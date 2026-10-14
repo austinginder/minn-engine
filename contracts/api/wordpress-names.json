@@ -1,12 +1,12 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 299,
-        "functions": 202,
+        "functionCalls": 286,
+        "functions": 194,
         "hookApi": 0,
         "classReferences": 151,
         "classes": 32,
-        "files": 112
+        "files": 109
     },
     "families": {
         "functions": {
@@ -15,7 +15,6 @@
             "wp-includes/comment.php": 32,
             "wp-includes/general-template.php": 18,
             "wp-includes/user.php": 16,
-            "wp-includes/cron.php": 13,
             "wp-includes/widgets.php": 12,
             "wp-includes/nav-menu.php": 11,
             "wp-includes/functions.php": 11,
@@ -160,13 +159,6 @@
             "files": {
                 "Minn/Front/SitemapRequest.php": 1,
                 "Minn/Theme/FrontLifecycle.php": 3
-            }
-        },
-        "_get_cron_array": {
-            "uses": 3,
-            "family": "wp-includes/cron.php",
-            "files": {
-                "Minn/Cli/CronCommand.php": 3
             }
         },
         "clean_term_cache": {
@@ -446,14 +438,6 @@
                 "Minn/Runtime/CommentForm.php": 1
             }
         },
-        "wp_cron": {
-            "uses": 2,
-            "family": "wp-includes/cron.php",
-            "files": {
-                "Minn/Cli/MinnCommand.php": 1,
-                "Minn/Engine.php": 1
-            }
-        },
         "wp_delete_term": {
             "uses": 2,
             "family": "wp-includes/taxonomy.php",
@@ -507,13 +491,6 @@
                 "Minn/Runtime/PostRevisions.php": 2
             }
         },
-        "wp_get_schedules": {
-            "uses": 2,
-            "family": "wp-includes/cron.php",
-            "files": {
-                "Minn/Cli/CronCommand.php": 2
-            }
-        },
         "wp_insert_comment": {
             "uses": 2,
             "family": "wp-includes/comment.php",
@@ -556,13 +533,6 @@
             "family": "wp-includes/taxonomy.php",
             "files": {
                 "Minn/Runtime/TermSave.php": 2
-            }
-        },
-        "wp_unschedule_hook": {
-            "uses": 2,
-            "family": "wp-includes/cron.php",
-            "files": {
-                "Minn/Cli/CronCommand.php": 2
             }
         },
         "wp_update_comment": {
@@ -1385,13 +1355,6 @@
                 "Minn/Runtime/Plugins.php": 1
             }
         },
-        "wp_reschedule_event": {
-            "uses": 1,
-            "family": "wp-includes/cron.php",
-            "files": {
-                "Minn/Cli/CronCommand.php": 1
-            }
-        },
         "wp_resolve_numeric_slug_conflicts": {
             "uses": 1,
             "family": "wp-includes/rewrite.php",
@@ -1418,20 +1381,6 @@
             "family": "wp-includes/capabilities.php",
             "files": {
                 "Minn/Runtime/UserQueryRunner.php": 1
-            }
-        },
-        "wp_schedule_event": {
-            "uses": 1,
-            "family": "wp-includes/cron.php",
-            "files": {
-                "Minn/Cli/CronCommand.php": 1
-            }
-        },
-        "wp_schedule_single_event": {
-            "uses": 1,
-            "family": "wp-includes/cron.php",
-            "files": {
-                "Minn/Cli/CronCommand.php": 1
             }
         },
         "wp_set_object_terms": {
@@ -1481,13 +1430,6 @@
             "family": "wp-includes/post.php",
             "files": {
                 "Minn/Runtime/PostLinks.php": 1
-            }
-        },
-        "wp_unschedule_event": {
-            "uses": 1,
-            "family": "wp-includes/cron.php",
-            "files": {
-                "Minn/Cli/CronCommand.php": 1
             }
         },
         "wp_unspam_comment": {

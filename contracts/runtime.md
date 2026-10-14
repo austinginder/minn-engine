@@ -16123,6 +16123,18 @@ http-transports probe is not run in this batch's comparison: its requests are wh
 FrankenPHP server (a flush after the engine finishes a response early), and nothing here touches the
 transports. The other 369 probes give identical output before and after.
 
+**Batch 21, scheduled events (function calls 299 → 286).** `Runtime\CronEvents` keeps the cron option
+as the facade's cron functions did: `all()` (an old list keyed by hook alone upgraded first by
+`upgrade()`), `store()`, `schedules()` (hourly, twice daily, daily and weekly after the ones
+cron_schedules adds), `scheduleSingle()` (refused within ten minutes of a duplicate), `schedule()`,
+`reschedule()` (the schedule's interval, else the one the event carries), `unschedule()`,
+`unscheduleHook()`, `event()`, `next()`, `ready()` and `run()` (each recurring event rescheduled, then
+removed, then fired; a failure logged and told as cron_reschedule_event_error or
+cron_unschedule_event_error). Each step keeps the pre_ filter that may answer first. The engine's
+`wp cron` commands and its after-send cron call it directly; `_minn_run_cron` in the facade keeps its
+booted guard. The comparison again leaves out the http-transports probe; the other probes give
+identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

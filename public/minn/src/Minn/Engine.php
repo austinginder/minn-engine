@@ -41,6 +41,7 @@ use Minn\Rest\Api;
 use Minn\Rest\Responses;
 use Minn\Rest\RestUrl;
 use Minn\Rest\Types;
+use Minn\Runtime\CronEvents;
 use Minn\Runtime\Handoff;
 use Minn\Theme\PageRenderer;
 use Minn\Theme\Theme;
@@ -361,7 +362,7 @@ final readonly class Engine
                 return 0;
             }
             \defined('DOING_CRON') || \define('DOING_CRON', true);
-            return (int) \wp_cron();
+            return (int) CronEvents::run();
         };
         $cron = Cron::create($db, $site, ABSPATH . 'wp-content', $fireDueEvents);
         $notFound = static function () use (&$front): Response { return $front->notFound(); };

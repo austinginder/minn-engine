@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Runtime\CronEvents;
 use Minn\Runtime\Records;
 use WP_CLI;
 use WP_CLI\Formatter;
@@ -41,7 +42,7 @@ final class CronCommand
         $dueNow = isset($assocArgs['due-now']);
         $now = time();
         $items = [];
-        foreach (\_get_cron_array() as $timestamp => $hooks) {
+        foreach (CronEvents::all() as $timestamp => $hooks) {
             foreach ($hooks as $name => $keys) {
                 if ($hook !== '' && $name !== $hook) {
                     continue;
@@ -85,7 +86,7 @@ final class CronCommand
         if ($args === [] && !$all && !$dueNow) {
             WP_CLI::error('Please specify one or more cron events, or use --due-now/--all.');
         }
-        $crons = \_get_cron_array();
+        $crons = CronEvents::all();
         foreach ($args as $hook) {
             if (!self::scheduled($crons, (string) $hook)) {
                 WP_CLI::error("Invalid cron event '{$hook}'");
@@ -102,9 +103,9 @@ final class CronCommand
                 foreach ($keys as $entry) {
                     $started = microtime(true);
                     if (($entry['schedule'] ?? false) !== false) {
-                        \wp_reschedule_event((int) $timestamp, $entry['schedule'], (string) $hook, $entry['args'], true);
+                        CronEvents::reschedule((int) $timestamp, $entry['schedule'], (string) $hook, $entry['args'], true);
                     }
-                    \wp_unschedule_event((int) $timestamp, (string) $hook, $entry['args'], true);
+                    CronEvents::unschedule((int) $timestamp, (string) $hook, $entry['args'], true);
                     \Minn\Runtime\Runtime::hooks()->actionRefArray((string) (string) $hook, array_values((array) $entry['args']));
                     $elapsed = number_format(microtime(true) - $started, 3);
                     WP_CLI::log("Executed the cron event '{$hook}' in {$elapsed}s.");
@@ -140,7 +141,7 @@ final class CronCommand
         if ($timestamp === false) {
             WP_CLI::error("'{$when}' is not a valid datetime.");
         }
-        if ($recurrence !== '' && !isset(\wp_get_schedules()[$recurrence])) {
+        if ($recurrence !== '' && !isset(CronEvents::schedules()[$recurrence])) {
             WP_CLI::error("'{$recurrence}' is not a valid schedule name for recurrence.");
         }
         $eventArgs = self::eventArgs($assocArgs);
@@ -148,8 +149,8 @@ final class CronCommand
             WP_CLI::warning('Numeric keys should be used for the hook arguments.');
         }
         $result = $recurrence === ''
-            ? \wp_schedule_single_event($timestamp, $hook, $eventArgs)
-            : \wp_schedule_event($timestamp, $recurrence, $hook, $eventArgs);
+            ? CronEvents::scheduleSingle($timestamp, $hook, $eventArgs)
+            : CronEvents::schedule($timestamp, $recurrence, $hook, $eventArgs);
         if ($result === false || Records::isError($result)) {
             WP_CLI::error('Event not scheduled.');
         }
@@ -171,7 +172,7 @@ final class CronCommand
         if ($args === []) {
             WP_CLI::error('Please specify one or more cron events, or use --due-now/--all.');
         }
-        $crons = \_get_cron_array();
+        $crons = CronEvents::all();
         foreach ($args as $hook) {
             if (!self::scheduled($crons, (string) $hook)) {
                 WP_CLI::error("Invalid cron event '{$hook}'");
@@ -179,7 +180,7 @@ final class CronCommand
         }
         $deleted = 0;
         foreach ($args as $hook) {
-            $removed = \wp_unschedule_hook((string) $hook);
+            $removed = CronEvents::unscheduleHook((string) $hook);
             $deleted += is_int($removed) ? $removed : 0;
         }
         WP_CLI::success('Deleted a total of ' . $deleted . ' cron event' . ($deleted === 1 ? '' : 's') . '.');
@@ -198,7 +199,7 @@ final class CronCommand
     {
         Runtime::bootEngine();
         $hook = (string) $args[0];
-        $removed = \wp_unschedule_hook($hook);
+        $removed = CronEvents::unscheduleHook($hook);
         if (!is_int($removed) || $removed === 0) {
             WP_CLI::error("No events found for hook '{$hook}'.");
         }
@@ -220,7 +221,7 @@ final class CronCommand
     {
         Runtime::bootEngine();
         $items = [];
-        foreach (\wp_get_schedules() as $name => $schedule) {
+        foreach (CronEvents::schedules() as $name => $schedule) {
             $items[] = ['name' => $name, 'display' => $schedule['display'], 'interval' => (int) $schedule['interval']];
         }
         usort($items, static fn (array $a, array $b): int => $a['interval'] <=> $b['interval']);

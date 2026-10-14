@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Cli;
 
 use Minn\Json;
+use Minn\Runtime\CronEvents;
 use WP_CLI;
 use Minn\Content\Inventory;
 use Minn\Cron\Cron;
@@ -107,7 +108,7 @@ final class MinnCommand
         \defined('DOING_CRON') || \define('DOING_CRON', true);
         Runtime::bootEngine();
         $lite = Runtime::boot();
-        $cron = Cron::create($lite->db, $lite->site, ABSPATH . 'wp-content', static fn (): int => (int) \wp_cron());
+        $cron = Cron::create($lite->db, $lite->site, ABSPATH . 'wp-content', static fn (): int => (int) CronEvents::run());
         foreach ($cron->run() as $line) {
             WP_CLI::log($line);
         }

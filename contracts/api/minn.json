@@ -22725,6 +22725,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Cli\\Runtime",
+                "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -22773,8 +22774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 67
+                    "line": 38,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -22800,8 +22801,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 116
+                    "line": 81,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -22827,8 +22828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 157
+                    "line": 131,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -22854,8 +22855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 186
+                    "line": 169,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -22881,8 +22882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 206
+                    "line": 198,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -22908,8 +22909,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 228
+                    "line": 220,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -22935,8 +22936,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 243
+                    "line": 236,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -22962,8 +22963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 254
+                    "line": 247,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -22984,8 +22985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 265
+                    "line": 262,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -23004,8 +23005,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 287
+                    "line": 269,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -23024,8 +23025,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 293
+                    "line": 291,
+                    "end": 294
                 }
             ]
         },
@@ -23667,6 +23668,7 @@
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Mail\\Message",
+                "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\ScriptPack"
             ],
@@ -23702,8 +23704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 38
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -23729,8 +23731,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 77
+                    "line": 49,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -23756,8 +23758,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 94
+                    "line": 85,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -23783,8 +23785,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 115
+                    "line": 102,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -23810,8 +23812,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 136
+                    "line": 128,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -23837,8 +23839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 151
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -23864,8 +23866,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 172
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -23891,8 +23893,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 187
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -23918,8 +23920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 202
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -23945,8 +23947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 217
+                    "line": 215,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -23972,8 +23974,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 280
+                    "line": 251,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -23999,8 +24001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 332
+                    "line": 302,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -24033,8 +24035,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 229
+                    "line": 220,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -24045,8 +24047,8 @@
                     "doc": "The WordPress the swap parked beside this webroot, when the manifest names one.",
                     "shapes": [],
                     "params": [],
-                    "line": 335,
-                    "end": 340
+                    "line": 336,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -24057,8 +24059,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 342,
-                    "end": 345
+                    "line": 343,
+                    "end": 346
                 }
             ]
         },
@@ -40813,6 +40815,7 @@
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\Types",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\DebugMode",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Options",
@@ -40851,8 +40854,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 73,
-                "end": 78
+                "line": 74,
+                "end": 79
             },
             "cases": [],
             "constants": [
@@ -40893,8 +40896,8 @@
                     "doc": "The front door: answer the request that arrived and send it. This is\nthe only place the engine touches the world, so everything under it\nis a function of a request, callable more than once in a process.",
                     "shapes": [],
                     "params": [],
-                    "line": 85,
-                    "end": 91
+                    "line": 86,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -40913,8 +40916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 119
+                    "line": 99,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -40933,8 +40936,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 129
+                    "line": 123,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -40967,8 +40970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 170
+                    "line": 137,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -40994,8 +40997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 192
+                    "line": 180,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -41021,8 +41024,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 217
+                    "line": 202,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -41041,8 +41044,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 231
+                    "line": 226,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -41068,8 +41071,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 264
+                    "line": 243,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -41088,8 +41091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 271
+                    "line": 268,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -41115,8 +41118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 332
+                    "line": 274,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -41212,8 +41215,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 401
+                    "line": 336,
+                    "end": 402
                 }
             ]
         },
@@ -72552,6 +72555,7 @@
                 "Minn\\Rest\\Types",
                 "Minn\\Runtime\\Assets",
                 "Minn\\Runtime\\Constants",
+                "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\Interactivity",
                 "Minn\\Runtime\\OEmbed",
                 "Minn\\Runtime\\Recovery",
@@ -121909,6 +121913,480 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\CronEvents",
+            "short": "CronEvents",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CronEvents.php",
+            "lines": 267,
+            "doc": "Scheduled events as WordPress keeps them in the cron option: the list\nread (an old one upgraded) and stored, the schedules, single and\nrecurring events added (a near duplicate refused), rescheduled, removed\none by one, by hook or by arguments, looked up, and the due ones run;\neach step with the filters that may answer first.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Json",
+                "Minn\\Runtime\\CronTable",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Cli\\CronCommand",
+                "Minn\\Cli\\MinnCommand",
+                "Minn\\Engine"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "all(): array",
+                    "doc": "The scheduled events by timestamp (_get_cron_array), an old list\nupgraded first; empty when there is none.",
+                    "shapes": [
+                        "@return array<int|string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 25,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "store",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "store(mixed $cron, mixed $wpError = false): mixed",
+                    "doc": "The events stored (_set_cron_array): whether they were, or the error saying they could not be when asked for one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "cron",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "schedules",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "schedules(): array",
+                    "doc": "The schedules events recur on (wp_get_schedules): hourly, twice daily,\ndaily and weekly, after the ones cron_schedules adds.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 59,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "scheduleSingle",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "scheduleSingle(mixed $timestamp, mixed $hook, mixed $args = array ( ), mixed $wpError = false): mixed",
+                    "doc": "An event run once (wp_schedule_single_event): refused near a duplicate (ten minutes either side) or when a plugin says no.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "timestamp",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hook",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "schedule",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "schedule(mixed $timestamp, mixed $recurrence, mixed $hook, mixed $args = array ( ), mixed $wpError = false): mixed",
+                    "doc": "A recurring event (wp_schedule_event): refused for an unknown schedule or when a plugin says no.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "timestamp",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "recurrence",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hook",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "reschedule",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "reschedule(mixed $timestamp, mixed $recurrence, mixed $hook, mixed $args = array ( ), mixed $wpError = false): mixed",
+                    "doc": "A recurring event moved to its next run (wp_reschedule_event): the\ninterval its schedule names, else the one the event carries.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "timestamp",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "recurrence",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hook",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 119,
+                    "end": 138
+                },
+                {
+                    "routes": [],
+                    "name": "unschedule",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unschedule(mixed $timestamp, mixed $hook, mixed $args = array ( ), mixed $wpError = false): mixed",
+                    "doc": "One event removed (wp_unschedule_event).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "timestamp",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hook",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 141,
+                    "end": 151
+                },
+                {
+                    "routes": [],
+                    "name": "unscheduleHook",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unscheduleHook(mixed $hook, mixed $wpError = false): mixed",
+                    "doc": "Every event of a hook removed, whatever its arguments (wp_unschedule_hook): how many, 0 for none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 154,
+                    "end": 166
+                },
+                {
+                    "routes": [],
+                    "name": "event",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "event(mixed $hook, mixed $args = array ( ), mixed $timestamp = NULL): mixed",
+                    "doc": "An event by hook and arguments, the next one or the one at a time (wp_get_scheduled_event), or false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "timestamp",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 169,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "next",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "next(mixed $hook, mixed $args = array ( )): mixed",
+                    "doc": "When an event next runs (wp_next_scheduled), as wp_next_scheduled leaves it; false for none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 192
+                },
+                {
+                    "routes": [],
+                    "name": "ready",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ready(): mixed",
+                    "doc": "The events due now (wp_get_ready_cron_jobs).",
+                    "shapes": [
+                        "@return array<int|string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 199,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "run(): mixed",
+                    "doc": "The due events run (wp_cron): each recurring one rescheduled first,\neach removed, then its hook fired with its arguments; how many ran.\nA failure to reschedule or remove is logged and told as\ncron_reschedule_event_error or cron_unschedule_event_error.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 214,
+                    "end": 235
+                },
+                {
+                    "routes": [],
+                    "name": "upgrade",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "upgrade(mixed $cron): array",
+                    "doc": "An old event list keyed by hook alone, keyed again by its arguments'\nhash and stored (_upgrade_cron_array).",
+                    "shapes": [
+                        "@return array<int|string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "cron",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 264,
+                    "end": 282
+                },
+                {
+                    "routes": [],
+                    "name": "refuse",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refuse(mixed $wpError, string $code, string $message): mixed",
+                    "doc": "A refusal: the error when one was asked for, else false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "code",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 238,
+                    "end": 241
+                },
+                {
+                    "routes": [],
+                    "name": "failed",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "failed(mixed $result, string $action, string $hook, array $event): void",
+                    "doc": "A failed reschedule or removal logged and told to its action.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "result",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "event",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 244,
+                    "end": 256
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\CronTable",
             "short": "CronTable",
             "namespace": "Minn\\Runtime",
@@ -121923,7 +122401,8 @@
             ],
             "usedBy": [
                 "Minn\\Cron\\Cron",
-                "Minn\\Ops\\Diagnostics"
+                "Minn\\Ops\\Diagnostics",
+                "Minn\\Runtime\\CronEvents"
             ],
             "constructor": null,
             "cases": [],
@@ -123283,6 +123762,7 @@
                 "Minn\\Runtime\\CommentQueryRunner",
                 "Minn\\Runtime\\CommentQueryWhere",
                 "Minn\\Runtime\\CommentThreads",
+                "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Heartbeat",
                 "Minn\\Runtime\\MainQuery",
@@ -129475,6 +129955,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\LiveSettings",
+                "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\PluginActivation",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\SiteOptions",
@@ -137048,6 +137529,7 @@
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryRunner",
                 "Minn\\Runtime\\CommentTags",
+                "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenuItems",
@@ -139947,6 +140429,7 @@
                 "Minn\\Runtime\\CommentQueryRunner",
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\Constants",
+                "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Deferrals",
                 "Minn\\Runtime\\FileUpload",

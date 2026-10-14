@@ -239,7 +239,7 @@ Lists available cron schedules.
 
 Tests the WP Cron spawning system and reports the results.
 
-Internals: `scheduled()` (private, line 246), `eventArgs()` (private, line 261), `duration()` (private, line 268), `relative()` (private, line 290)
+Internals: `scheduled()` (private, line 247), `eventArgs()` (private, line 262), `duration()` (private, line 269), `relative()` (private, line 291)
 
 
 ## DirectorySearch
@@ -490,7 +490,7 @@ resumed here.
 [--theme]
 : Treat the name as a theme rather than a plugin.
 
-Internals: `installer()` (private, line 219), `parkedTree()` (private, line 335), `engineVersion()` (private, line 342)
+Internals: `installer()` (private, line 220), `parkedTree()` (private, line 336), `engineVersion()` (private, line 343)
 
 
 ## OptionCommand

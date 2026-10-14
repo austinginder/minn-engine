@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 795,
-        "composes": 2308,
+        "minn": 787,
+        "composes": 2303,
         "leaf": 1019,
-        "noop": 2886,
+        "noop": 2899,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1218,
+        "minnMethods": 1224,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -35006,13 +35006,12 @@
         },
         "_get_cron_array": {
             "file": "cron.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_upgrade_cron_array",
-                "get_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CronEvents::all"
+            ],
+            "composes": []
         },
         "_get_custom_object_labels": {
             "file": "post.php",
@@ -38464,18 +38463,13 @@
         },
         "_minn_run_cron": {
             "file": "cron.php",
-            "lines": 22,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
+                "Minn\\Runtime\\CronEvents::run",
                 "Minn\\Runtime\\Runtime::booted"
             ],
-            "composes": [
-                "_minn_cron_failed",
-                "do_action_ref_array",
-                "wp_get_ready_cron_jobs",
-                "wp_reschedule_event",
-                "wp_unschedule_event"
-            ]
+            "composes": []
         },
         "_minn_run_main_query": {
             "file": "query.php",
@@ -39832,12 +39826,12 @@
         },
         "_set_cron_array": {
             "file": "cron.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "update_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CronEvents::store"
+            ],
+            "composes": []
         },
         "_set_preview": {
             "file": "post.php",
@@ -40049,12 +40043,12 @@
         },
         "_upgrade_cron_array": {
             "file": "cron.php",
-            "lines": 16,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "update_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CronEvents::upgrade"
+            ],
+            "composes": []
         },
         "_usort_by_first_member": {
             "file": "deadends.php",
@@ -70077,15 +70071,12 @@
         },
         "wp_get_ready_cron_jobs": {
             "file": "cron.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\CronTable::due"
+                "Minn\\Runtime\\CronEvents::ready"
             ],
-            "composes": [
-                "_get_cron_array",
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_get_recent_posts": {
             "file": "post.php",
@@ -70150,25 +70141,21 @@
         },
         "wp_get_scheduled_event": {
             "file": "cron.php",
-            "lines": 14,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\CronTable::find",
-                "Minn\\Runtime\\CronTable::key"
+                "Minn\\Runtime\\CronEvents::event"
             ],
-            "composes": [
-                "_get_cron_array",
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_get_schedules": {
             "file": "cron.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CronEvents::schedules"
+            ],
+            "composes": []
         },
         "wp_get_script_polyfill": {
             "file": "script-loader.php",
@@ -73013,13 +73000,12 @@
         },
         "wp_next_scheduled": {
             "file": "cron.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "wp_get_scheduled_event"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CronEvents::next"
+            ],
+            "composes": []
         },
         "wp_no_robots": {
             "file": "deprecated.php",
@@ -75195,18 +75181,12 @@
         },
         "wp_reschedule_event": {
             "file": "cron.php",
-            "lines": 17,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\CronTable::nextRun"
+                "Minn\\Runtime\\CronEvents::reschedule"
             ],
-            "composes": [
-                "_minn_cron_refuse",
-                "apply_filters",
-                "wp_get_scheduled_event",
-                "wp_get_schedules",
-                "wp_schedule_event"
-            ]
+            "composes": []
         },
         "wp_reset_postdata": {
             "file": "post.php",
@@ -75609,19 +75589,12 @@
         },
         "wp_schedule_event": {
             "file": "cron.php",
-            "lines": 18,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\CronTable::insert",
-                "Minn\\Runtime\\CronTable::key"
+                "Minn\\Runtime\\CronEvents::schedule"
             ],
-            "composes": [
-                "_get_cron_array",
-                "_minn_cron_refuse",
-                "_set_cron_array",
-                "apply_filters",
-                "wp_get_schedules"
-            ]
+            "composes": []
         },
         "wp_schedule_personal_data_cleanup_requests": {
             "file": "functions.php",
@@ -75635,19 +75608,12 @@
         },
         "wp_schedule_single_event": {
             "file": "cron.php",
-            "lines": 17,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\CronTable::hasNear",
-                "Minn\\Runtime\\CronTable::insert",
-                "Minn\\Runtime\\CronTable::key"
+                "Minn\\Runtime\\CronEvents::scheduleSingle"
             ],
-            "composes": [
-                "_get_cron_array",
-                "_minn_cron_refuse",
-                "_set_cron_array",
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_schedule_update_checks": {
             "file": "deadends.php",
@@ -77235,31 +77201,21 @@
         },
         "wp_unschedule_event": {
             "file": "cron.php",
-            "lines": 8,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\CronTable::key",
-                "Minn\\Runtime\\CronTable::remove"
+                "Minn\\Runtime\\CronEvents::unschedule"
             ],
-            "composes": [
-                "_get_cron_array",
-                "_minn_cron_refuse",
-                "_set_cron_array",
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_unschedule_hook": {
             "file": "cron.php",
-            "lines": 10,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\CronTable::removeHook"
+                "Minn\\Runtime\\CronEvents::unscheduleHook"
             ],
-            "composes": [
-                "_get_cron_array",
-                "_set_cron_array",
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_unslash": {
             "file": "formatting.php",

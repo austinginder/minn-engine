@@ -7,16 +7,7 @@ use Minn\Runtime\Runtime;
 /** The events as stored, a list read before version 2 upgraded (and saved) first. */
 function _get_cron_array()
 {
-    $cron = get_option('cron');
-    if (!is_array($cron)) {
-        return [];
-    }
-    if (!isset($cron['version'])) {
-        $cron = _upgrade_cron_array($cron);
-    }
-    unset($cron['version']);
-    ksort($cron);
-    return $cron;
+    return Minn\Runtime\CronEvents::all();
 }
 
 /**
@@ -26,35 +17,12 @@ function _get_cron_array()
  */
 function _upgrade_cron_array($cron)
 {
-    if (isset($cron['version']) && $cron['version'] === 2) {
-        return $cron;
-    }
-    $upgraded = [];
-    foreach ((array) $cron as $timestamp => $hooks) {
-        if ($timestamp === 'version') {
-            $upgraded['version'] = 2;
-            continue;
-        }
-        foreach ((array) $hooks as $hook => $event) {
-            $upgraded[$timestamp][$hook][md5(serialize($event['args'] ?? null))] = $event;
-        }
-    }
-    $upgraded['version'] = 2;
-    update_option('cron', $upgraded);
-    return $upgraded;
+    return Minn\Runtime\CronEvents::upgrade($cron);
 }
 
 function _set_cron_array($cron, $wp_error = false)
 {
-    if (!is_array($cron)) {
-        $cron = [];
-    }
-    $cron['version'] = 2;
-    $result = update_option('cron', $cron);
-    if ($wp_error && !$result) {
-        return new WP_Error('could_not_set', 'The cron event list could not be saved.');
-    }
-    return $result;
+    return Minn\Runtime\CronEvents::store($cron, $wp_error);
 }
 
 /** @internal false or a WP_Error, as the caller asked */
@@ -65,89 +33,27 @@ function _minn_cron_refuse($wp_error, string $code, string $message)
 
 function wp_get_schedules()
 {
-    $schedules = [
-        'hourly' => ['interval' => HOUR_IN_SECONDS, 'display' => 'Once Hourly'],
-        'twicedaily' => ['interval' => 12 * HOUR_IN_SECONDS, 'display' => 'Twice Daily'],
-        'daily' => ['interval' => DAY_IN_SECONDS, 'display' => 'Once Daily'],
-        'weekly' => ['interval' => WEEK_IN_SECONDS, 'display' => 'Once Weekly'],
-    ];
-    return array_merge(apply_filters('cron_schedules', []), $schedules);
+    return Minn\Runtime\CronEvents::schedules();
 }
 
 function wp_schedule_single_event($timestamp, $hook, $args = [], $wp_error = false)
 {
-    if (!is_numeric($timestamp) || $timestamp <= 0) {
-        return _minn_cron_refuse($wp_error, 'invalid_timestamp', 'Event timestamp must be a valid Unix timestamp.');
-    }
-    $event = (object) ['hook' => $hook, 'timestamp' => (int) $timestamp, 'schedule' => false, 'args' => array_values((array) $args)];
-    $pre = apply_filters('pre_schedule_event', null, $event, $wp_error);
-    if ($pre !== null) {
-        return $pre;
-    }
-    $crons = _get_cron_array();
-    if (CronTable::hasNear($crons, $event->timestamp, (string) $event->hook, CronTable::key($event->args), 10 * MINUTE_IN_SECONDS)) {
-        return _minn_cron_refuse($wp_error, 'duplicate_event', 'A duplicate event already exists.');
-    }
-    $event = apply_filters('schedule_event', $event);
-    if (!$event) {
-        return _minn_cron_refuse($wp_error, 'schedule_event_false', 'A plugin disallowed this event.');
-    }
-    return _set_cron_array(CronTable::insert($crons, $event->timestamp, (string) $event->hook, CronTable::key($event->args), ['schedule' => $event->schedule, 'args' => $event->args]), $wp_error);
+    return Minn\Runtime\CronEvents::scheduleSingle($timestamp, $hook, $args, $wp_error);
 }
 
 function wp_schedule_event($timestamp, $recurrence, $hook, $args = [], $wp_error = false)
 {
-    if (!is_numeric($timestamp) || $timestamp <= 0) {
-        return _minn_cron_refuse($wp_error, 'invalid_timestamp', 'Event timestamp must be a valid Unix timestamp.');
-    }
-    $schedules = wp_get_schedules();
-    if (!isset($schedules[$recurrence])) {
-        return _minn_cron_refuse($wp_error, 'invalid_schedule', 'Event schedule does not exist.');
-    }
-    $event = (object) ['hook' => $hook, 'timestamp' => (int) $timestamp, 'schedule' => $recurrence, 'args' => array_values((array) $args), 'interval' => $schedules[$recurrence]['interval']];
-    $pre = apply_filters('pre_schedule_event', null, $event, $wp_error);
-    if ($pre !== null) {
-        return $pre;
-    }
-    $event = apply_filters('schedule_event', $event);
-    if (!$event) {
-        return _minn_cron_refuse($wp_error, 'schedule_event_false', 'A plugin disallowed this event.');
-    }
-    $entry = ['schedule' => $event->schedule, 'args' => $event->args, 'interval' => $event->interval];
-    return _set_cron_array(CronTable::insert(_get_cron_array(), $event->timestamp, (string) $event->hook, CronTable::key($event->args), $entry), $wp_error);
+    return Minn\Runtime\CronEvents::schedule($timestamp, $recurrence, $hook, $args, $wp_error);
 }
 
 function wp_reschedule_event($timestamp, $recurrence, $hook, $args = [], $wp_error = false)
 {
-    if (!is_numeric($timestamp) || $timestamp <= 0) {
-        return _minn_cron_refuse($wp_error, 'invalid_timestamp', 'Event timestamp must be a valid Unix timestamp.');
-    }
-    $interval = (int) (wp_get_schedules()[$recurrence]['interval'] ?? 0);
-    if ($interval === 0) {
-        $scheduled = wp_get_scheduled_event($hook, $args, $timestamp);
-        $interval = $scheduled && isset($scheduled->interval) ? (int) $scheduled->interval : 0;
-    }
-    $event = (object) ['hook' => $hook, 'timestamp' => (int) $timestamp, 'schedule' => $recurrence, 'args' => array_values((array) $args), 'interval' => $interval];
-    $pre = apply_filters('pre_reschedule_event', null, $event, $wp_error);
-    if ($pre !== null) {
-        return $pre;
-    }
-    if ($interval === 0) {
-        return _minn_cron_refuse($wp_error, 'invalid_schedule', 'Event schedule does not exist.');
-    }
-    return wp_schedule_event(CronTable::nextRun((int) $timestamp, $interval, time()), $recurrence, $hook, $args, $wp_error);
+    return Minn\Runtime\CronEvents::reschedule($timestamp, $recurrence, $hook, $args, $wp_error);
 }
 
 function wp_unschedule_event($timestamp, $hook, $args = [], $wp_error = false)
 {
-    if (!is_numeric($timestamp) || $timestamp <= 0) {
-        return _minn_cron_refuse($wp_error, 'invalid_timestamp', 'Event timestamp must be a valid Unix timestamp.');
-    }
-    $pre = apply_filters('pre_unschedule_event', null, $timestamp, $hook, $args, $wp_error);
-    if ($pre !== null) {
-        return $pre;
-    }
-    return _set_cron_array(CronTable::remove(_get_cron_array(), (int) $timestamp, (string) $hook, CronTable::key((array) $args)), $wp_error);
+    return Minn\Runtime\CronEvents::unschedule($timestamp, $hook, $args, $wp_error);
 }
 
 function wp_clear_scheduled_hook($hook, $args = [], $wp_error = false)
@@ -177,41 +83,17 @@ function wp_clear_scheduled_hook($hook, $args = [], $wp_error = false)
 
 function wp_unschedule_hook($hook, $wp_error = false)
 {
-    $pre = apply_filters('pre_unschedule_hook', null, $hook, $wp_error);
-    if ($pre !== null) {
-        return $pre;
-    }
-    [$crons, $removed] = CronTable::removeHook(_get_cron_array(), (string) $hook);
-    if ($removed === 0) {
-        return 0;
-    }
-    $set = _set_cron_array($crons, $wp_error);
-    return $set === true ? $removed : $set;
+    return Minn\Runtime\CronEvents::unscheduleHook($hook, $wp_error);
 }
 
 function wp_get_scheduled_event($hook, $args = [], $timestamp = null)
 {
-    $pre = apply_filters('pre_get_scheduled_event', null, $hook, $args, $timestamp);
-    if ($pre !== null) {
-        return $pre;
-    }
-    $found = CronTable::find(_get_cron_array(), (string) $hook, CronTable::key((array) $args), $timestamp === null ? null : (int) $timestamp);
-    if ($found === null) {
-        return false;
-    }
-    [$at, $entry] = $found;
-    $event = (object) ['hook' => $hook, 'timestamp' => $at, 'schedule' => $entry['schedule'], 'args' => $entry['args']];
-    if (isset($entry['interval'])) {
-        $event->interval = $entry['interval'];
-    }
-    return $event;
+    return Minn\Runtime\CronEvents::event($hook, $args, $timestamp);
 }
 
 function wp_next_scheduled($hook, $args = [])
 {
-    $event = wp_get_scheduled_event($hook, $args);
-    // An event's time is the plugins' to change; no event, nothing to ask (probe hook-inputs).
-    return $event ? apply_filters('wp_next_scheduled', $event->timestamp, $event, $hook, $args) : false;
+    return Minn\Runtime\CronEvents::next($hook, $args);
 }
 
 function wp_get_schedule($hook, $args = [])
@@ -222,11 +104,7 @@ function wp_get_schedule($hook, $args = [])
 
 function wp_get_ready_cron_jobs()
 {
-    $pre = apply_filters('pre_get_ready_cron_jobs', null);
-    if ($pre !== null) {
-        return $pre;
-    }
-    return CronTable::due(_get_cron_array(), time());
+    return Minn\Runtime\CronEvents::ready();
 }
 
 /**
@@ -264,28 +142,7 @@ function wp_cron()
  */
 function _minn_run_cron()
 {
-    if (!Runtime::booted()) {
-        return false;
-    }
-    $crons = wp_get_ready_cron_jobs();
-    if ($crons === []) {
-        return 0;
-    }
-    $ran = 0;
-    foreach ($crons as $timestamp => $cronhooks) {
-        foreach ($cronhooks as $hook => $keys) {
-            foreach ($keys as $key => $v) {
-                $schedule = $v['schedule'];
-                if ($schedule) {
-                    _minn_cron_failed(wp_reschedule_event($timestamp, $schedule, $hook, $v['args'], true), 'cron_reschedule_event_error', $hook, $v);
-                }
-                _minn_cron_failed(wp_unschedule_event($timestamp, $hook, $v['args'], true), 'cron_unschedule_event_error', $hook, $v);
-                do_action_ref_array($hook, $v['args']);
-                $ran++;
-            }
-        }
-    }
-    return $ran;
+    return Runtime::booted() ? Minn\Runtime\CronEvents::run() : false;
 }
 
 
