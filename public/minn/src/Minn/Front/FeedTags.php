@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\Media\FileTypes;
 use Minn\Objects\Post;
+use Minn\Runtime\PostLinks;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
@@ -103,7 +104,7 @@ final class FeedTags
                 $url = QueryArgs::add('attachment_id', $postId, SiteUrls::home('/feed/') . (\get_default_feed() !== $feed ? "{$feed}/" : ''));
             } else {
                 $front = Runtime::options()->filtered('show_on_front') === 'page' && (int) Runtime::options()->filtered('page_on_front') === $postId;
-                $base = Url::withTrailingSlash((string) ($front ? \_get_page_link($postId) : \get_permalink($postId))) . 'feed';
+                $base = Url::withTrailingSlash((string) ($front ? PostLinks::pageAddress($postId) : PostLinks::permalink($postId))) . 'feed';
                 $url = SiteUrls::trailing($base . (\get_default_feed() !== $feed ? "/{$feed}" : ''), 'single_feed');
             }
         } else {

@@ -80,7 +80,7 @@ final class PostData
             return $output . '<span id="more-' . $post->ID . '"></span>' . $parts[1];
         }
         if ($moreLinkText !== '') {
-            $output .= Runtime::hooks()->filter('the_content_more_link', [' <a href="' . \get_permalink($post) . "#more-{$post->ID}\" class=\"more-link\">{$moreLinkText}</a>", $moreLinkText]);
+            $output .= Runtime::hooks()->filter('the_content_more_link', [' <a href="' . PostLinks::permalink($post) . "#more-{$post->ID}\" class=\"more-link\">{$moreLinkText}</a>", $moreLinkText]);
         }
         return TagBalancer::balance((string) $output);
     }

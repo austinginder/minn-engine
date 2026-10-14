@@ -1,15 +1,15 @@
 {
-    "generated": "2026-10-13",
+    "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 808,
-        "composes": 2345,
+        "minn": 804,
+        "composes": 2344,
         "leaf": 1023,
-        "noop": 2832,
+        "noop": 2837,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1122,
+        "minnMethods": 1123,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -35079,17 +35079,12 @@
         },
         "_get_page_link": {
             "file": "post.php",
-            "lines": 3,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\PostLinks::page"
+                "Minn\\Runtime\\PostLinks::pageAddress"
             ],
-            "composes": [
-                "_minn_link_flags",
-                "apply_filters",
-                "get_post",
-                "home_url"
-            ]
+            "composes": []
         },
         "_get_path_to_translation": {
             "file": "deprecated.php",
@@ -47493,15 +47488,12 @@
         },
         "get_attachment_link": {
             "file": "post.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\PostLinks::attachment"
+                "Minn\\Runtime\\PostLinks::attachmentLink"
             ],
-            "composes": [
-                "_minn_link_flags",
-                "get_post"
-            ]
+            "composes": []
         },
         "get_attachment_taxonomies": {
             "file": "taxonomy.php",
@@ -50067,16 +50059,12 @@
         },
         "get_page_link": {
             "file": "post.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_get_page_link",
-                "apply_filters",
-                "get_option",
-                "get_post",
-                "home_url"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostLinks::pageLink"
+            ],
+            "composes": []
         },
         "get_page_of_comment": {
             "file": "comment.php",
@@ -50241,18 +50229,12 @@
         },
         "get_permalink": {
             "file": "post.php",
-            "lines": 11,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\PostLinks::post"
+                "Minn\\Runtime\\PostLinks::permalink"
             ],
-            "composes": [
-                "get_attachment_link",
-                "get_page_link",
-                "get_post",
-                "get_post_permalink",
-                "get_post_types"
-            ]
+            "composes": []
         },
         "get_plugin_data": {
             "file": "plugin.php",
@@ -50586,15 +50568,12 @@
         },
         "get_post_permalink": {
             "file": "post.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\PostLinks::custom"
+                "Minn\\Runtime\\PostLinks::customLink"
             ],
-            "composes": [
-                "_minn_link_flags",
-                "get_post"
-            ]
+            "composes": []
         },
         "get_post_reply_link": {
             "file": "comment.php",

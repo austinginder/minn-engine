@@ -28,7 +28,7 @@ final class ArchiveLinks
         }
         if ($type->name === 'post') {
             $postsPage = Runtime::options()->filtered('show_on_front') === 'page' ? (int) Runtime::options()->filtered('page_for_posts') : 0;
-            return Runtime::hooks()->filter('post_type_archive_link', [$postsPage > 0 ? \get_permalink($postsPage) : SiteUrls::home(), $postType]);
+            return Runtime::hooks()->filter('post_type_archive_link', [$postsPage > 0 ? PostLinks::permalink($postsPage) : SiteUrls::home(), $postType]);
         }
         $rewrite = $GLOBALS['wp_rewrite'] ?? null;
         if (Runtime::options()->filtered('permalink_structure') && is_array($type->rewrite) && $rewrite instanceof \WP_Rewrite) {

@@ -489,7 +489,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 48)
+Internals: `enclosures()` (private, line 49)
 
 
 ## FeedTemplates
@@ -799,7 +799,7 @@ A search's URL.
 
 A listing URL for a page number.
 
-Internals: `filtered()` (private, line 125), `hasPrettyLink()` (private, line 255), `fill()` (private, line 260)
+Internals: `filtered()` (private, line 126), `hasPrettyLink()` (private, line 256), `fill()` (private, line 261)
 
 
 ## PostEmbed
@@ -844,7 +844,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 121)
+Internals: `append()` (private, line 122)
 
 
 ## PostNavigation

@@ -8,6 +8,7 @@ use Minn\Content\TermRecord;
 use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Closure;
+use Minn\Runtime\PostLinks;
 use Minn\Runtime\Registry;
 use Minn\Runtime\Runtime;
 use Minn\Content\Posts;
@@ -105,7 +106,7 @@ final readonly class Permalinks
      */
     public function link(PostRecord $post): string
     {
-        return self::filtered() ? (string) \get_permalink($post->id) : $this->forPost($post);
+        return self::filtered() ? (string) PostLinks::permalink($post->id) : $this->forPost($post);
     }
 
     /**

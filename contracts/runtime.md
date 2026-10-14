@@ -16046,6 +16046,16 @@ preg_replace_callback as a call (it finds none). A hook registration that names 
 as its callback (the default filters) stays a name: plugins remove those callbacks by it. All 370
 probes give identical output before and after.
 
+**Batch 14, a post's address by its kind (function calls 482 → 468).** `Runtime\PostLinks` gains what
+get_permalink and the link functions it chooses between did: `permalink()` (a page's, an
+attachment's, a plugin type's or a post's address; a post filtered for "sample" shown as published),
+`pageLink()` (the home address for the front page, then page_link), `pageAddress()`
+(_get_page_link, the plain address with no id for no page), `attachmentLink()` and `customLink()`
+(get_post_permalink). The facade maps onto them. Full run 25 (after batch 13) was green once
+theme_mods_twentytwentyfive, left at custom-header-probe's mid-run state by a run interrupted when
+Cove restarted, was put back from the clone source and the suites in the restart windows were rerun.
+All 370 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

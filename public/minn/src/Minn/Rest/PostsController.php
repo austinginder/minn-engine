@@ -18,6 +18,7 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Objects\Post;
 use Minn\RestError;
+use Minn\Runtime\PostLinks;
 use Minn\Runtime\Records;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
@@ -217,6 +218,6 @@ final readonly class PostsController
         if (!Runtime::booted() || !Registered::viewableType($post->type)) {
             return $response;
         }
-        return Reply::alternate($response, (string) \get_permalink($post->id));
+        return Reply::alternate($response, (string) PostLinks::permalink($post->id));
     }
 }

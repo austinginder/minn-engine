@@ -33,6 +33,66 @@ final class PostLinks
 
     private const UNPUBLISHED = ['draft', 'pending', 'auto-draft', 'future'];
 
+    /**
+     * A post's address by its kind (get_permalink): a page's, an
+     * attachment's, a plugin type's or a post's; false for no post. A post
+     * filtered for "sample" is shown as it would be published.
+     */
+    public static function permalink(mixed $post = 0, mixed $leavename = false): mixed
+    {
+        $post = $post instanceof Post ? $post : Records::post($post);
+        if ($post === null) {
+            return false;
+        }
+        $sample = ($post->filter ?? '') === 'sample';
+        return match (true) {
+            $post->post_type === 'page' => self::pageLink($post, $leavename, $sample),
+            $post->post_type === 'attachment' => self::attachmentLink($post, $leavename),
+            in_array($post->post_type, Registered::postTypes(['_builtin' => false]), true) => self::customLink($post, $leavename, $sample),
+            default => self::post($post, $leavename ? self::LEAVE_NAME : 0),
+        };
+    }
+
+    /** A page's address (get_page_link): the home address for the front page; then page_link. */
+    public static function pageLink(mixed $post = 0, mixed $leavename = false, mixed $sample = false): mixed
+    {
+        $post = $post instanceof Post ? $post : Records::post($post);
+        if ($post === null) {
+            return false;
+        }
+        $options = Runtime::options();
+        $front = $options->filtered('show_on_front') === 'page' && (int) $options->filtered('page_on_front') === $post->ID;
+        $link = $front ? SiteUrls::home('/') : self::pageAddress($post, $leavename, $sample);
+        return Runtime::hooks()->filter('page_link', [$link, $post->ID, $sample]);
+    }
+
+    /** A page's own address, front page or not (_get_page_link); no such page is the plain address with no id. */
+    public static function pageAddress(mixed $post = 0, mixed $leavename = false, mixed $sample = false): mixed
+    {
+        $post = $post instanceof Post ? $post : Records::post($post);
+        return $post === null ? Runtime::hooks()->filter('_get_page_link', [SiteUrls::home('/?page_id='), null]) : self::page($post, self::flags($leavename, $sample));
+    }
+
+    /** An attachment's address (get_attachment_link), or false. */
+    public static function attachmentLink(mixed $post = null, mixed $leavename = false): mixed
+    {
+        $post = $post instanceof Post ? $post : Records::post($post);
+        return $post === null ? false : self::attachment($post, self::flags($leavename, false));
+    }
+
+    /** A plugin type's post address (get_post_permalink), or false. */
+    public static function customLink(mixed $post = 0, mixed $leavename = false, mixed $sample = false): mixed
+    {
+        $post = $post instanceof Post ? $post : Records::post($post);
+        return $post === null ? false : self::custom($post, self::flags($leavename, $sample));
+    }
+
+    /** The flags for leaving the name and showing a sample. */
+    private static function flags(mixed $leavename, mixed $sample): int
+    {
+        return ($leavename ? self::LEAVE_NAME : 0) | ($sample ? self::SAMPLE : 0);
+    }
+
     /** A post's address (not a page, attachment or plugin type). */
     public static function post(Post $post, int $flags): string
     {
@@ -99,7 +159,7 @@ final class PostLinks
         $pretty = (string) Runtime::options()->filtered('permalink_structure') !== '';
         $link = '';
         if ($pretty && $parent instanceof Post && in_array($parent->post_type, Registered::postTypes(), true)) {
-            $parentLink = $parent->post_type === 'page' ? self::page($parent, 0) : (string) \get_permalink($parent);
+            $parentLink = $parent->post_type === 'page' ? self::page($parent, 0) : (string) self::permalink($parent);
             $name = is_numeric($post->post_name) || str_contains((string) Runtime::options()->filtered('permalink_structure'), '%category%') ? 'attachment/' . $post->post_name : (string) $post->post_name;
             if (!str_contains($parentLink, '?')) {
                 $link = SiteUrls::trailing(Url::withTrailingSlash($parentLink) . '%postname%');
@@ -164,7 +224,7 @@ final class PostLinks
         }
         $sample->post_name = (string) \wp_unique_post_slug($sample->post_name, $sample->ID, $sample->post_status, $sample->post_type, $sample->post_parent);
         $sample->filter = 'sample';
-        $link = str_replace("%{$sample->post_type}%", '%pagename%', (string) \get_permalink($sample, true));
+        $link = str_replace("%{$sample->post_type}%", '%pagename%', (string) self::permalink($sample, true));
         if (Registered::hierarchicalType($sample->post_type)) {
             $uri = (string) \get_page_uri($sample);
             $uri = str_contains($uri, '/') ? substr($uri, 0, (int) strrpos($uri, '/')) : '';

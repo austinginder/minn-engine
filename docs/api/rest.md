@@ -1933,7 +1933,7 @@ One post of any type, with the reference's read rules.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `totals()` (private, line 109), `readable()` (private, line 128), `visibleStatuses()` (private, line 151)
+Internals: `totals()` (private, line 110), `readable()` (private, line 129), `visibleStatuses()` (private, line 152)
 
 
 ## PostsWriteController

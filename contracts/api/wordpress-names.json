@@ -1,8 +1,8 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 482,
-        "functions": 265,
+        "functionCalls": 468,
+        "functions": 263,
         "hookApi": 0,
         "classReferences": 287,
         "classes": 45,
@@ -17,7 +17,6 @@
             "wp-includes/comment.php": 32,
             "wp-includes/general-template.php": 27,
             "wp-includes/rest-api.php": 24,
-            "wp-includes/link-template.php": 21,
             "wp-includes/feed.php": 20,
             "wp-includes/comment-template.php": 18,
             "wp-includes/user.php": 18,
@@ -27,6 +26,7 @@
             "wp-includes/widgets.php": 12,
             "wp-includes/nav-menu.php": 11,
             "wp-includes/functions.php": 11,
+            "wp-includes/link-template.php": 7,
             "wp-includes/revision.php": 7,
             "wp-includes/kses.php": 6,
             "wp-includes/template.php": 5,
@@ -110,21 +110,6 @@
         }
     },
     "functions": {
-        "get_permalink": {
-            "uses": 13,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/EmbedCard.php": 2,
-                "Minn/Front/FeedTags.php": 1,
-                "Minn/Front/Permalinks.php": 1,
-                "Minn/Front/PostEmbed.php": 2,
-                "Minn/Rest/PostsController.php": 1,
-                "Minn/Runtime/ArchiveLinks.php": 1,
-                "Minn/Runtime/NavMenuItems.php": 2,
-                "Minn/Runtime/PostData.php": 1,
-                "Minn/Runtime/PostLinks.php": 2
-            }
-        },
         "get_query_var": {
             "uses": 10,
             "family": "wp-includes/query.php",
@@ -912,13 +897,6 @@
             "files": {
                 "Minn/Runtime/MenuEvents.php": 1,
                 "Minn/Runtime/TermEvents.php": 1
-            }
-        },
-        "_get_page_link": {
-            "uses": 1,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/FeedTags.php": 1
             }
         },
         "_get_term_children": {

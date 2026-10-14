@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Objects\Post;
 use Minn\Objects\User;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\PostLinks;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
@@ -81,7 +82,7 @@ final class PostEmbed
         }
         $secret = Handoff::password(10, false);
         $title = \get_the_title($post);
-        $output = sprintf('<blockquote class="wp-embedded-content" data-secret="%1$s"><a href="%2$s">%3$s</a></blockquote>', Escape::attr($secret), Escape::url(\get_permalink($post)), $title);
+        $output = sprintf('<blockquote class="wp-embedded-content" data-secret="%1$s"><a href="%2$s">%3$s</a></blockquote>', Escape::attr($secret), Escape::url(PostLinks::permalink($post)), $title);
         $output .= sprintf(
             '<iframe sandbox="allow-scripts" security="restricted" src="%1$s" width="%2$d" height="%3$d" title="%4$s" data-secret="%5$s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" class="wp-embedded-content"></iframe>',
             Escape::url(self::url($post) . '#?secret=' . $secret),
@@ -102,7 +103,7 @@ final class PostEmbed
         if (!$post instanceof Post) {
             return false;
         }
-        $permalink = (string) \get_permalink($post);
+        $permalink = (string) PostLinks::permalink($post);
         $url = (string) Runtime::options()->filtered('permalink_structure') !== '' && !str_contains($permalink, '?')
             ? Url::withTrailingSlash($permalink) . SiteUrls::trailing('embed')
             : QueryArgs::add(['embed' => 'true'], $permalink);

@@ -99,7 +99,7 @@ final class NavMenuItems
         if (!$type || !$original || $original->post_status === 'trash') {
             $item->_invalid = true;
         }
-        $item->url = $original ? (string) \get_permalink($original) : '';
+        $item->url = $original ? (string) PostLinks::permalink($original) : '';
         $title = $original ? Runtime::hooks()->filter('the_title', [$original->post_title, $original->ID]) : '';
         $item->title = (string) $item->post_title === '' ? (string) $title : (string) $item->post_title;
     }
@@ -149,7 +149,7 @@ final class NavMenuItems
         $item->object = $type ? $type->name : (string) $item->post_type;
         $item->type_label = $type ? $type->labels->singular_name : (string) $item->post_type;
         $item->title = (string) $item->post_title;
-        $item->url = (string) \get_permalink((int) $item->ID);
+        $item->url = (string) PostLinks::permalink((int) $item->ID);
         $item->target = '';
         $item->attr_title = Runtime::hooks()->filter('nav_menu_attr_title', ['']);
         $item->description = Runtime::hooks()->filter('nav_menu_description', ['']);

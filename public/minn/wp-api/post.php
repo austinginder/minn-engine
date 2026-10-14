@@ -579,17 +579,7 @@ function get_delete_post_link($post = 0, $deprecated = '', $force_delete = false
 /** A post's address, by its kind (Runtime\PostLinks); a post object handed in is used as it is. */
 function get_permalink($post = 0, $leavename = false)
 {
-    $post = $post instanceof WP_Post ? $post : get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $sample = ($post->filter ?? '') === 'sample';
-    return match (true) {
-        $post->post_type === 'page' => get_page_link($post, $leavename, $sample),
-        $post->post_type === 'attachment' => get_attachment_link($post, $leavename),
-        in_array($post->post_type, get_post_types(['_builtin' => false]), true) => get_post_permalink($post, $leavename, $sample),
-        default => PostLinks::post($post, $leavename ? PostLinks::LEAVE_NAME : 0),
-    };
+    return PostLinks::permalink($post, $leavename);
 }
 
 /** @internal the link flags of a leavename and sample pair */
@@ -611,35 +601,25 @@ function the_permalink($post = 0)
 /** A plugin type's address by its pattern or query var (Runtime\PostLinks), through post_type_link. */
 function get_post_permalink($post = 0, $leavename = false, $sample = false)
 {
-    $post = $post instanceof WP_Post ? $post : get_post($post);
-    return $post === null ? false : PostLinks::custom($post, _minn_link_flags($leavename, $sample));
+    return PostLinks::customLink($post, $leavename, $sample);
 }
 
 /** A page's address: the front page is home; else its own, through page_link. */
 function get_page_link($post = 0, $leavename = false, $sample = false)
 {
-    $post = $post instanceof WP_Post ? $post : get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $front = get_option('show_on_front') === 'page' && (int) get_option('page_on_front') === $post->ID;
-    $link = $front ? home_url('/') : _get_page_link($post, $leavename, $sample);
-    return apply_filters('page_link', $link, $post->ID, $sample);
+    return PostLinks::pageLink($post, $leavename, $sample);
 }
 
 /** A page's own address, through _get_page_link (Runtime\PostLinks). */
 function _get_page_link($post = 0, $leavename = false, $sample = false)
 {
-    $post = $post instanceof WP_Post ? $post : get_post($post);
-    // No such page: the plain address with no id, as the reference answers it.
-    return $post === null ? apply_filters('_get_page_link', home_url('/?page_id='), null) : PostLinks::page($post, _minn_link_flags($leavename, $sample));
+    return PostLinks::pageAddress($post, $leavename, $sample);
 }
 
 /** An attachment's address, through attachment_link (Runtime\PostLinks). */
 function get_attachment_link($post = null, $leavename = false)
 {
-    $post = $post instanceof WP_Post ? $post : get_post($post);
-    return $post === null ? false : PostLinks::attachment($post, _minn_link_flags($leavename, false));
+    return PostLinks::attachmentLink($post, $leavename);
 }
 
 /** The address an editor shows with the slug to edit, through get_sample_permalink (Runtime\PostLinks). */

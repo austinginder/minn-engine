@@ -46369,6 +46369,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\I18n\\Gettext",
                 "Minn\\I18n\\Numbers",
+                "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Support\\Escape"
@@ -46390,8 +46391,8 @@
                         "@return array{0: int, 1: string, 2: string}|null"
                     ],
                     "params": [],
-                    "line": 31,
-                    "end": 54
+                    "line": 32,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -46417,8 +46418,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 65
+                    "line": 58,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -46429,8 +46430,8 @@
                     "doc": "The site's name and icon, linking home, the whole block through embed_site_title_html.",
                     "shapes": [],
                     "params": [],
-                    "line": 68,
-                    "end": 77
+                    "line": 69,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -46441,8 +46442,8 @@
                     "doc": "The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open.",
                     "shapes": [],
                     "params": [],
-                    "line": 80,
-                    "end": 89
+                    "line": 81,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -46453,8 +46454,8 @@
                     "doc": "The button that opens the sharing dialog; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 98
+                    "line": 93,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -46465,8 +46466,8 @@
                     "doc": "The sharing dialog: the post's address and its embed code, each a tab; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 101,
-                    "end": 114
+                    "line": 102,
+                    "end": 115
                 }
             ]
         },
@@ -46638,6 +46639,7 @@
                 "Minn\\Front\\FeedWriter",
                 "Minn\\Media\\FileTypes",
                 "Minn\\Objects\\Post",
+                "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
@@ -46672,8 +46674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 45
+                    "line": 29,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -46684,8 +46686,8 @@
                     "doc": "The current post's enclosures as RSS has them: address, length, and the type the third line starts with.",
                     "shapes": [],
                     "params": [],
-                    "line": 58,
-                    "end": 69
+                    "line": 59,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -46696,8 +46698,8 @@
                     "doc": "The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.",
                     "shapes": [],
                     "params": [],
-                    "line": 72,
-                    "end": 89
+                    "line": 73,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -46723,8 +46725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 114
+                    "line": 93,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -46743,8 +46745,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 140
+                    "line": 122,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -46755,8 +46757,8 @@
                     "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 143,
-                    "end": 153
+                    "line": 144,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -46767,8 +46769,8 @@
                     "doc": "The site icon as an Atom icon, or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 156,
-                    "end": 160
+                    "line": 157,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -46781,8 +46783,8 @@
                         "@return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted"
                     ],
                     "params": [],
-                    "line": 48,
-                    "end": 55
+                    "line": 49,
+                    "end": 56
                 }
             ]
         },
@@ -48094,6 +48096,7 @@
                 "Minn\\Content\\Terms",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Db",
+                "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -48205,8 +48208,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 38
+                "line": 29,
+                "end": 39
             },
             "cases": [],
             "constants": [
@@ -48300,8 +48303,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 46
+                    "line": 42,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -48320,8 +48323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 54
+                    "line": 50,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -48340,8 +48343,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 62
+                    "line": 58,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -48360,8 +48363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 76
+                    "line": 66,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -48372,8 +48375,8 @@
                     "doc": "Whether the site uses a permalink structure.",
                     "shapes": [],
                     "params": [],
-                    "line": 79,
-                    "end": 82
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -48392,8 +48395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -48419,8 +48422,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 99
+                    "line": 96,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -48439,8 +48442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 109
+                    "line": 107,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -48473,8 +48476,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 122
+                    "line": 117,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -48493,8 +48496,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 152
+                    "line": 132,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -48513,8 +48516,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 161
+                    "line": 156,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -48533,8 +48536,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 170
+                    "line": 165,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -48553,8 +48556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 188
+                    "line": 178,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -48573,8 +48576,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 217
+                    "line": 192,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -48593,8 +48596,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 225
+                    "line": 221,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -48627,8 +48630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 241
+                    "line": 229,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -48647,8 +48650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 247
+                    "line": 245,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -48674,8 +48677,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 253
+                    "line": 251,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -48686,8 +48689,8 @@
                     "doc": "Whether links go through the reference's filters: once plugins can hook them.",
                     "shapes": [],
                     "params": [],
-                    "line": 125,
-                    "end": 128
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -48706,8 +48709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 258
+                    "line": 256,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -48726,8 +48729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 286
+                    "line": 261,
+                    "end": 287
                 }
             ]
         },
@@ -48745,6 +48748,7 @@
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\User",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
@@ -48786,8 +48790,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 55
+                    "line": 32,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -48829,8 +48833,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 73
+                    "line": 59,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -48863,8 +48867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 96
+                    "line": 77,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -48883,8 +48887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 110
+                    "line": 100,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -48912,8 +48916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 118
+                    "line": 114,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -48941,8 +48945,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 132
+                    "line": 122,
+                    "end": 133
                 }
             ]
         },
@@ -102469,6 +102473,7 @@
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime"
@@ -102515,8 +102520,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 34
+                "line": 29,
+                "end": 35
             },
             "cases": [],
             "constants": [],
@@ -102586,8 +102591,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 42
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -102622,8 +102627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 99
+                    "line": 58,
+                    "end": 100
                 },
                 {
                     "routes": [
@@ -102658,8 +102663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 186
+                    "line": 184,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -102692,8 +102697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 212
+                    "line": 190,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -102719,8 +102724,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 221
+                    "line": 216,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -102749,8 +102754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 125
+                    "line": 110,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -102769,8 +102774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 144
+                    "line": 129,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -102803,8 +102808,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 179
+                    "line": 152,
+                    "end": 180
                 }
             ]
         },
@@ -116819,6 +116824,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
@@ -126467,6 +126473,7 @@
                 "Minn\\I18n\\Gettext",
                 "Minn\\Objects\\Term",
                 "Minn\\Runtime\\ArchiveLinks",
+                "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
@@ -130448,6 +130455,7 @@
                 "Minn\\I18n\\Gettext",
                 "Minn\\Objects\\Post",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteTime"
             ],
@@ -131370,7 +131378,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostLinks.php",
-            "lines": 151,
+            "lines": 211,
             "doc": "Post addresses as the reference's link functions build them (probe\npermalinks): a post through pre_post_link (the structure) and post_link;\na page from get_page_uri through _get_page_link and page_link; an\nattachment under its parent's address, or its own; a plugin's type by\nits address pattern (the permastruct its rewrite registered) through\npost_type_link, by its query var without one. Plain (?p=, ?page_id=,\n?post_type=) unless its status is public, or private and readable by\nwhoever asks, or it is a sample: a draft, a scheduled or trashed post, a\nrevision, a private one a visitor asks for. \"Leaving the name\" keeps the slug as its placeholder\n(%postname%, %pagename%, %{type}%) for an editor to fill in, and\nget_sample_permalink shows a draft as it would be published.",
             "implements": [],
             "extends": null,
@@ -131387,7 +131395,16 @@
                 "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Url"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Front\\EmbedCard",
+                "Minn\\Front\\FeedTags",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Front\\PostEmbed",
+                "Minn\\Rest\\PostsController",
+                "Minn\\Runtime\\ArchiveLinks",
+                "Minn\\Runtime\\NavMenuItems",
+                "Minn\\Runtime\\PostData"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -131414,6 +131431,162 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "permalink",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "permalink(mixed $post = 0, mixed $leavename = false): mixed",
+                    "doc": "A post's address by its kind (get_permalink): a page's, an\nattachment's, a plugin type's or a post's; false for no post. A post\nfiltered for \"sample\" is shown as it would be published.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "leavename",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "pageLink",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pageLink(mixed $post = 0, mixed $leavename = false, mixed $sample = false): mixed",
+                    "doc": "A page's address (get_page_link): the home address for the front page; then page_link.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "leavename",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "sample",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "pageAddress",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pageAddress(mixed $post = 0, mixed $leavename = false, mixed $sample = false): mixed",
+                    "doc": "A page's own address, front page or not (_get_page_link); no such page is the plain address with no id.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "leavename",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "sample",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "attachmentLink",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "attachmentLink(mixed $post = NULL, mixed $leavename = false): mixed",
+                    "doc": "An attachment's address (get_attachment_link), or false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "leavename",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "customLink",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "customLink(mixed $post = 0, mixed $leavename = false, mixed $sample = false): mixed",
+                    "doc": "A plugin type's post address (get_post_permalink), or false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "leavename",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "sample",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 88
+                },
+                {
+                    "routes": [],
                     "name": "post",
                     "static": true,
                     "visibility": "public",
@@ -131436,8 +131609,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 47
+                    "line": 97,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -131463,8 +131636,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 92
+                    "line": 142,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -131490,8 +131663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 112
+                    "line": 155,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -131517,8 +131690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 132
+                    "line": 175,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -131553,8 +131726,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 175
+                    "line": 215,
+                    "end": 235
+                },
+                {
+                    "routes": [],
+                    "name": "flags",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "flags(mixed $leavename, mixed $sample): int",
+                    "doc": "The flags for leaving the name and showing a sample.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "leavename",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sample",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -131580,8 +131780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 65
+                    "line": 110,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -131600,8 +131800,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 79
+                    "line": 128,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -131627,8 +131827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 146
+                    "line": 199,
+                    "end": 206
                 }
             ]
         },

@@ -71,7 +71,7 @@ the WordPress runtime plugins load against
 | [`PostData`](#postdata) | final class | 68 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 165 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
-| [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
+| [`PostLinks`](#postlinks) | final class | 211 | Post addresses as the reference's link functions build them (probe |
 | [`PostLookup`](#postlookup) | final readonly class | 134 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 394 | WP_Query::get_posts as the reference runs it (probe wp-query-sql): the |
 | [`PostQueryParts`](#postqueryparts) | final class | 56 | The pieces of one WP_Query run as the reference builds them and hands |
@@ -3375,6 +3375,30 @@ get_sample_permalink shows a draft as it would be published.
 - const `SAMPLE` = `2` — The address an editor previews: a draft as if published.
 - const `UNPUBLISHED` = `array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft',   3 => 'future', )`
 
+Used by: `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Rest\PostsController`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostData`
+
+### static `permalink(mixed $post = 0, mixed $leavename = false): mixed`
+
+A post's address by its kind (get_permalink): a page's, an
+attachment's, a plugin type's or a post's; false for no post. A post
+filtered for "sample" is shown as it would be published.
+
+### static `pageLink(mixed $post = 0, mixed $leavename = false, mixed $sample = false): mixed`
+
+A page's address (get_page_link): the home address for the front page; then page_link.
+
+### static `pageAddress(mixed $post = 0, mixed $leavename = false, mixed $sample = false): mixed`
+
+A page's own address, front page or not (_get_page_link); no such page is the plain address with no id.
+
+### static `attachmentLink(mixed $post = NULL, mixed $leavename = false): mixed`
+
+An attachment's address (get_attachment_link), or false.
+
+### static `customLink(mixed $post = 0, mixed $leavename = false, mixed $sample = false): mixed`
+
+A plugin type's post address (get_post_permalink), or false.
+
 ### static `post(Minn\Objects\Post $post, int $flags): string`
 
 A post's address (not a page, attachment or plugin type).
@@ -3399,7 +3423,7 @@ a page's parents written in.
 
 - `@return array{0: string, 1: string}`
 
-Internals: `tokens()` (private, line 50), `category()` (private, line 68), `plain()` (private, line 139)
+Internals: `flags()` (private, line 91), `tokens()` (private, line 110), `category()` (private, line 128), `plain()` (private, line 199)
 
 
 ## PostLookup
