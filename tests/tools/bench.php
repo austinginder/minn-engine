@@ -19,10 +19,18 @@
  * This is the engine alone, PHP's server for both, so it answers "did a
  * change make the engine slower", not "how fast is Minn behind Cove".
  *
+ * Where the time goes (--phases): for the length of the run a timer is put
+ * in both stacks' mu-plugins (the same file, inert without the bench's own
+ * request header), noting the time from the request's start to each boot
+ * hook both fire (mu-plugins loaded, plugins loaded, theme set up, init,
+ * loaded, then the request's own work to shutdown), the peak memory and the
+ * files loaded; the median of each is reported per page and stack. The
+ * timer is removed when the run ends.
+ *
  * Writes nothing unless --write: then contracts/benchmarks.json keeps the
  * run (commit, machine, figures) beside the earlier ones.
  *
- * php tests/tools/bench.php [--runs=20] [--throughput] [--force] [--write] [--only=/,/hello-world/]
+ * php tests/tools/bench.php [--runs=20] [--throughput] [--phases] [--force] [--write] [--only=/,/hello-world/]
  * php tests/tools/bench.php --engine=<commit> [--runs=20] [--force]
  */
 
@@ -30,7 +38,7 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
 require_once dirname(__DIR__) . '/local.php';
-$args = getopt('', ['runs:', 'throughput', 'force', 'write', 'only:', 'engine:', 'load:']);
+$args = getopt('', ['runs:', 'throughput', 'phases', 'force', 'write', 'only:', 'engine:', 'load:']);
 $runs = max(3, (int) ($args['runs'] ?? 20));
 $force = isset($args['force']);
 $only = isset($args['only']) ? explode(',', (string) $args['only']) : null;
@@ -63,9 +71,9 @@ if ($before > $limit && !$force) {
 }
 
 /** One kept-alive connection per stack, so neither pays a handshake the other does not. */
-$client = static function (string $base, ?string $host = null): Closure {
+$client = static function (string $base, ?string $host = null, array $headers = []): Closure {
     $handle = curl_init();
-    return static function (string $path) use ($handle, $base, $host): array {
+    return static function (string $path) use ($handle, $base, $host, $headers): array {
         curl_setopt_array($handle, [
             CURLOPT_URL => $base . $path,
             CURLOPT_RETURNTRANSFER => true,
@@ -73,7 +81,7 @@ $client = static function (string $base, ?string $host = null): Closure {
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => 0,
             CURLOPT_TCP_KEEPALIVE => 1,
-            CURLOPT_HTTPHEADER => $host === null ? [] : ["Host: {$host}"],
+            CURLOPT_HTTPHEADER => array_merge($host === null ? [] : ["Host: {$host}"], $headers),
             CURLOPT_TIMEOUT => 60,
         ]);
         $body = curl_exec($handle);
@@ -243,6 +251,85 @@ PHP);
                 $record['throughput'][$path][$c] = ['minn' => $m, 'wordpress' => $w];
                 printf("%-26s %6d %12.1f %12.1f\n", $pages[$path] ?? $path, $c, $m, $w);
             }
+        }
+    }
+}
+
+if (isset($args['phases']) && !isset($args['engine'])) {
+    // ---- Where the time goes: a timer in both stacks' mu-plugins for the length of the run -----------
+    $site = minn_test_sites_dir() . '/minn.localhost';
+    $log = sys_get_temp_dir() . '/minn-bench-phases-' . getmypid() . '.jsonl';
+    $timer = <<<'PHP'
+<?php
+/**
+ * Plugin Name: Minn bench phases
+ * Description: Put here by tests/tools/bench.php --phases for one run, and taken away after. Inert without the bench's request header.
+ */
+const MINN_BENCH_LOG = '__MINN_BENCH_LOG__';
+if (($_SERVER['HTTP_X_MINN_BENCH_PHASES'] ?? '') === '') {
+    return;
+}
+$GLOBALS['minn_bench_marks'] = ['mu-plugins' => microtime(true)];
+foreach (['plugins_loaded' => 'plugins', 'after_setup_theme' => 'theme', 'init' => 'init', 'wp_loaded' => 'loaded'] as $hook => $name) {
+    add_action($hook, static function () use ($name): void {
+        $GLOBALS['minn_bench_marks'][$name] ??= microtime(true);
+    }, PHP_INT_MAX);
+}
+register_shutdown_function(static function (): void {
+    $start = (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true));
+    $marks = array_map(static fn (float $t): float => round(($t - $start) * 1000, 2), $GLOBALS['minn_bench_marks'] + ['done' => microtime(true)]);
+    $line = ['stack' => str_contains(ABSPATH, 'wp-reference') ? 'wordpress' : 'minn', 'path' => $_SERVER['REQUEST_URI'] ?? '', 'marks' => $marks, 'memory' => round(memory_get_peak_usage() / 1048576, 1), 'files' => count(get_included_files())];
+    file_put_contents(MINN_BENCH_LOG, json_encode($line) . "\n", FILE_APPEND | LOCK_EX);
+});
+PHP;
+    // The log is named in the file itself, never by the request.
+    $timer = str_replace("'__MINN_BENCH_LOG__'", var_export($log, true), $timer);
+    $placed = ["{$site}/public/wp-content/mu-plugins/zz-minn-bench-phases.php", "{$site}/wp-reference/wp-content/mu-plugins/zz-minn-bench-phases.php"];
+    foreach ($placed as $file) {
+        file_put_contents($file, $timer);
+    }
+    try {
+        @unlink($log);
+        $timed = ['minn' => $client($engineUrl, null, ['X-Minn-Bench-Phases: 1']), 'wordpress' => $client($referenceUrl, null, ['X-Minn-Bench-Phases: 1'])];
+        $measure($timed);
+    } finally {
+        foreach ($placed as $file) {
+            @unlink($file);
+        }
+    }
+    $rows = [];
+    foreach (file($log) ?: [] as $line) {
+        $row = json_decode($line, true);
+        if (is_array($row)) {
+            $path = (string) $row['path'];
+            $rows[$path][$row['stack']][] = $row;
+        }
+    }
+    @unlink($log);
+    $median = static function (array $values): float {
+        sort($values);
+        return $values === [] ? 0.0 : (float) $values[intdiv(count($values), 2)];
+    };
+    $phases = ['mu-plugins', 'plugins', 'theme', 'init', 'loaded', 'done'];
+    echo "\nWhere the time goes: milliseconds from the request's start to each point (median), peak memory, files loaded\n";
+    printf("%-26s %-9s %s %8s %6s\n", 'page', 'stack', implode('', array_map(static fn ($p) => sprintf('%11s', $p), $phases)), 'memory', 'files');
+    foreach ($rows as $path => $byStack) {
+        foreach (['minn', 'wordpress'] as $stack) {
+            $samples = $byStack[$stack] ?? [];
+            if ($samples === []) {
+                continue;
+            }
+            $cells = '';
+            foreach ($phases as $phase) {
+                $values = array_values(array_filter(array_map(static fn ($s) => $s['marks'][$phase] ?? null, $samples), static fn ($v) => $v !== null));
+                $cells .= $values === [] ? sprintf('%11s', '-') : sprintf('%9.1fms', $median($values));
+                $record['phases'][$path][$stack][$phase] = $values === [] ? null : $median($values);
+            }
+            $memory = $median(array_column($samples, 'memory'));
+            $files = $median(array_column($samples, 'files'));
+            $record['phases'][$path][$stack]['memory'] = $memory;
+            $record['phases'][$path][$stack]['files'] = $files;
+            printf("%-26s %-9s %s %6.1fMB %6d\n", $pages[$path] ?? $path, $stack, $cells, $memory, $files);
         }
     }
 }
