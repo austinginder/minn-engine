@@ -28,6 +28,12 @@ final readonly class Recovery
 {
     public const PLUGINS_OPTION = 'paused_plugins';
     public const THEMES_OPTION = 'paused_themes';
+
+    /** Whether the site is in recovery mode (wp_is_recovery_mode): never, as the engine keeps no recovery-mode session; its own recovery pauses the failing plugin instead. */
+    public static function inMode(): bool
+    {
+        return false;
+    }
     public const STRIKES_OPTION = 'minn_recovery_strikes';
     /** Seconds inside which a second boot failure pauses the extension. */
     public const WINDOW = 600;

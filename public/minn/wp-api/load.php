@@ -228,8 +228,7 @@ function wp_load_translations_early()
 /** The protocol the request came over: HTTP/1.1, 2, 2.0 or 3 as the server says, anything else HTTP/1.0 (probe functions-remaining). */
 function wp_get_server_protocol()
 {
-    $protocol = $_SERVER['SERVER_PROTOCOL'] ?? '';
-    return in_array($protocol, ['HTTP/1.1', 'HTTP/2', 'HTTP/2.0', 'HTTP/3'], true) ? $protocol : 'HTTP/1.0';
+    return Minn\Runtime\RequestHeaders::protocol();
 }
 
 /** Starts the page timer timer_stop reads ($timestart). */
@@ -440,7 +439,7 @@ function wp_clone($input_object)
 /** The engine keeps no recovery-mode session: its own recovery pauses the failing plugin instead. */
 function wp_is_recovery_mode()
 {
-    return false;
+    return Minn\Runtime\Recovery::inMode();
 }
 
 /** The recovery-mode object, one for the request (probe recovery). Minn keeps no recovery session, so its methods answer nothing (Austin, D4). */
@@ -805,3 +804,6 @@ Minn\Runtime\Handoff::bind([
     'abilities' => static fn () => WP_Abilities_Registry::get_instance(),
     'abilityCategories' => static fn () => WP_Ability_Categories_Registry::get_instance(),
 ]);
+
+// The site's roles object, handed over through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind(['roles' => static fn () => wp_roles()]);

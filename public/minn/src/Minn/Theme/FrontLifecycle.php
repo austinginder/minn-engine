@@ -14,6 +14,7 @@ use Minn\Runtime\Handoff;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Registered;
+use Minn\Runtime\RequestHeaders;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteInfo;
 
@@ -86,11 +87,11 @@ final class FrontLifecycle
         $sitemap = (string) $query->get('sitemap') !== '';
         if (!$sitemap && !$query->is_feed() && ($notFound || ($empty && ($query->is_paged() || $bareDate)))) {
             $query->set_404();
-            \status_header(404);
-            \nocache_headers();
+            RequestHeaders::status(404);
+            RequestHeaders::noCache();
             return;
         }
-        \status_header(200);
+        RequestHeaders::status(200);
     }
 
     /**
@@ -122,7 +123,7 @@ final class FrontLifecycle
         }
         $headers = (array) Runtime::hooks()->filter('wp_headers', [$headers, $wp]);
         if ($status !== null) {
-            \status_header($status);
+            RequestHeaders::status($status);
         }
         if (isset($headers['Last-Modified']) && $headers['Last-Modified'] === false) {
             unset($headers['Last-Modified']);

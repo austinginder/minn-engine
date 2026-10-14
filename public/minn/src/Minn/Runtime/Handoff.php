@@ -423,6 +423,12 @@ final class Handoff
         return isset(self::$answers[$name]);
     }
 
+    /** The site's roles object (wp_roles), made the first time it is asked for. */
+    public static function roles(): object
+    {
+        return self::answer('roles');
+    }
+
     /** A theme by its folder and root (new WP_Theme). */
     public static function newTheme(mixed ...$args): Theme
     {

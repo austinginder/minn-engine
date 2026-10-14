@@ -79,7 +79,7 @@ final class OptionSanitizer
             in_array($option, ['limited_email_domains', 'banned_email_domains'], true) => [self::domains(is_array($value) ? $value : explode("\n", $text)), null],
             $option === 'timezone_string' => !in_array($value, timezone_identifiers_list(\DateTimeZone::ALL_WITH_BC), true) && !empty($value) ? [$value, self::ERRORS[$option]] : [$value, null],
             in_array($option, ['permalink_structure', 'category_base', 'tag_base'], true) => self::structure($option, $text),
-            $option === 'default_role' => [!\get_role($text) && \get_role('subscriber') ? 'subscriber' : $value, null],
+            $option === 'default_role' => [!isset(Runtime::current()->capabilities->roles()->all()[$text]) && isset(Runtime::current()->capabilities->roles()->all()['subscriber']) ? 'subscriber' : $value, null],
             in_array($option, ['moderation_keys', 'disallowed_keys'], true) => [implode("\n", array_unique(array_filter(array_map('trim', explode("\n", $text))))), null],
             default => [$value, null],
         };

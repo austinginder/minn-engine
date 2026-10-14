@@ -97,6 +97,34 @@ final readonly class Response
         }
     }
 
+    /** A status line sent now, as plugin code sends one, with its code. Nothing outside a web request, or once the head is out. */
+    public static function emitStatus(string $line, int $code): void
+    {
+        if (!headers_sent() && PHP_SAPI !== 'cli') {
+            header($line, true, $code);
+        }
+    }
+
+    /**
+     * Headers sent now unless the head is out, a header given as false
+     * taken off instead.
+     *
+     * @param array<string, string|false> $headers
+     */
+    public static function emitNoCache(array $headers): void
+    {
+        if (headers_sent()) {
+            return;
+        }
+        foreach ($headers as $name => $value) {
+            if ($value === false) {
+                header_remove($name);
+            } else {
+                header("{$name}: {$value}");
+            }
+        }
+    }
+
     /**
      * Bytes written to PHP's output now, so into whatever buffers are open:
      * for a page passed through buffers plugin code opened before it

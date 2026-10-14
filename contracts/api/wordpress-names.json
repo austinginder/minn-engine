@@ -1,17 +1,16 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 128,
-        "functions": 101,
+        "functionCalls": 112,
+        "functions": 89,
         "hookApi": 0,
         "classReferences": 2,
         "classes": 1,
-        "files": 53
+        "files": 48
     },
     "families": {
         "functions": {
             "wp-includes/post.php": 12,
-            "wp-includes/functions.php": 11,
             "wp-includes/general-template.php": 6,
             "wp-includes/kses.php": 6,
             "wp-includes/template.php": 5,
@@ -24,18 +23,16 @@
             "wp-includes/script-loader.php": 4,
             "wp-includes/category-template.php": 4,
             "wp-includes/comment.php": 4,
-            "wp-includes/capabilities.php": 3,
             "wp-includes/post-template.php": 3,
             "wp-includes/feed.php": 3,
             "wp-includes/plugin.php": 3,
             "wp-includes/l10n.php": 3,
             "wp-admin/includes/file.php": 3,
+            "wp-includes/functions.php": 3,
             "wp-admin/includes/post.php": 2,
             "wp-includes/shortcodes.php": 2,
             "wp-includes/rewrite.php": 2,
             "wp-includes/author-template.php": 2,
-            "wp-includes/http.php": 2,
-            "wp-includes/load.php": 2,
             "wp-includes/widgets.php": 2,
             "wp-admin/includes/image.php": 2,
             "wp-includes/update.php": 2,
@@ -48,7 +45,6 @@
             "wp-includes/nav-menu-template.php": 1,
             "wp-includes/functions.wp-scripts.php": 1,
             "wp-includes/functions.wp-styles.php": 1,
-            "wp-includes/vars.php": 1,
             "wp-includes/user.php": 1
         },
         "classes": {
@@ -63,14 +59,6 @@
                 "Minn/Front/EmbedCard.php": 1,
                 "Minn/Front/FeedTags.php": 2,
                 "Minn/Front/ToolbarMenus.php": 2
-            }
-        },
-        "status_header": {
-            "uses": 4,
-            "family": "wp-includes/functions.php",
-            "files": {
-                "Minn/Front/SitemapRequest.php": 1,
-                "Minn/Theme/FrontLifecycle.php": 3
             }
         },
         "get_comment_link": {
@@ -119,13 +107,6 @@
             "files": {
                 "Minn/Rest/PluginsController.php": 1,
                 "Minn/Runtime/PluginRequirements.php": 1
-            }
-        },
-        "get_role": {
-            "uses": 2,
-            "family": "wp-includes/capabilities.php",
-            "files": {
-                "Minn/Runtime/OptionSanitizer.php": 2
             }
         },
         "get_sample_permalink": {
@@ -247,20 +228,6 @@
                 "Minn/Blocks/Dynamic/Theme/QueryBlocks.php": 1
             }
         },
-        "current_time": {
-            "uses": 1,
-            "family": "wp-includes/functions.php",
-            "files": {
-                "Minn/Query/DateSql.php": 1
-            }
-        },
-        "do_feed": {
-            "uses": 1,
-            "family": "wp-includes/functions.php",
-            "files": {
-                "Minn/Front/FeedController.php": 1
-            }
-        },
         "flush_rewrite_rules": {
             "uses": 1,
             "family": "wp-includes/rewrite.php",
@@ -359,13 +326,6 @@
                 "Minn/Runtime/BlockHooks.php": 1
             }
         },
-        "get_http_origin": {
-            "uses": 1,
-            "family": "wp-includes/http.php",
-            "files": {
-                "Minn/Runtime/AjaxController.php": 1
-            }
-        },
         "get_index_template": {
             "uses": 1,
             "family": "wp-includes/template.php",
@@ -429,20 +389,6 @@
                 "Minn/Front/ToolbarMenus.php": 1
             }
         },
-        "is_allowed_http_origin": {
-            "uses": 1,
-            "family": "wp-includes/http.php",
-            "files": {
-                "Minn/Runtime/AjaxController.php": 1
-            }
-        },
-        "is_multisite": {
-            "uses": 1,
-            "family": "wp-includes/load.php",
-            "files": {
-                "Minn/Runtime/UserQueryRunner.php": 1
-            }
-        },
         "is_uninstallable_plugin": {
             "uses": 1,
             "family": "wp-admin/includes/plugin.php",
@@ -469,13 +415,6 @@
             "family": "wp-includes/l10n.php",
             "files": {
                 "Minn/Runtime/Plugins.php": 1
-            }
-        },
-        "nocache_headers": {
-            "uses": 1,
-            "family": "wp-includes/functions.php",
-            "files": {
-                "Minn/Theme/FrontLifecycle.php": 1
             }
         },
         "plugin_basename": {
@@ -667,20 +606,6 @@
                 "Minn/Rest/MediaController.php": 1
             }
         },
-        "wp_is_mobile": {
-            "uses": 1,
-            "family": "wp-includes/vars.php",
-            "files": {
-                "Minn/Front/ToolbarMarkup.php": 1
-            }
-        },
-        "wp_is_recovery_mode": {
-            "uses": 1,
-            "family": "wp-includes/load.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
         "wp_kses": {
             "uses": 1,
             "family": "wp-includes/kses.php",
@@ -735,20 +660,6 @@
             "family": "wp-includes/rewrite.php",
             "files": {
                 "Minn/Theme/FrontLifecycle.php": 1
-            }
-        },
-        "wp_roles": {
-            "uses": 1,
-            "family": "wp-includes/capabilities.php",
-            "files": {
-                "Minn/Runtime/UserQueryRunner.php": 1
-            }
-        },
-        "wp_timezone": {
-            "uses": 1,
-            "family": "wp-includes/functions.php",
-            "files": {
-                "Minn/Query/DateSql.php": 1
             }
         },
         "wp_unique_filename": {

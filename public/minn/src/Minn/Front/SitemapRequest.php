@@ -8,6 +8,7 @@ use Minn\Objects\SitemapProvider;
 use Minn\Objects\SitemapServer;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\MainQuery;
+use Minn\Runtime\RequestHeaders;
 use Minn\Runtime\Runtime;
 use Minn\Support\Sanitize;
 use Minn\Theme\Printed;
@@ -90,6 +91,6 @@ final class SitemapRequest
     private static function notFound(): void
     {
         $GLOBALS['wp_query']->set_404();
-        \status_header(404);
+        RequestHeaders::status(404);
     }
 }

@@ -16,7 +16,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CustomLogo`](#customlogo) | final class | 25 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
 | [`FeedController`](#feedcontroller) | final readonly class | 60 | The feeds, wherever a request asks for one: the feed var of the rule its |
-| [`FeedTags`](#feedtags) | final class | 160 | The template tags a feed is written with that take more than a line, as |
+| [`FeedTags`](#feedtags) | final class | 177 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
 | [`FrontController`](#frontcontroller) | final readonly class | 105 | The public site. One catch-all route: resolve the URL, then either |
@@ -458,7 +458,13 @@ Atom, the link to its comments feed, the feed's build date, and the site
 icon a feed carries; and the small ones: the site's default feed, a feed's
 content type and a post's title for a feed.
 
-Used by: `Minn\Front\FeedTemplates`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\SiteInfo`, `Minn\Theme\FeedHeaders`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Front\FeedController`, `Minn\Front\FeedTemplates`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\SiteInfo`, `Minn\Theme\FeedHeaders`, `Minn\Theme\HeadLinks`
+
+### static `serve(): void`
+
+The feed the query asks for run by its do_feed_{feed} handlers
+(do_feed): leading underscores dropped, the default for none; a 404
+when nothing handles it.
 
 ### static `defaultFeed(): mixed`
 
@@ -502,7 +508,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 78)
+Internals: `enclosures()` (private, line 98)
 
 
 ## FeedTemplates
@@ -1441,7 +1447,7 @@ The canonical step: a sitemap asked for by another address is sent to its own.
 
 What the sitemaps server does with the request (render_sitemaps).
 
-Internals: `page()` (private, line 69), `notFound()` (private, line 90)
+Internals: `page()` (private, line 70), `notFound()` (private, line 91)
 
 
 ## SitemapXml
@@ -1666,7 +1672,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 59), `creatable()` (private, line 261), `editPost()` (private, line 308), `editTerm()` (private, line 318)
+Internals: `profileUrl()` (private, line 60), `creatable()` (private, line 262), `editPost()` (private, line 309), `editTerm()` (private, line 319)
 
 
 ## ToolbarTree

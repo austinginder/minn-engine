@@ -62,7 +62,7 @@ final readonly class FeedController
             // Content renders against the feed's own queried object (a category feed marks its category current), images by the page rules.
             RenderState::current()->reset();
             Blocks::renderer()->withContext(new Context($resolution, $page->posts, count($page->posts), $this->perFeed(), true));
-            \do_feed();
+            FeedTags::serve();
         } catch (\Throwable $failure) {
             while (ob_get_level() > $level) {
                 ob_end_clean();

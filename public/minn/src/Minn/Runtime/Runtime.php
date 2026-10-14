@@ -346,6 +346,12 @@ final class Runtime
         return $this->context->contentDir();
     }
 
+    /** Whether the facade's functions and classes are defined yet. */
+    public static function facadeLoaded(): bool
+    {
+        return self::$facadeLoaded;
+    }
+
     /** Defines the facade functions once; safe to call again. */
     public static function loadFacade(string $engineDir): void
     {

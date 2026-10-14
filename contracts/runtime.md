@@ -16249,6 +16249,14 @@ user columns stay at 70. Full run 31 (after batch 31) was green once minn-v1 and
 run again on their own. The http-transports probe stays out of the comparison; the other probes give
 identical output before and after.
 
+**Batch 33, the request's headers and facts.** `Runtime\RequestHeaders` answers status_header, nocache_headers,
+wp_get_server_protocol, get_http_origin, get_allowed_http_origins, is_allowed_http_origin and wp_is_mobile;
+`Http\Response::emitStatus()` and `emitNoCache()` send the lines at the engine's edge. The feed is served by
+`FeedTags::serve()` (do_feed), recovery mode answered by `Recovery::inMode()`, the roles object handed over by
+`Handoff::roles()`, and the date query reads the site's zone and year from SiteTime once the facade is loaded
+(`Runtime::facadeLoaded()`). is_multisite, always false, drops out of the user search. The http-transports
+probe stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

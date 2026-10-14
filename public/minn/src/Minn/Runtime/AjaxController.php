@@ -89,8 +89,8 @@ final readonly class AjaxController
     /** The two cross-origin headers, for an Origin that is this site's own address; empty for any other. */
     private function allowedOrigin(): array
     {
-        $origin = (string) \get_http_origin();
-        if ($origin === '' || !\is_allowed_http_origin($origin)) {
+        $origin = (string) RequestHeaders::origin();
+        if ($origin === '' || !RequestHeaders::allowedOrigin($origin)) {
             return [];
         }
         return ['Access-Control-Allow-Origin' => $origin, 'Access-Control-Allow-Credentials' => 'true'];

@@ -12,6 +12,7 @@ use Minn\Runtime\CommentReads;
 use Minn\Runtime\CurrentUser;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
+use Minn\Runtime\Recovery;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\I18n\Gettext;
@@ -345,7 +346,7 @@ final class ToolbarMenus
     /** The way out of recovery mode, while the site is in it. */
     public static function recoveryModeMenu(Toolbar $bar): void
     {
-        if (!\wp_is_recovery_mode()) {
+        if (!Recovery::inMode()) {
             return;
         }
         $bar->add_node([

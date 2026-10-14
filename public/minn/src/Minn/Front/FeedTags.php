@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Media\FileTypes;
+use Minn\Runtime\MainQuery;
+use Minn\Runtime\Handoff;
+use Minn\I18n\Gettext;
 use Minn\Objects\Post;
 use Minn\Objects\Query;
 use Minn\Runtime\MetaData;
@@ -31,6 +34,23 @@ use Minn\Runtime\TermFields;
  */
 final class FeedTags
 {
+    /**
+     * The feed the query asks for run by its do_feed_{feed} handlers
+     * (do_feed): leading underscores dropped, the default for none; a 404
+     * when nothing handles it.
+     */
+    public static function serve(): void
+    {
+        $feed = (string) preg_replace('/^_+/', '', (string) MainQuery::current()->get('feed'));
+        if ($feed === '' || $feed === 'feed') {
+            $feed = self::defaultFeed();
+        }
+        if (!Runtime::hooks()->has("do_feed_{$feed}")) {
+            Handoff::stop(Gettext::text('<strong>Error:</strong> This is not a valid feed template.'), '', ['response' => 404]);
+        }
+        Runtime::hooks()->action("do_feed_{$feed}", [$GLOBALS['wp_query']->is_comment_feed ?? false, $feed]);
+    }
+
     /** The feed the site serves by default (get_default_feed): default_feed's, "rss" read as rss2. */
     public static function defaultFeed(): mixed
     {

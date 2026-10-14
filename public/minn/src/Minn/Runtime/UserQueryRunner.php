@@ -135,7 +135,7 @@ final class UserQueryRunner
             [$qv['blog_id'], $blog] = [0, 0];
         }
         if ($blog) {
-            $queries = (new UserQueryRoles($prefix . 'capabilities'))->clauses($qv, $queries, (array) (\wp_roles()->roles ?? []));
+            $queries = (new UserQueryRoles($prefix . 'capabilities'))->clauses($qv, $queries, (array) (Handoff::roles()->roles ?? []));
         }
         if ($queries !== (array) $query->meta_query->queries) {
             $query->meta_query = Handoff::newMetaQuery($queries);
@@ -188,7 +188,7 @@ final class UserQueryRunner
             $columns = match (true) {
                 str_contains($search, '@') => [self::EMAIL],
                 is_numeric($search) => ['user_login', 'ID'],
-                preg_match('|^https?://|', $search) === 1 && !(\is_multisite() && \wp_is_large_network('users')) => [self::URL],
+                preg_match('|^https?://|', $search) === 1 => [self::URL],
                 default => ['user_login', 'user_url', 'user_email', 'user_nicename', 'display_name'],
             };
         }

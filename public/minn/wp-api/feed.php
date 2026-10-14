@@ -297,14 +297,7 @@ function get_the_content_feed($feed_type = null)
 /** The feed the query asks for (leading underscores dropped; the default for none), by its do_feed_{feed} handlers; a 404 when nothing handles it. */
 function do_feed()
 {
-    $feed = (string) preg_replace('/^_+/', '', (string) get_query_var('feed'));
-    if ($feed === '' || $feed === 'feed') {
-        $feed = get_default_feed();
-    }
-    if (!has_action("do_feed_{$feed}")) {
-        wp_die(__('<strong>Error:</strong> This is not a valid feed template.'), '', ['response' => 404]);
-    }
-    do_action("do_feed_{$feed}", $GLOBALS['wp_query']->is_comment_feed ?? false, $feed);
+    Minn\Front\FeedTags::serve();
 }
 
 /** @internal a feed template (Minn\Front\FeedTemplates) printed, its content type sent as it starts */

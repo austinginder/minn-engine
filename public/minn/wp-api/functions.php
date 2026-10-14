@@ -468,30 +468,13 @@ function do_robots()
 
 function status_header($code, $description = '')
 {
-    $description = $description ?: get_status_header_desc($code);
-    if ($description === '') {
-        return;
-    }
-    $protocol = wp_get_server_protocol();
-    $line = (string) apply_filters('status_header', "{$protocol} {$code} {$description}", $code, $description, $protocol);
-    if (!headers_sent() && PHP_SAPI !== 'cli') {
-        header($line, true, (int) $code);
-    }
+    Minn\Runtime\RequestHeaders::status($code, $description);
 }
 
 /** The no-cache headers sent; one set to false (Last-Modified) is taken off instead. */
 function nocache_headers()
 {
-    if (headers_sent()) {
-        return;
-    }
-    foreach (wp_get_nocache_headers() as $name => $value) {
-        if ($value === false) {
-            header_remove($name);
-        } else {
-            header("{$name}: {$value}");
-        }
-    }
+    Minn\Runtime\RequestHeaders::noCache();
 }
 
 /** The no-cache headers through nocache_headers, then Last-Modified false, which a plugin cannot keep (probe functions-remaining). */
@@ -567,8 +550,7 @@ function wp_is_rest_endpoint()
 
 function wp_is_mobile()
 {
-    $ua = (string) ($_SERVER['HTTP_USER_AGENT'] ?? '');
-    return apply_filters('wp_is_mobile', $ua !== '' && preg_match('/Mobile|Android|Silk\/|Kindle|BlackBerry|Opera Mini|Opera Mobi/', $ua) === 1);
+    return Minn\Runtime\RequestHeaders::isMobile();
 }
 
 /** Whether the request came with basic auth credentials (probe load-remaining); the filter may say otherwise. */

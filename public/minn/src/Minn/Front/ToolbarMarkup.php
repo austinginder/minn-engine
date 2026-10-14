@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\I18n\Gettext;
+use Minn\Runtime\RequestHeaders;
 use Minn\Support\Escape;
 use Minn\Runtime\Runtime;
 
@@ -24,7 +25,7 @@ final class ToolbarMarkup
     /** The bar's wrapper up to its first group. */
     public static function open(): string
     {
-        $class = 'nojq nojs' . (\wp_is_mobile() ? ' mobile' : '');
+        $class = 'nojq nojs' . (RequestHeaders::isMobile() ? ' mobile' : '');
         $skip = !Runtime::current()->isAdmin && !Runtime::hooks()->actionsDone('wp_body_open')
             ? "\t\t\t\t\t\t\t<a class=\"screen-reader-shortcut\" href=\"#wp-toolbar\" tabindex=\"1\">" . Gettext::text('Skip to toolbar') . "</a>\n"
             : '';
