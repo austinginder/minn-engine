@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Front\FeedTags;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
@@ -44,9 +45,9 @@ final readonly class HeadLinks
     {
         $args = (array) Runtime::hooks()->filter('feed_links_args', [Lists::args($args, ['separator' => Gettext::inContext('&raquo;', 'feed link'), 'feedtitle' => Gettext::text('%1$s %2$s Feed'), 'comstitle' => Gettext::text('%1$s %2$s Comments Feed')])]);
         $name = (string) \get_bloginfo('name');
-        $link = static fn (string $title, string $href): string => sprintf('<link rel="alternate" type="%s" title="%s" href="%s" />' . "\n", \feed_content_type(), Escape::attr(sprintf($title, $name, $args['separator'])), Escape::url($href));
+        $link = static fn (string $title, string $href): string => sprintf('<link rel="alternate" type="%s" title="%s" href="%s" />' . "\n", FeedTags::contentType(), Escape::attr(sprintf($title, $name, $args['separator'])), Escape::url($href));
         $out = Runtime::hooks()->filter('feed_links_show_posts_feed', [true]) ? $link((string) $args['feedtitle'], (string) \get_feed_link()) : '';
-        return $out . (Runtime::hooks()->filter('feed_links_show_comments_feed', [true]) ? $link((string) $args['comstitle'], (string) \get_feed_link('comments_' . \get_default_feed())) : '');
+        return $out . (Runtime::hooks()->filter('feed_links_show_comments_feed', [true]) ? $link((string) $args['comstitle'], (string) \get_feed_link('comments_' . FeedTags::defaultFeed())) : '');
     }
 
     /** No trailing newline: the reference prints the JSON alternate and the RSD link on the same physical line. */

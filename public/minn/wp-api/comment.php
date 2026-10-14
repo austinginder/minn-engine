@@ -38,15 +38,7 @@ function get_comments($args = '')
 
 function get_comments_number($post = 0)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        $count = 0;
-        $post_id = 0;
-    } else {
-        $count = $post->comment_count;
-        $post_id = $post->ID;
-    }
-    return apply_filters('get_comments_number', $count, $post_id);
+    return Minn\Runtime\PostTags::commentsNumber($post);
 }
 
 function comments_number($zero = false, $one = false, $more = false, $post = 0)
@@ -424,14 +416,12 @@ function get_page_of_comment($comment_id, $args = [])
 
 function comments_open($post = null)
 {
-    $post = get_post($post);
-    return (bool) apply_filters('comments_open', $post !== null && $post->comment_status === 'open', $post?->ID);
+    return Minn\Runtime\PostTags::commentsOpen($post);
 }
 
 function pings_open($post = null)
 {
-    $post = get_post($post);
-    return (bool) apply_filters('pings_open', $post !== null && $post->ping_status === 'open', $post?->ID);
+    return Minn\Runtime\PostTags::pingsOpen($post);
 }
 
 function wp_comment_reply($position = 1, $checkbox = false, $mode = 'single', $table_row = true)
@@ -472,10 +462,7 @@ function comment_author_IP($comment_id = 0)
 
 function get_comment_author_url($comment_id = 0)
 {
-    $comment = get_comment($comment_id);
-    $url = (string) ($comment->comment_author_url ?? '');
-    $url = $url === 'http://' ? '' : $url;
-    return apply_filters('get_comment_author_url', $url === '' ? '' : esc_url($url), (string) ($comment->comment_ID ?? ''), $comment);
+    return Minn\Runtime\CommentTags::authorUrl($comment_id);
 }
 
 /** Prints a comment author's URL, through comment_url. */
@@ -862,13 +849,7 @@ function wp_list_comments($args = [], $comments = null)
 
 function get_comment_time($format = '', $gmt = false, $translate = true, $comment_id = 0)
 {
-    $comment = get_comment($comment_id);
-    if ($comment === null) {
-        return '';
-    }
-    $date = $gmt ? $comment->comment_date_gmt : $comment->comment_date;
-    $format = $format === '' ? get_option('time_format') : $format;
-    return apply_filters('get_comment_time', mysql2date($format, $date, $translate), $format, $gmt, $translate, $comment);
+    return Minn\Runtime\CommentTags::time($format, $gmt, $translate, $comment_id);
 }
 
 function comment_text($comment_id = 0, $args = [])

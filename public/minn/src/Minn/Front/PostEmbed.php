@@ -8,6 +8,7 @@ use Minn\Objects\Post;
 use Minn\Objects\User;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\PostLinks;
+use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
@@ -44,7 +45,7 @@ final class PostEmbed
             'provider_url' => SiteUrls::home(),
             'author_name' => \get_bloginfo('name'),
             'author_url' => SiteUrls::home(),
-            'title' => \get_the_title($post),
+            'title' => PostTags::title($post),
             'type' => 'link',
         ];
         $author = Handoff::user((int) $post->post_author);
@@ -81,7 +82,7 @@ final class PostEmbed
             return false;
         }
         $secret = Handoff::password(10, false);
-        $title = \get_the_title($post);
+        $title = PostTags::title($post);
         $output = sprintf('<blockquote class="wp-embedded-content" data-secret="%1$s"><a href="%2$s">%3$s</a></blockquote>', Escape::attr($secret), Escape::url(PostLinks::permalink($post)), $title);
         $output .= sprintf(
             '<iframe sandbox="allow-scripts" security="restricted" src="%1$s" width="%2$d" height="%3$d" title="%4$s" data-secret="%5$s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" class="wp-embedded-content"></iframe>',

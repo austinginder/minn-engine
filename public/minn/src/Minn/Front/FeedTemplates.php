@@ -7,6 +7,8 @@ namespace Minn\Front;
 use Closure;
 use Minn\I18n\Gettext;
 use Minn\Objects\Post;
+use Minn\Runtime\CommentTags;
+use Minn\Runtime\PostTags;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteTime;
@@ -47,7 +49,7 @@ final class FeedTemplates
                 'atom', 'atom-comments' => 'atom',
                 default => $name,
             };
-            $send('Content-Type: ' . \feed_content_type($type) . '; charset=' . Runtime::options()->filtered('blog_charset'));
+            $send('Content-Type: ' . FeedTags::contentType($type) . '; charset=' . Runtime::options()->filtered('blog_charset'));
             $w->put('<?xml version="1.0" encoding="' . Runtime::options()->filtered('blog_charset') . '"' . ($name === 'atom-comments' ? ' ' : '') . '?' . '>');
             match ($name) {
                 'rss2' => self::rss2($w),
@@ -88,7 +90,7 @@ final class FeedTemplates
 
     private static function rss2Item(FeedWriter $w): void
     {
-        $discussed = \get_comments_number() || \comments_open();
+        $discussed = PostTags::commentsNumber() || PostTags::commentsOpen();
         $w->put("\t<item>\n\t\t<title>")->tag('the_title_rss')->put("</title>\n\t\t<link>")->tag('the_permalink_rss')->put("</link>\n");
         if ($discussed) {
             $w->put("\t\t\t\t\t<comments>")->tag('comments_link_feed')->put("</comments>\n");
@@ -107,7 +109,7 @@ final class FeedTemplates
             $w->put("]]></content:encoded>\n\t\t\t\t\t\n");
         }
         if ($discussed) {
-            $w->put("\t\t\t\t\t<wfw:commentRss>", Escape::url(FeedTags::postCommentsFeedLink(0, 'rss2')), "</wfw:commentRss>\n\t\t\t<slash:comments>", (string) \get_comments_number(), "</slash:comments>\n");
+            $w->put("\t\t\t\t\t<wfw:commentRss>", Escape::url(FeedTags::postCommentsFeedLink(0, 'rss2')), "</wfw:commentRss>\n\t\t\t<slash:comments>", (string) PostTags::commentsNumber(), "</slash:comments>\n");
         }
         $w->put("\t\t\n\t\t")->tag('rss_enclosure')->put("\n\t\t")->act('rss2_item')->put("\t</item>\n\t");
     }
@@ -150,8 +152,8 @@ final class FeedTemplates
                 ->put('"><![CDATA[')->cdata('the_content_feed', 'atom')->put("]]></content>\n");
         }
         $w->put("\t\t\n\t\t")->tag('atom_enclosure')->act('atom_entry');
-        if (\get_comments_number() || \comments_open()) {
-            $count = (string) \get_comments_number();
+        if (PostTags::commentsNumber() || PostTags::commentsOpen()) {
+            $count = (string) PostTags::commentsNumber();
             $w->put("\t\t\t<link rel=\"replies\" type=\"")->tag('bloginfo_rss', 'html_type')->put('" href="')->tag('the_permalink_rss')
                 ->put("#comments\" thr:count=\"{$count}\" />\n\t\t\t<link rel=\"replies\" type=\"application/atom+xml\" href=\"", Escape::url(FeedTags::postCommentsFeedLink(0, 'atom')), "\" thr:count=\"{$count}\" />\n\t\t\t<thr:total>{$count}</thr:total>\n\t\t");
         }
@@ -218,7 +220,7 @@ final class FeedTemplates
     private static function commentsTitle(string $single): string
     {
         if (\is_singular()) {
-            return sprintf(Text::numericReferences(Gettext::text($single)), \get_the_title_rss());
+            return sprintf(Text::numericReferences(Gettext::text($single)), FeedTags::titleRss());
         }
         if (\is_search()) {
             return sprintf(Text::numericReferences(Gettext::text('Comments for %1$s searching on %2$s')), \get_bloginfo_rss('name'), \get_search_query());
@@ -232,7 +234,7 @@ final class FeedTemplates
         if (\is_singular()) {
             return sprintf(Text::numericReferences(Gettext::text('By: %s')), \get_comment_author_rss());
         }
-        return sprintf(Text::numericReferences(Gettext::text('Comment on %1$s by %2$s')), Runtime::hooks()->filter('the_title_rss', [\get_the_title($post->ID)]), \get_comment_author_rss());
+        return sprintf(Text::numericReferences(Gettext::text('Comment on %1$s by %2$s')), Runtime::hooks()->filter('the_title_rss', [PostTags::title($post->ID)]), \get_comment_author_rss());
     }
 
     /** The comment the loop is on, with its post made the current one. @return array{0: object, 1: Post} */
@@ -265,9 +267,9 @@ final class FeedTemplates
     {
         [$comment, $post] = self::current();
         $w->put("\t<item>\n\t\t<title>\n\t\t", self::commentTitle($post), "\t\t</title>\n\t\t<link>")->tag('comment_link')
-            ->put("</link>\n\n\t\t<dc:creator><![CDATA[", FeedWriter::insideCdata((string) \get_comment_author_rss()), "]]></dc:creator>\n\t\t<pubDate>", (string) SiteTime::fromStored('D, d M Y H:i:s +0000', \get_comment_time('Y-m-d H:i:s', true, false), false), "</pubDate>\n\t\t<guid isPermaLink=\"false\">")->tag('comment_guid')
+            ->put("</link>\n\n\t\t<dc:creator><![CDATA[", FeedWriter::insideCdata((string) \get_comment_author_rss()), "]]></dc:creator>\n\t\t<pubDate>", (string) SiteTime::fromStored('D, d M Y H:i:s +0000', CommentTags::time('Y-m-d H:i:s', true, false), false), "</pubDate>\n\t\t<guid isPermaLink=\"false\">")->tag('comment_guid')
             ->put("</guid>\n\n");
-        if (\post_password_required($post)) {
+        if (PostTags::passwordRequired($post)) {
             $w->put("\t\t\t\t\t<description>", Text::numericReferences(Gettext::text('Protected Comments: Please enter your password to view comments.')), "</description>\n\t\t\t<content:encoded><![CDATA[", \get_the_password_form(), "]]></content:encoded>\n");
         } else {
             $w->put("\t\t\t\t\t<description><![CDATA[")->cdata('comment_text_rss')->put("]]></description>\n\t\t\t<content:encoded><![CDATA[")->cdata('comment_text')->put("]]></content:encoded>\n");
@@ -300,14 +302,14 @@ final class FeedTemplates
     private static function atomComment(FeedWriter $w): void
     {
         [$comment, $post] = self::current();
-        $when = (string) SiteTime::fromStored('Y-m-d\TH:i:s\Z', \get_comment_time('Y-m-d H:i:s', true, false), false);
-        $url = \get_comment_author_url();
+        $when = (string) SiteTime::fromStored('Y-m-d\TH:i:s\Z', CommentTags::time('Y-m-d H:i:s', true, false), false);
+        $url = CommentTags::authorUrl();
         $w->put("\t<entry>\n\t\t<title>\n\t\t", self::commentTitle($post), "\t\t</title>\n\t\t<link rel=\"alternate\" href=\"")->tag('comment_link')
             ->put('" type="')->tag('bloginfo_rss', 'html_type')
             ->put("\" />\n\n\t\t<author>\n\t\t\t<name>")->tag('comment_author_rss')
             ->put("</name>\n\t\t\t", $url ? '<uri>' . Escape::url($url) . '</uri>' : '', "\n\t\t</author>\n\n\t\t<id>")->tag('comment_guid')
             ->put("</id>\n\t\t<updated>{$when}</updated>\n\t\t<published>{$when}</published>\n\n\t\t\t\t\t<content type=\"html\" xml:base=\"")->tag('comment_link')->put('"><![CDATA[');
-        \post_password_required($post) ? $w->put(FeedWriter::insideCdata(\get_the_password_form())) : $w->cdata('comment_text');
+        PostTags::passwordRequired($post) ? $w->put(FeedWriter::insideCdata(\get_the_password_form())) : $w->cdata('comment_text');
         $w->put("]]></content>\n\t\t\n\t\t\t\t\t<thr:in-reply-to ref=\"");
         if ((int) $comment->comment_parent === 0) {
             $w->tag('the_guid')->put('" href="')->tag('the_permalink_rss');

@@ -81,8 +81,7 @@ function clean_post_cache($post)
 
 function get_the_ID()
 {
-    $post = get_post();
-    return $post === null ? false : $post->ID;
+    return Minn\Runtime\PostTags::id();
 }
 
 function get_post_type($post = null)
@@ -123,19 +122,7 @@ function get_post_mime_type($post = null)
 
 function get_the_title($post = 0)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return '';
-    }
-    $title = $post->post_title;
-    if (!is_admin()) {
-        if ($post->post_password !== '') {
-            $title = sprintf(apply_filters('protected_title_format', 'Protected: %s', $post), $title);
-        } elseif ($post->post_status === 'private') {
-            $title = sprintf(apply_filters('private_title_format', 'Private: %s', $post), $title);
-        }
-    }
-    return apply_filters('the_title', $title, $post->ID);
+    return Minn\Runtime\PostTags::title($post);
 }
 
 function the_title($before = '', $after = '', $display = true)
@@ -233,12 +220,7 @@ function has_excerpt($post = 0)
 
 function post_password_required($post = null)
 {
-    $post = get_post($post);
-    if ($post === null || $post->post_password === '') {
-        return apply_filters('post_password_required', false, $post);
-    }
-    $required = !Minn\Content\PasswordGate::cookieUnlocks($post->post_password, Runtime::current()->reader->postPassword);
-    return apply_filters('post_password_required', $required, $post);
+    return Minn\Runtime\PostTags::passwordRequired($post);
 }
 
 /**

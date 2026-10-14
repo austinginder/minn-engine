@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Media\FileTypes;
 use Minn\Objects\Post;
 use Minn\Runtime\PostLinks;
+use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
@@ -21,10 +22,34 @@ use Minn\Runtime\TermFields;
  * the reference answers them in a feed's loop (probe feed-tags): a post's
  * categories and tags in each feed's markup, its enclosures for RSS and
  * Atom, the link to its comments feed, the feed's build date, and the site
- * icon a feed carries.
+ * icon a feed carries; and the small ones: the site's default feed, a feed's
+ * content type and a post's title for a feed.
  */
 final class FeedTags
 {
+    /** The feed the site serves by default (get_default_feed): default_feed's, "rss" read as rss2. */
+    public static function defaultFeed(): mixed
+    {
+        $feed = Runtime::hooks()->filter('default_feed', ['rss2']);
+        return $feed === 'rss' ? 'rss2' : $feed;
+    }
+
+    /** The content type a feed is served as (feed_content_type), the default feed's when none is named. */
+    public static function contentType(mixed $type = ''): mixed
+    {
+        if ($type === '') {
+            $type = self::defaultFeed();
+        }
+        $types = ['rss' => 'application/rss+xml', 'rss2' => 'application/rss+xml', 'rss-http' => 'text/xml', 'atom' => 'application/atom+xml', 'rdf' => 'application/rdf+xml'];
+        return Runtime::hooks()->filter('feed_content_type', [$types[$type] ?? 'application/octet-stream', $type]);
+    }
+
+    /** A post's title for a feed (get_the_title_rss), as the_title_rss leaves it. */
+    public static function titleRss(mixed $post = 0): mixed
+    {
+        return Runtime::hooks()->filter('the_title_rss', [PostTags::title($post)]);
+    }
+
     /** A post's category and tag names (each once) in a feed type's markup, before the_category_rss. */
     public static function categories(string $type): string
     {
@@ -48,7 +73,7 @@ final class FeedTags
     /** @return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted */
     private static function enclosures(): array
     {
-        if (\post_password_required()) {
+        if (PostTags::passwordRequired()) {
             return [];
         }
         $custom = (array) \get_post_custom();
@@ -92,8 +117,8 @@ final class FeedTags
     /** The address of a post's comments feed in a feed type (the default one bare), through post_comments_feed_link. */
     public static function postCommentsFeedLink(int $postId, string $feed): string
     {
-        $postId = $postId ?: (int) \get_the_ID();
-        $feed = $feed !== '' ? $feed : \get_default_feed();
+        $postId = $postId ?: (int) PostTags::id();
+        $feed = $feed !== '' ? $feed : self::defaultFeed();
         $post = Records::post($postId);
         if (!$post instanceof Post) {
             return '';
@@ -101,11 +126,11 @@ final class FeedTags
         $unattached = $post->post_type === 'attachment' && (int) $post->post_parent === 0;
         if (Runtime::options()->filtered('permalink_structure')) {
             if ($unattached) {
-                $url = QueryArgs::add('attachment_id', $postId, SiteUrls::home('/feed/') . (\get_default_feed() !== $feed ? "{$feed}/" : ''));
+                $url = QueryArgs::add('attachment_id', $postId, SiteUrls::home('/feed/') . (self::defaultFeed() !== $feed ? "{$feed}/" : ''));
             } else {
                 $front = Runtime::options()->filtered('show_on_front') === 'page' && (int) Runtime::options()->filtered('page_on_front') === $postId;
                 $base = Url::withTrailingSlash((string) ($front ? PostLinks::pageAddress($postId) : PostLinks::permalink($postId))) . 'feed';
-                $url = SiteUrls::trailing($base . (\get_default_feed() !== $feed ? "/{$feed}" : ''), 'single_feed');
+                $url = SiteUrls::trailing($base . (self::defaultFeed() !== $feed ? "/{$feed}" : ''), 'single_feed');
             }
         } else {
             $key = $unattached ? 'attachment_id' : ($post->post_type === 'page' ? 'page_id' : 'p');

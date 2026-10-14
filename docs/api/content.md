@@ -622,7 +622,7 @@ class, library and final HTML through their filters.
 
 get_attached_media: the post's attachments of a kind ("video", "audio", a MIME type), as the reference's children query finds them.
 
-Internals: `sources()` (private, line 110), `anyOwnFormat()` (private, line 138), `sourceTags()` (private, line 149), `attributes()` (private, line 163), `fitted()` (private, line 176), `library()` (private, line 183), `fallback()` (private, line 194), `postId()` (private, line 199), `instance()` (private, line 205)
+Internals: `sources()` (private, line 111), `anyOwnFormat()` (private, line 139), `sourceTags()` (private, line 150), `attributes()` (private, line 164), `fitted()` (private, line 177), `library()` (private, line 184), `fallback()` (private, line 195), `postId()` (private, line 200), `instance()` (private, line 206)
 
 
 ## MenuItem
@@ -881,7 +881,7 @@ reference shows them to a reader who has not entered the password.
 
 - const `EXCERPT` = `'There is no excerpt because this is a protected post.'`
 
-Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Renderer`, `Minn\Theme\ClassicContent`
+Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Renderer`, `Minn\Runtime\PostTags`, `Minn\Theme\ClassicContent`
 
 ### static `is(Minn\Content\PostRecord $post): bool`
 

@@ -16,7 +16,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
 | [`FeedController`](#feedcontroller) | final readonly class | 60 | The feeds, wherever a request asks for one: the feed var of the rule its |
-| [`FeedTags`](#feedtags) | final class | 137 | The template tags a feed is written with that take more than a line, as |
+| [`FeedTags`](#feedtags) | final class | 160 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
 | [`FrontController`](#frontcontroller) | final readonly class | 105 | The public site. One catch-all route: resolve the URL, then either |
@@ -455,9 +455,22 @@ The template tags a feed is written with that take more than a line, as
 the reference answers them in a feed's loop (probe feed-tags): a post's
 categories and tags in each feed's markup, its enclosures for RSS and
 Atom, the link to its comments feed, the feed's build date, and the site
-icon a feed carries.
+icon a feed carries; and the small ones: the site's default feed, a feed's
+content type and a post's title for a feed.
 
-Used by: `Minn\Front\FeedTemplates`
+Used by: `Minn\Front\FeedTemplates`, `Minn\Runtime\ArchiveLinks`, `Minn\Theme\FeedHeaders`, `Minn\Theme\HeadLinks`
+
+### static `defaultFeed(): mixed`
+
+The feed the site serves by default (get_default_feed): default_feed's, "rss" read as rss2.
+
+### static `contentType(mixed $type = ''): mixed`
+
+The content type a feed is served as (feed_content_type), the default feed's when none is named.
+
+### static `titleRss(mixed $post = 0): mixed`
+
+A post's title for a feed (get_the_title_rss), as the_title_rss leaves it.
 
 ### static `categories(string $type): string`
 
@@ -489,7 +502,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 49)
+Internals: `enclosures()` (private, line 74)
 
 
 ## FeedTemplates
@@ -514,7 +527,7 @@ rdf, rss), between wp_before_load_template and wp_after_load_template.
 
 - `@param Closure(string): void $send sends a header line (the Content-Type)`
 
-Internals: `syndication()` (private, line 65), `rss2()` (private, line 70), `rss2Item()` (private, line 89), `atom()` (private, line 115), `atomEntry()` (private, line 134), `rdf()` (private, line 161), `rdfItem()` (private, line 185), `rss()` (private, line 200), `commentsTitle()` (private, line 218), `commentTitle()` (private, line 230), `current()` (private, line 239), `rss2Comments()` (private, line 246), `rss2Comment()` (private, line 264), `atomComments()` (private, line 278), `atomComment()` (private, line 300)
+Internals: `syndication()` (private, line 67), `rss2()` (private, line 72), `rss2Item()` (private, line 91), `atom()` (private, line 117), `atomEntry()` (private, line 136), `rdf()` (private, line 163), `rdfItem()` (private, line 187), `rss()` (private, line 202), `commentsTitle()` (private, line 220), `commentTitle()` (private, line 232), `current()` (private, line 241), `rss2Comments()` (private, line 248), `rss2Comment()` (private, line 266), `atomComments()` (private, line 280), `atomComment()` (private, line 302)
 
 
 ## FeedWriter
@@ -844,7 +857,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 122)
+Internals: `append()` (private, line 123)
 
 
 ## PostNavigation

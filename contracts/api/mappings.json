@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 804,
-        "composes": 2344,
+        "minn": 803,
+        "composes": 2335,
         "leaf": 1023,
-        "noop": 2837,
+        "noop": 2847,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1123,
+        "minnMethods": 1132,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -44445,13 +44445,12 @@
         },
         "comments_open": {
             "file": "comment.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_post"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostTags::commentsOpen"
+            ],
+            "composes": []
         },
         "comments_popup_link": {
             "file": "comment.php",
@@ -46124,13 +46123,12 @@
         },
         "feed_content_type": {
             "file": "feed.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_default_feed"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\FeedTags::contentType"
+            ],
+            "composes": []
         },
         "feed_links": {
             "file": "template.php",
@@ -48352,14 +48350,12 @@
         },
         "get_comment_author_url": {
             "file": "comment.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "esc_url",
-                "get_comment"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentTags::authorUrl"
+            ],
+            "composes": []
         },
         "get_comment_author_url_link": {
             "file": "comment.php",
@@ -48535,15 +48531,12 @@
         },
         "get_comment_time": {
             "file": "comment.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_comment",
-                "get_option",
-                "mysql2date"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentTags::time"
+            ],
+            "composes": []
         },
         "get_comment_to_edit": {
             "file": "deadends.php",
@@ -48595,13 +48588,12 @@
         },
         "get_comments_number": {
             "file": "comment.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_post"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostTags::commentsNumber"
+            ],
+            "composes": []
         },
         "get_comments_number_text": {
             "file": "comment.php",
@@ -48867,12 +48859,12 @@
         },
         "get_default_feed": {
             "file": "link-template.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\FeedTags::defaultFeed"
+            ],
+            "composes": []
         },
         "get_default_link_to_edit": {
             "file": "deadends.php",
@@ -51829,12 +51821,12 @@
         },
         "get_the_ID": {
             "file": "post.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_post"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostTags::id"
+            ],
+            "composes": []
         },
         "get_the_archive_description": {
             "file": "query.php",
@@ -52455,24 +52447,21 @@
         },
         "get_the_title": {
             "file": "post.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_post",
-                "is_admin"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostTags::title"
+            ],
+            "composes": []
         },
         "get_the_title_rss": {
             "file": "feed.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_the_title"
-            ]
+            "minn": [
+                "Minn\\Front\\FeedTags::titleRss"
+            ],
+            "composes": []
         },
         "get_theme": {
             "file": "theme.php",
@@ -56345,13 +56334,12 @@
         },
         "pings_open": {
             "file": "comment.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_post"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostTags::pingsOpen"
+            ],
+            "composes": []
         },
         "plugin_basename": {
             "file": "plugin.php",
@@ -56666,17 +56654,12 @@
         },
         "post_password_required": {
             "file": "post.php",
-            "lines": 6,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\PasswordGate::cookieUnlocks",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::reader->postPassword"
+                "Minn\\Runtime\\PostTags::passwordRequired"
             ],
-            "composes": [
-                "apply_filters",
-                "get_post"
-            ]
+            "composes": []
         },
         "post_permalink": {
             "file": "deprecated.php",

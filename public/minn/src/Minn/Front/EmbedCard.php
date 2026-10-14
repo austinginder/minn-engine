@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\I18n\Gettext;
 use Minn\I18n\Numbers;
 use Minn\Runtime\PostLinks;
+use Minn\Runtime\PostTags;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
@@ -33,7 +34,7 @@ final class EmbedCard
     {
         $id = \has_post_thumbnail() ? (int) \get_post_thumbnail_id() : 0;
         if (\get_post_type() === 'attachment' && \wp_attachment_is_image()) {
-            $id = (int) \get_the_ID();
+            $id = (int) PostTags::id();
         }
         $id = (int) Runtime::hooks()->filter('embed_thumbnail_id', [$id]);
         if ($id === 0) {
@@ -80,10 +81,10 @@ final class EmbedCard
     /** The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open. */
     public static function commentsButton(): string
     {
-        if (\is_404() || !((int) \get_comments_number() || \comments_open())) {
+        if (\is_404() || !((int) PostTags::commentsNumber() || PostTags::commentsOpen())) {
             return '';
         }
-        $count = (int) \get_comments_number();
+        $count = (int) PostTags::commentsNumber();
         $words = sprintf(Gettext::plural('%s <span class="screen-reader-text">Comment</span>', '%s <span class="screen-reader-text">Comments</span>', $count), Numbers::format($count));
         return "\t<div class=\"wp-embed-comments\">\n\t\t<a href=\"" . Escape::url((string) \get_comments_link()) . "\" target=\"_top\">\n\t\t\t<span class=\"dashicons dashicons-admin-comments\"></span>\n\t\t\t"
             . $words . "\t\t</a>\n\t</div>\n\t";
@@ -104,7 +105,7 @@ final class EmbedCard
         if (\is_404()) {
             return '';
         }
-        $key = \get_the_ID() . '-' . mt_rand();
+        $key = PostTags::id() . '-' . mt_rand();
         $tab = static fn (string $kind, string $label, bool $selected): string => "\t\t\t\t\t<li class=\"wp-embed-share-tab-button wp-embed-share-tab-button-{$kind}\" role=\"presentation\">\n\t\t\t\t\t\t<button type=\"button\" role=\"tab\" aria-controls=\"wp-embed-share-tab-{$kind}-{$key}\" aria-selected=\"" . ($selected ? 'true' : 'false') . '" tabindex="' . ($selected ? '0' : '-1') . "\">{$label}</button>\n\t\t\t\t\t</li>\n";
         $panel = static fn (string $kind, bool $shown, string $input, string $words): string => "\t\t\t\t<div id=\"wp-embed-share-tab-{$kind}-{$key}\" class=\"wp-embed-share-tab\" role=\"tabpanel\" aria-hidden=\"" . ($shown ? 'false' : 'true') . "\">\n\t\t\t\t\t{$input}\n\n\t\t\t\t\t<p class=\"wp-embed-share-description\" id=\"wp-embed-share-description-{$kind}-{$key}\">\n\t\t\t\t\t\t{$words}\t\t\t\t\t</p>\n\t\t\t\t</div>\n";
         return "\t<div class=\"wp-embed-share-dialog hidden\" role=\"dialog\" aria-label=\"Sharing options\">\n\t\t<div class=\"wp-embed-share-dialog-content\">\n\t\t\t<div class=\"wp-embed-share-dialog-text\">\n\t\t\t\t<ul class=\"wp-embed-share-tabs\" role=\"tablist\">\n"

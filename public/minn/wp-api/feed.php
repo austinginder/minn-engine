@@ -108,11 +108,7 @@ function _minn_register_core_rss_block(): void
 
 function feed_content_type($type = '')
 {
-    if ($type === '') {
-        $type = get_default_feed();
-    }
-    $types = ['rss' => 'application/rss+xml', 'rss2' => 'application/rss+xml', 'rss-http' => 'text/xml', 'atom' => 'application/atom+xml', 'rdf' => 'application/rdf+xml'];
-    return apply_filters('feed_content_type', $types[$type] ?? 'application/octet-stream', $type);
+    return Minn\Front\FeedTags::contentType($type);
 }
 
 function get_bloginfo_rss($show = '')
@@ -168,7 +164,7 @@ function self_link()
 /** The post title for a feed item, through the_title_rss (handed the title alone). */
 function get_the_title_rss($post = 0)
 {
-    return apply_filters('the_title_rss', get_the_title($post));
+    return Minn\Front\FeedTags::titleRss($post);
 }
 
 function the_title_rss()

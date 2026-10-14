@@ -346,8 +346,7 @@ function get_search_comments_feed_link($search_query = '', $feed = '')
 
 function get_default_feed()
 {
-    $feed = apply_filters('default_feed', 'rss2');
-    return $feed === 'rss' ? 'rss2' : $feed;
+    return Minn\Front\FeedTags::defaultFeed();
 }
 
 function wp_customize_url($stylesheet = '')

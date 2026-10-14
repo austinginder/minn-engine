@@ -9,6 +9,7 @@ use Minn\Http\NoCache;
 use Minn\Http\Response;
 use Minn\Objects\Post;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\PostTags;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
@@ -111,7 +112,7 @@ final class FrontLifecycle
         }
         if (\is_singular()) {
             $post = \get_queried_object();
-            if ($post instanceof Post && \pings_open($post)) {
+            if ($post instanceof Post && PostTags::pingsOpen($post)) {
                 $headers['X-Pingback'] = \get_bloginfo('pingback_url', 'display');
             }
         }

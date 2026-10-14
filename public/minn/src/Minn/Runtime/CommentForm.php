@@ -106,10 +106,10 @@ final class CommentForm
         }
         $statusObject = Registered::status($status);
         $refusal = match (true) {
-            !\comments_open($postId) => ['comment_closed', 'Sorry, comments are closed for this item.', 403],
+            !PostTags::commentsOpen($postId) => ['comment_closed', 'Sorry, comments are closed for this item.', 403],
             $status === 'trash' => ['comment_on_trash', '', 0],
             $statusObject === null || (!$statusObject->public && !$statusObject->private) => Can::current('read_post', $postId) ? ['comment_on_draft', 'Sorry, comments are not allowed for this item.', 403] : ['comment_on_draft', '', 0],
-            \post_password_required($postId) => ['comment_on_password_protected', '', 0],
+            PostTags::passwordRequired($postId) => ['comment_on_password_protected', '', 0],
             default => null,
         };
         if ($refusal === null) {

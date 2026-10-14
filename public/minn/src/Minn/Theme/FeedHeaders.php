@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Front\FeedTags;
 use Minn\Http\Request;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteTime;
@@ -28,7 +29,7 @@ final class FeedHeaders
     public static function for(array $vars, ?Request $request): array
     {
         $feed = (string) $vars['feed'];
-        $headers = ['Content-Type' => \feed_content_type($feed === 'feed' ? \get_default_feed() : $feed) . '; charset=' . Runtime::options()->filtered('blog_charset')];
+        $headers = ['Content-Type' => FeedTags::contentType($feed === 'feed' ? FeedTags::defaultFeed() : $feed) . '; charset=' . Runtime::options()->filtered('blog_charset')];
         $last = (string) SiteTime::fromStored(self::FORMAT, \get_lastpostmodified('GMT'), false);
         if (self::carriesComments($vars, $feed)) {
             $comment = (string) SiteTime::fromStored(self::FORMAT, \get_lastcommentmodified('GMT'), false);

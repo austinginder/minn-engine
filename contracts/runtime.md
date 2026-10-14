@@ -16056,6 +16056,15 @@ theme_mods_twentytwentyfive, left at custom-header-probe's mid-run state by a ru
 Cove restarted, was put back from the clone source and the suites in the restart windows were rerun.
 All 370 probes give identical output before and after.
 
+**Batch 15, the template tags (function calls 468 → 433).** `Runtime\PostTags` answers what the post
+template tags did: `id()` (get_the_ID), `title()` (get_the_title, a protected or private one marked
+outside the admin), `passwordRequired()`, `commentsOpen()`, `pingsOpen()` and `commentsNumber()`, each
+through its filter. `Runtime\CommentTags` answers get_comment_time and get_comment_author_url, and
+`Front\FeedTags` gains `defaultFeed()`, `contentType()` (feed_content_type) and `titleRss()`
+(get_the_title_rss). The facade maps onto them. the_title_attribute (it prints) and the featured-image
+tags (they read post meta) wait for the meta batch. All 370 probes give identical output before and
+after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

@@ -6,6 +6,7 @@ namespace Minn\Content;
 
 use Minn\Media\FileTypes;
 use Minn\Objects\Post;
+use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
@@ -198,7 +199,7 @@ final class MediaShortcodes
 
     private static function postId(): int
     {
-        return Records::post() ? (int) \get_the_ID() : 0;
+        return Records::post() ? (int) PostTags::id() : 0;
     }
 
     /** The shortcode's instance number this request, counted whether or not a plugin takes it over. */

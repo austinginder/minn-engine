@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Front\FeedTags;
 use Minn\Support\Url;
 
 /**
@@ -43,7 +44,7 @@ final class ArchiveLinks
     /** get_post_type_archive_feed_link. */
     public static function feed(string $postType, string $feed): string|false
     {
-        $default = (string) \get_default_feed();
+        $default = (string) FeedTags::defaultFeed();
         $feed = $feed === '' ? $default : $feed;
         $link = self::archive($postType);
         if (!$link) {
