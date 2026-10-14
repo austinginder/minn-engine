@@ -1915,6 +1915,854 @@
                 "body": "049c7da15483"
             }
         },
+        "post.php": {
+            "_count_posts_cache_key": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the API's cache key, built from public capability checks for plugins that clear it",
+                "body": "7ad62556da9d"
+            },
+            "_future_post_hook": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "clears and schedules publish_future_post through the public cron functions",
+                "body": "5c18a05bb76b"
+            },
+            "_get_custom_object_labels": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "picks each default's flat or hierarchical form and casts ObjectLabels::build's result",
+                "doubt": "the object's own labels are left as given, where the API writes the derived labels back onto it as an object",
+                "body": "e3d14038f98f"
+            },
+            "_minn_adjacent_post": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AdjacentPosts",
+                "gates": [
+                    "globals",
+                    "unprobed"
+                ],
+                "why": "the engine's PostBlocks reaches get_adjacent_post through this by swapping global $post; with the lookup in the engine taking a post, the swap goes",
+                "body": "47bed2775397"
+            },
+            "_minn_author_feed_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\AuthorLists",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "builds the author feed link or image markup by rules for wp_list_authors and the user list in user.php",
+                "body": "ec60643a0c7f"
+            },
+            "_minn_list_author_item": {
+                "verdict": "move",
+                "to": "Minn\\Front\\AuthorLists",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "one author's list item markup with its count; it goes with wp_list_authors",
+                "body": "06588b8e552e"
+            },
+            "_minn_query_body_classes": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\BodyClasses",
+                "gates": [
+                    "globals",
+                    "unprobed"
+                ],
+                "why": "gathers the view facts from the global $wp_query for BodyClasses::forView; the gathering belongs with the builder",
+                "body": "cf40df3790d5"
+            },
+            "_minn_revision_differs": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "compares a post with a revision over the revision fields, close to the private PostRevisions::changed; it goes with the upgrade it serves",
+                "body": "8d486ec1bd48"
+            },
+            "_page_traverse_name": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "gates": [
+                    "refs"
+                ],
+                "why": "recursive walk of a parent map into id => slug; tree walking belongs beside Pages::descendants",
+                "body": "bbe31c809976"
+            },
+            "_post_format_get_term": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "names a format term through get_post_format_string",
+                "body": "5d6e00c81ee8"
+            },
+            "_post_format_get_terms": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a get_terms callback naming format terms through get_post_format_string and _post_format_get_term",
+                "body": "62695eafe320"
+            },
+            "_post_format_request": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a request callback mapping the format query var through get_post_format_slugs and get_taxonomy",
+                "body": "a067023a9854"
+            },
+            "_post_format_wp_get_object_terms": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a wp_get_object_terms callback naming format terms through _post_format_get_term",
+                "body": "21cd7d7abd71"
+            },
+            "_post_type_meta_capabilities": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "fills the global $post_type_meta_caps plugins read",
+                "body": "68377a631634"
+            },
+            "_prime_post_parent_id_caches": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostCaches",
+                "gates": [
+                    "globals"
+                ],
+                "why": "finds uncached ids and loads their parents with SQL through $wpdb; cache priming is engine work",
+                "body": "1f8d1e1c0e5c"
+            },
+            "_reset_front_page_settings_for_post": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the public option functions and unstick_post by name so their option hooks fire; the only decision is comparing ids",
+                "body": "39ccc44e1e81"
+            },
+            "_reset_privacy_policy_page_for_post": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_option and update_option by name; the only decision is comparing ids",
+                "body": "c7354de6d6a1"
+            },
+            "_set_preview": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "copies the autosave's text onto the post and hooks the named preview filters plugins may unhook",
+                "body": "8875fec367f4"
+            },
+            "_show_post_preview": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads $_GET as plugins may have changed it, checks the nonce, then hooks _set_preview",
+                "body": "fe6f07ff0cd9"
+            },
+            "_transition_post_status": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostWrites",
+                "why": "fills an empty guid on first publish through the engine's writer and clears the schedule; post-save behaviour beside transitionStatus",
+                "body": "a5e347cc9c4c"
+            },
+            "_wp_copy_post_meta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_meta into add_metadata per value, so the meta hooks fire",
+                "body": "d3031d6428b6"
+            },
+            "_wp_get_post_revision_version": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "parses the version from a revision's name; PostRevisions owns the naming scheme",
+                "body": "4c3425a01027"
+            },
+            "_wp_link_page": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PageLinks",
+                "why": "the page-link URL scheme (plain or pretty, drafts, previews) and its anchor markup; PageLinks renders the list",
+                "doubt": "a static front page split into pages gets /2/ where the API uses the pagination base (/page/2/); previews add preview=true rather than going through get_preview_post_link with preview_id and nonce",
+                "body": "f59be03334ef"
+            },
+            "_wp_preview_meta_filter": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a get_post_metadata callback answering the autosave's meta through get_post_meta for revisioned keys",
+                "body": "d4e5ef59405a"
+            },
+            "_wp_preview_post_thumbnail_filter": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "answers the thumbnail id from $_REQUEST as plugins may have changed it",
+                "body": "7908640fd04b"
+            },
+            "_wp_preview_terms_filter": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "answers the post format from $_REQUEST as plugins may have changed it",
+                "body": "ad839c0120a6"
+            },
+            "_wp_put_post_revision": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "the guard and the source, data, put chain are all PostRevisions steps; one engine method should take the post and the autosave flag",
+                "doubt": "a post without an ID returns null where the API returns WP_Error invalid_post, and a revision of a revision is not refused",
+                "body": "044946b8e960"
+            },
+            "_wp_upgrade_revisions_of_post": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "gates": [
+                    "globals"
+                ],
+                "why": "renames old revisions through $wpdb and saves a fresh one when the newest differs; revision storage is engine work",
+                "doubt": "appends -v1 to the whole name where the API rewrites it to {id}-revision-v1 and hands each revision its predecessor's author; there is no upgrade lock",
+                "body": "4fcc34e175c0"
+            },
+            "add_post_type_support": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "spreads one feature or a list over Registry::addSupport",
+                "body": "648a0032770b"
+            },
+            "clean_attachment_cache": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostCaches",
+                "why": "letting an attachment's caches go belongs beside PostCaches::clean",
+                "doubt": "never deletes the posts and post_meta cache entries nor honours wp_suspend_cache_invalidation, which the API does",
+                "body": "99ace0d2303c"
+            },
+            "count_user_posts": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostReads",
+                "why": "which statuses count is the rule PostReads::byAuthorSql already holds; the count and its filter join it",
+                "doubt": "counts private posts for every reader, where the API counts them only for a reader who may read private posts or is the author",
+                "body": "a1347d8dabe7"
+            },
+            "create_initial_post_types": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "why": "re-registers the captured built-in types and statuses from the registry's own rows; turning supports back into arguments is registry knowledge",
+                "body": "84799c4580ef"
+            },
+            "generate_postdata": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "resolves the post and answers false for none around PostData::generate",
+                "body": "7351c17bf086"
+            },
+            "get_adjacent_post": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AdjacentPosts",
+                "why": "term and exclusion rules, the private-posts level and three clause filters around the engine's adjacentClauses and adjacentId; the whole lookup is engine work",
+                "doubt": "an unknown taxonomy returns null only with in_same_term, where the API returns null for it before anything else",
+                "body": "5931bebe0f4b"
+            },
+            "get_available_post_mime_types": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostLookup",
+                "gates": [
+                    "globals"
+                ],
+                "why": "a distinct mime-type SQL read through $wpdb behind its pre filter; a stored-data read for PostLookup",
+                "body": "4d54025029d8"
+            },
+            "get_available_post_statuses": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the status names of wp_count_posts",
+                "doubt": "drops statuses with no posts, where the API lists every status wp_count_posts names",
+                "body": "83a17ececd74"
+            },
+            "get_body_class": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\BodyClasses",
+                "why": "takes the stored classic classes or works them out, adds the extras and filters; Theme\\PageRenderer already fires body_class itself",
+                "doubt": "escapes after body_class where the API escapes before it, so a filter's classes come back escaped",
+                "body": "219ea05030f3"
+            },
+            "get_boundary_post": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AdjacentPosts",
+                "why": "builds the first or last post query by rules (own terms kept, excluded terms negated) before get_posts; it joins the adjacent lookup",
+                "body": "7a6f7d9a4a26"
+            },
+            "get_delete_post_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\EditLinks",
+                "why": "the capability check, delete or trash by EMPTY_TRASH_DAYS, the nonce and the filter; it belongs beside EditLinks::post",
+                "doubt": "builds post.php?post=%d for every type where the API uses the type's _edit_link (EditLinks::post does); the $deprecated notice is missing",
+                "body": "b13d63a11dd5"
+            },
+            "get_enclosed": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FeedTags",
+                "why": "splits each enclosure meta entry for its address, as FeedTags already splits them, then its filter",
+                "body": "53b9937e5463"
+            },
+            "get_page_by_title": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the deprecation notice, the engine's title lookup, and null or get_post's output mode around it",
+                "doubt": "PostLookup::idByTitle orders by ID alone where the API's query orders by date then ID",
+                "body": "e72284fc3fb5"
+            },
+            "get_page_hierarchy": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "gates": [
+                    "refs"
+                ],
+                "why": "builds the parent map and walks it in a closure, repeating _page_traverse_name; tree walking belongs beside Pages::children and descendants",
+                "body": "63c5403ca211"
+            },
+            "get_page_template_slug": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_meta by name so get_post_metadata filters (previews, plugins) apply; 'default' as empty is glue",
+                "body": "cf0e295777b3"
+            },
+            "get_post_class": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PostClasses",
+                "why": "gathers the format, thumbnail, sticky and term facts and runs both filters around PostClasses::build; the gathering joins the builder",
+                "doubt": "extra classes go through the html-class sanitiser, stripping characters like ':' that the API keeps (it only escapes them)",
+                "body": "f09fabf93d80"
+            },
+            "get_post_custom_keys": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the keys of get_post_custom, null when there are none",
+                "body": "604a7e078b57"
+            },
+            "get_post_custom_values": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "one key's values from get_post_custom, null for none",
+                "body": "9114ccb2e3b0"
+            },
+            "get_post_datetime": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\SiteTime",
+                "why": "picks the column, rejects zero dates and parses it in the right zone; stored-date parsing like SiteTime::fromStored",
+                "doubt": "a gmt source comes back in UTC where the API converts the result to the site's time zone",
+                "body": "50613b1d051e"
+            },
+            "get_post_mime_type": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostReads",
+                "why": "reads one column of the post, false for none; PostReads::type already does the same for the type column",
+                "body": "638beced7a60"
+            },
+            "get_post_mime_types": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Kind",
+                "why": "translates the labels of Kind::POST_MIME_TYPES and filters them; the list's owner should give it ready",
+                "body": "1e673fb8dec8"
+            },
+            "get_post_parent": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post of the post's parent, null for none",
+                "body": "ca43b550f4ee"
+            },
+            "get_post_timestamp": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "get_post_datetime as a timestamp, false for none",
+                "body": "d7caeb2068c8"
+            },
+            "get_post_type_capabilities": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Registry::capabilities maps the names; the body records the meta names through _post_type_meta_capabilities, as the API does, and casts to an object",
+                "body": "7911bb227402"
+            },
+            "get_post_type_labels": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "why": "Registry::labels then post_type_labels_{name} around the result; the filter is part of making labels",
+                "doubt": "the filtered labels are not merged back over the defaults, so a filter that drops a label loses it where the API restores it",
+                "body": "0cb348ac9ad0"
+            },
+            "get_post_types_by_support": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registered",
+                "why": "matches each type's supports by and, or, not; Registered already lists objects by operator",
+                "doubt": "the operator is compared in lower case only, where the API's list filter takes AND, OR, NOT in any case",
+                "body": "43d8f60dd8be"
+            },
+            "get_pung": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostReads",
+                "why": "splits the stored pinged column into a list, then its filter; parsing a stored column is engine work",
+                "body": "42f9fdcb4fa6"
+            },
+            "get_the_author": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads the global $authordata the loop sets, then the_author",
+                "body": "6189590efa69"
+            },
+            "get_the_author_email": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then get_the_author_meta('email')",
+                "body": "69297b3a2050"
+            },
+            "get_the_author_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the author's website link markup with its title and filter, $authordata passed on; template-tag markup by rules",
+                "body": "d49b96ce5aea"
+            },
+            "get_the_author_posts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "count_user_posts for the current post's author and type",
+                "body": "5768f594a74b"
+            },
+            "get_the_author_posts_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the author link markup from $authordata and filters it; template-tag markup by rules",
+                "body": "f70a652dfb08"
+            },
+            "get_the_content": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostData",
+                "gates": [
+                    "globals"
+                ],
+                "why": "chooses the loop globals or PostData::generate, then the password form or PostData::content; the choice and the gate belong in PostData, which already writes those globals in setup",
+                "body": "3f79261879c8"
+            },
+            "get_the_excerpt": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "why": "the protected-post answer and get_the_excerpt around the stored excerpt, a sibling of PostTags::title; Rest\\RenderedFields already fires the same filter itself",
+                "doubt": "the protected-post message skips __(), so a translated site shows it in English",
+                "body": "41230f63b0ad"
+            },
+            "get_the_guid": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "why": "the stored guid and id through get_the_guid; a template-tag read beside PostTags::title",
+                "body": "1e8302e8dfc2"
+            },
+            "get_the_modified_author": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_meta and get_userdata by name, then the_modified_author",
+                "body": "609051e15362"
+            },
+            "get_the_modified_date": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "why": "PostTags::date's twin for the modified column: default format, the formatted time, its filter",
+                "doubt": "no post returns false without the filter, where the API sends false through get_the_modified_date; the filter also gets the resolved format, not the one given",
+                "body": "0d9f69ad0f98"
+            },
+            "get_the_modified_time": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "why": "PostTags::date's twin for the modified time: default time format, the formatted time, its filter",
+                "doubt": "no post returns false without the filter, where the API sends false through get_the_modified_time; the filter also gets the resolved format, not the one given",
+                "body": "7a07b7ffc7bb"
+            },
+            "get_the_time": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "why": "the same body as PostTags::date (get_the_date) with the time format and its own filter; it joins its twin",
+                "doubt": "get_the_time receives the resolved format where the API passes the format as given (empty for the default)",
+                "body": "07f085c0e82d"
+            },
+            "get_to_ping": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostReads",
+                "why": "cleans and splits the stored to_ping column into a list, then its filter; parsing a stored column is engine work",
+                "body": "5fd71779bf97"
+            },
+            "has_excerpt": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostReads",
+                "why": "reads whether the stored excerpt is set; a column read like PostReads::type",
+                "doubt": "an excerpt of '0' counts as present here, where the API's empty() test says there is none",
+                "body": "a6db2c6193e5"
+            },
+            "is_multi_author": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostReads",
+                "why": "a transient-cached answer from the engine's author count, then its filter; stored data and caching are engine work",
+                "body": "a7187fae1c96"
+            },
+            "is_page_template": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Templates",
+                "why": "the template-matching rules (default, a list, file names) over the queried page's slug are template behaviour",
+                "doubt": "matches by file basename when a name holds a dot, so 'a/full.php' answers true for 'b/full.php'; the API compares the whole slug",
+                "body": "792b99dccf99"
+            },
+            "is_post_embeddable": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "is_post_type_viewable by name, then its own filter",
+                "body": "dcfb89647caf"
+            },
+            "is_sticky": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostWrites",
+                "why": "reads the sticky list and filters the answer; PostWrites already reads that list for stick and unstick",
+                "body": "6c429b85d453"
+            },
+            "post_custom": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "one key from get_post_custom, unwrapped when it holds a single value",
+                "body": "61e3dc89df35"
+            },
+            "post_exists": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostLookup",
+                "why": "which types to search and the match are the lookup's job, beside idByTitle",
+                "doubt": "$content, $date and $status are ignored, and with no type it searches only public types where the API searches every type",
+                "body": "2d956df86b1e"
+            },
+            "prepend_attachment": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "why": "chooses a video or audio player or an image link by the attachment's kind and builds its markup, then the filter; media rendering by rules",
+                "doubt": "a video with a featured image gets no poster attribute",
+                "body": "a79c0717f808"
+            },
+            "query_posts": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "replaces the global $wp_query with a new query",
+                "body": "5d55048c9913"
+            },
+            "register_post_meta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "register_meta for posts with the subtype set",
+                "body": "c5d0ac89a0d4"
+            },
+            "register_post_status": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sanitizes the name and casts the registry's row to the object",
+                "body": "c1956624e2dc"
+            },
+            "register_post_type": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the name rule, the refusal, the object's steps in order and both actions are registration; the registry can make the object through Handoff and keep the order",
+                "body": "487afe87d5c8"
+            },
+            "set_post_type": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sanitize_post_field for its db filters, the engine's write, clean_post_cache, and the 1 or 0 the API's row count gives",
+                "body": "1bdb653e6b41"
+            },
+            "the_attachment_link": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the deprecated-argument notice and an echo of wp_get_attachment_link with the size the flag picks",
+                "body": "670d6c5159d6"
+            },
+            "the_author": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes and returns get_the_author",
+                "doubt": "$deprecated_echo is ignored: the_author('', false) still prints, where the API only returns",
+                "body": "170c77a3513c"
+            },
+            "the_author_email": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then the_author_meta('email')",
+                "body": "bd041c4b0472"
+            },
+            "the_content": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\ClassicContent",
+                "why": "picks the engine's classic pipeline or a plain the_content run, then escapes ]]>; the choice and the escape are engine work, only the echo stays",
+                "doubt": "$strip_teaser never reaches ClassicContent::render, so the_content(null, true) keeps the teaser under a classic theme",
+                "body": "b25d7d9096d0"
+            },
+            "the_date": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "prints a date only on a new day and moves $currentday into $previousday, the loop globals themes and plugins read",
+                "body": "5e1d68fa59c5"
+            },
+            "the_guid": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_the_guid through the_guid",
+                "body": "4200e37da358"
+            },
+            "the_meta": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "why": "builds the post-meta list markup by rules, skipping protected keys, with the_meta_key per item; the engine renders, the deprecation notice and echo stay",
+                "body": "4f10d80a9681"
+            },
+            "the_modified_date": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps get_the_modified_date in before and after, its display filter, echo or return",
+                "body": "c41ce88930ed"
+            },
+            "the_title": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps get_the_title in before and after, nothing for an empty title, echo or return by the display flag",
+                "body": "bd92da3d765a"
+            },
+            "unregister_post_type": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the existence and built-in refusals, the object's teardown steps and the action are registry behaviour beside unregisterPostType",
+                "body": "74a77bd35d32"
+            },
+            "update_post_cache": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "sanitize_post then wp_cache_add_multiple by name, which a cache drop-in may define",
+                "body": "a2e1c6c5963e"
+            },
+            "update_post_parent_caches": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\PostReads::prime",
+                "why": "the API primes the parents in one go (_prime_post_caches without terms); the body loads them one by one where PostReads::prime($ids, false) does the job",
+                "body": "3fb254e079b0"
+            },
+            "update_user_caches": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_cache_add by name per cache group, which a drop-in may define",
+                "body": "01d113681a75"
+            },
+            "use_block_editor_for_post": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "use_block_editor_for_post_type by name, then its own filter",
+                "doubt": "runs the filter for no post where the API returns false first; a meta-box-loader request is not answered false",
+                "body": "09cf53054e50"
+            },
+            "use_block_editor_for_post_type": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registered",
+                "why": "decides from the type's settings, then its filter; a type fact like Registered::viewableType",
+                "doubt": "skips the editor-support check and runs the filter for an unknown type, where the API returns false for both first",
+                "body": "da72fbfa8b61"
+            },
+            "walk_page_dropdown_tree": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "calls the walker a plugin may pass, or the default one",
+                "body": "f06870801f5f"
+            },
+            "walk_page_tree": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "marks pages with children and calls the walker a plugin may pass",
+                "body": "80006ccb8969"
+            },
+            "wp_add_footnotes_to_revision": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "the footnotes revision field is engine data beside PostRevisions' own fields; the function stays as the named callback",
+                "body": "665ab7d1d942"
+            },
+            "wp_check_for_changed_dates": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostWrites",
+                "why": "which posts keep an old date and the day it was, then rememberOld; the rule joins the post-save behaviour",
+                "doubt": "also requires the post before to be published, which the API does not ask; attachments (inherit) are left out",
+                "body": "996d0bf9d55a"
+            },
+            "wp_check_for_changed_slugs": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostWrites",
+                "why": "which posts keep an old slug, then the engine's rememberOld; the rule joins the post-save behaviour",
+                "doubt": "an attachment (status inherit) never keeps its old slug, which the API also tracks",
+                "body": "5a3607b4d05a"
+            },
+            "wp_check_post_hierarchy_for_loops": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Hierarchy",
+                "why": "walks the parent chain by hand; Support\\Hierarchy already finds loops in a parent chain",
+                "doubt": "an existing loop above the new parent is only stepped around, where the API breaks it by setting each member's parent to 0",
+                "body": "444e407c07a4"
+            },
+            "wp_check_revisioned_meta_fields_have_changed": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "compares get_post_meta per revisioned key so get_post_metadata filters run, as the named callback plugins unhook",
+                "body": "bc63458f352e"
+            },
+            "wp_count_posts": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostLookup",
+                "why": "every status filled to zero over the engine's counts, then its filter; the readable rule belongs beside countByStatus",
+                "doubt": "$perm is ignored: with 'readable' a user without read_private_posts still counts other authors' private posts",
+                "body": "4d0bb6086915"
+            },
+            "wp_delete_auto_drafts": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostWrites",
+                "gates": [
+                    "globals"
+                ],
+                "why": "selects week-old auto-drafts with SQL through $wpdb and deletes them; stored-data cleanup is engine work",
+                "body": "b42875265de3"
+            },
+            "wp_filter_wp_template_unique_post_slug": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateWriter",
+                "why": "makes a template slug unique within its theme by numbered suffixes; template storage rules",
+                "doubt": "a slug another filter chose is returned untouched, where the API makes that one unique within the theme too; no truncation to 200 characters",
+                "body": "d60a88a66d94"
+            },
+            "wp_get_latest_revision_id_and_total_count": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "the latest revision and the count are the read PostLookup::revisionsOf and PostRevisions::all already make; the two WP_Error refusals stay as shape",
+                "body": "dd6b7b2cdd85"
+            },
+            "wp_get_post_autosave": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's newest autosave as get_post's object, false for none",
+                "body": "abd87a70318d"
+            },
+            "wp_get_post_parent_id": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostReads",
+                "why": "reads the parent column as an int, false for no post; a column read like PostReads::type",
+                "body": "6cba540e4aa6"
+            },
+            "wp_get_post_revision": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "get_post limited to revisions, in the OBJECT, ARRAY_A or ARRAY_N shape asked",
+                "doubt": "assigns the fetched post back to the by-reference argument, so a caller's id variable becomes a WP_Post or null; the API reads into a local",
+                "body": "c6f921aa425f"
+            },
+            "wp_get_post_revisions_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_edit_post_link for a revision or the latest one wp_get_latest_revision_id_and_total_count names",
+                "body": "9a7e840d0374"
+            },
+            "wp_get_recent_posts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the API's defaults through get_posts, rows as arrays for ARRAY_A",
+                "doubt": "OBJECT output with nothing found returns an empty array where the API returns false; the numeric-argument deprecation notice is missing",
+                "body": "22ec495bd3ef"
+            },
+            "wp_is_post_autosave": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "the autosave naming rule on a revision's slug, answering its parent; PostRevisions owns revision names",
+                "doubt": "matches any digits-autosave prefix where the API looks for the parent's own id followed by -autosave",
+                "body": "d0409dea4db9"
+            },
+            "wp_is_post_revision": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "a revision's parent id, false for anything else; revision facts belong in PostRevisions",
+                "body": "66ffc27dc1b6"
+            },
+            "wp_link_pages": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PageLinks",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the defaults, both filters and the $page, $numpages, $more globals feed PageLinks::render; the whole tag can live there, the echo flag stays",
+                "body": "f56706d4a68c"
+            },
+            "wp_list_authors": {
+                "verdict": "move",
+                "to": "Minn\\Front\\AuthorLists",
+                "why": "counts, the admin and empty rules, the names and the list markup with its filters are engine work; the echo flag stays",
+                "body": "0d479f59410b"
+            },
+            "wp_post_revision_meta_keys": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "picks the registered meta keys with revisions enabled, then its filter around the list; revision behaviour",
+                "doubt": "lists the type's keys before the generic ones where the API merges the generic keys first",
+                "body": "c3d11b85ff1e"
+            },
+            "wp_reset_postdata": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "resets the post data of the global $wp_query",
+                "body": "c9583e94922b"
+            },
+            "wp_reset_query": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "puts $wp_the_query back in the global $wp_query",
+                "body": "7949fefb0ea5"
+            },
+            "wp_resolve_post_date": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "current_time, get_date_from_gmt and wp_checkdate by name, whose filter decides validity",
+                "body": "ee88e687ce6f"
+            },
+            "wp_restore_post_revision": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_update_post and update_post_meta by name so their hooks run, then the restore action; the field pick is glue",
+                "body": "1f767ef8b239"
+            },
+            "wp_restore_post_revision_meta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "delete_metadata then _wp_copy_post_meta per revisioned key",
+                "body": "f6fa7f37a8db"
+            },
+            "wp_save_post_revision": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "the bail during post_updated decides when a revision is saved; it belongs in PostRevisions::save",
+                "doubt": "bails on every post_updated run, where the API bails only while wp_save_post_revision_on_insert hangs on wp_after_insert_post; a plugin that unhooks that gets no revisions",
+                "body": "a5619aa18938"
+            },
+            "wp_save_post_revision_on_insert": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "hook glue: on an update, and only while wp_save_post_revision still hangs on post_updated, the public function",
+                "body": "9c89ee262ba2"
+            },
+            "wp_save_revisioned_meta_fields": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "copies each revisioned key through metadata_exists, get_post_meta and add_metadata, whose meta hooks fire",
+                "body": "0de86ae0d959"
+            },
+            "wp_shortlink_header": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_shortlink by name so its filters run, then the Link header, as rest_output_link_header sends its own",
+                "body": "a7871f8c4dee"
+            }
+        },
         "query.php": {
             "_find_post_by_old_date": {
                 "verdict": "move",
