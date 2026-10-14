@@ -43,12 +43,12 @@
         "provenWeighted": 96.2
     },
     "wordpressNames": {
-        "functionCalls": 967,
-        "functions": 355,
+        "functionCalls": 0,
+        "functions": 0,
         "hookApi": 0,
-        "classReferences": 568,
-        "classes": 50,
-        "files": 166
+        "classReferences": 0,
+        "classes": 0,
+        "files": 0
     },
     "coverage": {
         "measured": "2026-10-13",
@@ -114,7 +114,7 @@
         },
         "htmlspecialcharsCeiling": {
             "label": "htmlspecialchars outside Html",
-            "ceiling": 13,
+            "ceiling": 12,
             "started": 14,
             "since": "54b4d84d",
             "rose": false
@@ -135,7 +135,7 @@
         },
         "wordpressCallCeiling": {
             "label": "Calls into WordPress-named functions",
-            "ceiling": 967,
+            "ceiling": 0,
             "started": 1406,
             "since": "61614e6f",
             "rose": false
@@ -149,7 +149,7 @@
         },
         "wordpressClassCeiling": {
             "label": "References to WordPress classes",
-            "ceiling": 568,
+            "ceiling": 0,
             "started": 568,
             "since": "b5bce4eb",
             "rose": false
@@ -238,6 +238,20 @@
             "since": "653ceb35",
             "rose": false
         },
+        "facadeLogicCeiling": {
+            "label": "Facade functions and methods holding logic",
+            "ceiling": 3865,
+            "started": 3865,
+            "since": "",
+            "rose": false
+        },
+        "facadeLogicLinesCeiling": {
+            "label": "Lines of logic in the facade",
+            "ceiling": 30383,
+            "started": 30383,
+            "since": "",
+            "rose": false
+        },
         "wporgRequestCeiling": {
             "label": "wordpress.org request addresses",
             "ceiling": 0,
@@ -287,20 +301,20 @@
             "window": 100,
             "stretches": 113,
             "lines": 2083,
-            "of": 169919
+            "of": 176166
         },
         "engine": {
-            "of": 89321,
+            "of": 99566,
             "php": {
                 "strict": {
                     "window": 40,
-                    "stretches": 0,
-                    "lines": 0
+                    "stretches": 8,
+                    "lines": 51
                 },
                 "sensitive": {
                     "window": 30,
-                    "stretches": 58,
-                    "lines": 241
+                    "stretches": 75,
+                    "lines": 343
                 }
             },
             "assets": {
@@ -317,10 +331,19 @@
             "sequences": 15
         },
         "facade": {
-            "of": 80598,
+            "of": 76600,
             "window": 80,
-            "stretches": 122,
-            "lines": 3151
+            "stretches": 115,
+            "lines": 3019
         }
+    },
+    "facadeLogic": {
+        "functions": 3490,
+        "methods": 3804,
+        "delegates": 3429,
+        "logicFunctions": 1832,
+        "logicMethods": 2033,
+        "logicLines": 30383,
+        "kept": 0
     }
 }

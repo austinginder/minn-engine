@@ -31,7 +31,10 @@
  * - gate: the repository scans of tests/tools/gate-scan.php (dead ends
  *   called or defined by hand, the PHP floor, public-repo hygiene);
  * - clones: tests/tools/clone-scan.php, duplicated engine code and engine
- *   code identical to the reference's source.
+ *   code identical to the reference's source;
+ * - facadeLogic: the facade's functions and methods that hold logic
+ *   rather than hand over to the engine, and their lines
+ *   (contracts/api/facade-logic.json, tests/tools/facade-logic.php).
  *
  * php tests/tools/scorecard.php [--run-log=<run-all log>]
  */
@@ -101,6 +104,8 @@ if (($counts = $json('contracts/query-count.json')) !== null) {
 $hooks = ($status = $json('contracts/api/hook-status.json')) === null ? null : $status['figures'];
 // The WordPress functions, hook calls and classes the engine still uses (tests/tools/wordpress-names.php).
 $wordpressNames = ($names = $json('contracts/api/wordpress-names.json')) === null ? null : $names['summary'];
+// The logic still in the facade, rather than in the engine (tests/tools/facade-logic.php).
+$facadeLogic = ($logic = $json('contracts/api/facade-logic.json')) === null ? null : $logic['summary'];
 $coverage = ($lines = $json('contracts/line-coverage.json')) === null ? null : ['measured' => $lines['measured'], 'percent' => $lines['percent'], 'lines' => $lines['lines'], 'covered' => $lines['covered'], 'parts' => $lines['parts']];
 
 // The leanness ceilings the style suite holds (each only falls), with the value each started at and whether one ever rose.
@@ -117,7 +122,7 @@ $history = static function (string $variable) use ($git): array {
     return $values;
 };
 $ceilings = [];
-foreach (['deadNameCeiling' => 'Dead-name methods', 'liveCeiling' => 'Lifecycle branches (live() calls)', 'optionReadCeiling' => 'Option reads beside the store', 'rawOptionWriteCeiling' => 'Raw option writes', 'rawMetaWriteCeiling' => 'Raw meta writes', 'postRowCeiling' => 'Hand-built post rows', 'linkHrefCeiling' => 'Hand-built REST links', 'htmlspecialcharsCeiling' => 'htmlspecialchars outside Html', 'permalinkCallerCeiling' => 'Unfiltered permalink callers', 'bootedCeiling' => 'Runtime::booted() branches', 'wordpressCallCeiling' => 'Calls into WordPress-named functions', 'hookApiCeiling' => 'Calls into the hook API by its WordPress names', 'wordpressClassCeiling' => 'References to WordPress classes', 'longMethodCeiling' => 'Methods over eighty lines', 'bigClassCeiling' => 'Classes over six hundred lines', 'undocumentedCeiling' => 'Public methods without a docblock', 'boolParamCeiling' => 'Boolean parameters', 'wideConstructorCeiling' => 'Constructors with six or more parameters', 'unionCeiling' => 'array|PostRecord bridges', 'bracketCeiling' => 'Bracket reads of post columns', 'userBracketCeiling' => 'Bracket reads of user columns', 'commentBracketCeiling' => 'Bracket reads of comment columns', 'rawJsonCeiling' => 'Raw json_encode and json_decode calls', 'bareRouteCeiling' => 'Routes without a policy', 'leafCeiling' => 'Facade functions over fifteen lines', 'wporgRequestCeiling' => 'wordpress.org request addresses'] as $variable => $label) {
+foreach (['deadNameCeiling' => 'Dead-name methods', 'liveCeiling' => 'Lifecycle branches (live() calls)', 'optionReadCeiling' => 'Option reads beside the store', 'rawOptionWriteCeiling' => 'Raw option writes', 'rawMetaWriteCeiling' => 'Raw meta writes', 'postRowCeiling' => 'Hand-built post rows', 'linkHrefCeiling' => 'Hand-built REST links', 'htmlspecialcharsCeiling' => 'htmlspecialchars outside Html', 'permalinkCallerCeiling' => 'Unfiltered permalink callers', 'bootedCeiling' => 'Runtime::booted() branches', 'wordpressCallCeiling' => 'Calls into WordPress-named functions', 'hookApiCeiling' => 'Calls into the hook API by its WordPress names', 'wordpressClassCeiling' => 'References to WordPress classes', 'longMethodCeiling' => 'Methods over eighty lines', 'bigClassCeiling' => 'Classes over six hundred lines', 'undocumentedCeiling' => 'Public methods without a docblock', 'boolParamCeiling' => 'Boolean parameters', 'wideConstructorCeiling' => 'Constructors with six or more parameters', 'unionCeiling' => 'array|PostRecord bridges', 'bracketCeiling' => 'Bracket reads of post columns', 'userBracketCeiling' => 'Bracket reads of user columns', 'commentBracketCeiling' => 'Bracket reads of comment columns', 'rawJsonCeiling' => 'Raw json_encode and json_decode calls', 'bareRouteCeiling' => 'Routes without a policy', 'leafCeiling' => 'Facade functions over fifteen lines', 'facadeLogicCeiling' => 'Facade functions and methods holding logic', 'facadeLogicLinesCeiling' => 'Lines of logic in the facade', 'wporgRequestCeiling' => 'wordpress.org request addresses'] as $variable => $label) {
     if (preg_match('/\$' . $variable . ' = (\d+);/', $style, $m)) {
         $values = $history($variable);
         $rose = false;
@@ -193,6 +198,7 @@ $card = [
     'run' => $run,
     'gate' => is_array($gate) ? $gate : null,
     'clones' => is_array($clones) ? $clones : null,
+    'facadeLogic' => $facadeLogic,
 ];
 file_put_contents("{$root}/contracts/scorecard.json", json_encode($card, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 printf("security %d/%d fixed; sql %s; hooks %s; coverage %s; open %s\n",
@@ -205,6 +211,8 @@ printf("leanness: %d ratchets, %d risen; run %s\n",
     count($ceilings), count(array_filter($ceilings, static fn (array $c): bool => $c['rose'])),
     $run === null ? 'not recorded' : "{$run['green']} of {$run['suites']} suites green, {$run['checks']} checks" . ($run['red'] === [] ? '' : ' (red: ' . implode(', ', $run['red']) . ')') . (isset($run['engineWarnings']) ? ", {$run['engineWarnings']} engine warnings" : ''));
 printf("WordPress names in the engine: %s\n", $wordpressNames === null ? 'unmeasured' : "{$wordpressNames['functionCalls']} calls to {$wordpressNames['functions']} functions, {$wordpressNames['hookApi']} hook API calls, {$wordpressNames['classReferences']} references to {$wordpressNames['classes']} classes, in {$wordpressNames['files']} files (target 0, 0, 0)");
+printf("facade logic: %s\n", $facadeLogic === null ? 'unmeasured' : sprintf('%d functions and %d methods hold logic, %d lines; %d delegates; %d kept on purpose (only falls)',
+    $facadeLogic['logicFunctions'], $facadeLogic['logicMethods'], $facadeLogic['logicLines'], $facadeLogic['delegates'], $facadeLogic['kept']));
 printf("gate: %s\n", !is_array($gate) ? 'gate-scan.php failed' : sprintf('%d calls into stubbed dead ends, %d unproven dead ends written by hand, PHP %s floor (%d lint failures, %d names only newer PHP has), %d hygiene hits',
     $gate['deadEndCalls'], $gate['deadEndsByHand'], $gate['floor']['version'], $gate['floor']['lintFailures'], $gate['floor']['unknown'], $gate['hygiene']['hits']));
 printf("clones: %s\n", !is_array($clones) ? 'clone-scan.php failed' : sprintf('%d duplicated lines; %s',

@@ -168,6 +168,27 @@ $check('route catalogue: contracts/api/routes.json is current', is_array($catalo
 $leafCeiling = 12;
 $check("facade map: leaf functions over fifteen lines stay at or under {$leafCeiling}", is_array($mapping) && ($mapping['leafLinesOver15'] ?? PHP_INT_MAX) <= $leafCeiling, (string) ($mapping['leafLinesOver15'] ?? '?'));
 
+// Measure 29 of the release gate, tracked (2026-10-14): the logic still in the facade. A facade
+// function or method holds logic when its body has more than one statement or a control
+// structure; behaviour belongs in src/Minn, and the facade keeps every symbol as a delegate.
+// contracts/api/facade-logic.json (tests/tools/facade-logic.php) lists each one; both counts
+// only fall. A definition that must run in the layer's own scope says so in its docblock
+// (@minn-facade-logic <reason>) and is listed under "kept" instead.
+exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-logic.php') . ' --check', $ignored, $facadeLogicStale);
+$check('facade logic: contracts/api/facade-logic.json is current', $facadeLogicStale === 0, 'run php tests/tools/facade-logic.php');
+$facadeLogic = (array) ((json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/facade-logic.json'), true) ?: [])['summary'] ?? []);
+$facadeLogicCeiling = 3865;
+$facadeLogicLinesCeiling = 30383;
+$facadeLogicCount = (int) ($facadeLogic['logicFunctions'] ?? PHP_INT_MAX) + (int) ($facadeLogic['logicMethods'] ?? 0);
+$check("facade logic: functions and methods holding logic stay at or under {$facadeLogicCeiling}", $facadeLogicCount <= $facadeLogicCeiling, (string) $facadeLogicCount);
+$check("facade logic: their body lines stay at or under {$facadeLogicLinesCeiling}", (int) ($facadeLogic['logicLines'] ?? PHP_INT_MAX) <= $facadeLogicLinesCeiling, (string) ($facadeLogic['logicLines'] ?? '?'));
+
+// The facade's delegates are generated: contracts/api/facade-delegates.json records the one
+// statement of every top-level, unconditional delegate, and the PHP is rendered from it in one
+// shape (tests/tools/facade-gen.php). Make a function a delegate with --set, never by hand.
+exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-gen.php') . ' --check', $facadeGenOut, $facadeGenStale);
+$check('facade delegates: every delegate is recorded in contracts/api/facade-delegates.json and rendered from it', $facadeGenStale === 0, implode(' ', array_slice(array_map('trim', $facadeGenOut), 0, 6)));
+
 // The app reads each capability flag by name, and a flag the boot payload lacks reads as false (an
 // empty Add plugin dialog once uploadPlugins was new). Where Minn Admin is linked in, every key its
 // boot_caps names must be one the engine computes too.

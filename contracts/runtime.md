@@ -16357,6 +16357,40 @@ measure 15 is 0: no WordPress function calls, hook calls by WordPress names, or 
 src/Minn. The http-transports probe stays out of the comparison; the other probes give identical output
 before and after.
 
+## The facade's logic measured, its delegates generated (2026-10-14)
+
+With measure 15 at 0 the engine no longer reaches into the facade; measure 29 of the release gate
+(tracked: it only falls) measures the other direction, the engine's behaviour still written in the
+facade. The facade keeps every public symbol WordPress has, with its exact signature, and each
+function and method should hand over to a Minn class in one statement.
+
+`tests/tools/facade-logic.php` reads the facade by its tokens (`tests/tools/facade-parse.php`) and
+counts every function and method whose body holds more than one statement or any control structure,
+generated dead ends and placeholders apart. It writes `contracts/api/facade-logic.json` with each one's
+file, line, statements and lines. The baseline is 3,865 definitions (1,832 functions, 2,033 methods)
+and 30,383 lines; 3,429 are delegates already. The most are in blocks.php, media.php, post.php,
+WP_Theme_JSON, template.php, functions.php, comment.php, deprecated.php, core-blocks.php and
+taxonomy.php. The style suite keeps the file current and holds both counts to `$facadeLogicCeiling`
+and `$facadeLogicLinesCeiling`; the scorecard reports them under `facadeLogic` and reads both
+ceilings' history with the other ratchets.
+
+A definition whose body must run in the facade's own scope says why in its docblock
+(`@minn-facade-logic <reason>`) and is listed under "kept" instead of counted. None is tagged yet.
+
+The delegates are generated. `contracts/api/facade-delegates.json` records the one statement of
+every top-level, unconditional delegate (1,621), and `tests/tools/facade-gen.php` renders each from
+it in one shape, with its docblock, signature and return type as written: `--set NAME 'STATEMENT;'`
+turns a function into a delegate, `--write` renders the table, `--learn` records the code, and
+`--check`, which the style suite runs, fails on a delegate the table does not hold, one that differs
+from it, or one out of shape. Every delegate was in that shape already, so the first render changed no
+byte. Pluggable functions (defined conditionally, so plugins can replace them) and class methods stay
+outside the table.
+
+Moving the logic is batch work by family, files with the fewest subclass hazards first. A class's
+methods move only behind a probe that subclasses it and records which overrides run on both stacks:
+plugins extend facade classes and override single methods, so every `$this->` call the base class
+makes is part of its contract.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
