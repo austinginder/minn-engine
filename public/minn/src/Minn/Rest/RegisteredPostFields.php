@@ -8,6 +8,7 @@ use Closure;
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Front\Permalinks;
+use Minn\Runtime\TermTags;
 
 /** The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. */
 final readonly class RegisteredPostFields
@@ -56,7 +57,7 @@ final readonly class RegisteredPostFields
             'comment_status' => $type->supports('comments') ? $p->commentStatus : null,
             'ping_status' => $type->supports('comments') ? $p->pingStatus : null,
             'template' => (string) ($this->posts->meta($p->id, '_wp_page_template') ?? ''),
-            'format' => $type->supports('post-formats') ? (\get_post_format($p->id) ?: 'standard') : null,
+            'format' => $type->supports('post-formats') ? (TermTags::format($p->id) ?: 'standard') : null,
             'meta' => $type->supports('custom-fields') ? RestMeta::read('post', $p->id, $p->type, 'view') : null,
         ];
         $object = array_filter($object, static fn ($value) => $value !== null);

@@ -19,6 +19,7 @@ use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteInfo;
 use Minn\Runtime\SiteUrls;
+use Minn\Runtime\TermTags;
 use Minn\Support\Escape;
 use Minn\Support\Text;
 use Minn\Support\Url;
@@ -78,7 +79,7 @@ final class FeedTags
     public static function categories(string $type): string
     {
         $names = [];
-        foreach ([['category', (array) \get_the_category()], ['post_tag', (array) (\get_the_tags() ?: [])]] as [$taxonomy, $terms]) {
+        foreach ([['category', (array) TermTags::categories()], ['post_tag', (array) (TermTags::tags() ?: [])]] as [$taxonomy, $terms]) {
             foreach ($terms as $term) {
                 $names[] = $type === 'atom' ? (string) $term->name : (string) TermFields::field('name', $term->name, (int) $term->term_id, (string) $taxonomy, 'rss');
             }

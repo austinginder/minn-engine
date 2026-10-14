@@ -127,14 +127,14 @@ final class PostLinks
     /** The %category% part: the post's first category by id (post_link_category may choose another), under its parents. */
     private static function category(Post $post): string
     {
-        $categories = \get_the_category($post->ID);
+        $categories = TermTags::categories($post->ID);
         usort($categories, static fn ($a, $b) => (int) $a->term_id <=> (int) $b->term_id);
         $chosen = $categories === [] ? null : Runtime::hooks()->filter('post_link_category', [$categories[0], $categories, $post]);
         $chosen = $chosen instanceof Term ? $chosen : Records::term((int) Runtime::options()->filtered('default_category'), 'category');
         if (!$chosen instanceof Term) {
             return '';
         }
-        $parents = $chosen->parent ? (string) \get_category_parents((int) $chosen->parent, false, '/', true) : '';
+        $parents = $chosen->parent ? (string) TermTags::categoryParents((int) $chosen->parent, false, '/', true) : '';
         return $parents . $chosen->slug;
     }
 

@@ -89,7 +89,7 @@ final class PostData
     public static function content(?string $moreLinkText, Post $post, array $elements): string
     {
         $stripTeaser = !empty($elements['strip_teaser']);
-        $moreLinkText ??= sprintf('<span aria-label="%1$s">%2$s</span>', sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), \the_title_attribute(['echo' => false, 'post' => $post])), \Minn\I18n\Gettext::text('(more&hellip;)'));
+        $moreLinkText ??= sprintf('<span aria-label="%1$s">%2$s</span>', sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), PostTags::titleAttribute(['echo' => false, 'post' => $post])), \Minn\I18n\Gettext::text('(more&hellip;)'));
         $pages = array_values((array) $elements['pages']);
         $content = (string) ($pages[min(max(1, (int) $elements['page']), max(1, count($pages))) - 1] ?? '');
         $parts = [$content];

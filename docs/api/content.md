@@ -622,7 +622,7 @@ class, library and final HTML through their filters.
 
 get_attached_media: the post's attachments of a kind ("video", "audio", a MIME type), as the reference's children query finds them.
 
-Internals: `sources()` (private, line 112), `anyOwnFormat()` (private, line 140), `sourceTags()` (private, line 151), `attributes()` (private, line 165), `fitted()` (private, line 178), `library()` (private, line 185), `fallback()` (private, line 196), `postId()` (private, line 201), `instance()` (private, line 207)
+Internals: `sources()` (private, line 113), `anyOwnFormat()` (private, line 141), `sourceTags()` (private, line 152), `attributes()` (private, line 166), `fitted()` (private, line 179), `library()` (private, line 186), `fallback()` (private, line 197), `postId()` (private, line 202), `instance()` (private, line 208)
 
 
 ## MenuItem
@@ -1703,7 +1703,7 @@ a write finds the row as it now is. Nothing outlives the request.
 
 - const `SOURCES` = `array (   'posts' =>    array (     0 => 'posts',   ),   'post_terms' =>    array (     0 => 'term_relationships',     1 => 'term_taxonomy',     2 => 'terms',   ),   'revisions' =>    array (     0 => 'posts',   ),   'theme_templates' =>    array (     0 => 'posts',     1 => 'term_relationships',     2 => 'term_taxonomy',     3 => 'terms',   ),   'users' =>    array (     0 => 'users',   ),   'comments' =>    array (     0 => 'comments',   ),   'comment_queries' =>    array (     0 => 'comments',     1 => 'commentmeta',   ),   'term_rows' =>    array (     0 => 'terms',     1 => 'term_taxonomy',   ),   'post_meta' =>    array (     0 => 'postmeta',   ),   'user_meta' =>    array (     0 => 'usermeta',   ),   'term_meta' =>    array (     0 => 'termmeta',   ),   'comment_meta' =>    array (     0 => 'commentmeta',   ), )` — The tables each kind of entry is read from.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Posts`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Meta`, `Minn\Runtime\PostCaches`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQuery`, `Minn\Runtime\UserWrites`, `Minn\Theme\Templates`
+Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Posts`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Meta`, `Minn\Runtime\PostCaches`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermTags`, `Minn\Runtime\UserWrites`, `Minn\Theme\Templates`
 
 
 ### static `remember(string $kind, string|int $key, Closure $load): mixed`

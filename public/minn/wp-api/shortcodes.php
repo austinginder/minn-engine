@@ -85,15 +85,7 @@ function _filter_do_shortcode_context()
 
 function shortcode_atts($pairs, $atts, $shortcode = '')
 {
-    $atts = (array) $atts;
-    $out = [];
-    foreach ($pairs as $name => $default) {
-        $out[$name] = array_key_exists($name, $atts) ? $atts[$name] : $default;
-    }
-    if ($shortcode !== '') {
-        $out = apply_filters("shortcode_atts_{$shortcode}", $out, $pairs, $atts, $shortcode);
-    }
-    return $out;
+    return Minn\Runtime\Shortcodes::atts($pairs, $atts, $shortcode);
 }
 
 function do_shortcodes_in_html_tags($content, $ignore_html, $tagnames)

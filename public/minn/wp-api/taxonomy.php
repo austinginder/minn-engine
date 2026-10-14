@@ -304,21 +304,7 @@ function get_cat_name($cat_id)
 /** A category's old field names beside its term fields, on a term object or a term array alike (probe admin-terms). */
 function _make_cat_compat(&$category)
 {
-    if ($category instanceof WP_Term) {
-        $category->cat_ID = $category->term_id;
-        $category->category_count = $category->count;
-        $category->category_description = $category->description;
-        $category->cat_name = $category->name;
-        $category->category_nicename = $category->slug;
-        $category->category_parent = $category->parent;
-    } elseif (is_array($category) && isset($category['term_id'])) {
-        $category['cat_ID'] = &$category['term_id'];
-        $category['category_count'] = &$category['count'];
-        $category['category_description'] = &$category['description'];
-        $category['cat_name'] = &$category['name'];
-        $category['category_nicename'] = &$category['slug'];
-        $category['category_parent'] = &$category['parent'];
-    }
+    Minn\Runtime\TermTags::categoryFields($category);
 }
 
 function get_term_link($term, $taxonomy = '')
@@ -337,8 +323,7 @@ function _minn_term_query_link(WP_Term $term): string
 
 function get_category_link($category)
 {
-    $term = $category instanceof WP_Term ? $category : get_term((int) $category, 'category');
-    return $term instanceof WP_Term ? get_term_link($term) : '';
+    return Minn\Runtime\TermTags::categoryLink($category);
 }
 
 function get_tag_link($tag)
@@ -369,38 +354,17 @@ function wp_add_object_terms($object_id, $terms, $taxonomy)
 
 function get_the_terms($post, $taxonomy)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    // The object's terms as a list primed them, else read, as the reference reads them.
-    $terms = get_object_term_cache($post->ID, $taxonomy);
-    if ($terms === false) {
-        $terms = wp_get_object_terms($post->ID, $taxonomy);
-    }
-    if (is_wp_error($terms)) {
-        return $terms;
-    }
-    $terms = apply_filters('get_the_terms', $terms, $post->ID, $taxonomy);
-    return $terms === [] ? false : $terms;
+    return Minn\Runtime\TermTags::ofPost($post, $taxonomy);
 }
 
 function get_the_category($post_id = false)
 {
-    $terms = get_the_terms($post_id, 'category');
-    if (!is_array($terms)) {
-        $terms = [];
-    }
-    foreach ($terms as $term) {
-        _make_cat_compat($term);
-    }
-    return apply_filters('get_the_categories', $terms, $post_id);
+    return Minn\Runtime\TermTags::categories($post_id);
 }
 
 function get_the_tags($post = 0)
 {
-    $terms = get_the_terms($post, 'post_tag');
-    return apply_filters('get_the_tags', $terms);
+    return Minn\Runtime\TermTags::tags($post);
 }
 
 function has_term($term = '', $taxonomy = '', $post = null)
@@ -1247,22 +1211,7 @@ function term_is_ancestor_of($term1, $term2, $taxonomy)
 
 function get_category_parents($category_id, $link = false, $separator = '/', $nicename = false, $deprecated = [])
 {
-    $term = get_term((int) $category_id, 'category');
-    if (!$term || is_wp_error($term)) {
-        return $term instanceof WP_Error ? $term : '';
-    }
-    // Outermost first, the term itself last.
-    $ids = array_reverse(array_map('intval', get_ancestors((int) $category_id, 'category', 'taxonomy')));
-    $ids[] = (int) $category_id;
-    $line = [];
-    foreach ($ids as $id) {
-        $row = get_term($id, 'category');
-        if (!$row || is_wp_error($row)) {
-            continue;
-        }
-        $line[] = ['name' => $row->name, 'slug' => $row->slug, 'link' => get_category_link($id)];
-    }
-    return Minn\Front\TermLists::parentChain($line, (bool) $link, (string) $separator, (bool) $nicename);
+    return Minn\Runtime\TermTags::categoryParents($category_id, $link, $separator, $nicename, $deprecated);
 }
 
 function tag_description($tag = 0)
@@ -1277,23 +1226,7 @@ function _prime_term_caches($term_ids, $update_meta_cache = true)
 
 function get_object_term_cache($id, $taxonomy)
 {
-    $cached = wp_cache_get((int) $id, 'minn_object_terms');
-    if (is_array($cached) && array_key_exists((string) $taxonomy, $cached)) {
-        return $cached[(string) $taxonomy];
-    }
-    // A list the engine primed (update_post_caches) answers too, each term through get_term, as the reference's primed relationships do.
-    $primed = Minn\Content\RowCache::peek('post_terms', (int) $id . ':' . $taxonomy);
-    if (!is_array($primed)) {
-        return false;
-    }
-    $terms = [];
-    foreach ($primed as [$termId]) {
-        $term = get_term((int) $termId, (string) $taxonomy);
-        if ($term instanceof WP_Term) {
-            $terms[] = $term;
-        }
-    }
-    return $terms;
+    return Minn\Runtime\TermTags::cached($id, $taxonomy);
 }
 
 function update_object_term_cache($object_ids, $object_type)

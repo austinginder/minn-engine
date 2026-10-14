@@ -179,11 +179,7 @@ function get_lastcommentmodified($timezone = 'server')
 /** A comment's link, at the page of comments it is on (Minn\Runtime\CommentPages), through get_comment_link. */
 function get_comment_link($comment = null, $args = [])
 {
-    $comment = get_comment($comment);
-    $args = wp_parse_args(is_array($args) ? $args : ['page' => $args], ['type' => 'all', 'page' => '', 'per_page' => '', 'max_depth' => '', 'cpage' => null]);
-    $page = Minn\Runtime\CommentPages::linkPage($comment, $args);
-    $link = Minn\Runtime\CommentPages::link((string) get_permalink($comment?->comment_post_ID), $page) . '#comment-' . $comment?->comment_ID;
-    return apply_filters('get_comment_link', $link, $comment, $args, $page);
+    return Minn\Runtime\CommentTags::link($comment, $args);
 }
 
 function get_page_of_comment($comment_id, $args = [])
@@ -653,10 +649,7 @@ function comment_id_fields($post = null)
 /** The post's link to its comments, or to the form when it has none. */
 function get_comments_link($post = 0)
 {
-    $post = get_post($post);
-    // No post (one the reader may not see, in its comment feed) still gives the fragment alone, as the reference's does.
-    $link = ($post ? get_permalink($post) : '') . (get_comments_number($post) > 0 ? '#comments' : '#respond');
-    return apply_filters('get_comments_link', $link, $post ? (int) $post->ID : 0);
+    return Minn\Runtime\CommentTags::postLink($post);
 }
 
 /** A page of a post's comments: comment-page-N/ under a pretty permalink, ?cpage=N otherwise. */

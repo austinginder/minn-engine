@@ -16266,6 +16266,14 @@ allowed-HTML tables and the policy. The comment form sets the content filters ag
 wp_kses current_filter(), false outside a filter). The http-transports
 probe stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 35, template tags about terms, authors and comments.** `Runtime\TermTags` answers get_the_terms,
+get_object_term_cache, get_the_category (with `categoryFields()` for _make_cat_compat), get_the_tags,
+get_post_format, get_category_link and get_category_parents. `PostTags::authorMeta()`, `authorPostsUrl()` and
+`titleAttribute()` answer get_the_author_meta, get_author_posts_url and the_title_attribute;
+`CommentTags::link()` and `postLink()` get_comment_link and get_comments_link; `Shortcodes::atts()`
+shortcode_atts. The http-transports probe stays out of the comparison; the other probes give identical output
+before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

@@ -355,7 +355,7 @@ Route: `* /wp-comments-post.php (public)`
 
 The comment form's target.
 
-Internals: `submit()` (private, line 48), `refusal()` (private, line 69)
+Internals: `submit()` (private, line 49), `refusal()` (private, line 70)
 
 
 ## CustomLogo
@@ -508,7 +508,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 98)
+Internals: `enclosures()` (private, line 99)
 
 
 ## FeedTemplates
@@ -818,7 +818,7 @@ A search's URL.
 
 A listing URL for a page number.
 
-Internals: `filtered()` (private, line 126), `hasPrettyLink()` (private, line 256), `fill()` (private, line 261)
+Internals: `filtered()` (private, line 127), `hasPrettyLink()` (private, line 257), `fill()` (private, line 262)
 
 
 ## PostEmbed
@@ -1507,6 +1507,8 @@ Internals: `xsl()` (private, line 30)
 A term's parent chain and the tag cloud, built from term rows the caller
 already fetched and links the caller resolves. The category list and
 select are the walkers' (Walker_Category, Walker_CategoryDropdown).
+
+Used by: `Minn\Runtime\TermTags`
 
 ### static `parentChain(array $line, bool $link, string $separator, bool $bySlug): string`
 

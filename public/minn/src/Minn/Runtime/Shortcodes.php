@@ -12,6 +12,26 @@ namespace Minn\Runtime;
  */
 final class Shortcodes
 {
+    /**
+     * A shortcode's attributes over its defaults (shortcode_atts): only the
+     * names the defaults have, the given value else the default; through
+     * shortcode_atts_{shortcode} when the shortcode is named.
+     *
+     * @return array<string, mixed>
+     */
+    public static function atts(mixed $pairs, mixed $atts, mixed $shortcode = ''): mixed
+    {
+        $atts = (array) $atts;
+        $out = [];
+        foreach ($pairs as $name => $default) {
+            $out[$name] = array_key_exists($name, $atts) ? $atts[$name] : $default;
+        }
+        if ($shortcode !== '') {
+            $out = Runtime::hooks()->filter("shortcode_atts_{$shortcode}", [$out, $pairs, $atts, $shortcode]);
+        }
+        return $out;
+    }
+
     /** @var array<string, callable> */
     private array $tags = [];
 

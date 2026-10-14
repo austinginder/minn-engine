@@ -138,7 +138,7 @@ final class FeedTemplates
     private static function atomEntry(FeedWriter $w): void
     {
         $w->put("\t<entry>\n\t\t<author>\n\t\t\t<name>")->tag('the_author')->put("</name>\n\t\t\t");
-        if (!empty(\get_the_author_meta('url'))) {
+        if (!empty(PostTags::authorMeta('url'))) {
             $w->put("\t\t\t\t<uri>")->tag('the_author_meta', 'url')->put("</uri>\n\t\t\t\t");
         }
         $w->act('atom_author')
@@ -316,7 +316,7 @@ final class FeedTemplates
         if ((int) $comment->comment_parent === 0) {
             $w->tag('the_guid')->put('" href="')->tag('the_permalink_rss');
         } else {
-            $w->tag('comment_guid', $comment->comment_parent)->put('" href="', Escape::url(\get_comment_link($comment->comment_parent)));
+            $w->tag('comment_guid', $comment->comment_parent)->put('" href="', Escape::url(CommentTags::link($comment->comment_parent)));
         }
         $w->put('" type="')->tag('bloginfo_rss', 'html_type')->put("\" />\n\t\t\t")->act('comment_atom_entry', $comment->comment_ID, $post->ID)->put("\t</entry>\n\t");
     }

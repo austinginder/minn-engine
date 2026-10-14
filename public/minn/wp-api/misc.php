@@ -178,19 +178,7 @@ function get_post_format_string($slug)
 
 function get_post_format($post = null)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    if (!post_type_supports($post->post_type, 'post-formats')) {
-        return false;
-    }
-    $format = get_the_terms($post->ID, 'post_format');
-    if (empty($format)) {
-        return false;
-    }
-    $format = array_shift($format);
-    return str_replace('post-format-', '', $format->slug);
+    return Minn\Runtime\TermTags::format($post);
 }
 
 function has_post_format($format = [], $post = null)

@@ -8,6 +8,7 @@ use Minn\Content\TermRecord;
 use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Closure;
+use Minn\Runtime\CommentTags;
 use Minn\Runtime\PostLinks;
 use Minn\Runtime\Registry;
 use Minn\Runtime\Runtime;
@@ -117,7 +118,7 @@ final readonly class Permalinks
     public function forComment(int $commentId, ?PostRecord $post, int $postId): string
     {
         if (self::filtered()) {
-            return (string) \get_comment_link($commentId);
+            return (string) CommentTags::link($commentId);
         }
         return ($post === null ? $this->url('/?p=' . $postId) : $this->forPost($post)) . '#comment-' . $commentId;
     }

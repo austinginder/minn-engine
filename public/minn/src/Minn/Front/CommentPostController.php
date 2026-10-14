@@ -13,6 +13,7 @@ use Minn\Http\Route;
 use Minn\Objects\Errors;
 use Minn\Runtime\CommentChecks;
 use Minn\Runtime\CommentForm;
+use Minn\Runtime\CommentTags;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
@@ -55,7 +56,7 @@ final readonly class CommentPostController
         $consent = isset($request->form['wp-comment-cookies-consent']);
         Runtime::hooks()->action('set_comment_cookies', [$comment, Handoff::currentUser(), $consent]);
         $redirect = (string) ($request->form['redirect_to'] ?? '');
-        $location = $redirect === '' ? (string) \get_comment_link($comment) : $redirect . '#comment-' . $comment->comment_ID;
+        $location = $redirect === '' ? (string) CommentTags::link($comment) : $redirect . '#comment-' . $comment->comment_ID;
         if (!$consent && CommentChecks::status($comment) === 'unapproved' && (string) $comment->comment_author_email !== '') {
             $location = QueryArgs::add(['unapproved' => $comment->comment_ID, 'moderation-hash' => Handoff::hash($comment->comment_date_gmt)], $location);
         }

@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 719,
-        "composes": 2212,
-        "leaf": 1015,
-        "noop": 3035,
+        "minn": 715,
+        "composes": 2203,
+        "leaf": 1014,
+        "noop": 3049,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8675,
-        "minnMethods": 1303,
+        "minnMethods": 1314,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -35361,9 +35361,11 @@
         },
         "_make_cat_compat": {
             "file": "taxonomy.php",
-            "lines": 15,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermTags::categoryFields"
+            ],
             "composes": []
         },
         "_make_clickable_rel_attr": {
@@ -47108,18 +47110,12 @@
         },
         "get_author_posts_url": {
             "file": "post.php",
-            "lines": 8,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::isPretty"
+                "Minn\\Runtime\\PostTags::authorPostsUrl"
             ],
-            "composes": [
-                "apply_filters",
-                "get_userdata",
-                "home_url"
-            ]
+            "composes": []
         },
         "get_author_rss_link": {
             "file": "deprecated.php",
@@ -47660,27 +47656,21 @@
         },
         "get_category_link": {
             "file": "taxonomy.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_term",
-                "get_term_link"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermTags::categoryLink"
+            ],
+            "composes": []
         },
         "get_category_parents": {
             "file": "taxonomy.php",
-            "lines": 16,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Front\\TermLists::parentChain"
+                "Minn\\Runtime\\TermTags::categoryParents"
             ],
-            "composes": [
-                "get_ancestors",
-                "get_category_link",
-                "get_term",
-                "is_wp_error"
-            ]
+            "composes": []
         },
         "get_category_rss_link": {
             "file": "deprecated.php",
@@ -47976,18 +47966,12 @@
         },
         "get_comment_link": {
             "file": "comment.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\CommentPages::link",
-                "Minn\\Runtime\\CommentPages::linkPage"
+                "Minn\\Runtime\\CommentTags::link"
             ],
-            "composes": [
-                "apply_filters",
-                "get_comment",
-                "get_permalink",
-                "wp_parse_args"
-            ]
+            "composes": []
         },
         "get_comment_meta": {
             "file": "meta.php",
@@ -48103,16 +48087,12 @@
         },
         "get_comments_link": {
             "file": "comment.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_comments_number",
-                "get_permalink",
-                "get_post",
-                "post"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentTags::postLink"
+            ],
+            "composes": []
         },
         "get_comments_number": {
             "file": "comment.php",
@@ -49370,15 +49350,12 @@
         },
         "get_object_term_cache": {
             "file": "taxonomy.php",
-            "lines": 17,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\RowCache::peek"
+                "Minn\\Runtime\\TermTags::cached"
             ],
-            "composes": [
-                "get_term",
-                "wp_cache_get"
-            ]
+            "composes": []
         },
         "get_objects_in_term": {
             "file": "taxonomy.php",
@@ -49876,14 +49853,12 @@
         },
         "get_post_format": {
             "file": "misc.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_post",
-                "get_the_terms",
-                "post_type_supports"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermTags::format"
+            ],
+            "composes": []
         },
         "get_post_format_link": {
             "file": "misc.php",
@@ -51385,13 +51360,12 @@
         },
         "get_the_author_meta": {
             "file": "post.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_userdata"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostTags::authorMeta"
+            ],
+            "composes": []
         },
         "get_the_author_msn": {
             "file": "deprecated.php",
@@ -51475,14 +51449,12 @@
         },
         "get_the_category": {
             "file": "taxonomy.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_make_cat_compat",
-                "apply_filters",
-                "get_the_terms"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermTags::categories"
+            ],
+            "composes": []
         },
         "get_the_category_by_ID": {
             "file": "taxonomy.php",
@@ -51794,13 +51766,12 @@
         },
         "get_the_tags": {
             "file": "taxonomy.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_the_terms"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermTags::tags"
+            ],
+            "composes": []
         },
         "get_the_taxonomies": {
             "file": "taxonomy.php",
@@ -51836,16 +51807,12 @@
         },
         "get_the_terms": {
             "file": "taxonomy.php",
-            "lines": 14,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_object_term_cache",
-                "get_post",
-                "is_wp_error",
-                "wp_get_object_terms"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermTags::ofPost"
+            ],
+            "composes": []
         },
         "get_the_time": {
             "file": "post.php",
@@ -60590,12 +60557,12 @@
         },
         "shortcode_atts": {
             "file": "shortcodes.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Shortcodes::atts"
+            ],
+            "composes": []
         },
         "shortcode_exists": {
             "file": "shortcodes.php",
@@ -61789,15 +61756,12 @@
         },
         "the_title_attribute": {
             "file": "post.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "esc_attr",
-                "get_post",
-                "get_the_title",
-                "wp_parse_args"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostTags::titleAttribute"
+            ],
+            "composes": []
         },
         "the_title_rss": {
             "file": "feed.php",

@@ -94,18 +94,7 @@ function the_title($before = '', $after = '', $display = true)
 
 function the_title_attribute($args = '')
 {
-    $args = wp_parse_args($args, ['before' => '', 'after' => '', 'echo' => true, 'post' => get_post()]);
-    $title = get_the_title($args['post']);
-    if ($title === '') {
-        return null;
-    }
-    // Before and after lose their tags with the title (probe post-template-remaining).
-    $title = esc_attr(strip_tags($args['before'] . $title . $args['after']));
-    if ($args['echo']) {
-        echo $title;
-        return null;
-    }
-    return $title;
+    return Minn\Runtime\PostTags::titleAttribute($args);
 }
 
 /**
@@ -1411,19 +1400,7 @@ function wp_set_post_terms($post_id = 0, $terms = '', $taxonomy = 'post_tag', $a
 
 function get_the_author_meta($field = '', $user_id = false)
 {
-    $user = $user_id === false ? ($GLOBALS['authordata'] ?? null) : get_userdata((int) $user_id);
-    if (!$user instanceof WP_User) {
-        return '';
-    }
-    // An empty field names nothing: '' rather than every meta value (probe template-tags-remaining).
-    $value = $field === '' ? '' : ($field === 'ID' ? $user->ID : $user->get($field));
-    if ($field === 'ID') {
-        $value = (int) $user->ID;
-    }
-    if (in_array($field, ['login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status'], true)) {
-        $value = $user->get('user_' . $field);
-    }
-    return apply_filters("get_the_author_{$field}", $value === null || $value === false ? '' : $value, $user_id === false ? $user->ID : $user_id, $user_id === false ? $user->ID : false);
+    return Minn\Runtime\PostTags::authorMeta($field, $user_id);
 }
 
 function the_author_meta($field = '', $user_id = false)
@@ -1445,14 +1422,7 @@ function the_author($deprecated = '', $deprecated_echo = true)
 
 function get_author_posts_url($author_id, $author_nicename = '')
 {
-    $author_id = (int) $author_id;
-    if ($author_nicename === '') {
-        $user = get_userdata($author_id);
-        $author_nicename = $user ? $user->user_nicename : '';
-    }
-    $permalinks = Runtime::current()->get('permalinks');
-    $link = $permalinks !== null && $permalinks->isPretty() ? home_url('/author/' . ($author_nicename === '' ? '' : $author_nicename . '/')) : home_url('/?author=' . $author_id);
-    return apply_filters('author_link', $link, $author_id, $author_nicename);
+    return Minn\Runtime\PostTags::authorPostsUrl($author_id, $author_nicename);
 }
 
 function get_the_author_posts_link()

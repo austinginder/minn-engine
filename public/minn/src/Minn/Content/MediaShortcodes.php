@@ -11,6 +11,7 @@ use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\Shortcodes;
 use Minn\Support\Escape;
 use Minn\Support\Flag;
 
@@ -40,7 +41,7 @@ final class MediaShortcodes
         }
         $types = (array) \wp_get_video_extensions();
         $defaults = ['src' => '', 'poster' => '', 'loop' => '', 'autoplay' => '', 'muted' => 'false', 'preload' => 'metadata', 'width' => 640, 'height' => 360, 'class' => 'wp-video-shortcode'] + array_fill_keys($types, '');
-        $atts = \shortcode_atts($defaults, (array) $attr, 'video');
+        $atts = Shortcodes::atts($defaults, (array) $attr, 'video');
         $hosted = match (true) {
             preg_match(self::YOUTUBE, (string) $atts['src']) === 1 => 'video/youtube',
             preg_match(self::VIMEO, (string) $atts['src']) === 1 => 'video/vimeo',
@@ -76,7 +77,7 @@ final class MediaShortcodes
         }
         $types = (array) \wp_get_audio_extensions();
         $defaults = ['src' => '', 'loop' => '', 'autoplay' => '', 'muted' => 'false', 'preload' => 'none', 'class' => 'wp-audio-shortcode', 'style' => 'width: 100%;'] + array_fill_keys($types, '');
-        $atts = \shortcode_atts($defaults, (array) $attr, 'audio');
+        $atts = Shortcodes::atts($defaults, (array) $attr, 'audio');
         $sources = self::sources($atts, $types, null, 'audio');
         if (!is_array($sources)) {
             return $sources;

@@ -53,7 +53,7 @@ final class PostEmbed
         $author = Handoff::user((int) $post->post_author);
         if ($author instanceof User) {
             $data['author_name'] = $author->display_name;
-            $data['author_url'] = \get_author_posts_url($author->ID);
+            $data['author_url'] = PostTags::authorPostsUrl($author->ID);
         }
         return Runtime::hooks()->filter('oembed_response_data', [$data, $post, $width, $height]);
     }

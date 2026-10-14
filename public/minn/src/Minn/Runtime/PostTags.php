@@ -6,6 +6,8 @@ namespace Minn\Runtime;
 
 use DateTimeZone;
 use Minn\Content\PasswordGate;
+use Minn\Http\Response;
+use Minn\Objects\User;
 
 /**
  * What the post template tags tell about a post (the one being read when
@@ -58,6 +60,61 @@ final class PostTags
             return $datetime->getTimestamp();
         }
         return $translate ? SiteTime::format($format, $datetime->getTimestamp(), $gmt ? new DateTimeZone('UTC') : null) : $datetime->format((string) $format);
+    }
+
+    /**
+     * One of the author's fields (get_the_author_meta): the post's author
+     * being read unless a user is named; ID as an integer, the user_ columns
+     * by their short names, empty for none; as get_the_author_{field}
+     * leaves it.
+     */
+    public static function authorMeta(mixed $field = '', mixed $userId = false): mixed
+    {
+        $user = $userId === false ? ($GLOBALS['authordata'] ?? null) : Handoff::user((int) $userId);
+        if (!$user instanceof User) {
+            return '';
+        }
+        $value = $field === '' ? '' : ($field === 'ID' ? $user->ID : $user->get($field));
+        if ($field === 'ID') {
+            $value = (int) $user->ID;
+        }
+        if (in_array($field, ['login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status'], true)) {
+            $value = $user->get('user_' . $field);
+        }
+        return Runtime::hooks()->filter("get_the_author_{$field}", [$value === null || $value === false ? '' : $value, $userId === false ? $user->ID : $userId, $userId === false ? $user->ID : false]);
+    }
+
+    /** An author's archive address (get_author_posts_url): /author/{nicename}/ with pretty permalinks, else ?author=; as author_link leaves it. */
+    public static function authorPostsUrl(mixed $authorId, mixed $nicename = ''): mixed
+    {
+        $authorId = (int) $authorId;
+        if ($nicename === '') {
+            $user = Handoff::user($authorId);
+            $nicename = $user ? $user->user_nicename : '';
+        }
+        $permalinks = Runtime::current()->get('permalinks');
+        $link = $permalinks !== null && $permalinks->isPretty() ? SiteUrls::home('/author/' . ($nicename === '' ? '' : $nicename . '/')) : SiteUrls::home('/?author=' . $authorId);
+        return Runtime::hooks()->filter('author_link', [$link, $authorId, $nicename]);
+    }
+
+    /**
+     * A post's title made safe for an attribute (the_title_attribute), its
+     * tags gone with those of before and after; printed unless echo is
+     * false, null for no title.
+     */
+    public static function titleAttribute(mixed $args = ''): mixed
+    {
+        $args = \Minn\Support\Lists::args($args, ['before' => '', 'after' => '', 'echo' => true, 'post' => Records::post()]);
+        $title = self::title($args['post']);
+        if ($title === '') {
+            return null;
+        }
+        $title = \Minn\Support\Escape::attr(strip_tags($args['before'] . $title . $args['after']));
+        if ($args['echo']) {
+            Response::write($title);
+            return null;
+        }
+        return $title;
     }
 
     /** The id of the post being read (get_the_ID), or false. */

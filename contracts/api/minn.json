@@ -29328,6 +29328,7 @@
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\Shortcodes",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Flag"
             ],
@@ -29376,8 +29377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 67
+                    "line": 35,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -29405,8 +29406,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 90
+                    "line": 71,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -29432,8 +29433,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 101
+                    "line": 94,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -29477,8 +29478,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 137
+                    "line": 113,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -29506,8 +29507,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 148
+                    "line": 141,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -29549,8 +29550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 162
+                    "line": 152,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -29578,8 +29579,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 175
+                    "line": 166,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -29607,8 +29608,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 182
+                    "line": 179,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -29627,8 +29628,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 193
+                    "line": 186,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -29654,8 +29655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 199
+                    "line": 197,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -29666,8 +29667,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 201,
-                    "end": 204
+                    "line": 202,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -29686,8 +29687,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 213
+                    "line": 208,
+                    "end": 214
                 }
             ]
         },
@@ -35635,6 +35636,7 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQuery",
+                "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\UserWrites",
                 "Minn\\Theme\\Templates"
             ],
@@ -46279,6 +46281,7 @@
                 "Minn\\Objects\\Errors",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Runtime"
@@ -46310,8 +46313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 37
+                    "line": 32,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -46330,8 +46333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 66
+                    "line": 49,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -46357,8 +46360,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 77
+                    "line": 70,
+                    "end": 78
                 }
             ]
         },
@@ -46424,6 +46427,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\I18n\\Gettext",
                 "Minn\\I18n\\Numbers",
+                "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostReads",
@@ -46450,8 +46454,8 @@
                         "@return array{0: int, 1: string, 2: string}|null"
                     ],
                     "params": [],
-                    "line": 36,
-                    "end": 59
+                    "line": 37,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -46477,8 +46481,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 70
+                    "line": 63,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -46489,8 +46493,8 @@
                     "doc": "The site's name and icon, linking home, the whole block through embed_site_title_html.",
                     "shapes": [],
                     "params": [],
-                    "line": 73,
-                    "end": 82
+                    "line": 74,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -46501,8 +46505,8 @@
                     "doc": "The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open.",
                     "shapes": [],
                     "params": [],
-                    "line": 85,
-                    "end": 94
+                    "line": 86,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -46513,8 +46517,8 @@
                     "doc": "The button that opens the sharing dialog; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 97,
-                    "end": 103
+                    "line": 98,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -46525,8 +46529,8 @@
                     "doc": "The sharing dialog: the post's address and its embed code, each a tab; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 106,
-                    "end": 119
+                    "line": 107,
+                    "end": 120
                 }
             ]
         },
@@ -46713,6 +46717,7 @@
                 "Minn\\Runtime\\SiteInfo",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\TermFields",
+                "Minn\\Runtime\\TermTags",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Text",
                 "Minn\\Support\\Url"
@@ -46739,8 +46744,8 @@
                     "doc": "The feed the query asks for run by its do_feed_{feed} handlers\n(do_feed): leading underscores dropped, the default for none; a 404\nwhen nothing handles it.",
                     "shapes": [],
                     "params": [],
-                    "line": 42,
-                    "end": 52
+                    "line": 43,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -46751,8 +46756,8 @@
                     "doc": "The feed the site serves by default (get_default_feed): default_feed's, \"rss\" read as rss2.",
                     "shapes": [],
                     "params": [],
-                    "line": 55,
-                    "end": 59
+                    "line": 56,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -46771,8 +46776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 69
+                    "line": 63,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -46791,8 +46796,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 75
+                    "line": 73,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -46811,8 +46816,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 95
+                    "line": 79,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -46823,8 +46828,8 @@
                     "doc": "The current post's enclosures as RSS has them: address, length, and the type the third line starts with.",
                     "shapes": [],
                     "params": [],
-                    "line": 108,
-                    "end": 119
+                    "line": 109,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -46835,8 +46840,8 @@
                     "doc": "The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.",
                     "shapes": [],
                     "params": [],
-                    "line": 122,
-                    "end": 139
+                    "line": 123,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -46862,8 +46867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 164
+                    "line": 143,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -46882,8 +46887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 190
+                    "line": 172,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -46894,8 +46899,8 @@
                     "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 193,
-                    "end": 203
+                    "line": 194,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -46906,8 +46911,8 @@
                     "doc": "The site icon as an Atom icon, or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 206,
-                    "end": 210
+                    "line": 207,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -46920,8 +46925,8 @@
                         "@return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted"
                     ],
                     "params": [],
-                    "line": 98,
-                    "end": 105
+                    "line": 99,
+                    "end": 106
                 }
             ]
         },
@@ -48237,6 +48242,7 @@
                 "Minn\\Content\\Terms",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Db",
+                "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\Runtime"
@@ -48349,8 +48355,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 29,
-                "end": 39
+                "line": 30,
+                "end": 40
             },
             "cases": [],
             "constants": [
@@ -48444,8 +48450,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 47
+                    "line": 43,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -48464,8 +48470,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 55
+                    "line": 51,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -48484,8 +48490,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 63
+                    "line": 59,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -48504,8 +48510,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 77
+                    "line": 67,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -48516,8 +48522,8 @@
                     "doc": "Whether the site uses a permalink structure.",
                     "shapes": [],
                     "params": [],
-                    "line": 80,
-                    "end": 83
+                    "line": 81,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -48536,8 +48542,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 87,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -48563,8 +48569,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 100
+                    "line": 97,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -48583,8 +48589,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 110
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -48617,8 +48623,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 123
+                    "line": 118,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -48637,8 +48643,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 153
+                    "line": 133,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -48657,8 +48663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 162
+                    "line": 157,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -48677,8 +48683,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 171
+                    "line": 166,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -48697,8 +48703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 189
+                    "line": 179,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -48717,8 +48723,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 218
+                    "line": 193,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -48737,8 +48743,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 226
+                    "line": 222,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -48771,8 +48777,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 242
+                    "line": 230,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -48791,8 +48797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 248
+                    "line": 246,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -48818,8 +48824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 254
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -48830,8 +48836,8 @@
                     "doc": "Whether links go through the reference's filters: once plugins can hook them.",
                     "shapes": [],
                     "params": [],
-                    "line": 126,
-                    "end": 129
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -48850,8 +48856,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 259
+                    "line": 257,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -48870,8 +48876,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 287
+                    "line": 262,
+                    "end": 288
                 }
             ]
         },
@@ -52956,7 +52962,9 @@
             "uses": [
                 "Minn\\Html"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\TermTags"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -68000,6 +68008,7 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\RequestHeaders",
                 "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\FrontLifecycle",
@@ -83706,6 +83715,7 @@
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Theme\\QueryClasses"
             ],
@@ -83866,6 +83876,7 @@
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaKeys",
+                "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\UserWrites",
                 "Minn\\Theme\\QueryClasses"
             ],
@@ -104937,7 +104948,8 @@
                 "Minn\\Rest\\RegisteredType",
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RestMeta",
-                "Minn\\Rest\\RestUrl"
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Runtime\\TermTags"
             ],
             "usedBy": [
                 "Minn\\Rest\\PostObject"
@@ -104970,8 +104982,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 15,
-                "end": 17
+                "line": 16,
+                "end": 18
             },
             "cases": [],
             "constants": [],
@@ -105047,8 +105059,8 @@
                             "doc": "a GMT date as the object writes it"
                         }
                     ],
-                    "line": 30,
-                    "end": 76
+                    "line": 31,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -105097,8 +105109,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 100
+                    "line": 80,
+                    "end": 101
                 }
             ]
         },
@@ -121525,7 +121537,9 @@
                 "Minn\\Support\\Lists",
                 "Minn\\Support\\Url"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\CommentTags"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -122346,24 +122360,78 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CommentTags.php",
-            "lines": 41,
+            "lines": 59,
             "doc": "What the comment template tags tell about a comment (the one being read\nwhen none is named): when it was written and its author's address, each\nthrough the filter plugins hook there.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\CommentPages",
+                "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteTime",
-                "Minn\\Support\\Escape"
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Lists"
             ],
             "usedBy": [
-                "Minn\\Front\\FeedTemplates"
+                "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\EmbedCard",
+                "Minn\\Front\\FeedTemplates",
+                "Minn\\Front\\Permalinks"
             ],
             "constructor": null,
             "cases": [],
             "constants": [],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "link",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "link(mixed $comment = NULL, mixed $args = array ( )): mixed",
+                    "doc": "A comment's address, at the page of comments it is on (get_comment_link), as get_comment_link leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "comment",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 24
+                },
+                {
+                    "routes": [],
+                    "name": "postLink",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "postLink(mixed $post = 0): mixed",
+                    "doc": "A post's address at its comments, or at the form when it has none (get_comments_link), as get_comments_link leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 32
+                },
                 {
                     "routes": [],
                     "name": "author",
@@ -122381,8 +122449,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 17,
-                    "end": 22
+                    "line": 35,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -122393,8 +122461,8 @@
                     "doc": "The author of the comment being read, for a feed (get_comment_author_rss), as comment_author_rss leaves it.",
                     "shapes": [],
                     "params": [],
-                    "line": 25,
-                    "end": 28
+                    "line": 43,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -122434,8 +122502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 44
+                    "line": 53,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -122454,8 +122522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 53
+                    "line": 65,
+                    "end": 71
                 }
             ]
         },
@@ -125644,6 +125712,7 @@
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostRevisions",
+                "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
@@ -125653,6 +125722,7 @@
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\Themes",
@@ -135549,6 +135619,7 @@
                 "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteTime"
@@ -136710,6 +136781,7 @@
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
+                "Minn\\Runtime\\TermTags",
                 "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Url"
             ],
@@ -136720,6 +136792,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Runtime\\ArchiveLinks",
+                "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostWrites"
@@ -140510,16 +140583,22 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostTags.php",
-            "lines": 127,
+            "lines": 182,
             "doc": "What the post template tags tell about a post (the one being read when\nnone is named): its id and title, whether a password stands before it,\nwhether comments and pings are open, how many comments it has, and its\nfeatured image; each through the filter plugins hook there.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PasswordGate",
+                "Minn\\Http\\Response",
+                "Minn\\Objects\\User",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Runtime\\SiteTime"
+                "Minn\\Runtime\\SiteTime",
+                "Minn\\Runtime\\SiteUrls",
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Lists"
             ],
             "usedBy": [
                 "Minn\\Content\\MediaShortcodes",
@@ -140528,7 +140607,9 @@
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\PostData",
                 "Minn\\Theme\\FrontLifecycle"
             ],
             "constructor": null,
@@ -140574,8 +140655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 36
+                    "line": 26,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -140615,8 +140696,82 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 47
+                    "line": 41,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "authorMeta",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "authorMeta(mixed $field = '', mixed $userId = false): mixed",
+                    "doc": "One of the author's fields (get_the_author_meta): the post's author\nbeing read unless a user is named; ID as an integer, the user_ columns\nby their short names, empty for none; as get_the_author_{field}\nleaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "field",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "authorPostsUrl",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "authorPostsUrl(mixed $authorId, mixed $nicename = ''): mixed",
+                    "doc": "An author's archive address (get_author_posts_url): /author/{nicename}/ with pretty permalinks, else ?author=; as author_link leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "authorId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "nicename",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "titleAttribute",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "titleAttribute(mixed $args = ''): mixed",
+                    "doc": "A post's title made safe for an attribute (the_title_attribute), its\ntags gone with those of before and after; printed unless echo is\nfalse, null for no title.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -140627,8 +140782,8 @@
                     "doc": "The id of the post being read (get_the_ID), or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 64,
-                    "end": 68
+                    "line": 121,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -140647,8 +140802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 90
+                    "line": 132,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -140667,8 +140822,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 102
+                    "line": 151,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -140687,8 +140842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 109
+                    "line": 162,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -140707,8 +140862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 116
+                    "line": 169,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -140727,8 +140882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 127
+                    "line": 176,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -140747,8 +140902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 134
+                    "line": 187,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -140767,8 +140922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 141
+                    "line": 194,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -140808,8 +140963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 61
+                    "line": 52,
+                    "end": 63
                 }
             ]
         },
@@ -142308,6 +142463,7 @@
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\UserWrites"
             ],
@@ -143079,6 +143235,7 @@
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\UserQueryRunner",
                 "Minn\\Theme\\FrontLifecycle",
@@ -145453,6 +145610,7 @@
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\ThemeMods",
@@ -147341,7 +147499,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Shortcodes.php",
-            "lines": 274,
+            "lines": 294,
             "doc": "The shortcode registry plugin code fills with add_shortcode, and the\nexpansion do_shortcode performs: [tag attrs], [tag attrs/], [tag]…[/tag]\n(the first closing tag wins; content is not expanded again), [[tag]] as\nthe literal, unregistered tags left as written.",
             "implements": [],
             "extends": null,
@@ -147352,6 +147510,7 @@
                 "Minn\\Support\\KsesAttributes"
             ],
             "usedBy": [
+                "Minn\\Content\\MediaShortcodes",
                 "Minn\\Runtime\\Runtime"
             ],
             "constructor": null,
@@ -147390,6 +147549,42 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "atts",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "atts(mixed $pairs, mixed $atts, mixed $shortcode = ''): mixed",
+                    "doc": "A shortcode's attributes over its defaults (shortcode_atts): only the\nnames the defaults have, the given value else the default; through\nshortcode_atts_{shortcode} when the shortcode is named.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "pairs",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "atts",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "shortcode",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 33
+                },
+                {
+                    "routes": [],
                     "name": "tags",
                     "static": false,
                     "visibility": "public",
@@ -147399,8 +147594,8 @@
                         "@return array<string, callable>"
                     ],
                     "params": [],
-                    "line": 24,
-                    "end": 27
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -147426,8 +147621,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 33
+                    "line": 50,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -147446,8 +147641,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 39
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -147458,8 +147653,8 @@
                     "doc": "Forgets every shortcode.",
                     "shapes": [],
                     "params": [],
-                    "line": 42,
-                    "end": 45
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -147478,8 +147673,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 51
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -147492,8 +147687,8 @@
                         "@return array<string, callable> every registered tag and its handler, to restore after a narrowed run"
                     ],
                     "params": [],
-                    "line": 58,
-                    "end": 61
+                    "line": 78,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -147514,8 +147709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 71
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -147528,8 +147723,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 78,
-                    "end": 81
+                    "line": 98,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -147548,8 +147743,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 92
+                    "line": 104,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -147575,8 +147770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 119
+                    "line": 122,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -147597,8 +147792,8 @@
                             "doc": "the pattern's match"
                         }
                     ],
-                    "line": 129,
-                    "end": 146
+                    "line": 149,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -147633,8 +147828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 184
+                    "line": 179,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -147653,8 +147848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 200
+                    "line": 211,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -147675,8 +147870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 206
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -147697,8 +147892,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 236
+                    "line": 237,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -147727,8 +147922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 257
+                    "line": 270,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -147756,8 +147951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 285
+                    "line": 284,
+                    "end": 305
                 }
             ]
         },
@@ -148277,6 +148472,7 @@
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\RequestHeaders",
                 "Minn\\Runtime\\SiteInfo",
                 "Minn\\Runtime\\TermLookup",
@@ -150650,6 +150846,7 @@
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\TermWrites"
             ],
             "constructor": null,
@@ -152788,6 +152985,240 @@
                     ],
                     "line": 221,
                     "end": 225
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\TermTags",
+            "short": "TermTags",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TermTags.php",
+            "lines": 130,
+            "doc": "What WordPress's template tags tell about a post's terms: its terms of a\ntaxonomy (as a list primed them, else read), its categories with their\nold field names, its tags, its format, and a category's address and the\nchain of its parents.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\RowCache",
+                "Minn\\Front\\TermLists",
+                "Minn\\Objects\\Term",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermLookup"
+            ],
+            "usedBy": [
+                "Minn\\Front\\FeedTags",
+                "Minn\\Rest\\RegisteredPostFields",
+                "Minn\\Runtime\\PostLinks"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "cached",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "cached(mixed $id, mixed $taxonomy): mixed",
+                    "doc": "The terms of a post that a list primed or the object cache holds\n(get_object_term_cache), each through get_term; false when nothing\nholds them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 24,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "ofPost",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ofPost(mixed $post, mixed $taxonomy): mixed",
+                    "doc": "A post's terms of a taxonomy (get_the_terms), as get_the_terms leaves them; false for none or no post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "categories",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "categories(mixed $postId = false): mixed",
+                    "doc": "A post's categories (get_the_category), each with its old field names, as get_the_categories leaves them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "tags",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "tags(mixed $post = 0): mixed",
+                    "doc": "A post's tags (get_the_tags), as get_the_tags leaves them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "format",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "format(mixed $post = NULL): mixed",
+                    "doc": "A post's format (get_post_format): its post_format term's slug without the prefix; false for none or a type without formats.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "categoryFields",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "categoryFields(mixed $category): void",
+                    "doc": "A category's old field names beside its term fields (_make_cat_compat), on a term object or a term array alike.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "category",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 97,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "categoryLink",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "categoryLink(mixed $category): mixed",
+                    "doc": "A category's address (get_category_link), empty for none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "category",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 121
+                },
+                {
+                    "routes": [],
+                    "name": "categoryParents",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "categoryParents(mixed $categoryId, mixed $link = false, mixed $separator = '/', mixed $nicename = false, mixed $deprecated = array ( )): mixed",
+                    "doc": "A category's parents and itself, outermost first (get_category_parents),\nas names or slugs, linked or not, with the separator after each; the\nerror for an unknown category.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "categoryId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "link",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "separator",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'/'",
+                            "doc": ""
+                        },
+                        {
+                            "name": "nicename",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "deprecated",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 128,
+                    "end": 145
                 }
             ]
         },
@@ -158621,6 +159052,7 @@
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\PostFields",
+                "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\SiteInfo",
                 "Minn\\Runtime\\SiteUrls",
@@ -161001,11 +161433,13 @@
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryWhere",
+                "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\Pages",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostRevisions",
+                "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermOrder",

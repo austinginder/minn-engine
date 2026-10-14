@@ -13,6 +13,24 @@ use Minn\Support\Escape;
  */
 final class CommentTags
 {
+    /** A comment's address, at the page of comments it is on (get_comment_link), as get_comment_link leaves it. */
+    public static function link(mixed $comment = null, mixed $args = []): mixed
+    {
+        $comment = Records::comment($comment);
+        $args = \Minn\Support\Lists::args(is_array($args) ? $args : ['page' => $args], ['type' => 'all', 'page' => '', 'per_page' => '', 'max_depth' => '', 'cpage' => null]);
+        $page = CommentPages::linkPage($comment, $args);
+        $link = CommentPages::link((string) PostLinks::permalink($comment?->comment_post_ID), $page) . '#comment-' . $comment?->comment_ID;
+        return Runtime::hooks()->filter('get_comment_link', [$link, $comment, $args, $page]);
+    }
+
+    /** A post's address at its comments, or at the form when it has none (get_comments_link), as get_comments_link leaves it. */
+    public static function postLink(mixed $post = 0): mixed
+    {
+        $post = Records::post($post);
+        $link = ($post ? PostLinks::permalink($post) : '') . (PostTags::commentsNumber($post) > 0 ? '#comments' : '#respond');
+        return Runtime::hooks()->filter('get_comments_link', [$link, $post ? (int) $post->ID : 0]);
+    }
+
     /** A comment's author (get_comment_author), "Anonymous" for none, as get_comment_author leaves it. */
     public static function author(mixed $commentId = 0): mixed
     {

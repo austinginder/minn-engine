@@ -2070,7 +2070,7 @@ under its REST base, the class list and links.
 - `@param Closure(string, string): string $gmt a GMT date as the object writes it`
 - `@return array<string, mixed>`
 
-Internals: `links()` (private, line 79)
+Internals: `links()` (private, line 80)
 
 
 ## RegisteredType
