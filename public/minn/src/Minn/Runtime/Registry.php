@@ -6,6 +6,8 @@ namespace Minn\Runtime;
 
 use Minn\I18n\Gettext;
 use Minn\Json;
+use Minn\Objects\PostType;
+use Minn\Objects\Taxonomy;
 
 /**
  * Post types, taxonomies, and statuses as plugin code registers and reads
@@ -29,9 +31,9 @@ final class Registry
     /** @var array<string, array<string, mixed>> each type's features, registered or not, as $_wp_post_type_features holds them */
     private array $features = [];
 
-    /** @var array<string, \WP_Post_Type> the one object per registered type, as $wp_post_types holds it */
+    /** @var array<string, PostType> the one object per registered type, as $wp_post_types holds it */
     private array $postTypeObjects = [];
-    /** @var array<string, \WP_Taxonomy> the one object per registered taxonomy, as $wp_taxonomies holds it */
+    /** @var array<string, Taxonomy> the one object per registered taxonomy, as $wp_taxonomies holds it */
     private array $taxonomyObjects = [];
 
     public function __construct(private readonly string $engineDir)
@@ -106,18 +108,18 @@ final class Registry
     }
 
     /** The one object for a registered post type, or null. */
-    public function postTypeObject(string $name): ?\WP_Post_Type
+    public function postTypeObject(string $name): ?PostType
     {
         if (!isset($this->postTypes[$name])) {
             return null;
         }
-        return $this->postTypeObjects[$name] ??= self::objectFrom(\WP_Post_Type::class, $this->postTypes[$name]);
+        return $this->postTypeObjects[$name] ??= self::objectFrom(Handoff::blankPostType(), $this->postTypes[$name]);
     }
 
     /**
      * The objects of every registered post type, in registration order.
      *
-     * @return array<string, \WP_Post_Type>
+     * @return array<string, PostType>
      */
     public function postTypeObjects(): array
     {
@@ -129,18 +131,18 @@ final class Registry
     }
 
     /** The one object for a registered taxonomy, or null. */
-    public function taxonomyObject(string $name): ?\WP_Taxonomy
+    public function taxonomyObject(string $name): ?Taxonomy
     {
         if (!isset($this->taxonomies[$name])) {
             return null;
         }
-        return $this->taxonomyObjects[$name] ??= self::objectFrom(\WP_Taxonomy::class, $this->taxonomies[$name]);
+        return $this->taxonomyObjects[$name] ??= self::objectFrom(Handoff::blankTaxonomy(), $this->taxonomies[$name]);
     }
 
     /**
      * The objects of every registered taxonomy, in registration order.
      *
-     * @return array<string, \WP_Taxonomy>
+     * @return array<string, Taxonomy>
      */
     public function taxonomyObjects(): array
     {
@@ -221,7 +223,7 @@ final class Registry
      *
      * @return array<string, mixed>
      */
-    public function adoptPostType(\WP_Post_Type $object): array
+    public function adoptPostType(PostType $object): array
     {
         $name = (string) $object->name;
         $this->postTypes[$name] = self::rowOf($object, ['supports', 'rest_controller', 'revisions_rest_controller', 'autosave_rest_controller']);
@@ -247,23 +249,22 @@ final class Registry
     }
 
     /**
-     * An object of the class holding a row as registration left it, without
+     * An empty object filled with a row as registration left it, without
      * building it again (no filters, no defaults): the built-in types and
      * taxonomies. A built-in type's supports were taken in, so its object
      * has none of its own.
      *
      * @template T of object
-     * @param class-string<T> $class
+     * @param T $object
      * @param array<string, mixed> $row
      * @return T
      */
-    private static function objectFrom(string $class, array $row): object
+    private static function objectFrom(object $object, array $row): object
     {
-        $object = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
         foreach ($row as $key => $value) {
             $object->{$key} = in_array($key, ['labels', 'cap'], true) ? (object) $value : $value;
         }
-        if ($object instanceof \WP_Post_Type) {
+        if ($object instanceof PostType) {
             unset($object->supports);
         }
         return $object;
@@ -444,7 +445,7 @@ final class Registry
      *
      * @return array<string, mixed>
      */
-    public function adoptTaxonomy(\WP_Taxonomy $object): array
+    public function adoptTaxonomy(Taxonomy $object): array
     {
         $name = (string) $object->name;
         $this->taxonomies[$name] = self::rowOf($object, ['rest_controller']);

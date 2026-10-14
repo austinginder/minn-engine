@@ -10499,6 +10499,8 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Objects\\PostType",
+                "Minn\\Objects\\Taxonomy",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -10517,7 +10519,7 @@
                     "name": "ofType",
                     "static": true,
                     "visibility": "public",
-                    "signature": "ofType(string $type): ?WP_Post_Type",
+                    "signature": "ofType(string $type): ?Minn\\Objects\\PostType",
                     "doc": "A post type's registered object (any but post and page), or null.",
                     "shapes": [],
                     "params": [
@@ -10529,15 +10531,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 22,
-                    "end": 31
+                    "line": 24,
+                    "end": 33
                 },
                 {
                     "routes": [],
                     "name": "ofTaxonomy",
                     "static": true,
                     "visibility": "public",
-                    "signature": "ofTaxonomy(string $taxonomy): ?WP_Taxonomy",
+                    "signature": "ofTaxonomy(string $taxonomy): ?Minn\\Objects\\Taxonomy",
                     "doc": "A plugin's taxonomy, or null.",
                     "shapes": [],
                     "params": [
@@ -10549,8 +10551,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 41
+                    "line": 36,
+                    "end": 43
                 }
             ]
         },
@@ -51694,6 +51696,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Objects\\Post",
+                "Minn\\Objects\\Rewrite",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\SiteUrls"
             ],
@@ -51724,8 +51727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 34
+                    "line": 31,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -51746,8 +51749,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 59
+                    "line": 45,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -51766,8 +51769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 70
+                    "line": 63,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -51811,8 +51814,8 @@
                             "doc": "whether a page stands at a path"
                         }
                     ],
-                    "line": 80,
-                    "end": 97
+                    "line": 81,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -51840,8 +51843,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 113
+                    "line": 106,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -51860,8 +51863,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 120
+                    "line": 117,
+                    "end": 121
                 }
             ]
         },
@@ -53254,6 +53257,7 @@
                 "Minn\\Auth\\Can",
                 "Minn\\I18n\\Gettext",
                 "Minn\\I18n\\Numbers",
+                "Minn\\Objects\\Toolbar",
                 "Minn\\Objects\\User",
                 "Minn\\Runtime\\CommentReads",
                 "Minn\\Runtime\\CurrentUser",
@@ -53291,320 +53295,320 @@
                     "name": "myAccountItem",
                     "static": true,
                     "visibility": "public",
-                    "signature": "myAccountItem(WP_Admin_Bar $bar): void",
+                    "signature": "myAccountItem(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "\"Howdy\" with the user's name and small avatar, at the right of the bar.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 79
+                    "line": 64,
+                    "end": 80
                 },
                 {
                     "routes": [],
                     "name": "myAccountMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "myAccountMenu(WP_Admin_Bar $bar): void",
+                    "signature": "myAccountMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The account menu: the user's card (larger avatar, name, login when it differs, the profile link) and Log Out.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 96
+                    "line": 83,
+                    "end": 97
                 },
                 {
                     "routes": [],
                     "name": "sidebarToggle",
                     "static": true,
                     "visibility": "public",
-                    "signature": "sidebarToggle(WP_Admin_Bar $bar): void",
+                    "signature": "sidebarToggle(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The menu button wp-admin's narrow screens show; the front end has none.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 104
+                    "line": 100,
+                    "end": 105
                 },
                 {
                     "routes": [],
                     "name": "wpMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "wpMenu(WP_Admin_Bar $bar): void",
+                    "signature": "wpMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The WordPress logo's menu: About and Get Involved for a reader, then the wordpress.org links beside them.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 132
+                    "line": 108,
+                    "end": 133
                 },
                 {
                     "routes": [],
                     "name": "siteMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "siteMenu(WP_Admin_Bar $bar): void",
+                    "signature": "siteMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The site's name (with its icon when it has one), then the dashboard, appearance and plugins below it.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 162
+                    "line": 136,
+                    "end": 163
                 },
                 {
                     "routes": [],
                     "name": "appearanceMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "appearanceMenu(WP_Admin_Bar $bar): void",
+                    "signature": "appearanceMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The appearance group under the site's name: themes, then what the theme supports for those who may edit it.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 186
+                    "line": 166,
+                    "end": 187
                 },
                 {
                     "routes": [],
                     "name": "editSiteMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "editSiteMenu(WP_Admin_Bar $bar): void",
+                    "signature": "editSiteMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "Edit Site under a block theme, opening the template this page was built from when there is one.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 200
+                    "line": 190,
+                    "end": 201
                 },
                 {
                     "routes": [],
                     "name": "customizeMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "customizeMenu(WP_Admin_Bar $bar): void",
+                    "signature": "customizeMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "Customize, for a theme the customizer serves (a block theme only once something registers with it).",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 212
+                    "line": 204,
+                    "end": 213
                 },
                 {
                     "routes": [],
                     "name": "updatesMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "updatesMenu(WP_Admin_Bar $bar): void",
+                    "signature": "updatesMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The count of updates waiting, when there are any.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 225
+                    "line": 216,
+                    "end": 226
                 },
                 {
                     "routes": [],
                     "name": "commentsMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "commentsMenu(WP_Admin_Bar $bar): void",
+                    "signature": "commentsMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The comments awaiting moderation, for those who edit posts.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 238
+                    "line": 229,
+                    "end": 239
                 },
                 {
                     "routes": [],
                     "name": "newContentMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "newContentMenu(WP_Admin_Bar $bar): void",
+                    "signature": "newContentMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "New: a post, media, a link, a page, each other type shown on the bar, and a user, as far as the user may create them.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 256
+                    "line": 242,
+                    "end": 257
                 },
                 {
                     "routes": [],
                     "name": "editMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "editMenu(WP_Admin_Bar $bar): void",
+                    "signature": "editMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "Edit, for the post, term or user the page shows, when the user may edit it.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 303
+                    "line": 289,
+                    "end": 304
                 },
                 {
                     "routes": [],
                     "name": "shortlinkMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "shortlinkMenu(WP_Admin_Bar $bar): void",
+                    "signature": "shortlinkMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The page's shortlink, with a box to copy it from.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 334
+                    "line": 327,
+                    "end": 335
                 },
                 {
                     "routes": [],
                     "name": "secondaryGroups",
                     "static": true,
                     "visibility": "public",
-                    "signature": "secondaryGroups(WP_Admin_Bar $bar): void",
+                    "signature": "secondaryGroups(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The groups for the bar's right side and the logo menu's outside links.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 341
+                    "line": 338,
+                    "end": 342
                 },
                 {
                     "routes": [],
                     "name": "recoveryModeMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "recoveryModeMenu(WP_Admin_Bar $bar): void",
+                    "signature": "recoveryModeMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The way out of recovery mode, while the site is in it.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 355
+                    "line": 345,
+                    "end": 356
                 },
                 {
                     "routes": [],
                     "name": "searchMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "searchMenu(WP_Admin_Bar $bar): void",
+                    "signature": "searchMenu(Minn\\Objects\\Toolbar $bar): void",
                     "doc": "The search box, on the front end.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "bar",
-                            "type": "WP_Admin_Bar",
+                            "type": "Minn\\Objects\\Toolbar",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 369
+                    "line": 359,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -53623,8 +53627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 60
+                    "line": 58,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -53637,8 +53641,8 @@
                         "@return array<string, array{0: string, 1: string}> the admin page => [the label, the node id], for what the user may create"
                     ],
                     "params": [],
-                    "line": 259,
-                    "end": 285
+                    "line": 260,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -53659,8 +53663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 313
+                    "line": 307,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -53681,8 +53685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 323
+                    "line": 317,
+                    "end": 324
                 }
             ]
         },
@@ -83221,6 +83225,32 @@
             "methods": []
         },
         {
+            "name": "Minn\\Objects\\PostType",
+            "short": "PostType",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/PostType.php",
+            "lines": 3,
+            "doc": "A registered post type as the WordPress layer hands it to plugins\n(WP_Post_Type): its labels, capabilities and settings. The engine knows\nthese objects by this mark and makes them through Runtime\\Handoff, so it\nnever names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Auth\\RegisteredCaps",
+                "Minn\\Rest\\PostCollectionParams",
+                "Minn\\Rest\\RegisteredType",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\PostQueryParts",
+                "Minn\\Runtime\\PostQueryStatus",
+                "Minn\\Runtime\\Registry"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Objects\\Query",
             "short": "Query",
             "namespace": "Minn\\Objects",
@@ -83337,6 +83367,51 @@
             "methods": []
         },
         {
+            "name": "Minn\\Objects\\Rewrite",
+            "short": "Rewrite",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/Rewrite.php",
+            "lines": 3,
+            "doc": "The rewrite object as the WordPress layer hands it to plugins\n(WP_Rewrite): the permalink structures, the extra rules and endpoints\nplugins add, and the rules built from them. The engine knows it by this\nmark, so it never names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\RuleTable",
+                "Minn\\Runtime\\ArchiveLinks",
+                "Minn\\Runtime\\CommentPages",
+                "Minn\\Runtime\\RewriteRules"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\Taxonomy",
+            "short": "Taxonomy",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/Taxonomy.php",
+            "lines": 3,
+            "doc": "A registered taxonomy as the WordPress layer hands it to plugins\n(WP_Taxonomy): its labels, capabilities and settings. The engine knows\nthese objects by this mark and makes them through Runtime\\Handoff, so it\nnever names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Auth\\RegisteredCaps",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Registry"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Objects\\Term",
             "short": "Term",
             "namespace": "Minn\\Objects",
@@ -83415,6 +83490,26 @@
             "methods": []
         },
         {
+            "name": "Minn\\Objects\\Toolbar",
+            "short": "Toolbar",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/Toolbar.php",
+            "lines": 3,
+            "doc": "The toolbar as the WordPress layer hands it to plugins (WP_Admin_Bar):\nthe nodes and groups a menu callback adds. The engine knows it by this\nmark, so it never names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\ToolbarMenus"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Objects\\User",
             "short": "User",
             "namespace": "Minn\\Objects",
@@ -83460,6 +83555,29 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\UserOrder",
                 "Minn\\Runtime\\UserQueryRunner"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\Widget",
+            "short": "Widget",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/Widget.php",
+            "lines": 3,
+            "doc": "A widget as the WordPress layer hands it to plugins (WP_Widget): its id\nbase, name, options and the form and update methods a widget class\nwrites. The engine knows these objects by this mark, so it never names\nthe WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\SidebarsController",
+                "Minn\\Rest\\WidgetObject",
+                "Minn\\Rest\\WidgetsController",
+                "Minn\\Widgets\\WidgetForms"
             ],
             "constructor": null,
             "cases": [],
@@ -101578,6 +101696,7 @@
                 "Minn\\Http\\Args",
                 "Minn\\Http\\RouteParams",
                 "Minn\\Media\\FileTypes",
+                "Minn\\Objects\\PostType",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -101628,8 +101747,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 34
+                    "line": 32,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -101650,8 +101769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 38,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -101672,15 +101791,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 53
+                    "line": 50,
+                    "end": 54
                 },
                 {
                     "routes": [],
                     "name": "built",
                     "static": true,
                     "visibility": "public",
-                    "signature": "built(WP_Post_Type $object): array",
+                    "signature": "built(Minn\\Objects\\PostType $object): array",
                     "doc": "A post type's list parameters as built, for the type in any\nnamespace: before rest_{type}_collection_params and the optional\nmarks, for the facade's controller class, which adds its callbacks\nand runs the filter itself.",
                     "shapes": [
                         "@return array<string, array<string, mixed>>"
@@ -101688,14 +101807,14 @@
                     "params": [
                         {
                             "name": "object",
-                            "type": "WP_Post_Type",
+                            "type": "Minn\\Objects\\PostType",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 137
+                    "line": 135,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -101708,8 +101827,8 @@
                         "@return array<string, list<string>>"
                     ],
                     "params": [],
-                    "line": 216,
-                    "end": 224
+                    "line": 217,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -101719,7 +101838,7 @@
                     "signature": "named(string $name): ?array",
                     "doc": "A REST post type by its name, in whatever namespace it lists itself\n(a plugin's type under a namespace of its own has the same list as one\nunder wp/v2); posts and pages by name before plugins load.",
                     "shapes": [
-                        "@return array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null"
+                        "@return array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null"
                     ],
                     "params": [
                         {
@@ -101730,8 +101849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 69
+                    "line": 63,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -101741,19 +101860,19 @@
                     "signature": "forType(?array $type): array",
                     "doc": "",
                     "shapes": [
-                        "@param array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null $type @return array<string, array<string, mixed>>"
+                        "@param array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null $type @return array<string, array<string, mixed>>"
                     ],
                     "params": [
                         {
                             "name": "type",
                             "type": "?array",
-                            "shape": "array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null",
+                            "shape": "array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null",
                             "default": null,
                             "doc": "@return array<string, array<string, mixed>>"
                         }
                     ],
-                    "line": 72,
-                    "end": 87
+                    "line": 73,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -101761,21 +101880,21 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "filtered(array $type): array",
-                    "doc": "The parameters built, through rest_{type}_collection_params, each marked optional. @param array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>>",
+                    "doc": "The parameters built, through rest_{type}_collection_params, each marked optional. @param array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>>",
                     "shapes": [
-                        "@param array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>>"
+                        "@param array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>>"
                     ],
                     "params": [
                         {
                             "name": "type",
                             "type": "array",
-                            "shape": "array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}",
+                            "shape": "array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}",
                             "default": null,
                             "doc": "@return array<string, array<string, mixed>>"
                         }
                     ],
-                    "line": 90,
-                    "end": 101
+                    "line": 91,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -101785,7 +101904,7 @@
                     "signature": "type(string $base): ?array",
                     "doc": "The type a REST base names, with what its parameters depend on. Posts\nand pages are known before plugins load; other types once they have.",
                     "shapes": [
-                        "@return array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null"
+                        "@return array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null"
                     ],
                     "params": [
                         {
@@ -101796,18 +101915,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 124
+                    "line": 110,
+                    "end": 125
                 },
                 {
                     "routes": [],
                     "name": "described",
                     "static": true,
                     "visibility": "private",
-                    "signature": "described(string $name, WP_Post_Type $object): array",
+                    "signature": "described(string $name, Minn\\Objects\\PostType $object): array",
                     "doc": "",
                     "shapes": [
-                        "@return array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}"
+                        "@return array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}"
                     ],
                     "params": [
                         {
@@ -101819,14 +101938,14 @@
                         },
                         {
                             "name": "object",
-                            "type": "WP_Post_Type",
+                            "type": "Minn\\Objects\\PostType",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 149
+                    "line": 141,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -101847,8 +101966,8 @@
                             "doc": "@return array<string, array<string, mixed>>"
                         }
                     ],
-                    "line": 152,
-                    "end": 208
+                    "line": 153,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -101861,8 +101980,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 227,
-                    "end": 230
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -101884,8 +102003,8 @@
                             "doc": "REST base => hierarchical"
                         }
                     ],
-                    "line": 238,
-                    "end": 251
+                    "line": 239,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -101913,8 +102032,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 254,
-                    "end": 264
+                    "line": 255,
+                    "end": 265
                 }
             ]
         },
@@ -104648,6 +104767,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Objects\\PostType",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -104658,7 +104778,7 @@
                 "Minn\\Runtime\\PostEvents"
             ],
             "constructor": {
-                "signature": "__construct(string $name, WP_Post_Type $object)",
+                "signature": "__construct(string $name, Minn\\Objects\\PostType $object)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -104671,15 +104791,15 @@
                     },
                     {
                         "name": "object",
-                        "type": "WP_Post_Type",
+                        "type": "Minn\\Objects\\PostType",
                         "shape": "",
                         "default": null,
                         "doc": ""
                     }
                 ],
                 "visibility": "private",
-                "line": 18,
-                "end": 20
+                "line": 19,
+                "end": 21
             },
             "cases": [],
             "constants": [],
@@ -104695,7 +104815,7 @@
                 },
                 {
                     "name": "object",
-                    "type": "WP_Post_Type",
+                    "type": "Minn\\Objects\\PostType",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -104721,8 +104841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 23,
-                    "end": 30
+                    "line": 24,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -104741,8 +104861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -104753,8 +104873,8 @@
                     "doc": "Whether the type's posts have parents.",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 42
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -104765,8 +104885,8 @@
                     "doc": "The REST base the type's routes live under, with its namespace.",
                     "shapes": [],
                     "params": [],
-                    "line": 45,
-                    "end": 48
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -104779,8 +104899,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 51,
-                    "end": 60
+                    "line": 52,
+                    "end": 61
                 }
             ]
         },
@@ -111541,6 +111661,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Objects\\Widget",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Fields",
@@ -111577,8 +111698,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 35,
-                "end": 37
+                "line": 36,
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -111635,8 +111756,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 61
+                    "line": 47,
+                    "end": 62
                 },
                 {
                     "routes": [
@@ -111664,8 +111785,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 73
+                    "line": 66,
+                    "end": 74
                 },
                 {
                     "routes": [
@@ -111695,8 +111816,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 96
+                    "line": 80,
+                    "end": 97
                 },
                 {
                     "routes": [
@@ -111717,8 +111838,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 107
+                    "line": 101,
+                    "end": 108
                 },
                 {
                     "routes": [
@@ -111746,8 +111867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 119
+                    "line": 112,
+                    "end": 120
                 },
                 {
                     "routes": [
@@ -111775,8 +111896,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 159
+                    "line": 129,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -111787,8 +111908,8 @@
                     "doc": "The widgets are registered on init; a runtime that stopped short of it\nregisters them now. Without the runtime there are no widgets to serve.",
                     "shapes": [],
                     "params": [],
-                    "line": 165,
-                    "end": 173
+                    "line": 166,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -111809,15 +111930,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 199
+                    "line": 177,
+                    "end": 200
                 },
                 {
                     "routes": [],
                     "name": "type",
                     "static": false,
                     "visibility": "private",
-                    "signature": "type(WP_Widget $widget): array",
+                    "signature": "type(Minn\\Objects\\Widget $widget): array",
                     "doc": "",
                     "shapes": [
                         "@return array<string, mixed>"
@@ -111825,14 +111946,14 @@
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 216
+                    "line": 203,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -111842,11 +111963,11 @@
                     "signature": "widgetTypes(): array",
                     "doc": "",
                     "shapes": [
-                        "@return array<string, \\WP_Widget> by id base, in id order"
+                        "@return array<string, Widget> by id base, in id order"
                     ],
                     "params": [],
-                    "line": 219,
-                    "end": 227
+                    "line": 220,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -111865,8 +111986,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 234
+                    "line": 230,
+                    "end": 235
                 }
             ]
         },
@@ -116006,6 +116127,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Objects\\Widget",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
@@ -116030,8 +116152,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 22
+                "line": 21,
+                "end": 23
             },
             "cases": [],
             "constants": [],
@@ -116080,15 +116202,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 49
+                    "line": 26,
+                    "end": 50
                 },
                 {
                     "routes": [],
                     "name": "instance",
                     "static": true,
                     "visibility": "public",
-                    "signature": "instance(WP_Widget $object, int $number): array",
+                    "signature": "instance(Minn\\Objects\\Widget $object, int $number): array",
                     "doc": "A widget's settings, encoded and signed, and raw when it shows them. @return array<string, mixed>",
                     "shapes": [
                         "@return array<string, mixed>"
@@ -116096,7 +116218,7 @@
                     "params": [
                         {
                             "name": "object",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -116109,21 +116231,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 62
+                    "line": 53,
+                    "end": 63
                 },
                 {
                     "routes": [],
                     "name": "form",
                     "static": true,
                     "visibility": "private",
-                    "signature": "form(WP_Widget $object, int $number): string",
+                    "signature": "form(Minn\\Objects\\Widget $object, int $number): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
                         {
                             "name": "object",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -116136,8 +116258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 71
+                    "line": 65,
+                    "end": 72
                 }
             ]
         },
@@ -116159,6 +116281,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Objects\\Widget",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Context",
@@ -116196,8 +116319,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 41,
-                "end": 43
+                "line": 42,
+                "end": 44
             },
             "cases": [],
             "constants": [
@@ -116254,8 +116377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 65
+                    "line": 48,
+                    "end": 66
                 },
                 {
                     "routes": [
@@ -116283,8 +116406,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 73
+                    "line": 70,
+                    "end": 74
                 },
                 {
                     "routes": [
@@ -116305,8 +116428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 92
+                    "line": 78,
+                    "end": 93
                 },
                 {
                     "routes": [
@@ -116336,8 +116459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 114
+                    "line": 99,
+                    "end": 115
                 },
                 {
                     "routes": [
@@ -116365,15 +116488,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 140
+                    "line": 119,
+                    "end": 141
                 },
                 {
                     "routes": [],
                     "name": "saveInstance",
                     "static": false,
                     "visibility": "private",
-                    "signature": "saveInstance(WP_Widget $object, int $number, array $body): string",
+                    "signature": "saveInstance(Minn\\Objects\\Widget $object, int $number, array $body): string",
                     "doc": "Saves a widget's settings through its own update and registers it:\nraw settings (when it shows them), encoded ones with their hash, or\nits form's fields. The widget's id.",
                     "shapes": [
                         "@param array<string, mixed> $body"
@@ -116381,7 +116504,7 @@
                     "params": [
                         {
                             "name": "object",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -116401,15 +116524,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 163
+                    "line": 150,
+                    "end": 164
                 },
                 {
                     "routes": [],
                     "name": "newInstance",
                     "static": true,
                     "visibility": "private",
-                    "signature": "newInstance(WP_Widget $object, int $number, array $body): array",
+                    "signature": "newInstance(Minn\\Objects\\Widget $object, int $number, array $body): array",
                     "doc": "",
                     "shapes": [
                         "@param array<string, mixed> $body @return array<string, mixed>"
@@ -116417,7 +116540,7 @@
                     "params": [
                         {
                             "name": "object",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -116437,8 +116560,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 166,
-                    "end": 187
+                    "line": 167,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -116457,8 +116580,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 197
+                    "line": 191,
+                    "end": 198
                 }
             ]
         },
@@ -117654,6 +117777,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Front\\FeedTags",
+                "Minn\\Objects\\Rewrite",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Registered",
@@ -117686,8 +117810,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 42
+                    "line": 25,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -117713,8 +117837,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 60
+                    "line": 46,
+                    "end": 61
                 }
             ]
         },
@@ -120748,6 +120872,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Objects\\Comment",
+                "Minn\\Objects\\Rewrite",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MainQuery",
@@ -120797,8 +120922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 62
+                    "line": 32,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -120826,8 +120951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 110
+                    "line": 92,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -120846,8 +120971,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 118,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -120873,8 +120998,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 133
+                    "line": 124,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -120902,8 +121027,8 @@
                             "doc": "the count of the top-level comments older than this one, through get_page_of_comment_query_args"
                         }
                     ],
-                    "line": 65,
-                    "end": 82
+                    "line": 66,
+                    "end": 83
                 }
             ]
         },
@@ -124504,7 +124629,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 263,
+            "lines": 276,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -124513,9 +124638,11 @@
                 "Minn\\Objects\\CommentsQuery",
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\Post",
+                "Minn\\Objects\\PostType",
                 "Minn\\Objects\\Query",
                 "Minn\\Objects\\RestRequest",
                 "Minn\\Objects\\RestResponse",
+                "Minn\\Objects\\Taxonomy",
                 "Minn\\Objects\\Term",
                 "Minn\\Objects\\TermsQuery",
                 "Minn\\Objects\\Theme",
@@ -124592,6 +124719,7 @@
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryRunner",
@@ -124627,7 +124755,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "bind(array $answers): void",
-                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,\nand the REST ones newRestRequest, restRequestFromUrl, newRestResponse,\nrestController, and newTheme.",
+                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,\nand the REST ones newRestRequest, restRequestFromUrl, newRestResponse,\nrestController, newTheme, and the empty registered-type objects\nblankPostType and blankTaxonomy.",
                     "shapes": [
                         "@param array<string, Closure> $answers"
                     ],
@@ -124640,8 +124768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 54
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -124652,8 +124780,8 @@
                     "doc": "The user the request is (wp_get_current_user).",
                     "shapes": [],
                     "params": [],
-                    "line": 57,
-                    "end": 60
+                    "line": 60,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -124664,8 +124792,8 @@
                     "doc": "Whether someone is signed in (is_user_logged_in).",
                     "shapes": [],
                     "params": [],
-                    "line": 63,
-                    "end": 66
+                    "line": 66,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -124684,8 +124812,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 72
+                    "line": 72,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -124711,8 +124839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 78
+                    "line": 78,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -124731,8 +124859,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 84
+                    "line": 84,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -124751,8 +124879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 90
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -124778,8 +124906,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 96,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -124805,8 +124933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 102
+                    "line": 102,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -124825,8 +124953,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -124845,8 +124973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -124865,8 +124993,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -124885,8 +125013,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 126
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -124905,8 +125033,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 132
+                    "line": 132,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -124925,8 +125053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 138
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -124945,8 +125073,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 144
+                    "line": 144,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -124965,8 +125093,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -124985,8 +125113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 156
+                    "line": 156,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -125026,8 +125154,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 163
+                    "line": 162,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -125046,8 +125174,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 169
+                    "line": 169,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -125066,8 +125194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -125086,8 +125214,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 181
+                    "line": 181,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -125106,8 +125234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 187
+                    "line": 187,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -125126,8 +125254,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 193
+                    "line": 193,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -125146,8 +125274,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 199
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -125166,8 +125294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 205
+                    "line": 205,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -125186,8 +125314,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 211
+                    "line": 211,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -125206,8 +125334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 217
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -125226,8 +125354,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 223
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -125246,8 +125374,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 229
+                    "line": 229,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -125266,8 +125394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 235
+                    "line": 235,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -125286,8 +125414,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 241
+                    "line": 241,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -125306,8 +125434,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 247
+                    "line": 247,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -125326,8 +125454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 253
+                    "line": 253,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -125346,8 +125474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 259
+                    "line": 259,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -125366,8 +125494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 265
+                    "line": 265,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -125386,8 +125514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 271
+                    "line": 271,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -125406,8 +125534,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 277
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -125433,8 +125561,32 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 283
+                    "line": 283,
+                    "end": 286
+                },
+                {
+                    "routes": [],
+                    "name": "blankPostType",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blankPostType(): Minn\\Objects\\PostType",
+                    "doc": "A post type's object with nothing set yet, for the registry to fill (WP_Post_Type, built without its constructor).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 289,
+                    "end": 292
+                },
+                {
+                    "routes": [],
+                    "name": "blankTaxonomy",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blankTaxonomy(): Minn\\Objects\\Taxonomy",
+                    "doc": "A taxonomy's object with nothing set yet, for the registry to fill (WP_Taxonomy, built without its constructor).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 295,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -125453,8 +125605,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 289
+                    "line": 301,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -125480,8 +125632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 295
+                    "line": 306,
+                    "end": 310
                 }
             ]
         },
@@ -136242,7 +136394,9 @@
             "doc": "The pieces of one WP_Query run as the reference builds them and hands\nthem to filters. The seven clause pieces stay untyped: a filter may hand\nback anything, and the request is written from whatever it handed back.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Objects\\PostType"
+            ],
             "usedBy": [
                 "Minn\\Runtime\\CommentFeedQuery",
                 "Minn\\Runtime\\PostQuery",
@@ -136264,8 +136418,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 39
+                "line": 39,
+                "end": 41
             },
             "cases": [],
             "constants": [
@@ -136396,7 +136550,7 @@
                 },
                 {
                     "name": "typeObject",
-                    "type": "?WP_Post_Type",
+                    "type": "?Minn\\Objects\\PostType",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -136443,8 +136597,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 42,
-                    "end": 49
+                    "line": 44,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -136465,8 +136619,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 57
+                    "line": 54,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -136492,8 +136646,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 66
+                    "line": 62,
+                    "end": 68
                 }
             ]
         },
@@ -136658,6 +136812,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Can",
+                "Minn\\Objects\\PostType",
                 "Minn\\Objects\\Query",
                 "Minn\\Query\\Sql",
                 "Minn\\Runtime\\CurrentUser",
@@ -136690,8 +136845,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 26
+                "line": 25,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -136725,8 +136880,8 @@
                     "doc": "Settles the post type the caps come from: a list of several types has\nnone (its caps are named for multiple_post_type), any other names one.",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 45
+                    "line": 33,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -136747,8 +136902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 62
+                    "line": 49,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -136761,8 +136916,8 @@
                         "@return array{0: string, 1: bool}"
                     ],
                     "params": [],
-                    "line": 65,
-                    "end": 88
+                    "line": 66,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -136781,8 +136936,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 95
+                    "line": 92,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -136808,8 +136963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 139
+                    "line": 99,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -136820,8 +136975,8 @@
                     "doc": "A listing with no statuses asked for: each type with the statuses its reader may see.",
                     "shapes": [],
                     "params": [],
-                    "line": 142,
-                    "end": 168
+                    "line": 143,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -136840,8 +136995,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 185
+                    "line": 172,
+                    "end": 186
                 }
             ]
         },
@@ -140877,13 +141032,16 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registry.php",
-            "lines": 513,
+            "lines": 512,
             "doc": "Post types, taxonomies, and statuses as plugin code registers and reads\nthem. The built-in set is data/registry.json, captured from the\nreference; registrations derive their defaults the way the content\nprobe observed (contracts/fixtures/api/content.json).",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\I18n\\Gettext",
                 "Minn\\Json",
+                "Minn\\Objects\\PostType",
+                "Minn\\Objects\\Taxonomy",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -140908,8 +141066,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 54
+                "line": 39,
+                "end": 56
             },
             "cases": [],
             "constants": [],
@@ -141008,8 +141166,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 61,
-                    "end": 64
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -141028,8 +141186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 70
+                    "line": 69,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -141042,8 +141200,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 77,
-                    "end": 80
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -141062,8 +141220,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 86
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -141074,15 +141232,15 @@
                     "doc": "Makes the one object for each registered type and taxonomy and binds\n$wp_post_types and $wp_taxonomies to them, as the reference shares\nthem: a plugin changing one (relabelling Posts) is heard by every\nreader (probe type-object-sharing). Called once the facade classes\nexist; later registrations make their own.",
                     "shapes": [],
                     "params": [],
-                    "line": 95,
-                    "end": 106
+                    "line": 97,
+                    "end": 108
                 },
                 {
                     "routes": [],
                     "name": "postTypeObject",
                     "static": false,
                     "visibility": "public",
-                    "signature": "postTypeObject(string $name): ?WP_Post_Type",
+                    "signature": "postTypeObject(string $name): ?Minn\\Objects\\PostType",
                     "doc": "The one object for a registered post type, or null.",
                     "shapes": [],
                     "params": [
@@ -141094,8 +141252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 115
+                    "line": 111,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -141105,18 +141263,18 @@
                     "signature": "postTypeObjects(): array",
                     "doc": "The objects of every registered post type, in registration order.",
                     "shapes": [
-                        "@return array<string, \\WP_Post_Type>"
+                        "@return array<string, PostType>"
                     ],
                     "params": [],
-                    "line": 122,
-                    "end": 129
+                    "line": 124,
+                    "end": 131
                 },
                 {
                     "routes": [],
                     "name": "taxonomyObject",
                     "static": false,
                     "visibility": "public",
-                    "signature": "taxonomyObject(string $name): ?WP_Taxonomy",
+                    "signature": "taxonomyObject(string $name): ?Minn\\Objects\\Taxonomy",
                     "doc": "The one object for a registered taxonomy, or null.",
                     "shapes": [],
                     "params": [
@@ -141128,8 +141286,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 138
+                    "line": 134,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -141139,11 +141297,11 @@
                     "signature": "taxonomyObjects(): array",
                     "doc": "The objects of every registered taxonomy, in registration order.",
                     "shapes": [
-                        "@return array<string, \\WP_Taxonomy>"
+                        "@return array<string, Taxonomy>"
                     ],
                     "params": [],
-                    "line": 145,
-                    "end": 152
+                    "line": 147,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -141156,8 +141314,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 159,
-                    "end": 162
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -141176,8 +141334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 168
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -141188,15 +141346,15 @@
                     "doc": "The built-in types', taxonomies' and statuses' labels in the site's\nlanguage, as the reference registers them again on init: each label\nasks for its own message (data/registry-labels.json, captured from the\nreference), and a type's single-item template and a taxonomy's\narchive template are named after the singular name. Rows and the\nshared objects both take them; what a plugin set before init gives\nway, as it does there.",
                     "shapes": [],
                     "params": [],
-                    "line": 179,
-                    "end": 214
+                    "line": 181,
+                    "end": 216
                 },
                 {
                     "routes": [],
                     "name": "adoptPostType",
                     "static": false,
                     "visibility": "public",
-                    "signature": "adoptPostType(WP_Post_Type $object): array",
+                    "signature": "adoptPostType(Minn\\Objects\\PostType $object): array",
                     "doc": "Takes a built post type as the registered one: the object\nregister_post_type made is the one every reader shares, and its\nproperties are the type's row. Registering again puts a new object in\nthe old one's place, as on the reference.",
                     "shapes": [
                         "@return array<string, mixed>"
@@ -141204,14 +141362,14 @@
                     "params": [
                         {
                             "name": "object",
-                            "type": "WP_Post_Type",
+                            "type": "Minn\\Objects\\PostType",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 230
+                    "line": 226,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -141254,8 +141412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 295
+                    "line": 287,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -141298,8 +141456,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 313
+                    "line": 307,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -141335,8 +141493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 378
+                    "line": 350,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -141355,8 +141513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 388
+                    "line": 382,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -141391,8 +141549,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 400
+                    "line": 398,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -141418,8 +141576,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 403,
-                    "end": 406
+                    "line": 404,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -141438,8 +141596,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 409,
-                    "end": 412
+                    "line": 410,
+                    "end": 413
                 },
                 {
                     "routes": [],
@@ -141460,8 +141618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 419,
-                    "end": 422
+                    "line": 420,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -141489,15 +141647,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 431,
-                    "end": 439
+                    "line": 432,
+                    "end": 440
                 },
                 {
                     "routes": [],
                     "name": "adoptTaxonomy",
                     "static": false,
                     "visibility": "public",
-                    "signature": "adoptTaxonomy(WP_Taxonomy $object): array",
+                    "signature": "adoptTaxonomy(Minn\\Objects\\Taxonomy $object): array",
                     "doc": "Takes a built taxonomy as the registered one, the object every reader\nshares, its properties the taxonomy's row.",
                     "shapes": [
                         "@return array<string, mixed>"
@@ -141505,14 +141663,14 @@
                     "params": [
                         {
                             "name": "object",
-                            "type": "WP_Taxonomy",
+                            "type": "Minn\\Objects\\Taxonomy",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 447,
-                    "end": 453
+                    "line": 448,
+                    "end": 454
                 },
                 {
                     "routes": [],
@@ -141523,8 +141681,8 @@
                     "doc": "Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given.",
                     "shapes": [],
                     "params": [],
-                    "line": 456,
-                    "end": 459
+                    "line": 457,
+                    "end": 460
                 },
                 {
                     "routes": [],
@@ -141543,8 +141701,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 462,
-                    "end": 469
+                    "line": 463,
+                    "end": 470
                 },
                 {
                     "routes": [],
@@ -141570,8 +141728,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 472,
-                    "end": 485
+                    "line": 473,
+                    "end": 486
                 },
                 {
                     "routes": [],
@@ -141597,8 +141755,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 488,
-                    "end": 498
+                    "line": 489,
+                    "end": 499
                 },
                 {
                     "routes": [],
@@ -141626,8 +141784,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 505,
-                    "end": 527
+                    "line": 506,
+                    "end": 528
                 },
                 {
                     "routes": [],
@@ -141656,24 +141814,24 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 247
+                    "line": 240,
+                    "end": 249
                 },
                 {
                     "routes": [],
                     "name": "objectFrom",
                     "static": true,
                     "visibility": "private",
-                    "signature": "objectFrom(string $class, array $row): object",
-                    "doc": "An object of the class holding a row as registration left it, without\nbuilding it again (no filters, no defaults): the built-in types and\ntaxonomies. A built-in type's supports were taken in, so its object\nhas none of its own.",
+                    "signature": "objectFrom(object $object, array $row): object",
+                    "doc": "An empty object filled with a row as registration left it, without\nbuilding it again (no filters, no defaults): the built-in types and\ntaxonomies. A built-in type's supports were taken in, so its object\nhas none of its own.",
                     "shapes": [
                         "@param array<string, mixed> $row"
                     ],
                     "params": [
                         {
-                            "name": "class",
-                            "type": "string",
-                            "shape": "class-string<T>",
+                            "name": "object",
+                            "type": "object",
+                            "shape": "T",
                             "default": null,
                             "doc": ""
                         },
@@ -141685,8 +141843,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 270
+                    "line": 262,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -141722,8 +141880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 339
+                    "line": 325,
+                    "end": 340
                 }
             ]
         },
@@ -141738,6 +141896,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Objects\\Rewrite",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -141765,7 +141924,7 @@
                     "name": "generate",
                     "static": true,
                     "visibility": "public",
-                    "signature": "generate(WP_Rewrite $rewrite, array $args): array",
+                    "signature": "generate(Minn\\Objects\\Rewrite $rewrite, array $args): array",
                     "doc": "generate_rewrite_rules: the rules for one structure.",
                     "shapes": [
                         "@param array{struct: string, ep_mask?: int, paged?: bool, feed?: bool, forcomments?: bool, walk_dirs?: bool, endpoints?: bool} $args",
@@ -141774,7 +141933,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -141787,15 +141946,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 73
+                    "line": 47,
+                    "end": 74
                 },
                 {
                     "routes": [],
                     "name": "all",
                     "static": true,
                     "visibility": "public",
-                    "signature": "all(WP_Rewrite $rewrite): array",
+                    "signature": "all(Minn\\Objects\\Rewrite $rewrite): array",
                     "doc": "rewrite_rules: every rule, assembled and filtered.",
                     "shapes": [
                         "@return array<string, string>"
@@ -141803,21 +141962,21 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 96
+                    "line": 81,
+                    "end": 97
                 },
                 {
                     "routes": [],
                     "name": "unfiltered",
                     "static": true,
                     "visibility": "public",
-                    "signature": "unfiltered(WP_Rewrite $rewrite): array",
+                    "signature": "unfiltered(Minn\\Objects\\Rewrite $rewrite): array",
                     "doc": "The rules as the engine itself would make them, in their stored form\nand with no plugin's filter or action on them: what the stored rules\nare when no plugin changed them. The site's rewrite is left as it is.",
                     "shapes": [
                         "@return array<string, string>"
@@ -141825,41 +141984,41 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 110
+                    "line": 106,
+                    "end": 111
                 },
                 {
                     "routes": [],
                     "name": "builtins",
                     "static": true,
                     "visibility": "public",
-                    "signature": "builtins(WP_Rewrite $rewrite): void",
+                    "signature": "builtins(Minn\\Objects\\Rewrite $rewrite): void",
                     "doc": "The built-in taxonomies' tags and patterns, set once on the site's\nrewrite under the front of the structure then; a structure set later\nleaves them, and a plugin's, as they were (probe registry-rewrites).",
                     "shapes": [],
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 159
+                    "line": 152,
+                    "end": 160
                 },
                 {
                     "routes": [],
                     "name": "typeArchive",
                     "static": true,
                     "visibility": "public",
-                    "signature": "typeArchive(WP_Rewrite $rewrite, string $name, array $type): array",
+                    "signature": "typeArchive(Minn\\Objects\\Rewrite $rewrite, string $name, array $type): array",
                     "doc": "A post type's archive rules, which join the top rules as it registers\n(probe cpt-rules): its archive slug (the rewrite slug when the archive\nis just true) under the front of the structure, or the root when the\ntype opts out of the front; the archive, its two feed rules when the\ntype has feeds, its pages when it has those.",
                     "shapes": [
                         "@param array<string, mixed> $type the registered type",
@@ -141868,7 +142027,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -141888,8 +142047,8 @@
                             "doc": "the registered type"
                         }
                     ],
-                    "line": 171,
-                    "end": 191
+                    "line": 172,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -141908,15 +142067,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 197
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
                     "name": "assemble",
                     "static": true,
                     "visibility": "private",
-                    "signature": "assemble(WP_Rewrite $rewrite, Closure $section): array",
+                    "signature": "assemble(Minn\\Objects\\Rewrite $rewrite, Closure $section): array",
                     "doc": "The sections in the reference's order, each through $section: the top\nrules (each permastruct's joining them), the fixed files, root,\ncomments, search, author, dates, pages and posts, the bottom rules.",
                     "shapes": [
                         "@param Closure(string, array<string, string>): array<string, string> $section",
@@ -141925,7 +142084,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -141938,15 +142097,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 144
+                    "line": 121,
+                    "end": 145
                 },
                 {
                     "routes": [],
                     "name": "queries",
                     "static": true,
                     "visibility": "private",
-                    "signature": "queries(WP_Rewrite $rewrite, string $struct): array",
+                    "signature": "queries(Minn\\Objects\\Rewrite $rewrite, string $struct): array",
                     "doc": "Each level's query: the index, then each tag's var and its match, one\nmore at a time.",
                     "shapes": [
                         "@return list<string>"
@@ -141954,7 +142113,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -141967,8 +142126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 214
+                    "line": 206,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -141989,8 +142148,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 230
+                    "line": 218,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -142009,15 +142168,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 241
+                    "line": 234,
+                    "end": 242
                 },
                 {
                     "routes": [],
                     "name": "plainLevel",
                     "static": true,
                     "visibility": "private",
-                    "signature": "plainLevel(WP_Rewrite $rewrite, array $level, array $args): array",
+                    "signature": "plainLevel(Minn\\Objects\\Rewrite $rewrite, array $level, array $args): array",
                     "doc": "A level that is not a post's.",
                     "shapes": [
                         "@param array{match: string, query: string, tokens: int, mask: int} $level",
@@ -142027,7 +142186,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -142047,15 +142206,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 258
+                    "line": 251,
+                    "end": 259
                 },
                 {
                     "routes": [],
                     "name": "postLevel",
                     "static": true,
                     "visibility": "private",
-                    "signature": "postLevel(WP_Rewrite $rewrite, array $level, array $args, bool $hierarchical): array",
+                    "signature": "postLevel(Minn\\Objects\\Rewrite $rewrite, array $level, array $args, bool $hierarchical): array",
                     "doc": "The post's level, between its attachments' rules.",
                     "shapes": [
                         "@param array{match: string, query: string, tokens: int, mask: int} $level",
@@ -142065,7 +142224,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -142092,15 +142251,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 285
+                    "line": 268,
+                    "end": 286
                 },
                 {
                     "routes": [],
                     "name": "attachments",
                     "static": true,
                     "visibility": "private",
-                    "signature": "attachments(WP_Rewrite $rewrite, string $base): array",
+                    "signature": "attachments(Minn\\Objects\\Rewrite $rewrite, string $base): array",
                     "doc": "An attachment's rules under a base: itself, its trackback, feeds,\ncomment pages and embed.",
                     "shapes": [
                         "@return array<string, string>"
@@ -142108,7 +142267,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -142121,15 +142280,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 305
+                    "line": 294,
+                    "end": 306
                 },
                 {
                     "routes": [],
                     "name": "feeds",
                     "static": true,
                     "visibility": "private",
-                    "signature": "feeds(WP_Rewrite $rewrite, array $level, array $args): array",
+                    "signature": "feeds(Minn\\Objects\\Rewrite $rewrite, array $level, array $args): array",
                     "doc": "A level's two feed rules (with comments when asked).",
                     "shapes": [
                         "@param array{match: string, query: string, tokens: int, mask: int} $level",
@@ -142139,7 +142298,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -142159,15 +142318,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 319
+                    "line": 315,
+                    "end": 320
                 },
                 {
                     "routes": [],
                     "name": "pagesAndComments",
                     "static": true,
                     "visibility": "private",
-                    "signature": "pagesAndComments(WP_Rewrite $rewrite, array $level, array $args): array",
+                    "signature": "pagesAndComments(Minn\\Objects\\Rewrite $rewrite, array $level, array $args): array",
                     "doc": "A level's page rule, its comment pages (posts' and pages' places\nonly), and a static front page's comment pages at the root.",
                     "shapes": [
                         "@param array{match: string, query: string, tokens: int, mask: int} $level",
@@ -142177,7 +142336,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -142197,15 +142356,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 342
+                    "line": 330,
+                    "end": 343
                 },
                 {
                     "routes": [],
                     "name": "endpoints",
                     "static": true,
                     "visibility": "private",
-                    "signature": "endpoints(WP_Rewrite $rewrite, array $level, array $args): array",
+                    "signature": "endpoints(Minn\\Objects\\Rewrite $rewrite, array $level, array $args): array",
                     "doc": "The endpoints placed at a level (by the structure's place or the\ndirectory's own).",
                     "shapes": [
                         "@param array{match: string, query: string, tokens: int, mask: int} $level",
@@ -142215,7 +142374,7 @@
                     "params": [
                         {
                             "name": "rewrite",
-                            "type": "WP_Rewrite",
+                            "type": "Minn\\Objects\\Rewrite",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -142235,8 +142394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 352,
-                    "end": 364
+                    "line": 353,
+                    "end": 365
                 }
             ]
         },
@@ -169469,6 +169628,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Html",
+                "Minn\\Objects\\Widget",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\SiteUrls",
@@ -169485,13 +169645,13 @@
                     "name": "title",
                     "static": true,
                     "visibility": "public",
-                    "signature": "title(WP_Widget $widget, array $instance): string",
+                    "signature": "title(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The title field most widgets open with.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169504,21 +169664,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 23,
-                    "end": 31
+                    "line": 24,
+                    "end": 32
                 },
                 {
                     "routes": [],
                     "name": "titleOnly",
                     "static": true,
                     "visibility": "public",
-                    "signature": "titleOnly(WP_Widget $widget, array $instance): string",
+                    "signature": "titleOnly(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "search, meta, calendar: the title alone.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169531,21 +169691,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 37
+                    "line": 35,
+                    "end": 38
                 },
                 {
                     "routes": [],
                     "name": "pages",
                     "static": true,
                     "visibility": "public",
-                    "signature": "pages(WP_Widget $widget, array $instance): string",
+                    "signature": "pages(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The pages widget: title, sort order, pages to leave out.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169558,21 +169718,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 50
+                    "line": 41,
+                    "end": 51
                 },
                 {
                     "routes": [],
                     "name": "archives",
                     "static": true,
                     "visibility": "public",
-                    "signature": "archives(WP_Widget $widget, array $instance): string",
+                    "signature": "archives(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The archives widget: title, dropdown and counts boxes.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169585,21 +169745,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 57
+                    "line": 54,
+                    "end": 58
                 },
                 {
                     "routes": [],
                     "name": "categories",
                     "static": true,
                     "visibility": "public",
-                    "signature": "categories(WP_Widget $widget, array $instance): string",
+                    "signature": "categories(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The categories widget: title, dropdown, counts and hierarchy boxes.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169612,21 +169772,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 65
+                    "line": 61,
+                    "end": 66
                 },
                 {
                     "routes": [],
                     "name": "recentPosts",
                     "static": true,
                     "visibility": "public",
-                    "signature": "recentPosts(WP_Widget $widget, array $instance): string",
+                    "signature": "recentPosts(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The recent posts widget: title, how many, whether to show dates.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169639,21 +169799,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 73
+                    "line": 69,
+                    "end": 74
                 },
                 {
                     "routes": [],
                     "name": "recentComments",
                     "static": true,
                     "visibility": "public",
-                    "signature": "recentComments(WP_Widget $widget, array $instance): string",
+                    "signature": "recentComments(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The recent comments widget: title and how many.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169666,21 +169826,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 79
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [],
                     "name": "customHtml",
                     "static": true,
                     "visibility": "public",
-                    "signature": "customHtml(WP_Widget $widget, array $instance): string",
+                    "signature": "customHtml(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The custom HTML widget: hidden title and content fields its editor syncs.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169693,21 +169853,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 86
+                    "line": 83,
+                    "end": 87
                 },
                 {
                     "routes": [],
                     "name": "block",
                     "static": true,
                     "visibility": "public",
-                    "signature": "block(WP_Widget $widget, array $instance): string",
+                    "signature": "block(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The block widget: its block markup in a textarea.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169720,21 +169880,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 92
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
                     "name": "text",
                     "static": true,
                     "visibility": "public",
-                    "signature": "text(WP_Widget $widget, array $instance): string",
+                    "signature": "text(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The text widget in its visual mode: hidden fields the editor syncs (after the indent WP_Widget_Text::form prints first).",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169747,21 +169907,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 102
+                    "line": 96,
+                    "end": 103
                 },
                 {
                     "routes": [],
                     "name": "tagCloud",
                     "static": true,
                     "visibility": "public",
-                    "signature": "tagCloud(WP_Widget $widget, array $instance): string",
+                    "signature": "tagCloud(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The tag cloud: its title, the taxonomies that show a cloud (tags unless one is chosen), and the counts box.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169774,21 +169934,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 116
+                    "line": 106,
+                    "end": 117
                 },
                 {
                     "routes": [],
                     "name": "navMenu",
                     "static": true,
                     "visibility": "public",
-                    "signature": "navMenu(WP_Widget $widget, array $instance): string",
+                    "signature": "navMenu(Minn\\Objects\\Widget $widget, array $instance): string",
                     "doc": "The navigation menu widget: a note when there are no menus, else the title and the menu to show.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169801,8 +169961,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 132
+                    "line": 120,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -169831,21 +169991,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 175
+                    "line": 144,
+                    "end": 176
                 },
                 {
                     "routes": [],
                     "name": "links",
                     "static": true,
                     "visibility": "public",
-                    "signature": "links(WP_Widget $widget, array $instance, array $categories, string $limit): string",
+                    "signature": "links(Minn\\Objects\\Widget $widget, array $instance, array $categories, string $limit): string",
                     "doc": "The Links widget: the link category (the categories given as [id, name]),\nthe sort order, what each link shows, and how many (the limit as the\ncaller shows it).",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169872,8 +170032,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 200
+                    "line": 183,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -169906,21 +170066,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 206
+                    "line": 204,
+                    "end": 207
                 },
                 {
                     "routes": [],
                     "name": "number",
                     "static": true,
                     "visibility": "private",
-                    "signature": "number(WP_Widget $widget, int $number, string $label): string",
+                    "signature": "number(Minn\\Objects\\Widget $widget, int $number, string $label): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169940,21 +170100,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 211
+                    "line": 209,
+                    "end": 212
                 },
                 {
                     "routes": [],
                     "name": "id",
                     "static": true,
                     "visibility": "private",
-                    "signature": "id(WP_Widget $widget, string $field): string",
+                    "signature": "id(Minn\\Objects\\Widget $widget, string $field): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169967,21 +170127,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 216
+                    "line": 214,
+                    "end": 217
                 },
                 {
                     "routes": [],
                     "name": "name",
                     "static": true,
                     "visibility": "private",
-                    "signature": "name(WP_Widget $widget, string $field): string",
+                    "signature": "name(Minn\\Objects\\Widget $widget, string $field): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
                         {
                             "name": "widget",
-                            "type": "WP_Widget",
+                            "type": "Minn\\Objects\\Widget",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -169994,8 +170154,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 221
+                    "line": 219,
+                    "end": 222
                 }
             ]
         },

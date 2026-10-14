@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Auth;
 
+use Minn\Objects\PostType;
+use Minn\Objects\Taxonomy;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
@@ -19,7 +21,7 @@ use Minn\Runtime\Runtime;
 final class RegisteredCaps
 {
     /** A post type's registered object (any but post and page), or null. */
-    public static function ofType(string $type): ?\WP_Post_Type
+    public static function ofType(string $type): ?PostType
     {
         if (!Runtime::booted()) {
             return null;
@@ -27,16 +29,16 @@ final class RegisteredCaps
         // Posts and pages own the families everything else is named after; every other type, a built-in one (patterns,
         // menu items, templates) as much as a plugin's, answers with the names it registered, as on the reference.
         $object = Registered::postType($type);
-        return $object instanceof \WP_Post_Type && !in_array($type, ['post', 'page'], true) ? $object : null;
+        return $object instanceof PostType && !in_array($type, ['post', 'page'], true) ? $object : null;
     }
 
     /** A plugin's taxonomy, or null. */
-    public static function ofTaxonomy(string $taxonomy): ?\WP_Taxonomy
+    public static function ofTaxonomy(string $taxonomy): ?Taxonomy
     {
         if (!Runtime::booted()) {
             return null;
         }
         $object = Registered::taxonomy($taxonomy);
-        return $object instanceof \WP_Taxonomy && empty($object->_builtin) ? $object : null;
+        return $object instanceof Taxonomy && empty($object->_builtin) ? $object : null;
     }
 }

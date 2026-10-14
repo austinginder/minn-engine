@@ -45,7 +45,7 @@ the WordPress runtime plugins load against
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 263 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 276 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 385 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
@@ -100,7 +100,7 @@ the WordPress runtime plugins load against
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registered`](#registered) | final class | 181 | What is registered, looked up the way WordPress's lookups answer: post |
 | [`RegisteredSettings`](#registeredsettings) | final class | 102 | Settings as register_setting keeps them (probe rest-settings): the |
-| [`Registry`](#registry) | final class | 513 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`Registry`](#registry) | final class | 512 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`Runtime`](#runtime) | final class | 410 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
@@ -1153,7 +1153,7 @@ oldest comments come first.
 
 A post's link opened at a page of its comments, as pretty or plain links write it.
 
-Internals: `olderQuery()` (private, line 65)
+Internals: `olderQuery()` (private, line 66)
 
 
 ## CommentQuery
@@ -1928,7 +1928,7 @@ plugins have had their chance), so a plugin's version answers the engine
 as it answers WordPress. Arguments pass as given, so each answer's own
 defaults hold.
 
-Used by: `Minn\Auth\Can`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteSchema`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Themes`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Theme\FrontLifecycle`
+Used by: `Minn\Auth\Can`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteSchema`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\Registry`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Themes`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Theme\FrontLifecycle`
 
 
 ### static `bind(array $answers): void`
@@ -1940,7 +1940,8 @@ factories newError, newPost, postInstance, newTerm, newComment,
 commentInstance, newUser, and the query factories newQuery,
 newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
 and the REST ones newRestRequest, restRequestFromUrl, newRestResponse,
-restController, and newTheme.
+restController, newTheme, and the empty registered-type objects
+blankPostType and blankTaxonomy.
 
 - `@param array<string, Closure> $answers`
 
@@ -2096,11 +2097,19 @@ A REST response with data, a status and headers (new WP_REST_Response).
 
 One of the REST controllers a filter is handed, by kind: menus, menu-items or menu-locations.
 
+### static `blankPostType(): Minn\Objects\PostType`
+
+A post type's object with nothing set yet, for the registry to fill (WP_Post_Type, built without its constructor).
+
+### static `blankTaxonomy(): Minn\Objects\Taxonomy`
+
+A taxonomy's object with nothing set yet, for the registry to fill (WP_Taxonomy, built without its constructor).
+
 ### static `newTheme(mixed ...$args): Minn\Objects\Theme`
 
 A theme by its folder and root (new WP_Theme).
 
-Internals: `answer()` (private, line 291)
+Internals: `answer()` (private, line 306)
 
 
 ## Heartbeat
@@ -4110,7 +4119,7 @@ __construct(string $table)
 - `bool $statusJoin` — Whether an attachment's status follows its parent's (a taxonomy archive's attachments).
 - `int $page`
 - `mixed $postType` — The post type the query settles on: a name, a list, `any`, or empty.
-- `?WP_Post_Type $typeObject`
+- `?Minn\Objects\PostType $typeObject`
 - `string $typeCap`
 - `array $statuses` — The statuses asked for by name, which a single post's status check lets through. @var list<string>
 - readonly `string $table`
@@ -4190,7 +4199,7 @@ Appends the type and status clause. @param array<string, mixed> $q
 
 - `@param array<string, mixed> $q`
 
-Internals: `typeWhere()` (private, line 65), `cap()` (private, line 91), `named()` (private, line 98), `listing()` (private, line 142), `privateStatuses()` (private, line 171)
+Internals: `typeWhere()` (private, line 66), `cap()` (private, line 92), `named()` (private, line 99), `listing()` (private, line 143), `privateStatuses()` (private, line 172)
 
 
 ## PostQueryTax
@@ -4997,7 +5006,7 @@ them: a plugin changing one (relabelling Posts) is heard by every
 reader (probe type-object-sharing). Called once the facade classes
 exist; later registrations make their own.
 
-### `postTypeObject(string $name): ?WP_Post_Type`
+### `postTypeObject(string $name): ?Minn\Objects\PostType`
 
 The one object for a registered post type, or null.
 
@@ -5005,9 +5014,9 @@ The one object for a registered post type, or null.
 
 The objects of every registered post type, in registration order.
 
-- `@return array<string, \WP_Post_Type>`
+- `@return array<string, PostType>`
 
-### `taxonomyObject(string $name): ?WP_Taxonomy`
+### `taxonomyObject(string $name): ?Minn\Objects\Taxonomy`
 
 The one object for a registered taxonomy, or null.
 
@@ -5015,7 +5024,7 @@ The one object for a registered taxonomy, or null.
 
 The objects of every registered taxonomy, in registration order.
 
-- `@return array<string, \WP_Taxonomy>`
+- `@return array<string, Taxonomy>`
 
 ### `statuses(): array`
 
@@ -5037,7 +5046,7 @@ archive template are named after the singular name. Rows and the
 shared objects both take them; what a plugin set before init gives
 way, as it does there.
 
-### `adoptPostType(WP_Post_Type $object): array`
+### `adoptPostType(Minn\Objects\PostType $object): array`
 
 Takes a built post type as the registered one: the object
 register_post_type made is the one every reader shares, and its
@@ -5113,7 +5122,7 @@ taxonomies, from the built-in data (WP_Post_Type::get_default_labels).
 
 - `@return array<string, array{0: mixed, 1: mixed}>`
 
-### `adoptTaxonomy(WP_Taxonomy $object): array`
+### `adoptTaxonomy(Minn\Objects\Taxonomy $object): array`
 
 Takes a built taxonomy as the registered one, the object every reader
 shares, its properties the taxonomy's row.
@@ -5142,7 +5151,7 @@ Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `rowOf()` (private, line 238), `objectFrom()` (private, line 260), `derivedLabels()` (private, line 324)
+Internals: `rowOf()` (private, line 240), `objectFrom()` (private, line 262), `derivedLabels()` (private, line 325)
 
 
 ## RewriteRules
@@ -5174,20 +5183,20 @@ rewrite_rules_array.
 - const `DEFAULTS` = `array (   'ep_mask' => 0,   'paged' => true,   'feed' => true,   'forcomments' => false,   'walk_dirs' => true,   'endpoints' => true, )` — What a permastruct's flags default to (no endpoint places).
 - const `POST_BY_TIME` = `array (   0 => '%year%',   1 => '%monthnum%',   2 => '%day%',   3 => '%hour%',   4 => '%minute%',   5 => '%second%', )` — The six date and time tags that together name a post.
 
-### static `generate(WP_Rewrite $rewrite, array $args): array`
+### static `generate(Minn\Objects\Rewrite $rewrite, array $args): array`
 
 generate_rewrite_rules: the rules for one structure.
 
 - `@param array{struct: string, ep_mask?: int, paged?: bool, feed?: bool, forcomments?: bool, walk_dirs?: bool, endpoints?: bool} $args`
 - `@return array<string, string>`
 
-### static `all(WP_Rewrite $rewrite): array`
+### static `all(Minn\Objects\Rewrite $rewrite): array`
 
 rewrite_rules: every rule, assembled and filtered.
 
 - `@return array<string, string>`
 
-### static `unfiltered(WP_Rewrite $rewrite): array`
+### static `unfiltered(Minn\Objects\Rewrite $rewrite): array`
 
 The rules as the engine itself would make them, in their stored form
 and with no plugin's filter or action on them: what the stored rules
@@ -5195,13 +5204,13 @@ are when no plugin changed them. The site's rewrite is left as it is.
 
 - `@return array<string, string>`
 
-### static `builtins(WP_Rewrite $rewrite): void`
+### static `builtins(Minn\Objects\Rewrite $rewrite): void`
 
 The built-in taxonomies' tags and patterns, set once on the site's
 rewrite under the front of the structure then; a structure set later
 leaves them, and a plugin's, as they were (probe registry-rewrites).
 
-### static `typeArchive(WP_Rewrite $rewrite, string $name, array $type): array`
+### static `typeArchive(Minn\Objects\Rewrite $rewrite, string $name, array $type): array`
 
 A post type's archive rules, which join the top rules as it registers
 (probe cpt-rules): its archive slug (the rewrite slug when the archive
@@ -5216,7 +5225,7 @@ type has feeds, its pages when it has those.
 
 Whether a structure begins with a tag that could be a page's path too (use_verbose_page_rules).
 
-Internals: `assemble()` (private, line 120), `queries()` (private, line 205), `namesPost()` (private, line 217), `dirMask()` (private, line 233), `plainLevel()` (private, line 250), `postLevel()` (private, line 267), `attachments()` (private, line 293), `feeds()` (private, line 314), `pagesAndComments()` (private, line 329), `endpoints()` (private, line 352)
+Internals: `assemble()` (private, line 121), `queries()` (private, line 206), `namesPost()` (private, line 218), `dirMask()` (private, line 234), `plainLevel()` (private, line 251), `postLevel()` (private, line 268), `attachments()` (private, line 294), `feeds()` (private, line 315), `pagesAndComments()` (private, line 330), `endpoints()` (private, line 353)
 
 
 ## Runtime

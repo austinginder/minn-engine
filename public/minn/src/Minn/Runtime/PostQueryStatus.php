@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Auth\Can;
+use Minn\Objects\PostType;
 use Minn\Objects\Query;
 use Minn\Query\Sql;
 use Minn\Support\Sanitize;
@@ -171,7 +172,7 @@ final class PostQueryStatus
     private function privateStatuses(string $type): string
     {
         $object = Registered::postType($type);
-        if (!Handoff::signedIn() || !$object instanceof \WP_Post_Type) {
+        if (!Handoff::signedIn() || !$object instanceof PostType) {
             return '';
         }
         $t = $this->parts->table;

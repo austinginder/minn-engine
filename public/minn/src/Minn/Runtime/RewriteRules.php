@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Closure;
+use Minn\Objects\Rewrite;
 
 /**
  * The rewrite rules WordPress makes from its structures, as the reference
@@ -43,7 +44,7 @@ final class RewriteRules
      * @param array{struct: string, ep_mask?: int, paged?: bool, feed?: bool, forcomments?: bool, walk_dirs?: bool, endpoints?: bool} $args
      * @return array<string, string>
      */
-    public static function generate(\WP_Rewrite $rewrite, array $args): array
+    public static function generate(Rewrite $rewrite, array $args): array
     {
         $args += self::DEFAULTS;
         $struct = (string) $args['struct'];
@@ -77,7 +78,7 @@ final class RewriteRules
      *
      * @return array<string, string>
      */
-    public static function all(\WP_Rewrite $rewrite): array
+    public static function all(Rewrite $rewrite): array
     {
         if (!$rewrite->using_permalinks()) {
             return [];
@@ -102,7 +103,7 @@ final class RewriteRules
      *
      * @return array<string, string>
      */
-    public static function unfiltered(\WP_Rewrite $rewrite): array
+    public static function unfiltered(Rewrite $rewrite): array
     {
         $copy = clone $rewrite;
         $copy->matches = 'matches';
@@ -117,7 +118,7 @@ final class RewriteRules
      * @param Closure(string, array<string, string>): array<string, string> $section
      * @return array{0: array<string, string>, 1: array<string, string>} the top rules, and every rule
      */
-    private static function assemble(\WP_Rewrite $rewrite, Closure $section): array
+    private static function assemble(Rewrite $rewrite, Closure $section): array
     {
         $index = $rewrite->index;
         $fixed = [
@@ -148,7 +149,7 @@ final class RewriteRules
      * rewrite under the front of the structure then; a structure set later
      * leaves them, and a plugin's, as they were (probe registry-rewrites).
      */
-    public static function builtins(\WP_Rewrite $rewrite): void
+    public static function builtins(Rewrite $rewrite): void
     {
         $flags = ['with_front' => true, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true];
         foreach (['category' => ['(.+?)', 'category_name=', EP_CATEGORIES], 'post_tag' => ['([^/]+)', 'tag=', EP_TAGS], 'post_format' => ['([^/]+)', 'post_format=', EP_NONE]] as $name => [$regex, $query, $mask]) {
@@ -168,7 +169,7 @@ final class RewriteRules
      * @param array<string, mixed> $type the registered type
      * @return array<string, string>
      */
-    public static function typeArchive(\WP_Rewrite $rewrite, string $name, array $type): array
+    public static function typeArchive(Rewrite $rewrite, string $name, array $type): array
     {
         $archive = $type['has_archive'] ?? false;
         $args = is_array($type['rewrite'] ?? null) ? $type['rewrite'] : [];
@@ -202,7 +203,7 @@ final class RewriteRules
      *
      * @return list<string>
      */
-    private static function queries(\WP_Rewrite $rewrite, string $struct): array
+    private static function queries(Rewrite $rewrite, string $struct): array
     {
         preg_match_all('/%.+?%/', $struct, $found);
         $queries = [];
@@ -247,7 +248,7 @@ final class RewriteRules
      * @param array<string, mixed> $args
      * @return array<string, string>
      */
-    private static function plainLevel(\WP_Rewrite $rewrite, array $level, array $args): array
+    private static function plainLevel(Rewrite $rewrite, array $level, array $args): array
     {
         $rules = $args['feed'] ? self::feeds($rewrite, $level, $args) + [$level['match'] . 'embed/?$' => $level['query'] . '&embed=true'] : [];
         $rules += self::pagesAndComments($rewrite, $level, $args) + self::endpoints($rewrite, $level, $args);
@@ -264,7 +265,7 @@ final class RewriteRules
      * @param array<string, mixed> $args
      * @return array<string, string>
      */
-    private static function postLevel(\WP_Rewrite $rewrite, array $level, array $args, bool $hierarchical): array
+    private static function postLevel(Rewrite $rewrite, array $level, array $args, bool $hierarchical): array
     {
         [$match, $query] = [$level['match'], $level['query']];
         $rules = [$match . 'embed/?$' => $query . '&embed=true', $match . 'trackback/?$' => $query . '&tb=1'];
@@ -290,7 +291,7 @@ final class RewriteRules
      *
      * @return array<string, string>
      */
-    private static function attachments(\WP_Rewrite $rewrite, string $base): array
+    private static function attachments(Rewrite $rewrite, string $base): array
     {
         $query = $rewrite->index . '?attachment=' . $rewrite->preg_index(1);
         $feeds = '(' . implode('|', $rewrite->feeds) . ')/?$';
@@ -311,7 +312,7 @@ final class RewriteRules
      * @param array<string, mixed> $args
      * @return array<string, string>
      */
-    private static function feeds(\WP_Rewrite $rewrite, array $level, array $args): array
+    private static function feeds(Rewrite $rewrite, array $level, array $args): array
     {
         $feeds = '(' . implode('|', $rewrite->feeds) . ')/?$';
         $query = $level['query'] . '&feed=' . $rewrite->preg_index($level['tokens'] + 1) . ($args['forcomments'] ? '&withcomments=1' : '');
@@ -326,7 +327,7 @@ final class RewriteRules
      * @param array<string, mixed> $args
      * @return array<string, string>
      */
-    private static function pagesAndComments(\WP_Rewrite $rewrite, array $level, array $args): array
+    private static function pagesAndComments(Rewrite $rewrite, array $level, array $args): array
     {
         $next = $rewrite->preg_index($level['tokens'] + 1);
         $comments = $level['match'] . $rewrite->comments_pagination_base . '-([0-9]{1,})/?$';
@@ -349,7 +350,7 @@ final class RewriteRules
      * @param array<string, mixed> $args
      * @return array<string, string>
      */
-    private static function endpoints(\WP_Rewrite $rewrite, array $level, array $args): array
+    private static function endpoints(Rewrite $rewrite, array $level, array $args): array
     {
         $rules = [];
         if (!$args['endpoints']) {

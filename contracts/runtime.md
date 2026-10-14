@@ -16198,6 +16198,15 @@ taxonomy's own callback, else `countPublished()` for post types or `countAll()`)
 remove a meta row by its id, with that row's actions. The http-transports probe stays out of the
 comparison; the other probes give identical output before and after.
 
+**Batch 28, widgets, the toolbar, rewrite, post types and taxonomies by mark (class references 151 → 74).**
+The engine knows these objects by `Minn\Objects` marks the WordPress layer's classes carry: `Widget`
+(WP_Widget), `Toolbar` (WP_Admin_Bar), `Rewrite` (WP_Rewrite), `PostType` (WP_Post_Type) and `Taxonomy`
+(WP_Taxonomy). The registry makes a registered type's or taxonomy's one object empty through
+`Handoff::blankPostType()` and `blankTaxonomy()` (the class built without its constructor), then fills
+it from the registration row as before. The marks are named for what they are where an engine class
+already has the WordPress name's short form (Front\AdminBar). The http-transports probe stays out of the
+comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

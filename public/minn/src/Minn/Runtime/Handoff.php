@@ -10,9 +10,11 @@ use Minn\Objects\Comment;
 use Minn\Objects\CommentsQuery;
 use Minn\Objects\Errors;
 use Minn\Objects\Post;
+use Minn\Objects\PostType;
 use Minn\Objects\Query;
 use Minn\Objects\RestRequest;
 use Minn\Objects\RestResponse;
+use Minn\Objects\Taxonomy;
 use Minn\Objects\Term;
 use Minn\Objects\Theme;
 use Minn\Objects\TermsQuery;
@@ -44,7 +46,8 @@ final class Handoff
      * commentInstance, newUser, and the query factories newQuery,
      * newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
      * and the REST ones newRestRequest, restRequestFromUrl, newRestResponse,
-     * restController, and newTheme.
+     * restController, newTheme, and the empty registered-type objects
+     * blankPostType and blankTaxonomy.
      *
      * @param array<string, Closure> $answers
      */
@@ -280,6 +283,18 @@ final class Handoff
     public static function restController(string $kind, mixed ...$args): object
     {
         return self::answer('restController', $kind, ...$args);
+    }
+
+    /** A post type's object with nothing set yet, for the registry to fill (WP_Post_Type, built without its constructor). */
+    public static function blankPostType(): PostType
+    {
+        return self::answer('blankPostType');
+    }
+
+    /** A taxonomy's object with nothing set yet, for the registry to fill (WP_Taxonomy, built without its constructor). */
+    public static function blankTaxonomy(): Taxonomy
+    {
+        return self::answer('blankTaxonomy');
     }
 
     /** A theme by its folder and root (new WP_Theme). */

@@ -1766,7 +1766,7 @@ again.
 
 - `@return array<string, array<string, mixed>>`
 
-### static `built(WP_Post_Type $object): array`
+### static `built(Minn\Objects\PostType $object): array`
 
 A post type's list parameters as built, for the type in any
 namespace: before rest_{type}_collection_params and the optional
@@ -1782,7 +1782,7 @@ the order the site allows them, each once.
 
 - `@return array<string, list<string>>`
 
-Internals: `named()` (private, line 62), `forType()` (private, line 72), `filtered()` (private, line 90), `type()` (private, line 109), `described()` (private, line 140), `build()` (private, line 152), `statuses()` (private, line 227), `taxonomies()` (private, line 238), `termFilter()` (private, line 254)
+Internals: `named()` (private, line 63), `forType()` (private, line 73), `filtered()` (private, line 91), `type()` (private, line 110), `described()` (private, line 141), `build()` (private, line 153), `statuses()` (private, line 228), `taxonomies()` (private, line 239), `termFilter()` (private, line 255)
 
 
 ## PostListArgs
@@ -3376,7 +3376,7 @@ as the_widget shows it, and the settings encoded again.
 The widgets are registered on init; a runtime that stopped short of it
 registers them now. Without the runtime there are no widgets to serve.
 
-Internals: `item()` (private, line 176), `type()` (private, line 202), `widgetTypes()` (private, line 219), `requireSidebar()` (private, line 229)
+Internals: `item()` (private, line 177), `type()` (private, line 203), `widgetTypes()` (private, line 220), `requireSidebar()` (private, line 230)
 
 
 ## SiteSchema
@@ -4105,13 +4105,13 @@ A widget in a sidebar, its form and settings in the edit context. @return array<
 
 - `@return array<string, mixed>`
 
-### static `instance(WP_Widget $object, int $number): array`
+### static `instance(Minn\Objects\Widget $object, int $number): array`
 
 A widget's settings, encoded and signed, and raw when it shows them. @return array<string, mixed>
 
 - `@return array<string, mixed>`
 
-Internals: `form()` (private, line 64)
+Internals: `form()` (private, line 65)
 
 
 ## WidgetsController
@@ -4171,5 +4171,5 @@ Route: `DELETE /wp/v2/widgets/{id:[\w\-]+} (cap edit_theme_options)`
 
 Deletes a widget with force; without, sends it to the inactive widgets.
 
-Internals: `saveInstance()` (private, line 149), `newInstance()` (private, line 166), `sidebarOf()` (private, line 190)
+Internals: `saveInstance()` (private, line 150), `newInstance()` (private, line 167), `sidebarOf()` (private, line 191)
 

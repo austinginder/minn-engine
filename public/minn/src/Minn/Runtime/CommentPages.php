@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Objects\Comment;
+use Minn\Objects\Rewrite;
 use Minn\Support\Url;
 use Minn\Support\Lists;
 
@@ -123,7 +124,7 @@ final class CommentPages
     public static function link(string $permalink, mixed $page): string
     {
         $rewrite = $GLOBALS['wp_rewrite'] ?? null;
-        $pretty = $rewrite instanceof \WP_Rewrite && $rewrite->using_permalinks();
+        $pretty = $rewrite instanceof Rewrite && $rewrite->using_permalinks();
         if ($page && Runtime::options()->filtered('page_comments')) {
             $permalink = $pretty
                 ? Url::withTrailingSlash($permalink) . $rewrite->comments_pagination_base . '-' . $page

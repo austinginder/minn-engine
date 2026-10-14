@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Front\FeedTags;
+use Minn\Objects\Rewrite;
 use Minn\Support\Url;
 
 /**
@@ -32,7 +33,7 @@ final class ArchiveLinks
             return Runtime::hooks()->filter('post_type_archive_link', [$postsPage > 0 ? PostLinks::permalink($postsPage) : SiteUrls::home(), $postType]);
         }
         $rewrite = $GLOBALS['wp_rewrite'] ?? null;
-        if (Runtime::options()->filtered('permalink_structure') && is_array($type->rewrite) && $rewrite instanceof \WP_Rewrite) {
+        if (Runtime::options()->filtered('permalink_structure') && is_array($type->rewrite) && $rewrite instanceof Rewrite) {
             $slug = is_string($type->has_archive) ? $type->has_archive : (string) ($type->rewrite['slug'] ?? $postType);
             $link = SiteUrls::home(SiteUrls::trailing((empty($type->rewrite['with_front']) ? $rewrite->root : $rewrite->front) . $slug, 'post_type_archive'));
         } else {

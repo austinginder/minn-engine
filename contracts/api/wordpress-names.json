@@ -4,9 +4,9 @@
         "functionCalls": 156,
         "functions": 127,
         "hookApi": 0,
-        "classReferences": 151,
-        "classes": 32,
-        "files": 85
+        "classReferences": 74,
+        "classes": 27,
+        "files": 73
     },
     "families": {
         "functions": {
@@ -54,15 +54,10 @@
             "wp-includes/vars.php": 1
         },
         "classes": {
-            "wp-includes/class-wp-widget.php": 27,
-            "wp-includes/class-wp-admin-bar.php": 16,
-            "wp-includes/class-wp-rewrite.php": 16,
-            "wp-includes/class-wp-post-type.php": 13,
             "wp-admin/includes/class-wp-upgrader.php": 13,
             "wp-includes/class-wp-block-type.php": 8,
             "wp-includes/class-wp-application-passwords.php": 6,
             "wp-includes/class-wp-block.php": 6,
-            "wp-includes/class-wp-taxonomy.php": 5,
             "wp-includes/class-wp-block-type-registry.php": 4,
             "wp-includes/class-wp-theme-json-data.php": 4,
             "wp-admin/includes/class-wp-ajax-upgrader-skin.php": 3,
@@ -996,45 +991,6 @@
         }
     },
     "classes": {
-        "WP_Widget": {
-            "uses": 27,
-            "family": "wp-includes/class-wp-widget.php",
-            "files": {
-                "Minn/Rest/SidebarsController.php": 2,
-                "Minn/Rest/WidgetObject.php": 4,
-                "Minn/Rest/WidgetsController.php": 5,
-                "Minn/Widgets/WidgetForms.php": 16
-            }
-        },
-        "WP_Admin_Bar": {
-            "uses": 16,
-            "family": "wp-includes/class-wp-admin-bar.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 16
-            }
-        },
-        "WP_Rewrite": {
-            "uses": 16,
-            "family": "wp-includes/class-wp-rewrite.php",
-            "files": {
-                "Minn/Front/RuleTable.php": 1,
-                "Minn/Runtime/ArchiveLinks.php": 1,
-                "Minn/Runtime/CommentPages.php": 1,
-                "Minn/Runtime/RewriteRules.php": 13
-            }
-        },
-        "WP_Post_Type": {
-            "uses": 13,
-            "family": "wp-includes/class-wp-post-type.php",
-            "files": {
-                "Minn/Auth/RegisteredCaps.php": 2,
-                "Minn/Rest/PostCollectionParams.php": 3,
-                "Minn/Rest/RegisteredType.php": 2,
-                "Minn/Runtime/PostQueryParts.php": 1,
-                "Minn/Runtime/PostQueryStatus.php": 1,
-                "Minn/Runtime/Registry.php": 4
-            }
-        },
         "WP_Upgrader": {
             "uses": 13,
             "family": "wp-admin/includes/class-wp-upgrader.php",
@@ -1069,14 +1025,6 @@
                 "Minn/Blocks/Dynamic/Theme/QueryBlocks.php": 1,
                 "Minn/Rest/BlockRendererController.php": 1,
                 "Minn/Runtime/BlockFilters.php": 1
-            }
-        },
-        "WP_Taxonomy": {
-            "uses": 5,
-            "family": "wp-includes/class-wp-taxonomy.php",
-            "files": {
-                "Minn/Auth/RegisteredCaps.php": 2,
-                "Minn/Runtime/Registry.php": 3
             }
         },
         "WP_Block_Type_Registry": {

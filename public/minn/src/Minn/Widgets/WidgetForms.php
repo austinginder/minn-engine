@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Widgets;
 
 use Minn\Html;
+use Minn\Objects\Widget;
 use Minn\Runtime\NavMenu;
 use Minn\Runtime\Registered;
 use Minn\Runtime\SiteUrls;
@@ -20,7 +21,7 @@ use Minn\Support\Escape;
 final class WidgetForms
 {
     /** The title field most widgets open with. */
-    public static function title(\WP_Widget $widget, array $instance): string
+    public static function title(Widget $widget, array $instance): string
     {
         return sprintf(
             "\t\t<p>\n\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t<input class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" type=\"text\" value=\"%3\$s\" />\n\t\t</p>\n",
@@ -31,13 +32,13 @@ final class WidgetForms
     }
 
     /** search, meta, calendar: the title alone. */
-    public static function titleOnly(\WP_Widget $widget, array $instance): string
+    public static function titleOnly(Widget $widget, array $instance): string
     {
         return self::title($widget, $instance) . "\t\t";
     }
 
     /** The pages widget: title, sort order, pages to leave out. */
-    public static function pages(\WP_Widget $widget, array $instance): string
+    public static function pages(Widget $widget, array $instance): string
     {
         $sortby = (string) ($instance['sortby'] ?? 'post_title');
         $options = '';
@@ -50,14 +51,14 @@ final class WidgetForms
     }
 
     /** The archives widget: title, dropdown and counts boxes. */
-    public static function archives(\WP_Widget $widget, array $instance): string
+    public static function archives(Widget $widget, array $instance): string
     {
         $box = static fn (string $key, string $label): string => sprintf("\t\t\t<input class=\"checkbox\" type=\"checkbox\"%3\$s id=\"%1\$s\" name=\"%2\$s\" />\n\t\t\t<label for=\"%1\$s\">%4\$s</label>\n", self::id($widget, $key), self::name($widget, $key), Html::checked(!empty($instance[$key])), $label);
         return self::title($widget, $instance) . "\t\t<p>\n" . $box('dropdown', 'Display as dropdown') . "\t\t\t<br />\n" . $box('count', 'Show post counts') . "\t\t</p>\n\t\t";
     }
 
     /** The categories widget: title, dropdown, counts and hierarchy boxes. */
-    public static function categories(\WP_Widget $widget, array $instance): string
+    public static function categories(Widget $widget, array $instance): string
     {
         $box = static fn (string $key, string $label): string => sprintf("\t\t\t<input type=\"checkbox\" class=\"checkbox\" id=\"%1\$s\" name=\"%2\$s\"%3\$s />\n\t\t\t<label for=\"%1\$s\">%4\$s</label>\n", self::id($widget, $key), self::name($widget, $key), Html::checked(!empty($instance[$key])), $label);
         return self::title($widget, $instance)
@@ -65,7 +66,7 @@ final class WidgetForms
     }
 
     /** The recent posts widget: title, how many, whether to show dates. */
-    public static function recentPosts(\WP_Widget $widget, array $instance): string
+    public static function recentPosts(Widget $widget, array $instance): string
     {
         return self::title($widget, $instance)
             . self::number($widget, (int) ($instance['number'] ?? 5) ?: 5, 'Number of posts to show:')
@@ -73,26 +74,26 @@ final class WidgetForms
     }
 
     /** The recent comments widget: title and how many. */
-    public static function recentComments(\WP_Widget $widget, array $instance): string
+    public static function recentComments(Widget $widget, array $instance): string
     {
         return self::title($widget, $instance) . self::number($widget, (int) ($instance['number'] ?? 5) ?: 5, 'Number of comments to show:') . "\t\t";
     }
 
     /** The custom HTML widget: hidden title and content fields its editor syncs. */
-    public static function customHtml(\WP_Widget $widget, array $instance): string
+    public static function customHtml(Widget $widget, array $instance): string
     {
         return sprintf("\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"title sync-input\" type=\"hidden\" value=\"%3\$s\" />\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')))
             . sprintf("\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" class=\"content sync-input\" hidden>%3\$s</textarea>\n\t\t", self::id($widget, 'content'), self::name($widget, 'content'), Escape::textarea((string) ($instance['content'] ?? '')));
     }
 
     /** The block widget: its block markup in a textarea. */
-    public static function block(\WP_Widget $widget, array $instance): string
+    public static function block(Widget $widget, array $instance): string
     {
         return sprintf("\t\t<p>\n\t\t\t<label for=\"%1\$s\">\n\t\t\t\tBlock HTML:\t\t\t</label>\n\t\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" rows=\"6\" cols=\"50\" class=\"widefat code\">%3\$s</textarea>\n\t\t</p>\n\t\t", self::id($widget, 'content'), self::name($widget, 'content'), Escape::textarea((string) ($instance['content'] ?? '')));
     }
 
     /** The text widget in its visual mode: hidden fields the editor syncs (after the indent WP_Widget_Text::form prints first). */
-    public static function text(\WP_Widget $widget, array $instance): string
+    public static function text(Widget $widget, array $instance): string
     {
         return sprintf("\t\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"title sync-input\" type=\"hidden\" value=\"%3\$s\">\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')))
             // The text goes into its hidden field as it is: the reference does not escape it here.
@@ -102,7 +103,7 @@ final class WidgetForms
     }
 
     /** The tag cloud: its title, the taxonomies that show a cloud (tags unless one is chosen), and the counts box. */
-    public static function tagCloud(\WP_Widget $widget, array $instance): string
+    public static function tagCloud(Widget $widget, array $instance): string
     {
         $taxonomies = Registered::taxonomies(['show_tagcloud' => true], 'object');
         $current = isset($instance['taxonomy']) && Registered::taxonomyExists((string) $instance['taxonomy']) ? (string) $instance['taxonomy'] : 'post_tag';
@@ -116,7 +117,7 @@ final class WidgetForms
     }
 
     /** The navigation menu widget: a note when there are no menus, else the title and the menu to show. */
-    public static function navMenu(\WP_Widget $widget, array $instance): string
+    public static function navMenu(Widget $widget, array $instance): string
     {
         $menus = NavMenu::menus();
         $chosen = (int) ($instance['nav_menu'] ?? 0);
@@ -179,7 +180,7 @@ final class WidgetForms
      * the sort order, what each link shows, and how many (the limit as the
      * caller shows it).
      */
-    public static function links(\WP_Widget $widget, array $instance, array $categories, string $limit): string
+    public static function links(Widget $widget, array $instance, array $categories, string $limit): string
     {
         $options = '';
         foreach ($categories as [$id, $name]) {
@@ -205,17 +206,17 @@ final class WidgetForms
         return is_scalar($value) && (string) $value === (string) $current ? " {$attribute}='{$attribute}'" : '';
     }
 
-    private static function number(\WP_Widget $widget, int $number, string $label): string
+    private static function number(Widget $widget, int $number, string $label): string
     {
         return sprintf("\n\t\t<p>\n\t\t\t<label for=\"%1\$s\">%3\$s</label>\n\t\t\t<input class=\"tiny-text\" id=\"%1\$s\" name=\"%2\$s\" type=\"number\" step=\"1\" min=\"1\" value=\"%4\$d\" size=\"3\" />\n\t\t</p>\n", self::id($widget, 'number'), self::name($widget, 'number'), $label, $number);
     }
 
-    private static function id(\WP_Widget $widget, string $field): string
+    private static function id(Widget $widget, string $field): string
     {
         return Escape::attr($widget->get_field_id($field));
     }
 
-    private static function name(\WP_Widget $widget, string $field): string
+    private static function name(Widget $widget, string $field): string
     {
         return Escape::attr($widget->get_field_name($field));
     }

@@ -19,7 +19,7 @@ use Minn\Runtime\TypeProps;
  * once, when it is shown in REST and the class exists.
  */
 #[AllowDynamicProperties]
-final class WP_Post_Type
+final class WP_Post_Type implements \Minn\Objects\PostType
 {
     public $name;
     public $label;

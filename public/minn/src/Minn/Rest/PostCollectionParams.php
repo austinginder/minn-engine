@@ -7,6 +7,7 @@ namespace Minn\Rest;
 use Minn\Http\Args;
 use Minn\Http\RouteParams;
 use Minn\Media\FileTypes;
+use Minn\Objects\PostType;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
@@ -57,7 +58,7 @@ final class PostCollectionParams implements RouteParams
      * (a plugin's type under a namespace of its own has the same list as one
      * under wp/v2); posts and pages by name before plugins load.
      *
-     * @return array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null
+     * @return array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null
      */
     private static function named(string $name): ?array
     {
@@ -65,10 +66,10 @@ final class PostCollectionParams implements RouteParams
             return self::type(['post' => 'posts', 'page' => 'pages'][$name] ?? '');
         }
         $object = Registered::postType($name);
-        return $object instanceof \WP_Post_Type && !empty($object->show_in_rest) ? self::described($name, $object) : null;
+        return $object instanceof PostType && !empty($object->show_in_rest) ? self::described($name, $object) : null;
     }
 
-    /** @param array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null $type @return array<string, array<string, mixed>> */
+    /** @param array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null $type @return array<string, array<string, mixed>> */
     private static function forType(?array $type): array
     {
         if ($type === null) {
@@ -86,7 +87,7 @@ final class PostCollectionParams implements RouteParams
         return $params;
     }
 
-    /** The parameters built, through rest_{type}_collection_params, each marked optional. @param array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>> */
+    /** The parameters built, through rest_{type}_collection_params, each marked optional. @param array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>> */
     private static function filtered(array $type): array
     {
         $params = self::build($type);
@@ -104,7 +105,7 @@ final class PostCollectionParams implements RouteParams
      * The type a REST base names, with what its parameters depend on. Posts
      * and pages are known before plugins load; other types once they have.
      *
-     * @return array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null
+     * @return array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null
      */
     private static function type(string $base): ?array
     {
@@ -131,13 +132,13 @@ final class PostCollectionParams implements RouteParams
      *
      * @return array<string, array<string, mixed>>
      */
-    public static function built(\WP_Post_Type $object): array
+    public static function built(PostType $object): array
     {
         return self::build(self::described((string) $object->name, $object));
     }
 
-    /** @return array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} */
-    private static function described(string $name, \WP_Post_Type $object): array
+    /** @return array{name: string, object: ?PostType, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} */
+    private static function described(string $name, PostType $object): array
     {
         $taxonomies = [];
         foreach (Registered::objectTaxonomies($name, 'objects') as $taxonomy) {

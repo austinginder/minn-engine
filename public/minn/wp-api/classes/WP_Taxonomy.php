@@ -17,7 +17,7 @@ use Minn\Runtime\TypeProps;
  * when it is shown in REST and the class exists.
  */
 #[AllowDynamicProperties]
-final class WP_Taxonomy
+final class WP_Taxonomy implements \Minn\Objects\Taxonomy
 {
     public $name;
     public $label;

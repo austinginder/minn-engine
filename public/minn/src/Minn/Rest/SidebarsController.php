@@ -11,6 +11,7 @@ use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Objects\Widget;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
@@ -102,7 +103,7 @@ final readonly class SidebarsController
         self::ready();
         $types = self::widgetTypes();
         $fields = Fields::fromQuery($request->query);
-        $items = array_map(fn (\WP_Widget $widget) => $this->type($widget), array_values($types));
+        $items = array_map(fn (Widget $widget) => $this->type($widget), array_values($types));
         return Reply::item($fields === null ? $items : array_map(static fn (array $item) => $fields->apply($item), $items), null);
     }
 
@@ -199,7 +200,7 @@ final readonly class SidebarsController
     }
 
     /** @return array<string, mixed> */
-    private function type(\WP_Widget $widget): array
+    private function type(Widget $widget): array
     {
         $item = [
             'id' => $widget->id_base,
@@ -215,7 +216,7 @@ final readonly class SidebarsController
         return RuntimePrepare::item('rest_prepare_widget_type', $item, static fn () => $widget);
     }
 
-    /** @return array<string, \WP_Widget> by id base, in id order */
+    /** @return array<string, Widget> by id base, in id order */
     private static function widgetTypes(): array
     {
         $types = [];

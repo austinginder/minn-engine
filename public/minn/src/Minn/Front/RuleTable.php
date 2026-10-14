@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Closure;
 use Minn\Objects\Post;
+use Minn\Objects\Rewrite;
 use Minn\Runtime\PostReads;
 use Minn\Runtime\SiteUrls;
 
@@ -44,7 +45,7 @@ final class RuleTable
     public static function match(string $path): ?array
     {
         $rewrite = $GLOBALS['wp_rewrite'] ?? null;
-        $rules = $rewrite instanceof \WP_Rewrite ? $rewrite->wp_rewrite_rules() : null;
+        $rules = $rewrite instanceof Rewrite ? $rewrite->wp_rewrite_rules() : null;
         if (!is_array($rules) || $rules === []) {
             return null;
         }

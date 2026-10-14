@@ -17,51 +17,51 @@ reference prints it (probe rest-widgets): field ids and names from the
 widget's number, values escaped, defaults filled in. The whitespace is
 the reference's own and is part of the answer.
 
-### static `title(WP_Widget $widget, array $instance): string`
+### static `title(Minn\Objects\Widget $widget, array $instance): string`
 
 The title field most widgets open with.
 
-### static `titleOnly(WP_Widget $widget, array $instance): string`
+### static `titleOnly(Minn\Objects\Widget $widget, array $instance): string`
 
 search, meta, calendar: the title alone.
 
-### static `pages(WP_Widget $widget, array $instance): string`
+### static `pages(Minn\Objects\Widget $widget, array $instance): string`
 
 The pages widget: title, sort order, pages to leave out.
 
-### static `archives(WP_Widget $widget, array $instance): string`
+### static `archives(Minn\Objects\Widget $widget, array $instance): string`
 
 The archives widget: title, dropdown and counts boxes.
 
-### static `categories(WP_Widget $widget, array $instance): string`
+### static `categories(Minn\Objects\Widget $widget, array $instance): string`
 
 The categories widget: title, dropdown, counts and hierarchy boxes.
 
-### static `recentPosts(WP_Widget $widget, array $instance): string`
+### static `recentPosts(Minn\Objects\Widget $widget, array $instance): string`
 
 The recent posts widget: title, how many, whether to show dates.
 
-### static `recentComments(WP_Widget $widget, array $instance): string`
+### static `recentComments(Minn\Objects\Widget $widget, array $instance): string`
 
 The recent comments widget: title and how many.
 
-### static `customHtml(WP_Widget $widget, array $instance): string`
+### static `customHtml(Minn\Objects\Widget $widget, array $instance): string`
 
 The custom HTML widget: hidden title and content fields its editor syncs.
 
-### static `block(WP_Widget $widget, array $instance): string`
+### static `block(Minn\Objects\Widget $widget, array $instance): string`
 
 The block widget: its block markup in a textarea.
 
-### static `text(WP_Widget $widget, array $instance): string`
+### static `text(Minn\Objects\Widget $widget, array $instance): string`
 
 The text widget in its visual mode: hidden fields the editor syncs (after the indent WP_Widget_Text::form prints first).
 
-### static `tagCloud(WP_Widget $widget, array $instance): string`
+### static `tagCloud(Minn\Objects\Widget $widget, array $instance): string`
 
 The tag cloud: its title, the taxonomies that show a cloud (tags unless one is chosen), and the counts box.
 
-### static `navMenu(WP_Widget $widget, array $instance): string`
+### static `navMenu(Minn\Objects\Widget $widget, array $instance): string`
 
 The navigation menu widget: a note when there are no menus, else the title and the menu to show.
 
@@ -75,13 +75,13 @@ nothing, when it is shown).
 - `@param array<string, mixed> $args`
 - `@param array<string, bool> $inputs`
 
-### static `links(WP_Widget $widget, array $instance, array $categories, string $limit): string`
+### static `links(Minn\Objects\Widget $widget, array $instance, array $categories, string $limit): string`
 
 The Links widget: the link category (the categories given as [id, name]),
 the sort order, what each link shows, and how many (the limit as the
 caller shows it).
 
-Internals: `marked()` (private, line 203), `number()` (private, line 208), `id()` (private, line 213), `name()` (private, line 218)
+Internals: `marked()` (private, line 204), `number()` (private, line 209), `id()` (private, line 214), `name()` (private, line 219)
 
 
 ## WidgetTemplates

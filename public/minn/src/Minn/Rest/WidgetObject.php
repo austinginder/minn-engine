@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\Widget;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\WidgetAreas;
 
@@ -33,8 +34,8 @@ final readonly class WidgetObject
             'rendered' => $sidebarId === WidgetAreas::INACTIVE ? '' : trim(WidgetAreas::render((string) $widgetId, (string) $sidebarId)),
         ];
         if ($context->isEdit()) {
-            $item['rendered_form'] = trim((string) ($object instanceof \WP_Widget ? self::form($object, $parsed['number'] ?? -1) : WidgetAreas::control((string) $widgetId)));
-            if ($object instanceof \WP_Widget) {
+            $item['rendered_form'] = trim((string) ($object instanceof Widget ? self::form($object, $parsed['number'] ?? -1) : WidgetAreas::control((string) $widgetId)));
+            if ($object instanceof Widget) {
                 $item['instance'] = self::instance($object, $parsed['number'] ?? -1);
             }
         }
@@ -49,7 +50,7 @@ final readonly class WidgetObject
     }
 
     /** A widget's settings, encoded and signed, and raw when it shows them. @return array<string, mixed> */
-    public static function instance(\WP_Widget $object, int $number): array
+    public static function instance(Widget $object, int $number): array
     {
         $all = $object->get_settings();
         $instance = is_array($all) && isset($all[$number]) ? (array) $all[$number] : [];
@@ -61,7 +62,7 @@ final readonly class WidgetObject
         return $out;
     }
 
-    private static function form(\WP_Widget $object, int $number): string
+    private static function form(Widget $object, int $number): string
     {
         $all = $object->get_settings();
         $object->_set($number);

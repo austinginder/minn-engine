@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\Auth\Can;
 use Minn\I18n\Numbers;
+use Minn\Objects\Toolbar;
 use Minn\Objects\User;
 use Minn\Runtime\CommentReads;
 use Minn\Runtime\CurrentUser;
@@ -60,7 +61,7 @@ final class ToolbarMenus
     }
 
     /** "Howdy" with the user's name and small avatar, at the right of the bar. */
-    public static function myAccountItem(\WP_Admin_Bar $bar): void
+    public static function myAccountItem(Toolbar $bar): void
     {
         $userId = CurrentUser::id();
         if (!$userId) {
@@ -79,7 +80,7 @@ final class ToolbarMenus
     }
 
     /** The account menu: the user's card (larger avatar, name, login when it differs, the profile link) and Log Out. */
-    public static function myAccountMenu(\WP_Admin_Bar $bar): void
+    public static function myAccountMenu(Toolbar $bar): void
     {
         $userId = CurrentUser::id();
         if (!$userId) {
@@ -96,7 +97,7 @@ final class ToolbarMenus
     }
 
     /** The menu button wp-admin's narrow screens show; the front end has none. */
-    public static function sidebarToggle(\WP_Admin_Bar $bar): void
+    public static function sidebarToggle(Toolbar $bar): void
     {
         if (Runtime::current()->isAdmin) {
             $bar->add_node(['id' => 'menu-toggle', 'title' => self::ICON . '<span class="screen-reader-text">' . Gettext::text('Menu') . '</span>', 'href' => '#']);
@@ -104,7 +105,7 @@ final class ToolbarMenus
     }
 
     /** The WordPress logo's menu: About and Get Involved for a reader, then the wordpress.org links beside them. */
-    public static function wpMenu(\WP_Admin_Bar $bar): void
+    public static function wpMenu(Toolbar $bar): void
     {
         $reads = Can::current('read');
         $about = $reads ? SiteUrls::selfAdmin('about.php') : false;
@@ -132,7 +133,7 @@ final class ToolbarMenus
     }
 
     /** The site's name (with its icon when it has one), then the dashboard, appearance and plugins below it. */
-    public static function siteMenu(\WP_Admin_Bar $bar): void
+    public static function siteMenu(Toolbar $bar): void
     {
         if (!Handoff::signedIn() || (!\is_user_member_of_blog() && !Can::current('manage_network'))) {
             return;
@@ -162,7 +163,7 @@ final class ToolbarMenus
     }
 
     /** The appearance group under the site's name: themes, then what the theme supports for those who may edit it. */
-    public static function appearanceMenu(\WP_Admin_Bar $bar): void
+    public static function appearanceMenu(Toolbar $bar): void
     {
         $bar->add_group(['parent' => 'site-name', 'id' => 'appearance']);
         if (Can::current('switch_themes')) {
@@ -186,7 +187,7 @@ final class ToolbarMenus
     }
 
     /** Edit Site under a block theme, opening the template this page was built from when there is one. */
-    public static function editSiteMenu(\WP_Admin_Bar $bar): void
+    public static function editSiteMenu(Toolbar $bar): void
     {
         if (!(bool) Runtime::current()->get('block_theme', true) || !Can::current('edit_theme_options') || Runtime::current()->isAdmin) {
             return;
@@ -200,7 +201,7 @@ final class ToolbarMenus
     }
 
     /** Customize, for a theme the customizer serves (a block theme only once something registers with it). */
-    public static function customizeMenu(\WP_Admin_Bar $bar): void
+    public static function customizeMenu(Toolbar $bar): void
     {
         if (!Can::current('customize') || Runtime::current()->isAdmin || ((bool) Runtime::current()->get('block_theme', true) && !Runtime::hooks()->has('customize_register'))) {
             return;
@@ -212,7 +213,7 @@ final class ToolbarMenus
     }
 
     /** The count of updates waiting, when there are any. */
-    public static function updatesMenu(\WP_Admin_Bar $bar): void
+    public static function updatesMenu(Toolbar $bar): void
     {
         $total = (int) (\wp_get_update_data()['counts']['total'] ?? 0);
         if (!$total) {
@@ -225,7 +226,7 @@ final class ToolbarMenus
     }
 
     /** The comments awaiting moderation, for those who edit posts. */
-    public static function commentsMenu(\WP_Admin_Bar $bar): void
+    public static function commentsMenu(Toolbar $bar): void
     {
         if (!Can::current('edit_posts')) {
             return;
@@ -238,7 +239,7 @@ final class ToolbarMenus
     }
 
     /** New: a post, media, a link, a page, each other type shown on the bar, and a user, as far as the user may create them. */
-    public static function newContentMenu(\WP_Admin_Bar $bar): void
+    public static function newContentMenu(Toolbar $bar): void
     {
         $actions = self::creatable();
         if ($actions === []) {
@@ -285,7 +286,7 @@ final class ToolbarMenus
     }
 
     /** Edit, for the post, term or user the page shows, when the user may edit it. */
-    public static function editMenu(\WP_Admin_Bar $bar): void
+    public static function editMenu(Toolbar $bar): void
     {
         $shown = Runtime::current()->isAdmin ? null : ($GLOBALS['wp_the_query'] ?? null)?->get_queried_object();
         if (empty($shown)) {
@@ -323,7 +324,7 @@ final class ToolbarMenus
     }
 
     /** The page's shortlink, with a box to copy it from. */
-    public static function shortlinkMenu(\WP_Admin_Bar $bar): void
+    public static function shortlinkMenu(Toolbar $bar): void
     {
         $short = \wp_get_shortlink(0, 'query');
         if (empty($short)) {
@@ -334,14 +335,14 @@ final class ToolbarMenus
     }
 
     /** The groups for the bar's right side and the logo menu's outside links. */
-    public static function secondaryGroups(\WP_Admin_Bar $bar): void
+    public static function secondaryGroups(Toolbar $bar): void
     {
         $bar->add_group(['id' => 'top-secondary', 'meta' => ['class' => 'ab-top-secondary']]);
         $bar->add_group(['parent' => 'wp-logo', 'id' => 'wp-logo-external', 'meta' => ['class' => 'ab-sub-secondary']]);
     }
 
     /** The way out of recovery mode, while the site is in it. */
-    public static function recoveryModeMenu(\WP_Admin_Bar $bar): void
+    public static function recoveryModeMenu(Toolbar $bar): void
     {
         if (!\wp_is_recovery_mode()) {
             return;
@@ -355,7 +356,7 @@ final class ToolbarMenus
     }
 
     /** The search box, on the front end. */
-    public static function searchMenu(\WP_Admin_Bar $bar): void
+    public static function searchMenu(Toolbar $bar): void
     {
         if (Runtime::current()->isAdmin) {
             return;

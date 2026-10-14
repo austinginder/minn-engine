@@ -1300,7 +1300,7 @@ fits. Null when the site has no rules (plain permalinks).
 
 - `@return array{request: string, rule: string, query: string, vars: array<string, string>}|null`
 
-Internals: `subject()` (private, line 62), `first()` (private, line 80), `queryOf()` (private, line 105), `pageAt()` (private, line 116)
+Internals: `subject()` (private, line 63), `first()` (private, line 81), `queryOf()` (private, line 106), `pageAt()` (private, line 117)
 
 
 ## SingleAddresses
@@ -1602,71 +1602,71 @@ callback, so plugins can unhook any of them by name.
 - const `MENUS` = `array (   0 =>    array (     0 => 'wp_admin_bar_my_account_menu',     1 => 0,   ),   1 =>    array (     0 => 'wp_admin_bar_my_account_item',     1 => 9991,   ),   2 =>    array (     0 => 'wp_admin_bar_recovery_mode_menu',     1 => 9992,   ),   3 =>    array (     0 => 'wp_admin_bar_search_menu',     1 => 9999,   ),   4 =>    array (     0 => 'wp_admin_bar_sidebar_toggle',     1 => 0,   ),   5 =>    array (     0 => 'wp_admin_bar_wp_menu',     1 => 10,   ),   6 =>    array (     0 => 'wp_admin_bar_my_sites_menu',     1 => 20,   ),   7 =>    array (     0 => 'wp_admin_bar_site_menu',     1 => 30,   ),   8 =>    array (     0 => 'wp_admin_bar_edit_site_menu',     1 => 40,   ),   9 =>    array (     0 => 'wp_admin_bar_customize_menu',     1 => 40,   ),   10 =>    array (     0 => 'wp_admin_bar_updates_menu',     1 => 50,   ),   11 =>    array (     0 => 'wp_admin_bar_command_palette_menu',     1 => 55,   ),   12 =>    array (     0 => 'wp_admin_bar_comments_menu',     1 => 60,   ),   13 =>    array (     0 => 'wp_admin_bar_new_content_menu',     1 => 70,   ),   14 =>    array (     0 => 'wp_admin_bar_edit_menu',     1 => 80,   ),   15 =>    array (     0 => 'wp_admin_bar_add_secondary_groups',     1 => 200,   ), )` — WordPress's menus as add_menus hooks them: the callback, its priority.
 - const `ICON` = `'<span class="ab-icon" aria-hidden="true"></span>'`
 
-### static `myAccountItem(WP_Admin_Bar $bar): void`
+### static `myAccountItem(Minn\Objects\Toolbar $bar): void`
 
 "Howdy" with the user's name and small avatar, at the right of the bar.
 
-### static `myAccountMenu(WP_Admin_Bar $bar): void`
+### static `myAccountMenu(Minn\Objects\Toolbar $bar): void`
 
 The account menu: the user's card (larger avatar, name, login when it differs, the profile link) and Log Out.
 
-### static `sidebarToggle(WP_Admin_Bar $bar): void`
+### static `sidebarToggle(Minn\Objects\Toolbar $bar): void`
 
 The menu button wp-admin's narrow screens show; the front end has none.
 
-### static `wpMenu(WP_Admin_Bar $bar): void`
+### static `wpMenu(Minn\Objects\Toolbar $bar): void`
 
 The WordPress logo's menu: About and Get Involved for a reader, then the wordpress.org links beside them.
 
-### static `siteMenu(WP_Admin_Bar $bar): void`
+### static `siteMenu(Minn\Objects\Toolbar $bar): void`
 
 The site's name (with its icon when it has one), then the dashboard, appearance and plugins below it.
 
-### static `appearanceMenu(WP_Admin_Bar $bar): void`
+### static `appearanceMenu(Minn\Objects\Toolbar $bar): void`
 
 The appearance group under the site's name: themes, then what the theme supports for those who may edit it.
 
-### static `editSiteMenu(WP_Admin_Bar $bar): void`
+### static `editSiteMenu(Minn\Objects\Toolbar $bar): void`
 
 Edit Site under a block theme, opening the template this page was built from when there is one.
 
-### static `customizeMenu(WP_Admin_Bar $bar): void`
+### static `customizeMenu(Minn\Objects\Toolbar $bar): void`
 
 Customize, for a theme the customizer serves (a block theme only once something registers with it).
 
-### static `updatesMenu(WP_Admin_Bar $bar): void`
+### static `updatesMenu(Minn\Objects\Toolbar $bar): void`
 
 The count of updates waiting, when there are any.
 
-### static `commentsMenu(WP_Admin_Bar $bar): void`
+### static `commentsMenu(Minn\Objects\Toolbar $bar): void`
 
 The comments awaiting moderation, for those who edit posts.
 
-### static `newContentMenu(WP_Admin_Bar $bar): void`
+### static `newContentMenu(Minn\Objects\Toolbar $bar): void`
 
 New: a post, media, a link, a page, each other type shown on the bar, and a user, as far as the user may create them.
 
-### static `editMenu(WP_Admin_Bar $bar): void`
+### static `editMenu(Minn\Objects\Toolbar $bar): void`
 
 Edit, for the post, term or user the page shows, when the user may edit it.
 
-### static `shortlinkMenu(WP_Admin_Bar $bar): void`
+### static `shortlinkMenu(Minn\Objects\Toolbar $bar): void`
 
 The page's shortlink, with a box to copy it from.
 
-### static `secondaryGroups(WP_Admin_Bar $bar): void`
+### static `secondaryGroups(Minn\Objects\Toolbar $bar): void`
 
 The groups for the bar's right side and the logo menu's outside links.
 
-### static `recoveryModeMenu(WP_Admin_Bar $bar): void`
+### static `recoveryModeMenu(Minn\Objects\Toolbar $bar): void`
 
 The way out of recovery mode, while the site is in it.
 
-### static `searchMenu(WP_Admin_Bar $bar): void`
+### static `searchMenu(Minn\Objects\Toolbar $bar): void`
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 57), `creatable()` (private, line 259), `editPost()` (private, line 306), `editTerm()` (private, line 316)
+Internals: `profileUrl()` (private, line 58), `creatable()` (private, line 260), `editPost()` (private, line 307), `editTerm()` (private, line 317)
 
 
 ## ToolbarTree

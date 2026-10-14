@@ -774,3 +774,9 @@ Minn\Runtime\Handoff::bind([
 
 // Themes, made through Minn\Runtime\Handoff.
 Minn\Runtime\Handoff::bind(['newTheme' => static fn (...$args) => new WP_Theme(...$args)]);
+
+// A registered type's or taxonomy's object, made empty through Minn\Runtime\Handoff for the registry to fill.
+Minn\Runtime\Handoff::bind([
+    'blankPostType' => static fn () => (new ReflectionClass(WP_Post_Type::class))->newInstanceWithoutConstructor(),
+    'blankTaxonomy' => static fn () => (new ReflectionClass(WP_Taxonomy::class))->newInstanceWithoutConstructor(),
+]);

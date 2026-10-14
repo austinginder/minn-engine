@@ -691,11 +691,11 @@ null for those and when no runtime is up.
 
 Used by: `Minn\Auth\Capabilities`, `Minn\Auth\TypeCapabilities`, `Minn\Rest\TermsController`
 
-### static `ofType(string $type): ?WP_Post_Type`
+### static `ofType(string $type): ?Minn\Objects\PostType`
 
 A post type's registered object (any but post and page), or null.
 
-### static `ofTaxonomy(string $taxonomy): ?WP_Taxonomy`
+### static `ofTaxonomy(string $taxonomy): ?Minn\Objects\Taxonomy`
 
 A plugin's taxonomy, or null.
 

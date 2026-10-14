@@ -2,7 +2,7 @@
 
 /** The widget base and registry. Shapes from contracts/fixtures/api/media.json. */
 #[AllowDynamicProperties]
-class WP_Widget
+class WP_Widget implements \Minn\Objects\Widget
 {
     public $id_base;
     public $name;

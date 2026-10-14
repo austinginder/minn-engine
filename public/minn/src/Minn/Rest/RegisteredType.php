@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\PostType;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
@@ -15,7 +16,7 @@ use Minn\Runtime\Runtime;
  */
 final readonly class RegisteredType
 {
-    private function __construct(public string $name, private \WP_Post_Type $object)
+    private function __construct(public string $name, private PostType $object)
     {
     }
 
@@ -26,7 +27,7 @@ final readonly class RegisteredType
             return null;
         }
         $object = Registered::postType($type);
-        return $object instanceof \WP_Post_Type && empty($object->_builtin) ? new self($type, $object) : null;
+        return $object instanceof PostType && empty($object->_builtin) ? new self($type, $object) : null;
     }
 
     /** Whether the type supports the feature (title, editor, author...). */

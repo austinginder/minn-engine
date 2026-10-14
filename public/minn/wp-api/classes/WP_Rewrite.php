@@ -9,7 +9,7 @@ use Minn\Runtime\Runtime;
  * the rules plugins change; flushing writes nothing.
  */
 #[AllowDynamicProperties]
-class WP_Rewrite
+class WP_Rewrite implements \Minn\Objects\Rewrite
 {
     public $permalink_structure;
     public $use_trailing_slashes;

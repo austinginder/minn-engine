@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\PostType;
+
 /**
  * The pieces of one WP_Query run as the reference builds them and hands
  * them to filters. The seven clause pieces stay untyped: a filter may hand
@@ -29,7 +31,7 @@ final class PostQueryParts
     public int $page = 1;
     /** The post type the query settles on: a name, a list, `any`, or empty. */
     public mixed $postType = '';
-    public ?\WP_Post_Type $typeObject = null;
+    public ?PostType $typeObject = null;
     public string $typeCap = '';
     /** The statuses asked for by name, which a single post's status check lets through. @var list<string> */
     public array $statuses = [];

@@ -12,7 +12,7 @@ use Minn\Front\ToolbarTree;
  * which it holds no nodes to read. The protected steps stay methods, so a
  * subclass named through wp_admin_bar_class can still override them.
  */
-class WP_Admin_Bar
+class WP_Admin_Bar implements \Minn\Objects\Toolbar
 {
     private $nodes = [];
     private $bound = false;

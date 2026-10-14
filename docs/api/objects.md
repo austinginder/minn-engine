@@ -9,15 +9,20 @@
 | [`Errors`](#errors) | interface | 3 | A list of errors as the WordPress layer hands it to plugins (WP_Error): |
 | [`HttpResponse`](#httpresponse) | interface | 3 | An HTTP response as the WordPress layer hands it to plugins |
 | [`Post`](#post) | interface | 3 | A post as the WordPress layer hands it to plugins (WP_Post). The engine |
+| [`PostType`](#posttype) | interface | 3 | A registered post type as the WordPress layer hands it to plugins |
 | [`Query`](#query) | interface | 3 | A posts query as the WordPress layer hands it to plugins (WP_Query): its |
 | [`RestRequest`](#restrequest) | interface | 3 | A REST request as the WordPress layer hands it to plugins |
 | [`RestResponse`](#restresponse) | interface | 3 | A REST response as the WordPress layer hands it to plugins |
 | [`RestServer`](#restserver) | interface | 3 | The REST server as the WordPress layer hands it to plugins |
+| [`Rewrite`](#rewrite) | interface | 3 | The rewrite object as the WordPress layer hands it to plugins |
+| [`Taxonomy`](#taxonomy) | interface | 3 | A registered taxonomy as the WordPress layer hands it to plugins |
 | [`Term`](#term) | interface | 3 | A term as the WordPress layer hands it to plugins (WP_Term). The engine |
 | [`TermsQuery`](#termsquery) | interface | 3 | A terms query as the WordPress layer hands it to plugins (WP_Term_Query). |
 | [`Theme`](#theme) | interface | 3 | A theme as the WordPress layer hands it to plugins (WP_Theme): its |
+| [`Toolbar`](#toolbar) | interface | 3 | The toolbar as the WordPress layer hands it to plugins (WP_Admin_Bar): |
 | [`User`](#user) | interface | 3 | A user as the WordPress layer hands it to plugins (WP_User). The engine |
 | [`UsersQuery`](#usersquery) | interface | 3 | A users query as the WordPress layer hands it to plugins (WP_User_Query). |
+| [`Widget`](#widget) | interface | 3 | A widget as the WordPress layer hands it to plugins (WP_Widget): its id |
 
 ## Comment
 
@@ -77,6 +82,18 @@ so it never names the WordPress layer's class.
 Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Media\Icons`, `Minn\Rest\BlockRendererController`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\TermsController`, `Minn\Runtime\Handoff`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\Records`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\QueryClasses`
 
 
+## PostType
+
+`interface Minn\Objects\PostType` · `public/minn/src/Minn/Objects/PostType.php`
+
+A registered post type as the WordPress layer hands it to plugins
+(WP_Post_Type): its labels, capabilities and settings. The engine knows
+these objects by this mark and makes them through Runtime\Handoff, so it
+never names the WordPress layer's class.
+
+Used by: `Minn\Auth\RegisteredCaps`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\RegisteredType`, `Minn\Runtime\Handoff`, `Minn\Runtime\PostQueryParts`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\Registry`
+
+
 ## Query
 
 `interface Minn\Objects\Query` · `public/minn/src/Minn/Objects/Query.php`
@@ -125,6 +142,30 @@ class.
 Used by: `Minn\Rest\Responses`, `Minn\Rest\RuntimeRoutes`
 
 
+## Rewrite
+
+`interface Minn\Objects\Rewrite` · `public/minn/src/Minn/Objects/Rewrite.php`
+
+The rewrite object as the WordPress layer hands it to plugins
+(WP_Rewrite): the permalink structures, the extra rules and endpoints
+plugins add, and the rules built from them. The engine knows it by this
+mark, so it never names the WordPress layer's class.
+
+Used by: `Minn\Front\RuleTable`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\RewriteRules`
+
+
+## Taxonomy
+
+`interface Minn\Objects\Taxonomy` · `public/minn/src/Minn/Objects/Taxonomy.php`
+
+A registered taxonomy as the WordPress layer hands it to plugins
+(WP_Taxonomy): its labels, capabilities and settings. The engine knows
+these objects by this mark and makes them through Runtime\Handoff, so it
+never names the WordPress layer's class.
+
+Used by: `Minn\Auth\RegisteredCaps`, `Minn\Runtime\Handoff`, `Minn\Runtime\Registry`
+
+
 ## Term
 
 `interface Minn\Objects\Term` · `public/minn/src/Minn/Objects/Term.php`
@@ -159,6 +200,17 @@ WordPress layer's class.
 Used by: `Minn\Rest\Api`, `Minn\Rest\InstalledThemesController`, `Minn\Runtime\Handoff`, `Minn\Runtime\Themes`
 
 
+## Toolbar
+
+`interface Minn\Objects\Toolbar` · `public/minn/src/Minn/Objects/Toolbar.php`
+
+The toolbar as the WordPress layer hands it to plugins (WP_Admin_Bar):
+the nodes and groups a menu callback adds. The engine knows it by this
+mark, so it never names the WordPress layer's class.
+
+Used by: `Minn\Front\ToolbarMenus`
+
+
 ## User
 
 `interface Minn\Objects\User` · `public/minn/src/Minn/Objects/User.php`
@@ -179,4 +231,16 @@ The engine knows these objects by this mark and makes them through
 Runtime\Handoff, so it never names the WordPress layer's class.
 
 Used by: `Minn\Rest\UsersController`, `Minn\Runtime\Handoff`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`
+
+
+## Widget
+
+`interface Minn\Objects\Widget` · `public/minn/src/Minn/Objects/Widget.php`
+
+A widget as the WordPress layer hands it to plugins (WP_Widget): its id
+base, name, options and the form and update methods a widget class
+writes. The engine knows these objects by this mark, so it never names
+the WordPress layer's class.
+
+Used by: `Minn\Rest\SidebarsController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Widgets\WidgetForms`
 

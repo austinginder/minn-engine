@@ -11,6 +11,7 @@ use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Objects\Widget;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
@@ -79,7 +80,7 @@ final readonly class WidgetsController
         SidebarsController::ready();
         $body = $request->json();
         $object = \_minn_widget_factory()->get_widget_object((string) ($body['id_base'] ?? ''));
-        if (!$object instanceof \WP_Widget) {
+        if (!$object instanceof Widget) {
             throw new RestError('rest_invalid_widget', 'Invalid widget.', 400);
         }
         $sidebar = (string) ($body['sidebar'] ?? WidgetAreas::INACTIVE);
@@ -102,7 +103,7 @@ final readonly class WidgetsController
         $body = $request->json();
         $parsed = WidgetAreas::parse($id);
         $object = \_minn_widget_factory()->get_widget_object($parsed['id_base']);
-        if ($object instanceof \WP_Widget && (isset($body['instance']) || isset($body['form_data']))) {
+        if ($object instanceof Widget && (isset($body['instance']) || isset($body['form_data']))) {
             $this->saveInstance($object, (int) ($parsed['number'] ?? 0), $body);
         }
         if (isset($body['sidebar']) && (string) $body['sidebar'] !== $sidebar) {
@@ -129,7 +130,7 @@ final readonly class WidgetsController
         unset($previous['_links']);
         $parsed = WidgetAreas::parse($id);
         $object = \_minn_widget_factory()->get_widget_object($parsed['id_base']);
-        if ($object instanceof \WP_Widget) {
+        if ($object instanceof Widget) {
             $settings = (array) $object->get_settings();
             unset($settings[$parsed['number'] ?? -1]);
             $object->save_settings($settings);
@@ -146,7 +147,7 @@ final readonly class WidgetsController
      *
      * @param array<string, mixed> $body
      */
-    private function saveInstance(\WP_Widget $object, int $number, array $body): string
+    private function saveInstance(Widget $object, int $number, array $body): string
     {
         $new = self::newInstance($object, $number, $body);
         $settings = (array) $object->get_settings();
@@ -163,7 +164,7 @@ final readonly class WidgetsController
     }
 
     /** @param array<string, mixed> $body @return array<string, mixed> */
-    private static function newInstance(\WP_Widget $object, int $number, array $body): array
+    private static function newInstance(Widget $object, int $number, array $body): array
     {
         $instance = (array) ($body['instance'] ?? []);
         if (isset($instance['raw'])) {
