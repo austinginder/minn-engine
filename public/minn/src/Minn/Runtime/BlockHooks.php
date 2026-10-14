@@ -35,7 +35,7 @@ final class BlockHooks
         if (!self::active()) {
             return $markup;
         }
-        $template = new \WP_Block_Template();
+        $template = Handoff::newBlockTemplate();
         $template->id = Themes::stylesheet() . '//' . $slug;
         $template->theme = Themes::stylesheet();
         $template->slug = $slug;
@@ -52,10 +52,10 @@ final class BlockHooks
      */
     public static function registeredPattern(string $slug): ?string
     {
-        if (!class_exists(\WP_Block_Patterns_Registry::class, false)) {
+        if (!Handoff::bound('blockPatterns')) {
             return null;
         }
-        $pattern = \WP_Block_Patterns_Registry::get_instance()->get_registered($slug);
+        $pattern = Handoff::blockPatterns()->get_registered($slug);
         $content = is_array($pattern) ? (string) ($pattern['content'] ?? '') : '';
         return $content === '' ? null : $content;
     }

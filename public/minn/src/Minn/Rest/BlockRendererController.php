@@ -11,8 +11,10 @@ use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Objects\BlockType;
 use Minn\Objects\Post;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\PostData;
 use Minn\Runtime\PostReads;
 use Minn\Runtime\Records;
@@ -51,13 +53,13 @@ final readonly class BlockRendererController
             throw RestError::noRoute();
         }
         $values = $request->method === Method::Post ? $request->json() + $request->query : $request->query;
-        $type = \WP_Block_Type_Registry::get_instance()->get_registered($name);
-        $schema = ['type' => 'object', 'properties' => $type instanceof \WP_Block_Type ? $type->get_attributes() : [], 'additionalProperties' => false];
-        $this->refuseInvalid(['context' => [$values['context'] ?? 'view', self::ARGS['context']], 'attributes' => [$values['attributes'] ?? [], $type instanceof \WP_Block_Type ? $schema : self::ARGS['attributes']]]);
+        $type = Handoff::blockTypes()->get_registered($name);
+        $schema = ['type' => 'object', 'properties' => $type instanceof BlockType ? $type->get_attributes() : [], 'additionalProperties' => false];
+        $this->refuseInvalid(['context' => [$values['context'] ?? 'view', self::ARGS['context']], 'attributes' => [$values['attributes'] ?? [], $type instanceof BlockType ? $schema : self::ARGS['attributes']]]);
         ['post_id' => $postId] = $values + ['post_id' => 0];
         $postId = (int) $postId;
         $this->permit($postId);
-        if (!$type instanceof \WP_Block_Type || !$type->is_dynamic()) {
+        if (!$type instanceof BlockType || !$type->is_dynamic()) {
             throw new RestError('block_invalid', 'Invalid block.', 404);
         }
         $attributes = (array) $this->schema->sanitize((array) ($values['attributes'] ?? []), $schema, 'attributes');
@@ -97,7 +99,7 @@ final readonly class BlockRendererController
     }
 
     /** The block rendered on its own, inside the post when one is named (the global post put back after). @param array<string, mixed> $attributes */
-    private static function rendered(\WP_Block_Type $type, array $attributes, int $postId): string
+    private static function rendered(BlockType $type, array $attributes, int $postId): string
     {
         $outer = $GLOBALS['post'] ?? null;
         $outerRuntime = Runtime::current()->get('post');
@@ -108,7 +110,7 @@ final readonly class BlockRendererController
             $context = ['postId' => $postId, 'postType' => PostReads::type($postId)];
         }
         try {
-            $block = new \WP_Block(['blockName' => $type->name, 'attrs' => $attributes, 'innerHTML' => '', 'innerContent' => []], $context);
+            $block = Handoff::newBlock(['blockName' => $type->name, 'attrs' => $attributes, 'innerHTML' => '', 'innerContent' => []], $context);
             return (string) $block->render();
         } finally {
             $GLOBALS['post'] = $outer;

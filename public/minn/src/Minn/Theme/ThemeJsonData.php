@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Objects\ThemeJsonLayer;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -28,8 +30,8 @@ final class ThemeJsonData
         if (is_array($cached)) {
             return $cached;
         }
-        $data = Runtime::hooks()->filter('wp_theme_json_data_theme', [new \WP_Theme_JSON_Data($json, 'theme')]);
-        $filtered = $data instanceof \WP_Theme_JSON_Data ? self::asWritten((array) $data->get_theme_json()->get_raw_data()) : $json;
+        $data = Runtime::hooks()->filter('wp_theme_json_data_theme', [Handoff::newThemeJsonData($json, 'theme')]);
+        $filtered = $data instanceof ThemeJsonLayer ? self::asWritten((array) $data->get_theme_json()->get_raw_data()) : $json;
         Runtime::current()->set($key, $filtered);
         return $filtered;
     }
@@ -56,8 +58,8 @@ final class ThemeJsonData
         if (is_array($cached)) {
             return $cached;
         }
-        $data = Runtime::hooks()->filter((string) $filter, [new \WP_Theme_JSON_Data(['version' => 3] + $json, $origin)]);
-        $filtered = $data instanceof \WP_Theme_JSON_Data ? array_diff_key((array) $data->get_data(), ['version' => true]) : $json;
+        $data = Runtime::hooks()->filter((string) $filter, [Handoff::newThemeJsonData(['version' => 3] + $json, $origin)]);
+        $filtered = $data instanceof ThemeJsonLayer ? array_diff_key((array) $data->get_data(), ['version' => true]) : $json;
         Runtime::current()->set($key, $filtered);
         return $filtered;
     }
@@ -72,7 +74,7 @@ final class ThemeJsonData
      */
     private static function asWritten(array $raw): array
     {
-        $paths = array_merge(array_column(\WP_Theme_JSON::PRESETS_METADATA, 'path'), [['spacing', 'spacingScale']]);
+        $paths = array_merge(array_column(StylePresets::METADATA, 'path'), [['spacing', 'spacingScale']]);
         $nodes = [['settings']];
         foreach (array_keys((array) ($raw['settings']['blocks'] ?? [])) as $block) {
             $nodes[] = ['settings', 'blocks', (string) $block];

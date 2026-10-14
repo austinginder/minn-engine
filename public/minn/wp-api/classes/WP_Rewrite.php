@@ -412,7 +412,7 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
 
 /** The request object plugin code reads query vars from. */
 #[AllowDynamicProperties]
-class WP
+class WP implements \Minn\Objects\Environment
 {
     // A new WP knows the reference's own vars; registration (a taxonomy's, REST, sitemaps) adds to the global one (probe wp-request).
     public $public_query_vars = ['m', 'p', 'posts', 'w', 'cat', 'withcomments', 'withoutcomments', 's', 'search', 'exact', 'sentence', 'calendar', 'page', 'paged', 'more', 'tb', 'pb', 'author', 'order', 'orderby', 'year', 'monthnum', 'day', 'hour', 'minute', 'second', 'name', 'category_name', 'tag', 'feed', 'author_name', 'pagename', 'page_id', 'error', 'attachment', 'attachment_id', 'subpost', 'subpost_id', 'preview', 'robots', 'favicon', 'taxonomy', 'term', 'cpage', 'post_type', 'embed'];

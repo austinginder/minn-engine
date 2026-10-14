@@ -76,7 +76,7 @@ final class QueryBlocks
     private static function queried(Block $block, array $attrs, int $page): Page
     {
         $queryId = $block->attrs['queryId'] ?? null;
-        $template = new \WP_Block(['blockName' => 'core/post-template', 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []], ['queryId' => $queryId, 'query' => $attrs]);
+        $template = Handoff::newBlock(['blockName' => 'core/post-template', 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []], ['queryId' => $queryId, 'query' => $attrs]);
         $query = Handoff::newQuery(\build_query_vars_from_query_block($template, $page));
         $rows = array_map(static fn ($post) => array_diff_key(get_object_vars($post), ['filter' => true]), array_filter((array) $query->posts, static fn ($post) => $post instanceof Post));
         return new Page(PostRecord::fromRows(array_values($rows)), (int) $query->found_posts);

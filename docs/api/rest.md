@@ -437,7 +437,7 @@ Route: `POST /wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+} (public)`
 
 The block's markup, as {"rendered": "..."}.
 
-Internals: `refuseInvalid()` (private, line 68), `permit()` (private, line 86), `rendered()` (private, line 100)
+Internals: `refuseInvalid()` (private, line 70), `permit()` (private, line 88), `rendered()` (private, line 102)
 
 
 ## BlockTypesController
@@ -480,7 +480,7 @@ Route: `GET /wp/v2/block-types/{namespace:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+} 
 
 One block type.
 
-### static `fields(WP_Block_Type $type): array`
+### static `fields(Minn\Objects\BlockType $type): array`
 
 A block type's fields in the reference's order, as the route and
 WP_REST_Block_Types_Controller show them: its registration (supports
@@ -490,7 +490,7 @@ asset kind as the old single field (probe rest-block-controllers).
 
 - `@return array<string, mixed>`
 
-Internals: `items()` (private, line 61), `item()` (private, line 75), `links()` (private, line 135), `requireViewer()` (private, line 150)
+Internals: `items()` (private, line 63), `item()` (private, line 77), `links()` (private, line 137), `requireViewer()` (private, line 152)
 
 
 ## BlocksController

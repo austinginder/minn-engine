@@ -29,7 +29,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`QueryClasses`](#queryclasses) | final readonly class | 128 | The body-class tokens the main query stands for, in the reference's |
 | [`SpacingScale`](#spacingscale) | final class | 48 | The spacing sizes a theme.json spacing scale makes (probe |
 | [`StyleLayers`](#stylelayers) | final class | 67 | What plugins change about the global stylesheet's layers and nodes, for |
-| [`StylePresets`](#stylepresets) | final class | 148 | The preset side of theme.json: the colour, gradient, font-size, |
+| [`StylePresets`](#stylepresets) | final class | 151 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 88 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
@@ -392,7 +392,7 @@ in the reference's order and let them change what the query asks.
 
 Used by: `Minn\Theme\MainQueryBridge`
 
-### static `parseRequest(WP $wp, array $vars, array $given, ?Closure $parse = NULL): bool`
+### static `parseRequest(Minn\Objects\Environment $wp, array $vars, array $given, ?Closure $parse = NULL): bool`
 
 Parses the request: false when a plugin's do_parse_request took the
 parse over (the main query then does not run). The query string is
@@ -413,7 +413,7 @@ those or inside a search, an empty search, the front: a 200); the
 status and no-cache headers follow. A feed is never a 404: one of
 nothing is an empty feed.
 
-### static `sendHeaders(WP $wp): void`
+### static `sendHeaders(Minn\Objects\Environment $wp): void`
 
 The headers the reference sends for the request: no caching for a
 signed-in reader or a 404, the content type, a pingback address for a
@@ -931,7 +931,9 @@ font-family, spacing, and shadow lists a theme declares over core's
 own, as the custom properties on :root and the has-* utility classes
 the reference prints for them. Pure: settings in, CSS fragments out.
 
-Used by: `Minn\Theme\FontFaces`, `Minn\Theme\GlobalStyles`, `Minn\Theme\TreeStyles`
+- const `METADATA` = `array (   0 =>    array (     'path' =>      array (       0 => 'dimensions',       1 => 'aspectRatios',     ),     'prevent_override' =>      array (       0 => 'dimensions',       1 => 'defaultAspectRatios',     ),     'use_default_names' => false,     'value_key' => 'ratio',     'css_vars' => '--wp--preset--aspect-ratio--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'aspect-ratio',     ),   ),   1 =>    array (     'path' =>      array (       0 => 'color',       1 => 'palette',     ),     'prevent_override' =>      array (       0 => 'color',       1 => 'defaultPalette',     ),     'use_default_names' => false,     'value_key' => 'color',     'css_vars' => '--wp--preset--color--$slug',     'classes' =>      array (       '.has-$slug-color' => 'color',       '.has-$slug-background-color' => 'background-color',       '.has-$slug-border-color' => 'border-color',     ),     'properties' =>      array (       0 => 'color',       1 => 'background-color',       2 => 'border-color',     ),   ),   2 =>    array (     'path' =>      array (       0 => 'color',       1 => 'gradients',     ),     'prevent_override' =>      array (       0 => 'color',       1 => 'defaultGradients',     ),     'use_default_names' => false,     'value_key' => 'gradient',     'css_vars' => '--wp--preset--gradient--$slug',     'classes' =>      array (       '.has-$slug-gradient-background' => 'background',     ),     'properties' =>      array (       0 => 'background',     ),   ),   3 =>    array (     'path' =>      array (       0 => 'color',       1 => 'duotone',     ),     'prevent_override' =>      array (       0 => 'color',       1 => 'defaultDuotone',     ),     'use_default_names' => false,     'value_func' => NULL,     'css_vars' => NULL,     'classes' =>      array (     ),     'properties' =>      array (       0 => 'filter',     ),   ),   4 =>    array (     'path' =>      array (       0 => 'typography',       1 => 'fontSizes',     ),     'prevent_override' =>      array (       0 => 'typography',       1 => 'defaultFontSizes',     ),     'use_default_names' => true,     'value_func' => 'wp_get_typography_font_size_value',     'css_vars' => '--wp--preset--font-size--$slug',     'classes' =>      array (       '.has-$slug-font-size' => 'font-size',     ),     'properties' =>      array (       0 => 'font-size',     ),   ),   5 =>    array (     'path' =>      array (       0 => 'typography',       1 => 'fontFamilies',     ),     'prevent_override' => false,     'use_default_names' => false,     'value_key' => 'fontFamily',     'css_vars' => '--wp--preset--font-family--$slug',     'classes' =>      array (       '.has-$slug-font-family' => 'font-family',     ),     'properties' =>      array (       0 => 'font-family',     ),   ),   6 =>    array (     'path' =>      array (       0 => 'spacing',       1 => 'spacingSizes',     ),     'prevent_override' =>      array (       0 => 'spacing',       1 => 'defaultSpacingSizes',     ),     'use_default_names' => true,     'value_key' => 'size',     'css_vars' => '--wp--preset--spacing--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'padding',       1 => 'margin',     ),   ),   7 =>    array (     'path' =>      array (       0 => 'shadow',       1 => 'presets',     ),     'prevent_override' =>      array (       0 => 'shadow',       1 => 'defaultPresets',     ),     'use_default_names' => false,     'value_key' => 'shadow',     'css_vars' => '--wp--preset--shadow--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'box-shadow',     ),   ),   8 =>    array (     'path' =>      array (       0 => 'border',       1 => 'radiusSizes',     ),     'prevent_override' => false,     'use_default_names' => false,     'value_key' => 'size',     'css_vars' => '--wp--preset--border-radius--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'border-radius',     ),   ),   9 =>    array (     'path' =>      array (       0 => 'dimensions',       1 => 'dimensionSizes',     ),     'prevent_override' => false,     'use_default_names' => false,     'value_key' => 'size',     'css_vars' => '--wp--preset--dimension--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'width',       1 => 'height',       2 => 'min-height',     ),   ), )` — Each preset list theme.json may hold: where it sits, what overrides the defaults, its value, custom property, classes and CSS properties (WP_Theme_JSON::PRESETS_METADATA).
+
+Used by: `Minn\Theme\FontFaces`, `Minn\Theme\GlobalStyles`, `Minn\Theme\ThemeJsonData`, `Minn\Theme\TreeStyles`
 
 ### static `presets(array $settings, ?array $core = NULL): array`
 
@@ -1497,7 +1499,7 @@ callbacks and layer.
 - `@param array<string, mixed> $json`
 - `@return array<string, mixed>`
 
-Internals: `asWritten()` (private, line 73)
+Internals: `asWritten()` (private, line 75)
 
 
 ## ThemeStyles

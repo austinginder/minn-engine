@@ -86,7 +86,7 @@ attribute; anything else is left alone.
 
 - `@param array<string, mixed> $values`
 
-Internals: `inner()` (private, line 106), `closing()` (private, line 127), `opening()` (private, line 141), `attribute()` (private, line 147)
+Internals: `inner()` (private, line 107), `closing()` (private, line 128), `opening()` (private, line 142), `attribute()` (private, line 148)
 
 
 ## Block

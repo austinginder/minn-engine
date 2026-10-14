@@ -76,7 +76,7 @@ that opens on hover, the init watcher, and its tab index.
 
 Registers this family's blocks with the renderer.
 
-Internals: `wiring()` (private, line 68), `navigation()` (private, line 95), `responsive()` (private, line 176), `items()` (private, line 213), `groups()` (private, line 235), `filteredItems()` (private, line 261), `linkedPosts()` (private, line 283), `weighLinks()` (private, line 296), `linkable()` (private, line 311), `presetClasses()` (private, line 322), `overlayColors()` (private, line 344), `link()` (private, line 356), `submenu()` (private, line 391), `overlayClose()` (private, line 419), `classicItems()` (private, line 430), `pageList()` (private, line 436), `submenuColours()` (private, line 456), `ancestorsOf()` (private, line 472), `pageItems()` (private, line 499), `navParent()` (private, line 530), `menuPost()` (private, line 548), `enqueueView()` (private, line 563)
+Internals: `wiring()` (private, line 70), `navigation()` (private, line 97), `responsive()` (private, line 178), `items()` (private, line 215), `groups()` (private, line 237), `filteredItems()` (private, line 263), `linkedPosts()` (private, line 285), `weighLinks()` (private, line 298), `linkable()` (private, line 313), `presetClasses()` (private, line 324), `overlayColors()` (private, line 346), `link()` (private, line 358), `submenu()` (private, line 393), `overlayClose()` (private, line 421), `classicItems()` (private, line 432), `pageList()` (private, line 438), `submenuColours()` (private, line 458), `ancestorsOf()` (private, line 474), `pageItems()` (private, line 501), `navParent()` (private, line 532), `menuPost()` (private, line 550), `enqueueView()` (private, line 565)
 
 
 ## PostBlocks

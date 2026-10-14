@@ -15,6 +15,8 @@ use Minn\Content\Menus;
 use Minn\Content\Posts;
 use Minn\Content\Terms;
 use Minn\Db;
+use Minn\Objects\RenderedBlock;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Pages;
 use Minn\Runtime\Runtime;
 use Minn\Front\Kind;
@@ -263,10 +265,10 @@ final readonly class Navigation
         if (!Runtime::hooks()->has('block_core_navigation_render_inner_blocks')) {
             return $items;
         }
-        $list = Runtime::hooks()->filter('block_core_navigation_render_inner_blocks', [new \WP_Block_List(array_map(static fn (Block $item): array => $item->toArray(), $items))]);
+        $list = Runtime::hooks()->filter('block_core_navigation_render_inner_blocks', [Handoff::newBlockList(array_map(static fn (Block $item): array => $item->toArray(), $items))]);
         $kept = [];
         foreach (is_iterable($list) ? $list : [] as $block) {
-            if ($block instanceof \WP_Block) {
+            if ($block instanceof RenderedBlock) {
                 $kept[] = Block::fromArray($block->parsed_block);
             }
         }
@@ -312,7 +314,7 @@ final readonly class Navigation
     {
         $allowed = ['publish'];
         if (Runtime::hooks()->has('render_block_core_navigation_link_allowed_post_status')) {
-            $allowed = (array) Runtime::hooks()->filter('render_block_core_navigation_link_allowed_post_status', [$allowed, $block->attrs + ['opensInNewTab' => false], new \WP_Block($block->toArray())]);
+            $allowed = (array) Runtime::hooks()->filter('render_block_core_navigation_link_allowed_post_status', [$allowed, $block->attrs + ['opensInNewTab' => false], Handoff::newBlock($block->toArray())]);
         }
         $status = $this->posts->find($id)?->status;
         return $status !== null && in_array($status, $allowed, true);

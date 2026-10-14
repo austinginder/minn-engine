@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Objects\SitemapProvider;
+use Minn\Objects\SitemapServer;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
@@ -41,7 +43,7 @@ final class SitemapRequest
     }
 
     /** What the sitemaps server does with the request (render_sitemaps). */
-    public static function serve(\WP_Sitemaps $server): void
+    public static function serve(SitemapServer $server): void
     {
         $sitemap = (string) Sanitize::textField(MainQuery::current()->get('sitemap'));
         $stylesheet = (string) Sanitize::textField(MainQuery::current()->get('sitemap-stylesheet'));
@@ -53,7 +55,7 @@ final class SitemapRequest
             return;
         }
         if ($stylesheet !== '') {
-            (new \WP_Sitemaps_Stylesheet())->render_stylesheet($stylesheet);
+            (Handoff::newSitemapStylesheet())->render_stylesheet($stylesheet);
             throw new Printed();
         }
         if ($sitemap === 'index') {
@@ -64,10 +66,10 @@ final class SitemapRequest
     }
 
     /** One provider's page: printed, or a 404 when the subtype is not the provider's or the page has nothing. */
-    private static function page(\WP_Sitemaps $server, string $sitemap, string $subtype): void
+    private static function page(SitemapServer $server, string $sitemap, string $subtype): void
     {
         $provider = $server->registry->get_provider($sitemap);
-        if (!$provider instanceof \WP_Sitemaps_Provider) {
+        if (!$provider instanceof SitemapProvider) {
             self::notFound();
             return;
         }

@@ -47,7 +47,7 @@ final class Abilities
         }
         $state['categoriesFired'] = true;
         self::save($state);
-        Runtime::hooks()->action('wp_abilities_api_categories_init', [\WP_Ability_Categories_Registry::get_instance()]);
+        Runtime::hooks()->action('wp_abilities_api_categories_init', [Handoff::abilityCategories()]);
     }
 
     /** Fires the categories action, then the abilities action, each once. */
@@ -60,7 +60,7 @@ final class Abilities
         }
         $state['abilitiesFired'] = true;
         self::save($state);
-        Runtime::hooks()->action('wp_abilities_api_init', [\WP_Abilities_Registry::get_instance()]);
+        Runtime::hooks()->action('wp_abilities_api_init', [Handoff::abilities()]);
     }
 
     /** Registers a category; its row, or null with the reference's notice. @return array<string, mixed>|null */

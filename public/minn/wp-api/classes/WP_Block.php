@@ -7,7 +7,7 @@ use Minn\Runtime\Runtime;
 
 /** A parsed block ready to render, with its context and inner blocks. */
 #[AllowDynamicProperties]
-class WP_Block
+class WP_Block implements \Minn\Objects\RenderedBlock
 {
     public $parsed_block;
     public $name;

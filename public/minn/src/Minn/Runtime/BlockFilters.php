@@ -125,7 +125,7 @@ final class BlockFilters
         $id = spl_object_id($block);
         $parsed = self::$parsedFor[$id] ?? self::toArray($block);
         unset(self::$parsedFor[$id]);
-        $instance = class_exists('\WP_Block', false) ? new \WP_Block($parsed, self::context()) : null;
+        $instance = Handoff::bound('newBlock') ? Handoff::newBlock($parsed, self::context()) : null;
         return self::rendered($html, $parsed, $instance, $done);
     }
 

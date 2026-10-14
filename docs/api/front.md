@@ -1437,11 +1437,11 @@ Used by: `Minn\Front\SitemapController`
 
 The canonical step: a sitemap asked for by another address is sent to its own.
 
-### static `serve(WP_Sitemaps $server): void`
+### static `serve(Minn\Objects\SitemapServer $server): void`
 
 What the sitemaps server does with the request (render_sitemaps).
 
-Internals: `page()` (private, line 67), `notFound()` (private, line 88)
+Internals: `page()` (private, line 69), `notFound()` (private, line 90)
 
 
 ## SitemapXml

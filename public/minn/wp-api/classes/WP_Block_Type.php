@@ -4,7 +4,7 @@ use Minn\Blocks\BlockName;
 
 /** A block type as registered; the core set is data/blocks.json. Shapes from contracts/fixtures/api/blocks.json. */
 #[AllowDynamicProperties]
-class WP_Block_Type
+class WP_Block_Type implements \Minn\Objects\BlockType
 {
     public $api_version = 1;
     public $name;

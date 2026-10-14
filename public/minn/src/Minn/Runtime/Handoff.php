@@ -24,6 +24,9 @@ use Minn\Objects\Upgrader;
 use Minn\Objects\UpgraderSkin;
 use Minn\Objects\User;
 use Minn\Objects\UsersQuery;
+use Minn\Objects\BlockType;
+use Minn\Objects\RenderedBlock;
+use Minn\Objects\ThemeJsonLayer;
 
 /**
  * What the engine asks of the layer it runs under, where a plugin may have
@@ -52,7 +55,11 @@ final class Handoff
      * and the REST ones newRestRequest, restRequestFromUrl, newRestResponse,
      * restController, newTheme, and the empty registered-type objects
      * blankPostType and blankTaxonomy, a user's sessionTokens, the locale's
-     * newLocale and newTextdomainRegistry, and newUpgrader and newUpgraderSkin.
+     * newLocale and newTextdomainRegistry, newUpgrader and newUpgraderSkin, the
+     * blocks' newBlock, newBlockList, newBlockTemplate, newTagProcessor and
+     * newThemeJsonData, newSitemapStylesheet, and the registries blockTypes,
+     * blockPatterns, blockStyles, blockBindings, abilities and
+     * abilityCategories.
      *
      * @param array<string, Closure> $answers
      */
@@ -330,6 +337,84 @@ final class Handoff
     public static function newUpgraderSkin(mixed ...$args): UpgraderSkin
     {
         return self::answer('newUpgraderSkin', ...$args);
+    }
+
+    /** A block to render, with its context (new WP_Block). */
+    public static function newBlock(mixed ...$args): RenderedBlock
+    {
+        return self::answer('newBlock', ...$args);
+    }
+
+    /** Blocks to render as one list (new WP_Block_List). */
+    public static function newBlockList(mixed ...$args): object
+    {
+        return self::answer('newBlockList', ...$args);
+    }
+
+    /** An empty block template record (new WP_Block_Template). */
+    public static function newBlockTemplate(mixed ...$args): object
+    {
+        return self::answer('newBlockTemplate', ...$args);
+    }
+
+    /** A cursor over HTML's tags and attributes (new WP_HTML_Tag_Processor). */
+    public static function newTagProcessor(mixed ...$args): object
+    {
+        return self::answer('newTagProcessor', ...$args);
+    }
+
+    /** One origin's theme.json data for its filter (new WP_Theme_JSON_Data). */
+    public static function newThemeJsonData(mixed ...$args): ThemeJsonLayer
+    {
+        return self::answer('newThemeJsonData', ...$args);
+    }
+
+    /** The stylesheet a sitemap is shown with (new WP_Sitemaps_Stylesheet). */
+    public static function newSitemapStylesheet(mixed ...$args): object
+    {
+        return self::answer('newSitemapStylesheet', ...$args);
+    }
+
+    /** The registered block types (WP_Block_Type_Registry::get_instance). */
+    public static function blockTypes(mixed ...$args): object
+    {
+        return self::answer('blockTypes', ...$args);
+    }
+
+    /** The registered block patterns (WP_Block_Patterns_Registry::get_instance). */
+    public static function blockPatterns(mixed ...$args): object
+    {
+        return self::answer('blockPatterns', ...$args);
+    }
+
+    /** The registered block styles (WP_Block_Styles_Registry::get_instance). */
+    public static function blockStyles(mixed ...$args): object
+    {
+        return self::answer('blockStyles', ...$args);
+    }
+
+    /** The registered block binding sources (WP_Block_Bindings_Registry::get_instance). */
+    public static function blockBindings(mixed ...$args): object
+    {
+        return self::answer('blockBindings', ...$args);
+    }
+
+    /** The registered abilities (WP_Abilities_Registry::get_instance). */
+    public static function abilities(mixed ...$args): object
+    {
+        return self::answer('abilities', ...$args);
+    }
+
+    /** The registered ability categories (WP_Ability_Categories_Registry::get_instance). */
+    public static function abilityCategories(mixed ...$args): object
+    {
+        return self::answer('abilityCategories', ...$args);
+    }
+
+    /** Whether the layer has bound an answer by that name yet (it binds them as it loads). */
+    public static function bound(string $name): bool
+    {
+        return isset(self::$answers[$name]);
     }
 
     /** A theme by its folder and root (new WP_Theme). */

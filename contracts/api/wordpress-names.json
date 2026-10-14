@@ -4,9 +4,9 @@
         "functionCalls": 156,
         "functions": 127,
         "hookApi": 0,
-        "classReferences": 42,
-        "classes": 19,
-        "files": 66
+        "classReferences": 2,
+        "classes": 1,
+        "files": 59
     },
     "families": {
         "functions": {
@@ -54,25 +54,7 @@
             "wp-includes/vars.php": 1
         },
         "classes": {
-            "wp-includes/class-wp-block-type.php": 8,
-            "wp-includes/class-wp-block.php": 6,
-            "wp-includes/class-wp-block-type-registry.php": 4,
-            "wp-includes/class-wp-theme-json-data.php": 4,
-            "wp-includes/class-wp.php": 2,
-            "wp-includes/class-wp-block-patterns-registry.php": 2,
-            "wp-includes/sitemaps/class-wp-sitemaps.php": 2,
-            "wp-includes/class-wp-theme-json-resolver.php": 2,
-            "wp-includes/class-wp-dependency.php": 2,
-            "wp-includes/abilities-api/class-wp-abilities-registry.php": 1,
-            "wp-includes/abilities-api/class-wp-ability-categories-registry.php": 1,
-            "wp-includes/class-wp-block-bindings-registry.php": 1,
-            "wp-includes/class-wp-block-list.php": 1,
-            "wp-includes/class-wp-block-styles-registry.php": 1,
-            "wp-includes/class-wp-block-template.php": 1,
-            "wp-includes/html-api/class-wp-html-tag-processor.php": 1,
-            "wp-includes/sitemaps/class-wp-sitemaps-provider.php": 1,
-            "wp-includes/sitemaps/class-wp-sitemaps-stylesheet.php": 1,
-            "wp-includes/class-wp-theme-json.php": 1
+            "wp-includes/class-wp-theme-json-resolver.php": 2
         }
     },
     "functions": {
@@ -983,144 +965,11 @@
         }
     },
     "classes": {
-        "WP_Block_Type": {
-            "uses": 8,
-            "family": "wp-includes/class-wp-block-type.php",
-            "files": {
-                "Minn/Rest/BlockRendererController.php": 4,
-                "Minn/Rest/BlockTypesController.php": 4
-            }
-        },
-        "WP_Block": {
-            "uses": 6,
-            "family": "wp-includes/class-wp-block.php",
-            "files": {
-                "Minn/Blocks/Bindings.php": 1,
-                "Minn/Blocks/Dynamic/Theme/Navigation.php": 2,
-                "Minn/Blocks/Dynamic/Theme/QueryBlocks.php": 1,
-                "Minn/Rest/BlockRendererController.php": 1,
-                "Minn/Runtime/BlockFilters.php": 1
-            }
-        },
-        "WP_Block_Type_Registry": {
-            "uses": 4,
-            "family": "wp-includes/class-wp-block-type-registry.php",
-            "files": {
-                "Minn/Blocks/Bindings.php": 1,
-                "Minn/Rest/BlockRendererController.php": 1,
-                "Minn/Rest/BlockTypesController.php": 2
-            }
-        },
-        "WP_Theme_JSON_Data": {
-            "uses": 4,
-            "family": "wp-includes/class-wp-theme-json-data.php",
-            "files": {
-                "Minn/Theme/ThemeJsonData.php": 4
-            }
-        },
-        "WP": {
-            "uses": 2,
-            "family": "wp-includes/class-wp.php",
-            "files": {
-                "Minn/Theme/FrontLifecycle.php": 2
-            }
-        },
-        "WP_Block_Patterns_Registry": {
-            "uses": 2,
-            "family": "wp-includes/class-wp-block-patterns-registry.php",
-            "files": {
-                "Minn/Runtime/BlockHooks.php": 2
-            }
-        },
-        "WP_Sitemaps": {
-            "uses": 2,
-            "family": "wp-includes/sitemaps/class-wp-sitemaps.php",
-            "files": {
-                "Minn/Front/SitemapRequest.php": 2
-            }
-        },
         "WP_Theme_JSON_Resolver": {
             "uses": 2,
             "family": "wp-includes/class-wp-theme-json-resolver.php",
             "files": {
                 "Minn/Rest/InstalledThemesController.php": 2
-            }
-        },
-        "_WP_Dependency": {
-            "uses": 2,
-            "family": "wp-includes/class-wp-dependency.php",
-            "files": {
-                "Minn/Runtime/AssetEdits.php": 2
-            }
-        },
-        "WP_Abilities_Registry": {
-            "uses": 1,
-            "family": "wp-includes/abilities-api/class-wp-abilities-registry.php",
-            "files": {
-                "Minn/Runtime/Abilities.php": 1
-            }
-        },
-        "WP_Ability_Categories_Registry": {
-            "uses": 1,
-            "family": "wp-includes/abilities-api/class-wp-ability-categories-registry.php",
-            "files": {
-                "Minn/Runtime/Abilities.php": 1
-            }
-        },
-        "WP_Block_Bindings_Registry": {
-            "uses": 1,
-            "family": "wp-includes/class-wp-block-bindings-registry.php",
-            "files": {
-                "Minn/Blocks/Bindings.php": 1
-            }
-        },
-        "WP_Block_List": {
-            "uses": 1,
-            "family": "wp-includes/class-wp-block-list.php",
-            "files": {
-                "Minn/Blocks/Dynamic/Theme/Navigation.php": 1
-            }
-        },
-        "WP_Block_Styles_Registry": {
-            "uses": 1,
-            "family": "wp-includes/class-wp-block-styles-registry.php",
-            "files": {
-                "Minn/Rest/BlockTypesController.php": 1
-            }
-        },
-        "WP_Block_Template": {
-            "uses": 1,
-            "family": "wp-includes/class-wp-block-template.php",
-            "files": {
-                "Minn/Runtime/BlockHooks.php": 1
-            }
-        },
-        "WP_HTML_Tag_Processor": {
-            "uses": 1,
-            "family": "wp-includes/html-api/class-wp-html-tag-processor.php",
-            "files": {
-                "Minn/Blocks/Bindings.php": 1
-            }
-        },
-        "WP_Sitemaps_Provider": {
-            "uses": 1,
-            "family": "wp-includes/sitemaps/class-wp-sitemaps-provider.php",
-            "files": {
-                "Minn/Front/SitemapRequest.php": 1
-            }
-        },
-        "WP_Sitemaps_Stylesheet": {
-            "uses": 1,
-            "family": "wp-includes/sitemaps/class-wp-sitemaps-stylesheet.php",
-            "files": {
-                "Minn/Front/SitemapRequest.php": 1
-            }
-        },
-        "WP_Theme_JSON": {
-            "uses": 1,
-            "family": "wp-includes/class-wp-theme-json.php",
-            "files": {
-                "Minn/Theme/ThemeJsonData.php": 1
             }
         }
     }

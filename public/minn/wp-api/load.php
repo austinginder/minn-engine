@@ -789,3 +789,19 @@ Minn\Runtime\Handoff::bind([
     'newUpgrader' => static fn ($kind, $skin) => $kind === 'theme' ? new Theme_Upgrader($skin) : new Plugin_Upgrader($skin),
     'newUpgraderSkin' => static fn (...$args) => new WP_Ajax_Upgrader_Skin(...$args),
 ]);
+
+// Blocks and their registries, theme.json layers and the sitemap stylesheet, made and found through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind([
+    'newBlock' => static fn (...$args) => new WP_Block(...$args),
+    'newBlockList' => static fn (...$args) => new WP_Block_List(...$args),
+    'newBlockTemplate' => static fn (...$args) => new WP_Block_Template(...$args),
+    'newTagProcessor' => static fn (...$args) => new WP_HTML_Tag_Processor(...$args),
+    'newThemeJsonData' => static fn (...$args) => new WP_Theme_JSON_Data(...$args),
+    'newSitemapStylesheet' => static fn (...$args) => new WP_Sitemaps_Stylesheet(...$args),
+    'blockTypes' => static fn () => WP_Block_Type_Registry::get_instance(),
+    'blockPatterns' => static fn () => WP_Block_Patterns_Registry::get_instance(),
+    'blockStyles' => static fn () => WP_Block_Styles_Registry::get_instance(),
+    'blockBindings' => static fn () => WP_Block_Bindings_Registry::get_instance(),
+    'abilities' => static fn () => WP_Abilities_Registry::get_instance(),
+    'abilityCategories' => static fn () => WP_Ability_Categories_Registry::get_instance(),
+]);

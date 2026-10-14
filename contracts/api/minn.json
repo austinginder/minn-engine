@@ -11808,6 +11808,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Blocks\\Block",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -11844,8 +11845,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 37
+                    "line": 33,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -11874,8 +11875,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 80
+                    "line": 50,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -11910,8 +11911,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 103
+                    "line": 91,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -11946,8 +11947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 124
+                    "line": 107,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -11980,8 +11981,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 139
+                    "line": 128,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -12000,8 +12001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 144
+                    "line": 142,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -12041,8 +12042,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 155
+                    "line": 148,
+                    "end": 156
                 }
             ]
         },
@@ -14864,6 +14865,8 @@
                 "Minn\\Html",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Json",
+                "Minn\\Objects\\RenderedBlock",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Pages",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Kses"
@@ -14904,8 +14907,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 77,
-                "end": 83
+                "line": 79,
+                "end": 85
             },
             "cases": [],
             "constants": [
@@ -14998,8 +15001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 65
+                    "line": 56,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -15018,8 +15021,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 93
+                    "line": 88,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -15038,8 +15041,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 75
+                    "line": 70,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -15065,8 +15068,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 169
+                    "line": 97,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -15120,8 +15123,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 205
+                    "line": 178,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -15149,8 +15152,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 223
+                    "line": 215,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -15185,8 +15188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 252
+                    "line": 237,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -15208,8 +15211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 274
+                    "line": 263,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -15231,8 +15234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 293
+                    "line": 285,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -15253,8 +15256,8 @@
                             "doc": "each link to a post among them, submenus' too, through linkable()"
                         }
                     ],
-                    "line": 296,
-                    "end": 304
+                    "line": 298,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -15280,8 +15283,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 319
+                    "line": 313,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -15302,8 +15305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 341
+                    "line": 324,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -15322,8 +15325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 354
+                    "line": 346,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -15349,8 +15352,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 383
+                    "line": 358,
+                    "end": 385
                 },
                 {
                     "routes": [],
@@ -15376,8 +15379,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 391,
-                    "end": 416
+                    "line": 393,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -15396,8 +15399,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 419,
-                    "end": 427
+                    "line": 421,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -15410,8 +15413,8 @@
                         "@return list<Block>"
                     ],
                     "params": [],
-                    "line": 430,
-                    "end": 434
+                    "line": 432,
+                    "end": 436
                 },
                 {
                     "routes": [],
@@ -15437,8 +15440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 447
+                    "line": 438,
+                    "end": 449
                 },
                 {
                     "routes": [],
@@ -15460,8 +15463,8 @@
                             "doc": "the navigation's context"
                         }
                     ],
-                    "line": 456,
-                    "end": 469
+                    "line": 458,
+                    "end": 471
                 },
                 {
                     "routes": [],
@@ -15489,8 +15492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 472,
-                    "end": 487
+                    "line": 474,
+                    "end": 489
                 },
                 {
                     "routes": [],
@@ -15539,8 +15542,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 499,
-                    "end": 527
+                    "line": 501,
+                    "end": 529
                 },
                 {
                     "routes": [],
@@ -15589,8 +15592,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 530,
-                    "end": 537
+                    "line": 532,
+                    "end": 539
                 },
                 {
                     "routes": [],
@@ -15611,8 +15614,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 548,
-                    "end": 560
+                    "line": 550,
+                    "end": 562
                 },
                 {
                     "routes": [],
@@ -15623,8 +15626,8 @@
                     "doc": "Interactive navigation markup brings the block's view module with it, as on the reference.",
                     "shapes": [],
                     "params": [],
-                    "line": 563,
-                    "end": 568
+                    "line": 565,
+                    "end": 570
                 }
             ]
         },
@@ -52533,6 +52536,8 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Objects\\SitemapProvider",
+                "Minn\\Objects\\SitemapServer",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\Runtime",
@@ -52556,41 +52561,41 @@
                     "doc": "The canonical step: a sitemap asked for by another address is sent to its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 26,
-                    "end": 41
+                    "line": 28,
+                    "end": 43
                 },
                 {
                     "routes": [],
                     "name": "serve",
                     "static": true,
                     "visibility": "public",
-                    "signature": "serve(WP_Sitemaps $server): void",
+                    "signature": "serve(Minn\\Objects\\SitemapServer $server): void",
                     "doc": "What the sitemaps server does with the request (render_sitemaps).",
                     "shapes": [],
                     "params": [
                         {
                             "name": "server",
-                            "type": "WP_Sitemaps",
+                            "type": "Minn\\Objects\\SitemapServer",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 64
+                    "line": 46,
+                    "end": 66
                 },
                 {
                     "routes": [],
                     "name": "page",
                     "static": true,
                     "visibility": "private",
-                    "signature": "page(WP_Sitemaps $server, string $sitemap, string $subtype): void",
+                    "signature": "page(Minn\\Objects\\SitemapServer $server, string $sitemap, string $subtype): void",
                     "doc": "One provider's page: printed, or a 404 when the subtype is not the provider's or the page has nothing.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "server",
-                            "type": "WP_Sitemaps",
+                            "type": "Minn\\Objects\\SitemapServer",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -52610,8 +52615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 85
+                    "line": 69,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -52622,8 +52627,8 @@
                     "doc": "The main query made a 404, which the theme renders.",
                     "shapes": [],
                     "params": [],
-                    "line": 88,
-                    "end": 92
+                    "line": 90,
+                    "end": 94
                 }
             ]
         },
@@ -83067,6 +83072,28 @@
             ]
         },
         {
+            "name": "Minn\\Objects\\BlockType",
+            "short": "BlockType",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/BlockType.php",
+            "lines": 3,
+            "doc": "A registered block type as the WordPress layer hands it to plugins\n(WP_Block_Type): its attributes, supports, styles and render callback.\nThe engine knows these objects by this mark and finds them through\nRuntime\\Handoff, so it never names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\BlockRendererController",
+                "Minn\\Rest\\BlockTypesController",
+                "Minn\\Runtime\\Handoff"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Objects\\Comment",
             "short": "Comment",
             "namespace": "Minn\\Objects",
@@ -83111,6 +83138,46 @@
                 "Minn\\Runtime\\CommentQueryWhere",
                 "Minn\\Runtime\\CommentThreads",
                 "Minn\\Runtime\\Handoff"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\Dependency",
+            "short": "Dependency",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/Dependency.php",
+            "lines": 3,
+            "doc": "A registered script or style as the WordPress layer hands it to plugins\n(_WP_Dependency): its handle, source, dependencies, version and extra\ndata. The engine knows these objects by this mark, so it never names the\nWordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\AssetEdits"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\Environment",
+            "short": "Environment",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/Environment.php",
+            "lines": 3,
+            "doc": "The request's environment as the WordPress layer hands it to plugins\n(WP, the $wp global): the query variables parsed from the request and\nthe headers sent. The engine knows it by this mark, so it never names\nthe WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Theme\\FrontLifecycle"
             ],
             "constructor": null,
             "cases": [],
@@ -83292,6 +83359,27 @@
             "methods": []
         },
         {
+            "name": "Minn\\Objects\\RenderedBlock",
+            "short": "RenderedBlock",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/RenderedBlock.php",
+            "lines": 3,
+            "doc": "A block being rendered as the WordPress layer hands it to plugins\n(WP_Block): its parsed block, attributes, context and inner blocks. The\nengine knows these objects by this mark and makes them through\nRuntime\\Handoff, so it never names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "Minn\\Runtime\\Handoff"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Objects\\RestRequest",
             "short": "RestRequest",
             "namespace": "Minn\\Objects",
@@ -83437,6 +83525,46 @@
             "methods": []
         },
         {
+            "name": "Minn\\Objects\\SitemapProvider",
+            "short": "SitemapProvider",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/SitemapProvider.php",
+            "lines": 3,
+            "doc": "A sitemap provider as the WordPress layer hands it to plugins\n(WP_Sitemaps_Provider and its kinds): the object subtypes it lists and\ntheir URLs. The engine knows these objects by this mark, so it never\nnames the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\SitemapRequest"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\SitemapServer",
+            "short": "SitemapServer",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/SitemapServer.php",
+            "lines": 3,
+            "doc": "The sitemaps as the WordPress layer hands them to plugins (WP_Sitemaps):\nthe providers registered and the index and stylesheets they serve. The\nengine knows them by this mark, so it never names the WordPress layer's\nclass.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\SitemapRequest"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Objects\\Taxonomy",
             "short": "Taxonomy",
             "namespace": "Minn\\Objects",
@@ -83529,6 +83657,27 @@
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Themes"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\ThemeJsonLayer",
+            "short": "ThemeJsonLayer",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/ThemeJsonLayer.php",
+            "lines": 3,
+            "doc": "One origin's theme.json data as the WordPress layer hands it to the\nwp_theme_json_data_ filters (WP_Theme_JSON_Data), which may change it.\nThe engine knows these objects by this mark and makes them through\nRuntime\\Handoff, so it never names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Theme\\ThemeJsonData"
             ],
             "constructor": null,
             "cases": [],
@@ -94226,11 +94375,13 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Objects\\BlockType",
                 "Minn\\Objects\\Post",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\Schema",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\Records",
@@ -94261,8 +94412,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 41,
-                "end": 43
+                "line": 43,
+                "end": 45
             },
             "cases": [],
             "constants": [
@@ -94321,8 +94472,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 65
+                    "line": 50,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -94343,8 +94494,8 @@
                             "doc": "value and schema by name"
                         }
                     ],
-                    "line": 68,
-                    "end": 83
+                    "line": 70,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -94363,15 +94514,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 97
+                    "line": 88,
+                    "end": 99
                 },
                 {
                     "routes": [],
                     "name": "rendered",
                     "static": true,
                     "visibility": "private",
-                    "signature": "rendered(WP_Block_Type $type, array $attributes, int $postId): string",
+                    "signature": "rendered(Minn\\Objects\\BlockType $type, array $attributes, int $postId): string",
                     "doc": "The block rendered on its own, inside the post when one is named (the global post put back after). @param array<string, mixed> $attributes",
                     "shapes": [
                         "@param array<string, mixed> $attributes"
@@ -94379,7 +94530,7 @@
                     "params": [
                         {
                             "name": "type",
-                            "type": "WP_Block_Type",
+                            "type": "Minn\\Objects\\BlockType",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -94399,8 +94550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 120
+                    "line": 102,
+                    "end": 122
                 }
             ]
         },
@@ -94422,12 +94573,14 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Objects\\BlockType",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -94454,8 +94607,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 33
+                "line": 33,
+                "end": 35
             },
             "cases": [],
             "constants": [
@@ -94506,8 +94659,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [
@@ -94535,8 +94688,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 47
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [
@@ -94571,15 +94724,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 59
+                    "line": 53,
+                    "end": 61
                 },
                 {
                     "routes": [],
                     "name": "fields",
                     "static": true,
                     "visibility": "public",
-                    "signature": "fields(WP_Block_Type $type): array",
+                    "signature": "fields(Minn\\Objects\\BlockType $type): array",
                     "doc": "A block type's fields in the reference's order, as the route and\nWP_REST_Block_Types_Controller show them: its registration (supports\n{} when it has none), its styles (its own, then those registered for\nit), its variations as built when asked, and the first handle of each\nasset kind as the old single field (probe rest-block-controllers).",
                     "shapes": [
                         "@return array<string, mixed>"
@@ -94587,14 +94740,14 @@
                     "params": [
                         {
                             "name": "type",
-                            "type": "WP_Block_Type",
+                            "type": "Minn\\Objects\\BlockType",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 132
+                    "line": 93,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -94620,15 +94773,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 72
+                    "line": 63,
+                    "end": 74
                 },
                 {
                     "routes": [],
                     "name": "item",
                     "static": false,
                     "visibility": "private",
-                    "signature": "item(WP_Block_Type $type): array",
+                    "signature": "item(Minn\\Objects\\BlockType $type): array",
                     "doc": "",
                     "shapes": [
                         "@return array<string, mixed>"
@@ -94636,21 +94789,21 @@
                     "params": [
                         {
                             "name": "type",
-                            "type": "WP_Block_Type",
+                            "type": "Minn\\Objects\\BlockType",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 80
+                    "line": 77,
+                    "end": 82
                 },
                 {
                     "routes": [],
                     "name": "links",
                     "static": false,
                     "visibility": "private",
-                    "signature": "links(WP_Block_Type $type): array",
+                    "signature": "links(Minn\\Objects\\BlockType $type): array",
                     "doc": "",
                     "shapes": [
                         "@return array<string, list<array<string, mixed>>>"
@@ -94658,14 +94811,14 @@
                     "params": [
                         {
                             "name": "type",
-                            "type": "WP_Block_Type",
+                            "type": "Minn\\Objects\\BlockType",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 147
+                    "line": 137,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -94676,8 +94829,8 @@
                     "doc": "Only someone who edits a type shown in REST may read block types; the runtime holds them.",
                     "shapes": [],
                     "params": [],
-                    "line": 150,
-                    "end": 158
+                    "line": 152,
+                    "end": 160
                 }
             ]
         },
@@ -116689,6 +116842,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -118233,6 +118387,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Objects\\Dependency",
                 "Minn\\Runtime\\Assets"
             ],
             "usedBy": [],
@@ -118275,8 +118430,8 @@
                             "doc": "each handle as the view last showed it (source, dependencies, version, args, data)"
                         }
                     ],
-                    "line": 23,
-                    "end": 45
+                    "line": 25,
+                    "end": 47
                 }
             ]
         },
@@ -119342,6 +119497,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Blocks\\Block",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -119602,6 +119758,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Themes"
             ],
@@ -125009,17 +125166,19 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 307,
+            "lines": 389,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Objects\\BlockType",
                 "Minn\\Objects\\Comment",
                 "Minn\\Objects\\CommentsQuery",
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\PostType",
                 "Minn\\Objects\\Query",
+                "Minn\\Objects\\RenderedBlock",
                 "Minn\\Objects\\RestRequest",
                 "Minn\\Objects\\RestResponse",
                 "Minn\\Objects\\SessionTokens",
@@ -125028,6 +125187,7 @@
                 "Minn\\Objects\\Term",
                 "Minn\\Objects\\TermsQuery",
                 "Minn\\Objects\\Theme",
+                "Minn\\Objects\\ThemeJsonLayer",
                 "Minn\\Objects\\Upgrader",
                 "Minn\\Objects\\UpgraderSkin",
                 "Minn\\Objects\\User",
@@ -125037,7 +125197,9 @@
                 "Minn\\Auth\\AuthCookies",
                 "Minn\\Auth\\Can",
                 "Minn\\Auth\\SignIn",
+                "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Engine",
@@ -125052,6 +125214,8 @@
                 "Minn\\Ops\\DirectoryApi",
                 "Minn\\Ops\\UpgraderRun",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockRendererController",
+                "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
@@ -125070,11 +125234,14 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetObject",
                 "Minn\\Rest\\WidgetsController",
+                "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AbilityRun",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
+                "Minn\\Runtime\\BlockFilters",
+                "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentForm",
@@ -125120,7 +125287,8 @@
                 "Minn\\Runtime\\UserOrder",
                 "Minn\\Runtime\\UserQueryRunner",
                 "Minn\\Runtime\\UserSave",
-                "Minn\\Theme\\FrontLifecycle"
+                "Minn\\Theme\\FrontLifecycle",
+                "Minn\\Theme\\ThemeJsonData"
             ],
             "constructor": null,
             "cases": [],
@@ -125143,7 +125311,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "bind(array $answers): void",
-                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,\nand the REST ones newRestRequest, restRequestFromUrl, newRestResponse,\nrestController, newTheme, and the empty registered-type objects\nblankPostType and blankTaxonomy, a user's sessionTokens, the locale's\nnewLocale and newTextdomainRegistry, and newUpgrader and newUpgraderSkin.",
+                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,\nand the REST ones newRestRequest, restRequestFromUrl, newRestResponse,\nrestController, newTheme, and the empty registered-type objects\nblankPostType and blankTaxonomy, a user's sessionTokens, the locale's\nnewLocale and newTextdomainRegistry, newUpgrader and newUpgraderSkin, the\nblocks' newBlock, newBlockList, newBlockTemplate, newTagProcessor and\nnewThemeJsonData, newSitemapStylesheet, and the registries blockTypes,\nblockPatterns, blockStyles, blockBindings, abilities and\nabilityCategories.",
                     "shapes": [
                         "@param array<string, Closure> $answers"
                     ],
@@ -125156,8 +125324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 62
+                    "line": 66,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -125168,8 +125336,8 @@
                     "doc": "The user the request is (wp_get_current_user).",
                     "shapes": [],
                     "params": [],
-                    "line": 65,
-                    "end": 68
+                    "line": 72,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -125180,8 +125348,8 @@
                     "doc": "Whether someone is signed in (is_user_logged_in).",
                     "shapes": [],
                     "params": [],
-                    "line": 71,
-                    "end": 74
+                    "line": 78,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -125200,8 +125368,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 84,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -125227,8 +125395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 86
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -125247,8 +125415,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 92
+                    "line": 96,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -125267,8 +125435,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 98
+                    "line": 102,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -125294,8 +125462,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 104
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -125321,8 +125489,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 110
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -125341,8 +125509,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 116
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -125361,8 +125529,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 122
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -125381,8 +125549,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 128
+                    "line": 132,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -125401,8 +125569,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 134
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -125421,8 +125589,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 140
+                    "line": 144,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -125441,8 +125609,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 146
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -125461,8 +125629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 156,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -125481,8 +125649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 158
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -125501,8 +125669,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 164
+                    "line": 168,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -125542,8 +125710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 171
+                    "line": 174,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -125562,8 +125730,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 177
+                    "line": 181,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -125582,8 +125750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 183
+                    "line": 187,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -125602,8 +125770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 189
+                    "line": 193,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -125622,8 +125790,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 195
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -125642,8 +125810,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 205,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -125662,8 +125830,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 207
+                    "line": 211,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -125682,8 +125850,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 213
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -125702,8 +125870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 219
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -125722,8 +125890,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 225
+                    "line": 229,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -125742,8 +125910,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 231
+                    "line": 235,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -125762,8 +125930,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 237
+                    "line": 241,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -125782,8 +125950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 243
+                    "line": 247,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -125802,8 +125970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 249
+                    "line": 253,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -125822,8 +125990,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 255
+                    "line": 259,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -125842,8 +126010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 261
+                    "line": 265,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -125862,8 +126030,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 267
+                    "line": 271,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -125882,8 +126050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 273
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -125902,8 +126070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 279
+                    "line": 283,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -125922,8 +126090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 285
+                    "line": 289,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -125949,8 +126117,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 291
+                    "line": 295,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -125961,8 +126129,8 @@
                     "doc": "A post type's object with nothing set yet, for the registry to fill (WP_Post_Type, built without its constructor).",
                     "shapes": [],
                     "params": [],
-                    "line": 294,
-                    "end": 297
+                    "line": 301,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -125973,8 +126141,8 @@
                     "doc": "A taxonomy's object with nothing set yet, for the registry to fill (WP_Taxonomy, built without its constructor).",
                     "shapes": [],
                     "params": [],
-                    "line": 300,
-                    "end": 303
+                    "line": 307,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -125993,8 +126161,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 309
+                    "line": 313,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -126005,8 +126173,8 @@
                     "doc": "The site's locale: its names, number format and direction (new WP_Locale).",
                     "shapes": [],
                     "params": [],
-                    "line": 312,
-                    "end": 315
+                    "line": 319,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -126017,8 +126185,8 @@
                     "doc": "Where each text domain's translations are found (new WP_Textdomain_Registry).",
                     "shapes": [],
                     "params": [],
-                    "line": 318,
-                    "end": 321
+                    "line": 325,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -126044,8 +126212,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 327
+                    "line": 331,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -126064,8 +126232,268 @@
                             "doc": ""
                         }
                     ],
-                    "line": 330,
-                    "end": 333
+                    "line": 337,
+                    "end": 340
+                },
+                {
+                    "routes": [],
+                    "name": "newBlock",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newBlock(mixed ...$args): Minn\\Objects\\RenderedBlock",
+                    "doc": "A block to render, with its context (new WP_Block).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 343,
+                    "end": 346
+                },
+                {
+                    "routes": [],
+                    "name": "newBlockList",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newBlockList(mixed ...$args): object",
+                    "doc": "Blocks to render as one list (new WP_Block_List).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 349,
+                    "end": 352
+                },
+                {
+                    "routes": [],
+                    "name": "newBlockTemplate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newBlockTemplate(mixed ...$args): object",
+                    "doc": "An empty block template record (new WP_Block_Template).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 355,
+                    "end": 358
+                },
+                {
+                    "routes": [],
+                    "name": "newTagProcessor",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newTagProcessor(mixed ...$args): object",
+                    "doc": "A cursor over HTML's tags and attributes (new WP_HTML_Tag_Processor).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 361,
+                    "end": 364
+                },
+                {
+                    "routes": [],
+                    "name": "newThemeJsonData",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newThemeJsonData(mixed ...$args): Minn\\Objects\\ThemeJsonLayer",
+                    "doc": "One origin's theme.json data for its filter (new WP_Theme_JSON_Data).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 367,
+                    "end": 370
+                },
+                {
+                    "routes": [],
+                    "name": "newSitemapStylesheet",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newSitemapStylesheet(mixed ...$args): object",
+                    "doc": "The stylesheet a sitemap is shown with (new WP_Sitemaps_Stylesheet).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 373,
+                    "end": 376
+                },
+                {
+                    "routes": [],
+                    "name": "blockTypes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blockTypes(mixed ...$args): object",
+                    "doc": "The registered block types (WP_Block_Type_Registry::get_instance).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 379,
+                    "end": 382
+                },
+                {
+                    "routes": [],
+                    "name": "blockPatterns",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blockPatterns(mixed ...$args): object",
+                    "doc": "The registered block patterns (WP_Block_Patterns_Registry::get_instance).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 385,
+                    "end": 388
+                },
+                {
+                    "routes": [],
+                    "name": "blockStyles",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blockStyles(mixed ...$args): object",
+                    "doc": "The registered block styles (WP_Block_Styles_Registry::get_instance).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 391,
+                    "end": 394
+                },
+                {
+                    "routes": [],
+                    "name": "blockBindings",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blockBindings(mixed ...$args): object",
+                    "doc": "The registered block binding sources (WP_Block_Bindings_Registry::get_instance).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 397,
+                    "end": 400
+                },
+                {
+                    "routes": [],
+                    "name": "abilities",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "abilities(mixed ...$args): object",
+                    "doc": "The registered abilities (WP_Abilities_Registry::get_instance).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 403,
+                    "end": 406
+                },
+                {
+                    "routes": [],
+                    "name": "abilityCategories",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "abilityCategories(mixed ...$args): object",
+                    "doc": "The registered ability categories (WP_Ability_Categories_Registry::get_instance).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 409,
+                    "end": 412
+                },
+                {
+                    "routes": [],
+                    "name": "bound",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "bound(string $name): bool",
+                    "doc": "Whether the layer has bound an answer by that name yet (it binds them as it loads).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 415,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -126084,8 +126512,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 339
+                    "line": 421,
+                    "end": 424
                 },
                 {
                     "routes": [],
@@ -126111,8 +126539,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 341,
-                    "end": 345
+                    "line": 426,
+                    "end": 430
                 }
             ]
         },
@@ -162970,6 +163398,7 @@
             "uses": [
                 "Minn\\Http\\NoCache",
                 "Minn\\Http\\Response",
+                "Minn\\Objects\\Environment",
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\Query",
                 "Minn\\Runtime\\Handoff",
@@ -162994,7 +163423,7 @@
                     "name": "parseRequest",
                     "static": true,
                     "visibility": "public",
-                    "signature": "parseRequest(WP $wp, array $vars, array $given, ?Closure $parse = NULL): bool",
+                    "signature": "parseRequest(Minn\\Objects\\Environment $wp, array $vars, array $given, ?Closure $parse = NULL): bool",
                     "doc": "Parses the request: false when a plugin's do_parse_request took the\nparse over (the main query then does not run). The query string is\nthe main query's to build, after.",
                     "shapes": [
                         "@param array<string, mixed> $vars the variables the engine resolved",
@@ -163004,7 +163433,7 @@
                     "params": [
                         {
                             "name": "wp",
-                            "type": "WP",
+                            "type": "Minn\\Objects\\Environment",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -163031,8 +163460,8 @@
                             "doc": "the reference's parse vars for the public vars, when the request is known"
                         }
                     ],
-                    "line": 40,
-                    "end": 60
+                    "line": 41,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -163058,28 +163487,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 93
+                    "line": 73,
+                    "end": 94
                 },
                 {
                     "routes": [],
                     "name": "sendHeaders",
                     "static": true,
                     "visibility": "public",
-                    "signature": "sendHeaders(WP $wp): void",
+                    "signature": "sendHeaders(Minn\\Objects\\Environment $wp): void",
                     "doc": "The headers the reference sends for the request: no caching for a\nsigned-in reader or a 404, the content type, a pingback address for a\nsingle post that takes pings; then wp_headers, the status an error\nvariable names, and send_headers.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "wp",
-                            "type": "WP",
+                            "type": "Minn\\Objects\\Environment",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 137
+                    "line": 102,
+                    "end": 138
                 }
             ]
         },
@@ -165580,7 +166009,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/StylePresets.php",
-            "lines": 148,
+            "lines": 151,
             "doc": "The preset side of theme.json: the colour, gradient, font-size,\nfont-family, spacing, and shadow lists a theme declares over core's\nown, as the custom properties on :root and the has-* utility classes\nthe reference prints for them. Pure: settings in, CSS fragments out.",
             "implements": [],
             "extends": null,
@@ -165592,11 +166021,19 @@
             "usedBy": [
                 "Minn\\Theme\\FontFaces",
                 "Minn\\Theme\\GlobalStyles",
+                "Minn\\Theme\\ThemeJsonData",
                 "Minn\\Theme\\TreeStyles"
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "METADATA",
+                    "value": "array (   0 =>    array (     'path' =>      array (       0 => 'dimensions',       1 => 'aspectRatios',     ),     'prevent_override' =>      array (       0 => 'dimensions',       1 => 'defaultAspectRatios',     ),     'use_default_names' => false,     'value_key' => 'ratio',     'css_vars' => '--wp--preset--aspect-ratio--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'aspect-ratio',     ),   ),   1 =>    array (     'path' =>      array (       0 => 'color',       1 => 'palette',     ),     'prevent_override' =>      array (       0 => 'color',       1 => 'defaultPalette',     ),     'use_default_names' => false,     'value_key' => 'color',     'css_vars' => '--wp--preset--color--$slug',     'classes' =>      array (       '.has-$slug-color' => 'color',       '.has-$slug-background-color' => 'background-color',       '.has-$slug-border-color' => 'border-color',     ),     'properties' =>      array (       0 => 'color',       1 => 'background-color',       2 => 'border-color',     ),   ),   2 =>    array (     'path' =>      array (       0 => 'color',       1 => 'gradients',     ),     'prevent_override' =>      array (       0 => 'color',       1 => 'defaultGradients',     ),     'use_default_names' => false,     'value_key' => 'gradient',     'css_vars' => '--wp--preset--gradient--$slug',     'classes' =>      array (       '.has-$slug-gradient-background' => 'background',     ),     'properties' =>      array (       0 => 'background',     ),   ),   3 =>    array (     'path' =>      array (       0 => 'color',       1 => 'duotone',     ),     'prevent_override' =>      array (       0 => 'color',       1 => 'defaultDuotone',     ),     'use_default_names' => false,     'value_func' => NULL,     'css_vars' => NULL,     'classes' =>      array (     ),     'properties' =>      array (       0 => 'filter',     ),   ),   4 =>    array (     'path' =>      array (       0 => 'typography',       1 => 'fontSizes',     ),     'prevent_override' =>      array (       0 => 'typography',       1 => 'defaultFontSizes',     ),     'use_default_names' => true,     'value_func' => 'wp_get_typography_font_size_value',     'css_vars' => '--wp--preset--font-size--$slug',     'classes' =>      array (       '.has-$slug-font-size' => 'font-size',     ),     'properties' =>      array (       0 => 'font-size',     ),   ),   5 =>    array (     'path' =>      array (       0 => 'typography',       1 => 'fontFamilies',     ),     'prevent_override' => false,     'use_default_names' => false,     'value_key' => 'fontFamily',     'css_vars' => '--wp--preset--font-family--$slug',     'classes' =>      array (       '.has-$slug-font-family' => 'font-family',     ),     'properties' =>      array (       0 => 'font-family',     ),   ),   6 =>    array (     'path' =>      array (       0 => 'spacing',       1 => 'spacingSizes',     ),     'prevent_override' =>      array (       0 => 'spacing',       1 => 'defaultSpacingSizes',     ),     'use_default_names' => true,     'value_key' => 'size',     'css_vars' => '--wp--preset--spacing--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'padding',       1 => 'margin',     ),   ),   7 =>    array (     'path' =>      array (       0 => 'shadow',       1 => 'presets',     ),     'prevent_override' =>      array (       0 => 'shadow',       1 => 'defaultPresets',     ),     'use_default_names' => false,     'value_key' => 'shadow',     'css_vars' => '--wp--preset--shadow--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'box-shadow',     ),   ),   8 =>    array (     'path' =>      array (       0 => 'border',       1 => 'radiusSizes',     ),     'prevent_override' => false,     'use_default_names' => false,     'value_key' => 'size',     'css_vars' => '--wp--preset--border-radius--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'border-radius',     ),   ),   9 =>    array (     'path' =>      array (       0 => 'dimensions',       1 => 'dimensionSizes',     ),     'prevent_override' => false,     'use_default_names' => false,     'value_key' => 'size',     'css_vars' => '--wp--preset--dimension--$slug',     'classes' =>      array (     ),     'properties' =>      array (       0 => 'width',       1 => 'height',       2 => 'min-height',     ),   ), )",
+                    "doc": "Each preset list theme.json may hold: where it sits, what overrides the defaults, its value, custom property, classes and CSS properties (WP_Theme_JSON::PRESETS_METADATA).",
+                    "visibility": "public"
+                }
+            ],
             "properties": [],
             "methods": [
                 {
@@ -165623,8 +166060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 35
+                    "line": 23,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -165645,8 +166082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 62
+                    "line": 48,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -165667,8 +166104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 72
+                    "line": 72,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -165687,8 +166124,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 84
+                    "line": 78,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -165716,8 +166153,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 105
+                    "line": 96,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -165743,8 +166180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 117
+                    "line": 111,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -165774,8 +166211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 137
+                    "line": 130,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -165803,8 +166240,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 156
+                    "line": 149,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -165830,8 +166267,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 162
+                    "line": 162,
+                    "end": 165
                 }
             ]
         },
@@ -168807,7 +169244,10 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Objects\\ThemeJsonLayer",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\StylePresets"
             ],
             "usedBy": [
                 "Minn\\Theme\\GlobalStyles",
@@ -168846,8 +169286,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 35
+                    "line": 22,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -168876,8 +169316,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 63
+                    "line": 49,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -168899,8 +169339,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 97
+                    "line": 75,
+                    "end": 99
                 }
             ]
         },

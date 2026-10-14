@@ -4,29 +4,48 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`BlockType`](#blocktype) | interface | 3 | A registered block type as the WordPress layer hands it to plugins |
 | [`Comment`](#comment) | interface | 3 | A comment as the WordPress layer hands it to plugins (WP_Comment). The |
 | [`CommentsQuery`](#commentsquery) | interface | 3 | A comments query as the WordPress layer hands it to plugins |
+| [`Dependency`](#dependency) | interface | 3 | A registered script or style as the WordPress layer hands it to plugins |
+| [`Environment`](#environment) | interface | 3 | The request's environment as the WordPress layer hands it to plugins |
 | [`Errors`](#errors) | interface | 3 | A list of errors as the WordPress layer hands it to plugins (WP_Error): |
 | [`HttpResponse`](#httpresponse) | interface | 3 | An HTTP response as the WordPress layer hands it to plugins |
 | [`Post`](#post) | interface | 3 | A post as the WordPress layer hands it to plugins (WP_Post). The engine |
 | [`PostType`](#posttype) | interface | 3 | A registered post type as the WordPress layer hands it to plugins |
 | [`Query`](#query) | interface | 3 | A posts query as the WordPress layer hands it to plugins (WP_Query): its |
+| [`RenderedBlock`](#renderedblock) | interface | 3 | A block being rendered as the WordPress layer hands it to plugins |
 | [`RestRequest`](#restrequest) | interface | 3 | A REST request as the WordPress layer hands it to plugins |
 | [`RestResponse`](#restresponse) | interface | 3 | A REST response as the WordPress layer hands it to plugins |
 | [`RestServer`](#restserver) | interface | 3 | The REST server as the WordPress layer hands it to plugins |
 | [`Rewrite`](#rewrite) | interface | 3 | The rewrite object as the WordPress layer hands it to plugins |
 | [`SessionTokens`](#sessiontokens) | interface | 3 | A user's sessions as the WordPress layer hands them to plugins |
 | [`SiteLocale`](#sitelocale) | interface | 3 | The site's locale as the WordPress layer hands it to plugins |
+| [`SitemapProvider`](#sitemapprovider) | interface | 3 | A sitemap provider as the WordPress layer hands it to plugins |
+| [`SitemapServer`](#sitemapserver) | interface | 3 | The sitemaps as the WordPress layer hands them to plugins (WP_Sitemaps): |
 | [`Taxonomy`](#taxonomy) | interface | 3 | A registered taxonomy as the WordPress layer hands it to plugins |
 | [`Term`](#term) | interface | 3 | A term as the WordPress layer hands it to plugins (WP_Term). The engine |
 | [`TermsQuery`](#termsquery) | interface | 3 | A terms query as the WordPress layer hands it to plugins (WP_Term_Query). |
 | [`Theme`](#theme) | interface | 3 | A theme as the WordPress layer hands it to plugins (WP_Theme): its |
+| [`ThemeJsonLayer`](#themejsonlayer) | interface | 3 | One origin's theme.json data as the WordPress layer hands it to the |
 | [`Toolbar`](#toolbar) | interface | 3 | The toolbar as the WordPress layer hands it to plugins (WP_Admin_Bar): |
 | [`Upgrader`](#upgrader) | interface | 3 | An upgrader as the WordPress layer hands it to plugins (WP_Upgrader and |
 | [`UpgraderSkin`](#upgraderskin) | interface | 3 | What an upgrader reports through (WP_Upgrader_Skin and its kinds): the |
 | [`User`](#user) | interface | 3 | A user as the WordPress layer hands it to plugins (WP_User). The engine |
 | [`UsersQuery`](#usersquery) | interface | 3 | A users query as the WordPress layer hands it to plugins (WP_User_Query). |
 | [`Widget`](#widget) | interface | 3 | A widget as the WordPress layer hands it to plugins (WP_Widget): its id |
+
+## BlockType
+
+`interface Minn\Objects\BlockType` · `public/minn/src/Minn/Objects/BlockType.php`
+
+A registered block type as the WordPress layer hands it to plugins
+(WP_Block_Type): its attributes, supports, styles and render callback.
+The engine knows these objects by this mark and finds them through
+Runtime\Handoff, so it never names the WordPress layer's class.
+
+Used by: `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Runtime\Handoff`
+
 
 ## Comment
 
@@ -49,6 +68,30 @@ them through Runtime\Handoff, so it never names the WordPress layer's
 class.
 
 Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Rest\CommentsController`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\Handoff`
+
+
+## Dependency
+
+`interface Minn\Objects\Dependency` · `public/minn/src/Minn/Objects/Dependency.php`
+
+A registered script or style as the WordPress layer hands it to plugins
+(_WP_Dependency): its handle, source, dependencies, version and extra
+data. The engine knows these objects by this mark, so it never names the
+WordPress layer's class.
+
+Used by: `Minn\Runtime\AssetEdits`
+
+
+## Environment
+
+`interface Minn\Objects\Environment` · `public/minn/src/Minn/Objects/Environment.php`
+
+The request's environment as the WordPress layer hands it to plugins
+(WP, the $wp global): the query variables parsed from the request and
+the headers sent. The engine knows it by this mark, so it never names
+the WordPress layer's class.
+
+Used by: `Minn\Theme\FrontLifecycle`
 
 
 ## Errors
@@ -108,6 +151,18 @@ mark and makes them through Runtime\Handoff, so it never names the
 WordPress layer's class.
 
 Used by: `Minn\Front\FeedTags`, `Minn\Front\Renderer`, `Minn\Rest\PostsController`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\Handoff`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\QueryClasses`
+
+
+## RenderedBlock
+
+`interface Minn\Objects\RenderedBlock` · `public/minn/src/Minn/Objects/RenderedBlock.php`
+
+A block being rendered as the WordPress layer hands it to plugins
+(WP_Block): its parsed block, attributes, context and inner blocks. The
+engine knows these objects by this mark and makes them through
+Runtime\Handoff, so it never names the WordPress layer's class.
+
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Runtime\Handoff`
 
 
 ## RestRequest
@@ -183,6 +238,30 @@ Runtime\Handoff, so it never names the WordPress layer's class.
 Used by: `Minn\I18n\SiteLanguage`, `Minn\Runtime\Handoff`
 
 
+## SitemapProvider
+
+`interface Minn\Objects\SitemapProvider` · `public/minn/src/Minn/Objects/SitemapProvider.php`
+
+A sitemap provider as the WordPress layer hands it to plugins
+(WP_Sitemaps_Provider and its kinds): the object subtypes it lists and
+their URLs. The engine knows these objects by this mark, so it never
+names the WordPress layer's class.
+
+Used by: `Minn\Front\SitemapRequest`
+
+
+## SitemapServer
+
+`interface Minn\Objects\SitemapServer` · `public/minn/src/Minn/Objects/SitemapServer.php`
+
+The sitemaps as the WordPress layer hands them to plugins (WP_Sitemaps):
+the providers registered and the index and stylesheets they serve. The
+engine knows them by this mark, so it never names the WordPress layer's
+class.
+
+Used by: `Minn\Front\SitemapRequest`
+
+
 ## Taxonomy
 
 `interface Minn\Objects\Taxonomy` · `public/minn/src/Minn/Objects/Taxonomy.php`
@@ -227,6 +306,18 @@ this mark and makes them through Runtime\Handoff, so it never names the
 WordPress layer's class.
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\InstalledThemesController`, `Minn\Runtime\Handoff`, `Minn\Runtime\Themes`
+
+
+## ThemeJsonLayer
+
+`interface Minn\Objects\ThemeJsonLayer` · `public/minn/src/Minn/Objects/ThemeJsonLayer.php`
+
+One origin's theme.json data as the WordPress layer hands it to the
+wp_theme_json_data_ filters (WP_Theme_JSON_Data), which may change it.
+The engine knows these objects by this mark and makes them through
+Runtime\Handoff, so it never names the WordPress layer's class.
+
+Used by: `Minn\Runtime\Handoff`, `Minn\Theme\ThemeJsonData`
 
 
 ## Toolbar

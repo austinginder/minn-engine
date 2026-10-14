@@ -11,7 +11,7 @@ use Minn\Front\SitemapXml;
  * requests at template_redirect.
  */
 #[AllowDynamicProperties]
-class WP_Sitemaps
+class WP_Sitemaps implements \Minn\Objects\SitemapServer
 {
     public $index;
     public $registry;
@@ -213,7 +213,7 @@ class WP_Sitemaps_Stylesheet
 }
 
 #[AllowDynamicProperties]
-abstract class WP_Sitemaps_Provider
+abstract class WP_Sitemaps_Provider implements \Minn\Objects\SitemapProvider
 {
     protected $name = '';
     protected $object_type = '';

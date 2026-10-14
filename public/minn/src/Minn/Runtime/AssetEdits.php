@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Dependency;
+
 /**
  * What a plugin did to $wp_scripts->registered or $wp_styles->registered
  * directly, as wp_default_scripts callbacks do (a dependency dropped, a
@@ -24,7 +26,7 @@ final class AssetEdits
     {
         foreach ($synced as $handle => $was) {
             $dep = $edited[$handle] ?? null;
-            if (!$dep instanceof \_WP_Dependency) {
+            if (!$dep instanceof Dependency) {
                 $assets->deregister((string) $handle);
                 continue;
             }
@@ -38,7 +40,7 @@ final class AssetEdits
             }
         }
         foreach (array_diff_key($edited, $synced) as $handle => $dep) {
-            if ($dep instanceof \_WP_Dependency) {
+            if ($dep instanceof Dependency) {
                 $assets->register((string) $handle, $dep->src === false ? false : (string) $dep->src, (array) $dep->deps, $dep->ver, $dep->args);
             }
         }

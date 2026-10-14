@@ -7,7 +7,7 @@
  * their origin.
  */
 #[AllowDynamicProperties]
-class WP_Theme_JSON_Data
+class WP_Theme_JSON_Data implements \Minn\Objects\ThemeJsonLayer
 {
     private $theme_json;
     private $origin;

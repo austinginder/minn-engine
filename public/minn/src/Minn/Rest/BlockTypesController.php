@@ -11,7 +11,9 @@ use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Objects\BlockType;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -51,8 +53,8 @@ final readonly class BlockTypesController
     public function single(Request $request, string $namespace, string $name): Response
     {
         $this->requireViewer();
-        $type = \WP_Block_Type_Registry::get_instance()->get_registered("{$namespace}/{$name}");
-        if (!$type instanceof \WP_Block_Type) {
+        $type = Handoff::blockTypes()->get_registered("{$namespace}/{$name}");
+        if (!$type instanceof BlockType) {
             throw new RestError('rest_block_type_invalid', 'Invalid block type.', 404);
         }
         return Reply::item($this->item($type), Fields::fromQuery($request->query));
@@ -62,7 +64,7 @@ final readonly class BlockTypesController
     {
         $this->requireViewer();
         $items = [];
-        foreach (\WP_Block_Type_Registry::get_instance()->get_all_registered() as $name => $type) {
+        foreach (Handoff::blockTypes()->get_all_registered() as $name => $type) {
             if ($namespace === '' || str_starts_with((string) $name, $namespace . '/')) {
                 $items[] = $this->item($type);
             }
@@ -72,7 +74,7 @@ final readonly class BlockTypesController
     }
 
     /** @return array<string, mixed> */
-    private function item(\WP_Block_Type $type): array
+    private function item(BlockType $type): array
     {
         $item = self::fields($type);
         $item['_links'] = $this->links($type);
@@ -88,7 +90,7 @@ final readonly class BlockTypesController
      *
      * @return array<string, mixed>
      */
-    public static function fields(\WP_Block_Type $type): array
+    public static function fields(BlockType $type): array
     {
         $first = static fn (array $handles) => $handles[0] ?? null;
         $item = [
@@ -109,7 +111,7 @@ final readonly class BlockTypesController
             'selectors' => $type->selectors,
             // A type registered without supports shows the schema's default, {} (probe rest-block-controllers).
             'supports' => $type->supports ?? [],
-            'styles' => array_merge((array) $type->styles, array_values(\WP_Block_Styles_Registry::get_instance()->get_registered_styles_for_block($type->name))),
+            'styles' => array_merge((array) $type->styles, array_values(Handoff::blockStyles()->get_registered_styles_for_block($type->name))),
             'textdomain' => $type->textdomain,
             'example' => $type->example,
         ];
@@ -132,7 +134,7 @@ final readonly class BlockTypesController
     }
 
     /** @return array<string, list<array<string, mixed>>> */
-    private function links(\WP_Block_Type $type): array
+    private function links(BlockType $type): array
     {
         $links = [
             'collection' => [['href' => $this->url->to('/wp/v2/block-types')]],

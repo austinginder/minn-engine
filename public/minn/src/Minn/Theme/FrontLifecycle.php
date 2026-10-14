@@ -7,6 +7,7 @@ namespace Minn\Theme;
 
 use Minn\Http\NoCache;
 use Minn\Http\Response;
+use Minn\Objects\Environment;
 use Minn\Objects\Post;
 use Minn\Objects\Query;
 use Minn\Runtime\Handoff;
@@ -37,7 +38,7 @@ final class FrontLifecycle
      * @param array<string, mixed> $given the query string and form, where a plugin's own variables are read
      * @param (\Closure(list<string>): array<string, mixed>)|null $parse the reference's parse vars for the public vars, when the request is known
      */
-    public static function parseRequest(\WP $wp, array $vars, array $given, ?\Closure $parse = null): bool
+    public static function parseRequest(Environment $wp, array $vars, array $given, ?\Closure $parse = null): bool
     {
         if (!Runtime::hooks()->filter('do_parse_request', [true, $wp, $wp->extra_query_vars])) {
             return false;
@@ -98,7 +99,7 @@ final class FrontLifecycle
      * single post that takes pings; then wp_headers, the status an error
      * variable names, and send_headers.
      */
-    public static function sendHeaders(\WP $wp): void
+    public static function sendHeaders(Environment $wp): void
     {
         $headers = Handoff::signedIn() ? NoCache::headers() : [];
         $status = !empty($wp->query_vars['error']) ? (int) $wp->query_vars['error'] : null;

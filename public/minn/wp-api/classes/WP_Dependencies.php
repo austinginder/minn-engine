@@ -236,7 +236,7 @@ class WP_Dependencies
 }
 
 #[AllowDynamicProperties]
-class _WP_Dependency
+class _WP_Dependency implements \Minn\Objects\Dependency
 {
     public $handle;
     public $src;

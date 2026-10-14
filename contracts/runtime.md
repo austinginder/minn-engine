@@ -16217,6 +16217,16 @@ through `Handoff` (`sessionTokens()`, `newLocale()`, `newTextdomainRegistry()`, 
 any request, were run again on their own. The http-transports probe stays out of the comparison; the other probes give identical
 output before and after.
 
+**Batch 30, blocks, theme.json layers, the environment, sitemaps and dependencies by mark.** Block types,
+blocks being rendered, theme.json layers, the request environment ($wp), the sitemap server and providers,
+and registered scripts carry `Minn\Objects` marks (`BlockType`, `RenderedBlock`, `ThemeJsonLayer`,
+`Environment`, `SitemapServer`, `SitemapProvider`, `Dependency`). Blocks, block lists, block templates, tag
+processors, theme.json layers and the sitemap stylesheet are made through `Handoff`, which also hands over the
+block type, pattern, style, binding and ability registries, and says whether the layer has bound an answer
+yet (`bound()`), so the engine no longer asks `class_exists` of a WordPress name. The theme.json preset table
+is the engine's (`Theme\StylePresets::METADATA`) and WP_Theme_JSON reads it from there. The http-transports
+probe stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

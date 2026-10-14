@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -61,11 +62,11 @@ final class Bindings
         $instance = null;
         foreach ($bindings as $attribute => $binding) {
             $name = is_array($binding) && is_string($binding['source'] ?? null) ? $binding['source'] : null;
-            $source = in_array($attribute, $supported, true) && $name !== null ? \WP_Block_Bindings_Registry::get_instance()->get_registered($name) : null;
+            $source = in_array($attribute, $supported, true) && $name !== null ? Handoff::blockBindings()->get_registered($name) : null;
             if ($source === null) {
                 continue;
             }
-            $instance ??= new \WP_Block($block->toArray(), $context);
+            $instance ??= Handoff::newBlock($block->toArray(), $context);
             foreach ((array) $source->uses_context as $key) {
                 if (array_key_exists($key, $context)) {
                     $instance->context[$key] = $context[$key];
@@ -89,7 +90,7 @@ final class Bindings
      */
     public static function html(string $html, string $blockName, array $values): string
     {
-        $definitions = (array) (\WP_Block_Type_Registry::get_instance()->get_registered($blockName)?->attributes ?? []);
+        $definitions = (array) (Handoff::blockTypes()->get_registered($blockName)?->attributes ?? []);
         foreach ($values as $attribute => $value) {
             $definition = (array) ($definitions[$attribute] ?? []);
             $selector = (string) ($definition['selector'] ?? '');
@@ -146,7 +147,7 @@ final class Bindings
     /** The first element matching the selector, with an attribute set to the value. */
     private static function attribute(string $html, string $selector, string $name, mixed $value): string
     {
-        $processor = new \WP_HTML_Tag_Processor($html);
+        $processor = Handoff::newTagProcessor($html);
         if ($name === '' || !$processor->next_tag(['tag_name' => $selector])) {
             return $html;
         }
