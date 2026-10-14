@@ -469,8 +469,7 @@ function url_to_postid($url)
 
 function get_post_custom($post_id = 0)
 {
-    $post_id = $post_id ?: get_the_ID();
-    return get_post_meta((int) $post_id);
+    return Minn\Runtime\MetaData::postCustom($post_id);
 }
 
 function get_post_custom_keys($post_id = 0)
@@ -952,12 +951,7 @@ function unstick_post($post_id)
 
 function get_post_thumbnail_id($post = null)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $id = get_post_meta($post->ID, '_thumbnail_id', true);
-    return (int) apply_filters('post_thumbnail_id', $id === '' ? 0 : (int) $id, $post);
+    return Minn\Runtime\PostTags::thumbnailId($post);
 }
 
 /** @internal a live post left without a slug (no title to make one from) takes its id, made free (probe editor-styles) */
@@ -1002,8 +996,7 @@ function _wp_link_page($i)
 /** Whether a post has a featured image, through has_post_thumbnail (handed the post as given and the image's id). */
 function has_post_thumbnail($post = null)
 {
-    $thumbnail_id = get_post_thumbnail_id($post);
-    return (bool) apply_filters('has_post_thumbnail', (bool) $thumbnail_id, $post, $thumbnail_id);
+    return Minn\Runtime\PostTags::hasThumbnail($post);
 }
 
 function setup_postdata($post)

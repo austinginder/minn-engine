@@ -33,7 +33,7 @@ final class EmbedCard
      */
     public static function thumbnail(): ?array
     {
-        $id = \has_post_thumbnail() ? (int) \get_post_thumbnail_id() : 0;
+        $id = PostTags::hasThumbnail() ? (int) PostTags::thumbnailId() : 0;
         if (\get_post_type() === 'attachment' && \wp_attachment_is_image()) {
             $id = (int) PostTags::id();
         }

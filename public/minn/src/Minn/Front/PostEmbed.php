@@ -63,7 +63,7 @@ final class PostEmbed
         $data['height'] = abs($height);
         $data['type'] = 'rich';
         $data['html'] = self::html($width, $height, $post);
-        $thumbnail = \wp_attachment_is_image($post) ? $post->ID : (int) \get_post_thumbnail_id($post);
+        $thumbnail = \wp_attachment_is_image($post) ? $post->ID : (int) PostTags::thumbnailId($post);
         if ($thumbnail > 0) {
             // The size chosen by the width alone (probe embed-remaining).
             $image = \wp_get_attachment_image_src($thumbnail, [$width, 0]);

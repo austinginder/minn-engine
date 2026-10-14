@@ -16110,6 +16110,19 @@ helpers still print it when asked; the widget forms only took it). WP_Theme carr
 Customizer, so it never ran. The admin's custom-logo check keeps its guard that the WordPress layer is
 loaded. All 370 probes give identical output before and after.
 
+**Batch 20, metadata (function calls 321 → 299).** `Runtime\MetaData` reads and writes metadata as the
+facade's meta functions did: `get()`, `raw()` (get_{type}_metadata answering first, else the object's
+meta read once into the object cache), `fallback()` (default_{type}_metadata), `exists()`, `add()`,
+`update()` (only the rows holding a previous value when one is given; a key not stored yet added, its
+new id answering), `delete()`, `isProtected()`, `sanitize()` and `table()` (the built-in types and a
+plugin's own by its table on $wpdb), each action told and post meta also told as postmeta; `ofPost()`,
+`updatePost()`, `updateUser()` and `postCustom()` are the post and user conveniences.
+`PostTags::thumbnailId()` and `hasThumbnail()` are the featured image tags. The facade maps onto them.
+Full run 27 (after batch 19) was green once the suites in Cove's restart windows were rerun. The
+http-transports probe is not run in this batch's comparison: its requests are what crash Cove's
+FrankenPHP server (a flush after the engine finishes a response early), and nothing here touches the
+transports. The other 369 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

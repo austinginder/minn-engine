@@ -73,7 +73,7 @@ final class AccountFlows
     {
         Runtime::hooks()->action('password_reset', [$user, $password]);
         Handoff::setPassword($password, $user->ID);
-        \update_user_meta($user->ID, 'default_password_nag', false);
+        MetaData::updateUser($user->ID, 'default_password_nag', false);
         Runtime::hooks()->action('after_password_reset', [$user, $password]);
     }
 
@@ -118,7 +118,7 @@ final class AccountFlows
         if (!is_int($id) || $id < 1) {
             return Handoff::newError('registerfail', sprintf(Gettext::text('<strong>Error:</strong> Could not register you&hellip; please contact the <a href="mailto:%s">site admin</a>!'), Runtime::options()->filtered('admin_email')));
         }
-        \update_user_meta($id, 'default_password_nag', true);
+        MetaData::updateUser($id, 'default_password_nag', true);
         Runtime::hooks()->action('register_new_user', [$id]);
         return $id;
     }

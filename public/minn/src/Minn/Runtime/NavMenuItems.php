@@ -68,7 +68,7 @@ final class NavMenuItems
     private static function menuItem(object $item): void
     {
         $id = (int) $item->ID;
-        $meta = static fn (string $key): mixed => \get_post_meta($id, '_menu_item_' . $key, true);
+        $meta = static fn (string $key): mixed => MetaData::ofPost($id, '_menu_item_' . $key, true);
         $item->db_id = $id;
         $item->menu_item_parent ??= (string) $meta('menu_item_parent');
         $item->object_id ??= (string) $meta('object_id');

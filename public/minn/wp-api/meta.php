@@ -9,12 +9,7 @@ use Minn\Runtime\MetaKeys;
 /** @internal table, id column */
 function _minn_meta_table(string $type): ?array
 {
-    // A plugin's own meta type: the table it set on $wpdb as "{$type}meta".
-    $table = Meta::knows($type) ? null : ($GLOBALS['wpdb']->{$type . 'meta'} ?? null);
-    if (is_string($table) && $table !== '') {
-        Minn\Runtime\MetaTypes::register($type, $table);
-    }
-    return Meta::knows($type) ? [$type] : null;
+    return Minn\Runtime\MetaData::table($type);
 }
 
 /** @internal */
@@ -25,49 +20,18 @@ function _minn_meta(): Meta
 
 function get_metadata($meta_type, $object_id, $meta_key = '', $single = false)
 {
-    $value = get_metadata_raw($meta_type, $object_id, $meta_key, $single);
-    if ($value !== null) {
-        return $value;
-    }
-    return get_metadata_default($meta_type, $object_id, $meta_key, $single);
+    return Minn\Runtime\MetaData::get($meta_type, $object_id, $meta_key, $single);
 }
 
 /** An object's meta as stored (probe user-more): false for no type or an id that is not a positive number once made absolute; null for a type without a table or a key not set. */
 function get_metadata_raw($meta_type, $object_id, $meta_key = '', $single = false)
 {
-    if (!$meta_type || !is_numeric($object_id)) {
-        return false;
-    }
-    $object_id = absint($object_id);
-    if (!$object_id) {
-        return false;
-    }
-    if (_minn_meta_table((string) $meta_type) === null) {
-        return null;
-    }
-    $check = apply_filters("get_{$meta_type}_metadata", null, $object_id, $meta_key, $single, $meta_type);
-    if ($check !== null) {
-        return $single && is_array($check) ? $check[0] : $check;
-    }
-    $cache = wp_cache_get($object_id, $meta_type . '_meta', false, $found);
-    if (!$found) {
-        $cache = _minn_meta()->all((string) $meta_type, $object_id);
-        wp_cache_set($object_id, $cache, $meta_type . '_meta');
-    }
-    if ($meta_key === '' || $meta_key === null) {
-        return $cache;
-    }
-    if (!isset($cache[$meta_key])) {
-        return null;
-    }
-    $values = array_map('maybe_unserialize', $cache[$meta_key]);
-    return $single ? $values[0] : $values;
+    return Minn\Runtime\MetaData::raw($meta_type, $object_id, $meta_key, $single);
 }
 
 function get_metadata_default($meta_type, $object_id, $meta_key, $single = false)
 {
-    $value = apply_filters("default_{$meta_type}_metadata", $single ? '' : [], $object_id, $meta_key, $single, $meta_type);
-    return !$single && !wp_is_numeric_array($value) ? [$value] : $value;
+    return Minn\Runtime\MetaData::fallback($meta_type, $object_id, $meta_key, $single);
 }
 
 /** A registered key's default, for default_{type}_metadata (probe meta-api). */
@@ -84,106 +48,27 @@ function get_object_subtype($object_type, $object_id)
 
 function metadata_exists($meta_type, $object_id, $meta_key)
 {
-    $check = apply_filters("get_{$meta_type}_metadata", null, (int) $object_id, $meta_key, true, $meta_type);
-    if ($check !== null) {
-        return (bool) $check;
-    }
-    $all = get_metadata_raw($meta_type, $object_id);
-    return is_array($all) && isset($all[$meta_key]);
+    return Minn\Runtime\MetaData::exists($meta_type, $object_id, $meta_key);
 }
 
 function add_metadata($meta_type, $object_id, $meta_key, $meta_value, $unique = false)
 {
-    $spec = _minn_meta_table((string) $meta_type);
-    $object_id = (int) $object_id;
-    if ($spec === null || $object_id <= 0 || (string) $meta_key === '') {
-        return false;
-    }
-    $meta_key = wp_unslash($meta_key);
-    $meta_value = wp_unslash($meta_value);
-    $meta_value = sanitize_meta($meta_key, $meta_value, $meta_type, get_object_subtype($meta_type, $object_id));
-    $check = apply_filters("add_{$meta_type}_metadata", null, $object_id, $meta_key, $meta_value, $unique);
-    if ($check !== null) {
-        return $check;
-    }
-    if ($unique && metadata_exists($meta_type, $object_id, $meta_key)) {
-        return false;
-    }
-    do_action("add_{$meta_type}_meta", $object_id, $meta_key, $meta_value);
-    $id = _minn_meta()->add((string) $meta_type, $object_id, (string) $meta_key, Options::toStorage($meta_value));
-    wp_cache_delete($object_id, $meta_type . '_meta');
-    do_action("added_{$meta_type}_meta", $id, $object_id, $meta_key, $meta_value);
-    return $id;
+    return Minn\Runtime\MetaData::add($meta_type, $object_id, $meta_key, $meta_value, $unique);
 }
 
 function update_metadata($meta_type, $object_id, $meta_key, $meta_value, $prev_value = '')
 {
-    $spec = _minn_meta_table((string) $meta_type);
-    $object_id = (int) $object_id;
-    if ($spec === null || $object_id <= 0 || (string) $meta_key === '') {
-        return false;
-    }
-    // A key not stored yet is added from the value as it was handed in (add_metadata sanitizes it).
-    [$raw_key, $passed] = [$meta_key, $meta_value];
-    $meta_key = wp_unslash($meta_key);
-    $meta_value = sanitize_meta($meta_key, wp_unslash($meta_value), $meta_type, get_object_subtype($meta_type, $object_id));
-    $check = apply_filters("update_{$meta_type}_metadata", null, $object_id, $meta_key, $meta_value, $prev_value);
-    if ($check !== null) {
-        return (bool) $check;
-    }
-    $rows = _minn_meta()->matching((string) $meta_type, $object_id, (string) $meta_key);
-    if ($rows === []) {
-        return add_metadata($meta_type, $object_id, $raw_key, $passed);
-    }
-    $stored = Options::toStorage($meta_value);
-    $ids = Meta::idsToUpdate($rows, $stored, $prev_value === '' ? null : Options::toStorage($prev_value));
-    if ($ids === []) {
-        return false;
-    }
-    foreach ($ids as $id) {
-        _minn_meta_action('update', (string) $meta_type, [$id, $object_id, $meta_key, $meta_value], [$id, $object_id, $meta_key, $meta_value]);
-    }
-    _minn_meta()->updateRows((string) $meta_type, $ids, $stored);
-    wp_cache_delete($object_id, $meta_type . '_meta');
-    foreach ($ids as $id) {
-        _minn_meta_action('updated', (string) $meta_type, [$id, $object_id, $meta_key, $meta_value], [$id, $object_id, $meta_key, $meta_value]);
-    }
-    return true;
+    return Minn\Runtime\MetaData::update($meta_type, $object_id, $meta_key, $meta_value, $prev_value);
 }
 
 function delete_metadata($meta_type, $object_id, $meta_key, $meta_value = '', $delete_all = false)
 {
-    $spec = _minn_meta_table((string) $meta_type);
-    $object_id = (int) $object_id;
-    if ($spec === null || ($object_id <= 0 && !$delete_all) || (string) $meta_key === '') {
-        return false;
-    }
-    $meta_key = wp_unslash($meta_key);
-    $meta_value = wp_unslash($meta_value);
-    $check = apply_filters("delete_{$meta_type}_metadata", null, $object_id, $meta_key, $meta_value, $delete_all);
-    if ($check !== null) {
-        return (bool) $check;
-    }
-    $rows = _minn_meta()->find((string) $meta_type, $delete_all ? null : $object_id, (string) $meta_key, $meta_value !== '' && $meta_value !== null && $meta_value !== false ? Options::toStorage($meta_value) : null);
-    if ($rows === []) {
-        return false;
-    }
-    $ids = array_map(static fn (array $r) => (int) $r['meta_id'], $rows);
-    _minn_meta_action('delete', (string) $meta_type, [$ids, $object_id, $meta_key, $meta_value], [$ids]);
-    _minn_meta()->deleteRows((string) $meta_type, $ids);
-    foreach ($rows as $row) {
-        wp_cache_delete((int) $row['object_id'], $meta_type . '_meta');
-    }
-    _minn_meta_action('deleted', (string) $meta_type, [$ids, $object_id, $meta_key, $meta_value], [$ids]);
-    return true;
+    return Minn\Runtime\MetaData::delete($meta_type, $object_id, $meta_key, $meta_value, $delete_all);
 }
 
 function sanitize_meta($meta_key, $meta_value, $object_type, $object_subtype = '')
 {
-    if ((string) $object_subtype !== '' && has_filter("sanitize_{$object_type}_meta_{$meta_key}_for_{$object_subtype}")) {
-        return apply_filters("sanitize_{$object_type}_meta_{$meta_key}_for_{$object_subtype}", $meta_value, $meta_key, $object_type, $object_subtype);
-    }
-    return apply_filters("sanitize_{$object_type}_meta_{$meta_key}", $meta_value, $meta_key, $object_type);
+    return Minn\Runtime\MetaData::sanitize($meta_key, $meta_value, $object_type, $object_subtype);
 }
 
 function register_meta($object_type, $meta_key, $args, $deprecated = null)
@@ -410,8 +295,7 @@ function delete_metadata_by_mid($meta_type, $meta_id)
 /** A key is protected when its first printable character is an underscore; is_protected_meta may say otherwise. */
 function is_protected_meta($meta_key, $meta_type = '')
 {
-    $key = (string) preg_replace('/[\x00-\x1F\x7F]/', '', (string) $meta_key);
-    return apply_filters('is_protected_meta', $key !== '' && $key[0] === '_', $meta_key, $meta_type);
+    return Minn\Runtime\MetaData::isProtected($meta_key, $meta_type);
 }
 
 /** The meta table of an object type the database has one for, or false. */

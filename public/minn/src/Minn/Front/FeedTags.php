@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Media\FileTypes;
 use Minn\Objects\Post;
 use Minn\Objects\Query;
+use Minn\Runtime\MetaData;
 use Minn\Runtime\PostLinks;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
@@ -77,7 +78,7 @@ final class FeedTags
         if (PostTags::passwordRequired()) {
             return [];
         }
-        $custom = (array) \get_post_custom();
+        $custom = (array) MetaData::postCustom();
         return array_map(static fn ($entry): array => explode("\n", (string) $entry), (array) ($custom['enclosure'] ?? []));
     }
 

@@ -210,7 +210,7 @@ final readonly class MenuEvents
         if ($post === null) {
             return [];
         }
-        $meta = static fn (string $key): mixed => \get_post_meta($itemId, '_menu_item_' . $key, true);
+        $meta = static fn (string $key): mixed => MetaData::ofPost($itemId, '_menu_item_' . $key, true);
         return [
             'menu-item-db-id' => $itemId, 'menu-item-object-id' => (string) $meta('object_id'), 'menu-item-object' => (string) $meta('object'), 'menu-item-parent-id' => (string) $meta('menu_item_parent'),
             'menu-item-position' => $post->menuOrder, 'menu-item-type' => (string) $meta('type'), 'menu-item-title' => $post->title, 'menu-item-url' => (string) $meta('url'),

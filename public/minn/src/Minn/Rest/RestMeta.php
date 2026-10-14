@@ -9,6 +9,7 @@ use Minn\Objects\Errors;
 use Minn\Objects\RestRequest;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\MetaData;
 use Minn\Runtime\MetaKeys;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
@@ -57,7 +58,7 @@ final class RestMeta
      */
     public static function value(string $objectType, int $objectId, string $key, array $field, RestRequest $request): mixed
     {
-        $stored = \get_metadata($objectType, $objectId, $key, false);
+        $stored = MetaData::get($objectType, $objectId, $key, false);
         $stored = is_array($stored) ? array_values($stored) : [];
         if ($field['single']) {
             return self::prepare($stored === [] ? $field['schema']['default'] : $stored[0], $field, $request);
@@ -163,14 +164,14 @@ final class RestMeta
     /** A single key stored: an unchanged value is left alone, then the user must be allowed to edit it. @param array<string, mixed> $field */
     public static function store(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?Errors
     {
-        $old = \get_metadata($objectType, $objectId, $key);
+        $old = MetaData::get($objectType, $objectId, $key);
         if (is_array($old) && count($old) === 1 && self::same($objectType, $subtype, $key, $field, $old[0], $value)) {
             return null;
         }
         if (!Can::current("edit_{$objectType}_meta", $objectId, $key)) {
             return self::refused('rest_cannot_update', $field['name']);
         }
-        return \update_metadata($objectType, $objectId, Slashes::add($key), Slashes::add($value)) ? null : self::failed($key, $field['name']);
+        return MetaData::update($objectType, $objectId, Slashes::add($key), Slashes::add($value)) ? null : self::failed($key, $field['name']);
     }
 
     /** A multiple key stored as a list, once the user may edit it. @param array<string, mixed> $field @param array<mixed> $values */
@@ -191,7 +192,7 @@ final class RestMeta
      */
     private static function replaceAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?Errors
     {
-        $current = \get_metadata($objectType, $objectId, $key, false);
+        $current = MetaData::get($objectType, $objectId, $key, false);
         $current = is_array($current) ? $current : [];
         [$toRemove, $toAdd] = [$current, $values];
         foreach ($values as $addKey => $value) {
@@ -201,12 +202,12 @@ final class RestMeta
             }
         }
         foreach (array_unique($toRemove, SORT_REGULAR) as $value) {
-            if (!\delete_metadata($objectType, $objectId, Slashes::add($key), Slashes::add($value))) {
+            if (!MetaData::delete($objectType, $objectId, Slashes::add($key), Slashes::add($value))) {
                 return self::failed($key, $field['name']);
             }
         }
         foreach ($toAdd as $value) {
-            if (!\add_metadata($objectType, $objectId, Slashes::add($key), Slashes::add($value))) {
+            if (!MetaData::add($objectType, $objectId, Slashes::add($key), Slashes::add($value))) {
                 return self::failed($key, $field['name']);
             }
         }
@@ -216,22 +217,22 @@ final class RestMeta
     /** A key deleted once the user may delete it (a single key's invalid stored value refuses null). @param array<string, mixed> $field */
     public static function delete(string $objectType, int $objectId, string $key, array $field): ?Errors
     {
-        if ($field['single'] && Records::isError(SiteSchema::validate(\get_metadata($objectType, $objectId, $key, true), $field['schema']))) {
+        if ($field['single'] && Records::isError(SiteSchema::validate(MetaData::get($objectType, $objectId, $key, true), $field['schema']))) {
             return self::nullStored($field['name']);
         }
         if (!Can::current("delete_{$objectType}_meta", $objectId, $key)) {
             return self::refused('rest_cannot_delete', $field['name']);
         }
-        if (\get_metadata_raw($objectType, $objectId, Slashes::add($key)) === null) {
+        if (MetaData::raw($objectType, $objectId, Slashes::add($key)) === null) {
             return null;
         }
-        return \delete_metadata($objectType, $objectId, Slashes::add($key)) ? null : Handoff::newError('rest_meta_database_error', Gettext::text('Could not delete meta value from database.'), ['key' => $field['name'], 'status' => 500]);
+        return MetaData::delete($objectType, $objectId, Slashes::add($key)) ? null : Handoff::newError('rest_meta_database_error', Gettext::text('Could not delete meta value from database.'), ['key' => $field['name'], 'status' => 500]);
     }
 
     /** Whether a value sanitizes to what is stored (scalar types compared as the text the store keeps). @param array<string, mixed> $field */
     public static function same(string $objectType, string $subtype, string $key, array $field, mixed $stored, mixed $value): bool
     {
-        $sanitized = \sanitize_meta($key, $value, $objectType, $subtype);
+        $sanitized = MetaData::sanitize($key, $value, $objectType, $subtype);
         $type = $field['single'] ? ($field['schema']['type'] ?? null) : ($field['schema']['items']['type'] ?? null);
         if (in_array($type, self::SCALARS, true)) {
             $sanitized = (string) $sanitized;

@@ -46332,6 +46332,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\MainQuery",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\ThemeMods",
@@ -46361,8 +46362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 47
+                    "line": 28,
+                    "end": 48
                 }
             ]
         },
@@ -46653,6 +46654,7 @@
                 "Minn\\Media\\FileTypes",
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\Query",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\QueryArgs",
@@ -46684,8 +46686,8 @@
                     "doc": "The feed the site serves by default (get_default_feed): default_feed's, \"rss\" read as rss2.",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 36
+                    "line": 33,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -46704,8 +46706,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 46
+                    "line": 40,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -46724,8 +46726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 50,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -46744,8 +46746,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 72
+                    "line": 56,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -46756,8 +46758,8 @@
                     "doc": "The current post's enclosures as RSS has them: address, length, and the type the third line starts with.",
                     "shapes": [],
                     "params": [],
-                    "line": 85,
-                    "end": 96
+                    "line": 86,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -46768,8 +46770,8 @@
                     "doc": "The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.",
                     "shapes": [],
                     "params": [],
-                    "line": 99,
-                    "end": 116
+                    "line": 100,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -46795,8 +46797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 141
+                    "line": 120,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -46815,8 +46817,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 167
+                    "line": 149,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -46827,8 +46829,8 @@
                     "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 170,
-                    "end": 180
+                    "line": 171,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -46839,8 +46841,8 @@
                     "doc": "The site icon as an Atom icon, or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 183,
-                    "end": 187
+                    "line": 184,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -46853,8 +46855,8 @@
                         "@return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted"
                     ],
                     "params": [],
-                    "line": 75,
-                    "end": 82
+                    "line": 76,
+                    "end": 83
                 }
             ]
         },
@@ -98763,6 +98765,7 @@
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Sanitize",
@@ -98813,8 +98816,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 41
+                "line": 35,
+                "end": 42
             },
             "cases": [],
             "constants": [],
@@ -98892,8 +98895,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 48
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [
@@ -98921,8 +98924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 78
+                    "line": 64,
+                    "end": 79
                 },
                 {
                     "routes": [
@@ -98943,8 +98946,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 115
+                    "line": 83,
+                    "end": 116
                 },
                 {
                     "routes": [
@@ -98974,8 +98977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 280
+                    "line": 246,
+                    "end": 281
                 },
                 {
                     "routes": [
@@ -99003,8 +99006,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 315
+                    "line": 289,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -99030,8 +99033,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 59
+                    "line": 51,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -99067,8 +99070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 145
+                    "line": 129,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -99108,8 +99111,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 186
+                    "line": 156,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -99145,8 +99148,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 212
+                    "line": 197,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -99188,8 +99191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 228
+                    "line": 221,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -99210,8 +99213,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 239
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -99230,8 +99233,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 324
+                    "line": 318,
+                    "end": 325
                 }
             ]
         },
@@ -105323,6 +105326,7 @@
                 "Minn\\Rest\\Schema",
                 "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
@@ -105392,8 +105396,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 50
+                    "line": 38,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -105442,8 +105446,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 66
+                    "line": 59,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -105483,8 +105487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 75
+                    "line": 70,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -105524,8 +105528,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 84
+                    "line": 79,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -105567,8 +105571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 105
+                    "line": 88,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -105596,8 +105600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 136
+                    "line": 116,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -105632,8 +105636,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 149
+                    "line": 140,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -105689,8 +105693,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 174
+                    "line": 165,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -105746,8 +105750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 183
+                    "line": 178,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -105789,8 +105793,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 229
+                    "line": 218,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -105846,8 +105850,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 240
+                    "line": 233,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -105866,8 +105870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 289
+                    "line": 281,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -105923,8 +105927,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 161
+                    "line": 153,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -105981,8 +105985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 214
+                    "line": 193,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -106008,8 +106012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 246
+                    "line": 243,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -106035,8 +106039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 252
+                    "line": 249,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -106055,8 +106059,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 258
+                    "line": 255,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -106077,8 +106081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 277
+                    "line": 262,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -106089,8 +106093,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 291,
-                    "end": 295
+                    "line": 292,
+                    "end": 296
                 }
             ]
         },
@@ -116977,6 +116981,7 @@
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\User",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Support\\Entities",
@@ -123283,6 +123288,7 @@
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\Meta",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Pages",
@@ -125815,6 +125821,7 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
@@ -126466,7 +126473,9 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaTypes"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\MetaData"
+            ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
                 "doc": "",
@@ -127060,6 +127069,625 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\MetaData",
+            "short": "MetaData",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/MetaData.php",
+            "lines": 229,
+            "doc": "Metadata as WordPress's meta functions read and write it, for posts,\nterms, comments, users and any type a plugin's table names: read through\nget_{type}_metadata and the object cache (a value its default when unset),\nwritten and removed with the filters that may answer first and the actions\naround each change (post meta also told as postmeta), values sanitized and\nstored serialized.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Meta",
+                "Minn\\Runtime\\MetaKeys",
+                "Minn\\Runtime\\MetaTypes",
+                "Minn\\Runtime\\Options",
+                "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\StoredObjects",
+                "Minn\\Support\\Slashes"
+            ],
+            "usedBy": [
+                "Minn\\Front\\CustomLogo",
+                "Minn\\Front\\FeedTags",
+                "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\RestMeta",
+                "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\MenuEvents",
+                "Minn\\Runtime\\MetaKeys",
+                "Minn\\Runtime\\NavMenuItems",
+                "Minn\\Runtime\\PostTags"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "get",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "get(mixed $type, mixed $objectId, mixed $key = '', mixed $single = false): mixed",
+                    "doc": "A value, a key's values, or every key's (get_metadata), the default when the key is unset.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "single",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 24
+                },
+                {
+                    "routes": [],
+                    "name": "raw",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "raw(mixed $type, mixed $objectId, mixed $key = '', mixed $single = false): mixed",
+                    "doc": "What is stored (get_metadata_raw): false for no type or object, null\nfor an unknown type or an unset key; get_{type}_metadata may answer\nfirst; else the object's meta, read once into the cache.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "single",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "fallback",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fallback(mixed $type, mixed $objectId, mixed $key, mixed $single = false): mixed",
+                    "doc": "An unset key's value (get_metadata_default): empty, or an empty list, as default_{type}_metadata leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "single",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "exists",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "exists(mixed $type, mixed $objectId, mixed $key): bool",
+                    "doc": "Whether a key is set for an object (metadata_exists), get_{type}_metadata answering first.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "add",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "add(mixed $type, mixed $objectId, mixed $key, mixed $value, mixed $unique = false): mixed",
+                    "doc": "A value added (add_metadata): its id, or false; refused when unique and the key is already set.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "unique",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(mixed $type, mixed $objectId, mixed $key, mixed $value, mixed $previous = ''): mixed",
+                    "doc": "A value changed (update_metadata): every row of the key, or only those\nholding the previous value given; a key not stored yet is added from\nthe value as it was handed in (and the new row's id answers).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "previous",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 147
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(mixed $type, mixed $objectId, mixed $key, mixed $value = '', mixed $all = false): bool",
+                    "doc": "Values removed (delete_metadata): the key's, or only those holding the value given; for every object when all are asked.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "all",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 150,
+                    "end": 175
+                },
+                {
+                    "routes": [],
+                    "name": "isProtected",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isProtected(mixed $key, mixed $type = ''): mixed",
+                    "doc": "Whether a key is private to code (is_protected_meta): one starting with an underscore, as the filter leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 178,
+                    "end": 182
+                },
+                {
+                    "routes": [],
+                    "name": "sanitize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sanitize(mixed $key, mixed $value, mixed $objectType, mixed $subtype = ''): mixed",
+                    "doc": "A value as its key's sanitizer leaves it (sanitize_meta), the subtype's own sanitizer first when one is hooked.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectType",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "subtype",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 185,
+                    "end": 191
+                },
+                {
+                    "routes": [],
+                    "name": "table",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "table(string $type): ?array",
+                    "doc": "A meta type's table, or null when there is none: the built-in types,\nand a plugin's type by the table it set on $wpdb as \"{type}meta\".",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 199,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "ofPost",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ofPost(mixed $postId, mixed $key = '', mixed $single = false): mixed",
+                    "doc": "A post's meta (get_post_meta).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "single",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 209,
+                    "end": 212
+                },
+                {
+                    "routes": [],
+                    "name": "updatePost",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "updatePost(mixed $postId, mixed $key, mixed $value, mixed $previous = ''): mixed",
+                    "doc": "A post's meta changed (update_post_meta).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "previous",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 215,
+                    "end": 218
+                },
+                {
+                    "routes": [],
+                    "name": "updateUser",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "updateUser(mixed $userId, mixed $key, mixed $value, mixed $previous = ''): mixed",
+                    "doc": "A user's meta changed (update_user_meta).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "previous",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 221,
+                    "end": 224
+                },
+                {
+                    "routes": [],
+                    "name": "postCustom",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "postCustom(mixed $postId = 0): mixed",
+                    "doc": "Every key of a post's meta (get_post_custom), the post being read's when none is named.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 227,
+                    "end": 230
+                },
+                {
+                    "routes": [],
+                    "name": "store",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "store(): Minn\\Runtime\\Meta",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 232,
+                    "end": 235
+                },
+                {
+                    "routes": [],
+                    "name": "announce",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "announce(string $verb, string $type, array $args, array $legacy): void",
+                    "doc": "An action told for a meta change, and its postmeta twin for posts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "verb",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "legacy",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 238,
+                    "end": 244
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\MetaKeys",
             "short": "MetaKeys",
             "namespace": "Minn\\Runtime",
@@ -127077,6 +127705,7 @@
                 "Minn\\Objects\\User",
                 "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
@@ -127084,7 +127713,8 @@
             ],
             "usedBy": [
                 "Minn\\Auth\\Can",
-                "Minn\\Rest\\RestMeta"
+                "Minn\\Rest\\RestMeta",
+                "Minn\\Runtime\\MetaData"
             ],
             "constructor": null,
             "cases": [],
@@ -127415,7 +128045,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Runtime\\Meta"
+                "Minn\\Runtime\\Meta",
+                "Minn\\Runtime\\MetaData"
             ],
             "constructor": null,
             "cases": [],
@@ -127629,6 +128260,7 @@
                 "Minn\\I18n\\Gettext",
                 "Minn\\Objects\\Term",
                 "Minn\\Runtime\\ArchiveLinks",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
@@ -129050,6 +129682,7 @@
                 "Minn\\Cli\\OptionCommand",
                 "Minn\\Engine",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Symbols"
@@ -135655,12 +136288,13 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostTags.php",
-            "lines": 64,
-            "doc": "What the post template tags tell about a post (the one being read when\nnone is named): its id and title, whether a password stands before it,\nwhether comments and pings are open and how many comments it has; each\nthrough the filter plugins hook there.",
+            "lines": 82,
+            "doc": "What the post template tags tell about a post (the one being read when\nnone is named): its id and title, whether a password stands before it,\nwhether comments and pings are open, how many comments it has, and its\nfeatured image; each through the filter plugins hook there.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PasswordGate",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -135671,6 +136305,7 @@
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Theme\\FrontLifecycle"
             ],
             "constructor": null,
@@ -135772,6 +136407,46 @@
                 },
                 {
                     "routes": [],
+                    "name": "thumbnailId",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "thumbnailId(mixed $post = NULL): mixed",
+                    "doc": "The id of a post's featured image (get_post_thumbnail_id), 0 for none, false for no post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "hasThumbnail",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hasThumbnail(mixed $post = NULL): bool",
+                    "doc": "Whether a post has a featured image (has_post_thumbnail).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 88
+                },
+                {
+                    "routes": [],
                     "name": "commentsNumber",
                     "static": true,
                     "visibility": "public",
@@ -135787,8 +136462,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 77
+                    "line": 91,
+                    "end": 95
                 }
             ]
         },
@@ -139279,6 +139954,7 @@
                 "Minn\\Runtime\\Interactivity",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MenuItemMarks",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\NavMenuItems",
@@ -142380,6 +143056,7 @@
             "usedBy": [
                 "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\WidgetsController",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Options"
             ],
             "constructor": null,
@@ -154775,6 +155452,7 @@
                 "Minn\\Runtime\\ApplicationPasswordEvents",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostRevisions",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\TermEvents",

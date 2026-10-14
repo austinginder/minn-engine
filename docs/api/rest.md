@@ -1371,7 +1371,7 @@ Attachments go to the trash only when MEDIA_TRASH (or
 rest_attachment_trashable) says so; force removes the row, its meta,
 and its files.
 
-Internals: `restDate()` (private, line 50), `storeWithPlugins()` (private, line 128), `insertedWithPlugins()` (private, line 155), `preparedAttachment()` (private, line 196), `finishedWithPlugins()` (private, line 220), `params()` (private, line 236), `attachment()` (private, line 317)
+Internals: `restDate()` (private, line 51), `storeWithPlugins()` (private, line 129), `insertedWithPlugins()` (private, line 156), `preparedAttachment()` (private, line 197), `finishedWithPlugins()` (private, line 221), `params()` (private, line 237), `attachment()` (private, line 318)
 
 
 ## MediaObject
@@ -2317,7 +2317,7 @@ Whether a value sanitizes to what is stored (scalar types compared as the text t
 
 A type's empty value: '' for a string, false, 0, or an empty list.
 
-Internals: `update()` (private, line 152), `replaceAll()` (private, line 192), `refused()` (private, line 242), `failed()` (private, line 248), `nullStored()` (private, line 254), `gathered()` (private, line 261), `request()` (private, line 291)
+Internals: `update()` (private, line 153), `replaceAll()` (private, line 193), `refused()` (private, line 243), `failed()` (private, line 249), `nullStored()` (private, line 255), `gathered()` (private, line 262), `request()` (private, line 292)
 
 
 ## RestUrl

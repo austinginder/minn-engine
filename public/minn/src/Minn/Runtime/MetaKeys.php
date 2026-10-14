@@ -42,7 +42,7 @@ final class MetaKeys
         unset($defaults['default']);
         $args = array_merge($defaults, $args);
         if (empty($args['auth_callback'])) {
-            $args['auth_callback'] = \is_protected_meta($key, $objectType) ? '__return_false' : '__return_true';
+            $args['auth_callback'] = MetaData::isProtected($key, $objectType) ? '__return_false' : '__return_true';
         }
         $subtype = (string) $args['object_subtype'];
         $refusal = self::refusal($objectType, $subtype, $args);
@@ -171,7 +171,7 @@ final class MetaKeys
         $caps = Can::map("edit_{$objectType}", $userId, $objectId);
         $key = $args[1] ?? false;
         if ($key) {
-            $allowed = !\is_protected_meta($key, $objectType);
+            $allowed = !MetaData::isProtected($key, $objectType);
             $filter = Runtime::hooks()->has("auth_{$objectType}_meta_{$key}_for_{$subtype}") ? "auth_{$objectType}_meta_{$key}_for_{$subtype}" : "auth_{$objectType}_meta_{$key}";
             $allowed = Runtime::hooks()->filter((string) $filter, [$allowed, $key, $objectId, $userId, $capability, $caps]);
             // The name before _for_ existed is still heard, with a notice (probe hook-inputs).

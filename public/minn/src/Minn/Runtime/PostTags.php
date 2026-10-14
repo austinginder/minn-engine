@@ -9,8 +9,8 @@ use Minn\Content\PasswordGate;
 /**
  * What the post template tags tell about a post (the one being read when
  * none is named): its id and title, whether a password stands before it,
- * whether comments and pings are open and how many comments it has; each
- * through the filter plugins hook there.
+ * whether comments and pings are open, how many comments it has, and its
+ * featured image; each through the filter plugins hook there.
  */
 final class PostTags
 {
@@ -67,6 +67,24 @@ final class PostTags
     {
         $post = Records::post($post);
         return (bool) Runtime::hooks()->filter('pings_open', [$post !== null && $post->ping_status === 'open', $post?->ID]);
+    }
+
+    /** The id of a post's featured image (get_post_thumbnail_id), 0 for none, false for no post. */
+    public static function thumbnailId(mixed $post = null): mixed
+    {
+        $post = Records::post($post);
+        if ($post === null) {
+            return false;
+        }
+        $id = MetaData::get('post', $post->ID, '_thumbnail_id', true);
+        return (int) Runtime::hooks()->filter('post_thumbnail_id', [$id === '' ? 0 : (int) $id, $post]);
+    }
+
+    /** Whether a post has a featured image (has_post_thumbnail). */
+    public static function hasThumbnail(mixed $post = null): bool
+    {
+        $id = self::thumbnailId($post);
+        return (bool) Runtime::hooks()->filter('has_post_thumbnail', [(bool) $id, $post, $id]);
     }
 
     /** How many comments a post has (get_comments_number), 0 for none. */

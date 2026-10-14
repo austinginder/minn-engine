@@ -1,22 +1,21 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 321,
-        "functions": 215,
+        "functionCalls": 299,
+        "functions": 202,
         "hookApi": 0,
         "classReferences": 151,
         "classes": 32,
-        "files": 114
+        "files": 112
     },
     "families": {
         "functions": {
-            "wp-includes/post.php": 47,
+            "wp-includes/post.php": 42,
             "wp-includes/taxonomy.php": 35,
             "wp-includes/comment.php": 32,
             "wp-includes/general-template.php": 18,
-            "wp-includes/user.php": 18,
+            "wp-includes/user.php": 16,
             "wp-includes/cron.php": 13,
-            "wp-includes/meta.php": 12,
             "wp-includes/widgets.php": 12,
             "wp-includes/nav-menu.php": 11,
             "wp-includes/functions.php": 11,
@@ -32,7 +31,6 @@
             "wp-includes/comment-template.php": 4,
             "wp-includes/script-loader.php": 4,
             "wp-includes/category-template.php": 4,
-            "wp-includes/post-thumbnail-template.php": 3,
             "wp-includes/capabilities.php": 3,
             "wp-includes/post-template.php": 3,
             "wp-includes/plugin.php": 3,
@@ -138,13 +136,6 @@
                 "Minn/Front/FeedTemplates.php": 1
             }
         },
-        "get_metadata": {
-            "uses": 4,
-            "family": "wp-includes/meta.php",
-            "files": {
-                "Minn/Rest/RestMeta.php": 4
-            }
-        },
         "get_nav_menu_locations": {
             "uses": 4,
             "family": "wp-includes/nav-menu.php",
@@ -216,15 +207,6 @@
                 "Minn/Runtime/PostLinks.php": 3
             }
         },
-        "get_post_meta": {
-            "uses": 3,
-            "family": "wp-includes/post.php",
-            "files": {
-                "Minn/Front/CustomLogo.php": 1,
-                "Minn/Runtime/MenuEvents.php": 1,
-                "Minn/Runtime/NavMenuItems.php": 1
-            }
-        },
         "get_terms": {
             "uses": 3,
             "family": "wp-includes/taxonomy.php",
@@ -290,13 +272,6 @@
                 "Minn/Runtime/PostQuery.php": 1
             }
         },
-        "delete_metadata": {
-            "uses": 2,
-            "family": "wp-includes/meta.php",
-            "files": {
-                "Minn/Rest/RestMeta.php": 2
-            }
-        },
         "get_default_block_template_types": {
             "uses": 2,
             "family": "wp-includes/block-template-utils.php",
@@ -347,14 +322,6 @@
             "files": {
                 "Minn/Runtime/CommentForm.php": 1,
                 "Minn/Runtime/PostQueryResults.php": 1
-            }
-        },
-        "get_post_thumbnail_id": {
-            "uses": 2,
-            "family": "wp-includes/post-thumbnail-template.php",
-            "files": {
-                "Minn/Front/EmbedCard.php": 1,
-                "Minn/Front/PostEmbed.php": 1
             }
         },
         "get_post_time": {
@@ -433,13 +400,6 @@
                 "Minn/Front/FeedTemplates.php": 1
             }
         },
-        "is_protected_meta": {
-            "uses": 2,
-            "family": "wp-includes/meta.php",
-            "files": {
-                "Minn/Runtime/MetaKeys.php": 2
-            }
-        },
         "shortcode_atts": {
             "uses": 2,
             "family": "wp-includes/shortcodes.php",
@@ -452,13 +412,6 @@
             "family": "wp-includes/taxonomy.php",
             "files": {
                 "Minn/Runtime/TermSave.php": 2
-            }
-        },
-        "update_user_meta": {
-            "uses": 2,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/AccountFlows.php": 2
             }
         },
         "username_exists": {
@@ -660,13 +613,6 @@
             "family": "wp-includes/revision.php",
             "files": {
                 "Minn/Runtime/PostRevisions.php": 1
-            }
-        },
-        "add_metadata": {
-            "uses": 1,
-            "family": "wp-includes/meta.php",
-            "files": {
-                "Minn/Rest/RestMeta.php": 1
             }
         },
         "add_settings_error": {
@@ -879,20 +825,6 @@
                 "Minn/Theme/FeedHeaders.php": 1
             }
         },
-        "get_metadata_raw": {
-            "uses": 1,
-            "family": "wp-includes/meta.php",
-            "files": {
-                "Minn/Rest/RestMeta.php": 1
-            }
-        },
-        "get_post_custom": {
-            "uses": 1,
-            "family": "wp-includes/post.php",
-            "files": {
-                "Minn/Front/FeedTags.php": 1
-            }
-        },
         "get_post_format": {
             "uses": 1,
             "family": "wp-includes/post-formats.php",
@@ -975,13 +907,6 @@
             "family": "wp-includes/l10n.php",
             "files": {
                 "Minn/Runtime/AccountFlows.php": 1
-            }
-        },
-        "has_post_thumbnail": {
-            "uses": 1,
-            "family": "wp-includes/post-thumbnail-template.php",
-            "files": {
-                "Minn/Front/EmbedCard.php": 1
             }
         },
         "has_site_icon": {
@@ -1089,13 +1014,6 @@
                 "Minn/Login/LoginController.php": 1
             }
         },
-        "sanitize_meta": {
-            "uses": 1,
-            "family": "wp-includes/meta.php",
-            "files": {
-                "Minn/Rest/RestMeta.php": 1
-            }
-        },
         "sanitize_post": {
             "uses": 1,
             "family": "wp-includes/post.php",
@@ -1124,25 +1042,11 @@
                 "Minn/Runtime/Upgrade.php": 1
             }
         },
-        "update_metadata": {
-            "uses": 1,
-            "family": "wp-includes/meta.php",
-            "files": {
-                "Minn/Rest/RestMeta.php": 1
-            }
-        },
         "update_post_caches": {
             "uses": 1,
             "family": "wp-includes/post.php",
             "files": {
                 "Minn/Runtime/PostQueryResults.php": 1
-            }
-        },
-        "update_post_meta": {
-            "uses": 1,
-            "family": "wp-includes/post.php",
-            "files": {
-                "Minn/Rest/MediaController.php": 1
             }
         },
         "walk_nav_menu_tree": {

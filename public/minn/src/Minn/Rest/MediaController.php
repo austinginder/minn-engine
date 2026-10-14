@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Objects\Errors;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\MetaData;
 use Minn\Runtime\PostEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -221,7 +222,7 @@ final readonly class MediaController
     {
         $events = new PostEvents();
         if (isset($params['alt_text'])) {
-            \update_post_meta($id, '_wp_attachment_image_alt', Slashes::add(Sanitize::textField((string) $params['alt_text'])));
+            MetaData::updatePost($id, '_wp_attachment_image_alt', Slashes::add(Sanitize::textField((string) $params['alt_text'])));
         }
         $events->restAfterInsert($id, $request, $before);
         $events->afterInsert($id, $before);
