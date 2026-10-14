@@ -36,6 +36,71 @@
                 "body": "5ad80eb2a232"
             }
         },
+        "admin-bar.php": {
+            "_admin_bar_bump_cb": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the bump style",
+                "body": "40e571ef1d87"
+            },
+            "_get_admin_bar_pref": {
+                "verdict": "move",
+                "to": "Minn\\Front\\AdminBar",
+                "why": "a user's toolbar preference, shown unless stored as false",
+                "body": "968b6de1fb15"
+            },
+            "_wp_admin_bar_init": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "builds the toolbar object of the filtered class into the global $wp_admin_bar plugins add nodes to",
+                "body": "dcfdd0aa4a49"
+            },
+            "is_admin_bar_showing": {
+                "verdict": "move",
+                "to": "Minn\\Front\\AdminBar",
+                "gates": [
+                    "globals"
+                ],
+                "why": "decides whether the toolbar shows (request kind, admin, sign-in, the user's preference, its filter); the global $show_admin_bar stays in step",
+                "body": "ee302d7f05f3"
+            },
+            "show_admin_bar": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets the global $show_admin_bar plugins and themes switch",
+                "body": "a3d463dcdf88"
+            },
+            "wp_admin_bar_dashboard_view_site_menu": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then a node added to the toolbar object",
+                "body": "8eab2eaeba99"
+            },
+            "wp_admin_bar_header": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the print style",
+                "body": "8da5d4cfa34a"
+            },
+            "wp_admin_bar_render": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "once, hands the global $wp_admin_bar to admin_bar_menu by reference and renders it between its actions",
+                "body": "03d64f05c34d"
+            },
+            "wp_enqueue_admin_bar_bump_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "swaps the theme's default bump callback for an inline style through theme support, the hook and style APIs",
+                "body": "d86aa9c044ad"
+            },
+            "wp_enqueue_admin_bar_header_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "swaps the old printer for an inline style through the hook and style APIs",
+                "body": "687a6e2f7e84"
+            }
+        },
         "ai-client.php": {
             "_minn_load_ai_client": {
                 "verdict": "keep",
@@ -114,6 +179,92 @@
                 "reason": "shape",
                 "why": "renames a remote pattern's keys into the local shape",
                 "body": "a19412d39d04"
+            }
+        },
+        "bookmark.php": {
+            "_minn_bookmark_anchor": {
+                "verdict": "move",
+                "to": "Minn\\Content\\LinkList",
+                "why": "one link's anchor, image and attributes",
+                "body": "f8407c8b7c62"
+            },
+            "_minn_bookmark_updated": {
+                "verdict": "move",
+                "to": "Minn\\Content\\LinkList",
+                "why": "a link's last-updated time in the site's offset and format",
+                "body": "0f6bc6d9d5ce"
+            },
+            "_walk_bookmarks": {
+                "verdict": "move",
+                "to": "Minn\\Content\\LinkList",
+                "why": "the links list markup by its arguments; markup by rules",
+                "body": "fb91f801ff1f"
+            },
+            "get_bookmark": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Links",
+                "why": "reads a link with its categories and sanitises it; the read moves, the OBJECT, ARRAY_A and ARRAY_N shapes stay",
+                "body": "a2ddfb1593ba"
+            },
+            "get_bookmark_field": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "one field of get_bookmark through sanitize_bookmark_field",
+                "body": "efe20e3ad422"
+            },
+            "get_bookmarks": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Links",
+                "why": "the links query: defaults, a category by name, the engine's matching, its filter",
+                "body": "ae9e4c1e822e"
+            },
+            "get_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_bookmark",
+                "body": "0d503fb3cf6e"
+            },
+            "sanitize_bookmark": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Links",
+                "why": "sanitises each known link field, on an object or an array",
+                "body": "8afb447354cc"
+            },
+            "sanitize_bookmark_field": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Links",
+                "why": "a link field's rules by field and context, with its filters and escaping",
+                "body": "0031f26b88ff"
+            },
+            "wp_delete_link": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Links",
+                "why": "deletes a link, its term relationships and cache between its actions",
+                "body": "624b05b022d7"
+            },
+            "wp_insert_link": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Links",
+                "why": "builds and saves a link row, its categories, actions and cache; engine storage",
+                "body": "f3d3ea245a88"
+            },
+            "wp_list_bookmarks": {
+                "verdict": "move",
+                "to": "Minn\\Content\\LinkList",
+                "why": "the categorised links list markup and its filter; echo or return stays",
+                "body": "e83bc6c7f796"
+            },
+            "wp_set_link_cats": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Links",
+                "why": "sets a link's categories, the default one when none are given",
+                "body": "33dfe24c615a"
+            },
+            "wp_update_link": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Links",
+                "why": "merges the stored link with the changes and keeps its categories, then saves",
+                "body": "ae507eb0b72a"
             }
         },
         "canonical.php": {
@@ -929,6 +1080,84 @@
                 ],
                 "why": "cleaning and storing the settings pairs is engine behaviour; $_updated_user_settings stays set for plugins",
                 "body": "d440edafb180"
+            }
+        },
+        "plugin.php": {
+            "_get_plugin_from_callback": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginFiles",
+                "why": "finds the plugin a callback's file belongs to by reflection and folder",
+                "body": "999052671f75"
+            },
+            "_minn_bind_hook_globals": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "binds $wp_filter, the hook counters, the filter stack, shortcode tags and the boot globals plugins read",
+                "body": "fce91f5c122f"
+            },
+            "_wp_filter_build_unique_id": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Hooks::id",
+                "why": "the engine's hook registry computes the same callback identity; Hooks::id would become public",
+                "body": "616ac59f605c"
+            },
+            "add_allowed_options": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "merges into the global $allowed_options through the engine's AllowedOptions::merge",
+                "body": "b77a4c894231"
+            },
+            "add_option_whitelist": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then add_allowed_options",
+                "body": "4a2b9655c1a0"
+            },
+            "get_dropins": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Inventory",
+                "why": "the drop-in names repeat Inventory::DROPINS; reading their headers goes beside that list",
+                "body": "6c8a26431dd1"
+            },
+            "get_mu_plugins": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginFiles",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "reads the must-use plugins' headers; the engine's plugin files",
+                "body": "2a74dffc711a"
+            },
+            "get_plugin_updates": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "pairs get_plugins with the update_plugins transient's offers",
+                "body": "4ae3a6213650"
+            },
+            "get_plugins": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginFiles",
+                "why": "finds the plugins' main files one level deep and sorts them by name; the engine's plugin files",
+                "body": "36540524d8ed"
+            },
+            "plugins_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginFiles",
+                "why": "builds a plugin's address (must-use or not, its folder, the path) before its filter",
+                "body": "59f55b99ef53"
+            },
+            "register_uninstall_hook": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginFiles",
+                "why": "records a plugin's uninstall callback in its option, refusing object callbacks",
+                "body": "8d72add5e332"
+            },
+            "wp_get_active_and_valid_plugins": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginFiles",
+                "why": "the active plugins' files that exist",
+                "doubt": "accepts any stored path that is a file; the reference also refuses one that is not .php or fails validate_file (a dot-dot path), which a probe with such an active_plugins entry would show",
+                "body": "049c7da15483"
             }
         },
         "robots-template.php": {

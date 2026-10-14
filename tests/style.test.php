@@ -195,7 +195,7 @@ $check('facade delegates: every delegate is recorded in contracts/api/facade-del
 // review only falls.
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-review.php') . ' --check', $facadeReviewOut, $facadeReviewBad);
 $facadeReview = json_decode(implode("\n", $facadeReviewOut), true);
-$facadeUnreviewedCeiling = 3694;
+$facadeUnreviewedCeiling = 3658;
 $check('facade review: every verdict is current and well formed', $facadeReviewBad === 0, implode(' ', array_slice((array) ($facadeReview['problems'] ?? []), 0, 3)));
 $check("facade review: unreviewed definitions stay at or under {$facadeUnreviewedCeiling}", (int) ($facadeReview['unreviewed'] ?? PHP_INT_MAX) <= $facadeUnreviewedCeiling, (string) ($facadeReview['unreviewed'] ?? '?'));
 
