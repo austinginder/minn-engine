@@ -6647,6 +6647,250 @@
                 "body": "58bfdaf860c1"
             }
         },
+        "classes/WP_Rewrite.php": {
+            "WP::add_query_var": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "appends a var to the object's public_query_vars once; the list plugins and the request parse read",
+                "body": "22d6d687633d"
+            },
+            "WP::build_query_string": {
+                "verdict": "move",
+                "to": "Minn\\Front\\RequestParse",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the query string through RequestParse::queryString, then runs the query_string filter and parses its result back into query_vars; the filter and the re-parse join queryString",
+                "doubt": "the filter runs through apply_filters, not apply_filters_deprecated, so no 2.1.0 deprecation notice",
+                "body": "fca3406971c4"
+            },
+            "WP::handle_404": {
+                "verdict": "delegate",
+                "to": "Minn\\Theme\\FrontLifecycle::handle404",
+                "gates": [
+                    "globals"
+                ],
+                "why": "hands the global main query to FrontLifecycle::handle404 with whether a singular query found nothing; one engine call on the global $wp_query",
+                "body": "744e33da1d48"
+            },
+            "WP::main": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "runs init, parse_request, query_posts, handle_404, register_globals and send_headers on $this in the reference's order, then the wp action",
+                "body": "d0629ca1c212"
+            },
+            "WP::minn_parse": {
+                "verdict": "move",
+                "to": "Minn\\Front\\RequestParse",
+                "gates": [
+                    "globals"
+                ],
+                "why": "matches REQUEST_URI against the rules, sets request, did_permalink, matched_rule and matched_query, refuses a var mismatch and builds the vars from the rule, GET, POST and the extra private vars; the parse belongs in RequestParse beside vars() and mismatch(), the superglobals passed in",
+                "body": "5698401e7a9e"
+            },
+            "WP::parse_request": {
+                "verdict": "delegate",
+                "to": "Minn\\Theme\\FrontLifecycle::parseRequest",
+                "gates": [
+                    "globals"
+                ],
+                "why": "reads the extra vars from a string or an array and hands the parse to FrontLifecycle::parseRequest with the reference's parse as its closure; argument conversion around one engine call",
+                "doubt": "extra_query_vars is set only inside the closure, after do_parse_request has been handed the previous value; the reference sets it first",
+                "body": "b9f0b8c6d8c4"
+            },
+            "WP::query_posts": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "builds the query string, makes the global $wp_the_query when missing, points $wp_query at it and runs it with the parsed vars; the main-query globals are the point",
+                "body": "a411d8b05f4e"
+            },
+            "WP::register_globals": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "copies the main query's vars, posts, post and request into globals with more, single and authordata; writing the globals themes read is the point",
+                "body": "37a6ca6c34d5"
+            },
+            "WP_Rewrite::add_endpoint": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "adds the endpoint to the object's list and its query var to the global $wp, both read by plugins and rule generation",
+                "doubt": "a null $query_var is not taken as the endpoint's name, as the reference does for back compat",
+                "body": "4d1c66f1a250"
+            },
+            "WP_Rewrite::add_permastruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "normalises the arguments to the reference's defaults, prefixes the structure with front or root and files it in extra_permastructs; the registry plugins read",
+                "doubt": "the old fourth $ep_mask argument is dropped (the reference reads func_get_arg(3))",
+                "body": "fbf1a1bed461"
+            },
+            "WP_Rewrite::add_rewrite_tag": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "replaces or appends the tag, its regex and its query in the object's three parallel lists, which plugins and rule generation read",
+                "body": "ca4d9350a81a"
+            },
+            "WP_Rewrite::add_rule": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "files the rule as external when its query is not the object's index, else at the bottom or top of the extra rules (an array query built onto index.php); the registry plugins fill",
+                "body": "f19799c306d8"
+            },
+            "WP_Rewrite::flush_rules": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RewriteRules",
+                "gates": [
+                    "globals"
+                ],
+                "why": "defers to wp_loaded remembering a hard flush in a static, then deletes and remakes the stored rules and asks flush_rewrite_rules_hard; the flush and its static state belong with RewriteRules::flush, which calls it today",
+                "body": "d9607d4c2d90"
+            },
+            "WP_Rewrite::get_author_permastruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "front, author_base and %author% from the object's own properties, false without pretty permalinks",
+                "doubt": "a plugin-set author_structure is ignored, where the reference returns it first (init unsets it to recompute)",
+                "body": "663754bc6074"
+            },
+            "WP_Rewrite::get_comment_feed_permastruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "root, comments_base, feed_base and %feed% from the object's own properties, false without pretty permalinks",
+                "doubt": "a plugin-set comment_feed_structure is ignored, where the reference returns it first (init unsets it to recompute)",
+                "body": "6cd8b0ff1cc0"
+            },
+            "WP_Rewrite::get_date_permastruct": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RewriteRules",
+                "why": "finds the date order the structure uses and moves dates under date/ when %post_id% is among its first three tags; a structure rule for RewriteRules",
+                "doubt": "a plugin-set date_structure is ignored, where the reference returns it first (init unsets it to recompute)",
+                "body": "6e983b080e84"
+            },
+            "WP_Rewrite::get_extra_permastruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the named structure from the object's extra_permastructs registry, false without pretty permalinks",
+                "body": "c2578402aa20"
+            },
+            "WP_Rewrite::get_feed_permastruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "root, feed_base and %feed% from the object's own properties, false without pretty permalinks",
+                "doubt": "a plugin-set feed_structure is ignored, where the reference returns it first (init unsets it to recompute)",
+                "body": "3c793129886b"
+            },
+            "WP_Rewrite::get_month_permastruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the permastruct from $this->get_date_permastruct without %day%",
+                "doubt": "the slashes left behind are not collapsed as the reference does, so a day-first structure gives //%monthnum%/%year%",
+                "body": "beed3184b5b6"
+            },
+            "WP_Rewrite::get_page_permastruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "root and %pagename% from the object's own properties, false without pretty permalinks",
+                "doubt": "a plugin-set page_structure is ignored, where the reference returns it first (init unsets it to recompute)",
+                "body": "b535d59fbd30"
+            },
+            "WP_Rewrite::get_search_permastruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "root, search_base and %search% from the object's own properties, false without pretty permalinks",
+                "doubt": "a plugin-set search_structure is ignored, where the reference returns it first (init unsets it to recompute)",
+                "body": "887f9822be57"
+            },
+            "WP_Rewrite::get_year_permastruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the permastruct from $this->get_date_permastruct without %monthnum% and %day%",
+                "doubt": "the slashes left behind are not collapsed as the reference does, so /%year%/%monthnum%/%day%/%postname%/ gives /%year%//",
+                "body": "dfdf1d3dfd54"
+            },
+            "WP_Rewrite::iis7_url_rewrite_rules": {
+                "verdict": "move",
+                "to": "Minn\\Support\\WebServer",
+                "why": "builds the IIS web.config rewrite rule, inside its parent tags when asked, through iis7_url_rewrite_rules; server rule markup for WebServer",
+                "doubt": "names the rule from get_option('home') where the reference uses home_url(), so a home_url filter is missed",
+                "body": "60d92275723f"
+            },
+            "WP_Rewrite::init": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RewriteRules",
+                "gates": [
+                    "globals"
+                ],
+                "why": "reads the structure option and derives front, root, trailing slashes and verbose page rules, and seeds the REST, sitemap and minn-admin top rules; structure rules for RewriteRules (verbosePages is there), written onto the $wp_rewrite plugins read",
+                "doubt": "resets extra_rules_top to fixed rules (wp-json ignoring rest_url_prefix) yet keeps extra_rules, non_wp_rules and endpoints, the reverse of the reference's init",
+                "body": "5485b6bd6288"
+            },
+            "WP_Rewrite::mod_rewrite_rules": {
+                "verdict": "move",
+                "to": "Minn\\Support\\WebServer",
+                "why": "writes the Apache .htaccess block from the home path and the external rules through mod_rewrite_rules and the deprecated rewrite_rules filter; server rule text by rules for WebServer, which knows Apache's conventions",
+                "body": "0d0d648c1a48"
+            },
+            "WP_Rewrite::page_rewrite_rules": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the %pagename% tag and generates the page rules through $this->generate_rewrite_rules and $this->get_page_permastruct, as the reference does",
+                "body": "d4bb6a470b7a"
+            },
+            "WP_Rewrite::preg_index": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the $N or $matches[N] back-reference by the object's matches mode; the engine's rule generation calls it through the object",
+                "body": "ac1905f3178e"
+            },
+            "WP_Rewrite::refresh_rewrite_rules": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RewriteRules",
+                "gates": [
+                    "globals"
+                ],
+                "why": "makes the rules in stored form through $this->rewrite_rules and stores them, or defers to a wp_loaded flush while registration is still open; storing the rules is engine work beside RewriteRules::flush",
+                "body": "823d6b746831"
+            },
+            "WP_Rewrite::remove_rewrite_tag": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "drops the tag from the object's three parallel lists",
+                "doubt": "re-indexes the lists where the reference leaves the gap, so the keys a plugin reads differ",
+                "body": "ed53e9ae9fb5"
+            },
+            "WP_Rewrite::set_category_base": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "stores the category base option and re-inits through $this->init",
+                "doubt": "no unchanged check as in the reference, so init runs on every call (and here resets the top rules)",
+                "body": "257981b2500a"
+            },
+            "WP_Rewrite::set_permalink_structure": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "when it changes, stores the option, re-inits through $this->init and fires permalink_structure_changed as the reference does; the runtime permalinks refresh is one engine call",
+                "body": "09ce9269c8cd"
+            },
+            "WP_Rewrite::set_tag_base": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "stores the tag base option and re-inits through $this->init",
+                "doubt": "no unchanged check as in the reference, so init runs on every call (and here resets the top rules)",
+                "body": "c48524cc58cf"
+            },
+            "WP_Rewrite::using_index_permalinks": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "whether the structure starts with the object's index file; a test on its own properties, which plugins can set",
+                "body": "a4e33cfcc945"
+            },
+            "WP_Rewrite::wp_rewrite_rules": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "reads the stored rules into $this->rules and makes them through $this->refresh_rewrite_rules when there are none; the seam RuleTable::match calls",
+                "body": "8100de8aff2e"
+            }
+        },
         "classes/WP_Tax_Query.php": {
             "WP_Tax_Query::__construct": {
                 "verdict": "keep",
@@ -7153,6 +7397,351 @@
                 ],
                 "why": "a page's option markup (value field, selected, indent, title fallback, list_pages filter)",
                 "body": "7af78105b753"
+            }
+        },
+        "classes/wpdb.php": {
+            "wpdb::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "keeps the four credentials, takes the engine's one mysqli handle and settles charset and table names through $this->init_charset and $this->set_prefix, the calls a db.php subclass overrides",
+                "doubt": "does not turn show_errors on under WP_DEBUG with WP_DEBUG_DISPLAY, nor connect through $this->db_connect(), as the reference's constructor does",
+                "body": "d82726f594dd"
+            },
+            "wpdb::__get": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "reads a protected member (col_meta, table_charset and the like) from outside, copying the last fields into col_info first; presents the object's own data (col_info is public here, so that branch never runs)",
+                "body": "4750aa99ccc9"
+            },
+            "wpdb::_escape": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "walks arrays escaping each scalar through $this->_real_escape, the step a db drop-in replaces",
+                "body": "a21044318bd3"
+            },
+            "wpdb::_insert_replace_helper": {
+                "verdict": "move",
+                "to": "Minn\\Query\\WriteSql",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds an INSERT or REPLACE from the processed fields, NULL for null values; statement building by rules for a new Query\\WriteSql beside Query\\Sql, keeping the $this->process_fields, $this->prepare and $this->query calls",
+                "doubt": "insert_id is not reset to 0 first, each value is prepared alone where the reference prepares the whole statement once, and check_current_query is set as a dynamic property nothing reads",
+                "body": "6ab6b261e357"
+            },
+            "wpdb::_weak_escape": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated since 3.6.0: the notice, then addslashes through the shared weak escape",
+                "body": "2019fdcf4020"
+            },
+            "wpdb::check_database_version": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\VersionCheck",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "compares $this->db_version with the global $required_mysql_version and builds the WP_Error naming $wp_version; the requirement check joins VersionCheck beside wordpress() and php(), the WP_Error staying",
+                "body": "87c4ed72c8ed"
+            },
+            "wpdb::check_safe_collation": {
+                "verdict": "move",
+                "to": "Minn\\Db",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "decides whether a non-ASCII query's table has only binary or general utf8 collations; collation knowledge for Db beside its column metadata",
+                "doubt": "a latin1 table reads as unsafe where the reference passes it, SHOW, DESCRIBE and CREATE are not let through first, and get_var and its kin never call it as the reference does",
+                "body": "790fa9a7ddeb"
+            },
+            "wpdb::columns": {
+                "verdict": "move",
+                "to": "Minn\\Db",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "reads SHOW FULL COLUMNS once per table through $this->get_results into col_meta as type and collation; column metadata for Db (DbDelta::columns reads the same rows)",
+                "doubt": "col_meta holds [type, collation] arrays where the reference keeps the column row objects, so a subclass reading col_meta[$table][$column]->Collation finds nothing",
+                "body": "54d49861da6b"
+            },
+            "wpdb::delete": {
+                "verdict": "move",
+                "to": "Minn\\Query\\WriteSql",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds DELETE FROM ... WHERE from the processed where fields, IS NULL for a null condition; statement building for Query\\WriteSql, keeping the $this->process_fields, $this->prepare and $this->query calls",
+                "doubt": "each value goes through its own $this->prepare call where the reference prepares the whole statement once, so a prepare override sees different calls",
+                "body": "152368641a28"
+            },
+            "wpdb::determine_charset": {
+                "verdict": "move",
+                "to": "Minn\\Db",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "upgrades utf8 to utf8mb4 and maps the collation to its utf8mb4 and 520 forms by the server's caps; connection charset rules for Db, the $this->has_cap calls kept where they are",
+                "body": "3204bb1c3ada"
+            },
+            "wpdb::escape": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated since 3.6.0: the notice, then slashes added through the shared weak escape",
+                "body": "2019fdcf4020"
+            },
+            "wpdb::escape_by_ref": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "escapes the referenced value in place through $this->_real_escape, floats left alone; an array_walk callback over the overridable escape",
+                "body": "79113a6097d3"
+            },
+            "wpdb::flush": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "resets the object's last result, column info, query, counts and error; state plugins and subclasses read",
+                "body": "66be96a12e71"
+            },
+            "wpdb::get_charset_collate": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "joins DEFAULT CHARACTER SET and COLLATE from the object's own charset and collate, which plugins pass to dbDelta",
+                "body": "9b1082c144a6"
+            },
+            "wpdb::get_col": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "runs $this->query when given one and collects column x of every row in $this->last_result",
+                "doubt": "the reference fills each cell through $this->get_var(null, $x, $i), so empty strings come back null and a get_var override is honoured; here neither",
+                "body": "d5d29b4d2744"
+            },
+            "wpdb::get_col_charset": {
+                "verdict": "move",
+                "to": "Minn\\Db",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "answers pre_get_col_charset, else the column's charset from its collation (false for a non-text column, the table's for an unknown one), priming through $this->get_table_charset; column metadata rules for Db",
+                "body": "9c9fbc9179c6"
+            },
+            "wpdb::get_col_info": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "reads one field, or every column's field, from the object's own col_info",
+                "body": "bae0238a7ef1"
+            },
+            "wpdb::get_results": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "runs $this->query when given one and shapes $this->last_result through Lists::shapeRows; the query seam drop-ins override",
+                "doubt": "with no query the reference returns null rather than reshaping the last result, and an unknown output mode returns null there",
+                "body": "90a281b4374a"
+            },
+            "wpdb::get_row": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "runs $this->query when given one and returns row y of $this->last_result as an object or array by the output mode",
+                "doubt": "with no query the reference returns null, where this reads row y of the last result",
+                "body": "97e258a9823e"
+            },
+            "wpdb::get_table_charset": {
+                "verdict": "move",
+                "to": "Minn\\Db",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "answers pre_get_table_charset, else the charset of the table's first collated column, kept per table in table_charset; column metadata rules for Db, the col_meta and table_charset properties kept",
+                "doubt": "the first collated column wins: no 'binary' for a blob column, no rule for mixed charsets, the connection charset for a table without text columns (the reference says false) and no WP_Error for an unreadable table",
+                "body": "5d6fb0ade5f5"
+            },
+            "wpdb::get_var": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "runs $this->query when given one, then picks column x of row y from $this->last_result",
+                "doubt": "an empty-string cell comes back as '' where the reference answers null for it",
+                "body": "d1c13db1ef95"
+            },
+            "wpdb::hide_errors": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "turns the show_errors flag off and returns the old one",
+                "body": "2b4c485529d5"
+            },
+            "wpdb::init_charset": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "reads DB_CHARSET and DB_COLLATE and stores what $this->determine_charset settles; a template over the overridable step",
+                "doubt": "with no DB_CHARSET the reference settles on an empty charset, here utf8 (then utf8mb4)",
+                "body": "9795c16cbc80"
+            },
+            "wpdb::log_query": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "appends the query, its time, caller, start and the log_query_custom_data-filtered data to the object's $queries, which debug plugins read",
+                "body": "5046884ab177"
+            },
+            "wpdb::placeholder_escape": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Placeholders",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "makes and keeps in a static the token that stands for a literal %, from AUTH_SALT; static engine state that belongs with the placeholder filling",
+                "doubt": "without AUTH_SALT the token is a fixed, guessable hash, where the reference salts uniqid() per request and hooks remove_placeholder_escape on query",
+                "body": "2658a6c94589"
+            },
+            "wpdb::prepare": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Placeholders",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "Placeholders::prepare already fills; the array-argument unwrap and the three _doing_it_wrong decisions on its counts move there too (Notices::doingItWrong), the $this->_real_escape callback and $this->add_placeholder_escape staying",
+                "doubt": "the no-placeholder notice fires only for zero counted placeholders with no args, where the reference fires it whenever the query has no %, and the one-placeholder-array-of-several case (4.9.0, returns null) is missing",
+                "body": "c83797f2865c"
+            },
+            "wpdb::print_error": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "logs the error with its query unless suppressed and prints the reference's error markup when show_errors is on; the object's own flags and last query, a method drop-ins override",
+                "doubt": "a suppressed error is still printed when show_errors is on (the reference returns first), $EZSQL_ERROR is not filled, and the log line lacks the 'made by' caller",
+                "body": "2f1eaf7fc3a4"
+            },
+            "wpdb::process_field_charsets": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "asks $this->get_col_charset for each text-format field (false for %d and %f); a loop over the overridable lookup",
+                "body": "7912f3dc0cac"
+            },
+            "wpdb::process_field_formats": {
+                "verdict": "move",
+                "to": "Minn\\Query\\WriteSql",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "pairs each value with the next given format (the first once they run out), else its field_types entry, else %s; a format rule for Query\\WriteSql, $this->field_types passed in",
+                "body": "c589074a8aad"
+            },
+            "wpdb::process_field_lengths": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "asks $this->get_col_length for each text-format field (false for %d and %f); a loop over the overridable lookup",
+                "body": "7ffe90cd1615"
+            },
+            "wpdb::process_fields": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "chains the overridable process_field_formats, process_field_charsets, process_field_lengths and strip_invalid_text steps and refuses with last_error when a value would change",
+                "doubt": "stops at the first changed field with the singular message, where the reference names every failing field (its plural message when several)",
+                "body": "db85f7a8edb6"
+            },
+            "wpdb::query": {
+                "verdict": "move",
+                "to": "Minn\\Db",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "runs raw SQL, classifies the statement, reads affected rows, insert id and result rows and reports errors; the run and classification belong in Db, keeping $this->flush, $this->print_error and last_query, num_queries, rows_affected, insert_id, last_result and num_rows where the reference sets them",
+                "doubt": "flushes before the query filter, never fills $queries under SAVEQUERIES (no log_query call), and lacks the reference's not-ready, empty-query and invalid-text checks",
+                "body": "b0bbc5ea5a20"
+            },
+            "wpdb::select": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "switches the database on $this->dbh and clears ready when it fails; the object's own handle and flag, which drop-ins override",
+                "doubt": "under PHP 8.1's default mysqli reporting a missing database throws mysqli_sql_exception, uncaught here, instead of ready going false",
+                "body": "f19c029d371e"
+            },
+            "wpdb::set_blog_id": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "swaps the blogid and siteid properties and returns the old id; the object's own state",
+                "doubt": "the reference also re-points the prefix and the blog tables' names for the new blog, which matters on multisite",
+                "body": "34ad605f4ba7"
+            },
+            "wpdb::set_prefix": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets prefix and base_prefix and names each table property from the object's own lists; the properties plugins and subclasses read",
+                "doubt": "no WP_Error for a prefix outside [a-z0-9_], prefix set even when table names are not, the old tables (categories, post2cat, link2cat) left unnamed, CUSTOM_USER_TABLE ignored",
+                "body": "3aae63f2e68b"
+            },
+            "wpdb::set_sql_mode": {
+                "verdict": "move",
+                "to": "Minn\\Db",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "reads the session modes when none are given, drops the incompatible_sql_modes-filtered list and sets the rest through Db::compatibleModes and setModes; the read and the filter move beside them",
+                "doubt": "the current modes are read through $this->get_var, so the query filter, last_query and num_queries see that read, where the reference reads them straight off the connection",
+                "body": "2aacefe82dff"
+            },
+            "wpdb::show_errors": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the show_errors flag and returns the old one",
+                "body": "88f67be5514a"
+            },
+            "wpdb::strip_invalid_text": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Utf8",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "drops what each text value's column charset cannot hold (Utf8::keptBy) and cuts it to the column's character or byte length; the length cut joins Utf8 beside keptBy",
+                "doubt": "a charset other than utf8, utf8mb4 and latin1 is kept as is, where the reference converts it through the server (SELECT CONVERT)",
+                "body": "fe3c4789b561"
+            },
+            "wpdb::strip_invalid_text_for_column": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "builds one field from $this->get_col_charset and $this->get_col_length and runs it through $this->strip_invalid_text; a composition of the overridable steps",
+                "body": "fae4e0c73009"
+            },
+            "wpdb::strip_invalid_text_from_query": {
+                "verdict": "move",
+                "to": "Minn\\Db",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "for a non-ASCII query, drops what its table's utf8 charset cannot hold; which charset a query's table has is Db knowledge, the $this->get_table_charset call kept",
+                "doubt": "a utf8mb4 table or a query naming no table comes back untouched, where the reference strips it through $this->strip_invalid_text with the table's or the connection's charset",
+                "body": "10fe7116a91b"
+            },
+            "wpdb::supports_collation": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated since 3.5.0: the notice, then $this->has_cap('collation')",
+                "body": "0857a691e571"
+            },
+            "wpdb::suppress_errors": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the suppress_errors flag and returns the old one",
+                "body": "26b9c3ebf225"
+            },
+            "wpdb::tables": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "picks the blog, global, network or old table lists the object holds and prefixes them; plugins add to those lists",
+                "doubt": "ignores $blog_id and CUSTOM_USER_TABLE and CUSTOM_USER_META_TABLE, and on multisite orders all as global, network, blog where the reference puts the network tables last",
+                "body": "46f5def42ede"
+            },
+            "wpdb::timer_start": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "stamps time_start with microtime and returns true",
+                "body": "e2ff3772d321"
+            },
+            "wpdb::update": {
+                "verdict": "move",
+                "to": "Minn\\Query\\WriteSql",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds UPDATE SET ... WHERE from the processed data and where fields, IS NULL for a null condition; statement building for Query\\WriteSql, keeping the $this->process_fields, $this->prepare and $this->query calls",
+                "doubt": "each value goes through its own $this->prepare call where the reference prepares the whole statement once, so a prepare override sees different calls",
+                "body": "802cb97a552b"
             }
         },
         "comment.php": {
