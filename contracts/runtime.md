@@ -16179,6 +16179,16 @@ last arrived. `Runtime\PostCaches::clean()` lets go of a post's caches, and `Sit
 table of defaults, so the bracket reads of comment columns stay at 57. The http-transports probe stays
 out of the comparison; the other probes give identical output before and after.
 
+**Batch 26, what the site tells about itself (function calls 187 → 166).** `Runtime\SiteInfo` answers
+`get()` (get_bloginfo: the name, tagline, addresses and feeds, the theme's stylesheet and folders, the
+admin address, charset, content type, version, language and direction, through bloginfo or
+bloginfo_url for display), `rss()` (get_bloginfo_rss) and `feedLink()` (get_feed_link).
+`Themes::stylesheetUri()` and `SiteLanguage::isRtl()` answer get_stylesheet_uri and is_rtl;
+`PostTags::time()` and `modifiedTime()` the post time tags; `CommentTags::author()` and `authorRss()`
+the comment author tags; `MainQuery::searchQuery()` the search terms. Full run 29 (after batch 25) was
+green throughout. The http-transports probe stays out of the comparison; the other probes give
+identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

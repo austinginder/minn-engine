@@ -157,7 +157,7 @@ function get_stylesheet_directory_uri()
 
 function get_stylesheet_uri()
 {
-    return apply_filters('stylesheet_uri', get_stylesheet_directory_uri() . '/style.css', get_stylesheet_directory_uri());
+    return Minn\Runtime\Themes::stylesheetUri();
 }
 
 function get_template_directory()
@@ -212,43 +212,7 @@ function get_theme_file_path($file = '')
 
 function get_bloginfo($show = '', $filter = 'raw')
 {
-    $output = match ($show) {
-        'url', 'home', 'siteurl' => home_url(),
-        'wpurl' => site_url(),
-        'description' => (string) get_option('blogdescription'),
-        'rdf_url' => get_feed_link('rdf'),
-        'rss_url' => get_feed_link('rss'),
-        'rss2_url' => get_feed_link('rss2'),
-        'atom_url' => get_feed_link('atom'),
-        'comments_atom_url' => get_feed_link('comments_atom'),
-        'comments_rss2_url' => get_feed_link('comments_rss2'),
-        'pingback_url' => site_url('xmlrpc.php'),
-        'stylesheet_url' => get_stylesheet_uri(),
-        'stylesheet_directory' => get_stylesheet_directory_uri(),
-        'template_directory', 'template_url' => get_template_directory_uri(),
-        'admin_email' => (string) get_option('admin_email'),
-        'charset' => (string) (get_option('blog_charset') ?: 'UTF-8'),
-        'html_type' => (string) (get_option('html_type') ?: 'text/html'),
-        'version' => $GLOBALS['wp_version'],
-        'language' => str_replace('_', '-', _minn_bloginfo_locale()),
-        'text_direction' => is_rtl() ? 'rtl' : 'ltr',
-        default => (string) get_option('blogname'),
-    };
-    if ($filter === 'display') {
-        if (str_contains($show, 'url') || str_contains($show, 'directory') || str_contains($show, 'home')) {
-            $output = apply_filters('bloginfo_url', $output, $show);
-        } else {
-            $output = apply_filters('bloginfo', $output, $show);
-        }
-    }
-    return $output;
-}
-
-/** @internal the locale as language tags want it: ll_CC without the formal variants */
-function _minn_bloginfo_locale(): string
-{
-    $locale = get_locale();
-    return $locale === 'en' ? 'en_US' : $locale;
+    return Minn\Runtime\SiteInfo::get($show, $filter);
 }
 
 function bloginfo($show = '')
@@ -259,16 +223,7 @@ function bloginfo($show = '')
 /** A feed's address (the default feed bare, through feed_link handed '' for it), or its ?feed= form without pretty permalinks. */
 function get_feed_link($feed = '')
 {
-    $feed = (string) $feed;
-    if (!get_option('permalink_structure')) {
-        $feed = str_replace('comments_', 'comments-', $feed !== '' ? $feed : get_default_feed());
-        return apply_filters('feed_link', home_url("?feed={$feed}"), $feed);
-    }
-    $comments = str_contains($feed, 'comments_');
-    $feed = str_replace('comments_', '', $feed);
-    $feed = $feed === get_default_feed() ? '' : $feed;
-    $path = preg_replace('#/+#', '/', '/' . ($comments ? 'comments/' : '') . 'feed/' . $feed);
-    return apply_filters('feed_link', home_url(user_trailingslashit(rtrim((string) $path, '/'), 'feed')), $feed);
+    return Minn\Runtime\SiteInfo::feedLink($feed);
 }
 
 /** @internal a pretty feed address under a page's address: feed/, the type named unless it is the default */

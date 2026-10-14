@@ -13,6 +13,7 @@ use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteInfo;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 use Minn\Support\Url;
@@ -42,9 +43,9 @@ final class PostEmbed
         $height = (int) max(ceil($width / 16 * 9), 200);
         $data = [
             'version' => '1.0',
-            'provider_name' => \get_bloginfo('name'),
+            'provider_name' => SiteInfo::get('name'),
             'provider_url' => SiteUrls::home(),
-            'author_name' => \get_bloginfo('name'),
+            'author_name' => SiteInfo::get('name'),
             'author_url' => SiteUrls::home(),
             'title' => PostTags::title($post),
             'type' => 'link',
@@ -90,7 +91,7 @@ final class PostEmbed
             Escape::url(self::url($post) . '#?secret=' . $secret),
             abs($width),
             abs($height),
-            Escape::attr(sprintf('&#8220;%1$s&#8221; &#8212; %2$s', $title, \get_bloginfo('name'))),
+            Escape::attr(sprintf('&#8220;%1$s&#8221; &#8212; %2$s', $title, SiteInfo::get('name'))),
             Escape::attr($secret),
         );
         $script = (string) file_get_contents(MINN_ENGINE_DIR . '/assets/embed-host.js');

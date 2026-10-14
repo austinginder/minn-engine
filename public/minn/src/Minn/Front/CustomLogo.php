@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\MetaData;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteInfo;
 use Minn\Runtime\SiteUrls;
 use Minn\Runtime\ThemeMods;
 use Minn\Runtime\ThemeSupports;
@@ -36,7 +37,7 @@ final class CustomLogo
             if ($unlinked) {
                 $attrs['alt'] = '';
             } elseif (empty(MetaData::ofPost($logo, '_wp_attachment_image_alt', true))) {
-                $attrs['alt'] = \get_bloginfo('name', 'display');
+                $attrs['alt'] = SiteInfo::get('name', 'display');
             }
             $attrs = Runtime::hooks()->filter('get_custom_logo_image_attributes', [$attrs, $logo, $blogId]);
             $image = (string) \wp_get_attachment_image($logo, 'full', false, $attrs);

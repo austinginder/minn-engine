@@ -14,6 +14,7 @@ use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteInfo;
 
 /**
  * WordPress's front-end request steps around the main query, as WP::main
@@ -115,7 +116,7 @@ final class FrontLifecycle
         if (MainQuery::current()->is_singular()) {
             $post = MainQuery::current()->get_queried_object();
             if ($post instanceof Post && PostTags::pingsOpen($post)) {
-                $headers['X-Pingback'] = \get_bloginfo('pingback_url', 'display');
+                $headers['X-Pingback'] = SiteInfo::get('pingback_url', 'display');
             }
         }
         $headers = (array) Runtime::hooks()->filter('wp_headers', [$headers, $wp]);

@@ -12,6 +12,7 @@ use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteInfo;
 use Minn\Runtime\SiteTime;
 use Minn\Support\Escape;
 use Minn\Support\Text;
@@ -97,7 +98,7 @@ final class FeedTemplates
             $w->put("\t\t\t\t\t<comments>")->tag('comments_link_feed')->put("</comments>\n");
         }
         $w->put("\t\t\n\t\t<dc:creator><![CDATA[")->cdata('the_author')
-            ->put("]]></dc:creator>\n\t\t<pubDate>", (string) SiteTime::fromStored('D, d M Y H:i:s +0000', \get_post_time('Y-m-d H:i:s', true), false), "</pubDate>\n\t\t")
+            ->put("]]></dc:creator>\n\t\t<pubDate>", (string) SiteTime::fromStored('D, d M Y H:i:s +0000', PostTags::time('Y-m-d H:i:s', true), false), "</pubDate>\n\t\t")
             ->tag('the_category_rss', 'rss2')
             ->put("\t\t<guid isPermaLink=\"false\">")->tag('the_guid')->put("</guid>\n\n")
             ->put("\t\t\t\t\t<description><![CDATA[")->cdata('the_excerpt_rss')->put("]]></description>\n");
@@ -145,7 +146,7 @@ final class FeedTemplates
             ->put("]]></title>\n\t\t<link rel=\"alternate\" type=\"")->tag('bloginfo_rss', 'html_type')
             ->put('" href="')->tag('the_permalink_rss')
             ->put("\" />\n\n\t\t<id>")->tag('the_guid')
-            ->put("</id>\n\t\t<updated>", (string) \get_post_modified_time('Y-m-d\TH:i:s\Z', true), "</updated>\n\t\t<published>", (string) \get_post_time('Y-m-d\TH:i:s\Z', true), "</published>\n\t\t")
+            ->put("</id>\n\t\t<updated>", (string) PostTags::modifiedTime('Y-m-d\TH:i:s\Z', true), "</updated>\n\t\t<published>", (string) PostTags::time('Y-m-d\TH:i:s\Z', true), "</published>\n\t\t")
             ->tag('the_category_rss', 'atom')
             ->put("\n\t\t<summary type=\"")->tag('html_type_rss')->put('"><![CDATA[')->cdata('the_excerpt_rss')->put("]]></summary>\n\n");
         if (!Runtime::options()->filtered('rss_use_excerpt')) {
@@ -224,7 +225,7 @@ final class FeedTemplates
             return sprintf(Text::numericReferences(Gettext::text($single)), FeedTags::titleRss());
         }
         if (MainQuery::current()->is_search()) {
-            return sprintf(Text::numericReferences(Gettext::text('Comments for %1$s searching on %2$s')), \get_bloginfo_rss('name'), \get_search_query());
+            return sprintf(Text::numericReferences(Gettext::text('Comments for %1$s searching on %2$s')), SiteInfo::rss('name'), MainQuery::searchQuery());
         }
         return sprintf(Text::numericReferences(Gettext::text('Comments for %s')), \get_wp_title_rss());
     }
@@ -233,9 +234,9 @@ final class FeedTemplates
     private static function commentTitle(Post $post): string
     {
         if (MainQuery::current()->is_singular()) {
-            return sprintf(Text::numericReferences(Gettext::text('By: %s')), \get_comment_author_rss());
+            return sprintf(Text::numericReferences(Gettext::text('By: %s')), CommentTags::authorRss());
         }
-        return sprintf(Text::numericReferences(Gettext::text('Comment on %1$s by %2$s')), Runtime::hooks()->filter('the_title_rss', [PostTags::title($post->ID)]), \get_comment_author_rss());
+        return sprintf(Text::numericReferences(Gettext::text('Comment on %1$s by %2$s')), Runtime::hooks()->filter('the_title_rss', [PostTags::title($post->ID)]), CommentTags::authorRss());
     }
 
     /** The comment the loop is on, with its post made the current one. @return array{0: object, 1: Post} */
@@ -268,7 +269,7 @@ final class FeedTemplates
     {
         [$comment, $post] = self::current();
         $w->put("\t<item>\n\t\t<title>\n\t\t", self::commentTitle($post), "\t\t</title>\n\t\t<link>")->tag('comment_link')
-            ->put("</link>\n\n\t\t<dc:creator><![CDATA[", FeedWriter::insideCdata((string) \get_comment_author_rss()), "]]></dc:creator>\n\t\t<pubDate>", (string) SiteTime::fromStored('D, d M Y H:i:s +0000', CommentTags::time('Y-m-d H:i:s', true, false), false), "</pubDate>\n\t\t<guid isPermaLink=\"false\">")->tag('comment_guid')
+            ->put("</link>\n\n\t\t<dc:creator><![CDATA[", FeedWriter::insideCdata((string) CommentTags::authorRss()), "]]></dc:creator>\n\t\t<pubDate>", (string) SiteTime::fromStored('D, d M Y H:i:s +0000', CommentTags::time('Y-m-d H:i:s', true, false), false), "</pubDate>\n\t\t<guid isPermaLink=\"false\">")->tag('comment_guid')
             ->put("</guid>\n\n");
         if (PostTags::passwordRequired($post)) {
             $w->put("\t\t\t\t\t<description>", Text::numericReferences(Gettext::text('Protected Comments: Please enter your password to view comments.')), "</description>\n\t\t\t<content:encoded><![CDATA[", \get_the_password_form(), "]]></content:encoded>\n");

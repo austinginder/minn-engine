@@ -11,6 +11,7 @@ use Minn\Runtime\PostLinks;
 use Minn\Runtime\PostReads;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteInfo;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 
@@ -75,7 +76,7 @@ final class EmbedCard
             '<div class="wp-embed-site-title"><a href="%s" target="_top"><img src="%s" width="32" height="32" alt="" class="wp-embed-site-icon" /><span>%s</span></a></div>',
             Escape::url(SiteUrls::home()),
             Escape::url((string) \get_site_icon_url(32, SiteUrls::includes('images/w-logo-gray-white-bg.svg'))),
-            Escape::html((string) \get_bloginfo('name')),
+            Escape::html((string) SiteInfo::get('name')),
         );
         return (string) Runtime::hooks()->filter('embed_site_title_html', [$title]);
     }

@@ -60,6 +60,13 @@ final class Themes
         return Runtime::hooks()->filter('stylesheet_directory_uri', [self::rootUri($stylesheet) . '/' . $stylesheet, $stylesheet, self::rootUri($stylesheet)]);
     }
 
+    /** The active theme's stylesheet address (get_stylesheet_uri), as stylesheet_uri leaves it. */
+    public static function stylesheetUri(): mixed
+    {
+        $directory = self::stylesheetDirectoryUri();
+        return Runtime::hooks()->filter('stylesheet_uri', [$directory . '/style.css', $directory]);
+    }
+
     /** The active parent theme's folder address (get_template_directory_uri). */
     public static function templateDirectoryUri(): mixed
     {

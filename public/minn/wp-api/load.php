@@ -114,8 +114,7 @@ function is_ssl()
 /** Whether the site's locale writes right to left. */
 function is_rtl()
 {
-    $locale = $GLOBALS['wp_locale'] ?? null;
-    return $locale instanceof WP_Locale && $locale->is_rtl();
+    return Minn\I18n\SiteLanguage::isRtl();
 }
 
 function is_customize_preview()

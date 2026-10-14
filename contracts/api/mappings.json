@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 759,
-        "composes": 2267,
-        "leaf": 1017,
-        "noop": 2962,
+        "composes": 2259,
+        "leaf": 1016,
+        "noop": 2970,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8699,
-        "minnMethods": 1266,
+        "functions": 8698,
+        "minnMethods": 1276,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -36272,15 +36272,6 @@
                 "esc_html"
             ]
         },
-        "_minn_bloginfo_locale": {
-            "file": "link-template.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_locale"
-            ]
-        },
         "_minn_bookmark_anchor": {
             "file": "bookmark.php",
             "lines": 11,
@@ -47772,32 +47763,21 @@
         },
         "get_bloginfo": {
             "file": "link-template.php",
-            "lines": 30,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_bloginfo_locale",
-                "apply_filters",
-                "get_feed_link",
-                "get_option",
-                "get_stylesheet_directory_uri",
-                "get_stylesheet_uri",
-                "get_template_directory_uri",
-                "home_url",
-                "is_rtl",
-                "site_url"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteInfo::get"
+            ],
+            "composes": []
         },
         "get_bloginfo_rss": {
             "file": "feed.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "esc_html",
-                "get_bloginfo"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteInfo::rss"
+            ],
+            "composes": []
         },
         "get_blogs_of_user": {
             "file": "template.php",
@@ -48174,13 +48154,12 @@
         },
         "get_comment_author": {
             "file": "comment.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_comment"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentTags::author"
+            ],
+            "composes": []
         },
         "get_comment_author_IP": {
             "file": "comment.php",
@@ -48233,11 +48212,10 @@
             "file": "feed.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_comment_author"
-            ]
+            "minn": [
+                "Minn\\Runtime\\CommentTags::authorRss"
+            ],
+            "composes": []
         },
         "get_comment_author_url": {
             "file": "comment.php",
@@ -49001,16 +48979,12 @@
         },
         "get_feed_link": {
             "file": "link-template.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_default_feed",
-                "get_option",
-                "home_url",
-                "user_trailingslashit"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteInfo::feedLink"
+            ],
+            "composes": []
         },
         "get_file_data": {
             "file": "plugin.php",
@@ -50412,15 +50386,12 @@
         },
         "get_post_modified_time": {
             "file": "post.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_post",
-                "wp_date",
-                "wp_timezone"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostTags::modifiedTime"
+            ],
+            "composes": []
         },
         "get_post_parent": {
             "file": "post.php",
@@ -50526,16 +50497,12 @@
         },
         "get_post_time": {
             "file": "post.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_gmt_from_date",
-                "get_post",
-                "wp_date",
-                "wp_timezone"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostTags::time"
+            ],
+            "composes": []
         },
         "get_post_timestamp": {
             "file": "post.php",
@@ -51080,14 +51047,12 @@
         },
         "get_search_query": {
             "file": "query.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "esc_attr",
-                "get_query_var"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\MainQuery::searchQuery"
+            ],
+            "composes": []
         },
         "get_search_template": {
             "file": "template.php",
@@ -51313,11 +51278,10 @@
             "file": "link-template.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_stylesheet_directory_uri"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Themes::stylesheetUri"
+            ],
+            "composes": []
         },
         "get_submit_button": {
             "file": "admin.php",
@@ -54324,9 +54288,11 @@
         },
         "is_rtl": {
             "file": "load.php",
-            "lines": 2,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\SiteLanguage::isRtl"
+            ],
             "composes": []
         },
         "is_search": {

@@ -458,7 +458,7 @@ Atom, the link to its comments feed, the feed's build date, and the site
 icon a feed carries; and the small ones: the site's default feed, a feed's
 content type and a post's title for a feed.
 
-Used by: `Minn\Front\FeedTemplates`, `Minn\Runtime\ArchiveLinks`, `Minn\Theme\FeedHeaders`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Front\FeedTemplates`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\SiteInfo`, `Minn\Theme\FeedHeaders`, `Minn\Theme\HeadLinks`
 
 ### static `defaultFeed(): mixed`
 
@@ -502,7 +502,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 77)
+Internals: `enclosures()` (private, line 78)
 
 
 ## FeedTemplates
@@ -527,7 +527,7 @@ rdf, rss), between wp_before_load_template and wp_after_load_template.
 
 - `@param Closure(string): void $send sends a header line (the Content-Type)`
 
-Internals: `syndication()` (private, line 68), `rss2()` (private, line 73), `rss2Item()` (private, line 92), `atom()` (private, line 118), `atomEntry()` (private, line 137), `rdf()` (private, line 164), `rdfItem()` (private, line 188), `rss()` (private, line 203), `commentsTitle()` (private, line 221), `commentTitle()` (private, line 233), `current()` (private, line 242), `rss2Comments()` (private, line 249), `rss2Comment()` (private, line 267), `atomComments()` (private, line 281), `atomComment()` (private, line 303)
+Internals: `syndication()` (private, line 69), `rss2()` (private, line 74), `rss2Item()` (private, line 93), `atom()` (private, line 119), `atomEntry()` (private, line 138), `rdf()` (private, line 165), `rdfItem()` (private, line 189), `rss()` (private, line 204), `commentsTitle()` (private, line 222), `commentTitle()` (private, line 234), `current()` (private, line 243), `rss2Comments()` (private, line 250), `rss2Comment()` (private, line 268), `atomComments()` (private, line 282), `atomComment()` (private, line 304)
 
 
 ## FeedWriter
@@ -857,7 +857,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 124)
+Internals: `append()` (private, line 125)
 
 
 ## PostNavigation
@@ -1666,7 +1666,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 56), `creatable()` (private, line 258), `editPost()` (private, line 305), `editTerm()` (private, line 315)
+Internals: `profileUrl()` (private, line 57), `creatable()` (private, line 259), `editPost()` (private, line 306), `editTerm()` (private, line 316)
 
 
 ## ToolbarTree

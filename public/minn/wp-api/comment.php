@@ -152,9 +152,7 @@ function wp_count_terms($args = [], $deprecated = '')
 
 function get_comment_author($comment_id = 0)
 {
-    $comment = get_comment($comment_id);
-    $author = $comment === null || $comment->comment_author === '' ? 'Anonymous' : $comment->comment_author;
-    return apply_filters('get_comment_author', $author, $comment?->comment_ID, $comment);
+    return Minn\Runtime\CommentTags::author($comment_id);
 }
 
 function get_comment_text($comment_id = 0, $args = [])

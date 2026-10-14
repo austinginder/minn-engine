@@ -22,8 +22,7 @@ function set_query_var($query_var, $value)
 
 function get_search_query($escaped = true)
 {
-    $query = apply_filters('get_search_query', get_query_var('s'));
-    return $escaped ? esc_attr($query) : $query;
+    return Minn\Runtime\MainQuery::searchQuery($escaped);
 }
 
 function the_search_query()

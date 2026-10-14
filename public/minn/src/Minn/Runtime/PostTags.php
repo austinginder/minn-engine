@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use DateTimeZone;
 use Minn\Content\PasswordGate;
 
 /**
@@ -14,6 +15,51 @@ use Minn\Content\PasswordGate;
  */
 final class PostTags
 {
+    /**
+     * When a post was published (get_post_time): a timestamp for "U" or
+     * "G", else the date in the format, local or UTC (a GMT date not set
+     * yet worked out from the local one), names translated when asked;
+     * false for no post.
+     */
+    public static function time(mixed $format = 'U', mixed $gmt = false, mixed $post = null, mixed $translate = false): mixed
+    {
+        $post = Records::post($post);
+        if ($post === null) {
+            return false;
+        }
+        $source = $gmt ? $post->post_date_gmt : $post->post_date;
+        if ($gmt && str_starts_with($source, '0000')) {
+            $source = SiteTime::toGmt($post->post_date);
+        }
+        $time = self::moment($source, $format, $gmt, $translate);
+        return $time === null ? false : Runtime::hooks()->filter('get_post_time', [$time, $format, $gmt]);
+    }
+
+    /** When a post last changed (get_post_modified_time), as get_post_time tells when it was published. */
+    public static function modifiedTime(mixed $format = 'U', mixed $gmt = false, mixed $post = null, mixed $translate = false): mixed
+    {
+        $post = Records::post($post);
+        if ($post === null) {
+            return false;
+        }
+        $time = self::moment($gmt ? $post->post_modified_gmt : $post->post_modified, $format, $gmt, $translate);
+        return $time === null ? false : Runtime::hooks()->filter('get_post_modified_time', [$time, $format, $gmt]);
+    }
+
+    /** A stored date as a timestamp for "U" or "G", else in the format (translated when asked); null for one that is not a date. */
+    private static function moment(string $source, mixed $format, mixed $gmt, mixed $translate): mixed
+    {
+        $zone = $gmt ? new DateTimeZone('UTC') : SiteTime::zone();
+        $datetime = date_create($source, $zone);
+        if ($datetime === false) {
+            return null;
+        }
+        if ($format === 'U' || $format === 'G') {
+            return $datetime->getTimestamp();
+        }
+        return $translate ? SiteTime::format($format, $datetime->getTimestamp(), $gmt ? new DateTimeZone('UTC') : null) : $datetime->format((string) $format);
+    }
+
     /** The id of the post being read (get_the_ID), or false. */
     public static function id(): mixed
     {

@@ -113,8 +113,7 @@ function feed_content_type($type = '')
 
 function get_bloginfo_rss($show = '')
 {
-    // Observed: the value is HTML-escaped whole, tags included, and typographic quotes stay.
-    return apply_filters('get_bloginfo_rss', esc_html(get_bloginfo($show)), $show);
+    return Minn\Runtime\SiteInfo::rss($show);
 }
 
 function bloginfo_rss($show = '')
@@ -252,7 +251,7 @@ function comment_link($comment = null)
 
 function get_comment_author_rss()
 {
-    return apply_filters('comment_author_rss', get_comment_author());
+    return Minn\Runtime\CommentTags::authorRss();
 }
 
 function comment_author_rss()

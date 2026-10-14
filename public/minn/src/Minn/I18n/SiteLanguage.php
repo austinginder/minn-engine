@@ -37,12 +37,18 @@ final class SiteLanguage
         return str_replace('_', '-', $locale === 'en' ? 'en_US' : $locale);
     }
 
+    /** Whether the site's language is written right to left (is_rtl). */
+    public static function isRtl(): bool
+    {
+        $locale = $GLOBALS['wp_locale'] ?? null;
+        return $locale instanceof \WP_Locale && $locale->is_rtl();
+    }
+
     /** The html element's dir and lang attributes (lang for html, xml:lang for xhtml or a non-HTML html_type). */
     public static function attributes(string $doctype = 'html'): string
     {
         $attributes = [];
-        $direction = $GLOBALS['wp_locale'] ?? null;
-        if ($direction instanceof \WP_Locale && $direction->is_rtl()) {
+        if (self::isRtl()) {
             $attributes[] = 'dir="rtl"';
         }
         $tag = self::tag();

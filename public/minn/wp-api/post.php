@@ -238,24 +238,7 @@ function get_the_time($format = '', $post = null)
 
 function get_post_time($format = 'U', $gmt = false, $post = null, $translate = false)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $source = $gmt ? $post->post_date_gmt : $post->post_date;
-    if ($gmt && str_starts_with($source, '0000')) {
-        $source = get_gmt_from_date($post->post_date);
-    }
-    $datetime = date_create($source, $gmt ? new DateTimeZone('UTC') : wp_timezone());
-    if ($datetime === false) {
-        return false;
-    }
-    if ($format === 'U' || $format === 'G') {
-        $time = $datetime->getTimestamp();
-    } else {
-        $time = $translate ? wp_date($format, $datetime->getTimestamp(), $gmt ? new DateTimeZone('UTC') : null) : $datetime->format($format);
-    }
-    return apply_filters('get_post_time', $time, $format, $gmt);
+    return Minn\Runtime\PostTags::time($format, $gmt, $post, $translate);
 }
 
 function get_the_modified_date($format = '', $post = null)
@@ -280,17 +263,7 @@ function get_the_modified_time($format = '', $post = null)
 
 function get_post_modified_time($format = 'U', $gmt = false, $post = null, $translate = false)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $source = $gmt ? $post->post_modified_gmt : $post->post_modified;
-    $datetime = date_create($source, $gmt ? new DateTimeZone('UTC') : wp_timezone());
-    if ($datetime === false) {
-        return false;
-    }
-    $time = $format === 'U' || $format === 'G' ? $datetime->getTimestamp() : ($translate ? wp_date($format, $datetime->getTimestamp(), $gmt ? new DateTimeZone('UTC') : null) : $datetime->format($format));
-    return apply_filters('get_post_modified_time', $time, $format, $gmt);
+    return Minn\Runtime\PostTags::modifiedTime($format, $gmt, $post, $translate);
 }
 
 /** The loop post's date, printed (or returned) only when it starts a new day; the_date filters it either way. */

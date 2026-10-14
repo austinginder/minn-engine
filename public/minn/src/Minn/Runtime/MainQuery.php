@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Objects\Query;
+use Minn\Support\Escape;
 
 /**
  * The query the request answers ($wp_query), as WordPress keeps it: the
@@ -25,5 +26,12 @@ final class MainQuery
             $GLOBALS['wp_query'] = $GLOBALS['wp_the_query'];
         }
         return $GLOBALS['wp_query'];
+    }
+
+    /** The search terms the query answers (get_search_query), as get_search_query leaves them, escaped for an attribute unless asked not to be. */
+    public static function searchQuery(mixed $escaped = true): mixed
+    {
+        $query = Runtime::hooks()->filter('get_search_query', [self::current()->get('s')]);
+        return $escaped ? Escape::attr($query) : $query;
     }
 }

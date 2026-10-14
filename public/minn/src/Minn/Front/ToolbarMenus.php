@@ -14,6 +14,7 @@ use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\I18n\Gettext;
+use Minn\Runtime\SiteInfo;
 use Minn\Runtime\SiteUrls;
 use Minn\Runtime\ThemeSupports;
 use Minn\Support\Escape;
@@ -136,7 +137,7 @@ final class ToolbarMenus
         if (!Handoff::signedIn() || (!\is_user_member_of_blog() && !Can::current('manage_network'))) {
             return;
         }
-        $name = (string) \get_bloginfo('name');
+        $name = (string) SiteInfo::get('name');
         $name = $name !== '' ? $name : (string) preg_replace('#^(https?://)?(www\.)?#', '', SiteUrls::home());
         $title = Text::htmlExcerpt($name, 40, '&hellip;');
         $meta = ['menu_title' => $title];

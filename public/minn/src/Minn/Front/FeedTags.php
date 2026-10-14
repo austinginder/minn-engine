@@ -14,6 +14,7 @@ use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteInfo;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 use Minn\Support\Text;
@@ -66,7 +67,7 @@ final class FeedTags
         foreach (array_unique($names) as $name) {
             $out .= match ($type) {
                 'rdf' => "\t\t<dc:subject><![CDATA[" . FeedWriter::insideCdata(html_entity_decode($name, ENT_COMPAT, (string) Runtime::options()->filtered('blog_charset'))) . "]]></dc:subject>\n",
-                'atom' => sprintf('<category scheme="%1$s" term="%2$s" />', Escape::attr(\get_bloginfo_rss('url')), Escape::attr($name)),
+                'atom' => sprintf('<category scheme="%1$s" term="%2$s" />', Escape::attr(SiteInfo::rss('url')), Escape::attr($name)),
                 default => "\t\t<category><![CDATA[" . FeedWriter::insideCdata(html_entity_decode($name, ENT_COMPAT, (string) Runtime::options()->filtered('blog_charset'))) . "]]></category>\n",
             };
         }
@@ -172,12 +173,12 @@ final class FeedTags
     public static function rss2Icon(): string
     {
         $title = \get_wp_title_rss();
-        $title = $title !== '' ? $title : \get_bloginfo_rss('name');
+        $title = $title !== '' ? $title : SiteInfo::rss('name');
         $url = \get_site_icon_url(32);
         if (!$url) {
             return '';
         }
-        return "\n<image>\n\t<url>" . Text::encodeAmpersands($url) . "</url>\n\t<title>" . $title . "</title>\n\t<link>" . \get_bloginfo_rss('url')
+        return "\n<image>\n\t<url>" . Text::encodeAmpersands($url) . "</url>\n\t<title>" . $title . "</title>\n\t<link>" . SiteInfo::rss('url')
             . "</link>\n\t<width>32</width>\n\t<height>32</height>\n</image> \n";
     }
 
