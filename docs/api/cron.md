@@ -56,5 +56,5 @@ a request repeated as fast as a visitor can send it costs two reads.
 
 True when a scheduled post's time has come or the cron option holds a due event.
 
-Internals: `fireEvents()` (private, line 101), `applyAutoUpdates()` (private, line 119), `postDue()` (private, line 130), `publishDue()` (private, line 145), `sweepTransients()` (private, line 167), `sweepThrottle()` (private, line 181), `lock()` (private, line 186), `unlock()` (private, line 201)
+Internals: `fireEvents()` (private, line 102), `applyAutoUpdates()` (private, line 120), `postDue()` (private, line 131), `publishDue()` (private, line 146), `sweepTransients()` (private, line 168), `sweepThrottle()` (private, line 182), `lock()` (private, line 187), `unlock()` (private, line 202)
 

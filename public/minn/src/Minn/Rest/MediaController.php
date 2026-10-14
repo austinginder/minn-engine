@@ -21,6 +21,7 @@ use Minn\Http\Route;
 use Minn\Media\Upload;
 use Minn\Media\Writer;
 use Minn\RestError;
+use Minn\Runtime\PostWrites;
 use Minn\Runtime\Runtime;
 use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
@@ -269,7 +270,7 @@ final readonly class MediaController
         $attachment->post_type = 'attachment';
         $attachment->page_template = null;
         $args = $this->preparedAttachment($attachment, $body, $request) + $parentArgs;
-        $saved = \wp_update_post(Slashes::add($args), true, false);
+        $saved = PostWrites::update(Slashes::add($args), true, false);
         if ($saved instanceof Errors) {
             throw new RestError($saved->get_error_code(), $saved->get_error_message(), 500);
         }

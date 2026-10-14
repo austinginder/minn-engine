@@ -734,8 +734,7 @@ function wp_setup_nav_menu_item($menu_item)
 
 function is_object_in_taxonomy($object_type, $taxonomy)
 {
-    $row = Runtime::registry()->taxonomy((string) $taxonomy);
-    return $row !== null && in_array((string) $object_type, (array) $row['object_type'], true);
+    return Minn\Runtime\Registered::objectInTaxonomy($object_type, $taxonomy);
 }
 
 /**

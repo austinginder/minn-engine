@@ -288,7 +288,7 @@ filters included), the user's capabilities as user_has_cap leaves them,
 and every primitive one granted. "exist" is always granted and
 "do_not_allow" never.
 
-Used by: `Minn\Front\ToolbarMenus`, `Minn\Media\FileTypes`, `Minn\Rest\Caller`, `Minn\Rest\RestMeta`, `Minn\Runtime\CommentForm`, `Minn\Runtime\FileUpload`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostReads`, `Minn\Runtime\UpdateCounts`
+Used by: `Minn\Front\ToolbarMenus`, `Minn\Media\FileTypes`, `Minn\Rest\Caller`, `Minn\Rest\RestMeta`, `Minn\Runtime\CommentForm`, `Minn\Runtime\FileUpload`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`, `Minn\Runtime\UpdateCounts`
 
 ### static `current(mixed $capability, mixed ...$args): mixed`
 

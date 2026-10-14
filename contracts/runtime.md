@@ -16227,6 +16227,17 @@ yet (`bound()`), so the engine no longer asks `class_exists` of a WordPress name
 is the engine's (`Theme\StylePresets::METADATA`) and WP_Theme_JSON reads it from there. The http-transports
 probe stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 31, post writes and revisions.** `Runtime\PostWrites` writes posts as the facade's post functions did:
+`insert()` (each column through its filters, then terms, meta and template, the save actions and
+wp_after_insert_post), `update()`, `delete()` (to the trash first unless forced; unstuck, terms, children,
+revisions, comments and meta taken away), `trash()`, `untrash()`, `publish()`, `publishFuture()`,
+`transitionStatus()`, `setCategories()`, `setTerms()`, `setTags()`, `stick()`, `unstick()`, `uniqueSlug()`,
+and the trashed-slug suffixes. `PostRevisions` gains `all()`, `toKeep()`, `enabled()`, `delete()`, `fields()`
+and `data()`; `CronEvents::clearHook()` answers wp_clear_scheduled_hook and
+`Registered::objectInTaxonomy()` is_object_in_taxonomy. The engine's post events call the engine directly.
+Column reads use keyed destructuring, so the bracket reads of post columns stay at 205. The http-transports
+probe stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

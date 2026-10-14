@@ -31,20 +31,6 @@ function _minn_post_lookup(): PostLookup
     return new PostLookup(Runtime::current()->db);
 }
 
-/** @internal the insert decisions, with the reference's option, capability, and date helpers handed in */
-function _minn_post_insert(): PostInsert
-{
-    return new PostInsert(
-        _minn_post_writer(),
-        get_current_user_id(),
-        static fn (string $type, string $kind): string => get_default_comment_status($type, $kind),
-        static fn (string $type, string $feature): bool => post_type_supports($type, $feature),
-        static fn (string $type): bool => current_user_can(get_post_type_object($type)->cap->publish_posts ?? 'publish_posts'),
-        static fn (string $date): string => (string) get_gmt_from_date($date),
-        static fn (bool $gmt): string => (string) current_time('mysql', $gmt),
-    );
-}
-
 function _minn_post_writer(): PostWriter
 {
     return new PostWriter(Runtime::current()->db, _minn_posts(), Runtime::current()->site);
@@ -651,22 +637,7 @@ function wp_is_post_autosave($post)
 /** A post's revisions, newest first unless asked otherwise; none while its revisions are switched off (unless check_enabled is false). */
 function wp_get_post_revisions($post = 0, $args = null)
 {
-    $post = get_post($post);
-    $args = wp_parse_args($args, ['order' => 'DESC', 'orderby' => 'date ID', 'check_enabled' => true]);
-    if ($post === null || ($args['check_enabled'] && !wp_revisions_enabled($post))) {
-        return [];
-    }
-    $rows = _minn_post_lookup()->revisionsOf($post->ID);
-    $rows = strtoupper((string) $args['order']) === 'ASC' ? array_reverse($rows) : $rows;
-    if (($args['fields'] ?? '') === 'ids') {
-        // A plain list of ids, in the same order (probe revision-remaining).
-        return array_map(static fn (array $row): int => (int) $row['ID'], array_values($rows));
-    }
-    $out = [];
-    foreach ($rows as $row) {
-        $out[(int) $row['ID']] = new WP_Post((object) $row);
-    }
-    return $out;
+    return Minn\Runtime\PostRevisions::all($post, $args);
 }
 
 /** A post's newest revision and how many it has; an error for no post, or one whose revisions are off. */
@@ -700,7 +671,7 @@ function wp_get_post_revisions_url($post = 0)
 
 function wp_revisions_enabled($post)
 {
-    return wp_revisions_to_keep($post) !== 0;
+    return Minn\Runtime\PostRevisions::enabled($post);
 }
 
 /**
@@ -710,37 +681,19 @@ function wp_revisions_enabled($post)
  */
 function _wp_post_revision_fields($post = [], $deprecated = false)
 {
-    $post = is_array($post) ? $post : (get_post($post)?->to_array() ?? []);
-    $runtime = Runtime::current();
-    $fields = (array) $runtime->get('revision_fields', ['post_title' => 'Title', 'post_content' => 'Content', 'post_excerpt' => 'Excerpt']);
-    $fields = (array) apply_filters('_wp_post_revision_fields', $fields, $post);
-    $runtime->set('revision_fields', $fields);
-    return array_diff_key($fields, array_flip(['ID', 'post_name', 'post_parent', 'post_date', 'post_date_gmt', 'post_status', 'post_type', 'comment_count', 'post_author']));
+    return Minn\Runtime\PostRevisions::fields($post, $deprecated);
 }
 
 /** A revision's row: the post's revision fields, its parent, inherit, revision, its name, and the post's modified time as its date. */
 function _wp_post_revision_data($post = [], $autosave = false)
 {
-    $post = _minn_revision_source($post);
-    $data = array_intersect_key($post, _wp_post_revision_fields($post));
-    $id = (int) ($post['ID'] ?? 0);
-    return $data + ['post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'revision', 'post_name' => $autosave ? "{$id}-autosave-v1" : "{$id}-revision-v1", 'post_date' => $post['post_modified'] ?? '', 'post_date_gmt' => $post['post_modified_gmt'] ?? ''];
-}
-
-/** @internal a post as a revision's row is made from: its own fields, as an (array) cast gives them */
-function _minn_revision_source($post): array
-{
-    if (is_array($post)) {
-        return $post;
-    }
-    $post = is_object($post) ? $post : get_post($post);
-    return is_object($post) ? get_object_vars($post) : [];
+    return Minn\Runtime\PostRevisions::data($post, $autosave);
 }
 
 /** A revision, or with $autosave the autosave ({id}-autosave-v1), of a post or of the post fields given, written through wp_insert_post, then _wp_put_post_revision. */
 function _wp_put_post_revision($post = null, $autosave = false)
 {
-    $source = _minn_revision_source($post);
+    $source = PostRevisions::source($post);
     return empty($source['ID']) ? null : PostRevisions::put(_wp_post_revision_data($source, (bool) $autosave));
 }
 
@@ -798,14 +751,7 @@ function normalize_whitespace($str)
  */
 function wp_revisions_to_keep($post)
 {
-    $post = get_post($post);
-    $num = defined('WP_POST_REVISIONS') ? WP_POST_REVISIONS : true;
-    $num = $num === true ? -1 : (int) $num;
-    if ($post === null || !post_type_supports($post->post_type, 'revisions')) {
-        $num = 0;
-    }
-    $num = apply_filters('wp_revisions_to_keep', $num, $post);
-    return (int) apply_filters("wp_{$post?->post_type}_revisions_to_keep", $num, $post);
+    return Minn\Runtime\PostRevisions::toKeep($post);
 }
 
 /** Whether a post is sticky, through is_sticky (handed the post's id). */
@@ -819,43 +765,18 @@ function is_sticky($post_id = 0)
 /** Adds the post to sticky_posts, then post_stuck with its id; nothing when it already is sticky (probe rest-sticky). */
 function stick_post($post_id)
 {
-    $post_id = (int) $post_id;
-    $stickies = get_option('sticky_posts');
-    $stickies = is_array($stickies) ? array_map('intval', $stickies) : [];
-    if (in_array($post_id, $stickies, true)) {
-        return;
-    }
-    $stickies[] = $post_id;
-    update_option('sticky_posts', $stickies);
-    do_action('post_stuck', $post_id);
+    Minn\Runtime\PostWrites::stick($post_id);
 }
 
 /** Takes the post out of sticky_posts, then post_unstuck with its id; nothing when it was not sticky (probe rest-sticky). */
 function unstick_post($post_id)
 {
-    $post_id = (int) $post_id;
-    $stickies = get_option('sticky_posts');
-    $stickies = is_array($stickies) ? array_map('intval', $stickies) : [];
-    if (!in_array($post_id, $stickies, true)) {
-        return;
-    }
-    update_option('sticky_posts', array_values(array_diff($stickies, [$post_id])));
-    do_action('post_unstuck', $post_id);
+    Minn\Runtime\PostWrites::unstick($post_id);
 }
 
 function get_post_thumbnail_id($post = null)
 {
     return Minn\Runtime\PostTags::thumbnailId($post);
-}
-
-/** @internal a live post left without a slug (no title to make one from) takes its id, made free (probe editor-styles) */
-function _minn_post_slug_from_id(int $id, array $columns, string $type): void
-{
-    if ((string) ($columns['post_name'] ?? '') !== '' || PostSave::keepsSlug((string) $columns['post_status'], $type)) {
-        return;
-    }
-    $slug = wp_unique_post_slug((string) sanitize_title((string) ($columns['post_title'] ?? ''), (string) $id), $id, (string) $columns['post_status'], $type, (int) ($columns['post_parent'] ?? 0));
-    _minn_post_writer()->update($id, ['post_name' => $slug]);
 }
 
 /** The links between a split post's pages (Front\PageLinks), through wp_link_pages_args, wp_link_pages_link and wp_link_pages; echoed and returned. */
@@ -975,215 +896,14 @@ function wp_count_attachments($mime_type = '')
     return apply_filters('wp_count_attachments', (object) array_map('strval', _minn_post_lookup()->countAttachments()), $mime_type);
 }
 
-/** @internal the columns the posts table takes, filled from a postarr */
-function _minn_post_columns(array $postarr, ?WP_Post $existing): array
-{
-    return _minn_post_insert()->columns($postarr, $existing?->to_array());
-}
-
 function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
 {
-    $given = (array) $postarr;
-    $update = !empty($given['ID']);
-    $existing = $update ? get_post((int) $given['ID']) : null;
-    if ($update && $existing === null) {
-        return $wp_error ? new WP_Error('invalid_post', 'Invalid post ID.') : 0;
-    }
-    // The reference's order (probe post-insert-filters): each column through its db context, the empty check,
-    // the parent, the post's own dates, status and slug, the slug's filters, wp_insert_post_data.
-    $sanitized = PostSave::sanitized($given);
-    $insert = _minn_post_insert();
-    $before = $existing?->to_array();
-    $columns = $insert->columns((array) wp_unslash($sanitized), $before);
-    $type = (string) ($columns['post_type'] ?? $existing->post_type);
-    if (PostSave::refusesEmpty($sanitized, $type)) {
-        return $wp_error ? new WP_Error('empty_content', 'Content, title, and excerpt are empty.') : 0;
-    }
-    $postId = (int) ($existing?->ID ?? 0);
-    $columns['post_parent'] = (string) PostSave::parent($sanitized, $postId);
-    _minn_post_free_slug($columns, $postId);
-    $columns = PostSave::guidAndSlug($insert->resolve($columns, $before), $postId, $type, _minn_post_writer()->slugs());
-    $columns = array_replace($columns, PostSave::data($columns, $sanitized, $given, $postId));
-    _minn_post_before_save($columns, $postId);
-    // A new post without a guid takes its address as it stands (probe insert-defaults): pretty when live, ?p= or ?page_id= when not.
-    $id = $insert->persist($columns, $existing?->ID, static fn (int $id): string => (string) get_permalink($id));
-    _minn_post_slug_from_id($id, $columns, $type);
-    wp_cache_delete($id, 'posts');
-    $refused = _minn_post_template_refusal($id, _minn_post_inputs($id, (array) wp_unslash($given), $type, $columns['post_status'], $update), (bool) $wp_error);
-    _minn_post_writer()->recountTaxonomiesOf($id);
-    if ($refused !== null) {
-        return $refused;
-    }
-    if ($type === 'attachment') {
-        return _minn_attachment_saved($id, $given, $existing);
-    }
-    $post = _minn_post_saved($id, $update, $existing);
-    if ($fire_after_hooks) {
-        // The revision is saved from wp_after_insert_post (priority 9), as on the reference.
-        wp_after_insert_post($post, $update, $existing);
-    }
-    return $id;
-}
-
-/** @internal A trashed post still holding the slug a save wants gives it up first, unless a plugin says no (probe hook-inputs). */
-function _minn_post_free_slug(array $columns, int $postId): void
-{
-    $wanted = (string) ($columns['post_name'] ?? '');
-    if ($wanted !== '' && ($columns['post_status'] ?? '') !== 'trash' && apply_filters('add_trashed_suffix_to_trashed_posts', true, $wanted, $postId)) {
-        wp_add_trashed_suffix_to_post_name_for_trashed_posts($wanted, $postId);
-    }
-}
-
-/**
- * @internal An attachment's save ends as the reference's does (probes
- * rest-media-save, rest-attachments-controller): its file recorded, then
- * add_attachment, or edit_attachment and attachment_updated; no save_post
- * actions, and no wp_after_insert_post whatever the caller asks (a REST
- * save fires that itself).
- */
-function _minn_attachment_saved(int $id, array $postarr, ?WP_Post $post_before): int
-{
-    if (!empty($postarr['file'])) {
-        update_attached_file($id, (string) $postarr['file']);
-    }
-    clean_post_cache($post_before ?? $id);
-    if ($post_before !== null) {
-        do_action('edit_attachment', $id);
-        do_action('attachment_updated', $id, get_post($id), $post_before);
-    } else {
-        do_action('add_attachment', $id);
-    }
-    return $id;
-}
-
-/**
- * @internal A trash or its undoing ends as the save it is: an attachment's
- * (edit_attachment, attachment_updated; probe hook-inputs-2), or a post's
- * with its transition and wp_after_insert_post.
- */
-function _minn_post_trash_saved(WP_Post $post): void
-{
-    _minn_post_keep_categories($post);
-    if ($post->post_type === 'attachment') {
-        _minn_attachment_saved($post->ID, [], $post);
-        return;
-    }
-    wp_after_insert_post(_minn_post_saved($post->ID, true, $post), true, $post);
-}
-
-/** @internal A save sets a post's categories again, as the reference's insert does, telling plugins even when nothing changes. */
-function _minn_post_keep_categories(WP_Post $post): void
-{
-    if (is_object_in_taxonomy($post->post_type, 'category')) {
-        // A post (not an auto-draft) with none is handed the default first, as the reference's insert hands it on.
-        $categories = wp_get_post_categories($post->ID);
-        $default = $categories === [] && $post->post_type === 'post' && $post->post_status !== 'auto-draft';
-        wp_set_post_categories($post->ID, $default ? [(int) get_option('default_category')] : $categories);
-    }
-}
-
-/** @internal What the reference tells plugins before a post's row is written: pre_post_insert for a new post, pre_post_update for one that exists. */
-function _minn_post_before_save(array $data, int $post_id = 0): void
-{
-    if ($post_id > 0) {
-        do_action('pre_post_update', $post_id, $data);
-        return;
-    }
-    do_action('pre_post_insert', $data);
-}
-
-/**
- * @internal What the reference tells plugins once a post's row and its own
- * terms are written, in its order: the caches let go, the status
- * transition, the edit actions for an update, the save actions.
- * wp_after_insert_post is the caller's to fire, after whatever else it
- * writes (the REST controllers' terms and meta).
- */
-function _minn_post_saved(int $post_id, bool $update, ?WP_Post $post_before): ?WP_Post
-{
-    // The reference lets go of the copy it had cached, which still holds the post as it was.
-    clean_post_cache($post_before ?? $post_id);
-    $post = get_post($post_id);
-    if ($post === null) {
-        return null;
-    }
-    wp_transition_post_status($post->post_status, $post_before instanceof WP_Post ? $post_before->post_status : 'new', $post);
-    if ($update && $post_before instanceof WP_Post) {
-        do_action("edit_post_{$post->post_type}", $post->ID, $post);
-        do_action('edit_post', $post->ID, $post);
-        do_action('post_updated', $post->ID, $post, $post_before);
-    }
-    do_action("save_post_{$post->post_type}", $post->ID, $post, $update);
-    do_action('save_post', $post->ID, $post, $update);
-    do_action('wp_insert_post', $post->ID, $post, $update);
-    return $post;
-}
-
-/**
- * @internal A page template the theme does not offer (probe template-getters):
- * the post stands either way; asked for an error, the save stops there with
- * one (no save hooks), otherwise the post keeps the default template.
- */
-function _minn_post_template_refusal(int $id, bool $kept, bool $wp_error): ?WP_Error
-{
-    if ($kept) {
-        return null;
-    }
-    if ($wp_error) {
-        return new WP_Error('invalid_page_template', __('Invalid page template.'));
-    }
-    update_post_meta($id, '_wp_page_template', 'default');
-    return null;
-}
-
-/** @internal the terms, meta, and template a postarr carries beside the columns; false when the page template is not one the theme offers */
-function _minn_post_inputs(int $id, array $postarr, string $type, string $status, bool $update): bool
-{
-    $categories = PostInsert::categories($postarr, $type, $status, $update, get_object_taxonomies($type), (int) get_option('default_category'));
-    if ($categories !== null) {
-        wp_set_post_categories($id, $categories);
-    }
-    if (isset($postarr['tags_input']) && in_array('post_tag', get_object_taxonomies($type), true)) {
-        wp_set_post_tags($id, $postarr['tags_input']);
-    }
-    // A taxonomy's default term goes to a post that brings none of its terms and has none (probe taxonomy-default-term).
-    $input = is_array($postarr['tax_input'] ?? null) ? $postarr['tax_input'] : [];
-    foreach (get_object_taxonomies($type, 'objects') as $name => $object) {
-        $default = empty($object->default_term) || isset($input[$name]) ? 0 : (int) get_option("default_term_{$name}");
-        if ($default > 0 && wp_get_object_terms($id, $name, ['fields' => 'ids']) === []) {
-            $input[$name] = [$default];
-        }
-    }
-    // A taxonomy's terms are set only for a user who may assign them; the others are left as they were (probe template-loader-more).
-    foreach ($input as $taxonomy => $terms) {
-        $object = get_taxonomy((string) $taxonomy);
-        if (!$object || current_user_can($object->cap->assign_terms)) {
-            wp_set_post_terms($id, $terms, (string) $taxonomy);
-        }
-    }
-    foreach (is_array($postarr['meta_input'] ?? null) ? $postarr['meta_input'] : [] as $key => $value) {
-        update_post_meta($id, (string) $key, $value);
-    }
-    if (isset($postarr['page_template'])) {
-        $template = (string) $postarr['page_template'];
-        if ($template === '') {
-            delete_post_meta($id, '_wp_page_template');
-        } elseif ($template === 'default' || array_key_exists($template, wp_get_theme()->get_page_templates(get_post($id)))) {
-            update_post_meta($id, '_wp_page_template', $template);
-        } else {
-            return false;
-        }
-    }
-    return true;
+    return Minn\Runtime\PostWrites::insert($postarr, $wp_error, $fire_after_hooks);
 }
 
 function wp_after_insert_post($post, $update, $post_before)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return;
-    }
-    do_action('wp_after_insert_post', $post->ID, $post, $update, $post_before);
+    Minn\Runtime\PostWrites::afterInsert($post, $update, $post_before);
 }
 
 /** The revision of an update, saved after the update's terms and meta, unless the site unhooked revisions from post_updated. */
@@ -1224,14 +944,7 @@ function wp_check_for_changed_dates($post_id, $post, $post_before)
  */
 function wp_transition_post_status($new_status, $old_status, $post)
 {
-    do_action('transition_post_status', $new_status, $old_status, $post);
-    $known = get_post_status_object($new_status) !== null;
-    if ($known && ($old_status === 'new' || get_post_status_object($old_status) !== null)) {
-        do_action("{$old_status}_to_{$new_status}", $post);
-    }
-    if ($known && post_type_exists($post->post_type)) {
-        do_action("{$new_status}_{$post->post_type}", $post->ID, $post, $old_status);
-    }
+    Minn\Runtime\PostWrites::transitionStatus($new_status, $old_status, $post);
 }
 
 /**
@@ -1423,69 +1136,18 @@ function wp_untrash_post_set_previous_status($new_status, $post_id, $previous_st
 
 function wp_update_post($postarr = [], $wp_error = false, $fire_after_hooks = true)
 {
-    $postarr = is_object($postarr) ? get_object_vars($postarr) : (array) $postarr;
-    $post = get_post((int) ($postarr['ID'] ?? 0));
-    if ($post === null) {
-        return $wp_error ? new WP_Error('invalid_post', 'Invalid post ID.') : 0;
-    }
-    $existing = $post->to_array();
-    // The stored post under the given fields, its categories among them, as the reference merges it.
-    $merged = array_merge($existing, wp_unslash($postarr));
-    if (isset($postarr['post_date']) && !isset($postarr['post_date_gmt'])) {
-        $merged['post_date_gmt'] = '';
-    }
-    // An attachment is saved through wp_insert_attachment, the stored fields (its tags among them) carried whole.
-    if ($merged['post_type'] === 'attachment') {
-        return wp_insert_attachment(wp_slash($merged), false, 0, $wp_error, $fire_after_hooks);
-    }
-    if (isset($merged['tags_input'])) {
-        // Given explicitly by the caller only.
-    } else {
-        unset($merged['tags_input']);
-    }
-    if (!isset($postarr['tags_input'])) {
-        unset($merged['tags_input']);
-    }
-    return wp_insert_post(wp_slash($merged), $wp_error, $fire_after_hooks);
+    return Minn\Runtime\PostWrites::update($postarr, $wp_error, $fire_after_hooks);
 }
 
 function wp_publish_post($post)
 {
-    $before = get_post($post);
-    if ($before === null || $before->post_status === 'publish') {
-        return;
-    }
-    $columns = ['post_status' => 'publish'];
-    // A floating date settles when the post goes out.
-    if ($before->post_date_gmt === '0000-00-00 00:00:00') {
-        $columns['post_date_gmt'] = get_gmt_from_date($before->post_date);
-    }
-    _minn_post_writer()->update($before->ID, $columns);
-    clean_post_cache($before);
-    $post = get_post($before->ID);
-    wp_transition_post_status('publish', $before->post_status, $post);
-    do_action("edit_post_{$post->post_type}", $post->ID, $post);
-    do_action('edit_post', $post->ID, $post);
-    do_action("save_post_{$post->post_type}", $post->ID, $post, true);
-    do_action('save_post', $post->ID, $post, true);
-    do_action('wp_insert_post', $post->ID, $post, true);
-    wp_after_insert_post($post, true, $before);
+    Minn\Runtime\PostWrites::publish($post);
 }
 
 /** The publish_future_post event's work: a scheduled post whose time has come goes out; one early is scheduled again for its time. */
 function check_and_publish_future_post($post)
 {
-    $post = get_post($post);
-    if ($post === null || $post->post_status !== 'future') {
-        return;
-    }
-    $time = strtotime($post->post_date_gmt . ' GMT');
-    if ($time > time()) {
-        wp_clear_scheduled_hook('publish_future_post', [$post->ID]);
-        wp_schedule_single_event($time, 'publish_future_post', [$post->ID]);
-        return;
-    }
-    return wp_publish_post($post->ID);
+    Minn\Runtime\PostWrites::publishFuture($post);
 }
 
 /** The default on future_post and future_page: a scheduled post is put on the cron calendar for its time, which is how WordPress publishes it. */
@@ -1556,149 +1218,33 @@ function delete_get_calendar_cache()
 
 function wp_trash_post($post_id = 0)
 {
-    $post = get_post($post_id);
-    if ($post === null || $post->post_status === 'trash') {
-        return false;
-    }
-    $check = apply_filters('pre_trash_post', null, $post, $post->post_status);
-    if ($check !== null) {
-        return $check;
-    }
-    // A trashed post stops being sticky first (probe rest-sticky).
-    unstick_post($post->ID);
-    do_action('wp_trash_post', $post->ID, $post->post_status);
-    // The status, the time and the slug it had are kept for the way back; then the save itself, as wp_update_post makes it.
-    add_post_meta($post->ID, '_wp_trash_meta_status', $post->post_status);
-    add_post_meta($post->ID, '_wp_trash_meta_time', time());
-    add_post_meta($post->ID, '_wp_desired_post_slug', $post->post_name);
-    clean_post_cache($post->ID);
-    _minn_post_before_save(['post_status' => 'trash', 'post_name' => $post->post_name . '__trashed'] + $post->to_array(), $post->ID);
-    _minn_post_writer()->trash(_minn_posts()->find($post->ID));
-    _minn_post_trash_saved($post);
-    wp_trash_post_comments($post->ID);
-    do_action('trashed_post', $post->ID, $post->post_status);
-    // The reference answers with the post as it was before the trash.
-    return $post;
+    return Minn\Runtime\PostWrites::trash($post_id);
 }
 
 function wp_untrash_post($post_id = 0)
 {
-    $post = get_post($post_id);
-    if ($post === null || $post->post_status !== 'trash') {
-        return false;
-    }
-    $previous = (string) get_post_meta($post->ID, '_wp_trash_meta_status', true);
-    $check = apply_filters('pre_untrash_post', null, $post, $previous);
-    if ($check !== null) {
-        return $check;
-    }
-    do_action('untrash_post', $post->ID, $previous);
-    $new = apply_filters('wp_untrash_post_status', 'draft', $post->ID, $previous);
-    // An attachment comes back inherit unless it goes back private or an auto-draft (probe hook-inputs-2).
-    if ($post->post_type === 'attachment' && !in_array($new, ['inherit', 'private', 'trash', 'auto-draft'], true)) {
-        $new = 'inherit';
-    }
-    delete_post_meta($post->ID, '_wp_trash_meta_status');
-    delete_post_meta($post->ID, '_wp_trash_meta_time');
-    // The slug it had comes back, whatever status it returns to.
-    $desired = (string) get_post_meta($post->ID, '_wp_desired_post_slug', true);
-    $columns = ['post_status' => $new];
-    if ($desired !== '' && str_ends_with((string) $post->post_name, '__trashed')) {
-        $columns['post_name'] = _minn_post_writer()->uniqueSlug($desired, $post->ID, $post->post_type, (int) $post->post_parent);
-    }
-    delete_post_meta($post->ID, '_wp_desired_post_slug');
-    _minn_post_before_save($columns + $post->to_array(), $post->ID);
-    _minn_post_writer()->update($post->ID, $columns);
-    _minn_post_trash_saved($post);
-    wp_untrash_post_comments($post->ID);
-    do_action('untrashed_post', $post->ID, $previous);
-    return $post;
+    return Minn\Runtime\PostWrites::untrash($post_id);
 }
 
 function wp_delete_post($post_id = 0, $force_delete = false)
 {
-    $post = get_post($post_id);
-    if ($post === null) {
-        return $post;
-    }
-    if (!$force_delete && in_array($post->post_type, ['post', 'page'], true) && $post->post_status !== 'trash' && EMPTY_TRASH_DAYS) {
-        return wp_trash_post($post_id);
-    }
-    if ($post->post_type === 'attachment') {
-        return wp_delete_attachment($post_id, $force_delete);
-    }
-    $check = apply_filters('pre_delete_post', null, $post, $force_delete);
-    if ($check !== null) {
-        return $check;
-    }
-    // A deleted post stops being sticky first (probe rest-sticky).
-    unstick_post($post->ID);
-    do_action('before_delete_post', $post->ID, $post);
-    delete_post_meta($post->ID, '_wp_trash_meta_status');
-    delete_post_meta($post->ID, '_wp_trash_meta_time');
-    wp_delete_object_term_relationships($post->ID, get_object_taxonomies($post->post_type));
-    _minn_post_writer()->reparentChildren($post->ID, (int) $post->post_parent, $post->post_type === 'page' ? ['page', 'attachment'] : ['attachment']);
-    foreach (wp_get_post_revisions($post->ID, ['check_enabled' => false]) as $revision) {
-        wp_delete_post_revision($revision);
-    }
-    foreach (_minn_comments()->idsOf($post->ID) as $comment_id) {
-        wp_delete_comment($comment_id, true);
-    }
-    _minn_post_delete_meta($post->ID);
-    return _minn_post_remove($post);
-}
-
-/** @internal Each meta row of a post removed by its id, as the reference removes them before the post, with the hooks of each. */
-function _minn_post_delete_meta(int $post_id): void
-{
-    foreach (_minn_meta()->rowsOf('post', $post_id) as $row) {
-        delete_metadata_by_mid('post', (int) $row['meta_id']);
-    }
-}
-
-/** @internal The row itself, between the delete actions, typed and untyped, and the caches let go after. */
-function _minn_post_remove(WP_Post $post): WP_Post
-{
-    do_action("delete_post_{$post->post_type}", $post->ID, $post);
-    do_action('delete_post', $post->ID, $post);
-    _minn_post_writer()->destroy($post->ID);
-    do_action("deleted_post_{$post->post_type}", $post->ID, $post);
-    do_action('deleted_post', $post->ID, $post);
-    clean_post_cache($post);
-    do_action('after_delete_post', $post->ID, $post);
-    return $post;
+    return Minn\Runtime\PostWrites::delete($post_id, $force_delete);
 }
 
 function wp_delete_post_revision($revision)
 {
-    $revision = get_post($revision);
-    // Anything but a revision is left alone, and nothing comes back (probe revision-remaining).
-    if ($revision === null || $revision->post_type !== 'revision') {
-        return null;
-    }
-    $removed = wp_delete_post($revision->ID);
-    if ($removed) {
-        do_action('wp_delete_post_revision', $revision->ID, $revision);
-    }
-    return $removed;
+    return Minn\Runtime\PostRevisions::delete($revision);
 }
 
 
 function wp_set_post_categories($post_id = 0, $post_categories = [], $append = false)
 {
-    $post_id = (int) $post_id;
-    $type = get_post_type($post_id);
-    $categories = array_values(array_filter(array_map('intval', (array) $post_categories)));
-    // Posts, and the types plugins add here, fall back to the default category (probe hook-inputs).
-    if ($categories === [] && !$append && in_array($type, ['post', ...(array) apply_filters('default_category_post_types', [])], true)) {
-        $categories = [(int) get_option('default_category')];
-    }
-    return wp_set_post_terms($post_id, $categories, 'category', $append);
+    return Minn\Runtime\PostWrites::setCategories($post_id, $post_categories, $append);
 }
 
 function wp_set_post_tags($post_id = 0, $tags = '', $append = false)
 {
-    return wp_set_post_terms($post_id, $tags, 'post_tag', $append);
+    return Minn\Runtime\PostWrites::setTags($post_id, $tags, $append);
 }
 
 function get_post_type_object($post_type)
@@ -1879,20 +1425,7 @@ function wp_get_post_terms($post_id = 0, $taxonomy = 'post_tag', $args = [])
 
 function wp_set_post_terms($post_id = 0, $terms = '', $taxonomy = 'post_tag', $append = false)
 {
-    $post_id = (int) $post_id;
-    if ($post_id <= 0) {
-        return false;
-    }
-    if (empty($terms)) {
-        $terms = [];
-    }
-    if (!is_array($terms)) {
-        $terms = array_values(array_filter(array_map('trim', explode(',', str_replace('，', ',', (string) $terms))), static fn ($t) => $t !== ''));
-    }
-    if (is_taxonomy_hierarchical($taxonomy)) {
-        $terms = array_values(array_unique(array_map('intval', $terms)));
-    }
-    return wp_set_object_terms($post_id, $terms, $taxonomy, $append);
+    return Minn\Runtime\PostWrites::setTerms($post_id, $terms, $taxonomy, $append);
 }
 
 function get_the_author_meta($field = '', $user_id = false)
@@ -2296,10 +1829,7 @@ function get_page_children($page_id, $pages)
 /** A slug no other post holds, through the reference's slug filters; drafts, pending posts and revisions keep theirs. */
 function wp_unique_post_slug($slug, $post_id, $post_status, $post_type, $post_parent)
 {
-    if (PostSave::keepsSlug((string) $post_status, (string) $post_type)) {
-        return $slug;
-    }
-    return PostSave::slugFilters((string) $slug, (int) $post_id, (string) $post_status, (string) $post_type, (int) $post_parent, _minn_post_writer()->slugs());
+    return Minn\Runtime\PostWrites::uniqueSlug($slug, $post_id, $post_status, $post_type, $post_parent);
 }
 
 function the_author_posts_link($deprecated = '')
@@ -2875,25 +2405,13 @@ function is_post_embeddable($post = null)
 /** Gives a post's slug the __trashed suffix (once), keeping the slug it wanted; the slug it now has. */
 function wp_add_trashed_suffix_to_post_name_for_post($post)
 {
-    global $wpdb;
-    $post = get_post($post);
-    if (str_ends_with((string) $post->post_name, '__trashed')) {
-        return $post->post_name;
-    }
-    add_post_meta($post->ID, '_wp_desired_post_slug', $post->post_name);
-    $name = $post->post_name . '__trashed';
-    $wpdb->update($wpdb->posts, ['post_name' => $name], ['ID' => $post->ID]);
-    clean_post_cache($post->ID);
-    return $name;
+    return Minn\Runtime\PostWrites::suffixTrashedPost($post);
 }
 
 /** Gives every trashed post with a slug (but the one named) the __trashed suffix, so a live post may take it. */
 function wp_add_trashed_suffix_to_post_name_for_trashed_posts($post_name, $post_id = 0)
 {
-    $trashed = get_posts(['name' => $post_name, 'post_status' => 'trash', 'post_type' => 'any', 'nopaging' => true, 'post__not_in' => [(int) $post_id]]);
-    foreach ($trashed as $post) {
-        wp_add_trashed_suffix_to_post_name_for_post($post);
-    }
+    Minn\Runtime\PostWrites::suffixTrashed($post_name, $post_id);
 }
 
 /** Deletes the auto-drafts dated more than a week ago. */

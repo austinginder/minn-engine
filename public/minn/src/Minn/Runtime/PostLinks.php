@@ -222,7 +222,7 @@ final class PostLinks
         if ($name !== null) {
             $sample->post_name = (string) Sanitize::title($name !== '' ? $name : (string) $title, (string) $sample->ID);
         }
-        $sample->post_name = (string) \wp_unique_post_slug($sample->post_name, $sample->ID, $sample->post_status, $sample->post_type, $sample->post_parent);
+        $sample->post_name = (string) PostWrites::uniqueSlug($sample->post_name, $sample->ID, $sample->post_status, $sample->post_type, $sample->post_parent);
         $sample->filter = 'sample';
         $link = str_replace("%{$sample->post_type}%", '%pagename%', (string) self::permalink($sample, true));
         if (Registered::hierarchicalType($sample->post_type)) {

@@ -1393,7 +1393,7 @@ function wp_delete_attachment($post_id, $force_delete = false)
     foreach (_minn_comments()->idsOf($post->ID) as $comment_id) {
         wp_delete_comment($comment_id, true);
     }
-    _minn_post_delete_meta($post->ID);
+    Minn\Runtime\PostWrites::deleteMeta($post->ID);
     do_action('delete_post', $post->ID, $post);
     _minn_post_writer()->destroy($post->ID);
     do_action('deleted_post', $post->ID, $post);

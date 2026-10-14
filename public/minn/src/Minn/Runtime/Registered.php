@@ -139,6 +139,13 @@ final class Registered
         return is_object($taxonomy) && (bool) $taxonomy->publicly_queryable;
     }
 
+    /** Whether a taxonomy is registered for an object type (is_object_in_taxonomy). */
+    public static function objectInTaxonomy(mixed $objectType, mixed $taxonomy): bool
+    {
+        $row = Runtime::registry()->taxonomy((string) $taxonomy);
+        return $row !== null && in_array((string) $objectType, (array) $row['object_type'], true);
+    }
+
     /**
      * The taxonomies registered for any of the object types given
      * (get_object_taxonomies): a list of names, or the objects by name.

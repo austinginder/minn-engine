@@ -1371,7 +1371,7 @@ Attachments go to the trash only when MEDIA_TRASH (or
 rest_attachment_trashable) says so; force removes the row, its meta,
 and its files.
 
-Internals: `restDate()` (private, line 51), `storeWithPlugins()` (private, line 129), `insertedWithPlugins()` (private, line 156), `preparedAttachment()` (private, line 197), `finishedWithPlugins()` (private, line 221), `params()` (private, line 237), `attachment()` (private, line 318)
+Internals: `restDate()` (private, line 52), `storeWithPlugins()` (private, line 130), `insertedWithPlugins()` (private, line 157), `preparedAttachment()` (private, line 198), `finishedWithPlugins()` (private, line 222), `params()` (private, line 238), `attachment()` (private, line 319)
 
 
 ## MediaObject

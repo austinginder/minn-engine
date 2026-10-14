@@ -32,13 +32,13 @@ final readonly class PostEvents
      */
     public function deleteForGood(int $id): mixed
     {
-        return \wp_delete_post($id, true);
+        return PostWrites::delete($id, true);
     }
 
     /** A post (an attachment too) sent to the trash through the reference's own trashing, as deleteForGood deletes. */
     public function trash(int $id): mixed
     {
-        return \wp_trash_post($id);
+        return PostWrites::trash($id);
     }
 
     /** Whether plugins are loaded to be told anything. */
@@ -51,7 +51,7 @@ final readonly class PostEvents
     public function beforeSave(array $columns, ?PostRecord $existing): void
     {
         if ($this->live()) {
-            \_minn_post_before_save($existing === null ? $columns : $columns + $existing->row(), $existing?->id ?? 0);
+            PostWrites::beforeSave($existing === null ? $columns : $columns + $existing->row(), $existing?->id ?? 0);
         }
     }
 
@@ -59,7 +59,7 @@ final readonly class PostEvents
     public function saved(int $id, ?PostRecord $before): void
     {
         if ($this->live()) {
-            \_minn_post_saved($id, $before !== null, self::wpPost($before));
+            PostWrites::saved($id, $before !== null, self::wpPost($before));
         }
     }
 
@@ -76,7 +76,7 @@ final readonly class PostEvents
         }
         // A post with none is handed the default first, as the reference's insert hands it on (wp_set_post_categories only hears an empty list from a caller that passes one).
         $categories = PostReads::categories($id);
-        \wp_set_post_categories($id, $categories === [] ? [(int) Runtime::options()->filtered('default_category')] : $categories);
+        PostWrites::setCategories($id, $categories === [] ? [(int) Runtime::options()->filtered('default_category')] : $categories);
     }
 
     /**
@@ -146,7 +146,7 @@ final readonly class PostEvents
     public function afterInsert(int $id, ?PostRecord $before): void
     {
         if ($this->live()) {
-            \wp_after_insert_post(Records::post($id), $before !== null, self::wpPost($before));
+            PostWrites::afterInsert(Records::post($id), $before !== null, self::wpPost($before));
         }
     }
 

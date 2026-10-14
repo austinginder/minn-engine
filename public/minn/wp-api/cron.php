@@ -58,27 +58,7 @@ function wp_unschedule_event($timestamp, $hook, $args = [], $wp_error = false)
 
 function wp_clear_scheduled_hook($hook, $args = [], $wp_error = false)
 {
-    if (!is_array($args)) {
-        $args = array_slice(func_get_args(), 1);
-        $wp_error = false;
-    }
-    $pre = apply_filters('pre_clear_scheduled_hook', null, $hook, $args, $wp_error);
-    if ($pre !== null) {
-        return $pre;
-    }
-    $results = [];
-    foreach (CronTable::timestampsFor(_get_cron_array(), (string) $hook, CronTable::key($args)) as $timestamp) {
-        $results[] = wp_unschedule_event($timestamp, $hook, $args, $wp_error);
-    }
-    $errors = array_filter($results, 'is_wp_error');
-    if ($errors === []) {
-        return count(array_filter($results));
-    }
-    $error = new WP_Error();
-    foreach ($errors as $e) {
-        $error->merge_from($e);
-    }
-    return $error;
+    return Minn\Runtime\CronEvents::clearHook(...func_get_args());
 }
 
 function wp_unschedule_hook($hook, $wp_error = false)

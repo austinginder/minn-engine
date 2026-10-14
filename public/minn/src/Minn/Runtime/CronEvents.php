@@ -165,6 +165,36 @@ final class CronEvents
         return $set === true ? $removed : $set;
     }
 
+    /**
+     * Every event of a hook with these arguments removed
+     * (wp_clear_scheduled_hook): how many, or the errors merged into one;
+     * arguments given loose (an old call) are taken as the list.
+     */
+    public static function clearHook(mixed $hook, mixed $args = [], mixed $wpError = false, mixed ...$loose): mixed
+    {
+        if (!is_array($args)) {
+            $args = array_slice(func_get_args(), 1);
+            $wpError = false;
+        }
+        $pre = Runtime::hooks()->filter('pre_clear_scheduled_hook', [null, $hook, $args, $wpError]);
+        if ($pre !== null) {
+            return $pre;
+        }
+        $results = [];
+        foreach (CronTable::timestampsFor(self::all(), (string) $hook, CronTable::key($args)) as $timestamp) {
+            $results[] = self::unschedule($timestamp, $hook, $args, $wpError);
+        }
+        $errors = array_filter($results, static fn (mixed $result): bool => Records::isError($result));
+        if ($errors === []) {
+            return count(array_filter($results));
+        }
+        $error = Handoff::newError();
+        foreach ($errors as $each) {
+            $error->merge_from($each);
+        }
+        return $error;
+    }
+
     /** An event by hook and arguments, the next one or the one at a time (wp_get_scheduled_event), or false. */
     public static function event(mixed $hook, mixed $args = [], mixed $timestamp = null): mixed
     {

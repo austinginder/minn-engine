@@ -8491,6 +8491,7 @@
                 "Minn\\Runtime\\PostQueryResults",
                 "Minn\\Runtime\\PostQueryStatus",
                 "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\UpdateCounts"
             ],
             "constructor": null,
@@ -27693,6 +27694,7 @@
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentWrites",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Records"
             ],
             "constructor": {
@@ -32788,6 +32790,7 @@
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostInsert",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Theme\\TemplateWriter",
@@ -33905,6 +33908,7 @@
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Theme\\ClassicRenderer",
@@ -39759,6 +39763,7 @@
                 "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Updates",
                 "Minn\\Runtime\\CronTable",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -39811,8 +39816,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 38,
-                "end": 40
+                "line": 39,
+                "end": 41
             },
             "cases": [],
             "constants": [
@@ -39917,8 +39922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 52
+                    "line": 49,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -39931,8 +39936,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 55,
-                    "end": 77
+                    "line": 56,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -39943,8 +39948,8 @@
                     "doc": "True when a hit has nothing to do: no job is due and the housekeeping\n(expired transients and throttle rows) ran within the last minute, so\na request repeated as fast as a visitor can send it costs two reads.",
                     "shapes": [],
                     "params": [],
-                    "line": 84,
-                    "end": 87
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -39955,8 +39960,8 @@
                     "doc": "True when a scheduled post's time has come or the cron option holds a due event.",
                     "shapes": [],
                     "params": [],
-                    "line": 90,
-                    "end": 93
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -39967,8 +39972,8 @@
                     "doc": "Fires the due events through the runtime. A callback that throws\nends the events step, as a fatal ends the reference's cron request;\nthe event was already rescheduled or removed, so it does not repeat\non the next trigger, and the sweeps still run.",
                     "shapes": [],
                     "params": [],
-                    "line": 101,
-                    "end": 110
+                    "line": 102,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -39981,8 +39986,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 119,
-                    "end": 128
+                    "line": 120,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -39993,8 +39998,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 130,
-                    "end": 136
+                    "line": 131,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -40005,8 +40010,8 @@
                     "doc": "A scheduled post goes live as the reference publishes it: status only,\ndates and modified untouched, term counts refreshed. With plugins\nloaded it goes through check_and_publish_future_post, the reference's\nown publish_future_post work, so they hear publish_post and the\ntransition; a plugin that throws on one post holds back no other.",
                     "shapes": [],
                     "params": [],
-                    "line": 145,
-                    "end": 165
+                    "line": 146,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -40017,8 +40022,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 167,
-                    "end": 179
+                    "line": 168,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -40029,8 +40034,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 181,
-                    "end": 184
+                    "line": 182,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -40041,8 +40046,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 186,
-                    "end": 199
+                    "line": 187,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -40053,8 +40058,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 201,
-                    "end": 205
+                    "line": 202,
+                    "end": 206
                 }
             ]
         },
@@ -70250,6 +70255,7 @@
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostQuery",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\TermLookup",
@@ -83287,6 +83293,7 @@
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostRevisions",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Records",
                 "Minn\\Theme\\FrontLifecycle",
                 "Minn\\Theme\\QueryClasses"
@@ -99189,6 +99196,7 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Slashes"
@@ -99238,8 +99246,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 35,
-                "end": 42
+                "line": 36,
+                "end": 43
             },
             "cases": [],
             "constants": [],
@@ -99317,8 +99325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 49
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [
@@ -99346,8 +99354,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 79
+                    "line": 65,
+                    "end": 80
                 },
                 {
                     "routes": [
@@ -99368,8 +99376,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 116
+                    "line": 84,
+                    "end": 117
                 },
                 {
                     "routes": [
@@ -99399,8 +99407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 281
+                    "line": 247,
+                    "end": 282
                 },
                 {
                     "routes": [
@@ -99428,8 +99436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 316
+                    "line": 290,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -99455,8 +99463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 60
+                    "line": 52,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -99492,8 +99500,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 146
+                    "line": 130,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -99533,8 +99541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 187
+                    "line": 157,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -99570,8 +99578,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 213
+                    "line": 198,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -99613,8 +99621,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 229
+                    "line": 222,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -99635,8 +99643,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 240
+                    "line": 238,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -99655,8 +99663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 325
+                    "line": 319,
+                    "end": 326
                 }
             ]
         },
@@ -120341,7 +120349,8 @@
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentForm",
-                "Minn\\Runtime\\CommentWrites"
+                "Minn\\Runtime\\CommentWrites",
+                "Minn\\Runtime\\PostWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -122474,7 +122483,8 @@
             ],
             "usedBy": [
                 "Minn\\Runtime\\CommentEvents",
-                "Minn\\Runtime\\Deferrals"
+                "Minn\\Runtime\\Deferrals",
+                "Minn\\Runtime\\PostWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -123378,7 +123388,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CronEvents.php",
-            "lines": 267,
+            "lines": 297,
             "doc": "Scheduled events as WordPress keeps them in the cron option: the list\nread (an old one upgraded) and stored, the schedules, single and\nrecurring events added (a near duplicate refused), rescheduled, removed\none by one, by hook or by arguments, looked up, and the due ones run;\neach step with the filters that may answer first.",
             "implements": [],
             "extends": null,
@@ -123393,7 +123403,8 @@
             "usedBy": [
                 "Minn\\Cli\\CronCommand",
                 "Minn\\Cli\\MinnCommand",
-                "Minn\\Engine"
+                "Minn\\Engine",
+                "Minn\\Runtime\\PostWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -123662,6 +123673,47 @@
                 },
                 {
                     "routes": [],
+                    "name": "clearHook",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clearHook(mixed $hook, mixed $args = array ( ), mixed $wpError = false, mixed ...$loose): mixed",
+                    "doc": "Every event of a hook with these arguments removed\n(wp_clear_scheduled_hook): how many, or the errors merged into one;\narguments given loose (an old call) are taken as the list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "loose",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 173,
+                    "end": 196
+                },
+                {
+                    "routes": [],
                     "name": "event",
                     "static": true,
                     "visibility": "public",
@@ -123691,8 +123743,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 185
+                    "line": 199,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -123718,8 +123770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 192
+                    "line": 218,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -123732,8 +123784,8 @@
                         "@return array<int|string, mixed>"
                     ],
                     "params": [],
-                    "line": 199,
-                    "end": 206
+                    "line": 229,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -123744,8 +123796,8 @@
                     "doc": "The due events run (wp_cron): each recurring one rescheduled first,\neach removed, then its hook fired with its arguments; how many ran.\nA failure to reschedule or remove is logged and told as\ncron_reschedule_event_error or cron_unschedule_event_error.",
                     "shapes": [],
                     "params": [],
-                    "line": 214,
-                    "end": 235
+                    "line": 244,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -123766,8 +123818,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 282
+                    "line": 294,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -123800,8 +123852,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 241
+                    "line": 268,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -123841,8 +123893,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 256
+                    "line": 274,
+                    "end": 286
                 }
             ]
         },
@@ -124242,7 +124294,8 @@
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\PostQueryStatus",
                 "Minn\\Runtime\\PostReads",
-                "Minn\\Runtime\\PostSave"
+                "Minn\\Runtime\\PostSave",
+                "Minn\\Runtime\\PostWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -125271,6 +125324,8 @@
                 "Minn\\Runtime\\PostQueryStatus",
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostRevisions",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registry",
@@ -128851,6 +128906,7 @@
             ],
             "usedBy": [
                 "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\TermWrites"
             ],
             "constructor": {
@@ -129480,6 +129536,7 @@
                 "Minn\\Runtime\\PostFields",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\TermWrites"
             ],
             "constructor": null,
@@ -132080,6 +132137,7 @@
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\PluginActivation",
                 "Minn\\Runtime\\PluginRemoval",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\SiteOptions",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\ThemeMods",
@@ -134853,7 +134911,8 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
-                "Minn\\Runtime\\CommentWrites"
+                "Minn\\Runtime\\CommentWrites",
+                "Minn\\Runtime\\PostWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -135041,6 +135100,7 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermWrites"
@@ -135686,7 +135746,9 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Support\\Sanitize"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\PostWrites"
+            ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\PostWriter $writer, int $userId, Closure $discussion, Closure $supports, Closure $canPublish, Closure $gmtFromDate, Closure $now)",
                 "doc": "",
@@ -136052,6 +136114,7 @@
                 "Minn\\Objects\\Term",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
@@ -136068,7 +136131,8 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\NavMenuItems",
-                "Minn\\Runtime\\PostData"
+                "Minn\\Runtime\\PostData",
+                "Minn\\Runtime\\PostWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -136510,7 +136574,9 @@
             "uses": [
                 "Minn\\Db"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\PostRevisions"
+            ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
                 "doc": "",
@@ -138512,6 +138578,7 @@
                 "Minn\\Runtime\\PostQueryResults",
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\PostSave",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\UserOrder",
                 "Minn\\Theme\\FeedHeaders"
             ],
@@ -139019,23 +139086,206 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostRevisions.php",
-            "lines": 67,
+            "lines": 181,
             "doc": "A post's revisions as the reference's wp_save_post_revision keeps them\n(probe revisions): only for a type that supports revisions and while\nwp_revisions_to_keep allows any; compared with the latest revision\n(wp_save_post_revision_check_for_changes, the revision fields with their\nwhitespace evened out, wp_save_post_revision_post_has_changed, whose\ndefault also compares the revisioned meta); saved through wp_insert_post\nand _wp_put_post_revision (whose default copies the revisioned meta);\nthen the oldest dropped past the limit, after\nwp_save_post_revision_revisions_before_deletion.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Objects\\Post",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\PostLookup",
+                "Minn\\Runtime\\PostWrites",
+                "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Lists",
                 "Minn\\Support\\Slashes",
                 "Minn\\Support\\Text"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\PostWrites"
+            ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "FIELDS",
+                    "value": "array (   'post_title' => 'Title',   'post_content' => 'Content',   'post_excerpt' => 'Excerpt', )",
+                    "doc": "The revision fields' defaults: the title, the content and the excerpt.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "all(mixed $post = 0, mixed $args = NULL): array",
+                    "doc": "A post's revisions (wp_get_post_revisions), newest first unless asked\notherwise, keyed by id (or a list of ids); none while its revisions are\nswitched off, unless check_enabled is false.",
+                    "shapes": [
+                        "@return array<int, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "toKeep",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "toKeep(mixed $post): int",
+                    "doc": "How many revisions a post keeps (wp_revisions_to_keep): WP_POST_REVISIONS\n(all, -1, when unset or true), none for a type without revision\nsupport, then wp_revisions_to_keep and wp_{type}_revisions_to_keep.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "enabled",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "enabled(mixed $post): bool",
+                    "doc": "Whether a post keeps any revisions (wp_revisions_enabled).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(mixed $revision): mixed",
+                    "doc": "A revision deleted (wp_delete_post_revision); anything but a revision is left alone, and nothing comes back.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "revision",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "fields",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fields(mixed $post = array ( ), mixed $deprecated = false): array",
+                    "doc": "The fields a revision keeps (_wp_post_revision_fields), through\n_wp_post_revision_fields; the filtered list is what the next call\nstarts from, as on the reference.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "deprecated",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "data",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "data(mixed $post = array ( ), mixed $autosave = false): array",
+                    "doc": "A revision's row (_wp_post_revision_data): the post's revision fields,\nits parent, inherit, revision, its name, and the post's modified time\nas its date.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "autosave",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 122
+                },
+                {
+                    "routes": [],
+                    "name": "source",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "source(mixed $post): array",
+                    "doc": "A post as a revision's row is made from: its own fields, as an (array)\ncast gives them.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 130,
+                    "end": 137
+                },
                 {
                     "routes": [],
                     "name": "save",
@@ -139053,8 +139303,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 43
+                    "line": 140,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -139075,8 +139325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 72
+                    "line": 179,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -139102,8 +139352,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 56
+                    "line": 161,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -139122,8 +139372,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 87
+                    "line": 190,
+                    "end": 202
                 }
             ]
         },
@@ -139156,7 +139406,8 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\GlobalStylesController",
-                "Minn\\Rest\\PostsWriteController"
+                "Minn\\Rest\\PostsWriteController",
+                "Minn\\Runtime\\PostWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -139972,6 +140223,894 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\PostWrites",
+            "short": "PostWrites",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostWrites.php",
+            "lines": 551,
+            "doc": "Posts written as WordPress's post functions write them: a post stored\nand changed (its columns through their filters, then its terms, meta and\ntemplate), published, sent to the trash and back, deleted with what\nhangs off it, its terms and categories set, made sticky or not; each step\nwith the actions the reference fires in its order, and the cached rows\nlet go.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\Can",
+                "Minn\\Content\\Comments",
+                "Minn\\Content\\PostWriter",
+                "Minn\\Content\\Posts",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Objects\\Post",
+                "Minn\\Runtime\\CommentChecks",
+                "Minn\\Runtime\\CommentWrites",
+                "Minn\\Runtime\\CronEvents",
+                "Minn\\Runtime\\CurrentUser",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Meta",
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\PostCaches",
+                "Minn\\Runtime\\PostInsert",
+                "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostRevisions",
+                "Minn\\Runtime\\PostSave",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime",
+                "Minn\\Runtime\\TermLookup",
+                "Minn\\Runtime\\TermWrites",
+                "Minn\\Runtime\\Themes",
+                "Minn\\Support\\Sanitize",
+                "Minn\\Support\\Slashes"
+            ],
+            "usedBy": [
+                "Minn\\Cron\\Cron",
+                "Minn\\Rest\\MediaController",
+                "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\PostRevisions"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "insert",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "insert(mixed $postarr, mixed $wpError = false, mixed $fireAfterHooks = true): mixed",
+                    "doc": "A post stored or changed (wp_insert_post): its id, 0 or the error\nwhen it cannot be; the revision is saved from wp_after_insert_post\nwhen the after hooks fire.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postarr",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "fireAfterHooks",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(mixed $postarr = array ( ), mixed $wpError = false, mixed $fireAfterHooks = true): mixed",
+                    "doc": "A post changed (wp_update_post): the stored post under the given\nfields, as the reference merges them; an attachment saved as one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postarr",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "fireAfterHooks",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(mixed $postId = 0, mixed $force = false): mixed",
+                    "doc": "A post deleted (wp_delete_post): a post or page to the trash first\nunless forced or the trash is off; an attachment as one; otherwise\nunstuck, its terms, children, revisions, comments and meta taken\naway, then the row. The post, or what pre_delete_post answered.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "force",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "trash",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "trash(mixed $postId = 0): mixed",
+                    "doc": "A post to the trash (wp_trash_post): its status, time and slug kept for the way back; the post as it was, or false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 139,
+                    "end": 162
+                },
+                {
+                    "routes": [],
+                    "name": "untrash",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "untrash(mixed $postId = 0): mixed",
+                    "doc": "A post back from the trash (wp_untrash_post): to draft unless\nwp_untrash_post_status says otherwise (an attachment to inherit), its\nslug given back; the post as it was, or false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 169,
+                    "end": 200
+                },
+                {
+                    "routes": [],
+                    "name": "afterInsert",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "afterInsert(mixed $post, mixed $update, mixed $postBefore): void",
+                    "doc": "What plugins hear once a post and all it carries are saved (wp_after_insert_post).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "update",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postBefore",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 203,
+                    "end": 210
+                },
+                {
+                    "routes": [],
+                    "name": "publish",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "publish(mixed $post): void",
+                    "doc": "A post published now (wp_publish_post), a floating date settled, with the save's actions.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 213,
+                    "end": 234
+                },
+                {
+                    "routes": [],
+                    "name": "publishFuture",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "publishFuture(mixed $post): void",
+                    "doc": "The publish_future_post event's work (check_and_publish_future_post): a scheduled post whose time has come goes out; one early is scheduled again.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 237,
+                    "end": 250
+                },
+                {
+                    "routes": [],
+                    "name": "transitionStatus",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "transitionStatus(mixed $newStatus, mixed $oldStatus, mixed $post): void",
+                    "doc": "The status change announced (wp_transition_post_status). The named\nhooks fire only for names that exist, so a stored status cannot forge\nanother action's name: {old}_to_{new} when the new status is\nregistered and the old one is too (or is \"new\"), {new}_{type} when the\nnew status and the post type are registered.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "newStatus",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "oldStatus",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 259,
+                    "end": 270
+                },
+                {
+                    "routes": [],
+                    "name": "setCategories",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setCategories(mixed $postId = 0, mixed $categories = array ( ), mixed $append = false): mixed",
+                    "doc": "A post's categories set (wp_set_post_categories): posts, and the types\ndefault_category_post_types adds, fall back to the default category.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "categories",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "append",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 276,
+                    "end": 285
+                },
+                {
+                    "routes": [],
+                    "name": "setTerms",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setTerms(mixed $postId = 0, mixed $terms = '', mixed $taxonomy = 'post_tag', mixed $append = false): mixed",
+                    "doc": "A post's terms of a taxonomy set (wp_set_post_terms): a comma list split, a hierarchical taxonomy's terms by id.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "terms",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'post_tag'",
+                            "doc": ""
+                        },
+                        {
+                            "name": "append",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 288,
+                    "end": 304
+                },
+                {
+                    "routes": [],
+                    "name": "setTags",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setTags(mixed $postId = 0, mixed $tags = '', mixed $append = false): mixed",
+                    "doc": "A post's tags set (wp_set_post_tags).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "tags",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "append",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 307,
+                    "end": 310
+                },
+                {
+                    "routes": [],
+                    "name": "stick",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "stick(mixed $postId): void",
+                    "doc": "A post made sticky (stick_post), then post_stuck; nothing when it already is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 313,
+                    "end": 323
+                },
+                {
+                    "routes": [],
+                    "name": "unstick",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unstick(mixed $postId): void",
+                    "doc": "A post no longer sticky (unstick_post), then post_unstuck; nothing when it was not.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 326,
+                    "end": 335
+                },
+                {
+                    "routes": [],
+                    "name": "uniqueSlug",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uniqueSlug(mixed $slug, mixed $postId, mixed $status, mixed $type, mixed $parent): mixed",
+                    "doc": "A slug no other post holds (wp_unique_post_slug), through the reference's slug filters; drafts, pending posts and revisions keep theirs.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 338,
+                    "end": 344
+                },
+                {
+                    "routes": [],
+                    "name": "suffixTrashed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "suffixTrashed(mixed $postName, mixed $postId = 0): void",
+                    "doc": "Every trashed post holding a slug (but the one named) given the __trashed suffix, so a live post may take it (wp_add_trashed_suffix_to_post_name_for_trashed_posts).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postName",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 347,
+                    "end": 352
+                },
+                {
+                    "routes": [],
+                    "name": "suffixTrashedPost",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "suffixTrashedPost(mixed $post): mixed",
+                    "doc": "A post's slug given the __trashed suffix once, the slug it wanted kept (wp_add_trashed_suffix_to_post_name_for_post); the slug it now has.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 355,
+                    "end": 367
+                },
+                {
+                    "routes": [],
+                    "name": "beforeSave",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "beforeSave(array $data, int $postId = 0): void",
+                    "doc": "What plugins hear before a post's row is written: pre_post_insert for a new post, pre_post_update for one that exists. @param array<string, mixed> $data",
+                    "shapes": [
+                        "@param array<string, mixed> $data"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 398,
+                    "end": 405
+                },
+                {
+                    "routes": [],
+                    "name": "saved",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "saved(int $postId, mixed $update, ?Minn\\Objects\\Post $postBefore): ?Minn\\Objects\\Post",
+                    "doc": "What plugins hear once a post's row and its own terms are written, in\nthe reference's order: the caches let go, the status transition, the\nedit actions for an update, the save actions.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "update",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postBefore",
+                            "type": "?Minn\\Objects\\Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 498,
+                    "end": 516
+                },
+                {
+                    "routes": [],
+                    "name": "deleteMeta",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "deleteMeta(int $postId): void",
+                    "doc": "Each meta row of a post removed by its id, with the hooks of each.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 534,
+                    "end": 539
+                },
+                {
+                    "routes": [],
+                    "name": "slugFromId",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "slugFromId(int $id, array $columns, string $type): void",
+                    "doc": "A live post left without a slug (no title to make one from) takes its id, made free. @param array<string, mixed> $columns",
+                    "shapes": [
+                        "@param array<string, mixed> $columns"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 370,
+                    "end": 378
+                },
+                {
+                    "routes": [],
+                    "name": "stickies",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "stickies(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<int> the sticky posts' ids"
+                    ],
+                    "params": [],
+                    "line": 381,
+                    "end": 385
+                },
+                {
+                    "routes": [],
+                    "name": "freeSlug",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "freeSlug(array $columns, int $postId): void",
+                    "doc": "A trashed post still holding the slug a save wants gives it up first, unless add_trashed_suffix_to_trashed_posts says no. @param array<string, mixed> $columns",
+                    "shapes": [
+                        "@param array<string, mixed> $columns"
+                    ],
+                    "params": [
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 388,
+                    "end": 395
+                },
+                {
+                    "routes": [],
+                    "name": "templateRefusal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "templateRefusal(int $id, mixed $kept, mixed $wpError): mixed",
+                    "doc": "A page template the theme does not offer: the post stands either way;\nasked for an error, the save stops there with one (no save hooks),\notherwise the post keeps the default template.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kept",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 412,
+                    "end": 422
+                },
+                {
+                    "routes": [],
+                    "name": "inputs",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "inputs(int $id, array $postarr, string $type, string $status, mixed $update): bool",
+                    "doc": "The terms, meta and template a postarr carries beside the columns;\nfalse when the page template is not one the theme offers.",
+                    "shapes": [
+                        "@param array<string, mixed> $postarr"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postarr",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "update",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 430,
+                    "end": 467
+                },
+                {
+                    "routes": [],
+                    "name": "attachmentSaved",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attachmentSaved(int $id, array $postarr, ?Minn\\Objects\\Post $postBefore): int",
+                    "doc": "An attachment's save ends as the reference's does: its file recorded,\nthen add_attachment, or edit_attachment and attachment_updated; no\nsave_post actions, and no wp_after_insert_post whatever the caller\nasks (a REST save fires that itself).",
+                    "shapes": [
+                        "@param array<string, mixed> $postarr"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postarr",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postBefore",
+                            "type": "?Minn\\Objects\\Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 477,
+                    "end": 491
+                },
+                {
+                    "routes": [],
+                    "name": "trashSaved",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "trashSaved(Minn\\Objects\\Post $post): void",
+                    "doc": "A trash or its undoing ends as the save it is: an attachment's, or a post's with its transition and wp_after_insert_post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "Minn\\Objects\\Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 519,
+                    "end": 531
+                },
+                {
+                    "routes": [],
+                    "name": "remove",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "remove(Minn\\Objects\\Post $post): Minn\\Objects\\Post",
+                    "doc": "The row itself, between the delete actions, typed and untyped, and the caches let go after.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "Minn\\Objects\\Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 542,
+                    "end": 553
+                },
+                {
+                    "routes": [],
+                    "name": "inserter",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "inserter(): Minn\\Runtime\\PostInsert",
+                    "doc": "The insert decisions, with the site's options, the user's capabilities and the date helpers handed in.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 556,
+                    "end": 567
+                },
+                {
+                    "routes": [],
+                    "name": "writer",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "writer(): Minn\\Content\\PostWriter",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 569,
+                    "end": 573
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\QueriedObject",
             "short": "QueriedObject",
             "namespace": "Minn\\Runtime",
@@ -140567,8 +141706,10 @@
                 "Minn\\Runtime\\PostQueryResults",
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostRevisions",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryTree",
@@ -141279,7 +142420,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registered.php",
-            "lines": 181,
+            "lines": 188,
             "doc": "What is registered, looked up the way WordPress's lookups answer: post\ntypes, post statuses and taxonomies by name, or listed by their flags (as\nnames or the objects); whether one exists, is hierarchical or viewable;\nand the features a post type supports. A name that is not text or a\nnumber finds nothing.",
             "implements": [],
             "extends": null,
@@ -141320,6 +142461,7 @@
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostRevisions",
                 "Minn\\Runtime\\PostSave",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\RewriteRules",
                 "Minn\\Runtime\\TermEvents",
@@ -141674,6 +142816,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "objectInTaxonomy",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "objectInTaxonomy(mixed $objectType, mixed $taxonomy): bool",
+                    "doc": "Whether a taxonomy is registered for an object type (is_object_in_taxonomy).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "objectType",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 143,
+                    "end": 147
+                },
+                {
+                    "routes": [],
                     "name": "objectTaxonomies",
                     "static": true,
                     "visibility": "public",
@@ -141698,8 +142867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 158
+                    "line": 155,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -141720,8 +142889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 181
+                    "line": 173,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -141764,8 +142933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 195
+                    "line": 198,
+                    "end": 202
                 }
             ]
         },
@@ -143510,6 +144679,7 @@
                 "Minn\\Runtime\\PostRevisions",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
@@ -146122,6 +147292,7 @@
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostQueryResults",
                 "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Theme\\FeedHeaders"
             ],
             "constructor": null,
@@ -148703,6 +149874,7 @@
                 "Minn\\Runtime\\ObjectTerms",
                 "Minn\\Runtime\\PostQueryTax",
                 "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
@@ -151277,6 +152449,7 @@
                 "Minn\\Runtime\\Deferrals",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermSave"
             ],
@@ -152450,6 +153623,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Runtime\\BlockHooks",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteInfo",
                 "Minn\\Runtime\\ThemeMods",
@@ -158557,6 +159731,7 @@
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\Pages",
                 "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostRevisions",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermOrder",
@@ -159252,6 +160427,7 @@
                 "Minn\\Runtime\\PostQueryTax",
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\PostSave",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\QueryFlags",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\TermEvents",
@@ -160300,6 +161476,7 @@
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostRevisions",
                 "Minn\\Runtime\\PostSave",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermSave"

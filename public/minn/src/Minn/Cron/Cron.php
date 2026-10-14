@@ -13,6 +13,7 @@ use Minn\Content\Site;
 use Minn\Db;
 use Minn\Ops\Updates;
 use Minn\Runtime\CronTable;
+use Minn\Runtime\PostWrites;
 use Minn\Runtime\Runtime;
 use Throwable;
 
@@ -150,9 +151,9 @@ final readonly class Cron
         );
         foreach ($rows as $row) {
             $id = (int) $row['ID'];
-            if (Runtime::booted() && function_exists('check_and_publish_future_post')) {
+            if (Runtime::booted()) {
                 try {
-                    \check_and_publish_future_post($id);
+                    PostWrites::publishFuture($id);
                 } catch (Throwable $failure) {
                     error_log("minn cron: publishing scheduled post {$id} stopped in a plugin: " . $failure->getMessage());
                 }
