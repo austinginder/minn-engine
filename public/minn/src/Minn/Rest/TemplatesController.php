@@ -12,7 +12,9 @@ use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\TemplateFiles;
 use Minn\Theme\TemplateIndex;
 use Minn\Theme\TemplateRecord;
 use Minn\Theme\TemplateWriter;
@@ -191,9 +193,9 @@ final readonly class TemplatesController
         if (!Runtime::booted()) {
             throw RestError::noRoute();
         }
-        $hierarchy = \get_template_hierarchy((string) $request->query['slug'], SchemaValues::toBoolean($request->query['is_custom'] ?? false), (string) ($request->query['template_prefix'] ?? ''));
+        $hierarchy = TemplateFiles::hierarchy((string) $request->query['slug'], SchemaValues::toBoolean($request->query['is_custom'] ?? false), (string) ($request->query['template_prefix'] ?? ''));
         $found = [];
-        foreach (\get_block_templates(['slug__in' => $hierarchy], TemplateIndex::TEMPLATE) as $template) {
+        foreach (Handoff::blockTemplates(['slug__in' => $hierarchy], TemplateIndex::TEMPLATE) as $template) {
             $found[$template->slug] ??= $template->id;
         }
         foreach ($hierarchy as $slug) {

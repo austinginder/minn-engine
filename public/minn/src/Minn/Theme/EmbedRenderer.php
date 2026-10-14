@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\TemplateFiles;
 
 /**
  * A post's embed page (its /embed/ address, or ?embed= on it), the card
@@ -47,7 +48,7 @@ final readonly class EmbedRenderer
     {
         $response = PrintedResponse::stand($this->bridge, ['embed' => true], static function () use ($bodyClasses): void {
             Runtime::current()->set('classic_body_classes', array_values(array_diff($bodyClasses(), ['minn-front-bar'])));
-            $template = (string) Runtime::hooks()->filter('template_include', [\get_embed_template()]);
+            $template = (string) Runtime::hooks()->filter('template_include', [TemplateFiles::embed()]);
             if ($template !== '' && is_file($template)) {
                 Handoff::loadTemplate($template, false);
             }

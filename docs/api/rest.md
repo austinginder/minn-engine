@@ -1242,7 +1242,7 @@ through here); the request is what the supports' callbacks are handed.
 
 - `@return array<string, mixed>`
 
-Internals: `item()` (private, line 81), `links()` (private, line 128), `viewsThemes()` (private, line 151), `viewsActive()` (private, line 157), `status()` (private, line 162), `requireRuntime()` (private, line 168)
+Internals: `item()` (private, line 82), `links()` (private, line 129), `viewsThemes()` (private, line 152), `viewsActive()` (private, line 158), `status()` (private, line 163), `requireRuntime()` (private, line 169)
 
 
 ## Links
@@ -3646,7 +3646,7 @@ Route: `DELETE /wp/v2/template-parts/{id:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)
 
 Deletes a customised template part.
 
-Internals: `listing()` (private, line 146), `listed()` (private, line 172), `lookup()` (private, line 189), `single()` (private, line 207), `save()` (private, line 216), `create()` (private, line 234), `fields()` (private, line 256), `delete()` (private, line 275), `trashed()` (private, line 292), `record()` (private, line 314), `readable()` (private, line 324), `requireWrite()` (private, line 335), `text()` (private, line 344)
+Internals: `listing()` (private, line 148), `listed()` (private, line 174), `lookup()` (private, line 191), `single()` (private, line 209), `save()` (private, line 218), `create()` (private, line 236), `fields()` (private, line 258), `delete()` (private, line 277), `trashed()` (private, line 294), `record()` (private, line 316), `readable()` (private, line 326), `requireWrite()` (private, line 337), `text()` (private, line 346)
 
 
 ## TermCollectionParams

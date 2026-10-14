@@ -6,8 +6,12 @@ namespace Minn\Runtime;
 
 use DateTimeZone;
 use Minn\Content\PasswordGate;
+use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\I18n\Gettext;
+use Minn\Objects\Post;
 use Minn\Objects\User;
+use Minn\Support\Escape;
 
 /**
  * What the post template tags tell about a post (the one being read when
@@ -126,6 +130,29 @@ final class PostTags
         }
         $format = $format === '' ? Runtime::options()->filtered('date_format') : $format;
         return Runtime::hooks()->filter('get_the_date', [self::time($format, false, $post, true), $format, $post]);
+    }
+
+    /**
+     * The password form (get_the_password_form), as the content shows it
+     * before its paragraphs are made; a reader the post's own page sent back
+     * with a password cookie set reads why above the field; as
+     * the_password_form leaves it.
+     */
+    public static function passwordForm(mixed $post = 0): mixed
+    {
+        $post = Records::post($post);
+        $label = 'pwbox-' . ($post === null ? mt_rand() : $post->ID);
+        $permalink = $post === null ? '' : (string) PostLinks::permalink($post);
+        $invalid = $post === null ? '' : PasswordGate::invalid($permalink, (string) RequestHeaders::rawReferer(), (string) (Request::cookieVariable('wp-postpass_' . COOKIEHASH) ?? ''), static fn (): Post => $post);
+        $block = Themes::isBlockTheme();
+        $button = '<input type="submit" name="Submit"' . ($block ? ' class="wp-block-button__link wp-element-button"' : '') . ' value="' . Escape::attr(Gettext::inContext('Enter', 'post password form')) . '" />';
+        $button = $block ? '<span class="wp-block-button">' . $button . '</span>' : $button;
+        $form = '<form action="' . Escape::url(SiteUrls::site('wp-login.php?action=postpass', 'login_post')) . '" class="post-password-form' . ($invalid === '' ? '' : ' password-form-error') . '" method="post">'
+            . '<input type="hidden" name="redirect_to" value="' . Escape::attr($permalink) . '" />'
+            . ($invalid === '' ? '' : '<div class="post-password-form-invalid-password" role="alert"><p id="error-' . $label . '">' . $invalid . '</p></div>') . "\n\t"
+            . '<p>This content is password-protected. To view it, please enter the password below.</p>' . "\n\t"
+            . '<p><label for="' . $label . '">Password: <input name="post_password" id="' . $label . '" type="password" spellcheck="false" required size="20"' . ($invalid === '' ? '' : ' aria-describedby="error-' . $label . '"') . ' /></label> ' . $button . '</p></form>' . "\n\t";
+        return Runtime::hooks()->filter('the_password_form', [$form, $post, $invalid]);
     }
 
     /** The id of the post being read (get_the_ID), or false. */

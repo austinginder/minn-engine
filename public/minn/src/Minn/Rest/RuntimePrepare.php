@@ -116,7 +116,7 @@ final class RuntimePrepare
     /** @param list<string> $atRoot a navigation's root ignored list, filled in */
     private static function withHookedBlocks(string $content, mixed $post, string $callback, array &$atRoot): string
     {
-        return (string) \apply_block_hooks_to_content_from_post_object($content, $post, $callback, $atRoot);
+        return (string) Handoff::blockHooksForPost($content, $post, $callback, $atRoot);
     }
 
     /**

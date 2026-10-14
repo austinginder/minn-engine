@@ -477,6 +477,41 @@ final class Handoff
         return self::answer('attachmentMetadata', $attachmentId, $file);
     }
 
+    /** The meta core and Minn Admin register on init, registered by the layer that holds their callbacks by name. */
+    public static function registerInitMeta(): void
+    {
+        self::answer('registerInitMeta');
+    }
+
+    /** The theme file for a template type, through the hierarchy and its filters (get_query_template); a block theme's canvas when it has a block template. */
+    public static function queryTemplate(mixed ...$args): mixed
+    {
+        return self::answer('queryTemplate', ...$args);
+    }
+
+    /** The block templates a query finds, the theme's and the ones plugins registered (get_block_templates). */
+    public static function blockTemplates(mixed ...$args): mixed
+    {
+        return self::answer('blockTemplates', ...$args);
+    }
+
+    /** Content with its hooked blocks inserted by the callback named (apply_block_hooks_to_content). */
+    public static function blockHooks(mixed ...$args): mixed
+    {
+        return self::answer('blockHooks', ...$args);
+    }
+
+    /**
+     * A post's content with its hooked blocks inserted
+     * (apply_block_hooks_to_content_from_post_object), a navigation's root
+     * ignored list filled in.
+     */
+    public static function blockHooksForPost(mixed $content, mixed $post, mixed $callback, mixed &$ignoredAtRoot): mixed
+    {
+        $answer = self::$answers['blockHooksForPost'] ?? throw new LogicException('Nothing answers blockHooksForPost yet: the WordPress layer binds it as it loads.');
+        return $answer($content, $post, $callback, $ignoredAtRoot);
+    }
+
     /** A theme by its folder and root (new WP_Theme). */
     public static function newTheme(mixed ...$args): Theme
     {

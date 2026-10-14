@@ -1059,7 +1059,7 @@ Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash):
 added to or stripped from every string inside a value, arrays and
 objects walked all the way down, anything else left as it is.
 
-Used by: `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
 
 ### static `add(mixed $value): mixed`
 

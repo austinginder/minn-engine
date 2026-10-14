@@ -272,7 +272,7 @@ final class FeedTemplates
             ->put("</link>\n\n\t\t<dc:creator><![CDATA[", FeedWriter::insideCdata((string) CommentTags::authorRss()), "]]></dc:creator>\n\t\t<pubDate>", (string) SiteTime::fromStored('D, d M Y H:i:s +0000', CommentTags::time('Y-m-d H:i:s', true, false), false), "</pubDate>\n\t\t<guid isPermaLink=\"false\">")->tag('comment_guid')
             ->put("</guid>\n\n");
         if (PostTags::passwordRequired($post)) {
-            $w->put("\t\t\t\t\t<description>", Text::numericReferences(Gettext::text('Protected Comments: Please enter your password to view comments.')), "</description>\n\t\t\t<content:encoded><![CDATA[", \get_the_password_form(), "]]></content:encoded>\n");
+            $w->put("\t\t\t\t\t<description>", Text::numericReferences(Gettext::text('Protected Comments: Please enter your password to view comments.')), "</description>\n\t\t\t<content:encoded><![CDATA[", PostTags::passwordForm(), "]]></content:encoded>\n");
         } else {
             $w->put("\t\t\t\t\t<description><![CDATA[")->cdata('comment_text_rss')->put("]]></description>\n\t\t\t<content:encoded><![CDATA[")->cdata('comment_text')->put("]]></content:encoded>\n");
         }
@@ -311,7 +311,7 @@ final class FeedTemplates
             ->put("\" />\n\n\t\t<author>\n\t\t\t<name>")->tag('comment_author_rss')
             ->put("</name>\n\t\t\t", $url ? '<uri>' . Escape::url($url) . '</uri>' : '', "\n\t\t</author>\n\n\t\t<id>")->tag('comment_guid')
             ->put("</id>\n\t\t<updated>{$when}</updated>\n\t\t<published>{$when}</published>\n\n\t\t\t\t\t<content type=\"html\" xml:base=\"")->tag('comment_link')->put('"><![CDATA[');
-        PostTags::passwordRequired($post) ? $w->put(FeedWriter::insideCdata(\get_the_password_form())) : $w->cdata('comment_text');
+        PostTags::passwordRequired($post) ? $w->put(FeedWriter::insideCdata(PostTags::passwordForm())) : $w->cdata('comment_text');
         $w->put("]]></content>\n\t\t\n\t\t\t\t\t<thr:in-reply-to ref=\"");
         if ((int) $comment->comment_parent === 0) {
             $w->tag('the_guid')->put('" href="')->tag('the_permalink_rss');

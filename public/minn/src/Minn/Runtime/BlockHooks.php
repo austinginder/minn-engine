@@ -16,13 +16,30 @@ namespace Minn\Runtime;
  */
 final class BlockHooks
 {
+    /**
+     * The blocks hooked to each anchor, by position (get_hooked_blocks), as
+     * the registered block types' block_hooks name them.
+     *
+     * @return array<string, array<string, list<string>>>
+     */
+    public static function hooked(): array
+    {
+        $hooked = [];
+        foreach (Handoff::blockTypes()->get_all_registered() as $type) {
+            foreach ((array) ($type->block_hooks ?? []) as $anchor => $position) {
+                $hooked[$anchor][$position][] = $type->name;
+            }
+        }
+        return $hooked;
+    }
+
     /** Whether block hooks are registered (the runtime's functions are there only once it is up). */
     public static function active(): bool
     {
-        if (!function_exists('get_hooked_blocks')) {
+        if (!Handoff::bound('blockTypes')) {
             return false;
         }
-        return get_hooked_blocks() !== [] || Runtime::hooks()->has('hooked_block_types');
+        return self::hooked() !== [] || Runtime::hooks()->has('hooked_block_types');
     }
 
     /**
@@ -80,6 +97,6 @@ final class BlockHooks
             'blockTypes' => $blockTypes,
             'categories' => $categories,
         ];
-        return (string) apply_block_hooks_to_content($markup, $context, 'insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata');
+        return (string) Handoff::blockHooks($markup, $context, 'insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata');
     }
 }

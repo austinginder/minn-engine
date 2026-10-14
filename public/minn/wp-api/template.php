@@ -470,7 +470,7 @@ function get_query_template($type, $templates = [])
 
 function get_index_template()
 {
-    return get_query_template('index');
+    return Minn\Runtime\TemplateFiles::index();
 }
 
 function get_404_template()

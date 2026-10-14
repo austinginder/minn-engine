@@ -15,6 +15,7 @@ use Minn\Runtime\Handoff;
 use Minn\Runtime\Plugins;
 use Minn\Runtime\Runtime;
 use Minn\Html;
+use Minn\Runtime\TemplateFiles;
 use Minn\Runtime\ThemeMods;
 use Minn\Runtime\ThemeSupports;
 
@@ -107,7 +108,7 @@ final readonly class ClassicRenderer
                 return $template;
             }
         }
-        return (string) \get_index_template();
+        return (string) TemplateFiles::index();
     }
 
     /** @param list<string> $coreClasses @return list<string> */

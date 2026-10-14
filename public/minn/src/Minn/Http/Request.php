@@ -46,6 +46,12 @@ final readonly class Request
         return $_SERVER[$name] ?? null;
     }
 
+    /** A request variable (query or form) as PHP holds it now, null when unset. */
+    public static function requestVariable(string $name): mixed
+    {
+        return $_REQUEST[$name] ?? null;
+    }
+
     /** A query variable as PHP holds it now, null when unset: plugin code may have set it since the request was read. */
     public static function queryVariable(string $name): mixed
     {

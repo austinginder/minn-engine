@@ -177,18 +177,7 @@ function post_password_required($post = null)
  */
 function get_the_password_form($post = 0)
 {
-    $post = get_post($post);
-    $label = 'pwbox-' . ($post === null ? mt_rand() : $post->ID);
-    $permalink = $post === null ? '' : (string) get_permalink($post);
-    $invalid = $post === null ? '' : Minn\Content\PasswordGate::invalid($permalink, (string) wp_get_raw_referer(), (string) ($_COOKIE['wp-postpass_' . COOKIEHASH] ?? ''), static fn (): WP_Post => $post);
-    $button = '<input type="submit" name="Submit"' . (wp_is_block_theme() ? ' class="wp-block-button__link wp-element-button"' : '') . ' value="' . esc_attr_x('Enter', 'post password form') . '" />';
-    $button = wp_is_block_theme() ? '<span class="wp-block-button">' . $button . '</span>' : $button;
-    $form = '<form action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" class="post-password-form' . ($invalid === '' ? '' : ' password-form-error') . '" method="post">'
-        . '<input type="hidden" name="redirect_to" value="' . esc_attr($permalink) . '" />'
-        . ($invalid === '' ? '' : '<div class="post-password-form-invalid-password" role="alert"><p id="error-' . $label . '">' . $invalid . '</p></div>') . "\n\t"
-        . '<p>This content is password-protected. To view it, please enter the password below.</p>' . "\n\t"
-        . '<p><label for="' . $label . '">Password: <input name="post_password" id="' . $label . '" type="password" spellcheck="false" required size="20"' . ($invalid === '' ? '' : ' aria-describedby="error-' . $label . '"') . ' /></label> ' . $button . '</p></form>' . "\n\t";
-    return apply_filters('the_password_form', $form, $post, $invalid);
+    return Minn\Runtime\PostTags::passwordForm($post);
 }
 
 function get_the_date($format = '', $post = null)

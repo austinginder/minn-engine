@@ -22,6 +22,7 @@ use Minn\Content\Texturize;
 use Minn\Front\Permalinks;
 use Minn\Html;
 use Minn\Objects\CommentsQuery;
+use Minn\Runtime\BlockQueries;
 use Minn\Runtime\Handoff;
 use Minn\Support\Kses;
 use Minn\Content\PasswordGate;
@@ -117,7 +118,7 @@ final readonly class Comments
         }
         // The reference's comment query for a template (build_comment_query_vars_from_block): approved ones and
         // the reader's own held ones, oldest first, threaded and paged as the site says.
-        $vars = \build_comment_query_vars_from_block((object) ['context' => ['postId' => $post->id]]);
+        $vars = BlockQueries::comments((object) ['context' => ['postId' => $post->id]]);
         $comments = (array) self::query($vars)->comments;
         // Newest first, when the site lists them so, is the top level reversed; replies keep their order.
         $comments = $this->site->option('comment_order') === 'desc' ? array_reverse($comments) : $comments;

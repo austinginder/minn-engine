@@ -60,6 +60,21 @@ final class Themes
         return Runtime::hooks()->filter('stylesheet_directory_uri', [self::rootUri($stylesheet) . '/' . $stylesheet, $stylesheet, self::rootUri($stylesheet)]);
     }
 
+    /** Whether the current theme is a block theme (wp_is_block_theme): the booted one's answer, or, for a stylesheet a filter swapped in, that theme's own. */
+    public static function isBlockTheme(): bool
+    {
+        $runtime = Runtime::current();
+        $theme = $runtime->get('theme');
+        $stylesheet = self::stylesheet();
+        if ($runtime->get('block_theme') === null || $theme instanceof \Minn\Theme\Theme && $stylesheet === $theme->slug) {
+            return true;
+        }
+        $known = (array) $runtime->get('block_theme_by_stylesheet', []);
+        $known[$stylesheet] ??= self::theme($stylesheet)->is_block_theme();
+        $runtime->set('block_theme_by_stylesheet', $known);
+        return $known[$stylesheet];
+    }
+
     /** The active theme's stylesheet address (get_stylesheet_uri), as stylesheet_uri leaves it. */
     public static function stylesheetUri(): mixed
     {

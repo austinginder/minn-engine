@@ -172,7 +172,7 @@ The body-class tokens before plugins filter them (get_body_class filters them). 
 
 - `@return list<string>`
 
-Internals: `template()` (private, line 81), `bodyClasses()` (private, line 120), `registerHead()` (private, line 137), `registerStyles()` (private, line 143)
+Internals: `template()` (private, line 82), `bodyClasses()` (private, line 121), `registerHead()` (private, line 138), `registerStyles()` (private, line 144)
 
 
 ## ClassicTheme
@@ -1062,6 +1062,8 @@ and taxonomy only when the taxonomy is; pages, categories, tags and
 authors step through their bare name when the slug has more to it. A
 prefix names the next step outright. A custom template is a page's.
 
+Used by: `Minn\Runtime\TemplateFiles`
+
 ### static `for(string $slug, bool $custom, string $prefix, array $types, array $taxonomies): array`
 
 A slug's fallback chain, most specific first, ending at index.
@@ -1361,7 +1363,7 @@ merges the same way, with the child's preset lists replacing the
 parent's whole. The engine reads the site's installed theme the way it
 reads the site's database; it never runs the theme's PHP.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\ThemeStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Runtime\Themes`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\ThemeStyles`
 
 ```php
 __construct(string $slug, string $dir, string $uri, ?Minn\Theme\Theme $parent = NULL)

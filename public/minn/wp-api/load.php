@@ -125,16 +125,7 @@ function is_customize_preview()
 /** Whether the current theme is a block theme: the booted one's answer, or, for a stylesheet a filter swapped in, that theme's own. */
 function wp_is_block_theme()
 {
-    $runtime = Runtime::current();
-    $theme = $runtime->get('theme');
-    $stylesheet = get_stylesheet();
-    if ($runtime->get('block_theme') === null || $theme instanceof Minn\Theme\Theme && $stylesheet === $theme->slug) {
-        return true;
-    }
-    $known = (array) $runtime->get('block_theme_by_stylesheet', []);
-    $known[$stylesheet] ??= wp_get_theme($stylesheet)->is_block_theme();
-    $runtime->set('block_theme_by_stylesheet', $known);
-    return $known[$stylesheet];
+    return Minn\Runtime\Themes::isBlockTheme();
 }
 
 function wp_get_environment_type()
@@ -830,3 +821,19 @@ Minn\Runtime\Handoff::bind([
 
 // An attachment's metadata is made by the image editors plugins choose, so the engine asks for it through Minn\Runtime\Handoff.
 Minn\Runtime\Handoff::bind(['attachmentMetadata' => static fn ($attachment_id, $file) => wp_generate_attachment_metadata($attachment_id, $file)]);
+
+// What runs in this layer by its own names, asked for by the engine through Minn\Runtime\Handoff: the meta
+// registered on init, a query's template, the block templates, and hooked blocks inserted into content.
+Minn\Runtime\Handoff::bind([
+    'registerInitMeta' => static function (): void {
+        wp_create_initial_post_meta();
+        wp_create_initial_comment_meta();
+        wp_register_persisted_preferences_meta();
+        _minn_register_toolbar_meta();
+        register_block_core_footnotes_post_meta();
+    },
+    'queryTemplate' => static fn (...$args) => get_query_template(...$args),
+    'blockTemplates' => static fn (...$args) => get_block_templates(...$args),
+    'blockHooks' => static fn (...$args) => apply_block_hooks_to_content(...$args),
+    'blockHooksForPost' => static fn ($content, $post, $callback, &$ignored) => apply_block_hooks_to_content_from_post_object($content, $post, $callback, $ignored),
+]);

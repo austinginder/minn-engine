@@ -5,17 +5,7 @@ use Minn\Front\EmbedCard;
 
 function get_embed_template()
 {
-    $object = get_queried_object();
-    $templates = [];
-    if (!empty($object->post_type)) {
-        $format = get_post_format($object);
-        if ($format) {
-            $templates[] = "embed-{$object->post_type}-{$format}.php";
-        }
-        $templates[] = "embed-{$object->post_type}.php";
-    }
-    $templates[] = 'embed.php';
-    return get_query_template('embed', $templates);
+    return Minn\Runtime\TemplateFiles::embed();
 }
 
 function enqueue_embed_scripts()

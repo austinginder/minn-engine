@@ -79,6 +79,17 @@ final class RequestHeaders
         return Runtime::hooks()->filter('allowed_http_origin', [$origin, $origin]);
     }
 
+    /** The referer as given (wp_get_raw_referer): the form's _wp_http_referer when it has one, else the Referer header, unslashed; false when neither. */
+    public static function rawReferer(): mixed
+    {
+        $given = Request::requestVariable('_wp_http_referer');
+        if (!empty($given)) {
+            return \Minn\Support\Slashes::strip($given);
+        }
+        $header = Request::serverVariable('HTTP_REFERER');
+        return empty($header) ? false : \Minn\Support\Slashes::strip($header);
+    }
+
     /** Whether the browser is a phone's or a tablet's (wp_is_mobile), as wp_is_mobile leaves it. */
     public static function isMobile(): mixed
     {

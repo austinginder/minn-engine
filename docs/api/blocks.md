@@ -654,6 +654,8 @@ category and tag ids and each viewable taxonomy's terms, merged; formats
 order, orderby, authors (a list, a comma list, or one id), a search, and
 parents for a hierarchical type.
 
+Used by: `Minn\Runtime\BlockQueries`
+
 ### static `fromContext(?array $context, int $page, array $sticky, array $site): array`
 
 The query vars a query block's context amounts to.

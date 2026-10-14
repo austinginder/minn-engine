@@ -658,13 +658,7 @@ function _filter_block_content_callback($matches)
 /** Anchor block name => relative position => the block types registered to hook there. */
 function get_hooked_blocks()
 {
-    $hooked = [];
-    foreach (WP_Block_Type_Registry::get_instance()->get_all_registered() as $type) {
-        foreach ((array) ($type->block_hooks ?? []) as $anchor => $position) {
-            $hooked[$anchor][$position][] = $type->name;
-        }
-    }
-    return $hooked;
+    return Minn\Runtime\BlockHooks::hooked();
 }
 
 /** @deprecated 6.3.0 The global styles' SVG filters printed, outside the admin (probe preview-output-helpers). */
@@ -1286,11 +1280,7 @@ function render_block_core_template_part($attributes)
 /** The WP_Query vars a query loop's context asks for on a page of it. */
 function build_query_vars_from_query_block($block, $page)
 {
-    $context = $block->context['query'] ?? null;
-    $sticky = array_map('intval', (array) get_option('sticky_posts', []));
-    $site = ['viewableType' => static fn (string $type) => is_post_type_viewable($type), 'hierarchicalType' => static fn (string $type) => is_post_type_hierarchical($type), 'viewableTaxonomy' => static fn (string $taxonomy) => is_taxonomy_viewable($taxonomy), 'formats' => array_values(get_post_format_slugs())];
-    $query = QueryVars::fromContext(is_array($context) ? $context : null, (int) $page, $sticky, $site);
-    return is_array($context) ? apply_filters('query_loop_block_query_vars', $query, $block, $page) : $query;
+    return Minn\Runtime\BlockQueries::posts($block, $page);
 }
 
 /** @internal the sticky setting: "only" lists the sticky posts, "exclude" keeps them out */
@@ -1300,33 +1290,7 @@ function build_query_vars_from_query_block($block, $page)
 /** The comment query vars a comment template's context asks for. */
 function build_comment_query_vars_from_block($block)
 {
-    $vars = ['orderby' => 'comment_date_gmt', 'order' => 'ASC', 'status' => 'approve', 'no_found_rows' => false];
-    if (is_user_logged_in()) {
-        $vars['include_unapproved'] = [get_current_user_id()];
-    } else {
-        $email = (string) wp_get_current_commenter()['comment_author_email'] ?: wp_get_unapproved_comment_author_email();
-        if ($email !== '') {
-            $vars['include_unapproved'] = [$email];
-        }
-    }
-    if (!empty($block->context['postId'])) {
-        $vars['post_id'] = (int) $block->context['postId'];
-    }
-    $vars['hierarchical'] = get_option('thread_comments') ? 'threaded' : false;
-    if (get_option('page_comments') && (int) get_option('comments_per_page') > 0) {
-        $per_page = (int) get_option('comments_per_page');
-        $vars['number'] = $per_page;
-        $page = (int) get_query_var('cpage');
-        if ($page > 0) {
-            $vars['paged'] = $page;
-        } elseif (get_option('default_comments_page') === 'oldest') {
-            $vars['paged'] = 1;
-        } elseif (!empty($vars['post_id'])) {
-            $count = (int) get_comments(['post_id' => $vars['post_id'], 'status' => 'approve', 'count' => true]);
-            $vars['paged'] = max(1, (int) ceil($count / $per_page));
-        }
-    }
-    return $vars;
+    return Minn\Runtime\BlockQueries::comments($block);
 }
 
 /** @internal a WP_Block_Template for a template a plugin registered */
@@ -1951,13 +1915,13 @@ function _wp_apply_block_content_filters($content, $context = '', &$seen_ids = n
 /** The template types a block theme may define (data/template-types.json), through default_template_types. */
 function get_default_block_template_types()
 {
-    return apply_filters('default_template_types', json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/template-types.json'), true));
+    return Minn\Runtime\TemplateFiles::defaultTypes();
 }
 
 /** The areas a template part may belong to (data/template-part-areas.json), through default_wp_template_part_areas. */
 function get_allowed_block_template_part_areas()
 {
-    return apply_filters('default_wp_template_part_areas', json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/template-part-areas.json'), true));
+    return Minn\Runtime\TemplateFiles::partAreas();
 }
 
 /** One variation per template part of the theme, offered in the inserter. */
@@ -1987,7 +1951,7 @@ function build_template_part_block_variations()
 /** The templates a slug falls back through (Theme\TemplateHierarchy), against the registered types and taxonomies. */
 function get_template_hierarchy($slug, $is_custom = false, $template_prefix = '')
 {
-    return TemplateHierarchy::for((string) $slug, (bool) $is_custom, (string) $template_prefix, array_values(get_post_types()), array_values(get_taxonomies()));
+    return Minn\Runtime\TemplateFiles::hierarchy($slug, $is_custom, $template_prefix);
 }
 
 /**

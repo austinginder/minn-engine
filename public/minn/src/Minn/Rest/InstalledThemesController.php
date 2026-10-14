@@ -16,6 +16,7 @@ use Minn\Objects\Theme;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\TemplateFiles;
 use Minn\Runtime\Themes;
 use Minn\Runtime\ThemeSupports;
 use Minn\Support\Lists;
@@ -117,8 +118,8 @@ final readonly class InstalledThemesController
         }
         $item += ['is_block_theme' => $theme->is_block_theme(), 'stylesheet_uri' => $theme->get_stylesheet_directory_uri(), 'template_uri' => $theme->get_template_directory_uri()];
         if ($active) {
-            $item['default_template_types'] = array_map(static fn ($slug, $type) => ['title' => $type['title'], 'description' => $type['description'], 'slug' => (string) $slug], array_keys(\get_default_block_template_types()), \get_default_block_template_types());
-            $item['default_template_part_areas'] = \get_allowed_block_template_part_areas();
+            $item['default_template_types'] = array_map(static fn ($slug, $type) => ['title' => $type['title'], 'description' => $type['description'], 'slug' => (string) $slug], array_keys(TemplateFiles::defaultTypes()), TemplateFiles::defaultTypes());
+            $item['default_template_part_areas'] = TemplateFiles::partAreas();
         }
         $item['_links'] = $this->links($theme);
         return $item;

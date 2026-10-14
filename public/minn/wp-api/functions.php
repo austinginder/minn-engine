@@ -893,10 +893,7 @@ function wp_get_referer()
 /** The referer as given: the form's _wp_http_referer when it has one, else the Referer header, unslashed; false when neither (probe functions-remaining). */
 function wp_get_raw_referer()
 {
-    if (!empty($_REQUEST['_wp_http_referer'])) {
-        return wp_unslash($_REQUEST['_wp_http_referer']);
-    }
-    return empty($_SERVER['HTTP_REFERER']) ? false : wp_unslash($_SERVER['HTTP_REFERER']);
+    return Minn\Runtime\RequestHeaders::rawReferer();
 }
 
 /** The form's _wp_original_http_referer when it is a safe address on this site, else false. */

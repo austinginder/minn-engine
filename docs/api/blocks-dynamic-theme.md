@@ -37,7 +37,7 @@ drops it (RowCache).
 
 - `@param array<string, mixed> $vars`
 
-Internals: `comments()` (private, line 57), `title()` (private, line 71), `template()` (private, line 111), `records()` (private, line 135), `count()` (private, line 148), `list()` (private, line 154), `avatar()` (private, line 185), `authorAvatar()` (private, line 197), `date()` (private, line 213), `commentPost()` (private, line 229), `authorName()` (private, line 235), `content()` (private, line 249), `replyLink()` (private, line 260), `form()` (private, line 273), `commentForm()` (private, line 288)
+Internals: `comments()` (private, line 58), `title()` (private, line 72), `template()` (private, line 112), `records()` (private, line 136), `count()` (private, line 149), `list()` (private, line 155), `avatar()` (private, line 186), `authorAvatar()` (private, line 198), `date()` (private, line 214), `commentPost()` (private, line 230), `authorName()` (private, line 236), `content()` (private, line 250), `replyLink()` (private, line 261), `form()` (private, line 274), `commentForm()` (private, line 289)
 
 
 ## Navigation
@@ -116,7 +116,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Site $site, Minn\Front\Perma
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 55), `queried()` (private, line 76), `loop()` (private, line 92), `current()` (private, line 105), `total()` (private, line 118), `postTemplate()` (private, line 134), `postClasses()` (private, line 168), `queryTitle()` (private, line 198), `noResults()` (private, line 218), `pagination()` (private, line 232), `paginationBase()` (private, line 278), `numbers()` (private, line 293), `archiveTitle()` (private, line 305)
+Internals: `query()` (private, line 56), `queried()` (private, line 77), `loop()` (private, line 93), `current()` (private, line 106), `total()` (private, line 119), `postTemplate()` (private, line 135), `postClasses()` (private, line 169), `queryTitle()` (private, line 199), `noResults()` (private, line 219), `pagination()` (private, line 233), `paginationBase()` (private, line 279), `numbers()` (private, line 294), `archiveTitle()` (private, line 306)
 
 
 ## Structure

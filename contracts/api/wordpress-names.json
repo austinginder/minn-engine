@@ -1,142 +1,20 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 18,
-        "functions": 16,
+        "functionCalls": 0,
+        "functions": 0,
         "hookApi": 0,
         "classReferences": 2,
         "classes": 1,
-        "files": 10
+        "files": 1
     },
     "families": {
-        "functions": {
-            "wp-includes/block-template-utils.php": 5,
-            "wp-includes/blocks.php": 5,
-            "wp-includes/post-template.php": 2,
-            "wp-includes/template.php": 2,
-            "wp-includes/blocks/footnotes.php": 1,
-            "wp-includes/comment.php": 1,
-            "wp-includes/post.php": 1,
-            "wp-includes/user.php": 1
-        },
+        "functions": [],
         "classes": {
             "wp-includes/class-wp-theme-json-resolver.php": 2
         }
     },
-    "functions": {
-        "get_default_block_template_types": {
-            "uses": 2,
-            "family": "wp-includes/block-template-utils.php",
-            "files": {
-                "Minn/Rest/InstalledThemesController.php": 2
-            }
-        },
-        "get_the_password_form": {
-            "uses": 2,
-            "family": "wp-includes/post-template.php",
-            "files": {
-                "Minn/Front/FeedTemplates.php": 2
-            }
-        },
-        "apply_block_hooks_to_content": {
-            "uses": 1,
-            "family": "wp-includes/blocks.php",
-            "files": {
-                "Minn/Runtime/BlockHooks.php": 1
-            }
-        },
-        "apply_block_hooks_to_content_from_post_object": {
-            "uses": 1,
-            "family": "wp-includes/blocks.php",
-            "files": {
-                "Minn/Rest/RuntimePrepare.php": 1
-            }
-        },
-        "build_comment_query_vars_from_block": {
-            "uses": 1,
-            "family": "wp-includes/blocks.php",
-            "files": {
-                "Minn/Blocks/Dynamic/Theme/Comments.php": 1
-            }
-        },
-        "build_query_vars_from_query_block": {
-            "uses": 1,
-            "family": "wp-includes/blocks.php",
-            "files": {
-                "Minn/Blocks/Dynamic/Theme/QueryBlocks.php": 1
-            }
-        },
-        "get_allowed_block_template_part_areas": {
-            "uses": 1,
-            "family": "wp-includes/block-template-utils.php",
-            "files": {
-                "Minn/Rest/InstalledThemesController.php": 1
-            }
-        },
-        "get_block_templates": {
-            "uses": 1,
-            "family": "wp-includes/block-template-utils.php",
-            "files": {
-                "Minn/Rest/TemplatesController.php": 1
-            }
-        },
-        "get_embed_template": {
-            "uses": 1,
-            "family": "wp-includes/template.php",
-            "files": {
-                "Minn/Theme/EmbedRenderer.php": 1
-            }
-        },
-        "get_hooked_blocks": {
-            "uses": 1,
-            "family": "wp-includes/blocks.php",
-            "files": {
-                "Minn/Runtime/BlockHooks.php": 1
-            }
-        },
-        "get_index_template": {
-            "uses": 1,
-            "family": "wp-includes/template.php",
-            "files": {
-                "Minn/Theme/ClassicRenderer.php": 1
-            }
-        },
-        "get_template_hierarchy": {
-            "uses": 1,
-            "family": "wp-includes/block-template-utils.php",
-            "files": {
-                "Minn/Rest/TemplatesController.php": 1
-            }
-        },
-        "register_block_core_footnotes_post_meta": {
-            "uses": 1,
-            "family": "wp-includes/blocks/footnotes.php",
-            "files": {
-                "Minn/Runtime/Plugins.php": 1
-            }
-        },
-        "wp_create_initial_comment_meta": {
-            "uses": 1,
-            "family": "wp-includes/comment.php",
-            "files": {
-                "Minn/Runtime/Plugins.php": 1
-            }
-        },
-        "wp_create_initial_post_meta": {
-            "uses": 1,
-            "family": "wp-includes/post.php",
-            "files": {
-                "Minn/Runtime/Plugins.php": 1
-            }
-        },
-        "wp_register_persisted_preferences_meta": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/Plugins.php": 1
-            }
-        }
-    },
+    "functions": [],
     "classes": {
         "WP_Theme_JSON_Resolver": {
             "uses": 2,

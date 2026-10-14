@@ -16337,6 +16337,19 @@ The REST media upload takes its file through FileUpload::handle directly; an att
 the image editors plugins choose, so the engine asks for it through `Handoff::attachmentMetadata()`. The
 http-transports probe stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 44, the last function calls.** `Runtime\TemplateFiles` answers get_index_template, get_embed_template,
+get_template_hierarchy, get_default_block_template_types and get_allowed_block_template_part_areas;
+`Runtime\BlockQueries` build_query_vars_from_query_block and build_comment_query_vars_from_block;
+`PostTags::passwordForm()` get_the_password_form (with `RequestHeaders::rawReferer()` and
+`Themes::isBlockTheme()`); `BlockHooks::hooked()` get_hooked_blocks. What runs in the WordPress layer by
+its own names is asked of it through Handoff: the meta core registers on init (`registerInitMeta()`), a
+query's template (`queryTemplate()`), the block templates (`blockTemplates()`), and hooked blocks inserted
+into content (`blockHooks()`, `blockHooksForPost()`). WordPress function calls in src reach 0. Full run 35 (after batch 43)
+was green once its reds were run again alone: posts another process held for a while, three files a
+crashed comparison run had left in the uploads folder (removed by name), a Cove reload under the dogfood
+browser suites, and the two reds the environment makes (the changelog read from GitHub, the post_date tie).
+The http-transports probe stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
