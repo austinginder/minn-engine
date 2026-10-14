@@ -1915,6 +1915,150 @@
                 "body": "049c7da15483"
             }
         },
+        "query.php": {
+            "_find_post_by_old_date": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Posts",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the _wp_old_date SQL, falls back to an old slug matching an old date, and reads both through $wpdb with the salted cache: a stored-data lookup",
+                "body": "efb84fd515dd"
+            },
+            "_find_post_by_old_slug": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Posts",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the _wp_old_slug SQL with the date clauses and reads it through $wpdb with the salted cache; Posts::byOldSlug holds the engine's own lookup without the dates",
+                "body": "2a9166be6291"
+            },
+            "_minn_archive_title_parts": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\ArchiveTitle",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "chooses the prefix and name per archive kind, the table ArchiveTitle::parts keeps for the block path from a Resolution; the post type archive and Archives default would join it",
+                "doubt": "post format archives get the taxonomy prefix where WordPress titles them plainly (Asides, Galleries), and the taxonomy prefix skips the translatable '%s:' format",
+                "body": "cbb8009a1b11"
+            },
+            "_minn_cached_post_query": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostCaches",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "caching for the old-slug finders: md5 key, posts last_changed salt, read, else compute and store in post-queries",
+                "body": "57d155f4dab7"
+            },
+            "_minn_old_slug_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SingleAddresses",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "works out the type from the query vars, skips hierarchical types, finds the post by old date or slug through old_slug_redirect_post_id and builds the paged or embed link",
+                "doubt": "the type is post_type or 'post'; WordPress first guesses 'attachment' from the attachment var and 'page' from pagename",
+                "body": "556ccf82c421"
+            },
+            "_minn_run_main_query": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\MainQueryBridge",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "engine-only helper the bridge calls: makes the main WP_Query, installs it as $wp_the_query and $wp_query so pre_get_posts sees it, runs it and flattens the posts to rows with the page size",
+                "body": "b4dc56e79edf"
+            },
+            "_minn_seed_main_query": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\MainQueryBridge",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "builds a main query without running it: parses vars, forces posts-page flags, loads the posts or a single by id or by name and type, counts pages, then installs $wp_the_query, $wp_query and $post; decisions the bridge owns",
+                "body": "474ec916d78f"
+            },
+            "_minn_seed_wp_request": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "writes the global $wp object's request, query_vars and did_permalink from the request URI before the parse, the state plugins read on parse_request and wp",
+                "body": "57b0bcecdbe0"
+            },
+            "_minn_wp_title_date": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DocumentTitle",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "parses m or year/monthnum/day into date parts and names the month through the $wp_locale global",
+                "doubt": "a year archive without a month gives no title (WordPress shows the year), and a day read from m keeps its leading zero where WordPress casts it to an integer",
+                "body": "7bab5cc05066"
+            },
+            "_minn_wp_title_parts": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DocumentTitle",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "picks the title parts from the main query's conditionals (search, 404, post, term, type archive, author, date), the decision DocumentTitle::parts makes for the document title",
+                "doubt": "on a static front page WordPress leaves the title empty (it checks is_page() && !is_front_page()), here is_singular() gives the page's title",
+                "body": "d3681781e4e3"
+            },
+            "get_the_archive_title": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\ArchiveTitle",
+                "why": "joins the computed prefix and name into the span shape and fires get_the_archive_title_prefix and get_the_archive_title around them; ArchiveTitle already holds the parts and compose() for the block path",
+                "body": "9ca7449a4cc2"
+            },
+            "redirect_canonical": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Canonical",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "takes the stored front resolution or asks Canonical::location, rebuilds the requested URL, stands down on a found 404, fires redirect_canonical and redirects with the stored status: canonical decisions Canonical should own whole",
+                "body": "665b07f68cd2"
+            },
+            "single_month_title": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DocumentTitle",
+                "gates": [
+                    "globals"
+                ],
+                "why": "reads the month and year from m or year/monthnum and names the month through $wp_locale; a title tag like DocumentTitle's others, with the display flag as shape",
+                "body": "08c12589561d"
+            },
+            "the_archive_description": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_the_archive_description() between before and after when it is not empty",
+                "body": "cbb9433799a6"
+            },
+            "the_archive_title": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_the_archive_title() between before and after when it is not empty",
+                "body": "6b6088615b23"
+            },
+            "wp_old_slug_redirect": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SingleAddresses",
+                "why": "decides the former-slug redirect from the front's stored resolution or the query, fires old_slug_redirect_url and ends the request; SingleAddresses::formerSlug already makes this move for the front",
+                "body": "7f3d54478da6"
+            },
+            "wp_title": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DocumentTitle",
+                "why": "assembles the title from computed parts, joins them by separator side and fires wp_title_parts and wp_title around them; only the display flag is shape",
+                "body": "01c111b7d575"
+            }
+        },
         "robots-template.php": {
             "wp_robots": {
                 "verdict": "move",
@@ -2006,6 +2150,511 @@
                 "reason": "compose",
                 "why": "prints the rules through wp_print_inline_script_tag, which fires its own filters",
                 "body": "9766dc147e3f"
+            }
+        },
+        "template.php": {
+            "_minn_archive_is_current": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Archives",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "decides whether a row is the current period or post by comparing the query vars per archive type",
+                "doubt": "no is_archive() check, so a single post under a dated permalink marks its period current where WordPress marks none",
+                "body": "b31d917d5bf8"
+            },
+            "_minn_archive_rows": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Archives",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "wires Archives with date, link, week and title closures and picks posts or periods by type; the wiring belongs with Archives",
+                "body": "fc0f8a48a11f"
+            },
+            "_minn_avatar_subject": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Avatar",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "maps an id, address, user, post or comment to the user, email and hash, the subject rule Avatar's class doc already claims",
+                "body": "6e91807f4bfd"
+            },
+            "_minn_block_head_defaults": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers the block theme's wp_head defaults by public callback names so plugins can remove_action them",
+                "body": "953545fdca1c"
+            },
+            "_minn_calendar": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Calendar",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "wires the engine Calendar from $wp_locale labels, date link closures, start_of_week and Posts' day and neighbour-month lookups; the wiring belongs with Calendar",
+                "body": "dd0500eee403"
+            },
+            "_minn_calendar_month": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Calendar",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "decides the calendar's month from the m, year and monthnum globals or the main query, falling back to now",
+                "doubt": "m shorter than six digits falls back instead of giving January, a year without a month keeps that year where WordPress shows the current month, m wins over year with monthnum, and ?w= is not read",
+                "body": "0dce87986d7a"
+            },
+            "_minn_classic_bar_footer": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes the engine admin bar's render for the stored resolution when both are present",
+                "body": "8f2c4368fef1"
+            },
+            "_minn_classic_bar_head": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes the engine admin bar's head output when the runtime holds one",
+                "body": "88cf79162906"
+            },
+            "_minn_classic_head_defaults": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers the wp_head defaults by public callback names so plugins can remove_action them, handing block themes to the block list",
+                "doubt": "the classic list misses wp_preload_resources and locale_stylesheet, which WordPress hooks to wp_head for every theme and the block list has",
+                "body": "d2f8296ecc6c"
+            },
+            "_minn_extra_feed": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\HeadLinks",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "chooses the extra feed by context (post comments, type archive, term, author, search), formats its title and asks its show filter",
+                "doubt": "feed_links_extra_show_post_comments_feed gets true instead of the feed_links_show_comments_feed answer, and that filter only runs when comments are open",
+                "body": "8b626b11cb19"
+            },
+            "_minn_list_current_page": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "decides which page is current from the main query (page, attachment, posts page, hierarchical singular)",
+                "body": "e993c5181c20"
+            },
+            "_minn_tooltip_id": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\Tooltip",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a static counter making wp-tooltip-N ids: engine state",
+                "body": "6f728c83acd1"
+            },
+            "_wp_render_title_tag": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "prints wp_get_document_title() inside a title element when the theme supports title-tag",
+                "body": "a594639c26ca"
+            },
+            "_wp_to_kebab_case": {
+                "verdict": "delegate",
+                "to": "Minn\\Blocks\\StyleEngine::kebab",
+                "why": "re-cuts camel case and separators with its own regexes; StyleEngine::kebab already splits words as the reference does",
+                "doubt": "punctuation and apostrophes survive here ('a.b' stays 'a.b') where WordPress's word split drops them",
+                "body": "9a6517653b35"
+            },
+            "add_thickbox": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers and enqueues the thickbox script and style through the public asset functions",
+                "body": "9d6de218b190"
+            },
+            "allowed_tags": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Kses",
+                "gates": [
+                    "globals"
+                ],
+                "why": "formats the $allowedtags global as tag and empty-attribute text and entity-encodes it; the global stays read in the facade and is passed in",
+                "body": "54784ebbff4f"
+            },
+            "esc_xml": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Escape",
+                "why": "an escaping algorithm: entity normalisation for XML, bare ampersands and the four specials, then the esc_xml filter",
+                "doubt": "CDATA sections are escaped where WordPress's esc_xml leaves <![CDATA[...]]> blocks untouched",
+                "body": "8c0b5e29d73d"
+            },
+            "feed_links": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes HeadLinks::siteFeeds() when the theme supports automatic-feed-links",
+                "body": "51a3cd820f50"
+            },
+            "feed_links_extra": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\HeadLinks",
+                "why": "fills the translated title formats through feed_links_extra_args and prints the alternate link the context picks; HeadLinks::siteFeeds already does the site feeds this way",
+                "body": "b6d7ea3be1c7"
+            },
+            "get_archive_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "feeds the queried post types to Hierarchy::archive and calls get_query_template by name so its filters fire",
+                "body": "bae5b672d9ca"
+            },
+            "get_attachment_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "feeds the queried attachment's mime type to Hierarchy::attachment and calls get_query_template by name so its filters fire",
+                "body": "1f224ae246a2"
+            },
+            "get_author_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "feeds the queried author's nicename and id (or the query vars) to Hierarchy::author and calls get_query_template by name",
+                "body": "91f1be1a6a10"
+            },
+            "get_avatar_data": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Avatar",
+                "why": "resolves the subject, comment type, email hash and Gravatar URL between pre_get_avatar_data, get_avatar_url and get_avatar_data; Avatar holds the pieces but not the flow",
+                "body": "794aeda453e6"
+            },
+            "get_blogs_of_user": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserSites",
+                "why": "answers the single site's record for a user from options between pre_get_blogs_of_user and get_blogs_of_user",
+                "doubt": "WordPress returns [] for user 0 before the pre filter, checks the user's meta rather than the user, and returns the single-site list without the get_blogs_of_user filter (multisite only)",
+                "body": "06fb0bdc5f1d"
+            },
+            "get_calendar": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Calendar",
+                "why": "reads the legacy argument form, filters the args, picks the month and renders the calendar through the get_calendar filter; the display flag is shape",
+                "doubt": "a site with no published posts of the type gets an empty month table where WordPress returns nothing",
+                "body": "a53cccec57de"
+            },
+            "get_category_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "feeds the queried category's slug and id to Hierarchy::term and calls get_query_template by name so its filters fire",
+                "body": "155453cdfa15"
+            },
+            "get_day_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Permalinks",
+                "why": "defaults year, month and day to now, picks the pretty or ?m= form with padded parts and fires day_link; Permalinks::forDate builds the same address",
+                "doubt": "same root-only /YYYY/MM/DD/ path as get_year_link, ignoring the date permastruct's front",
+                "body": "645462390a2b"
+            },
+            "get_footer": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires get_footer, names footer-name.php then footer.php and loads through locate_template by name",
+                "body": "7ef0eb69489e"
+            },
+            "get_header": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires get_header, names header-name.php then header.php and loads through locate_template by name",
+                "body": "730355e28539"
+            },
+            "get_month_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Permalinks",
+                "why": "defaults year and month to now, picks the pretty or ?m= form with the zero-padded month and fires month_link; Permalinks::forDate builds the same address",
+                "doubt": "same root-only /YYYY/MM/ path as get_year_link, ignoring the date permastruct's front",
+                "body": "3efcc99b7f53"
+            },
+            "get_page_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "feeds the queried page's template slug, name and id to Hierarchy::page and calls get_query_template by name so its filters fire",
+                "body": "990996594794"
+            },
+            "get_post_type_archive_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "returns '' for a type without an archive, else get_archive_template() by name",
+                "doubt": "an unregistered type falls through to get_archive_template() where WordPress returns '' when the type object is missing",
+                "body": "396746eaa31d"
+            },
+            "get_query_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "cleans the type, filters the hierarchy, then chains locate_template and locate_block_template before the type's template filter",
+                "body": "3d2b9056b43d"
+            },
+            "get_search_form": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\SearchForm",
+                "why": "builds the default html5 or xhtml form by rules around the args and format filters; locating and loading a theme's searchform.php stays in the facade for scope",
+                "doubt": "the pre-5.2 boolean form get_search_form(false) still echoes (WordPress reads a non-array argument as the echo flag), a null from the get_search_form filter is not replaced by the form, and the labels are untranslated",
+                "body": "fae5506b7e3a"
+            },
+            "get_sidebar": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires get_sidebar, names sidebar-name.php then sidebar.php and loads through locate_template by name",
+                "body": "0165c7de0440"
+            },
+            "get_single_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "feeds the queried post's type, name and template slug to Hierarchy::single and calls get_query_template by name so its filters fire",
+                "body": "746b2a448653"
+            },
+            "get_tag_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "feeds the queried tag's slug and id to Hierarchy::term and calls get_query_template by name so its filters fire",
+                "body": "53ef43b3f82a"
+            },
+            "get_taxonomy_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "feeds the queried term's taxonomy, slug and id to Hierarchy::term and calls get_query_template by name so its filters fire",
+                "body": "a5cb193541d4"
+            },
+            "get_template_part": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires the template part actions, names slug-name.php then slug.php and loads through locate_template by name",
+                "body": "9eea948e887b"
+            },
+            "get_the_block_template_html": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "runs the $_wp_current_template_content global through the public content pipeline (embeds, shortcodes, blocks, texturize, smilies, content tags) and wraps it",
+                "doubt": "do_blocks runs before do_shortcode where WordPress runs shortcodes first, and a singular page is not rendered inside the loop with the_post() as WordPress does",
+                "body": "bf33514ab131"
+            },
+            "get_the_generator": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FeedTags",
+                "why": "maps the current feed hook to a generator type and builds the generator markup per type before its filter",
+                "body": "012e4f555202"
+            },
+            "get_the_post_type_description": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "reads the queried post type's object and passes its description through get_the_post_type_description",
+                "body": "a25b17eea007"
+            },
+            "get_upload_iframe_src": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "chains add_query_arg over admin_url and fires the type's upload_iframe_src filter",
+                "doubt": "falls back to get_the_ID() where WordPress reads the global $post_ID of the edit screen",
+                "body": "e659e3643454"
+            },
+            "get_year_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Permalinks",
+                "why": "defaults the year to now, picks the pretty or ?m= form and fires year_link; Permalinks::forDate builds the same address but without user_trailingslashit or the filter",
+                "doubt": "pretty date links always start at the root (/YYYY/), where WordPress's date permastruct keeps the structure's front and moves under /date/ when the structure starts with %post_id%; a year of 0 also stays 0 instead of falling back to now",
+                "body": "4db0c9816193"
+            },
+            "load_template": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "extracts the query vars and requires the template in the scope of the globals templates expect, between the before and after actions",
+                "body": "da5fe574f280"
+            },
+            "locate_template": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TemplateFiles",
+                "why": "searches the child, parent and engine theme-compat folders with the path check, a file lookup TemplateFiles should own; the load_template call stays in the facade for scope",
+                "doubt": "WordPress locates through the $wp_stylesheet_path and $wp_template_path globals (set once by wp_set_template_globals), here the directory functions are asked on every call",
+                "body": "fe9feb6a87cf"
+            },
+            "maybe_hash_hex_color": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Sanitize",
+                "why": "adds the hash back when the no-hash check passes, else returns the input: the same colour rule as Sanitize::hexColor",
+                "body": "c69a4838bc7d"
+            },
+            "page_template_dropdown": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\Dropdowns",
+                "why": "sorts the page templates by name and echoes the option markup with the selected mark",
+                "body": "f50aefb0b157"
+            },
+            "sanitize_hex_color_no_hash": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Sanitize",
+                "why": "strips the hash and validates through the colour rule; Sanitize::hexColor holds that rule, so the no-hash form sits beside it",
+                "body": "815575026e5b"
+            },
+            "the_weekday": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "names the post's weekday through $wp_locale and get_post_time and echoes it through the_weekday",
+                "body": "60a883003c29"
+            },
+            "the_weekday_date": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "prints the weekday once per change, remembered in the $previousweekday global the loop shares",
+                "doubt": "compares weekday names where WordPress compares $currentday (the post's date) with $previousweekday, so posts a week apart on the same weekday print once here",
+                "body": "3b9f580af286"
+            },
+            "wp_dependencies_unique_hosts": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "gates": [
+                    "globals"
+                ],
+                "why": "walks the queued handles of $wp_scripts and $wp_styles for foreign hosts; Assets::externalHosts does this but walks dependencies and uses the request host, so the queue-only form joins it",
+                "body": "cdbbc4ffd25f"
+            },
+            "wp_dropdown_pages": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "why": "builds the select element and its no-change and none options by rules around the walked options, then fires wp_dropdown_pages",
+                "body": "e7e0041b168e"
+            },
+            "wp_dropdown_roles": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\Dropdowns",
+                "why": "builds the role options, reversed, with the selected mark and translated names, then echoes them",
+                "body": "0bdc9dac7deb"
+            },
+            "wp_editor": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\Editor",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "builds a textarea from the parsed editor settings: markup by rules standing in for the editor",
+                "doubt": "a bare textarea: WordPress prints the editor wrap with media buttons and Quicktags or TinyMCE, and fires the_editor and the_editor_content filters",
+                "body": "0ccfe67f6bdd"
+            },
+            "wp_enqueue_img_auto_sizes_contain_css_fix": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AssetQueue",
+                "why": "a run-once static flag and the wp_img_tag_add_auto_sizes decision before registering the inline contain-intrinsic-size style: engine state",
+                "doubt": "WordPress puts this handle at the front of the style queue so it prints first and stands down when a plugin unhooked the older print callback; here it is appended and that check is missing",
+                "body": "515fdbc181f6"
+            },
+            "wp_finalize_template_enhancement_output_buffer": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the buffer callback: lets a cleaned phase through, else runs the page through wp_template_enhancement_output_buffer and fires the finalized action",
+                "doubt": "no Content-Type check: WordPress filters only an HTML response and hands others to the finalized action unfiltered",
+                "body": "996240bd772b"
+            },
+            "wp_get_archives": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Archives",
+                "why": "parses and filters the args, writes the WHERE and JOIN through their filters, reads rows from Archives and builds each link with its count and current mark",
+                "doubt": "with show_post_count the count replaces the after argument where WordPress prepends it ('&nbsp;(3)' . $after)",
+                "body": "4c933cb17f4a"
+            },
+            "wp_get_toggletip": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\Tooltip",
+                "why": "builds the toggletip's button, dialog popover and close button markup by rules",
+                "body": "a9897b2266fc"
+            },
+            "wp_get_tooltip": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\Tooltip",
+                "why": "builds the tooltip's button and hint popover markup by rules from the content and args",
+                "body": "3be028e01a1f"
+            },
+            "wp_heartbeat_settings": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a heartbeat_settings filter callback adding admin_url and the pluggable wp_create_nonce to the settings",
+                "doubt": "WordPress sets ajaxurl only off admin screens and with the relative scheme; here it is always set and absolute",
+                "body": "2903dbd9a862"
+            },
+            "wp_list_pages": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "why": "normalises spacing, cleans and filters the excludes, wraps the walked tree in the title_li item and fires wp_list_pages; walk_page_tree stays called so a walker argument applies",
+                "body": "0e2362824d75"
+            },
+            "wp_login_form": {
+                "verdict": "move",
+                "to": "Minn\\Login\\LoginForm",
+                "why": "the defaults, login_form_defaults and the top, middle and bottom filters go with LoginForm::embedded; echo or return stays",
+                "doubt": "the labels are English literals where WordPress translates them with __()",
+                "body": "08e991884afa"
+            },
+            "wp_loginout": {
+                "verdict": "move",
+                "to": "Minn\\Login\\LoginLinks",
+                "why": "builds the log in or log out link by the signed-in state, then filters loginout and echoes or returns",
+                "doubt": "the link text is the untranslated 'Log in'/'Log out' where WordPress uses __()",
+                "body": "e6e52672019c"
+            },
+            "wp_oembed_add_discovery_links": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostEmbed",
+                "why": "keeps a printed-once flag in the runtime, builds the JSON and XML discovery links for the singular permalink and fires oembed_discovery_links",
+                "doubt": "the endpoint is home_url('/wp-json/...') rather than get_oembed_endpoint_url (rest_url plus oembed_endpoint_url), missing plain permalinks and that filter; off singular pages oembed_discovery_links never fires",
+                "body": "c2335e70e6c8"
+            },
+            "wp_preload_resources": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\HeadLinks",
+                "why": "filters wp_preload_resources, dedupes by href or imagesrcset and prints the allowed attributes as preload links by rule",
+                "doubt": "imagesrcset and imagesizes print without WordPress's as=image conditions, and numeric-keyed bare attributes are dropped where WordPress prints them",
+                "body": "f0d82106e3a5"
+            },
+            "wp_register": {
+                "verdict": "move",
+                "to": "Minn\\Login\\LoginLinks",
+                "why": "builds the Register or Site Admin link by the signed-in state and users_can_register, then filters register and echoes or returns",
+                "doubt": "a signed-in user gets Site Admin without WordPress's current_user_can('read') check, and the link texts are untranslated",
+                "body": "deabeadcb387"
+            },
+            "wp_resource_hints": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\HeadLinks",
+                "why": "collects external asset hosts, runs each relation through wp_resource_hints, dedupes and prints the link markup by rules",
+                "doubt": "prefetch and prerender are never offered to the filter, preconnect hrefs are not cut to scheme://host, attributes outside WordPress's list print, and hosts include dependencies' where WordPress reads only queued handles",
+                "body": "063a471aed25"
+            },
+            "wp_sanitize_script_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Support\\ScriptTag",
+                "why": "formats attributes by rule (false dropped, true bare, values escaped); ScriptTag::attributes does a sorted variant privately, so the unsorted form joins it",
+                "body": "9717623e2aa7"
+            },
+            "wp_set_template_globals": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets the $wp_stylesheet_path and $wp_template_path globals that template location and plugins read",
+                "body": "6c3f50ee377e"
+            },
+            "wp_site_icon": {
+                "verdict": "move",
+                "to": "Minn\\Content\\SiteIcon",
+                "why": "builds the four icon tags at fixed sizes and prints them through site_icon_meta_tags; SiteIcon::links() already builds the same four tags",
+                "body": "c990b4e1cd73"
+            },
+            "wp_star_rating": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\StarRating",
+                "why": "turns a rating or percent into full, half and empty stars and builds the markup and screen-reader title",
+                "doubt": "a plain rating is rounded to one decimal (3.04 loses the half star WordPress's ceil gives), comma decimals are not read, and one rating reads '1 ratings' where WordPress uses _n()",
+                "body": "415cb55d935b"
+            },
+            "wp_start_template_enhancement_output_buffer": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "asks wp_should_output_buffer_template_for_enhancement, opens the buffer on the public finalize callback and fires the started action",
+                "body": "c54cf5465a59"
             }
         },
         "theme-previews.php": {
