@@ -6,6 +6,7 @@ namespace Minn\Content;
 
 use Minn\Media\FileTypes;
 use Minn\Objects\Post;
+use Minn\Runtime\PostReads;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
@@ -96,7 +97,7 @@ final class MediaShortcodes
             return [];
         }
         $args = (array) Runtime::hooks()->filter('get_attached_media_args', [['post_parent' => $post->ID, 'post_type' => 'attachment', 'post_mime_type' => $type, 'posts_per_page' => -1, 'orderby' => 'menu_order', 'order' => 'ASC'], $type, $post]);
-        return (array) Runtime::hooks()->filter('get_attached_media', [(array) \get_children($args), $type, $post]);
+        return (array) Runtime::hooks()->filter('get_attached_media', [(array) PostReads::children($args), $type, $post]);
     }
 
     /**

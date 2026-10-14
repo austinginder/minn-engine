@@ -8,6 +8,7 @@ use Minn\I18n\Gettext;
 use Minn\I18n\Numbers;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostLinks;
+use Minn\Runtime\PostReads;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
@@ -34,7 +35,7 @@ final class EmbedCard
     public static function thumbnail(): ?array
     {
         $id = PostTags::hasThumbnail() ? (int) PostTags::thumbnailId() : 0;
-        if (\get_post_type() === 'attachment' && \wp_attachment_is_image()) {
+        if (PostReads::type() === 'attachment' && \wp_attachment_is_image()) {
             $id = (int) PostTags::id();
         }
         $id = (int) Runtime::hooks()->filter('embed_thumbnail_id', [$id]);

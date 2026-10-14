@@ -502,7 +502,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 76)
+Internals: `enclosures()` (private, line 77)
 
 
 ## FeedTemplates
@@ -857,7 +857,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 123)
+Internals: `append()` (private, line 124)
 
 
 ## PostNavigation
@@ -1300,7 +1300,7 @@ fits. Null when the site has no rules (plain permalinks).
 
 - `@return array{request: string, rule: string, query: string, vars: array<string, string>}|null`
 
-Internals: `subject()` (private, line 61), `first()` (private, line 79), `queryOf()` (private, line 104), `pageAt()` (private, line 115)
+Internals: `subject()` (private, line 62), `first()` (private, line 80), `queryOf()` (private, line 105), `pageAt()` (private, line 116)
 
 
 ## SingleAddresses

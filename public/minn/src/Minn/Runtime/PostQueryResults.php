@@ -36,7 +36,7 @@ final class PostQueryResults
             $query->post_count = count($query->posts);
             $query->posts = array_map(static fn (mixed $post): mixed => Records::post($post), $query->posts);
             if ($q['cache_results']) {
-                \update_post_caches($query->posts, $this->parts->postType, $q['update_post_term_cache'], $q['update_post_meta_cache']);
+                PostReads::updateCaches($query->posts, $this->parts->postType, $q['update_post_term_cache'], $q['update_post_meta_cache']);
             }
             $query->post = reset($query->posts);
         }
@@ -55,7 +55,7 @@ final class PostQueryResults
             $query->is_single = true;
             $query->is_attachment = true;
         }
-        $status = \get_post_status($first);
+        $status = PostReads::status($first);
         if (!in_array($status, $this->parts->statuses, true)) {
             $query->posts = $this->visible($status) ? $query->posts : [];
         }
@@ -123,7 +123,7 @@ final class PostQueryResults
         }
         // The missing stickies, published, fetched with this query's filter and cache settings.
         $settings = ['suppress_filters', 'cache_results', 'update_post_meta_cache', 'update_post_term_cache', 'lazy_load_term_meta'];
-        $found = \get_posts(['post__in' => $sticky, 'post_type' => $this->parts->postType, 'post_status' => 'publish', 'posts_per_page' => count($sticky)]
+        $found = PostReads::query(['post__in' => $sticky, 'post_type' => $this->parts->postType, 'post_status' => 'publish', 'posts_per_page' => count($sticky)]
             + array_combine($settings, array_map(static fn (string $setting): mixed => $q[$setting], $settings)));
         array_splice($query->posts, $offset, 0, $found);
     }

@@ -57,7 +57,7 @@ final class NavMenuItems
             'order' => 'ASC', 'orderby' => 'menu_order', 'post_type' => 'nav_menu_item', 'post_status' => 'publish', 'output' => \ARRAY_A, 'output_key' => 'menu_order', 'nopaging' => true,
             'update_menu_item_cache' => true, 'tax_query' => [['taxonomy' => 'nav_menu', 'field' => 'term_taxonomy_id', 'terms' => $menu->term_taxonomy_id]],
         ]);
-        $items = array_map(self::setUp(...), (array) \get_posts($args));
+        $items = array_map(self::setUp(...), (array) PostReads::query($args));
         if (!Runtime::current()->isAdmin) {
             $items = array_filter($items, static fn ($item) => empty($item->_invalid));
         }

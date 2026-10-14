@@ -73,7 +73,7 @@ final class PostSave
         $row = array_intersect_key((array) Slashes::strip($sanitized), array_flip(self::DATA));
         if ($before !== null) {
             // An update keeps the guid it had, in its display form (probe insert-defaults).
-            $row = array_replace($row, ['guid' => (string) \get_post_field('guid', $id)]);
+            $row = array_replace($row, ['guid' => (string) PostReads::field('guid', $id)]);
         }
         // A private post keeps no password (probe placeholders-admin).
         $row = $value('post_status') === 'private' ? array_replace($row, ['post_password' => '']) : $row;
@@ -128,7 +128,7 @@ final class PostSave
     {
         $postarr = array_merge(self::DEFAULTS, ['post_author' => CurrentUser::id()], $postarr);
         unset($postarr['filter']);
-        return (array) \sanitize_post(['ID' => 0] + $postarr, 'db');
+        return (array) PostFields::sanitize(['ID' => 0] + $postarr, 'db');
     }
 
     /** wp_insert_post_empty_content over whether a type with an editor, a title and an excerpt has none of them. @param array<string, mixed> $sanitized */
@@ -179,7 +179,7 @@ final class PostSave
     public static function guidAndSlug(array $columns, int $postId, string $type, PostSlugs $slugs): array
     {
         ['post_status' => $status, 'post_name' => $name, 'post_parent' => $parent] = $columns;
-        $settled = $postId > 0 ? ['guid' => (string) \get_post_field('guid', $postId)] : [];
+        $settled = $postId > 0 ? ['guid' => (string) PostReads::field('guid', $postId)] : [];
         if (!self::keepsSlug((string) $status, $type)) {
             $settled += ['post_name' => self::slugFilters((string) $name, $postId, (string) $status, $type, (int) $parent, $slugs)];
         }

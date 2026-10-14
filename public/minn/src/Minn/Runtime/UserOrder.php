@@ -52,7 +52,7 @@ final class UserOrder
     /** Joins each author's published post count in, and orders by it. */
     private static function postCount(UsersQuery $query, object $wpdb): string
     {
-        $where = \get_posts_by_author_sql('post');
+        $where = PostReads::byAuthorSql('post');
         $query->query_from .= " LEFT OUTER JOIN (\n\t\t\t\tSELECT post_author, COUNT(*) as post_count\n\t\t\t\tFROM {$wpdb->posts}\n\t\t\t\t{$where}\n\t\t\t\tGROUP BY post_author\n\t\t\t) p ON ({$wpdb->users}.ID = p.post_author)";
         return 'post_count';
     }

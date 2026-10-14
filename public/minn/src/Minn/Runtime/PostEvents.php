@@ -75,7 +75,7 @@ final readonly class PostEvents
             return;
         }
         // A post with none is handed the default first, as the reference's insert hands it on (wp_set_post_categories only hears an empty list from a caller that passes one).
-        $categories = \wp_get_post_categories($id);
+        $categories = PostReads::categories($id);
         \wp_set_post_categories($id, $categories === [] ? [(int) Runtime::options()->filtered('default_category')] : $categories);
     }
 

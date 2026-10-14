@@ -8,6 +8,7 @@ use Minn\Objects\Post;
 use Minn\Objects\User;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\PostLinks;
+use Minn\Runtime\PostReads;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
@@ -33,7 +34,7 @@ final class PostEmbed
     public static function data(mixed $post, int $width): array|false
     {
         $post = Records::post($post);
-        if (!$post instanceof Post || !\is_post_publicly_viewable($post)) {
+        if (!$post instanceof Post || !PostReads::publiclyViewable($post)) {
             return false;
         }
         $limits = (array) Runtime::hooks()->filter('oembed_min_max_width', [['min' => 200, 'max' => 600]]);

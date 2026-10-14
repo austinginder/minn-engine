@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Closure;
 use Minn\Objects\Post;
+use Minn\Runtime\PostReads;
 use Minn\Runtime\SiteUrls;
 
 /**
@@ -114,7 +115,7 @@ final class RuleTable
     /** Whether a page stands at a path (not one in the trash). */
     private static function pageAt(string $path): bool
     {
-        $page = \get_page_by_path($path);
+        $page = PostReads::pageByPath($path);
         return $page instanceof Post && !in_array($page->post_status, ['trash', 'auto-draft'], true);
     }
 }

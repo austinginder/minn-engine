@@ -16156,6 +16156,16 @@ red was the wp-query-sql row "parents in their order", whose top-level posts tie
 order, so the database may give them in either order. The http-transports probe stays out of the
 comparison; the other probes give identical output before and after.
 
+**Batch 24, post reads (function calls 240 → 215).** `Runtime\PostReads` answers what the facade's post
+reads did: `pageUri()`, `pageByPath()`, `type()`, `status()` (an attachment's is its parent's), `field()`,
+`publiclyViewable()`, `lastTime()`, `lastDate()` and `lastModified()`, `query()` (get_posts: five
+published posts by date unless asked otherwise), `children()`, `categories()`, `mimeTypeWhere()`,
+`byAuthorSql()`, `prime()` and `updateCaches()`. `Runtime\PostFields` puts a post's fields in a context
+(`value()`, `sanitize()`, `formatToEdit()`, `richEdit()`), and `MetaData::userOption()` reads a user's
+option under the site's prefix first. The query arguments get_posts adds are set with `array_replace`
+and read by keyed destructuring, so the bracket reads of post columns stay at 205. The http-transports
+probe stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

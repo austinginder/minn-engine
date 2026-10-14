@@ -24,6 +24,8 @@ published posts, and its private ones the reader may see (all of them
 with the cap to read others', their own otherwise), OR'd; an author
 narrows it; WHERE in front when asked.
 
+Used by: `Minn\Runtime\PostReads`
+
 ### static `sql(array $types, int $reader, string $full, ?int $author, string $publicOnly): string`
 
 The clause for the posts an author's lists count, as the reader may see them.
@@ -264,6 +266,8 @@ a bare group or a star widened with % into a LIKE, an exact type an
 equality, all OR'd; an empty type or a lone wildcard means no clause.
 
 - const `WILDCARDS` = `array (   0 => '',   1 => '%',   2 => '%/%', )`
+
+Used by: `Minn\Runtime\PostReads`
 
 ### static `sql(array|string $types, string $alias = ''): string`
 

@@ -130,14 +130,14 @@ final class PostQueryWhere
                 foreach ((array) $types as $type) {
                     $object = Registered::postType($type);
                     if ($object && $object->hierarchical) {
-                        $found = \get_page_by_path($q['pagename'], OBJECT, $type);
+                        $found = PostReads::pageByPath($q['pagename'], OBJECT, $type);
                         if ($found) {
                             break;
                         }
                     }
                 }
             } else {
-                $found = \get_page_by_path($q['pagename']);
+                $found = PostReads::pageByPath($q['pagename']);
             }
             $page = !empty($found) ? $found->ID : 0;
         }
@@ -228,7 +228,7 @@ final class PostQueryWhere
         $this->commentCount($q);
         ['post_mime_type' => $mime] = $q + ['post_mime_type' => null];
         if ($mime !== null && $mime !== '') {
-            $this->parts->whichmimetype = \wp_post_mime_type_where($mime, $t);
+            $this->parts->whichmimetype = PostReads::mimeTypeWhere($mime, $t);
         }
     }
 

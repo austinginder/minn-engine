@@ -86,32 +86,18 @@ function get_the_ID()
 
 function get_post_type($post = null)
 {
-    $post = get_post($post);
-    return $post === null ? false : $post->post_type;
+    return Minn\Runtime\PostReads::type($post);
 }
 
 function get_post_status($post = null)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $status = $post->post_status;
-    if ($post->post_type === 'attachment' && $status === 'inherit') {
-        $parent = $post->post_parent > 0 ? get_post($post->post_parent) : null;
-        $status = $parent === null ? 'publish' : ($parent->post_status === 'trash' ? get_post_meta($parent->ID, '_wp_trash_meta_status', true) ?: 'publish' : $parent->post_status);
-    }
-    return apply_filters('get_post_status', $status, $post);
+    return Minn\Runtime\PostReads::status($post);
 }
 
 /** One column of a post through sanitize_post_field in the context asked for (probe post-field). */
 function get_post_field($field, $post = null, $context = 'display')
 {
-    $post = get_post($post);
-    if ($post === null || !isset($post->{$field})) {
-        return '';
-    }
-    return sanitize_post_field((string) $field, $post->{$field}, $post->ID, (string) $context);
+    return Minn\Runtime\PostReads::field($field, $post, $context);
 }
 
 function get_post_mime_type($post = null)
@@ -365,14 +351,7 @@ function wp_get_post_parent_id($post = null)
 
 function get_page_by_path($page_path, $output = OBJECT, $post_type = 'page')
 {
-    $segments = array_values(array_filter(explode('/', trim((string) $page_path, '/')), static fn ($s) => $s !== ''));
-    if ($segments === []) {
-        return null;
-    }
-    // One type looks among attachments too, as the reference does; a list looks among exactly its types.
-    $types = is_array($post_type) ? array_values(array_map('strval', $post_type)) : [(string) $post_type, 'attachment'];
-    $found = _minn_posts()->byTypedPath($segments, $types);
-    return $found === null ? null : get_post($found->id, $output);
+    return Minn\Runtime\PostReads::pageByPath($page_path, $output, $post_type);
 }
 
 function get_page_by_title($page_title, $output = OBJECT, $post_type = 'page')
@@ -384,18 +363,7 @@ function get_page_by_title($page_title, $output = OBJECT, $post_type = 'page')
 
 function get_page_uri($page = 0)
 {
-    $page = $page instanceof WP_Post ? $page : get_post($page);
-    if ($page === null) {
-        return false;
-    }
-    $uri = $page->post_name;
-    foreach (get_post_ancestors($page) as $parent) {
-        $ancestor = get_post($parent);
-        if ($ancestor !== null && $ancestor->post_name !== '') {
-            $uri = $ancestor->post_name . '/' . $uri;
-        }
-    }
-    return apply_filters('get_page_uri', $uri, $page);
+    return Minn\Runtime\PostReads::pageUri($page);
 }
 
 function url_to_postid($url)
@@ -1004,28 +972,7 @@ function query_posts($query)
 
 function get_posts($args = null)
 {
-    $defaults = ['numberposts' => 5, 'category' => 0, 'orderby' => 'date', 'order' => 'DESC', 'include' => [], 'exclude' => [], 'meta_key' => '', 'meta_value' => '', 'post_type' => 'post', 'suppress_filters' => true];
-    $parsed = wp_parse_args($args, $defaults);
-    if (empty($parsed['post_status'])) {
-        $parsed['post_status'] = $parsed['post_type'] === 'attachment' ? 'inherit' : 'publish';
-    }
-    if (!empty($parsed['numberposts']) && empty($parsed['posts_per_page'])) {
-        $parsed['posts_per_page'] = $parsed['numberposts'];
-    }
-    if (!empty($parsed['category'])) {
-        $parsed['cat'] = $parsed['category'];
-    }
-    if (!empty($parsed['include'])) {
-        $ids = wp_parse_id_list($parsed['include']);
-        $parsed['posts_per_page'] = count($ids);
-        $parsed['post__in'] = $ids;
-    } elseif (!empty($parsed['exclude'])) {
-        $parsed['post__not_in'] = wp_parse_id_list($parsed['exclude']);
-    }
-    $parsed['ignore_sticky_posts'] = true;
-    $parsed['no_found_rows'] = true;
-    unset($parsed['numberposts'], $parsed['category'], $parsed['include'], $parsed['exclude']);
-    return (new WP_Query())->query($parsed);
+    return Minn\Runtime\PostReads::query($args);
 }
 
 function get_pages($args = [])
@@ -1041,23 +988,7 @@ function _minn_page_descendants(array $pages, int $parent): array
 
 function get_children($args = '', $output = OBJECT)
 {
-    if (is_numeric($args) || is_object($args)) {
-        $args = ['post_parent' => is_object($args) ? (int) $args->ID : (int) $args];
-    }
-    $parsed = wp_parse_args($args, ['post_parent' => 0, 'post_type' => 'any', 'post_status' => 'any', 'numberposts' => -1]);
-    if (empty($parsed['post_parent'])) {
-        $current = get_post();
-        if ($current === null) {
-            return [];
-        }
-        $parsed['post_parent'] = $current->ID;
-    }
-    $children = get_posts($parsed);
-    $out = [];
-    foreach ($children as $child) {
-        $out[$child->ID] = $output === ARRAY_A ? $child->to_array() : ($output === ARRAY_N ? array_values($child->to_array()) : $child);
-    }
-    return $out;
+    return Minn\Runtime\PostReads::children($args, $output);
 }
 
 function wp_get_recent_posts($args = [], $output = ARRAY_A)
@@ -1843,8 +1774,7 @@ function is_post_status_viewable($post_status)
 
 function is_post_publicly_viewable($post = null)
 {
-    $post = get_post($post);
-    return $post !== null && is_post_type_viewable($post->post_type) && is_post_status_viewable(get_post_status($post));
+    return Minn\Runtime\PostReads::publiclyViewable($post);
 }
 
 function get_post_types($args = [], $output = 'names', $operator = 'and')
@@ -1980,9 +1910,7 @@ function get_available_post_statuses($type = 'post')
 
 function wp_get_post_categories($post_id = 0, $args = [])
 {
-    $args = wp_parse_args($args, ['fields' => 'ids']);
-    $terms = wp_get_object_terms((int) $post_id, 'category', $args);
-    return is_wp_error($terms) ? [] : $terms;
+    return Minn\Runtime\PostReads::categories($post_id, $args);
 }
 
 function wp_get_post_tags($post_id = 0, $args = [])
@@ -2208,42 +2136,13 @@ function the_ID()
  */
 function sanitize_post($post, $context = 'display')
 {
-    if (is_object($post)) {
-        if (isset($post->filter) && $post->filter === $context) {
-            return $post;
-        }
-        $id = (int) ($post->ID ?? 0);
-        foreach (array_keys(get_object_vars($post)) as $field) {
-            if ($field !== 'filter') {
-                $post->{$field} = sanitize_post_field($field, $post->{$field}, $id, $context);
-            }
-        }
-        $post->filter = $context;
-        return $post;
-    }
-    if (!is_array($post)) {
-        return $post;
-    }
-    if (($post['filter'] ?? null) === $context) {
-        return $post;
-    }
-    $id = (int) ($post['ID'] ?? 0);
-    foreach ($post as $field => $value) {
-        $post[$field] = $field === 'filter' ? $value : sanitize_post_field($field, $value, $id, $context);
-    }
-    $post['filter'] = $context;
-    return $post;
+    return Minn\Runtime\PostFields::sanitize($post, $context);
 }
 
 /** A post column as the reference hands it out: raw, escaped for edit forms, cast for the integer columns. */
 function sanitize_post_field($field, $value, $post_id, $context = 'display')
 {
-    $field = (string) $field;
-    if (in_array($field, ['ID', 'post_parent', 'menu_order'], true)) {
-        // The integer columns stay integers in every context, escaped or not.
-        return (int) _minn_sanitize_post_value($field, (int) $value, $post_id, (string) $context);
-    }
-    return _minn_sanitize_post_value($field, $value, $post_id, (string) $context);
+    return Minn\Runtime\PostFields::value($field, $value, $post_id, $context);
 }
 
 /**
@@ -2256,28 +2155,7 @@ function sanitize_post_field($field, $value, $post_id, $context = 'display')
  */
 function _minn_sanitize_post_value(string $field, $value, $post_id, string $context)
 {
-    $bare = str_starts_with($field, 'post_') ? substr($field, 5) : null;
-    if ($context === 'raw') {
-        return $value;
-    }
-    if ($context === 'db') {
-        return $bare === null ? apply_filters("{$field}_pre", apply_filters("pre_post_{$field}", $value)) : apply_filters("{$bare}_save_pre", apply_filters("pre_{$field}", $value));
-    }
-    if ($context === 'edit') {
-        $value = $bare === null ? apply_filters("edit_post_{$field}", $value, $post_id) : apply_filters("{$bare}_edit_pre", apply_filters("edit_{$field}", $value, $post_id), $post_id);
-        if (!is_scalar($value)) {
-            return $value;
-        }
-        if ($field === 'post_content') {
-            return format_to_edit((string) $value, user_can_richedit());
-        }
-        return in_array($field, ['post_title', 'post_excerpt', 'post_password'], true) ? format_to_edit((string) $value) : esc_attr((string) $value);
-    }
-    $value = apply_filters($bare === null ? "post_{$field}" : $field, $value, $post_id, $context);
-    if ($context === 'attribute') {
-        return esc_attr((string) $value);
-    }
-    return $context === 'js' ? esc_js((string) $value) : $value;
+    return Minn\Runtime\PostFields::value($field, $value, $post_id, $context);
 }
 
 /** The article's class list; see Minn\Content\PostClasses for the order. */
@@ -2374,36 +2252,12 @@ function is_page_template($template = '')
 /** The posts, their meta and their terms read in one query each for a list (rows the engine already holds are not read again). */
 function _prime_post_caches($ids, $update_term_cache = true, $update_meta_cache = true)
 {
-    $ids = array_values(array_filter(array_map('intval', (array) $ids), static fn (int $id): bool => $id > 0));
-    if ($ids === []) {
-        return;
-    }
-    $store = _minn_posts();
-    $store->primeRows($ids);
-    if ($update_meta_cache) {
-        $store->primeMeta($ids);
-    }
-    if ($update_term_cache) {
-        $types = [];
-        foreach ($ids as $id) {
-            $types[(string) ($store->find($id)?->type ?? '')] = true;
-        }
-        $taxonomies = [];
-        foreach (array_keys(array_filter($types, static fn ($on, $type) => $type !== '', ARRAY_FILTER_USE_BOTH)) as $type) {
-            $taxonomies = [...$taxonomies, ...get_object_taxonomies((string) $type)];
-        }
-        $store->primeTerms($ids, array_values(array_unique($taxonomies)));
-    }
+    Minn\Runtime\PostReads::prime($ids, $update_term_cache, $update_meta_cache);
 }
 
 function update_post_caches(&$posts, $post_type = 'post', $update_term_cache = true, $update_meta_cache = true)
 {
-    if (!$posts) {
-        return;
-    }
-    // Whole posts in hand are kept, not read again.
-    _minn_posts()->rememberRows(array_map(static fn ($post) => get_object_vars($post), array_values(array_filter((array) $posts, static fn ($post) => $post instanceof WP_Post))));
-    _prime_post_caches(array_map(static fn ($post) => is_object($post) ? (int) ($post->ID ?? 0) : (int) $post, (array) $posts), $update_term_cache, $update_meta_cache);
+    Minn\Runtime\PostReads::updateCaches($posts, $post_type, $update_term_cache, $update_meta_cache);
 }
 
 function update_post_thumbnail_cache($wp_query = null)
@@ -2453,19 +2307,13 @@ function _minn_query_body_classes(): array
 /** The newest published post's date (probe plugin-queue): local for 'blog', GMT for 'gmt', GMT with microseconds for 'server'; false for another timezone or an unknown type. */
 function get_lastpostdate($timezone = 'server', $post_type = 'any')
 {
-    return apply_filters('get_lastpostdate', _get_last_post_time($timezone, 'date', $post_type), $timezone, $post_type);
+    return Minn\Runtime\PostReads::lastDate($timezone, $post_type);
 }
 
 /** The newest change to a published post: its modified stamp, or its date when that is later. */
 function get_lastpostmodified($timezone = 'server', $post_type = 'any')
 {
-    $modified = apply_filters('pre_get_lastpostmodified', false, $timezone, $post_type);
-    if ($modified !== false) {
-        return $modified;
-    }
-    $modified = _get_last_post_time($timezone, 'modified', $post_type);
-    $date = get_lastpostdate($timezone, $post_type);
-    return apply_filters('get_lastpostmodified', $date > $modified ? $date : $modified, $timezone, $post_type);
+    return Minn\Runtime\PostReads::lastModified($timezone, $post_type);
 }
 
 /**
@@ -2476,17 +2324,7 @@ function get_lastpostmodified($timezone = 'server', $post_type = 'any')
  */
 function _get_last_post_time($timezone, $field, $post_type = 'any')
 {
-    $zone = strtolower((string) $timezone);
-    if (!in_array($zone, ['gmt', 'blog', 'server'], true) || !in_array($field, ['date', 'modified'], true) || !is_string($post_type)
-        || ($post_type !== 'any' && !in_array($post_type, get_post_types(['public' => true]), true))) {
-        return false;
-    }
-    $types = $post_type === 'any' ? array_values(get_post_types(['public' => true])) : [(string) $post_type];
-    $value = _minn_posts()->newest($types, "post_{$field}" . ($zone === 'blog' ? '' : '_gmt'));
-    if ($value === null) {
-        return false;
-    }
-    return $zone === 'server' ? $value . '.000000' : $value;
+    return Minn\Runtime\PostReads::lastTime($timezone, $field, $post_type);
 }
 
 /** Every descendant page of one page within the caller's own list, preorder. */
@@ -2706,7 +2544,7 @@ function get_post_timestamp($post = null, $field = 'date')
 
 function wp_post_mime_type_where($post_mime_types, $table_alias = '')
 {
-    return \Minn\Query\MimeWhere::sql(is_array($post_mime_types) ? array_values($post_mime_types) : (string) $post_mime_types, (string) $table_alias);
+    return Minn\Runtime\PostReads::mimeTypeWhere($post_mime_types, $table_alias);
 }
 
 /** @internal a post format archive asks for the format's term and the types the format applies to */
@@ -2764,15 +2602,7 @@ function _post_format_wp_get_object_terms($terms)
 
 function get_posts_by_author_sql($post_type, $full = true, $post_author = null, $public_only = false)
 {
-    $types = [];
-    foreach ((array) $post_type as $type) {
-        $object = get_post_type_object($type);
-        if ($object) {
-            $cap = apply_filters_deprecated('pub_priv_sql_capability', [''], '3.2.0');
-            $types[] = ['type' => (string) $type, 'readPrivate' => (bool) ($cap ?: current_user_can($object->cap->read_private_posts))];
-        }
-    }
-    return Minn\Query\AuthorPostsSql::sql($types, is_user_logged_in() ? get_current_user_id() : 0, $full ? 'full' : '', $post_author === null ? null : (int) $post_author, $public_only ? 'public' : '');
+    return Minn\Runtime\PostReads::byAuthorSql($post_type, $full, $post_author, $public_only);
 }
 
 /** @internal The feed link after a listed author or user (feed or feed_image given): an image link, or the feed text in brackets. */

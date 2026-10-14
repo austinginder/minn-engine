@@ -14,6 +14,7 @@ use Minn\Http\Route;
 use Minn\Objects\Post;
 use Minn\RestError;
 use Minn\Runtime\PostData;
+use Minn\Runtime\PostReads;
 use Minn\Runtime\Records;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
@@ -104,7 +105,7 @@ final readonly class BlockRendererController
         if ($postId > 0) {
             $GLOBALS['post'] = Records::post($postId);
             PostData::setup($GLOBALS['post']);
-            $context = ['postId' => $postId, 'postType' => \get_post_type($postId)];
+            $context = ['postId' => $postId, 'postType' => PostReads::type($postId)];
         }
         try {
             $block = new \WP_Block(['blockName' => $type->name, 'attrs' => $attributes, 'innerHTML' => '', 'innerContent' => []], $context);

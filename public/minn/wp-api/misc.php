@@ -773,10 +773,7 @@ function wp_reset_vars($vars)
 /** The rich-editing preference, browser-gated: false without a browser user agent (the CLI probes false even for admins). */
 function user_can_richedit()
 {
-    $pref = get_user_option('rich_editing');
-    $wants = $pref === false || $pref === 'true' || $pref === true;
-    $agent = (string) (Runtime::current()->request?->header('user-agent') ?? '');
-    return (bool) apply_filters('user_can_richedit', $wants && stripos($agent, 'mozilla') !== false);
+    return Minn\Runtime\PostFields::richEdit();
 }
 
 /** The reference answers tinymce even where rich editing probes false. */

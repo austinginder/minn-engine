@@ -9,6 +9,7 @@ use Minn\Objects\Post;
 use Minn\Objects\Query;
 use Minn\Runtime\MetaData;
 use Minn\Runtime\PostLinks;
+use Minn\Runtime\PostReads;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Records;
@@ -159,7 +160,7 @@ final class FeedTags
             $datetime = date_create_immutable_from_format('Y-m-d H:i:s', max($times), $utc);
         }
         if ($datetime === false) {
-            $datetime = date_create_immutable_from_format('Y-m-d H:i:s', (string) \get_lastpostmodified('GMT'), $utc);
+            $datetime = date_create_immutable_from_format('Y-m-d H:i:s', (string) PostReads::lastModified('GMT'), $utc);
         }
         if ($datetime === false) {
             $datetime = date_create_immutable('now', $utc);

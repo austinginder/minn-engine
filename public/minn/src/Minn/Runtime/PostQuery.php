@@ -389,7 +389,7 @@ final class PostQuery
         $query->posts = $ids ?: [];
         if ($ids) {
             $this->foundPosts($q);
-            \_prime_post_caches($ids, $q['update_post_term_cache'], $q['update_post_meta_cache']);
+            PostReads::prime($ids, $q['update_post_term_cache'], $q['update_post_meta_cache']);
         }
     }
 

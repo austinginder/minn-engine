@@ -146,7 +146,7 @@ final class PostLinks
         if (!$pretty || self::plain($post, $flags)) {
             $link = SiteUrls::home('?page_id=' . $post->ID);
         } else {
-            $link = SiteUrls::home(SiteUrls::trailing($leavename ? '%pagename%' : (string) \get_page_uri($post), 'page'));
+            $link = SiteUrls::home(SiteUrls::trailing($leavename ? '%pagename%' : (string) PostReads::pageUri($post), 'page'));
         }
         return (string) Runtime::hooks()->filter('_get_page_link', [$link, $post->ID]);
     }
@@ -180,7 +180,7 @@ final class PostLinks
         $struct = (string) \_minn_rewrite()->get_extra_permastruct($post->post_type);
         // A plugin type's sample is pretty whatever its status, a trashed post's too (probe rest-plugin-types).
         $plain = !$sample && self::plain($post, $flags);
-        $slug = $type?->hierarchical ? (string) \get_page_uri($post) : (string) $post->post_name;
+        $slug = $type?->hierarchical ? (string) PostReads::pageUri($post) : (string) $post->post_name;
         if ($struct !== '' && !$plain) {
             $link = SiteUrls::home(SiteUrls::trailing($leavename ? $struct : str_replace("%{$post->post_type}%", $slug, $struct)));
         } elseif (!empty($type?->query_var) && !$plain) {
@@ -226,7 +226,7 @@ final class PostLinks
         $sample->filter = 'sample';
         $link = str_replace("%{$sample->post_type}%", '%pagename%', (string) self::permalink($sample, true));
         if (Registered::hierarchicalType($sample->post_type)) {
-            $uri = (string) \get_page_uri($sample);
+            $uri = (string) PostReads::pageUri($sample);
             $uri = str_contains($uri, '/') ? substr($uri, 0, (int) strrpos($uri, '/')) : '';
             $uri = (string) Runtime::hooks()->filter('editable_slug', [$uri, $sample]);
             $link = str_replace('%pagename%', ($uri !== '' ? $uri . '/' : '') . '%pagename%', $link);

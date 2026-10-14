@@ -205,6 +205,28 @@ final class MetaData
         return Meta::knows($type) ? [$type] : null;
     }
 
+    /**
+     * A user's option (get_user_option): the site's prefixed key first, then
+     * the bare one; false for nobody or neither; as get_user_option_{option}
+     * leaves it.
+     */
+    public static function userOption(mixed $option, mixed $user = 0, mixed $deprecated = ''): mixed
+    {
+        $user = $user === 0 || $user === '' ? (int) CurrentUser::id() : (int) $user;
+        if ($user === 0) {
+            return false;
+        }
+        $prefix = Runtime::current()->db->prefix();
+        if (self::exists('user', $user, $prefix . $option)) {
+            $result = self::get('user', $user, $prefix . $option, true);
+        } elseif (self::exists('user', $user, $option)) {
+            $result = self::get('user', $user, $option, true);
+        } else {
+            $result = false;
+        }
+        return Runtime::hooks()->filter("get_user_option_{$option}", [$result, $option, Handoff::user($user)]);
+    }
+
     /** A post's meta (get_post_meta). */
     public static function ofPost(mixed $postId, mixed $key = '', mixed $single = false): mixed
     {

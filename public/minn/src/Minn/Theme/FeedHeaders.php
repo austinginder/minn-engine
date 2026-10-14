@@ -6,6 +6,7 @@ namespace Minn\Theme;
 
 use Minn\Front\FeedTags;
 use Minn\Http\Request;
+use Minn\Runtime\PostReads;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteTime;
 
@@ -30,7 +31,7 @@ final class FeedHeaders
     {
         $feed = (string) $vars['feed'];
         $headers = ['Content-Type' => FeedTags::contentType($feed === 'feed' ? FeedTags::defaultFeed() : $feed) . '; charset=' . Runtime::options()->filtered('blog_charset')];
-        $last = (string) SiteTime::fromStored(self::FORMAT, \get_lastpostmodified('GMT'), false);
+        $last = (string) SiteTime::fromStored(self::FORMAT, PostReads::lastModified('GMT'), false);
         if (self::carriesComments($vars, $feed)) {
             $comment = (string) SiteTime::fromStored(self::FORMAT, \get_lastcommentmodified('GMT'), false);
             $last = strtotime($last) > strtotime($comment) ? $last : $comment;

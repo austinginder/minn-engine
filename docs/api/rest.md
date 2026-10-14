@@ -437,7 +437,7 @@ Route: `POST /wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+} (public)`
 
 The block's markup, as {"rendered": "..."}.
 
-Internals: `refuseInvalid()` (private, line 67), `permit()` (private, line 85), `rendered()` (private, line 99)
+Internals: `refuseInvalid()` (private, line 68), `permit()` (private, line 86), `rendered()` (private, line 100)
 
 
 ## BlockTypesController

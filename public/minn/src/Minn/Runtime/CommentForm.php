@@ -100,7 +100,7 @@ final class CommentForm
             Runtime::hooks()->action('comment_id_not_found', [$postId]);
             return Handoff::newError('comment_id_not_found');
         }
-        $status = (string) \get_post_status($post);
+        $status = (string) PostReads::status($post);
         if ($status === 'private' && !Can::current('read_post', $postId)) {
             return Handoff::newError('comment_id_not_found');
         }

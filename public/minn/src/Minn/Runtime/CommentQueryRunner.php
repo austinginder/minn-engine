@@ -146,7 +146,7 @@ final class CommentQueryRunner
             }
         }
         if (!empty($qv['update_comment_post_cache'])) {
-            \_prime_post_caches(array_values(array_unique(array_map(static fn ($c) => (int) $c->comment_post_ID, $comments))), false, false);
+            PostReads::prime(array_values(array_unique(array_map(static fn ($c) => (int) $c->comment_post_ID, $comments))), false, false);
         }
         return $comments;
     }

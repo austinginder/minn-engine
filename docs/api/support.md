@@ -167,7 +167,7 @@ encoded; for a textarea, everything encoded; for an inline script, a
 single-quoted string's specials; and an address (esc_url) cleaned, its
 protocol checked against the allowed ones.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\CommentTags`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\CommentTags`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -715,7 +715,7 @@ wp_list_sort() promises (loose comparison per field, first difference
 wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
 
-Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\Registered`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\PostReads`, `Minn\Runtime\Registered`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\HeadLinks`
 
 ### static `args(mixed $args, mixed $defaults = array ( )): array`
 

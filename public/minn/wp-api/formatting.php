@@ -616,8 +616,7 @@ function balanceTags($text, $force = false)
 
 function format_to_edit($content, $rich_text = false)
 {
-    $content = apply_filters('format_to_edit', $content);
-    return $rich_text ? $content : esc_textarea($content);
+    return Minn\Runtime\PostFields::formatToEdit($content, $rich_text);
 }
 
 /**

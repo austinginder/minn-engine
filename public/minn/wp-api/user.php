@@ -390,19 +390,7 @@ function delete_user_meta($user_id, $meta_key, $meta_value = '')
 
 function get_user_option($option, $user = 0, $deprecated = '')
 {
-    $user = $user === 0 || $user === '' ? get_current_user_id() : (int) $user;
-    if ($user === 0) {
-        return false;
-    }
-    $prefix = Runtime::current()->db->prefix();
-    if (metadata_exists('user', $user, $prefix . $option)) {
-        $result = get_user_meta($user, $prefix . $option, true);
-    } elseif (metadata_exists('user', $user, $option)) {
-        $result = get_user_meta($user, $option, true);
-    } else {
-        $result = false;
-    }
-    return apply_filters("get_user_option_{$option}", $result, $option, get_userdata($user));
+    return Minn\Runtime\MetaData::userOption($option, $user, $deprecated);
 }
 
 function update_user_option($user_id, $option_name, $newvalue, $is_global = false)
