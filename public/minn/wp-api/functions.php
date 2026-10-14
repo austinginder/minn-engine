@@ -54,20 +54,12 @@ function date_i18n($format, $timestamp_with_offset = false, $gmt = false)
 
 function get_gmt_from_date($date_string, $format = 'Y-m-d H:i:s')
 {
-    $datetime = date_create((string) $date_string, wp_timezone());
-    if ($datetime === false) {
-        return gmdate($format, 0);
-    }
-    return $datetime->setTimezone(new DateTimeZone('UTC'))->format($format);
+    return SiteTime::toGmt($date_string, $format);
 }
 
 function get_date_from_gmt($date_string, $format = 'Y-m-d H:i:s')
 {
-    $datetime = date_create((string) $date_string, new DateTimeZone('UTC'));
-    if ($datetime === false) {
-        return gmdate($format, 0);
-    }
-    return $datetime->setTimezone(wp_timezone())->format($format);
+    return SiteTime::fromGmt($date_string, $format);
 }
 
 function mysql2date($format, $date, $translate = true)

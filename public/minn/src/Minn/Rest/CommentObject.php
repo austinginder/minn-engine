@@ -8,6 +8,7 @@ use Minn\Content\CommentRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Front\Permalinks;
+use Minn\Runtime\CommentReads;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 
@@ -92,7 +93,7 @@ final readonly class CommentObject
             $links['in-reply-to'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments/' . $c->parentId)]];
         }
         // Replies are counted through the comment query (any approval, any type), as plugins' clauses see it.
-        if ((int) \get_comments(['count' => true, 'orderby' => 'none', 'parent' => $id, 'type' => 'all']) > 0) {
+        if ((int) CommentReads::query(['count' => true, 'orderby' => 'none', 'parent' => $id, 'type' => 'all']) > 0) {
             $links['children'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments') . '?parent=' . $id]];
         }
         $object['_links'] = $links;

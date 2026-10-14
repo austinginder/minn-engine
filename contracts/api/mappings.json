@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 770,
-        "composes": 2277,
-        "leaf": 1019,
-        "noop": 2942,
+        "minn": 759,
+        "composes": 2267,
+        "leaf": 1017,
+        "noop": 2962,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8702,
-        "minnMethods": 1252,
+        "functions": 8699,
+        "minnMethods": 1266,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -36602,39 +36602,6 @@
             "minn": [],
             "composes": []
         },
-        "_minn_comment_restore": {
-            "file": "comment.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "delete_comment_meta",
-                "do_action",
-                "get_comment",
-                "get_comment_meta",
-                "wp_set_comment_status"
-            ]
-        },
-        "_minn_comment_set_aside": {
-            "file": "comment.php",
-            "lines": 14,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_comment_meta",
-                "delete_comment_meta",
-                "do_action",
-                "get_comment",
-                "wp_set_comment_status"
-            ]
-        },
-        "_minn_comment_status_word": {
-            "file": "comment.php",
-            "lines": 5,
-            "kind": "leaf",
-            "minn": [],
-            "composes": []
-        },
         "_minn_comments": {
             "file": "comment.php",
             "lines": 1,
@@ -43982,15 +43949,12 @@
         },
         "clean_comment_cache": {
             "file": "comment.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\RowCache::forget"
+                "Minn\\Runtime\\CommentWrites::cleanCache"
             ],
-            "composes": [
-                "do_action",
-                "wp_cache_delete"
-            ]
+            "composes": []
         },
         "clean_dirsize_cache": {
             "file": "functions.php",
@@ -44028,16 +43992,12 @@
         },
         "clean_post_cache": {
             "file": "post.php",
-            "lines": 20,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\RowCache::forget"
+                "Minn\\Runtime\\PostCaches::clean"
             ],
-            "composes": [
-                "do_action",
-                "get_post",
-                "wp_cache_delete"
-            ]
+            "composes": []
         },
         "clean_pre": {
             "file": "deprecated.php",
@@ -48499,9 +48459,11 @@
         },
         "get_comments": {
             "file": "comment.php",
-            "lines": 2,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentReads::query"
+            ],
             "composes": []
         },
         "get_comments_link": {
@@ -48717,12 +48679,12 @@
         },
         "get_date_from_gmt": {
             "file": "functions.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_timezone"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteTime::fromGmt"
+            ],
+            "composes": []
         },
         "get_date_template": {
             "file": "template.php",
@@ -48779,14 +48741,12 @@
         },
         "get_default_comment_status": {
             "file": "comment.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_option",
-                "post_type_supports"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentChecks::defaultStatus"
+            ],
+            "composes": []
         },
         "get_default_feed": {
             "file": "link-template.php",
@@ -49102,12 +49062,12 @@
         },
         "get_gmt_from_date": {
             "file": "functions.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_timezone"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteTime::toGmt"
+            ],
+            "composes": []
         },
         "get_header": {
             "file": "template.php",
@@ -49370,12 +49330,12 @@
         },
         "get_lastcommentmodified": {
             "file": "comment.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentReads::lastModified"
+            ],
+            "composes": []
         },
         "get_lastpostdate": {
             "file": "post.php",
@@ -66087,12 +66047,12 @@
         },
         "wp_check_comment_data_max_lengths": {
             "file": "comment.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_get_comment_fields_max_lengths"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentChecks::maxLengths"
+            ],
+            "composes": []
         },
         "wp_check_comment_disallowed_list": {
             "file": "comment.php",
@@ -66560,16 +66520,12 @@
         },
         "wp_count_comments": {
             "file": "comment.php",
-            "lines": 6,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\CommentQuery::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
+                "Minn\\Runtime\\CommentReads::counts"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_count_posts": {
             "file": "post.php",
@@ -67301,21 +67257,12 @@
         },
         "wp_delete_comment": {
             "file": "comment.php",
-            "lines": 19,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::delete",
-                "Minn\\Content\\Comments::orphanReplies"
+                "Minn\\Runtime\\CommentWrites::delete"
             ],
-            "composes": [
-                "_minn_comments",
-                "clean_comment_cache",
-                "do_action",
-                "get_comment",
-                "wp_transition_comment_status",
-                "wp_trash_comment",
-                "wp_update_comment_count"
-            ]
+            "composes": []
         },
         "wp_delete_file": {
             "file": "media.php",
@@ -68219,12 +68166,12 @@
         },
         "wp_filter_comment": {
             "file": "comment.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentChecks::filter"
+            ],
+            "composes": []
         },
         "wp_filter_content_tags": {
             "file": "media.php",
@@ -68995,21 +68942,18 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::fieldLengths"
+                "Minn\\Runtime\\CommentChecks::fieldMaxLengths"
             ],
-            "composes": [
-                "_minn_comments",
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_get_comment_status": {
             "file": "comment.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_comment"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentChecks::status"
+            ],
+            "composes": []
         },
         "wp_get_computed_fluid_typography_value": {
             "file": "theme.php",
@@ -71007,22 +70951,12 @@
         },
         "wp_insert_comment": {
             "file": "comment.php",
-            "lines": 27,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::insert"
+                "Minn\\Runtime\\CommentWrites::insert"
             ],
-            "composes": [
-                "_minn_comments",
-                "clean_comment_cache",
-                "current_time",
-                "do_action",
-                "get_comment",
-                "get_gmt_from_date",
-                "wp_cache_delete",
-                "wp_unslash",
-                "wp_update_comment_count"
-            ]
+            "composes": []
         },
         "wp_insert_link": {
             "file": "bookmark.php",
@@ -75724,20 +75658,12 @@
         },
         "wp_set_comment_status": {
             "file": "comment.php",
-            "lines": 21,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::update"
+                "Minn\\Runtime\\CommentWrites::setStatus"
             ],
-            "composes": [
-                "_minn_comment_status_word",
-                "_minn_comments",
-                "clean_comment_cache",
-                "do_action",
-                "get_comment",
-                "wp_transition_comment_status",
-                "wp_update_comment_count"
-            ]
+            "composes": []
         },
         "wp_set_current_user": {
             "file": "pluggable.php",
@@ -76290,10 +76216,10 @@
             "file": "comment.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_comment_set_aside"
-            ]
+            "minn": [
+                "Minn\\Runtime\\CommentWrites::spam"
+            ],
+            "composes": []
         },
         "wp_specialchars": {
             "file": "formatting.php",
@@ -76799,13 +76725,12 @@
         },
         "wp_transition_comment_status": {
             "file": "comment.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_comment_status_word",
-                "do_action"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentWrites::transitionStatus"
+            ],
+            "composes": []
         },
         "wp_transition_post_status": {
             "file": "post.php",
@@ -76822,11 +76747,10 @@
             "file": "comment.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_comment_set_aside",
-                "wp_delete_comment"
-            ]
+            "minn": [
+                "Minn\\Runtime\\CommentWrites::trash"
+            ],
+            "composes": []
         },
         "wp_trash_post": {
             "file": "post.php",
@@ -76852,19 +76776,12 @@
         },
         "wp_trash_post_comments": {
             "file": "comment.php",
-            "lines": 15,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::setStatusOf",
-                "Minn\\Content\\Comments::statusesOf"
+                "Minn\\Runtime\\CommentWrites::trashPostComments"
             ],
-            "composes": [
-                "_minn_comments",
-                "add_post_meta",
-                "clean_comment_cache",
-                "do_action",
-                "get_post"
-            ]
+            "composes": []
         },
         "wp_trigger_error": {
             "file": "functions.php",
@@ -77101,19 +77018,19 @@
             "file": "comment.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_comment_restore"
-            ]
+            "minn": [
+                "Minn\\Runtime\\CommentWrites::unspam"
+            ],
+            "composes": []
         },
         "wp_untrash_comment": {
             "file": "comment.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_comment_restore"
-            ]
+            "minn": [
+                "Minn\\Runtime\\CommentWrites::untrash"
+            ],
+            "composes": []
         },
         "wp_untrash_post": {
             "file": "post.php",
@@ -77137,19 +77054,12 @@
         },
         "wp_untrash_post_comments": {
             "file": "comment.php",
-            "lines": 15,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::setStatusOf"
+                "Minn\\Runtime\\CommentWrites::untrashPostComments"
             ],
-            "composes": [
-                "_minn_comments",
-                "clean_comment_cache",
-                "delete_post_meta",
-                "do_action",
-                "get_post",
-                "get_post_meta"
-            ]
+            "composes": []
         },
         "wp_untrash_post_set_previous_status": {
             "file": "post.php",
@@ -77185,55 +77095,30 @@
         },
         "wp_update_comment": {
             "file": "comment.php",
-            "lines": 23,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::changedColumns",
-                "Minn\\Content\\Comments::update"
+                "Minn\\Runtime\\CommentWrites::update"
             ],
-            "composes": [
-                "_minn_comment_status_word",
-                "_minn_comments",
-                "apply_filters",
-                "clean_comment_cache",
-                "do_action",
-                "get_comment",
-                "is_wp_error",
-                "wp_filter_comment",
-                "wp_transition_comment_status",
-                "wp_unslash",
-                "wp_update_comment_count"
-            ]
+            "composes": []
         },
         "wp_update_comment_count": {
             "file": "comment.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Deferrals::comments",
-                "Minn\\Runtime\\Deferrals::putOffComments"
+                "Minn\\Runtime\\CommentWrites::updateCount"
             ],
-            "composes": [
-                "wp_defer_comment_counting",
-                "wp_update_comment_count_now"
-            ]
+            "composes": []
         },
         "wp_update_comment_count_now": {
             "file": "comment.php",
-            "lines": 15,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::recount",
-                "Minn\\Content\\PostWriter::update"
+                "Minn\\Runtime\\CommentWrites::updateCountNow"
             ],
-            "composes": [
-                "_minn_comments",
-                "_minn_post_writer",
-                "apply_filters",
-                "clean_post_cache",
-                "do_action",
-                "get_post"
-            ]
+            "composes": []
         },
         "wp_update_core": {
             "file": "deadends.php",

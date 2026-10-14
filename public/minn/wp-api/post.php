@@ -57,26 +57,7 @@ function get_post($post = null, $output = OBJECT, $filter = 'raw')
 
 function clean_post_cache($post)
 {
-    // Held back while wp_suspend_cache_invalidation is on (probe functions-remaining).
-    if (!empty($GLOBALS['_wp_suspend_cache_invalidation'])) {
-        return;
-    }
-    $cleaned = is_object($post) ? (int) ($post->ID ?? 0) : (int) $post;
-    if ($cleaned > 0) {
-        Minn\Content\RowCache::forget('posts', $cleaned);
-        Minn\Content\RowCache::forget('post_meta', $cleaned);
-        Minn\Content\RowCache::forget('post_terms');
-    }
-    $post = get_post($post);
-    if ($post === null) {
-        return;
-    }
-    wp_cache_delete($post->ID, 'posts');
-    wp_cache_delete($post->ID, 'post_meta');
-    do_action('clean_post_cache', $post->ID, $post);
-    if ($post->post_type === 'page') {
-        do_action('clean_page_cache', $post->ID);
-    }
+    Minn\Runtime\PostCaches::clean($post);
 }
 
 function get_the_ID()

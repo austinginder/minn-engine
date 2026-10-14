@@ -60,8 +60,8 @@ final readonly class Site
     public function defaultDiscussion(string $type, string $kind): string
     {
         // With plugins loaded, their say counts: a removed comments support or the filter.
-        if (\Minn\Runtime\Runtime::booted() && \function_exists('get_default_comment_status')) {
-            return \get_default_comment_status($type, $kind) === 'open' ? 'open' : 'closed';
+        if (\Minn\Runtime\Runtime::booted()) {
+            return \Minn\Runtime\CommentChecks::defaultStatus($type, $kind) === 'open' ? 'open' : 'closed';
         }
         $follows = $type === 'post' || ($type === 'attachment' && $kind === 'comment');
         $value = $this->option($kind === 'comment' ? 'default_comment_status' : 'default_ping_status') ?? 'open';

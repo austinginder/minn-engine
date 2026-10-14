@@ -250,7 +250,7 @@ Reads and writes over the comments table.
 - const `UPDATABLE` = `array (   0 => 'comment_post_ID',   1 => 'comment_author',   2 => 'comment_author_email',   3 => 'comment_author_url',   4 => 'comment_author_IP',   5 => 'comment_date',   6 => 'comment_date_gmt',   7 => 'comment_content',   8 => 'comment_karma',   9 => 'comment_approved',   10 => 'comment_agent',   11 => 'comment_type',   12 => 'comment_parent',   13 => 'user_id', )`
 - const `FIELD_LENGTHS` = `array (   'comment_author' => 245,   'comment_author_email' => 100,   'comment_author_url' => 200,   'comment_content' => 65525, )` — The comment form fields whose length the table limits, with the length a stock table gives each.
 
-Used by: `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Records`
+Used by: `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Records`
 
 ```php
 __construct(Minn\Db $db)
@@ -1216,7 +1216,7 @@ and format side effects, and revision snapshots.
 - const `ZERO_DATE` = `'0000-00-00 00:00:00'`
 - const `LENGTHS` = `array (   'post_status' => 20,   'comment_status' => 20,   'ping_status' => 20,   'post_password' => 255,   'post_name' => 200,   'guid' => 255,   'post_type' => 20,   'post_mime_type' => 100, )` — The posts table's short text columns, cut to fit as the reference's database layer cuts them.
 
-Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Site $site)
@@ -1394,7 +1394,7 @@ Internals: `fit()` (private, line 178), `announceSticky()` (private, line 279), 
 Reads over the posts table. A post comes back as a PostRecord; a listing
 is the main query's (WP_Query); rendering and escaping happen elsewhere.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TemplateObject`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostReads`, `Minn\Runtime\Records`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TemplateObject`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostReads`, `Minn\Runtime\Records`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1703,7 +1703,7 @@ a write finds the row as it now is. Nothing outlives the request.
 
 - const `SOURCES` = `array (   'posts' =>    array (     0 => 'posts',   ),   'post_terms' =>    array (     0 => 'term_relationships',     1 => 'term_taxonomy',     2 => 'terms',   ),   'revisions' =>    array (     0 => 'posts',   ),   'theme_templates' =>    array (     0 => 'posts',     1 => 'term_relationships',     2 => 'term_taxonomy',     3 => 'terms',   ),   'users' =>    array (     0 => 'users',   ),   'comments' =>    array (     0 => 'comments',   ),   'comment_queries' =>    array (     0 => 'comments',     1 => 'commentmeta',   ),   'term_rows' =>    array (     0 => 'terms',     1 => 'term_taxonomy',   ),   'post_meta' =>    array (     0 => 'postmeta',   ),   'user_meta' =>    array (     0 => 'usermeta',   ),   'term_meta' =>    array (     0 => 'termmeta',   ),   'comment_meta' =>    array (     0 => 'commentmeta',   ), )` — The tables each kind of entry is read from.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Posts`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\Meta`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQuery`, `Minn\Theme\Templates`
+Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Posts`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Meta`, `Minn\Runtime\PostCaches`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQuery`, `Minn\Theme\Templates`
 
 
 ### static `remember(string $kind, string|int $key, Closure $load): mixed`

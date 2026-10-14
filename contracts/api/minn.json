@@ -27682,7 +27682,9 @@
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Services",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\Records"
             ],
             "constructor": {
@@ -32775,6 +32777,7 @@
                 "Minn\\Cron\\Cron",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Services",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostInsert",
                 "Minn\\Runtime\\TermWriter",
@@ -33890,6 +33893,7 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\Subjects",
                 "Minn\\Rest\\TemplateObject",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\Records",
@@ -35606,7 +35610,9 @@
                 "Minn\\Content\\Terms",
                 "Minn\\Content\\Users",
                 "Minn\\Runtime\\CommentQueryRunner",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\Meta",
+                "Minn\\Runtime\\PostCaches",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQuery",
@@ -35866,6 +35872,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Db",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -46245,6 +46252,8 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Objects\\Errors",
+                "Minn\\Runtime\\CommentChecks",
+                "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Runtime"
@@ -46276,8 +46285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 35
+                    "line": 31,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -46296,8 +46305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 64
+                    "line": 48,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -46323,8 +46332,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 75
+                    "line": 69,
+                    "end": 77
                 }
             ]
         },
@@ -53237,6 +53246,7 @@
                 "Minn\\I18n\\Gettext",
                 "Minn\\I18n\\Numbers",
                 "Minn\\Objects\\User",
+                "Minn\\Runtime\\CommentReads",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\QueryArgs",
@@ -53283,8 +53293,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 77
+                    "line": 62,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -53303,8 +53313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 94
+                    "line": 81,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -53323,8 +53333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 102
+                    "line": 98,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -53343,8 +53353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 130
+                    "line": 106,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -53363,8 +53373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 160
+                    "line": 134,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -53383,8 +53393,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 184
+                    "line": 164,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -53403,8 +53413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 198
+                    "line": 188,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -53423,8 +53433,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 210
+                    "line": 202,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -53443,8 +53453,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 223
+                    "line": 214,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -53463,8 +53473,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 236
+                    "line": 227,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -53483,8 +53493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 254
+                    "line": 240,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -53503,8 +53513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 301
+                    "line": 287,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -53523,8 +53533,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 332
+                    "line": 325,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -53543,8 +53553,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 339
+                    "line": 336,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -53563,8 +53573,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 353
+                    "line": 343,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -53583,8 +53593,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 367
+                    "line": 357,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -53603,8 +53613,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 58
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -53617,8 +53627,8 @@
                         "@return array<string, array{0: string, 1: string}> the admin page => [the label, the node id], for what the user may create"
                     ],
                     "params": [],
-                    "line": 257,
-                    "end": 283
+                    "line": 258,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -53639,8 +53649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 311
+                    "line": 305,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -53661,8 +53671,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 321
+                    "line": 315,
+                    "end": 322
                 }
             ]
         },
@@ -95459,6 +95469,7 @@
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\UserObject",
+                "Minn\\Runtime\\CommentReads",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -95509,8 +95520,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 17,
-                "end": 24
+                "line": 18,
+                "end": 25
             },
             "cases": [],
             "constants": [],
@@ -95586,8 +95597,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 31
+                    "line": 29,
+                    "end": 32
                 },
                 {
                     "routes": [],
@@ -95598,8 +95609,8 @@
                     "doc": "The REST URL builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 34,
-                    "end": 37
+                    "line": 35,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -95625,8 +95636,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 100
+                    "line": 41,
+                    "end": 101
                 }
             ]
         },
@@ -119623,6 +119634,140 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\CommentChecks",
+            "short": "CommentChecks",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CommentChecks.php",
+            "lines": 75,
+            "doc": "What WordPress checks of a comment before and after it is stored: the\nlengths the table allows its fields, each field through its pre_comment_\nfilter, the status a stored comment has in words, and whether a new\npost of a type starts open to comments or pings.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Comments",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Content\\Site",
+                "Minn\\Front\\CommentPostController",
+                "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\CommentWrites"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fieldMaxLengths",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fieldMaxLengths(): mixed",
+                    "doc": "How long each comment form field may be\n(wp_get_comment_fields_max_lengths), as the table allows, through\nwp_get_comment_fields_max_lengths.",
+                    "shapes": [
+                        "@return array<string, int>"
+                    ],
+                    "params": [],
+                    "line": 24,
+                    "end": 27
+                },
+                {
+                    "routes": [],
+                    "name": "maxLengths",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "maxLengths(mixed $data): mixed",
+                    "doc": "Whether a comment fits its columns (wp_check_comment_data_max_lengths): true, or the error naming the first field too long.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "filter",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "filter(mixed $data): array",
+                    "doc": "Each field through its pre_comment_ filter (wp_filter_comment), in the\nreference's order (the user first, the email last), marked filtered.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 48,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "status",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "status(mixed $commentId): mixed",
+                    "doc": "A comment's status (wp_get_comment_status): approved, unapproved, spam or trash; false for an unknown comment or status.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "defaultStatus",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "defaultStatus(mixed $type = 'post', mixed $commentType = 'comment'): mixed",
+                    "doc": "Whether a new post of a type starts open (get_default_comment_status):\na page starts closed; another type follows the site's default when it\nsupports comments (or trackbacks, for pings).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'post'",
+                            "doc": ""
+                        },
+                        {
+                            "name": "commentType",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'comment'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 88
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\CommentCloser",
             "short": "CommentCloser",
             "namespace": "Minn\\Runtime",
@@ -119782,6 +119927,8 @@
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\CommentChecks",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
@@ -120439,6 +120586,7 @@
                 "Minn\\Objects\\Comment",
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\User",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostTags",
@@ -120448,7 +120596,9 @@
                 "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Slashes"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Front\\CommentPostController"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -120746,7 +120896,9 @@
                 "Minn\\Db",
                 "Minn\\Runtime\\CommentQueryRunner"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\CommentReads"
+            ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
                 "doc": "",
@@ -121310,6 +121462,93 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\CommentReads",
+            "short": "CommentReads",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CommentReads.php",
+            "lines": 38,
+            "doc": "What WordPress's comment functions tell about comments: the comments a\nquery finds, how many a post or the site has in each status, and when an\napproved comment last arrived.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\CommentQuery",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Front\\ToolbarMenus",
+                "Minn\\Rest\\CommentObject",
+                "Minn\\Theme\\FeedHeaders"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "query",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "query(mixed $args = ''): mixed",
+                    "doc": "The comments a query finds (get_comments): comments, ids or a count, as the comment query answers.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 15,
+                    "end": 18
+                },
+                {
+                    "routes": [],
+                    "name": "counts",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "counts(mixed $postId = 0): object",
+                    "doc": "How many comments a post or the site has in each status (wp_count_comments), unless wp_count_comments answers first.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "lastModified",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "lastModified(mixed $timezone = 'server'): mixed",
+                    "doc": "When an approved comment last arrived (get_lastcommentmodified), in\nGMT (\"gmt\", and the server's own, the GMT date moved by the server's\noffset in the database, with microseconds) or the site's time\n(\"blog\"); false with none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "timezone",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'server'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 48
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\CommentTags",
             "short": "CommentTags",
             "namespace": "Minn\\Runtime",
@@ -121486,6 +121725,485 @@
                     ],
                     "line": 74,
                     "end": 84
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\CommentWrites",
+            "short": "CommentWrites",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CommentWrites.php",
+            "lines": 312,
+            "doc": "Comments written as WordPress's comment functions write them: a comment\nstored and changed, its status set (to the trash or spam with the status\nit had kept aside, and back), deleted, and a post's count of approved\ncomments kept; each step with the actions and filters the reference\nfires in its order, and the cached rows let go.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Comments",
+                "Minn\\Content\\PostWriter",
+                "Minn\\Content\\Posts",
+                "Minn\\Content\\RowCache",
+                "Minn\\Runtime\\CommentChecks",
+                "Minn\\Runtime\\Deferrals",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\PostCaches",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime",
+                "Minn\\Support\\Slashes"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\Deferrals"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DEFAULTS",
+                    "value": "array (   'comment_post_ID' => 0,   'comment_author' => '',   'comment_author_email' => '',   'comment_author_url' => '',   'comment_author_IP' => '',   'comment_date' => '',   'comment_date_gmt' => '',   'comment_content' => '',   'comment_karma' => 0,   'comment_approved' => '1',   'comment_agent' => '',   'comment_type' => '',   'comment_parent' => 0,   'user_id' => 0, )",
+                    "doc": "The columns a stored comment has, each with what a new comment takes when it gives none (an integer column is read as one).",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "insert",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "insert(mixed $commentdata): int",
+                    "doc": "A comment stored (wp_insert_comment): its id, the post's count kept when it is approved, then wp_insert_comment told.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentdata",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "updateCount",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "updateCount(mixed $postId, mixed $deferred = false): bool",
+                    "doc": "A post's approved comments counted (wp_update_comment_count): put off\nwhile counting is deferred; asked with $deferred, the posts put off\nare counted now and the answer is true.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "deferred",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "updateCountNow",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "updateCountNow(mixed $postId): bool",
+                    "doc": "A post's approved comments counted now (wp_update_comment_count_now),\nunless pre_wp_update_comment_count_now supplies the count; plugins\ntold the old and new counts, then the post edited.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(mixed $commentarr, mixed $wpError = false): mixed",
+                    "doc": "A comment changed (wp_update_comment): the stored comment under the\nchange, through the field filters and comment_save_pre, then\nwp_update_comment_data (handed the data, the stored comment and the\nchange); the columns written, the post's count, edit_comment with the\ncolumns, and the status transition. 0 when nothing changed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentarr",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "setStatus",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setStatus(mixed $commentId, mixed $status, mixed $wpError = false): bool",
+                    "doc": "A comment's status set (wp_set_comment_status): hold, approve, spam or trash; false for an unknown comment or status.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 152
+                },
+                {
+                    "routes": [],
+                    "name": "statusWord",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "statusWord(mixed $stored): string",
+                    "doc": "A stored comment status in the words the transition actions use: approved, unapproved, spam, trash.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "stored",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 155,
+                    "end": 162
+                },
+                {
+                    "routes": [],
+                    "name": "transitionStatus",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "transitionStatus(mixed $newStatus, mixed $oldStatus, mixed $comment): void",
+                    "doc": "What plugins are told when a comment changes status (wp_transition_comment_status); one that keeps its status hears only comment_{status}_{type}.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "newStatus",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "oldStatus",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "comment",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 165,
+                    "end": 176
+                },
+                {
+                    "routes": [],
+                    "name": "cleanCache",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "cleanCache(mixed $ids): void",
+                    "doc": "Comments' cached rows and meta let go (clean_comment_cache), plugins told about each.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ids",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 179,
+                    "end": 188
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(mixed $commentId, mixed $force = false): bool",
+                    "doc": "A comment deleted (wp_delete_comment): to the trash first unless\nforced, it is there already or the trash is off; its replies moved up\nto its parent; the post recounted when it was approved.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "force",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 195,
+                    "end": 216
+                },
+                {
+                    "routes": [],
+                    "name": "trash",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "trash(mixed $commentId): bool",
+                    "doc": "A comment to the trash (wp_trash_comment), or deleted when the trash is off.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 219,
+                    "end": 222
+                },
+                {
+                    "routes": [],
+                    "name": "untrash",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "untrash(mixed $commentId): bool",
+                    "doc": "A comment back from the trash (wp_untrash_comment).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 225,
+                    "end": 228
+                },
+                {
+                    "routes": [],
+                    "name": "spam",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "spam(mixed $commentId): bool",
+                    "doc": "A comment marked spam (wp_spam_comment).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 231,
+                    "end": 234
+                },
+                {
+                    "routes": [],
+                    "name": "unspam",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unspam(mixed $commentId): bool",
+                    "doc": "A comment back from spam (wp_unspam_comment).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 237,
+                    "end": 240
+                },
+                {
+                    "routes": [],
+                    "name": "trashPostComments",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "trashPostComments(mixed $post = NULL): mixed",
+                    "doc": "A post's comments to the trash with it (wp_trash_post_comments): each\nbecomes post-trashed, its status kept on the post to give back; how\nmany changed (one set aside with its post already does not count).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 247,
+                    "end": 264
+                },
+                {
+                    "routes": [],
+                    "name": "untrashPostComments",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "untrashPostComments(mixed $post = NULL): mixed",
+                    "doc": "A post back from the trash gives its comments their statuses back (wp_untrash_post_comments).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 267,
+                    "end": 286
+                },
+                {
+                    "routes": [],
+                    "name": "setAside",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "setAside(mixed $commentId, string $status, string $before, string $after): bool",
+                    "doc": "A comment moved to the trash or spam: the first action, the status change, the status it had kept aside with the time, the second action.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "before",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "after",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 289,
+                    "end": 306
+                },
+                {
+                    "routes": [],
+                    "name": "restore",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "restore(mixed $commentId, string $before, string $after): bool",
+                    "doc": "A comment back from the trash or spam to the status kept aside (held when none was), between the two actions.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "before",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "after",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 309,
+                    "end": 325
+                },
+                {
+                    "routes": [],
+                    "name": "store",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "store(): Minn\\Content\\Comments",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 327,
+                    "end": 330
                 }
             ]
         },
@@ -123221,9 +123939,12 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\Runtime"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\CommentWrites"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -123781,12 +124502,15 @@
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryRunner",
                 "Minn\\Runtime\\CommentQueryWhere",
+                "Minn\\Runtime\\CommentReads",
                 "Minn\\Runtime\\CommentThreads",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Heartbeat",
@@ -123798,6 +124522,7 @@
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Pages",
                 "Minn\\Runtime\\PluginRemoval",
+                "Minn\\Runtime\\PostCaches",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostLinks",
@@ -127605,6 +128330,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenuItems",
@@ -132897,6 +133623,52 @@
                     ],
                     "line": 285,
                     "end": 290
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\PostCaches",
+            "short": "PostCaches",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostCaches.php",
+            "lines": 27,
+            "doc": "A post's cached rows let go as WordPress lets them go: its row, its meta\nand the terms read with it, then plugins told (a page told twice); held\nback while cache invalidation is suspended.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\RowCache",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\CommentWrites"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "clean",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clean(mixed $post): void",
+                    "doc": "A post's caches let go (clean_post_cache).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 39
                 }
             ]
         },
@@ -138436,17 +139208,20 @@
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\AbilityRun",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentFeedQuery",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryRunner",
                 "Minn\\Runtime\\CommentTags",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\NavMenuItems",
+                "Minn\\Runtime\\PostCaches",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostLinks",
@@ -139192,6 +139967,7 @@
                 "Minn\\Rest\\Types",
                 "Minn\\Rest\\UserCollectionParams",
                 "Minn\\Runtime\\ArchiveLinks",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\MetaKeys",
@@ -141340,12 +142116,15 @@
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentFeedQuery",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryRunner",
+                "Minn\\Runtime\\CommentReads",
                 "Minn\\Runtime\\CommentTags",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\CurrentUser",
@@ -141372,6 +142151,7 @@
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\PluginUpdates",
                 "Minn\\Runtime\\Plugins",
+                "Minn\\Runtime\\PostCaches",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostFields",
@@ -143874,7 +144654,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/SiteTime.php",
-            "lines": 70,
+            "lines": 90,
             "doc": "Time as the site keeps it: its timezone (the named one, else the UTC\noffset), now in that zone or in UTC, a moment written in the site's\nlanguage, and a stored date read back in a format.",
             "implements": [],
             "extends": null,
@@ -143886,6 +144666,7 @@
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentTags",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostQueryResults",
                 "Minn\\Theme\\FeedHeaders"
@@ -143948,6 +144729,60 @@
                 },
                 {
                     "routes": [],
+                    "name": "toGmt",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "toGmt(mixed $date, mixed $format = 'Y-m-d H:i:s'): string",
+                    "doc": "A date in the site's zone written in UTC (get_gmt_from_date); the epoch for one that is not a date.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "date",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "format",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'Y-m-d H:i:s'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "fromGmt",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromGmt(mixed $date, mixed $format = 'Y-m-d H:i:s'): string",
+                    "doc": "A date in UTC written in the site's zone (get_date_from_gmt); the epoch for one that is not a date.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "date",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "format",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'Y-m-d H:i:s'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 71
+                },
+                {
+                    "routes": [],
                     "name": "format",
                     "static": true,
                     "visibility": "public",
@@ -143977,8 +144812,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 61
+                    "line": 74,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -144011,8 +144846,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 84
+                    "line": 88,
+                    "end": 104
                 }
             ]
         },
@@ -157512,6 +158347,7 @@
                 "Minn\\Runtime\\ApplicationPasswordEvents",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostRevisions",
                 "Minn\\Runtime\\PostSave",
@@ -160079,6 +160915,7 @@
             "uses": [
                 "Minn\\Front\\FeedTags",
                 "Minn\\Http\\Request",
+                "Minn\\Runtime\\CommentReads",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteTime"
@@ -160125,8 +160962,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 51
+                    "line": 31,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -160154,8 +160991,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 68
+                    "line": 55,
+                    "end": 69
                 }
             ]
         },

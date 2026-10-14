@@ -747,7 +747,7 @@ A comment in the context asked for, through rest_prepare_comment when a plugin h
 
 The REST URL builder.
 
-Internals: `buildFields()` (private, line 40)
+Internals: `buildFields()` (private, line 41)
 
 
 ## CommentsController

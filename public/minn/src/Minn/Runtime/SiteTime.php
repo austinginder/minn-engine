@@ -50,6 +50,26 @@ final class SiteTime
         return (new DateTime('now', $gmt ? new DateTimeZone('UTC') : self::zone()))->format((string) $type);
     }
 
+    /** A date in the site's zone written in UTC (get_gmt_from_date); the epoch for one that is not a date. */
+    public static function toGmt(mixed $date, mixed $format = 'Y-m-d H:i:s'): string
+    {
+        $datetime = date_create((string) $date, self::zone());
+        if ($datetime === false) {
+            return gmdate((string) $format, 0);
+        }
+        return $datetime->setTimezone(new DateTimeZone('UTC'))->format((string) $format);
+    }
+
+    /** A date in UTC written in the site's zone (get_date_from_gmt); the epoch for one that is not a date. */
+    public static function fromGmt(mixed $date, mixed $format = 'Y-m-d H:i:s'): string
+    {
+        $datetime = date_create((string) $date, new DateTimeZone('UTC'));
+        if ($datetime === false) {
+            return gmdate((string) $format, 0);
+        }
+        return $datetime->setTimezone(self::zone())->format((string) $format);
+    }
+
     /** A moment written in a format, its names in the site's language (wp_date), as the filter leaves it. */
     public static function format(mixed $format, mixed $timestamp = null, mixed $timezone = null): mixed
     {

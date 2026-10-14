@@ -16166,6 +16166,19 @@ option under the site's prefix first. The query arguments get_posts adds are set
 and read by keyed destructuring, so the bracket reads of post columns stay at 205. The http-transports
 probe stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 25, comments (function calls 215 → 187).** `Runtime\CommentWrites` writes comments as the
+facade's comment functions did: `insert()`, `update()`, `updateCount()` and `updateCountNow()`,
+`setStatus()`, `transitionStatus()` (with `statusWord()`), `cleanCache()`, `delete()`, `trash()`,
+`untrash()`, `spam()` and `unspam()` (the status kept aside in meta, between the two actions), and a
+post's comments to the trash and back with it (`trashPostComments()`, `untrashPostComments()`).
+`Runtime\CommentChecks` holds the field lengths (`fieldMaxLengths()`, `maxLengths()`), the pre_comment_
+filters (`filter()`), a comment's status in words (`status()`) and a new post's discussion default
+(`defaultStatus()`); `Runtime\CommentReads` the comment query, the counts and when an approved comment
+last arrived. `Runtime\PostCaches::clean()` lets go of a post's caches, and `SiteTime::toGmt()` and
+`fromGmt()` move a date between the site's zone and UTC. A new comment's columns are filled from a
+table of defaults, so the bracket reads of comment columns stay at 57. The http-transports probe stays
+out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

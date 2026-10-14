@@ -33,7 +33,7 @@ final class Deferrals
         $now = self::flip('defer_comment_counting', $defer);
         if ($defer === false) {
             foreach (array_keys((array) Runtime::current()->get('deferred_comment_counts', [])) as $post) {
-                \wp_update_comment_count_now((int) $post);
+                CommentWrites::updateCountNow((int) $post);
             }
             Runtime::current()->set('deferred_comment_counts', []);
         }

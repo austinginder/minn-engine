@@ -80,7 +80,7 @@ final class CommentForm
         if ($content === '' && !Runtime::hooks()->filter('allow_empty_comment', [false, $data])) {
             return Handoff::newError('require_valid_comment', '<strong>Error:</strong> Please type your comment text.', 200);
         }
-        $lengths = \wp_check_comment_data_max_lengths($data);
+        $lengths = CommentChecks::maxLengths($data);
         if (Records::isError($lengths)) {
             return $lengths;
         }

@@ -11,6 +11,8 @@ use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Objects\Errors;
+use Minn\Runtime\CommentChecks;
+use Minn\Runtime\CommentForm;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
@@ -45,7 +47,7 @@ final readonly class CommentPostController
      */
     private function submit(Request $request): Response
     {
-        $comment = \wp_handle_comment_submission($request->form);
+        $comment = CommentForm::submit($request->form);
         if ($comment instanceof Errors) {
             $status = (int) $comment->get_error_data();
             return $status > 0 ? self::refusal($comment->get_error_message(), $status) : new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], '');
@@ -54,7 +56,7 @@ final readonly class CommentPostController
         Runtime::hooks()->action('set_comment_cookies', [$comment, Handoff::currentUser(), $consent]);
         $redirect = (string) ($request->form['redirect_to'] ?? '');
         $location = $redirect === '' ? (string) \get_comment_link($comment) : $redirect . '#comment-' . $comment->comment_ID;
-        if (!$consent && \wp_get_comment_status($comment) === 'unapproved' && (string) $comment->comment_author_email !== '') {
+        if (!$consent && CommentChecks::status($comment) === 'unapproved' && (string) $comment->comment_author_email !== '') {
             $location = QueryArgs::add(['unapproved' => $comment->comment_ID, 'moderation-hash' => Handoff::hash($comment->comment_date_gmt)], $location);
         }
         Handoff::safeRedirect(Runtime::hooks()->filter('comment_post_redirect', [$location, $comment]));

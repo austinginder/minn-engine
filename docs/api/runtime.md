@@ -21,6 +21,7 @@ the WordPress runtime plugins load against
 | [`BlockTemplates`](#blocktemplates) | final class | 67 | Block templates plugins register at runtime, by their namespaced name |
 | [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
 | [`BrowserGlobals`](#browserglobals) | final class | 45 | The browser and web server a request names, as the reference's globals |
+| [`CommentChecks`](#commentchecks) | final class | 75 | What WordPress checks of a comment before and after it is stored: the |
 | [`CommentCloser`](#commentcloser) | final readonly class | 30 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentEvents`](#commentevents) | final readonly class | 254 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
@@ -29,8 +30,10 @@ the WordPress runtime plugins load against
 | [`CommentQuery`](#commentquery) | final readonly class | 28 | The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner). |
 | [`CommentQueryRunner`](#commentqueryrunner) | final class | 131 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
 | [`CommentQueryWhere`](#commentquerywhere) | final class | 196 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
+| [`CommentReads`](#commentreads) | final class | 38 | What WordPress's comment functions tell about comments: the comments a |
 | [`CommentTags`](#commenttags) | final class | 27 | What the comment template tags tell about a comment (the one being read |
 | [`CommentThreads`](#commentthreads) | final class | 68 | A threaded or flat comment query's descendants as the reference fills |
+| [`CommentWrites`](#commentwrites) | final class | 312 | Comments written as WordPress's comment functions write them: a comment |
 | [`Connectors`](#connectors) | final class | 221 | The connectors registry: the external services a site talks to (AI |
 | [`Constants`](#constants) | final class | 91 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronEvents`](#cronevents) | final class | 267 | Scheduled events as WordPress keeps them in the cron option: the list |
@@ -72,6 +75,7 @@ the WordPress runtime plugins load against
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 272 | Loads the site's plugins into the runtime the way the reference does: |
+| [`PostCaches`](#postcaches) | final class | 27 | A post's cached rows let go as WordPress lets them go: its row, its meta |
 | [`PostData`](#postdata) | final class | 98 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 165 | What the reference's REST controllers tell plugins about a post they |
 | [`PostFields`](#postfields) | final class | 89 | A post's fields put in a context as WordPress's sanitize_post_field puts |
@@ -104,7 +108,7 @@ the WordPress runtime plugins load against
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 274 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`SiteOptions`](#siteoptions) | final class | 76 | The network's options, as a single site keeps them: options stored not |
-| [`SiteTime`](#sitetime) | final class | 70 | Time as the site keeps it: its timezone (the named one, else the UTC |
+| [`SiteTime`](#sitetime) | final class | 90 | Time as the site keeps it: its timezone (the named one, else the UTC |
 | [`SiteUrls`](#siteurls) | final class | 140 | The site's own addresses as WordPress builds them: the home and site |
 | [`StoredObjects`](#storedobjects) | final class | 78 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 196 | The part of the reference's interface the runtime does not answer: names in |
@@ -892,6 +896,47 @@ Each global's value for this user agent and server software.
 Internals: `browser()` (private, line 44)
 
 
+## CommentChecks
+
+`final class Minn\Runtime\CommentChecks` · `public/minn/src/Minn/Runtime/CommentChecks.php`
+
+What WordPress checks of a comment before and after it is stored: the
+lengths the table allows its fields, each field through its pre_comment_
+filter, the status a stored comment has in words, and whether a new
+post of a type starts open to comments or pings.
+
+Used by: `Minn\Content\Site`, `Minn\Front\CommentPostController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`
+
+### static `fieldMaxLengths(): mixed`
+
+How long each comment form field may be
+(wp_get_comment_fields_max_lengths), as the table allows, through
+wp_get_comment_fields_max_lengths.
+
+- `@return array<string, int>`
+
+### static `maxLengths(mixed $data): mixed`
+
+Whether a comment fits its columns (wp_check_comment_data_max_lengths): true, or the error naming the first field too long.
+
+### static `filter(mixed $data): array`
+
+Each field through its pre_comment_ filter (wp_filter_comment), in the
+reference's order (the user first, the email last), marked filtered.
+
+- `@return array<string, mixed>`
+
+### static `status(mixed $commentId): mixed`
+
+A comment's status (wp_get_comment_status): approved, unapproved, spam or trash; false for an unknown comment or status.
+
+### static `defaultStatus(mixed $type = 'post', mixed $commentType = 'comment'): mixed`
+
+Whether a new post of a type starts open (get_default_comment_status):
+a page starts closed; another type follows the site's default when it
+supports comments (or trackbacks, for pings).
+
+
 ## CommentCloser
 
 `final readonly class Minn\Runtime\CommentCloser` · `public/minn/src/Minn/Runtime/CommentCloser.php`
@@ -1055,6 +1100,8 @@ flood checks and pre_comment_approved have their say. A refusal is a
 WP_Error whose data is the status the form answers with; none means a
 blank page.
 
+Used by: `Minn\Front\CommentPostController`
+
 ### static `submit(array $form): Minn\Objects\Comment|Minn\Objects\Errors`
 
 The stored comment, or the refusal the form answers with.
@@ -1112,6 +1159,8 @@ Internals: `olderQuery()` (private, line 65)
 `final readonly class Minn\Runtime\CommentQuery` · `public/minn/src/Minn/Runtime/CommentQuery.php`
 
 The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner).
+
+Used by: `Minn\Runtime\CommentReads`
 
 ```php
 __construct(Minn\Db $db)
@@ -1203,6 +1252,32 @@ A LIKE test over the columns (get_search_sql), as an AND clause. @param list<str
 Internals: `approved()` (private, line 77), `post()` (private, line 97), `types()` (private, line 112), `parentAndUser()` (private, line 140), `search()` (private, line 153), `posts()` (private, line 176), `given()` (private, line 196), `listOf()` (private, line 202), `bare()` (private, line 211)
 
 
+## CommentReads
+
+`final class Minn\Runtime\CommentReads` · `public/minn/src/Minn/Runtime/CommentReads.php`
+
+What WordPress's comment functions tell about comments: the comments a
+query finds, how many a post or the site has in each status, and when an
+approved comment last arrived.
+
+Used by: `Minn\Front\ToolbarMenus`, `Minn\Rest\CommentObject`, `Minn\Theme\FeedHeaders`
+
+### static `query(mixed $args = ''): mixed`
+
+The comments a query finds (get_comments): comments, ids or a count, as the comment query answers.
+
+### static `counts(mixed $postId = 0): object`
+
+How many comments a post or the site has in each status (wp_count_comments), unless wp_count_comments answers first.
+
+### static `lastModified(mixed $timezone = 'server'): mixed`
+
+When an approved comment last arrived (get_lastcommentmodified), in
+GMT ("gmt", and the server's own, the GMT date moved by the server's
+offset in the database, with microseconds) or the site's time
+("blog"); false with none.
+
+
 ## CommentTags
 
 `final class Minn\Runtime\CommentTags` · `public/minn/src/Minn/Runtime/CommentTags.php`
@@ -1253,6 +1328,95 @@ A comment's children, then each one's own, depth first, as a list.
 - `@param array<array-key, mixed> $children`
 - `@param array<string, mixed> $args get_children()'s arguments, handed down`
 - `@return list<Comment>`
+
+
+## CommentWrites
+
+`final class Minn\Runtime\CommentWrites` · `public/minn/src/Minn/Runtime/CommentWrites.php`
+
+Comments written as WordPress's comment functions write them: a comment
+stored and changed, its status set (to the trash or spam with the status
+it had kept aside, and back), deleted, and a post's count of approved
+comments kept; each step with the actions and filters the reference
+fires in its order, and the cached rows let go.
+
+- const `DEFAULTS` = `array (   'comment_post_ID' => 0,   'comment_author' => '',   'comment_author_email' => '',   'comment_author_url' => '',   'comment_author_IP' => '',   'comment_date' => '',   'comment_date_gmt' => '',   'comment_content' => '',   'comment_karma' => 0,   'comment_approved' => '1',   'comment_agent' => '',   'comment_type' => '',   'comment_parent' => 0,   'user_id' => 0, )` — The columns a stored comment has, each with what a new comment takes when it gives none (an integer column is read as one).
+
+Used by: `Minn\Runtime\CommentEvents`, `Minn\Runtime\Deferrals`
+
+### static `insert(mixed $commentdata): int`
+
+A comment stored (wp_insert_comment): its id, the post's count kept when it is approved, then wp_insert_comment told.
+
+### static `updateCount(mixed $postId, mixed $deferred = false): bool`
+
+A post's approved comments counted (wp_update_comment_count): put off
+while counting is deferred; asked with $deferred, the posts put off
+are counted now and the answer is true.
+
+### static `updateCountNow(mixed $postId): bool`
+
+A post's approved comments counted now (wp_update_comment_count_now),
+unless pre_wp_update_comment_count_now supplies the count; plugins
+told the old and new counts, then the post edited.
+
+### static `update(mixed $commentarr, mixed $wpError = false): mixed`
+
+A comment changed (wp_update_comment): the stored comment under the
+change, through the field filters and comment_save_pre, then
+wp_update_comment_data (handed the data, the stored comment and the
+change); the columns written, the post's count, edit_comment with the
+columns, and the status transition. 0 when nothing changed.
+
+### static `setStatus(mixed $commentId, mixed $status, mixed $wpError = false): bool`
+
+A comment's status set (wp_set_comment_status): hold, approve, spam or trash; false for an unknown comment or status.
+
+### static `statusWord(mixed $stored): string`
+
+A stored comment status in the words the transition actions use: approved, unapproved, spam, trash.
+
+### static `transitionStatus(mixed $newStatus, mixed $oldStatus, mixed $comment): void`
+
+What plugins are told when a comment changes status (wp_transition_comment_status); one that keeps its status hears only comment_{status}_{type}.
+
+### static `cleanCache(mixed $ids): void`
+
+Comments' cached rows and meta let go (clean_comment_cache), plugins told about each.
+
+### static `delete(mixed $commentId, mixed $force = false): bool`
+
+A comment deleted (wp_delete_comment): to the trash first unless
+forced, it is there already or the trash is off; its replies moved up
+to its parent; the post recounted when it was approved.
+
+### static `trash(mixed $commentId): bool`
+
+A comment to the trash (wp_trash_comment), or deleted when the trash is off.
+
+### static `untrash(mixed $commentId): bool`
+
+A comment back from the trash (wp_untrash_comment).
+
+### static `spam(mixed $commentId): bool`
+
+A comment marked spam (wp_spam_comment).
+
+### static `unspam(mixed $commentId): bool`
+
+A comment back from spam (wp_unspam_comment).
+
+### static `trashPostComments(mixed $post = NULL): mixed`
+
+A post's comments to the trash with it (wp_trash_post_comments): each
+becomes post-trashed, its status kept on the post to give back; how
+many changed (one set aside with its post already does not count).
+
+### static `untrashPostComments(mixed $post = NULL): mixed`
+
+A post back from the trash gives its comments their statuses back (wp_untrash_post_comments).
+
+Internals: `setAside()` (private, line 289), `restore()` (private, line 309), `store()` (private, line 327)
 
 
 ## Connectors
@@ -1640,6 +1804,8 @@ suspended so a bulk read does not fill the cache. Each answers what it
 is now; a value that is not a boolean asks without changing it. Kept in
 the request's state, so a worker's next request starts with them off.
 
+Used by: `Minn\Runtime\CommentWrites`
+
 ### static `terms(mixed $defer): bool`
 
 wp_defer_term_counting: on, off, or asked; off counts what was put off.
@@ -1752,7 +1918,7 @@ plugins have had their chance), so a plugin's version answers the engine
 as it answers WordPress. Arguments pass as given, so each answer's own
 defaults hold.
 
-Used by: `Minn\Auth\Can`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteSchema`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Themes`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Theme\FrontLifecycle`
+Used by: `Minn\Auth\Can`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteSchema`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Themes`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Theme\FrontLifecycle`
 
 
 ### static `bind(array $answers): void`
@@ -2437,7 +2603,7 @@ written and removed with the filters that may answer first and the actions
 around each change (post meta also told as postmeta), values sanitized and
 stored serialized.
 
-Used by: `Minn\Front\CustomLogo`, `Minn\Front\FeedTags`, `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostTags`
+Used by: `Minn\Front\CustomLogo`, `Minn\Front\FeedTags`, `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostTags`
 
 ### static `get(mixed $type, mixed $objectId, mixed $key = '', mixed $single = false): mixed`
 
@@ -3465,6 +3631,21 @@ True when the named plugin file is running as code this request.
 Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 156), `rememberThemeDomain()` (private, line 179), `includeFile()` (private, line 241), `registerRealpath()` (private, line 272), `isolatedInclude()` (private, line 285)
 
 
+## PostCaches
+
+`final class Minn\Runtime\PostCaches` · `public/minn/src/Minn/Runtime/PostCaches.php`
+
+A post's cached rows let go as WordPress lets them go: its row, its meta
+and the terms read with it, then plugins told (a page told twice); held
+back while cache invalidation is suspended.
+
+Used by: `Minn\Runtime\CommentWrites`
+
+### static `clean(mixed $post): void`
+
+A post's caches let go (clean_post_cache).
+
+
 ## PostData
 
 `final class Minn\Runtime\PostData` · `public/minn/src/Minn/Runtime/PostData.php`
@@ -4445,7 +4626,7 @@ id (or the one being read), made from a row or an object, and given back
 as the object, an associative array (ARRAY_A) or a list (ARRAY_N); and
 whether a value is a list of errors.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Cli\CronCommand`, `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Media\Icons`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\CommentObject`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CronEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`
+Used by: `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Cli\CronCommand`, `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Media\Icons`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\CommentObject`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`
 
 ### static `post(mixed $post = NULL, mixed $output = 'OBJECT', mixed $filter = 'raw'): mixed`
 
@@ -4602,7 +4783,7 @@ names or the objects); whether one exists, is hierarchical or viewable;
 and the features a post type supports. A name that is not text or a
 number finds nothing.
 
-Used by: `Minn\Auth\RegisteredCaps`, `Minn\Content\PostSlugs`, `Minn\Front\ToolbarMenus`, `Minn\Rest\BatchController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredFields`, `Minn\Rest\RegisteredType`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\ObjectTerms`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\Records`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\FrontLifecycle`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Auth\RegisteredCaps`, `Minn\Content\PostSlugs`, `Minn\Front\ToolbarMenus`, `Minn\Rest\BatchController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredFields`, `Minn\Rest\RegisteredType`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\ObjectTerms`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\Records`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\FrontLifecycle`, `Minn\Widgets\WidgetForms`
 
 ### static `postType(mixed $type): ?object`
 
@@ -5012,7 +5193,7 @@ attributes. What it has not (an attachment's own link, smilies, the
 capital P, insecure home addresses) runs with the plugins' own
 callbacks.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Can`, `Minn\Auth\Capabilities`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\RenderState`, `Minn\Blocks\Renderer`, `Minn\Cli\CronCommand`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Content\Users`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Http\NoCache`, `Minn\I18n\Gettext`, `Minn\I18n\Numbers`, `Minn\I18n\SiteLanguage`, `Minn\I18n\TranslationFiles`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\FileTypes`, `Minn\Media\Icons`, `Minn\Ops\AutoUpdates`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Query\TaxSql`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermsController`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentTags`, `Minn\Runtime\Constants`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Notices`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\OptionsGroup`, `Minn\Runtime\Pages`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\Registered`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\SiteTime`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermFields`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeMods`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Themes`, `Minn\Runtime\Transients`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\VersionCheck`, `Minn\Runtime\WidgetAreas`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Support\Text`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\GlobalStyles`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\StyleLayers`, `Minn\Theme\TemplateBuffer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Can`, `Minn\Auth\Capabilities`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\RenderState`, `Minn\Blocks\Renderer`, `Minn\Cli\CronCommand`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Content\Users`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Http\NoCache`, `Minn\I18n\Gettext`, `Minn\I18n\Numbers`, `Minn\I18n\SiteLanguage`, `Minn\I18n\TranslationFiles`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\FileTypes`, `Minn\Media\Icons`, `Minn\Ops\AutoUpdates`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Query\TaxSql`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermsController`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Constants`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Notices`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\OptionsGroup`, `Minn\Runtime\Pages`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\Registered`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\SiteTime`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermFields`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeMods`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Themes`, `Minn\Runtime\Transients`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\VersionCheck`, `Minn\Runtime\WidgetAreas`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Support\Text`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\GlobalStyles`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\StyleLayers`, `Minn\Theme\TemplateBuffer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -5538,7 +5719,7 @@ Time as the site keeps it: its timezone (the named one, else the UTC
 offset), now in that zone or in UTC, a moment written in the site's
 language, and a stored date read back in a format.
 
-Used by: `Minn\Front\FeedTemplates`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentTags`, `Minn\Runtime\PostData`, `Minn\Runtime\PostQueryResults`, `Minn\Theme\FeedHeaders`
+Used by: `Minn\Front\FeedTemplates`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostData`, `Minn\Runtime\PostQueryResults`, `Minn\Theme\FeedHeaders`
 
 ### static `zoneName(): string`
 
@@ -5553,6 +5734,14 @@ The site's timezone (wp_timezone).
 Now (current_time): a timestamp for "timestamp" or "U" (the site's
 offset added unless in UTC), a database date for "mysql", else the
 format given, in the site's zone or UTC.
+
+### static `toGmt(mixed $date, mixed $format = 'Y-m-d H:i:s'): string`
+
+A date in the site's zone written in UTC (get_gmt_from_date); the epoch for one that is not a date.
+
+### static `fromGmt(mixed $date, mixed $format = 'Y-m-d H:i:s'): string`
+
+A date in UTC written in the site's zone (get_date_from_gmt); the epoch for one that is not a date.
 
 ### static `format(mixed $format, mixed $timestamp = NULL, mixed $timezone = NULL): mixed`
 

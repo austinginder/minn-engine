@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Auth\Can;
 use Minn\I18n\Numbers;
 use Minn\Objects\User;
+use Minn\Runtime\CommentReads;
 use Minn\Runtime\CurrentUser;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
@@ -228,7 +229,7 @@ final class ToolbarMenus
         if (!Can::current('edit_posts')) {
             return;
         }
-        $waiting = (int) \wp_count_comments()->moderated;
+        $waiting = (int) CommentReads::counts()->moderated;
         $count = Numbers::format($waiting);
         $title = self::ICON . '<span class="ab-label awaiting-mod pending-count count-' . $waiting . '" aria-hidden="true">' . $count . '</span>'
             . '<span class="screen-reader-text comments-in-moderation-text">' . sprintf(Gettext::plural('%s Comment in moderation', '%s Comments in moderation', $waiting), $count) . '</span>';

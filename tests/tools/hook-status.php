@@ -75,7 +75,7 @@ foreach ($engineFiles() as $file) {
 }
 
 // A live hook named whole as a string anywhere in the engine but a subscription (add_, has_, remove_, did_,
-// doing_) is taken as fired through a helper that takes its name (_minn_comment_set_aside(..., 'spammed_comment')).
+// doing_) is taken as fired through a helper that takes its name (Runtime\CommentWrites::setAside(..., 'spammed_comment')).
 // It only ever keeps a hook from counting as missing: dead ends and hooks outside a single site stay what they are.
 $named = [];
 foreach (['public/minn/src', 'public/minn/wp-api'] as $tree) {

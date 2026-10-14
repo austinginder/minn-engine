@@ -76,7 +76,7 @@ final readonly class CommentEvents
         if ($prepared instanceof Errors) {
             throw self::refusal($prepared);
         }
-        $id = (int) \wp_insert_comment(\wp_filter_comment(Slashes::add((array) $prepared)));
+        $id = (int) CommentWrites::insert(CommentChecks::filter(Slashes::add((array) $prepared)));
         if ($id < 1) {
             throw new RestError('rest_comment_failed_create', 'Creating comment failed.', 500);
         }
@@ -100,7 +100,7 @@ final readonly class CommentEvents
                 self::requireContent($prepared);
             }
             self::requireLengths($prepared);
-            $updated = \wp_update_comment(Slashes::add(['comment_ID' => $comment->id] + $prepared), true);
+            $updated = CommentWrites::update(Slashes::add(['comment_ID' => $comment->id] + $prepared), true);
             if ($updated instanceof Errors) {
                 throw new RestError('rest_comment_failed_edit', 'Updating comment failed.', 500);
             }
@@ -118,16 +118,16 @@ final readonly class CommentEvents
      */
     public static function changeStatus(int $id, string $asked): void
     {
-        if ($asked === \wp_get_comment_status($id)) {
+        if ($asked === CommentChecks::status($id)) {
             return;
         }
         match ($asked) {
-            'approved', 'approve', '1' => \wp_set_comment_status($id, 'approve'),
-            'hold', '0' => \wp_set_comment_status($id, 'hold'),
-            'spam' => \wp_spam_comment($id),
-            'unspam' => \wp_unspam_comment($id),
-            'trash' => \wp_trash_comment($id),
-            'untrash' => \wp_untrash_comment($id),
+            'approved', 'approve', '1' => CommentWrites::setStatus($id, 'approve'),
+            'hold', '0' => CommentWrites::setStatus($id, 'hold'),
+            'spam' => CommentWrites::spam($id),
+            'unspam' => CommentWrites::unspam($id),
+            'trash' => CommentWrites::trash($id),
+            'untrash' => CommentWrites::untrash($id),
             default => null,
         };
     }
@@ -171,7 +171,7 @@ final readonly class CommentEvents
     /** @param array<string, mixed> $prepared */
     private static function requireLengths(array $prepared): void
     {
-        $long = \wp_check_comment_data_max_lengths($prepared);
+        $long = CommentChecks::maxLengths($prepared);
         if ($long instanceof Errors) {
             throw new RestError($long->get_error_code(), $long->get_error_message(), 400);
         }
@@ -188,7 +188,7 @@ final readonly class CommentEvents
     public function insert(array $columns): int
     {
         if ($this->live()) {
-            return (int) \wp_insert_comment($columns);
+            return (int) CommentWrites::insert($columns);
         }
         $id = $this->comments->insert($columns);
         $comment = $this->comments->find($id);
@@ -217,17 +217,17 @@ final readonly class CommentEvents
             }
             return;
         }
-        \wp_update_comment(['comment_ID' => $comment->id] + $columns);
+        CommentWrites::update(['comment_ID' => $comment->id] + $columns);
         if ($status === null || $status === $comment->approved) {
             return;
         }
         // The REST controller names the status in words, and sends spam and trash through their own functions.
         match ($status) {
-            '1' => \wp_set_comment_status($comment->id, 'approve'),
-            '0' => \wp_set_comment_status($comment->id, 'hold'),
-            'spam' => \wp_spam_comment($comment->id),
-            'trash' => \wp_trash_comment($comment->id),
-            default => \wp_set_comment_status($comment->id, $status),
+            '1' => CommentWrites::setStatus($comment->id, 'approve'),
+            '0' => CommentWrites::setStatus($comment->id, 'hold'),
+            'spam' => CommentWrites::spam($comment->id),
+            'trash' => CommentWrites::trash($comment->id),
+            default => CommentWrites::setStatus($comment->id, $status),
         };
     }
 
@@ -235,7 +235,7 @@ final readonly class CommentEvents
     public function trash(CommentRecord $comment): void
     {
         if ($this->live()) {
-            \wp_trash_comment($comment->id);
+            CommentWrites::trash($comment->id);
             return;
         }
         $this->comments->addMeta($comment->id, '_wp_trash_meta_status', $comment->approved);
@@ -248,7 +248,7 @@ final readonly class CommentEvents
     public function delete(CommentRecord $comment): void
     {
         if ($this->live()) {
-            \wp_delete_comment($comment->id, true);
+            CommentWrites::delete($comment->id, true);
             return;
         }
         $this->comments->delete($comment->id);

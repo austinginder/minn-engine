@@ -4,7 +4,6 @@
 use Minn\Runtime\Deferrals;
 use Minn\Content\CommentClasses;
 use Minn\Content\Comments;
-use Minn\Runtime\CommentQuery;
 use Minn\Runtime\Runtime;
 
 /** @internal */
@@ -32,8 +31,7 @@ function get_comment($comment = null, $output = OBJECT)
 
 function get_comments($args = '')
 {
-    $query = new WP_Comment_Query();
-    return $query->query($args);
+    return Minn\Runtime\CommentReads::query($args);
 }
 
 function get_comments_number($post = 0)
@@ -61,74 +59,23 @@ function get_comments_number_text($zero = false, $one = false, $more = false, $p
 
 function wp_count_comments($post_id = 0)
 {
-    $post_id = (int) $post_id;
-    $filtered = apply_filters('wp_count_comments', [], $post_id);
-    if (!empty($filtered)) {
-        return (object) $filtered;
-    }
-    return (object) (new CommentQuery(Runtime::current()->db))->breakdown($post_id);
+    return Minn\Runtime\CommentReads::counts($post_id);
 }
 
 function wp_insert_comment($commentdata)
 {
-    $data = wp_unslash((array) $commentdata);
-    $now = current_time('mysql');
-    $columns = [
-        'comment_post_ID' => (int) ($data['comment_post_ID'] ?? 0),
-        'comment_author' => (string) ($data['comment_author'] ?? ''),
-        'comment_author_email' => (string) ($data['comment_author_email'] ?? ''),
-        'comment_author_url' => (string) ($data['comment_author_url'] ?? ''),
-        'comment_author_IP' => (string) ($data['comment_author_IP'] ?? ''),
-        'comment_date' => (string) ($data['comment_date'] ?? $now),
-        'comment_date_gmt' => (string) ($data['comment_date_gmt'] ?? get_gmt_from_date((string) ($data['comment_date'] ?? $now))),
-        'comment_content' => (string) ($data['comment_content'] ?? ''),
-        'comment_karma' => (int) ($data['comment_karma'] ?? 0),
-        'comment_approved' => (string) ($data['comment_approved'] ?? '1'),
-        'comment_agent' => (string) ($data['comment_agent'] ?? ''),
-        'comment_type' => (string) (($data['comment_type'] ?? '') === '' ? 'comment' : $data['comment_type']),
-        'comment_parent' => (int) ($data['comment_parent'] ?? 0),
-        'user_id' => (int) ($data['user_id'] ?? 0),
-    ];
-    $id = _minn_comments()->insert($columns);
-    if ($columns['comment_approved'] === '1') {
-        wp_update_comment_count($columns['comment_post_ID']);
-    }
-    wp_cache_delete($columns['comment_post_ID'], 'posts');
-    clean_comment_cache($id);
-    $comment = get_comment($id);
-    do_action('wp_insert_comment', $id, $comment);
-    return $id;
+    return Minn\Runtime\CommentWrites::insert($commentdata);
 }
 
 function wp_update_comment_count($post_id, $do_deferred = false)
 {
-    if ($do_deferred) {
-        // The posts put off are counted now, and the answer is true (probe comment-remaining).
-        Deferrals::comments(false);
-        return true;
-    }
-    // While counting is deferred the recount waits for wp_defer_comment_counting(false).
-    return Deferrals::putOffComments((int) $post_id) || wp_update_comment_count_now($post_id);
+    return Minn\Runtime\CommentWrites::updateCount($post_id, $do_deferred);
 }
 
 /** Recounts a post's approved comments now, telling plugins the old and new counts. */
 function wp_update_comment_count_now($post_id)
 {
-    $post_id = (int) $post_id;
-    $post = $post_id > 0 ? get_post($post_id) : null;
-    if ($post === null) {
-        return false;
-    }
-    $old = (int) $post->comment_count;
-    // A plugin may supply the count itself (pre_wp_update_comment_count_now); otherwise it is counted.
-    $given = apply_filters('pre_wp_update_comment_count_now', null, $old, $post_id);
-    $given === null ? _minn_comments()->recount($post_id) : _minn_post_writer()->update($post_id, ['comment_count' => (int) $given]);
-    clean_post_cache($post_id);
-    $new = (int) get_post($post_id)->comment_count;
-    do_action('wp_update_comment_count', $post_id, $new, $old);
-    do_action("edit_post_{$post->post_type}", $post_id, get_post($post_id));
-    do_action('edit_post', $post_id, get_post($post_id));
-    return true;
+    return Minn\Runtime\CommentWrites::updateCountNow($post_id);
 }
 
 /**
@@ -141,213 +88,61 @@ function wp_update_comment_count_now($post_id)
  */
 function wp_update_comment($commentarr, $wp_error = false)
 {
-    $given = wp_unslash((array) $commentarr);
-    $comment = get_comment((int) ($given['comment_ID'] ?? 0));
-    if ($comment === null) {
-        return $wp_error ? new WP_Error('invalid_comment_id', 'Invalid comment ID.') : false;
-    }
-    $stored = $comment->to_array();
-    $commentarr = wp_filter_comment(array_merge($stored, $given));
-    $commentarr['comment_content'] = apply_filters('comment_save_pre', $commentarr['comment_content']);
-    $data = apply_filters('wp_update_comment_data', $commentarr, $stored, $commentarr);
-    if (is_wp_error($data)) {
-        return $wp_error ? $data : 0;
-    }
-    $columns = array_intersect_key((array) $data, array_flip(['comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_author_IP', 'comment_date', 'comment_date_gmt', 'comment_content', 'comment_karma', 'comment_approved', 'comment_agent', 'comment_type', 'comment_parent', 'user_id']));
-    $changed = Comments::changedColumns($columns, $stored);
-    if ($changed !== []) {
-        _minn_comments()->update($comment->comment_ID, $changed);
-    }
-    clean_comment_cache($comment->comment_ID);
-    wp_update_comment_count((int) $comment->comment_post_ID);
-    do_action('edit_comment', $comment->comment_ID, $columns);
-    $updated = get_comment($comment->comment_ID);
-    wp_transition_comment_status(_minn_comment_status_word($updated->comment_approved), _minn_comment_status_word($comment->comment_approved), $updated);
-    return $changed === [] ? 0 : 1;
+    return Minn\Runtime\CommentWrites::update($commentarr, $wp_error);
 }
 
 function wp_set_comment_status($comment_id, $comment_status, $wp_error = false)
 {
-    $comment = get_comment($comment_id);
-    if ($comment === null) {
-        return false;
-    }
-    $status = match ((string) $comment_status) {
-        'hold', '0' => '0',
-        'approve', '1' => '1',
-        'spam' => 'spam',
-        'trash' => 'trash',
-        default => null,
-    };
-    if ($status === null) {
-        return false;
-    }
-    _minn_comments()->update($comment->comment_ID, ['comment_approved' => $status]);
-    clean_comment_cache($comment->comment_ID);
-    $updated = get_comment($comment->comment_ID);
-    do_action('wp_set_comment_status', $comment->comment_ID, $comment_status);
-    wp_transition_comment_status(_minn_comment_status_word($status), _minn_comment_status_word($comment->comment_approved), $updated);
-    wp_update_comment_count((int) $comment->comment_post_ID);
-    return true;
-}
-
-/** @internal A stored comment status in the words the transition actions use: approved, unapproved, spam, trash. */
-function _minn_comment_status_word(string $stored): string
-{
-    return match ($stored) {
-        '1', 'approve' => 'approved',
-        '0', 'hold' => 'unapproved',
-        default => $stored,
-    };
+    return Minn\Runtime\CommentWrites::setStatus($comment_id, $comment_status, $wp_error);
 }
 
 /** What plugins are told when a comment changes status; a comment that keeps its status hears only comment_{status}_{type}. */
 function wp_transition_comment_status($new_status, $old_status, $comment)
 {
-    $new = _minn_comment_status_word((string) $new_status);
-    $old = _minn_comment_status_word((string) $old_status);
-    if ($new !== $old) {
-        do_action('transition_comment_status', $new, $old, $comment);
-        do_action("comment_{$old}_to_{$new}", $comment);
-    }
-    $type = $comment->comment_type === '' ? 'comment' : $comment->comment_type;
-    do_action("comment_{$new}_{$type}", $comment->comment_ID, $comment);
+    Minn\Runtime\CommentWrites::transitionStatus($new_status, $old_status, $comment);
 }
 
 /** Lets go of comments' cached rows and meta, telling plugins about each. */
 function clean_comment_cache($ids)
 {
-    Minn\Content\RowCache::forget('comments');
-    Minn\Content\RowCache::forget('comment_queries');
-    foreach ((array) $ids as $id) {
-        wp_cache_delete((int) $id, 'comment');
-        wp_cache_delete((int) $id, 'comment_meta');
-        do_action('clean_comment_cache', (int) $id);
-    }
+    Minn\Runtime\CommentWrites::cleanCache($ids);
 }
 
 /** The trash takes a post's comments with it: each becomes post-trashed, and their statuses are kept to give back. */
 function wp_trash_post_comments($post = null)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return;
-    }
-    do_action('trash_post_comments', $post->ID);
-    $statuses = _minn_comments()->statusesOf($post->ID);
-    if ($statuses === []) {
-        return;
-    }
-    add_post_meta($post->ID, '_wp_trash_meta_comments_status', $statuses);
-    _minn_comments()->setStatusOf(array_keys($statuses), 'post-trashed');
-    clean_comment_cache(array_keys($statuses));
-    do_action('trashed_post_comments', $post->ID, $statuses);
-    // How many comments changed: one already set aside with its post does not count (probe post-remaining).
-    return count(array_filter($statuses, static fn ($status): bool => (string) $status !== 'post-trashed'));
+    return Minn\Runtime\CommentWrites::trashPostComments($post);
 }
 
 /** A post back from the trash gives its comments their statuses back. */
 function wp_untrash_post_comments($post = null)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return;
-    }
-    $statuses = get_post_meta($post->ID, '_wp_trash_meta_comments_status', true);
-    if (!is_array($statuses) || $statuses === []) {
-        return true;
-    }
-    do_action('untrash_post_comments', $post->ID);
-    foreach (array_keys(array_flip(array_map('strval', $statuses))) as $status) {
-        _minn_comments()->setStatusOf(array_map('intval', array_keys($statuses, $status, false)), $status);
-    }
-    clean_comment_cache(array_keys($statuses));
-    delete_post_meta($post->ID, '_wp_trash_meta_comments_status');
-    do_action('untrashed_post_comments', $post->ID);
+    return Minn\Runtime\CommentWrites::untrashPostComments($post);
 }
 
 function wp_delete_comment($comment_id, $force_delete = false)
 {
-    $comment = get_comment($comment_id);
-    if ($comment === null) {
-        return false;
-    }
-    if (!$force_delete && EMPTY_TRASH_DAYS && !in_array($comment->comment_approved, ['trash', 'spam'], true)) {
-        return wp_trash_comment($comment->comment_ID);
-    }
-    do_action('delete_comment', $comment->comment_ID, $comment);
-    _minn_comments()->orphanReplies((int) $comment->comment_ID, (int) $comment->comment_parent);
-    _minn_comments()->delete((int) $comment->comment_ID);
-    do_action('deleted_comment', $comment->comment_ID, $comment);
-    clean_comment_cache($comment->comment_ID);
-    do_action('wp_set_comment_status', $comment->comment_ID, 'delete');
-    wp_transition_comment_status('delete', $comment->comment_approved, $comment);
-    // Only an approved comment was counted.
-    if ($comment->comment_approved === '1') {
-        wp_update_comment_count((int) $comment->comment_post_ID);
-    }
-    return true;
+    return Minn\Runtime\CommentWrites::delete($comment_id, $force_delete);
 }
 
 function wp_trash_comment($comment_id)
 {
-    return EMPTY_TRASH_DAYS ? _minn_comment_set_aside($comment_id, 'trash', 'trash_comment', 'trashed_comment') : wp_delete_comment($comment_id, true);
+    return Minn\Runtime\CommentWrites::trash($comment_id);
 }
 
 function wp_untrash_comment($comment_id)
 {
-    return _minn_comment_restore($comment_id, 'untrash_comment', 'untrashed_comment');
+    return Minn\Runtime\CommentWrites::untrash($comment_id);
 }
 
 function wp_spam_comment($comment_id)
 {
-    return _minn_comment_set_aside($comment_id, 'spam', 'spam_comment', 'spammed_comment');
+    return Minn\Runtime\CommentWrites::spam($comment_id);
 }
 
 function wp_unspam_comment($comment_id)
 {
-    return _minn_comment_restore($comment_id, 'unspam_comment', 'unspammed_comment');
-}
-
-/**
- * @internal a comment moved to the trash or spam as the reference moves it
- * (probe placeholders-a): the first action, the status change, the status
- * it had kept aside with the time, the second action
- */
-function _minn_comment_set_aside($comment_id, string $status, string $before, string $after): bool
-{
-    $comment = get_comment($comment_id);
-    if ($comment === null) {
-        return false;
-    }
-    do_action($before, $comment->comment_ID, $comment);
-    if (!wp_set_comment_status($comment->comment_ID, $status)) {
-        return false;
-    }
-    delete_comment_meta($comment->comment_ID, '_wp_trash_meta_status');
-    delete_comment_meta($comment->comment_ID, '_wp_trash_meta_time');
-    add_comment_meta($comment->comment_ID, '_wp_trash_meta_status', $comment->comment_approved);
-    add_comment_meta($comment->comment_ID, '_wp_trash_meta_time', time());
-    do_action($after, $comment->comment_ID, $comment);
-    return true;
-}
-
-/** @internal a comment back from the trash or spam to the status kept aside (held when none was), between the two actions */
-function _minn_comment_restore($comment_id, string $before, string $after): bool
-{
-    $comment = get_comment($comment_id);
-    if ($comment === null) {
-        return false;
-    }
-    do_action($before, $comment->comment_ID, $comment);
-    $status = (string) (get_comment_meta($comment->comment_ID, '_wp_trash_meta_status', true) ?: '0');
-    if (!wp_set_comment_status($comment->comment_ID, $status)) {
-        return false;
-    }
-    delete_comment_meta($comment->comment_ID, '_wp_trash_meta_status');
-    delete_comment_meta($comment->comment_ID, '_wp_trash_meta_time');
-    do_action($after, $comment->comment_ID, $comment);
-    return true;
+    return Minn\Runtime\CommentWrites::unspam($comment_id);
 }
 
 function wp_count_terms($args = [], $deprecated = '')
@@ -380,16 +175,7 @@ function get_comment_date($format = '', $comment_id = 0)
 /** When an approved comment last arrived, in GMT ('gmt', and the server's own, which is GMT here) or the site's time ('blog'); false with none. */
 function get_lastcommentmodified($timezone = 'server')
 {
-    global $wpdb;
-    $timezone = strtolower((string) $timezone);
-    // Server time is the GMT date moved by the server's offset in the database, which answers with microseconds (probe comment-remaining).
-    $column = match ($timezone) {
-        'blog' => 'comment_date',
-        'gmt' => 'comment_date_gmt',
-        default => "DATE_ADD(comment_date_gmt, INTERVAL '" . (int) date('Z') . "' SECOND)",
-    };
-    $value = $wpdb->get_var("SELECT {$column} FROM {$wpdb->comments} WHERE comment_approved = '1' ORDER BY comment_date_gmt DESC LIMIT 1");
-    return apply_filters('get_lastcommentmodified', $value === null ? false : $value, $timezone);
+    return Minn\Runtime\CommentReads::lastModified($timezone);
 }
 
 /** A comment's link, at the page of comments it is on (Minn\Runtime\CommentPages), through get_comment_link. */
@@ -544,32 +330,13 @@ function comment_class($css_class = '', $comment = null, $post = null, $display 
 /** The column limits a comment must fit: author 245, email 100, url 200, content 65525. */
 function wp_check_comment_data_max_lengths($comment_data)
 {
-    $max = wp_get_comment_fields_max_lengths();
-    $limits = ['comment_author' => ['comment_author_column_length', 'Your name is too long.'], 'comment_author_email' => ['comment_author_email_column_length', 'Your email address is too long.'], 'comment_author_url' => ['comment_author_url_column_length', 'Your URL is too long.'], 'comment_content' => ['comment_content_column_length', 'Your comment is too long.']];
-    foreach ($limits as $field => [$code, $message]) {
-        if (isset($comment_data[$field], $max[$field]) && mb_strlen((string) $comment_data[$field], '8bit') > (int) $max[$field]) {
-            return new WP_Error($code, '<strong>Error:</strong> ' . $message, 200);
-        }
-    }
-    return true;
+    return Minn\Runtime\CommentChecks::maxLengths($comment_data);
 }
 
 /** Each field through its pre_comment_* filter, in the reference's order (the user first, the email last), marked filtered. */
 function wp_filter_comment($commentdata)
 {
-    $map = ['comment_agent' => 'pre_comment_user_agent', 'comment_author' => 'pre_comment_author_name', 'comment_content' => 'pre_comment_content', 'comment_author_IP' => 'pre_comment_user_ip', 'comment_author_url' => 'pre_comment_author_url', 'comment_author_email' => 'pre_comment_author_email'];
-    if (isset($commentdata['user_ID'])) {
-        $commentdata['user_id'] = apply_filters('pre_user_id', $commentdata['user_ID']);
-    } elseif (isset($commentdata['user_id'])) {
-        $commentdata['user_id'] = apply_filters('pre_user_id', $commentdata['user_id']);
-    }
-    foreach ($map as $field => $filter) {
-        if (isset($commentdata[$field])) {
-            $commentdata[$field] = apply_filters($filter, $commentdata[$field]);
-        }
-    }
-    $commentdata['filtered'] = true;
-    return $commentdata;
+    return Minn\Runtime\CommentChecks::filter($commentdata);
 }
 
 /**
@@ -740,11 +507,7 @@ function wp_handle_comment_submission($comment_data)
 /** approved, unapproved, spam, trash, or false for an unknown comment. */
 function wp_get_comment_status($comment_id)
 {
-    $comment = get_comment($comment_id);
-    if ($comment === null) {
-        return false;
-    }
-    return match ((string) $comment->comment_approved) { '1' => 'approved', '0' => 'unapproved', 'spam' => 'spam', 'trash' => 'trash', default => false };
+    return Minn\Runtime\CommentChecks::status($comment_id);
 }
 
 /** The remembered commenter from the comment_author_* cookies, or the signed-in user. */
@@ -1348,11 +1111,7 @@ function _minn_comment_form_body(array $args, WP_Post $post): void
 
 function get_default_comment_status($post_type = 'post', $comment_type = 'comment')
 {
-    // A page starts closed; another type follows the site's default when it supports comments (or trackbacks, for pings).
-    $feature = in_array($comment_type, ['pingback', 'trackback'], true) ? 'trackbacks' : 'comments';
-    $option = $feature === 'comments' ? 'default_comment_status' : 'default_ping_status';
-    $status = $post_type !== 'page' && post_type_supports($post_type, $feature) && get_option($option) === 'open' ? 'open' : 'closed';
-    return apply_filters('get_default_comment_status', $status, $post_type, $comment_type);
+    return Minn\Runtime\CommentChecks::defaultStatus($post_type, $comment_type);
 }
 
 function wp_blacklist_check($author, $email, $url, $comment, $user_ip, $user_agent)
@@ -1569,7 +1328,7 @@ function comment_time($format = '', $comment_id = 0)
 
 function wp_get_comment_fields_max_lengths()
 {
-    return apply_filters('wp_get_comment_fields_max_lengths', _minn_comments()->fieldLengths());
+    return Minn\Runtime\CommentChecks::fieldMaxLengths();
 }
 
 /** The default on transition_comment_status: the last-modified time of comments is asked again. */
