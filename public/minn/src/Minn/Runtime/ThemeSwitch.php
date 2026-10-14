@@ -31,10 +31,10 @@ final class ThemeSwitch
     /** switch_theme. */
     public static function switchTo(string $stylesheet): void
     {
-        $old = \wp_get_theme();
-        $new = \wp_get_theme($stylesheet);
-        \set_theme_mod('sidebars_widgets', ['time' => time(), 'data' => \wp_get_sidebars_widgets()]);
-        $locations = \get_theme_mod('nav_menu_locations');
+        $old = Themes::theme();
+        $new = Themes::theme($stylesheet);
+        ThemeMods::set('sidebars_widgets', ['time' => time(), 'data' => \wp_get_sidebars_widgets()]);
+        $locations = ThemeMods::get('nav_menu_locations');
         if ($locations !== false || Runtime::options()->filtered('theme_switch_menu_locations') !== false) {
             OptionWrites::update('theme_switch_menu_locations', $locations, true);
         }
@@ -43,7 +43,7 @@ final class ThemeSwitch
         OptionWrites::delete('template_root');
         OptionWrites::delete('stylesheet_root');
         OptionWrites::update('current_theme', $new->get('Name'));
-        \set_theme_mod('wp_classic_sidebars', $GLOBALS['wp_registered_sidebars'] ?? []);
+        ThemeMods::set('wp_classic_sidebars', $GLOBALS['wp_registered_sidebars'] ?? []);
         OptionWrites::update('theme_switched', $old->get_stylesheet());
         OptionWrites::update('theme_switched_via_customizer', false);
         OptionWrites::setAutoload(['theme_mods_' . $new->get_stylesheet() => true, 'theme_mods_' . $old->get_stylesheet() => false]);
@@ -57,7 +57,7 @@ final class ThemeSwitch
         if (!$stylesheet) {
             return;
         }
-        $old = \wp_get_theme((string) $stylesheet);
+        $old = Themes::theme((string) $stylesheet);
         if (Runtime::options()->filtered('theme_switched_via_customizer')) {
             Runtime::hooks()->remove('after_switch_theme', '_wp_menus_changed');
             Runtime::hooks()->remove('after_switch_theme', '_wp_sidebars_changed');
@@ -72,7 +72,7 @@ final class ThemeSwitch
     public static function menusChanged(): void
     {
         $mapped = self::mapLocations(\get_nav_menu_locations(), Runtime::options()->filtered('theme_switch_menu_locations'));
-        \set_theme_mod('nav_menu_locations', $mapped);
+        ThemeMods::set('nav_menu_locations', $mapped);
         OptionWrites::delete('theme_switch_menu_locations');
     }
 
@@ -141,7 +141,7 @@ final class ThemeSwitch
         if (Paths::validate($stylesheet) !== 0 || str_contains($stylesheet, '/') || $stylesheet === '.' || $stylesheet === '..') {
             return false;
         }
-        $path = rtrim((string) \get_theme_root($stylesheet), '/') . '/' . $stylesheet;
+        $path = rtrim((string) Themes::root($stylesheet), '/') . '/' . $stylesheet;
         return Files::deleteTree($path);
     }
 

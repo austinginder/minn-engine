@@ -179,7 +179,7 @@ A template as wp/v2 shapes it in a context, for the route's own type (templates 
 
 - `@return array<string, mixed>`
 
-### `themeFields(WP_Theme $theme, Minn\Objects\RestRequest $request): array`
+### `themeFields(Minn\Objects\Theme $theme, Minn\Objects\RestRequest $request): array`
 
 A theme in the wp/v2 shape, links included, before rest_prepare_theme. @return array<string, mixed>
 
@@ -248,7 +248,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 75), `engineResponse()` (private, line 404), `withPageLinks()` (private, line 418), `options()` (private, line 449), `withSchema()` (private, line 466), `withAllow()` (private, line 487)
+Internals: `controllers()` (private, line 76), `engineResponse()` (private, line 405), `withPageLinks()` (private, line 419), `options()` (private, line 450), `withSchema()` (private, line 467), `withAllow()` (private, line 488)
 
 
 ## ApplicationPasswordsController
@@ -1234,7 +1234,7 @@ Route: `GET /wp/v2/themes/{stylesheet:[^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?} (
 
 One theme by its stylesheet.
 
-### `fields(WP_Theme $theme, Minn\Objects\RestRequest $request): array`
+### `fields(Minn\Objects\Theme $theme, Minn\Objects\RestRequest $request): array`
 
 A theme in the wp/v2 shape, its links included, before
 rest_prepare_theme (the runtime's WP_REST_Themes_Controller shapes
@@ -1242,7 +1242,7 @@ through here); the request is what the supports' callbacks are handed.
 
 - `@return array<string, mixed>`
 
-Internals: `item()` (private, line 79), `links()` (private, line 126), `viewsThemes()` (private, line 149), `viewsActive()` (private, line 155), `status()` (private, line 160), `requireRuntime()` (private, line 166)
+Internals: `item()` (private, line 81), `links()` (private, line 128), `viewsThemes()` (private, line 151), `viewsActive()` (private, line 157), `status()` (private, line 162), `requireRuntime()` (private, line 168)
 
 
 ## Links

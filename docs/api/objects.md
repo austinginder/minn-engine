@@ -15,6 +15,7 @@
 | [`RestServer`](#restserver) | interface | 3 | The REST server as the WordPress layer hands it to plugins |
 | [`Term`](#term) | interface | 3 | A term as the WordPress layer hands it to plugins (WP_Term). The engine |
 | [`TermsQuery`](#termsquery) | interface | 3 | A terms query as the WordPress layer hands it to plugins (WP_Term_Query). |
+| [`Theme`](#theme) | interface | 3 | A theme as the WordPress layer hands it to plugins (WP_Theme): its |
 | [`User`](#user) | interface | 3 | A user as the WordPress layer hands it to plugins (WP_User). The engine |
 | [`UsersQuery`](#usersquery) | interface | 3 | A users query as the WordPress layer hands it to plugins (WP_User_Query). |
 
@@ -144,6 +145,18 @@ The engine knows these objects by this mark and makes them through
 Runtime\Handoff, so it never names the WordPress layer's class.
 
 Used by: `Minn\Runtime\Handoff`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`
+
+
+## Theme
+
+`interface Minn\Objects\Theme` · `public/minn/src/Minn/Objects/Theme.php`
+
+A theme as the WordPress layer hands it to plugins (WP_Theme): its
+headers, folders, templates and files. The engine knows these objects by
+this mark and makes them through Runtime\Handoff, so it never names the
+WordPress layer's class.
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\InstalledThemesController`, `Minn\Runtime\Handoff`, `Minn\Runtime\Themes`
 
 
 ## User

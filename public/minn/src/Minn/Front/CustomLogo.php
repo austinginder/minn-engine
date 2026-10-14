@@ -7,6 +7,8 @@ namespace Minn\Front;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
+use Minn\Runtime\ThemeMods;
+use Minn\Runtime\ThemeSupports;
 use Minn\Support\Escape;
 
 /**
@@ -24,11 +26,11 @@ final class CustomLogo
     /** The logo's markup, through get_custom_logo; empty when the site has none. */
     public static function html(int $blogId): string
     {
-        $logo = (int) \get_theme_mod('custom_logo');
+        $logo = (int) ThemeMods::get('custom_logo');
         $html = '';
         if ($logo > 0) {
             $front = MainQuery::current()->is_front_page() && !MainQuery::current()->is_paged();
-            $unlinked = $front && \get_theme_support('custom-logo', 'unlink-homepage-logo');
+            $unlinked = $front && ThemeSupports::get('custom-logo', 'unlink-homepage-logo');
             $attrs = ['class' => 'custom-logo', 'loading' => false];
             if ($unlinked) {
                 $attrs['alt'] = '';
@@ -40,8 +42,6 @@ final class CustomLogo
             $html = $unlinked
                 ? sprintf('<span class="custom-logo-link">%s</span>', $image)
                 : sprintf('<a href="%1$s" class="custom-logo-link" rel="home"%2$s>%3$s</a>', Escape::url(SiteUrls::home('/')), $front ? ' aria-current="page"' : '', $image);
-        } elseif (\is_customize_preview()) {
-            $html = sprintf('<a href="%1$s" class="custom-logo-link" style="display:none;"><img class="custom-logo" alt="" /></a>', Escape::url(SiteUrls::home('/')));
         }
         return (string) Runtime::hooks()->filter('get_custom_logo', [$html, $blogId]);
     }

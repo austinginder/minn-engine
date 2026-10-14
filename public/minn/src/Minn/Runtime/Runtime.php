@@ -153,7 +153,7 @@ final class Runtime
         $GLOBALS['wp_locale'] = new \WP_Locale();
         \_minn_locale_switcher();
         // The theme folder registered as the reference registers it while loading.
-        \register_theme_directory(\get_theme_root());
+        Themes::registerDirectory(Themes::root());
         // Core's block patterns are on for every theme before plugins and the theme load, so either may turn them off.
         ThemeSupports::add('core-block-patterns', []);
         register_shutdown_function(static function (): void {

@@ -17,6 +17,7 @@ use Minn\Http\Route;
 use Minn\Media\Metadata;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
+use Minn\Runtime\ThemeSupports;
 use Minn\Support\Serialized;
 use Minn\Theme\Theme;
 
@@ -43,7 +44,7 @@ final readonly class SiteController
         // block manages one whether or not the theme declares support);
         // a classic theme needs the declared custom-logo support.
         $supported = Theme::active($this->site, $this->permalinks, ABSPATH . 'wp-content/themes') !== null
-            || (\function_exists('current_theme_supports') && \current_theme_supports('custom-logo'));
+            || (\function_exists('current_theme_supports') && ThemeSupports::current('custom-logo'));
         $id = 0;
         if ($supported) {
             $mods = Serialized::decode((string) ($this->db->option('theme_mods_' . (string) ($this->db->option('stylesheet') ?? '')) ?? ''));

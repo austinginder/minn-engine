@@ -14,6 +14,8 @@ use Minn\Front\Resolution;
 use Minn\Runtime\Plugins;
 use Minn\Runtime\Runtime;
 use Minn\Html;
+use Minn\Runtime\ThemeMods;
+use Minn\Runtime\ThemeSupports;
 
 /**
  * A whole page from the active classic theme: the reference's PHP template
@@ -124,8 +126,8 @@ final readonly class ClassicRenderer
         $parent = $this->theme->template !== $this->theme->stylesheet ? $this->theme->template : null;
         return BodyClasses::classic($resolution, $coreClasses, $custom, $this->theme->stylesheet, $parent, new BodyFacts(
             loggedIn: Reader::current()->loggedIn(),
-            customLogo: (int) \get_theme_mod('custom_logo') > 0,
-            embedResponsive: \current_theme_supports('responsive-embeds') !== false,
+            customLogo: (int) ThemeMods::get('custom_logo') > 0,
+            embedResponsive: ThemeSupports::current('responsive-embeds') !== false,
             bar: $this->bar !== null && !$resolution->preview,
         ));
     }

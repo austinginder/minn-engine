@@ -908,7 +908,7 @@ Route: `GET /minn-admin/v1/media/months (floor edit_posts)`
 
 The months the library has uploads in.
 
-Internals: `logoUrl()` (private, line 56)
+Internals: `logoUrl()` (private, line 57)
 
 
 ## StructureController

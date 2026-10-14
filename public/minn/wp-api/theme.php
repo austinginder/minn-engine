@@ -7,79 +7,42 @@ use Minn\Runtime\Runtime;
 
 function wp_get_theme($stylesheet = '', $theme_root = '')
 {
-    $stylesheet = (string) $stylesheet === '' ? get_stylesheet() : (string) $stylesheet;
-    return new WP_Theme($stylesheet, $theme_root !== '' ? (string) $theme_root : get_theme_root($stylesheet));
+    return Minn\Runtime\Themes::theme($stylesheet, $theme_root);
 }
 
 function wp_get_themes($args = [])
 {
-    $out = [];
-    foreach (glob(get_theme_root() . '/*/style.css') ?: [] as $file) {
-        $slug = basename(dirname($file));
-        $out[$slug] = new WP_Theme($slug, get_theme_root());
-    }
-    return $out;
+    return Minn\Runtime\Themes::all($args);
 }
 
 function get_theme_mods()
 {
-    $mods = get_option('theme_mods_' . get_stylesheet());
-    return is_array($mods) ? $mods : [];
+    return Minn\Runtime\ThemeMods::all();
 }
 
 function get_theme_mod($name, $default_value = false)
 {
-    $mods = get_theme_mods();
-    if (isset($mods[$name])) {
-        return apply_filters("theme_mod_{$name}", $mods[$name]);
-    }
-    // Only a default with a %s (or %1$s) in it names the theme's folders; any other % is left alone.
-    if (is_string($default_value) && preg_match('#(?<!%)%(?:\d+\$?)?s#', $default_value) === 1) {
-        $default_value = sprintf($default_value, get_template_directory_uri(), get_stylesheet_directory_uri());
-    }
-    return apply_filters("theme_mod_{$name}", $default_value);
+    return Minn\Runtime\ThemeMods::get($name, $default_value);
 }
 
 function set_theme_mod($name, $value)
 {
-    $mods = get_theme_mods();
-    $old = $mods[$name] ?? false;
-    $mods[$name] = apply_filters("pre_set_theme_mod_{$name}", $value, $old);
-    return update_option('theme_mods_' . get_stylesheet(), $mods);
+    return Minn\Runtime\ThemeMods::set($name, $value);
 }
 
 function remove_theme_mod($name)
 {
-    $mods = get_theme_mods();
-    if (!isset($mods[$name])) {
-        return;
-    }
-    unset($mods[$name]);
-    if ($mods === []) {
-        remove_theme_mods();
-        return;
-    }
-    update_option('theme_mods_' . get_stylesheet(), $mods);
+    Minn\Runtime\ThemeMods::remove($name);
 }
 
 function remove_theme_mods()
 {
-    delete_option('theme_mods_' . get_stylesheet());
+    Minn\Runtime\ThemeMods::removeAll();
 }
 
 function get_theme_support($feature, ...$args)
 {
-    $supports = ThemeSupports::all();
-    if (!array_key_exists($feature, $supports)) {
-        return false;
-    }
-    if ($args === [] || $supports[$feature] === true) {
-        return $supports[$feature];
-    }
-    if (is_array($supports[$feature][0] ?? null) && array_is_list($supports[$feature][0])) {
-        return in_array($args[0], $supports[$feature][0], true);
-    }
-    return $supports[$feature][0][$args[0]] ?? false;
+    return Minn\Runtime\ThemeSupports::get($feature, ...$args);
 }
 
 /**
@@ -90,14 +53,7 @@ function get_theme_support($feature, ...$args)
  */
 function current_theme_supports($feature, ...$args)
 {
-    $support = get_theme_support($feature);
-    if ($support === false) {
-        return false;
-    }
-    if ($args !== [] && in_array($feature, ['post-formats', 'post-thumbnails', 'html5', 'custom-header', 'custom-background'], true)) {
-        return get_theme_support($feature, ...$args) !== false;
-    }
-    return apply_filters("current_theme_supports-{$feature}", true, $args, $support);
+    return Minn\Runtime\ThemeSupports::current($feature, ...$args);
 }
 
 /** Declares a feature (Runtime\ThemeSupports): bare it is on, otherwise its arguments, merged as WordPress merges each. */
@@ -153,19 +109,7 @@ function get_theme_roots()
 /** Adds a folder themes are looked for in (relative to the content folder when it does not exist as given); false when it is not there. */
 function register_theme_directory($directory)
 {
-    $directory = (string) $directory;
-    if (!file_exists($directory)) {
-        $directory = WP_CONTENT_DIR . '/' . $directory;
-        if (!file_exists($directory)) {
-            return false;
-        }
-    }
-    $directory = untrailingslashit($directory);
-    $GLOBALS['wp_theme_directories'] ??= [];
-    if (!in_array($directory, $GLOBALS['wp_theme_directories'], true)) {
-        $GLOBALS['wp_theme_directories'][] = $directory;
-    }
-    return true;
+    return Minn\Runtime\Themes::registerDirectory($directory);
 }
 
 /** The themes in the registered theme folders, stylesheet => its style.css and root, in folder order. */

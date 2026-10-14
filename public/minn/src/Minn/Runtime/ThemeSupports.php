@@ -40,6 +40,42 @@ final class ThemeSupports
 
     private const TYPES = ['boolean', 'integer', 'number', 'string', 'array', 'object'];
 
+    /**
+     * A feature's support (get_theme_support): false when the theme has none;
+     * with an argument, that part of it (one of a list, or a key's value).
+     */
+    public static function get(mixed $feature, mixed ...$args): mixed
+    {
+        $supports = self::all();
+        if (!array_key_exists($feature, $supports)) {
+            return false;
+        }
+        if ($args === [] || $supports[$feature] === true) {
+            return $supports[$feature];
+        }
+        if (is_array($supports[$feature][0] ?? null) && array_is_list($supports[$feature][0])) {
+            return in_array($args[0], $supports[$feature][0], true);
+        }
+        return $supports[$feature][0][$args[0]] ?? false;
+    }
+
+    /**
+     * Whether the theme supports a feature (current_theme_supports): for the
+     * features with parts, the part asked; otherwise
+     * current_theme_supports-{feature} has the last word.
+     */
+    public static function current(mixed $feature, mixed ...$args): mixed
+    {
+        $support = self::get($feature);
+        if ($support === false) {
+            return false;
+        }
+        if ($args !== [] && in_array($feature, ['post-formats', 'post-thumbnails', 'html5', 'custom-header', 'custom-background'], true)) {
+            return self::get($feature, ...$args) !== false;
+        }
+        return Runtime::hooks()->filter("current_theme_supports-{$feature}", [true, $args, $support]);
+    }
+
     /** Every feature the theme has declared, as stored. @return array<string, mixed> */
     public static function all(): array
     {
@@ -173,11 +209,11 @@ final class ThemeSupports
                 continue;
             }
             $name = (string) ($rest['name'] ?? $feature);
-            if (!\current_theme_supports($feature)) {
+            if (!self::current($feature)) {
                 $out[$name] = $rest['schema']['default'] ?? false;
                 continue;
             }
-            $support = \get_theme_support($feature);
+            $support = self::get($feature);
             $out[$name] = $feature === 'post-formats' ? ['standard', ...(array) self::unwrapped($support, $config)] : self::prepared($support, $config, $feature, $request);
         }
         return $out;

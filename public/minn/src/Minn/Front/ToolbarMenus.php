@@ -14,6 +14,7 @@ use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\I18n\Gettext;
 use Minn\Runtime\SiteUrls;
+use Minn\Runtime\ThemeSupports;
 use Minn\Support\Escape;
 use Minn\Support\Text;
 
@@ -168,12 +169,12 @@ final class ToolbarMenus
         if (!Can::current('edit_theme_options')) {
             return;
         }
-        $widgets = \current_theme_supports('widgets');
+        $widgets = ThemeSupports::current('widgets');
         $links = [
             'widgets' => [$widgets, Gettext::text('Widgets'), 'widgets.php', []],
-            'menus' => [$widgets || \current_theme_supports('menus'), Gettext::text('Menus'), 'nav-menus.php', []],
-            'background' => [\current_theme_supports('custom-background'), Gettext::text('Background'), 'themes.php?page=custom-background', ['class' => 'hide-if-customize']],
-            'header' => [\current_theme_supports('custom-header'), Gettext::text('Header'), 'themes.php?page=custom-header', ['class' => 'hide-if-customize']],
+            'menus' => [$widgets || ThemeSupports::current('menus'), Gettext::text('Menus'), 'nav-menus.php', []],
+            'background' => [ThemeSupports::current('custom-background'), Gettext::text('Background'), 'themes.php?page=custom-background', ['class' => 'hide-if-customize']],
+            'header' => [ThemeSupports::current('custom-header'), Gettext::text('Header'), 'themes.php?page=custom-header', ['class' => 'hide-if-customize']],
         ];
         foreach ($links as $id => [$supported, $title, $page, $meta]) {
             if ($supported) {
@@ -204,7 +205,7 @@ final class ToolbarMenus
         }
         $request = Runtime::current()->request;
         $here = (SiteUrls::secure() ? 'https://' : 'http://') . ($request === null ? '' : $request->host . $request->path . $request->queryStringWithout());
-        $bar->add_node(['id' => 'customize', 'title' => Gettext::text('Customize'), 'href' => QueryArgs::add('url', urlencode($here), \wp_customize_url()), 'meta' => ['class' => 'hide-if-no-customize']]);
+        $bar->add_node(['id' => 'customize', 'title' => Gettext::text('Customize'), 'href' => QueryArgs::add('url', urlencode($here), SiteUrls::customize()), 'meta' => ['class' => 'hide-if-no-customize']]);
         Runtime::hooks()->add('wp_before_admin_bar_render', 'wp_customize_support_script');
     }
 

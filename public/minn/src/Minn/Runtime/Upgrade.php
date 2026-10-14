@@ -238,7 +238,7 @@ final class Upgrade
     /** The folder the item lands in: a folder named for the package inside a known parent, otherwise the destination itself. */
     private static function destinationFor(string $destination, string $source): string
     {
-        $parents = array_map(static fn (string $dir): string => rtrim($dir, '/'), [ABSPATH, WP_CONTENT_DIR, WP_PLUGIN_DIR, WP_CONTENT_DIR . '/themes', (string) \get_theme_root()]);
+        $parents = array_map(static fn (string $dir): string => rtrim($dir, '/'), [ABSPATH, WP_CONTENT_DIR, WP_PLUGIN_DIR, WP_CONTENT_DIR . '/themes', (string) Themes::root()]);
         return in_array(rtrim($destination, '/'), $parents, true)
             ? Url::withTrailingSlash($destination) . basename($source) . '/'
             : Url::withTrailingSlash($destination);

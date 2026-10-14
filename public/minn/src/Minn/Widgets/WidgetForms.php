@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Widgets;
 
+use Minn\Html;
 use Minn\Runtime\Registered;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
@@ -40,7 +41,7 @@ final class WidgetForms
         $sortby = (string) ($instance['sortby'] ?? 'post_title');
         $options = '';
         foreach (['post_title' => 'Page title', 'menu_order' => 'Page order', 'ID' => 'Page ID'] as $value => $label) {
-            $options .= "\t\t\t\t<option value=\"{$value}\"" . \selected($sortby, $value, false) . ">{$label}</option>\n";
+            $options .= "\t\t\t\t<option value=\"{$value}\"" . Html::selected($sortby, $value) . ">{$label}</option>\n";
         }
         return self::title($widget, $instance)
             . sprintf("\n\t\t<p>\n\t\t\t<label for=\"%1\$s\">Sort by:</label>\n\t\t\t<select name=\"%2\$s\" id=\"%1\$s\" class=\"widefat\">\n%3\$s\t\t\t</select>\n\t\t</p>\n", self::id($widget, 'sortby'), self::name($widget, 'sortby'), $options)
@@ -50,14 +51,14 @@ final class WidgetForms
     /** The archives widget: title, dropdown and counts boxes. */
     public static function archives(\WP_Widget $widget, array $instance): string
     {
-        $box = static fn (string $key, string $label): string => sprintf("\t\t\t<input class=\"checkbox\" type=\"checkbox\"%3\$s id=\"%1\$s\" name=\"%2\$s\" />\n\t\t\t<label for=\"%1\$s\">%4\$s</label>\n", self::id($widget, $key), self::name($widget, $key), \checked(!empty($instance[$key]), true, false), $label);
+        $box = static fn (string $key, string $label): string => sprintf("\t\t\t<input class=\"checkbox\" type=\"checkbox\"%3\$s id=\"%1\$s\" name=\"%2\$s\" />\n\t\t\t<label for=\"%1\$s\">%4\$s</label>\n", self::id($widget, $key), self::name($widget, $key), Html::checked(!empty($instance[$key])), $label);
         return self::title($widget, $instance) . "\t\t<p>\n" . $box('dropdown', 'Display as dropdown') . "\t\t\t<br />\n" . $box('count', 'Show post counts') . "\t\t</p>\n\t\t";
     }
 
     /** The categories widget: title, dropdown, counts and hierarchy boxes. */
     public static function categories(\WP_Widget $widget, array $instance): string
     {
-        $box = static fn (string $key, string $label): string => sprintf("\t\t\t<input type=\"checkbox\" class=\"checkbox\" id=\"%1\$s\" name=\"%2\$s\"%3\$s />\n\t\t\t<label for=\"%1\$s\">%4\$s</label>\n", self::id($widget, $key), self::name($widget, $key), \checked(!empty($instance[$key]), true, false), $label);
+        $box = static fn (string $key, string $label): string => sprintf("\t\t\t<input type=\"checkbox\" class=\"checkbox\" id=\"%1\$s\" name=\"%2\$s\"%3\$s />\n\t\t\t<label for=\"%1\$s\">%4\$s</label>\n", self::id($widget, $key), self::name($widget, $key), Html::checked(!empty($instance[$key])), $label);
         return self::title($widget, $instance)
             . "\n\t\t<p>\n" . $box('dropdown', 'Display as dropdown') . "\t\t\t<br />\n\n" . $box('count', 'Show post counts') . "\t\t\t<br />\n\n" . $box('hierarchical', 'Show hierarchy') . "\t\t</p>\n\t\t";
     }
@@ -67,7 +68,7 @@ final class WidgetForms
     {
         return self::title($widget, $instance)
             . self::number($widget, (int) ($instance['number'] ?? 5) ?: 5, 'Number of posts to show:')
-            . sprintf("\n\t\t<p>\n\t\t\t<input class=\"checkbox\" type=\"checkbox\"%3\$s id=\"%1\$s\" name=\"%2\$s\" />\n\t\t\t<label for=\"%1\$s\">Display post date?</label>\n\t\t</p>\n\t\t", self::id($widget, 'show_date'), self::name($widget, 'show_date'), \checked(!empty($instance['show_date']), true, false));
+            . sprintf("\n\t\t<p>\n\t\t\t<input class=\"checkbox\" type=\"checkbox\"%3\$s id=\"%1\$s\" name=\"%2\$s\" />\n\t\t\t<label for=\"%1\$s\">Display post date?</label>\n\t\t</p>\n\t\t", self::id($widget, 'show_date'), self::name($widget, 'show_date'), Html::checked(!empty($instance['show_date'])));
     }
 
     /** The recent comments widget: title and how many. */
@@ -107,10 +108,10 @@ final class WidgetForms
         $out = sprintf("\t\t<p>\n\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t<input type=\"text\" class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" value=\"%3\$s\" />\n\t\t</p>\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')));
         $options = '';
         foreach ($taxonomies as $taxonomy) {
-            $options .= "\t\t\t\t\t\t\t\t\t\t\t<option value=\"" . Escape::attr($taxonomy->name) . '" ' . \selected($taxonomy->name, $current, false) . ">\n\t\t\t\t\t\t\t" . Escape::html($taxonomy->labels->name) . "\t\t\t\t\t\t</option>\n";
+            $options .= "\t\t\t\t\t\t\t\t\t\t\t<option value=\"" . Escape::attr($taxonomy->name) . '" ' . Html::selected($taxonomy->name, $current) . ">\n\t\t\t\t\t\t\t" . Escape::html($taxonomy->labels->name) . "\t\t\t\t\t\t</option>\n";
         }
         $out .= sprintf("\t\t\t\t\t\t<p>\n\t\t\t\t\t<label for=\"%1\$s\">Taxonomy:</label>\n\t\t\t\t\t<select class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\">\n%3\$s\t\t\t\t\t\t\t\t\t\t</select>\n\t\t\t\t</p>\n", self::id($widget, 'taxonomy'), self::name($widget, 'taxonomy'), $options);
-        return $out . sprintf("\t\t\t\t\t\t\t<p>\n\t\t\t\t<input type=\"checkbox\" class=\"checkbox\" id=\"%1\$s\" name=\"%2\$s\" %3\$s />\n\t\t\t\t<label for=\"%1\$s\">Show tag counts</label>\n\t\t\t</p>\n\t\t\t", self::id($widget, 'count'), self::name($widget, 'count'), \checked(!empty($instance['count']), true, false));
+        return $out . sprintf("\t\t\t\t\t\t\t<p>\n\t\t\t\t<input type=\"checkbox\" class=\"checkbox\" id=\"%1\$s\" name=\"%2\$s\" %3\$s />\n\t\t\t\t<label for=\"%1\$s\">Show tag counts</label>\n\t\t\t</p>\n\t\t\t", self::id($widget, 'count'), self::name($widget, 'count'), Html::checked(!empty($instance['count'])));
     }
 
     /** The navigation menu widget: a note when there are no menus, else the title and the menu to show. */
@@ -123,7 +124,7 @@ final class WidgetForms
         $out .= sprintf("\t\t\t<p>\n\t\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t\t<input type=\"text\" class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" value=\"%3\$s\" />\n\t\t\t</p>\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')));
         $options = '';
         foreach ($menus as $menu) {
-            $options .= "\t\t\t\t\t\t\t\t\t\t\t<option value=\"" . Escape::attr((string) $menu->term_id) . '" ' . \selected($chosen, $menu->term_id, false) . ">\n\t\t\t\t\t\t\t" . Escape::html($menu->name) . "\t\t\t\t\t\t</option>\n";
+            $options .= "\t\t\t\t\t\t\t\t\t\t\t<option value=\"" . Escape::attr((string) $menu->term_id) . '" ' . Html::selected($chosen, $menu->term_id) . ">\n\t\t\t\t\t\t\t" . Escape::html($menu->name) . "\t\t\t\t\t\t</option>\n";
         }
         $out .= sprintf("\t\t\t<p>\n\t\t\t\t<label for=\"%1\$s\">Select Menu:</label>\n\t\t\t\t<select id=\"%1\$s\" name=\"%2\$s\">\n\t\t\t\t\t<option value=\"0\">&mdash; Select &mdash;</option>\n%3\$s\t\t\t\t\t\t\t\t\t</select>\n\t\t\t</p>\n", self::id($widget, 'nav_menu'), self::name($widget, 'nav_menu'), $options);
         return $out . "\t\t\t\t\t</div>\n\t\t";
@@ -159,14 +160,14 @@ final class WidgetForms
         if ($inputs['items']) {
             $options = '';
             for ($i = 1; $i <= 20; $i++) {
-                $options .= "<option value='{$i}' " . \selected($items, $i, false) . ">{$i}</option>";
+                $options .= "<option value='{$i}' " . Html::selected($items, $i) . ">{$i}</option>";
             }
             $out .= "\t<p><label for=\"rss-items-{$number}\">How many items would you like to display?</label>\n\t<select id=\"rss-items-{$number}\" name=\"widget-rss[{$number}][items]\">\n\t{$options}\t</select></p>\n";
         }
         $out .= "\t<p>\n";
         foreach (['show_summary' => ['summary', 'Display item content?'], 'show_author' => ['author', 'Display item author if available?'], 'show_date' => ['date', 'Display item date?']] as $key => [$slug, $label]) {
             if ($inputs[$key]) {
-                $out .= "\t\t\t<input id=\"rss-show-{$slug}-{$number}\" name=\"widget-rss[{$number}][{$key}]\" type=\"checkbox\" value=\"1\" " . \checked((bool) $args[$key], true, false) . " />\n\t\t<label for=\"rss-show-{$slug}-{$number}\">{$label}</label><br />\n";
+                $out .= "\t\t\t<input id=\"rss-show-{$slug}-{$number}\" name=\"widget-rss[{$number}][{$key}]\" type=\"checkbox\" value=\"1\" " . Html::checked((bool) $args[$key]) . " />\n\t\t<label for=\"rss-show-{$slug}-{$number}\">{$label}</label><br />\n";
             }
         }
         return $out . "\t\t</p>\n\t";

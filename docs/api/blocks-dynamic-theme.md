@@ -136,7 +136,7 @@ __construct(Minn\Theme\Theme $theme, Minn\Theme\Templates $templates, Minn\Conte
 
 Registers this family's blocks with the renderer.
 
-Internals: `templatePart()` (private, line 44), `announcePart()` (private, line 69), `pattern()` (private, line 82), `siteTitle()` (private, line 100), `siteTagline()` (private, line 116)
+Internals: `templatePart()` (private, line 45), `announcePart()` (private, line 70), `pattern()` (private, line 83), `siteTitle()` (private, line 101), `siteTagline()` (private, line 117)
 
 
 ## TermBlocks

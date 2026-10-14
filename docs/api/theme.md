@@ -170,7 +170,7 @@ The body-class tokens before plugins filter them (get_body_class filters them). 
 
 - `@return list<string>`
 
-Internals: `template()` (private, line 78), `bodyClasses()` (private, line 117), `registerHead()` (private, line 134), `registerStyles()` (private, line 140)
+Internals: `template()` (private, line 80), `bodyClasses()` (private, line 119), `registerHead()` (private, line 136), `registerStyles()` (private, line 142)
 
 
 ## ClassicTheme

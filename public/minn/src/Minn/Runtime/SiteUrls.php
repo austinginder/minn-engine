@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Http\Request;
+use Minn\Support\Escape;
 use Minn\Support\Url;
 
 /**
@@ -79,6 +80,22 @@ final class SiteUrls
     public static function selfAdmin(mixed $path = '', mixed $scheme = 'admin'): string
     {
         return (string) Runtime::hooks()->filter('self_admin_url', [self::admin($path, $scheme), $path, $scheme]);
+    }
+
+    /** An address in wp-content (content_url). */
+    public static function content(mixed $path = ''): mixed
+    {
+        return Runtime::hooks()->filter('content_url', [self::joined(self::withScheme(WP_CONTENT_URL), $path), $path]);
+    }
+
+    /** The Customizer's address, a theme to preview named (wp_customize_url), escaped. */
+    public static function customize(mixed $stylesheet = ''): string
+    {
+        $url = self::admin('customize.php');
+        if ($stylesheet !== '') {
+            $url .= '?theme=' . urlencode((string) $stylesheet);
+        }
+        return Escape::url($url);
     }
 
     /** An address in wp-includes (includes_url). */

@@ -12,9 +12,11 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Objects\RestRequest;
+use Minn\Objects\Theme;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\Themes;
 use Minn\Runtime\ThemeSupports;
 use Minn\Support\Lists;
 
@@ -49,7 +51,7 @@ final readonly class InstalledThemesController
                 : $this->caller->refuse('rest_cannot_view_themes', 'Sorry, you are not allowed to view themes.');
         }
         $items = [];
-        foreach (\wp_get_themes() as $stylesheet => $theme) {
+        foreach (Themes::all() as $stylesheet => $theme) {
             if ($statuses === [] || in_array(self::status((string) $stylesheet), $statuses, true)) {
                 $items[] = $this->item($theme);
             }
@@ -68,7 +70,7 @@ final readonly class InstalledThemesController
                 ? $this->caller->refuse('rest_cannot_view_active_theme', 'Sorry, you are not allowed to view the active theme.')
                 : $this->caller->refuse('rest_cannot_view_themes', 'Sorry, you are not allowed to view themes.');
         }
-        $theme = \wp_get_theme($stylesheet);
+        $theme = Themes::theme($stylesheet);
         if (!$theme->exists()) {
             throw new RestError('rest_theme_not_found', 'Theme not found.', 404);
         }
@@ -76,10 +78,10 @@ final readonly class InstalledThemesController
     }
 
     /** @return array<string, mixed> */
-    private function item(\WP_Theme $theme): array
+    private function item(Theme $theme): array
     {
         $stylesheet = $theme->get_stylesheet();
-        return RuntimePrepare::item('rest_prepare_theme', $this->fields($theme, Runtime::current()->get('rest_prepare_request') ?? Handoff::newRestRequest('GET', '/wp/v2/themes')), static fn () => \wp_get_theme($stylesheet));
+        return RuntimePrepare::item('rest_prepare_theme', $this->fields($theme, Runtime::current()->get('rest_prepare_request') ?? Handoff::newRestRequest('GET', '/wp/v2/themes')), static fn () => Themes::theme($stylesheet));
     }
 
     /**
@@ -89,7 +91,7 @@ final readonly class InstalledThemesController
      *
      * @return array<string, mixed>
      */
-    public function fields(\WP_Theme $theme, RestRequest $request): array
+    public function fields(Theme $theme, RestRequest $request): array
     {
         $stylesheet = $theme->get_stylesheet();
         $active = self::status($stylesheet) === 'active';
@@ -123,7 +125,7 @@ final readonly class InstalledThemesController
     }
 
     /** @return array<string, list<array<string, mixed>>> */
-    private function links(\WP_Theme $theme): array
+    private function links(Theme $theme): array
     {
         $stylesheet = $theme->get_stylesheet();
         $active = self::status($stylesheet) === 'active';
@@ -159,7 +161,7 @@ final readonly class InstalledThemesController
 
     private static function status(string $stylesheet): string
     {
-        return $stylesheet === \get_stylesheet() ? 'active' : 'inactive';
+        return $stylesheet === Themes::stylesheet() ? 'active' : 'inactive';
     }
 
     /** A theme's supports come from its own code: without the runtime there is no answer to give. */

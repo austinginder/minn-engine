@@ -772,3 +772,6 @@ Minn\Runtime\Handoff::bind([
         'menu-locations' => new WP_REST_Menu_Locations_Controller(...$args),
     },
 ]);
+
+// Themes, made through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind(['newTheme' => static fn (...$args) => new WP_Theme(...$args)]);

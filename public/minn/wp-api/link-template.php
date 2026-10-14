@@ -69,11 +69,7 @@ function network_home_url($path = '', $scheme = null)
 
 function content_url($path = '')
 {
-    $url = set_url_scheme(WP_CONTENT_URL);
-    if ($path !== '' && is_string($path) && !str_contains($path, '..')) {
-        $url .= '/' . ltrim($path, '/');
-    }
-    return apply_filters('content_url', $url, $path);
+    return SiteUrls::content($path);
 }
 
 function includes_url($path = '', $scheme = null)
@@ -131,34 +127,32 @@ function rest_get_url_prefix()
 
 function get_theme_root($stylesheet_or_template = '')
 {
-    return apply_filters('theme_root', WP_CONTENT_DIR . '/themes');
+    return Minn\Runtime\Themes::root($stylesheet_or_template);
 }
 
 function get_theme_root_uri($stylesheet_or_template = '', $theme_root = '')
 {
-    return apply_filters('theme_root_uri', content_url('themes'), get_theme_root(), $stylesheet_or_template);
+    return Minn\Runtime\Themes::rootUri($stylesheet_or_template, $theme_root);
 }
 
 function get_stylesheet()
 {
-    return apply_filters('stylesheet', (string) get_option('stylesheet'));
+    return Minn\Runtime\Themes::stylesheet();
 }
 
 function get_template()
 {
-    return apply_filters('template', (string) get_option('template'));
+    return Minn\Runtime\Themes::template();
 }
 
 function get_stylesheet_directory()
 {
-    $stylesheet = get_stylesheet();
-    return apply_filters('stylesheet_directory', get_theme_root($stylesheet) . '/' . $stylesheet, $stylesheet, get_theme_root($stylesheet));
+    return Minn\Runtime\Themes::stylesheetDirectory();
 }
 
 function get_stylesheet_directory_uri()
 {
-    $stylesheet = str_replace('%2F', '/', rawurlencode(get_stylesheet()));
-    return apply_filters('stylesheet_directory_uri', get_theme_root_uri($stylesheet) . '/' . $stylesheet, $stylesheet, get_theme_root_uri($stylesheet));
+    return Minn\Runtime\Themes::stylesheetDirectoryUri();
 }
 
 function get_stylesheet_uri()
@@ -168,14 +162,12 @@ function get_stylesheet_uri()
 
 function get_template_directory()
 {
-    $template = get_template();
-    return apply_filters('template_directory', get_theme_root($template) . '/' . $template, $template, get_theme_root($template));
+    return Minn\Runtime\Themes::templateDirectory();
 }
 
 function get_template_directory_uri()
 {
-    $template = str_replace('%2F', '/', rawurlencode(get_template()));
-    return apply_filters('template_directory_uri', get_theme_root_uri($template) . '/' . $template, $template, get_theme_root_uri($template));
+    return Minn\Runtime\Themes::templateDirectoryUri();
 }
 
 function get_theme_file_uri($file = '')
@@ -351,11 +343,7 @@ function get_default_feed()
 
 function wp_customize_url($stylesheet = '')
 {
-    $url = admin_url('customize.php');
-    if ($stylesheet !== '') {
-        $url .= '?theme=' . urlencode((string) $stylesheet);
-    }
-    return esc_url($url);
+    return SiteUrls::customize($stylesheet);
 }
 
 function wp_upload_dir($time = null, $create_dir = true, $refresh_cache = false)

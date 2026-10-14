@@ -78,7 +78,7 @@ final readonly class MenuEvents
         $locations = \get_nav_menu_locations();
         $kept = array_filter($locations, static fn ($assigned) => (int) $assigned !== $menuId);
         if (count($kept) !== count($locations)) {
-            \set_theme_mod('nav_menu_locations', $kept);
+            ThemeMods::set('nav_menu_locations', $kept);
         }
         Runtime::hooks()->action('wp_delete_nav_menu', [$menuId]);
     }

@@ -15,6 +15,7 @@ use Minn\Runtime\BlockHooks;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\Html;
+use Minn\Runtime\Themes;
 use Minn\Theme\Templates;
 use Minn\Theme\Theme;
 use Minn\Blocks\RenderState;
@@ -71,7 +72,7 @@ final readonly class Structure
         if (!Runtime::booted()) {
             return;
         }
-        $id = (string) $block->attr('theme', \get_stylesheet()) . '//' . $slug;
+        $id = (string) $block->attr('theme', Themes::stylesheet()) . '//' . $slug;
         match ($source) {
             'post' => Runtime::hooks()->action('render_block_core_template_part_post', [$id, $block->attrs, Records::post((int) $where), $markup]),
             'file' => Runtime::hooks()->action('render_block_core_template_part_file', [$id, $block->attrs, $where, $markup]),

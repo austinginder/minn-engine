@@ -16097,6 +16097,19 @@ sanitizers Minn's own (`Sanitize::hexColor()` and `textareaField()` are new), wi
 `sanitize()` for the two schema helpers. WP_HTTP_Response carries the `Minn\Objects\HttpResponse`
 mark. The facade maps onto them. All 370 probes give identical output before and after.
 
+**Batch 19, themes (function calls 362 → 321, class references 155 → 151).** `Runtime\Themes` names and
+finds the site's themes as the facade did: the stylesheet and template, the themes root and its
+address, each active theme's folder and address, a theme by its folder (`theme()`, made through
+`Handoff::newTheme()`), every installed theme and the extra roots plugins register.
+`Runtime\ThemeMods` reads, writes and removes the active theme's settings, a default with %s naming
+the theme's folders. `ThemeSupports::get()` and `current()` are get_theme_support and
+current_theme_supports; `SiteUrls::content()` and `customize()` are content_url and wp_customize_url;
+`Html::checked()`, `selected()` and `chosen()` give the attribute the form helpers print (the facade's
+helpers still print it when asked; the widget forms only took it). WP_Theme carries the
+`Minn\Objects\Theme` mark. The custom logo's Customizer-preview branch is gone: Minn has no
+Customizer, so it never ran. The admin's custom-logo check keeps its guard that the WordPress layer is
+loaded. All 370 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

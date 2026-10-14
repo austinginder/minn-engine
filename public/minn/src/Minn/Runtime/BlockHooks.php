@@ -36,8 +36,8 @@ final class BlockHooks
             return $markup;
         }
         $template = new \WP_Block_Template();
-        $template->id = get_stylesheet() . '//' . $slug;
-        $template->theme = get_stylesheet();
+        $template->id = Themes::stylesheet() . '//' . $slug;
+        $template->theme = Themes::stylesheet();
         $template->slug = $slug;
         $template->type = 'wp_template_part';
         $template->area = $area;

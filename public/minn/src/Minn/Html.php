@@ -16,6 +16,24 @@ final class Html
     /** Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from "<" to the next ">". */
     public const SPLIT = '/(<(?:!--.*?(?:-->|$)|!\[CDATA\[.*?(?:\]\]>|$)|[^>]*>?))/s';
 
+    /** The checked attribute when the two agree as text (checked), else nothing. */
+    public static function checked(mixed $checked, mixed $current = true): string
+    {
+        return self::chosen($checked, $current, 'checked');
+    }
+
+    /** The selected attribute when the two agree as text (selected), else nothing. */
+    public static function selected(mixed $selected, mixed $current = true): string
+    {
+        return self::chosen($selected, $current, 'selected');
+    }
+
+    /** An attribute of the given name when the two agree as text, else nothing. */
+    public static function chosen(mixed $helper, mixed $current, string $type): string
+    {
+        return (string) $helper === (string) $current ? " {$type}='{$type}'" : '';
+    }
+
     /**
      * Markup cut into text and HTML pieces, the HTML ones at the odd
      * positions (wp_html_split): a comment or CDATA section is one piece

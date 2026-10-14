@@ -8,7 +8,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 370 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 335 | The engine's front door. An unmodified wp-config.php ends by requiring |
-| [`Html`](#html) | final class | 115 | HTML, the front door for escaping and cutting markup: plain static calls, |
+| [`Html`](#html) | final class | 133 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
 | [`Json`](#json) | final class | 134 | JSON in and out, for the engine and for code written for Minn: |
 | [`RestError`](#resterror) | final class | 60 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
@@ -274,7 +274,19 @@ Escaping at output boundaries goes through here.
 
 - const `SPLIT` = `'/(<(?:!--.*?(?:-->|$)|!\\[CDATA\\[.*?(?:\\]\\]>|$)|[^>]*>?))/s'` — Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from "<" to the next ">".
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Duotone`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Clickable`, `Minn\Content\Menus`, `Minn\Content\NoteMarkers`, `Minn\Content\PasswordGate`, `Minn\Content\SiteIcon`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\Calendar`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Html\Decoder`, `Minn\Html\Edits`, `Minn\Html\Escaped`, `Minn\Html\Scanner`, `Minn\Html\TagQuery`, `Minn\Html\Tags`, `Minn\Html\TokenMap`, `Minn\Http\Failure`, `Minn\I18n\SiteLanguage`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\PluginsController`, `Minn\Runtime\Shortcodes`, `Minn\Support\Escape`, `Minn\Support\Sanitize`, `Minn\Support\Text`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Duotone`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Clickable`, `Minn\Content\Menus`, `Minn\Content\NoteMarkers`, `Minn\Content\PasswordGate`, `Minn\Content\SiteIcon`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\Calendar`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Html\Decoder`, `Minn\Html\Edits`, `Minn\Html\Escaped`, `Minn\Html\Scanner`, `Minn\Html\TagQuery`, `Minn\Html\Tags`, `Minn\Html\TokenMap`, `Minn\Http\Failure`, `Minn\I18n\SiteLanguage`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\PluginsController`, `Minn\Runtime\Shortcodes`, `Minn\Support\Escape`, `Minn\Support\Sanitize`, `Minn\Support\Text`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Widgets\WidgetForms`
+
+### static `checked(mixed $checked, mixed $current = true): string`
+
+The checked attribute when the two agree as text (checked), else nothing.
+
+### static `selected(mixed $selected, mixed $current = true): string`
+
+The selected attribute when the two agree as text (selected), else nothing.
+
+### static `chosen(mixed $helper, mixed $current, string $type): string`
+
+An attribute of the given name when the two agree as text, else nothing.
 
 ### static `split(string $html): array`
 

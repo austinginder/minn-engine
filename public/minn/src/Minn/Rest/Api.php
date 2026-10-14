@@ -26,6 +26,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Router;
 use Minn\Objects\RestRequest;
+use Minn\Objects\Theme;
 use Minn\RestError;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
@@ -225,7 +226,7 @@ final readonly class Api
     }
 
     /** A theme in the wp/v2 shape, links included, before rest_prepare_theme. @return array<string, mixed> */
-    public function themeFields(\WP_Theme $theme, RestRequest $request): array
+    public function themeFields(Theme $theme, RestRequest $request): array
     {
         return (new InstalledThemesController($this->services->url(), $this->services->caller()))->fields($theme, $request);
     }

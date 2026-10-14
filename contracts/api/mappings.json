@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 800,
-        "composes": 2330,
-        "leaf": 1020,
-        "noop": 2858,
+        "composes": 2316,
+        "leaf": 1019,
+        "noop": 2873,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1188,
+        "minnMethods": 1208,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -34082,8 +34082,10 @@
         "__checked_selected_helper": {
             "file": "formatting.php",
             "lines": 5,
-            "kind": "leaf",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html::chosen"
+            ],
             "composes": []
         },
         "__clear_multi_author_cache": {
@@ -44561,13 +44563,12 @@
         },
         "content_url": {
             "file": "link-template.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "set_url_scheme"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteUrls::content"
+            ],
+            "composes": []
         },
         "convert_chars": {
             "file": "formatting.php",
@@ -44787,13 +44788,12 @@
         },
         "current_theme_supports": {
             "file": "theme.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_theme_support"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ThemeSupports::current"
+            ],
+            "composes": []
         },
         "current_time": {
             "file": "functions.php",
@@ -51419,33 +51419,28 @@
             "file": "link-template.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_option"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Themes::stylesheet"
+            ],
+            "composes": []
         },
         "get_stylesheet_directory": {
             "file": "link-template.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_stylesheet",
-                "get_theme_root"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Themes::stylesheetDirectory"
+            ],
+            "composes": []
         },
         "get_stylesheet_directory_uri": {
             "file": "link-template.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_stylesheet",
-                "get_theme_root_uri"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Themes::stylesheetDirectoryUri"
+            ],
+            "composes": []
         },
         "get_stylesheet_uri": {
             "file": "link-template.php",
@@ -51624,33 +51619,28 @@
             "file": "link-template.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_option"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Themes::template"
+            ],
+            "composes": []
         },
         "get_template_directory": {
             "file": "link-template.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_template",
-                "get_theme_root"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Themes::templateDirectory"
+            ],
+            "composes": []
         },
         "get_template_directory_uri": {
             "file": "link-template.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_template",
-                "get_theme_root_uri"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Themes::templateDirectoryUri"
+            ],
+            "composes": []
         },
         "get_template_hierarchy": {
             "file": "blocks.php",
@@ -52522,45 +52512,39 @@
         },
         "get_theme_mod": {
             "file": "theme.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_stylesheet_directory_uri",
-                "get_template_directory_uri",
-                "get_theme_mods"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ThemeMods::get"
+            ],
+            "composes": []
         },
         "get_theme_mods": {
             "file": "theme.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_option",
-                "get_stylesheet"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ThemeMods::all"
+            ],
+            "composes": []
         },
         "get_theme_root": {
             "file": "link-template.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Themes::root"
+            ],
+            "composes": []
         },
         "get_theme_root_uri": {
             "file": "link-template.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "content_url",
-                "get_theme_root"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Themes::rootUri"
+            ],
+            "composes": []
         },
         "get_theme_roots": {
             "file": "theme.php",
@@ -52581,10 +52565,10 @@
         },
         "get_theme_support": {
             "file": "theme.php",
-            "lines": 11,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\ThemeSupports::all"
+                "Minn\\Runtime\\ThemeSupports::get"
             ],
             "composes": []
         },
@@ -58422,12 +58406,12 @@
         },
         "register_theme_directory": {
             "file": "theme.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "untrailingslashit"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Themes::registerDirectory"
+            ],
+            "composes": []
         },
         "register_theme_feature": {
             "file": "theme.php",
@@ -58704,25 +58688,21 @@
         },
         "remove_theme_mod": {
             "file": "theme.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_stylesheet",
-                "get_theme_mods",
-                "remove_theme_mods",
-                "update_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ThemeMods::remove"
+            ],
+            "composes": []
         },
         "remove_theme_mods": {
             "file": "theme.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "delete_option",
-                "get_stylesheet"
-            ]
+            "minn": [
+                "Minn\\Runtime\\ThemeMods::removeAll"
+            ],
+            "composes": []
         },
         "remove_theme_support": {
             "file": "theme.php",
@@ -61124,15 +61104,12 @@
         },
         "set_theme_mod": {
             "file": "theme.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_stylesheet",
-                "get_theme_mods",
-                "update_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ThemeMods::set"
+            ],
+            "composes": []
         },
         "set_transient": {
             "file": "option.php",
@@ -67044,13 +67021,12 @@
         },
         "wp_customize_url": {
             "file": "link-template.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "admin_url",
-                "esc_url"
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteUrls::customize"
             ],
+            "composes": [],
             "deadend": "customizer"
         },
         "wp_dashboard": {
@@ -70435,13 +70411,12 @@
         },
         "wp_get_theme": {
             "file": "theme.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_stylesheet",
-                "get_theme_root"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Themes::theme"
+            ],
+            "composes": []
         },
         "wp_get_theme_data_custom_templates": {
             "file": "theme.php",
@@ -70502,12 +70477,12 @@
         },
         "wp_get_themes": {
             "file": "theme.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_theme_root"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Themes::all"
+            ],
+            "composes": []
         },
         "wp_get_toggletip": {
             "file": "template.php",

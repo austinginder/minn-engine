@@ -14,6 +14,7 @@ use Minn\Objects\Query;
 use Minn\Objects\RestRequest;
 use Minn\Objects\RestResponse;
 use Minn\Objects\Term;
+use Minn\Objects\Theme;
 use Minn\Objects\TermsQuery;
 use Minn\Objects\User;
 use Minn\Objects\UsersQuery;
@@ -43,7 +44,7 @@ final class Handoff
      * commentInstance, newUser, and the query factories newQuery,
      * newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
      * and the REST ones newRestRequest, restRequestFromUrl, newRestResponse,
-     * restController.
+     * restController, and newTheme.
      *
      * @param array<string, Closure> $answers
      */
@@ -279,6 +280,12 @@ final class Handoff
     public static function restController(string $kind, mixed ...$args): object
     {
         return self::answer('restController', $kind, ...$args);
+    }
+
+    /** A theme by its folder and root (new WP_Theme). */
+    public static function newTheme(mixed ...$args): Theme
+    {
+        return self::answer('newTheme', ...$args);
     }
 
     private static function answer(string $name, mixed ...$args): mixed

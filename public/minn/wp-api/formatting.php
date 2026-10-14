@@ -506,7 +506,7 @@ function _wp_array_set(&$input_array, $path, $value = null)
 
 function __checked_selected_helper($helper, $current, $display, $type)
 {
-    $result = (string) $helper === (string) $current ? " {$type}='{$type}'" : '';
+    $result = Minn\Html::chosen($helper, $current, (string) $type);
     if ($display) {
         echo $result;
     }

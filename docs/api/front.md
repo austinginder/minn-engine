@@ -13,7 +13,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
 | [`CommentPostController`](#commentpostcontroller) | final readonly class | 52 | wp-comments-post.php: the comment form's target. The reference's |
-| [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
+| [`CustomLogo`](#customlogo) | final class | 25 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
 | [`FeedController`](#feedcontroller) | final readonly class | 60 | The feeds, wherever a request asks for one: the feed var of the rule its |
 | [`FeedTags`](#feedtags) | final class | 160 | The template tags a feed is written with that take more than a line, as |
@@ -1666,7 +1666,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 54), `creatable()` (private, line 256), `editPost()` (private, line 303), `editTerm()` (private, line 313)
+Internals: `profileUrl()` (private, line 55), `creatable()` (private, line 257), `editPost()` (private, line 304), `editTerm()` (private, line 314)
 
 
 ## ToolbarTree
