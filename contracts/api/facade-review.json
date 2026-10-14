@@ -7686,6 +7686,356 @@
                 "body": "94ec10aa47d4"
             }
         },
+        "script-loader.php": {
+            "_minn_asset_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "gates": [
+                    "globals"
+                ],
+                "why": "an asset's address: relative sources under the stored site URL, the version argument by its rule",
+                "body": "afc0c8cf5a2c"
+            },
+            "_minn_before_head_closer": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AssetQueue",
+                "why": "inserts text before the head's closing tag",
+                "body": "bd49d80fff77"
+            },
+            "_minn_concat_chunks": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "why": "the concatenated handles as the loader's chunked query",
+                "body": "ae62c606cb22"
+            },
+            "_minn_default_dependencies": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires the registry's default action on init through the hook API, by reference as plugins expect",
+                "body": "4a2b01190a84"
+            },
+            "_minn_enqueue_block_style_handle": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "enqueues a block style now or when the block renders, through the public functions",
+                "body": "0fe1223d0bc7"
+            },
+            "_minn_inline_style_sources": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AssetQueue",
+                "why": "the inlined styles' original addresses the request keeps",
+                "body": "ac3b6cde5a10"
+            },
+            "_minn_register_script": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the API's script arguments turned into the engine's registration, then the args data on the WP_Scripts object",
+                "body": "786d83675e92"
+            },
+            "_minn_script_module_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ScriptModules",
+                "gates": [
+                    "globals"
+                ],
+                "why": "a module's address with its version argument",
+                "body": "d77ad2a2b61b"
+            },
+            "_minn_script_translations_block": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\ScriptTranslations",
+                "why": "a script's translations as its inline block, through load_script_textdomain",
+                "body": "d8af8f3ea996"
+            },
+            "_print_scripts": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the concatenated scripts' loader tag and inline code by rules, read from the WP_Scripts object",
+                "body": "8d5992dc345a"
+            },
+            "_print_styles": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the concatenated styles' loader link and inline code by rules, read from the WP_Styles object",
+                "body": "55db394a46e3"
+            },
+            "_wp_footer_scripts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "print_late_styles, then print_footer_scripts, by name",
+                "body": "64c8286a96d5"
+            },
+            "_wp_normalize_relative_css_links": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "why": "rewrites relative url() references against the stylesheet's folder",
+                "body": "a0c203b3fd14"
+            },
+            "_wp_scripts_add_args_data": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the footer group, strategy and fetch priority through the WP_Scripts object's add_data, which refuses what the reference refuses",
+                "body": "64747559174b"
+            },
+            "enqueue_block_styles_assets": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "each registered block style's handle or inline style through the public style functions",
+                "body": "60306cee338e"
+            },
+            "print_footer_scripts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the WP_Scripts object's footer items, then the print_footer_scripts filter heard",
+                "body": "d550bd483819"
+            },
+            "print_head_scripts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_print_head_scripts, then the print_head_scripts filter heard",
+                "body": "303847ca0960"
+            },
+            "print_late_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_print_styles, then the print_late_styles filter heard",
+                "body": "6ea8ee592a5b"
+            },
+            "script_concat_settings": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "defaults the concatenation globals plugins read",
+                "body": "10bb707b7629"
+            },
+            "wp_add_global_styles_for_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\GlobalStyles",
+                "why": "which blocks' global styles are added (on demand only for enqueued blocks) and their own and element rules",
+                "body": "03353c1eb8f7"
+            },
+            "wp_add_inline_script": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::addInline",
+                "why": "the engine adds the inline code; the before-init notice belongs inside it",
+                "body": "10aaf7bb627c"
+            },
+            "wp_add_inline_style": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::addInline",
+                "why": "the engine adds the inline css; the before-init notice belongs inside it",
+                "body": "561bf3538355"
+            },
+            "wp_default_script_modules": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ScriptModules",
+                "why": "the engine's default script modules and their dependencies are engine data",
+                "body": "4c12500ee5ee"
+            },
+            "wp_default_scripts": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the engine's default scripts (jQuery, the wp packages, comment-reply, wp-embed, the script pack) are engine data",
+                "body": "68eb647dfbf7"
+            },
+            "wp_dequeue_script": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::dequeue",
+                "why": "the engine dequeues; the before-init notice belongs inside it",
+                "body": "326172221a35"
+            },
+            "wp_dequeue_style": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::dequeue",
+                "why": "the engine dequeues; the before-init notice belongs inside it",
+                "body": "38aab78d5017"
+            },
+            "wp_deregister_script": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::deregister",
+                "why": "the engine deregisters; the before-init notice belongs inside it",
+                "body": "f77cc848b54e"
+            },
+            "wp_deregister_style": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::deregister",
+                "why": "the engine deregisters; the before-init notice belongs inside it",
+                "body": "52718850d4e4"
+            },
+            "wp_enqueue_block_style": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers and enqueues a block's style when the block renders or on the asset hooks, through the public functions",
+                "body": "b54c1a476c04"
+            },
+            "wp_enqueue_code_editor": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the code editor's settings, then its scripts, styles and inline defaults through the public asset functions and its action",
+                "body": "667655db12d0"
+            },
+            "wp_enqueue_global_styles_css_custom_properties": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the global stylesheet's variables as an inline style through the style API",
+                "body": "5d5e5acb18e6"
+            },
+            "wp_enqueue_registered_block_scripts_and_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "unless on demand, enqueues every registered block type's handles through the public functions",
+                "body": "6c6c7d392bbf"
+            },
+            "wp_enqueue_script": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::enqueue",
+                "why": "the engine enqueues; registering a given source first and the before-init notice belong inside it",
+                "body": "3c15db40d19f"
+            },
+            "wp_enqueue_stored_styles": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AssetQueue",
+                "why": "each style engine store as an inline style under its handle naming rule, prettified when asked",
+                "body": "cb32e3fd01fc"
+            },
+            "wp_enqueue_style": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::enqueue",
+                "why": "the engine enqueues; registering a given source first and the before-init notice belong inside it",
+                "body": "ef3a00d0710c"
+            },
+            "wp_get_script_polyfill": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "why": "the polyfill loader markup per feature test, through script_loader_src",
+                "body": "aec0028bd5a5"
+            },
+            "wp_hoist_late_printed_styles": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AssetQueue",
+                "why": "holds back the late styles from the footer and splices them before the head's close in the page buffer",
+                "body": "f743ff2e7fbd"
+            },
+            "wp_html_custom_data_attribute_name": {
+                "verdict": "move",
+                "to": "Minn\\Html\\DataAttributes",
+                "why": "a dataset name's data- attribute by the HTML rule",
+                "body": "54b1f40d3813"
+            },
+            "wp_js_dataset_name": {
+                "verdict": "move",
+                "to": "Minn\\Html\\DataAttributes",
+                "why": "a data- attribute's dataset name by the HTML rule",
+                "body": "58fdd2efb817"
+            },
+            "wp_just_in_time_script_localization": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "localizes three admin scripts through wp_localize_script with the registered shortcode tags",
+                "body": "03e308c49775"
+            },
+            "wp_load_classic_theme_block_styles_on_demand": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "for a classic theme, hooks the on-demand block styles through the filter and hook API",
+                "body": "41e70e1c1cb4"
+            },
+            "wp_localize_jquery_ui_datepicker": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the datepicker's localized defaults (the date format mapped, the locale's names) when it is queued",
+                "body": "7cbe01baa7c5"
+            },
+            "wp_maybe_inline_styles": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "why": "inlines small styles by their size limit filter, keeping each original address for its source trailer",
+                "body": "5ed53100e885"
+            },
+            "wp_print_head_scripts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires wp_print_scripts once, then the WP_Scripts object prints the head items",
+                "body": "d9c4013d2d15"
+            },
+            "wp_print_scripts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires wp_print_scripts, then the WP_Scripts object prints the handles",
+                "body": "02346c2dcb34"
+            },
+            "wp_print_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires wp_print_styles, then the WP_Styles object prints the handles plugins queued",
+                "body": "d37fda51aa1d"
+            },
+            "wp_prototype_before_jquery": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "why": "moves prototype before jquery in a handle list",
+                "body": "f37ac0b56d59"
+            },
+            "wp_register_script": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::register",
+                "why": "the engine registers; the before-init notice belongs inside the engine's registry",
+                "body": "ecd25ed5b150"
+            },
+            "wp_register_style": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Assets::register",
+                "why": "the engine registers; the before-init notice belongs inside it",
+                "body": "d973d28b1914"
+            },
+            "wp_remove_surrounding_empty_script_tags": {
+                "verdict": "delegate",
+                "to": "Minn\\Html::scriptBody",
+                "why": "the engine strips the tags; the refusal's notice and console.error answer are the call's wrapper",
+                "body": "02315c20916f"
+            },
+            "wp_script_is": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "why": "the status names (registered, enqueued or queue, done, to_do) mapped onto the registry's answers",
+                "body": "1b95da526e9d"
+            },
+            "wp_scripts": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "makes the global $wp_scripts once, wiring its defaults on init, and tells api-fetch once",
+                "body": "c3fe368a464d"
+            },
+            "wp_style_is": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "why": "the status names mapped onto the registry's answers",
+                "body": "e88fa25da549"
+            },
+            "wp_style_loader_src": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Assets",
+                "why": "an admin-relative style address while installing; stays as the named style_loader_src callback",
+                "body": "d0fd53496729"
+            },
+            "wp_styles": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "makes the global $wp_styles once, wiring its defaults on init",
+                "body": "caa43f294508"
+            }
+        },
         "shortcodes.php": {
             "add_shortcode": {
                 "verdict": "move",
