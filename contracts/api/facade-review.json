@@ -2063,6 +2063,512 @@
                 "body": "e0299ac1b630"
             }
         },
+        "classes/WP_Block.php": {
+            "WP_Block::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the block's parsed data, type and context, then $this->refresh_context_dependents",
+                "body": "3b3c00f3f489"
+            },
+            "WP_Block::__get": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the lazy attributes property, prepared by the type",
+                "body": "a5b82b897ff7"
+            },
+            "WP_Block::enqueue_assets": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the type's script, view script, module and style handles through the public enqueue functions",
+                "body": "a0ad408985c8"
+            },
+            "WP_Block::refresh_context_dependents": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Context",
+                "why": "the context a block takes from what is available by its type's uses_context",
+                "body": "249f3ca082cb"
+            },
+            "WP_Block::refresh_parsed_block_dependents": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Context",
+                "why": "the context a block provides its children by provides_context, and its inner blocks and content",
+                "body": "0866b533422d"
+            },
+            "WP_Block::render": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Renderer",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the render pipeline: engine-rendered core blocks, bindings, inner blocks, the dynamic callback with the supports block and global post kept, assets and the render filters",
+                "body": "65e99ac9142c"
+            },
+            "WP_Block::render_inner_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Renderer",
+                "why": "each inner block through pre_render_block, render_block_data and render_block_context, remade when they change it",
+                "body": "c2e9f6a3af5e"
+            },
+            "WP_Block::rendered_by_engine": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Renderer",
+                "why": "whether the engine renders this block itself",
+                "body": "dd7b6a4cdae4"
+            },
+            "WP_Block_List::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the list's blocks, context and registry",
+                "body": "600970d57be7"
+            },
+            "WP_Block_List::offsetGet": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "array access making a WP_Block from a parsed block on first read",
+                "body": "4d5fcd540a75"
+            },
+            "WP_Block_List::offsetSet": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "array access onto the blocks",
+                "body": "b6560f24db24"
+            },
+            "WP_Block_Supports::apply_block_supports": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "runs every registered support's apply for the block being rendered and merges their attributes",
+                "body": "94e69854c0a9"
+            },
+            "WP_Block_Supports::get_instance": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the API's one supports object",
+                "body": "dd97d34d5113"
+            },
+            "WP_Block_Supports::register_attributes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "each registered support's register_attribute callback over every block type",
+                "body": "a1356845fc5c"
+            }
+        },
+        "classes/WP_Block_Bindings_Registry.php": {
+            "WP_Block_Bindings_Registry::__wakeup": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "refuses an unserialized registry holding anything but source objects",
+                "body": "959955f7663f"
+            },
+            "WP_Block_Bindings_Registry::register": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "refuses through the shared rule with its notice, else puts a source object in the sources registry plugins read",
+                "body": "77aff2c974ed"
+            },
+            "WP_Block_Bindings_Registry::unregister": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "takes a source out of the registry, with its notice when missing",
+                "body": "805e1601b064"
+            }
+        },
+        "classes/WP_Block_Bindings_Source.php": {
+            "WP_Block_Bindings_Source::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the source's name and properties as the object's fields",
+                "body": "a1c90a7fb765"
+            },
+            "WP_Block_Bindings_Source::get_value": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "calls the source's own callback, then block_bindings_source_value",
+                "body": "79fc697a0d76"
+            }
+        },
+        "classes/WP_Block_Editor_Context.php": {
+            "WP_Block_Editor_Context::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the context's name and post as the object's fields",
+                "body": "6564b17cd4c9"
+            }
+        },
+        "classes/WP_Block_Metadata_Registry.php": {
+            "WP_Block_Metadata_Registry::default_identifier_callback": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "a block's identifier from its folder or block.json path",
+                "body": "bdcd76f58923"
+            },
+            "WP_Block_Metadata_Registry::find_collection_path": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "the collection a path falls under, the last match remembered",
+                "body": "b741effaca59"
+            },
+            "WP_Block_Metadata_Registry::get_collection_block_metadata_files": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "the block.json paths a collection's manifest names",
+                "body": "b291cd3f9e33"
+            },
+            "WP_Block_Metadata_Registry::get_default_collection_roots": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the default roots (wp-includes, content, plugins, theme folders), kept once",
+                "body": "96948c161bcf"
+            },
+            "WP_Block_Metadata_Registry::get_metadata": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "a block's metadata from its collection's manifest, read once",
+                "body": "aa9637c65eca"
+            },
+            "WP_Block_Metadata_Registry::is_valid_collection_path": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "refuses a collection path that is a root or holds one",
+                "body": "8aa2bb19cdc7"
+            },
+            "WP_Block_Metadata_Registry::register_collection": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "the collection path rule against the allowed roots and its filter, the manifest check and the record",
+                "body": "cec34b3eae4a"
+            }
+        },
+        "classes/WP_Block_Parser.php": {
+            "WP_Block_Parser::add_block_from_stack": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Parser",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "closes the top frame into the output with its leading freeform",
+                "body": "673656f37e59"
+            },
+            "WP_Block_Parser::add_freeform": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Parser",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the remaining or given text as a freeform block",
+                "body": "864e79147d97"
+            },
+            "WP_Block_Parser::add_inner_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Parser",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "appends an inner block to the open frame with its preceding html",
+                "body": "06bf46de34ac"
+            },
+            "WP_Block_Parser::minn_append": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Parser",
+                "why": "adds a stretch of html to a frame's inner html and content",
+                "body": "4af0809c4033"
+            },
+            "WP_Block_Parser::minn_close": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Parser",
+                "why": "closes a frame into its parent or the output",
+                "body": "b6535ecda0a7"
+            },
+            "WP_Block_Parser::minn_finish": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Parser",
+                "why": "closes the document: the trailing freeform or every open frame",
+                "body": "f400c29112a6"
+            },
+            "WP_Block_Parser::minn_void": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Parser",
+                "why": "places a void block inside its parent or in the output after its leading freeform",
+                "body": "08e48c4fc10b"
+            },
+            "WP_Block_Parser::next_token": {
+                "verdict": "delegate",
+                "to": "Minn\\Blocks\\Parser::token",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the engine finds the token; the type names and decoded attributes are the call's shape",
+                "body": "9b0bca821d88"
+            },
+            "WP_Block_Parser::parse": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "resets the parser and loops $this->proceed, the method a parser subclass overrides",
+                "body": "53c7cf86ebfb"
+            },
+            "WP_Block_Parser::proceed": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Parser",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the frame algorithm over the next token (openers stacked, voids and closers placed); its $this-> calls stay at their points",
+                "body": "ba38220856a1"
+            },
+            "WP_Block_Parser_Block::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the parsed block's fields",
+                "body": "cd9ab83592b7"
+            },
+            "WP_Block_Parser_Frame::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the frame's fields, the previous offset defaulted",
+                "body": "8ed0ec1f7020"
+            }
+        },
+        "classes/WP_Block_Patterns_Registry.php": {
+            "WP_Block_Pattern_Categories_Registry::register": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Patterns::registerCategory",
+                "why": "the engine registers; its refusal's notice belongs inside it",
+                "body": "aaa15669f96e"
+            },
+            "WP_Block_Pattern_Categories_Registry::unregister": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Patterns::unregisterCategory",
+                "why": "the engine unregisters; the not-found notice belongs inside it",
+                "body": "a7163adc6c80"
+            },
+            "WP_Block_Patterns_Registry::get_registered": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the engine's pattern through $this->with_content",
+                "body": "279fa9984123"
+            },
+            "WP_Block_Patterns_Registry::register": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Patterns::registerPattern",
+                "why": "the engine registers; its refusal's notice belongs inside the engine",
+                "body": "a06134f89778"
+            },
+            "WP_Block_Patterns_Registry::unregister": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Patterns::unregisterPattern",
+                "why": "the engine unregisters; the not-found notice belongs inside it",
+                "body": "1424c08d3543"
+            },
+            "WP_Block_Patterns_Registry::with_content": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "includes a pattern's file into scope for its content, then applies the block hooks by name",
+                "body": "125efe7c1e82"
+            },
+            "WP_Block_Styles_Registry::register": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Patterns::registerStyle",
+                "why": "the engine registers; its refusal's notice and version belong inside it",
+                "body": "7ba249c8855d"
+            },
+            "WP_Block_Styles_Registry::unregister": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Patterns::unregisterStyle",
+                "why": "the engine unregisters; the not-found notice belongs inside it",
+                "body": "65095f9bf8af"
+            }
+        },
+        "classes/WP_Block_Processor.php": {
+            "WP_Block_Processor::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the source text and the engine's block stream",
+                "body": "f405c41f0c57"
+            },
+            "WP_Block_Processor::extract_full_block_and_advance": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\BlockStream",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "gathers the current block and everything inside it into a parsed block, nesting by depth",
+                "body": "d1d9b16bb2da"
+            },
+            "WP_Block_Processor::gather": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\BlockStream",
+                "why": "adds the current token to the block stack by kind",
+                "body": "4f94285d74be"
+            },
+            "WP_Block_Processor::get_span": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the stream's span as a WP_HTML_Span",
+                "body": "674a130e28c0"
+            },
+            "WP_Block_Processor::nest": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\BlockStream",
+                "why": "nests a block into the top of the stack",
+                "body": "fb329469ef00"
+            },
+            "WP_Block_Processor::next_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\BlockStream",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "advances to the next opener of a type, any, or html by the wildcard rule",
+                "body": "19c8259ff2b6"
+            },
+            "WP_Block_Processor::next_delimiter": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\BlockStream",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "advances to the next delimiter of a type or any",
+                "body": "af81901fb86a"
+            },
+            "WP_Block_Processor::take_single": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\BlockStream",
+                "why": "the current html or void block as a parsed block, then on",
+                "body": "08c2a76ed5b7"
+            }
+        },
+        "classes/WP_Block_Template.php": {
+            "WP_Block_Templates_Registry::get_by_query": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "why": "the slug and post type query rules over the registered templates, which TemplateIndex's matching repeats",
+                "body": "c943e75c5781"
+            },
+            "WP_Block_Templates_Registry::get_by_slug": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's row by slug as a WP_Block_Template",
+                "body": "380b6a65b2df"
+            },
+            "WP_Block_Templates_Registry::get_registered": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's row as a WP_Block_Template, null for none",
+                "body": "4d577a3a7637"
+            },
+            "WP_Block_Templates_Registry::register": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "turns the engine's refusal code into its notice and WP_Error, the row into a WP_Block_Template",
+                "body": "b0cb79e14f5c"
+            },
+            "WP_Block_Templates_Registry::unregister": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's removal as a WP_Block_Template, or its notice and WP_Error",
+                "body": "4d016f8d8553"
+            }
+        },
+        "classes/WP_Block_Type.php": {
+            "WP_Block_Type::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "names the type and sets its properties through $this->set_props",
+                "body": "b9d1cf69da6a"
+            },
+            "WP_Block_Type::__get": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the deprecated single-handle properties read from their handle lists",
+                "body": "51f1cadae216"
+            },
+            "WP_Block_Type::__isset": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "whether a deprecated single-handle property has a handle",
+                "body": "d1c38594aecd"
+            },
+            "WP_Block_Type::__set": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a deprecated single-handle property written into its handle list",
+                "body": "068dccabb784"
+            },
+            "WP_Block_Type::get_variations": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the type's variations from its own callback once, then get_block_type_variations",
+                "body": "b7be1f8bfb45"
+            },
+            "WP_Block_Type::prepare_attributes_for_render": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Attributes",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "drops attributes that fail their schema and fills defaults; the engine's attribute rules",
+                "body": "d80f909990ff"
+            },
+            "WP_Block_Type::render": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "a dynamic type's render callback with $this->prepare_attributes_for_render, the point subclasses override",
+                "body": "9799ef7e45a3"
+            },
+            "WP_Block_Type::set_props": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the type's argument defaults, register_block_type_args and the lock and metadata attributes, then the properties",
+                "body": "2f836ad105ad"
+            },
+            "WP_Block_Type_Registry::get_all_registered": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "every type in the seeded registry",
+                "body": "9a0d6d28caaa"
+            },
+            "WP_Block_Type_Registry::get_instance": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the API's one registry object",
+                "body": "dd97d34d5113"
+            },
+            "WP_Block_Type_Registry::get_registered": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "a type from the seeded registry",
+                "body": "d2db6eff1897"
+            },
+            "WP_Block_Type_Registry::is_registered": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "whether the seeded registry holds a type",
+                "body": "a6a7acf700d0"
+            },
+            "WP_Block_Type_Registry::register": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the name refusal (BlockName::refuse) and duplicate notice, the type object into the registry, the dynamic bridge",
+                "body": "54594a529baf"
+            },
+            "WP_Block_Type_Registry::seed": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "fills the registry plugins read with the engine's core types once",
+                "body": "c2c976642bac"
+            },
+            "WP_Block_Type_Registry::unregister": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "takes a type out of the registry plugins read, with its notice when missing",
+                "body": "cd7dd61e3497"
+            }
+        },
         "classes/WP_Error.php": {
             "WP_Error::__construct": {
                 "verdict": "keep",
