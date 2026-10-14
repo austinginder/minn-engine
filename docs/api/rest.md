@@ -4040,7 +4040,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `listAllowed()` (private, line 112), `totals()` (private, line 136), `hasPublishedContent()` (private, line 171), `validRole()` (private, line 180), `validLocale()` (private, line 195), `assignableRole()` (private, line 207), `validEmail()` (private, line 216), `loginRefusal()` (private, line 402)
+Internals: `listAllowed()` (private, line 113), `totals()` (private, line 137), `hasPublishedContent()` (private, line 172), `validRole()` (private, line 181), `validLocale()` (private, line 196), `assignableRole()` (private, line 208), `validEmail()` (private, line 217), `loginRefusal()` (private, line 403)
 
 
 ## ViewConfigPatch

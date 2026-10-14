@@ -35,7 +35,7 @@ final class UserSave
         if ($existing === null && $login === '') {
             return new Refusal('empty_user_login', 'Cannot create a user with an empty login name.');
         }
-        if ($existing === null && \username_exists($login)) {
+        if ($existing === null && UserWrites::usernameExists($login)) {
             return new Refusal('existing_user_login', 'Sorry, that username already exists!');
         }
         $illegal = array_map('strtolower', (array) Runtime::hooks()->filter('illegal_user_logins', [[]]));

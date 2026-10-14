@@ -1,16 +1,15 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 144,
-        "functions": 114,
+        "functionCalls": 128,
+        "functions": 101,
         "hookApi": 0,
         "classReferences": 2,
         "classes": 1,
-        "files": 58
+        "files": 53
     },
     "families": {
         "functions": {
-            "wp-includes/user.php": 16,
             "wp-includes/post.php": 12,
             "wp-includes/functions.php": 11,
             "wp-includes/general-template.php": 6,
@@ -47,10 +46,10 @@
             "wp-includes/sitemaps.php": 1,
             "wp-includes/blocks/footnotes.php": 1,
             "wp-includes/nav-menu-template.php": 1,
-            "wp-admin/includes/user.php": 1,
             "wp-includes/functions.wp-scripts.php": 1,
             "wp-includes/functions.wp-styles.php": 1,
-            "wp-includes/vars.php": 1
+            "wp-includes/vars.php": 1,
+            "wp-includes/user.php": 1
         },
         "classes": {
             "wp-includes/class-wp-theme-json-resolver.php": 2
@@ -114,13 +113,6 @@
                 "Minn/Rest/InstalledThemesController.php": 2
             }
         },
-        "get_password_reset_key": {
-            "uses": 2,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/AccountFlows.php": 2
-            }
-        },
         "get_plugin_data": {
             "uses": 2,
             "family": "wp-admin/includes/plugin.php",
@@ -172,22 +164,6 @@
             "family": "wp-includes/shortcodes.php",
             "files": {
                 "Minn/Content/MediaShortcodes.php": 2
-            }
-        },
-        "username_exists": {
-            "uses": 2,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/AccountFlows.php": 1,
-                "Minn/Runtime/UserSave.php": 1
-            }
-        },
-        "validate_username": {
-            "uses": 2,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Rest/UsersController.php": 1,
-                "Minn/Runtime/AccountFlows.php": 1
             }
         },
         "wp_attachment_is_image": {
@@ -283,13 +259,6 @@
             "family": "wp-includes/functions.php",
             "files": {
                 "Minn/Front/FeedController.php": 1
-            }
-        },
-        "email_exists": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/AccountFlows.php": 1
             }
         },
         "flush_rewrite_rules": {
@@ -481,13 +450,6 @@
                 "Minn/Runtime/PluginRemoval.php": 1
             }
         },
-        "is_user_member_of_blog": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
         "kses_init_filters": {
             "uses": 1,
             "family": "wp-includes/kses.php",
@@ -528,20 +490,6 @@
             "family": "wp-includes/blocks/footnotes.php",
             "files": {
                 "Minn/Runtime/Plugins.php": 1
-            }
-        },
-        "reset_password": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Login/LoginController.php": 1
-            }
-        },
-        "retrieve_password": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Login/LoginController.php": 1
             }
         },
         "the_title_attribute": {
@@ -605,20 +553,6 @@
             "family": "wp-includes/post.php",
             "files": {
                 "Minn/Runtime/Plugins.php": 1
-            }
-        },
-        "wp_create_user": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/AccountFlows.php": 1
-            }
-        },
-        "wp_delete_user": {
-            "uses": 1,
-            "family": "wp-admin/includes/user.php",
-            "files": {
-                "Minn/Runtime/UserEvents.php": 1
             }
         },
         "wp_enqueue_script": {
@@ -733,27 +667,6 @@
                 "Minn/Rest/MediaController.php": 1
             }
         },
-        "wp_insert_user": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/UserEvents.php": 1
-            }
-        },
-        "wp_is_application_passwords_available": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/ApplicationPasswordSignIn.php": 1
-            }
-        },
-        "wp_is_application_passwords_available_for_user": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/ApplicationPasswordSignIn.php": 1
-            }
-        },
         "wp_is_mobile": {
             "uses": 1,
             "family": "wp-includes/vars.php",
@@ -850,13 +763,6 @@
             "family": "wp-includes/post.php",
             "files": {
                 "Minn/Runtime/PostEvents.php": 1
-            }
-        },
-        "wp_update_user": {
-            "uses": 1,
-            "family": "wp-includes/user.php",
-            "files": {
-                "Minn/Runtime/UserEvents.php": 1
             }
         },
         "wp_upload_dir": {

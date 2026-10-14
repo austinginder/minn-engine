@@ -248,222 +248,28 @@ function get_post_format_link($format)
 
 function wp_insert_user($userdata)
 {
-    if ($userdata instanceof stdClass) {
-        $userdata = get_object_vars($userdata);
-    } elseif ($userdata instanceof WP_User) {
-        $userdata = $userdata->to_array();
-    }
-    $userdata = wp_unslash((array) $userdata);
-    $update = !empty($userdata['ID']);
-    $existing = $update ? get_userdata((int) $userdata['ID']) : false;
-    if ($update && !$existing) {
-        return new WP_Error('invalid_user_id', 'Invalid user ID.');
-    }
-    // Each field through its pre_user_* filter first, the reference's order (probe user-insert-filters).
-    $fields = \Minn\Runtime\UserSave::fields($userdata, $existing ? $existing->to_array() : null);
-    if ($fields instanceof Refusal) {
-        return new WP_Error($fields->code, $fields->message, $fields->data);
-    }
-    // What the caller gave is what the filters are handed; the filtered fields are what is written.
-    $given = $userdata;
-    $userdata = array_replace($userdata, $fields);
-    if ($existing && (string) ($userdata['user_pass'] ?? '') === (string) $existing->user_pass) {
-        // The stored hash, carried by an update's merge, is no new password.
-        unset($userdata['user_pass']);
-    }
-    $insert = new UserInsert(
-        static fn (string $login): string => $login,
-        static fn (string $slug): string => $slug,
-        static fn (string $email): bool => (bool) is_email($email),
-        // UserSave::fields has looked the login up already, where the reference does.
-        static fn (string $login): bool => false,
-        static fn (string $email): int => (int) email_exists($email),
-        static fn (string $role): bool => isset(Runtime::current()->capabilities->roles()->all()[$role]),
-    );
-    $resolved = $insert->resolve($userdata, $existing ? $existing->to_array() : null);
-    if ($resolved instanceof Refusal) {
-        return new WP_Error($resolved->code, $resolved->message, $resolved->data);
-    }
-    if (!$update) {
-        return _minn_insert_account(_minn_user_row_filtered(UserInsert::account($userdata, $resolved, (string) get_option('default_role')), $given), $given);
-    }
-    return _minn_update_user_profile($existing, $userdata, $resolved, $given);
-}
-
-/** @internal a new account's row through wp_pre_insert_user_data, as the reference hands it (the password hashed), and back */
-function _minn_user_row_filtered(array $account, array $userdata): array
-{
-    $row = ['user_pass' => (string) wp_hash_password((string) $account['password']), 'user_nicename' => (string) $account['nicename'], 'user_email' => (string) $account['email'], 'user_url' => (string) $account['url'], 'user_registered' => (string) ($userdata['user_registered'] ?? gmdate('Y-m-d H:i:s')), 'user_activation_key' => '', 'display_name' => (string) $account['display_name'], 'user_login' => (string) $account['login']];
-    // The pre_user_* filters hand back slashed text (wp_filter_kses); the row is written unslashed, as the reference writes it.
-    $data = \Minn\Runtime\UserSave::data(wp_unslash($row), 0, $userdata);
-    $map = ['login' => 'user_login', 'nicename' => 'user_nicename', 'email' => 'user_email', 'url' => 'user_url', 'display_name' => 'display_name'];
-    foreach ($map as $field => $column) {
-        if (array_key_exists($column, $data)) {
-            $account[$field] = (string) $data[$column];
-        }
-    }
-    return $account;
-}
-
-/**
- * @internal A new account as the reference writes it: the row, wp_set_password,
- * each profile meta through add_user_meta, the role, clean_user_cache, then
- * user_register (where the count is kept). A role given as false (the REST
- * controller's way) leaves the account without one for the caller to add.
- */
-function _minn_insert_account(array $account, array $userdata): int
-{
-    $users = new Users(Runtime::current()->db);
-    $id = $users->insertAccount($account);
-    if (!empty($userdata['user_registered'])) {
-        $users->update($id, ['user_registered' => (string) $userdata['user_registered']]);
-    }
-    do_action('wp_set_password', (string) $account['password'], $id, new WP_User($id));
-    foreach (\Minn\Runtime\UserSave::meta(Users::profileMeta($account), $id, $userdata) as $key => $value) {
-        add_user_meta($id, $key, $value);
-    }
-    $user = new WP_User($id);
-    $user->set_role(array_key_exists('role', $userdata) && $userdata['role'] === false ? false : $account['role']);
-    clean_user_cache($user);
-    do_action('user_register', $id, $userdata);
-    return $id;
-}
-
-/** @internal the update half of wp_insert_user: changed columns, the profile meta, the role */
-function _minn_update_user_profile(WP_User $existing, array $userdata, array $resolved, array $given = []): int
-{
-    $id = $existing->ID;
-    $stored = $existing->to_array();
-    // Unslashed, as for a new account: the pre_user_* filters hand back slashed text.
-    $columns = wp_unslash(UserInsert::changes($userdata, $stored, $resolved, static fn (string $url): string => Minn\Support\Kses::url($url), static fn (string $password): string => (string) wp_hash_password($password)));
-    // The whole row through wp_pre_insert_user_data; what it changes is written too.
-    $row = array_intersect_key(array_replace($stored, $columns), array_flip(['user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_key', 'display_name']));
-    foreach (\Minn\Runtime\UserSave::data($row, $id, $given ?: $userdata) as $column => $value) {
-        if ($column !== 'user_login' && (string) $value !== (string) ($stored[$column] ?? '')) {
-            $columns[$column] = (string) $value;
-        }
-    }
-    if ($columns !== []) {
-        (new Users(Runtime::current()->db))->update($id, $columns);
-    }
-    if (isset($columns['user_pass'])) {
-        do_action('wp_set_password', (string) $userdata['user_pass'], $id, $existing);
-    }
-    clean_user_cache($id);
-    $meta = array_intersect_key($userdata, array_flip([...UserInsert::META_KEYS, 'infinite_scrolling']));
-    foreach (\Minn\Runtime\UserSave::meta($meta, $id, $given ?: $userdata) as $key => $value) {
-        update_user_meta($id, $key, $value);
-    }
-    if ($resolved['role'] !== null) {
-        (new WP_User($id))->set_role($resolved['role']);
-    }
-    clean_user_cache($id);
-    do_action('profile_update', $id, $existing, $userdata);
-    // A spam flag given that differs from the account's is heard as the account made ham (a
-    // single site refuses one set to spam before this; probe hook-inputs-2).
-    if (array_key_exists('spam', $userdata) && $userdata['spam'] !== null && $userdata['spam'] !== $existing->spam) {
-        do_action('make_ham_user', $id);
-    }
-    return $id;
+    return Minn\Runtime\UserWrites::insert($userdata);
 }
 
 function wp_update_user($userdata)
 {
-    if ($userdata instanceof stdClass) {
-        $userdata = get_object_vars($userdata);
-    } elseif ($userdata instanceof WP_User) {
-        $userdata = $userdata->to_array();
-    }
-    $userdata = (array) $userdata;
-    $id = (int) ($userdata['ID'] ?? 0);
-    if ($id <= 0 || !get_userdata($id)) {
-        return new WP_Error('invalid_user_id', 'Invalid user ID.');
-    }
-    $before = get_userdata($id)->to_array();
-    // The stored account and its profile under the given fields, as the reference merges them; the stored
-    // password hash is no new password.
-    $merged = $before;
-    foreach ([...UserInsert::META_KEYS, 'infinite_scrolling'] as $key) {
-        if (metadata_exists('user', $id, $key)) {
-            $merged[$key] = get_user_meta($id, $key, true);
-        }
-    }
-    // What was read from the database is slashed to stand beside what the caller gave, slashed as callers give it.
-    $result = wp_insert_user(array_merge(wp_slash($merged), $userdata));
-    if (!is_wp_error($result)) {
-        _minn_user_change_notices($before, $userdata);
-        do_action('wp_update_user', $id, $userdata, $userdata);
-    }
-    return $result;
-}
-
-/** @internal The notices the reference mails a user whose password or email address just changed, to the address they had. */
-function _minn_user_change_notices(array $user, array $userdata): void
-{
-    $site = wp_specialchars_decode((string) get_option('blogname'), ENT_QUOTES);
-    $values = ['USERNAME' => (string) $user['user_login'], 'ADMIN_EMAIL' => (string) get_option('admin_email'), 'EMAIL' => (string) $user['user_email'], 'SITENAME' => $site, 'SITEURL' => home_url()];
-    $sends = [];
-    if (!empty($userdata['user_pass']) && apply_filters('send_password_change_email', true, $user, $userdata)) {
-        $sends['password_change_email'] = Minn\Mail\ChangeNotices::password();
-    }
-    if (isset($userdata['user_email']) && (string) $userdata['user_email'] !== (string) $user['user_email'] && apply_filters('send_email_change_email', true, $user, $userdata)) {
-        $sends['email_change_email'] = Minn\Mail\ChangeNotices::email();
-        $values['NEW_EMAIL'] = (string) $userdata['user_email'];
-    }
-    foreach ($sends as $filter => $template) {
-        $mail = apply_filters($filter, ['to' => $user['user_email']] + $template + ['headers' => ''], $user, $userdata);
-        wp_mail($mail['to'], sprintf($mail['subject'], $site), Minn\Mail\ChangeNotices::fill((string) $mail['message'], $values), $mail['headers']);
-    }
+    return Minn\Runtime\UserWrites::update($userdata);
 }
 
 function wp_create_user($username, $password, $email = '')
 {
-    return wp_insert_user(['user_login' => wp_slash($username), 'user_email' => wp_slash($email), 'user_pass' => $password]);
+    return Minn\Runtime\UserWrites::create($username, $password, $email);
 }
 
 function wp_delete_user($id, $reassign = null)
 {
-    $id = (int) $id;
-    $user = get_userdata($id);
-    if (!$user) {
-        return false;
-    }
-    do_action('delete_user', $id, $reassign, $user);
-    if ($reassign === null) {
-        foreach ((new PostLookup(Runtime::current()->db))->idsByAuthor($id) as $postId) {
-            wp_delete_post($postId, true);
-        }
-    } else {
-        _minn_post_writer()->reassignAuthor($id, (int) $reassign);
-    }
-    // Each meta key removed with its own actions, then the row; the count follows deleted_user.
-    foreach (_minn_meta()->rowsOf('user', $id) as $row) {
-        delete_metadata_by_mid('user', $row['meta_id']);
-    }
-    (new Users(Runtime::current()->db))->deleteRow($id);
-    clean_user_cache($user);
-    do_action('deleted_user', $id, $reassign, $user);
-    return true;
+    return Minn\Runtime\UserWrites::delete($id, $reassign);
 }
 
 /** Lets go of a user's cached rows and meta, telling plugins. */
 function clean_user_cache($user)
 {
-    $cleaned = is_object($user) ? (int) ($user->ID ?? 0) : (int) $user;
-    if ($cleaned > 0) {
-        Minn\Content\RowCache::forget('users', $cleaned);
-        Minn\Content\RowCache::forget('user_meta', $cleaned);
-    }
-    $user = is_numeric($user) ? new WP_User((int) $user) : $user;
-    if (!$user instanceof WP_User || !$user->exists()) {
-        return;
-    }
-    wp_cache_delete($user->ID, 'users');
-    wp_cache_delete($user->user_login, 'userlogins');
-    wp_cache_delete($user->user_nicename, 'userslugs');
-    wp_cache_delete($user->user_email, 'useremail');
-    wp_cache_delete($user->ID, 'user_meta');
-    do_action('clean_user_cache', $user->ID, $user);
+    Minn\Runtime\UserWrites::cleanCache($user);
 }
 
 /** The default on user_register and deleted_user: the site's user count is kept current. */

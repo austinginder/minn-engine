@@ -363,7 +363,7 @@ A user as the WordPress layer hands it to plugins (WP_User). The engine
 knows these objects by this mark and makes them through Runtime\Handoff,
 so it never names the WordPress layer's class.
 
-Used by: `Minn\Auth\Can`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginHooks`, `Minn\Rest\UsersController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Handoff`, `Minn\Runtime\MetaKeys`, `Minn\Theme\QueryClasses`
+Used by: `Minn\Auth\Can`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginHooks`, `Minn\Rest\UsersController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Handoff`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\UserWrites`, `Minn\Theme\QueryClasses`
 
 
 ## UsersQuery

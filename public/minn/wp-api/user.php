@@ -56,17 +56,13 @@ function wp_is_application_passwords_supported()
 
 function wp_is_application_passwords_available()
 {
-    return apply_filters('wp_is_application_passwords_available', wp_is_application_passwords_supported());
+    return Minn\Runtime\UserWrites::appPasswordsAvailable();
 }
 
 /** Whether a user may sign in by application password: the site allows them, then wp_is_application_passwords_available_for_user. */
 function wp_is_application_passwords_available_for_user($user)
 {
-    $user = is_numeric($user) ? get_user_by('id', $user) : $user;
-    if (!$user instanceof WP_User || !$user->exists() || !wp_is_application_passwords_available()) {
-        return false;
-    }
-    return apply_filters('wp_is_application_passwords_available_for_user', true, $user);
+    return Minn\Runtime\UserWrites::appPasswordsAvailableFor($user);
 }
 
 /** A user signed in by application password (in an API request), the input as given, or the refusal: Minn\Runtime\ApplicationPasswordSignIn. */
@@ -93,16 +89,12 @@ function get_user($user_id)
 
 function username_exists($username)
 {
-    $user = get_user_by('login', $username);
-    $id = $user ? $user->ID : false;
-    return apply_filters('username_exists', $id, $username);
+    return Minn\Runtime\UserWrites::usernameExists($username);
 }
 
 function email_exists($email)
 {
-    $user = get_user_by('email', $email);
-    $id = $user ? $user->ID : false;
-    return apply_filters('email_exists', $id, $email);
+    return Minn\Runtime\UserWrites::emailExists($email);
 }
 
 function current_user_can($capability, ...$args)
@@ -456,9 +448,7 @@ function get_users($args = [])
 /** A username survives strict sanitising unchanged and is not empty. */
 function validate_username($username)
 {
-    $username = (string) $username;
-    $valid = $username !== '' && sanitize_user($username, true) === $username;
-    return (bool) apply_filters('validate_username', $valid, $username);
+    return Minn\Runtime\UserWrites::validUsername($username);
 }
 
 function wp_get_password_hint()
@@ -470,41 +460,7 @@ function wp_get_password_hint()
 /** A fresh 20-character reset key, its hash stored under the time it was issued. */
 function get_password_reset_key($user)
 {
-    $user = _minn_user_row($user);
-    if ($user === null) {
-        return new WP_Error('invalid_user', 'Invalid user.');
-    }
-    // The misspelt name came first and is still heard, with a notice (probe hook-inputs).
-    do_action_deprecated('retreive_password', [$user['user_login']], '1.5.1', 'retrieve_password');
-    do_action('retrieve_password', $user['user_login']);
-    $allow = apply_filters('allow_password_reset', true, (int) $user['ID']);
-    if (!$allow) {
-        return new WP_Error('no_password_reset', 'Password reset is not allowed for this user');
-    }
-    if (is_wp_error($allow)) {
-        return $allow;
-    }
-    [$key, $stored] = PasswordReset::mint();
-    do_action('retrieve_password_key', $user['user_login'], $key);
-    // Saved through wp_update_user, as the reference saves it (its filters and profile_update run).
-    $saved = wp_update_user(['ID' => (int) $user['ID'], 'user_activation_key' => $stored]);
-    if (is_wp_error($saved)) {
-        return new WP_Error('no_password_key_update', __('Could not save password reset key to database.'));
-    }
-    return $key;
-}
-
-/** @internal a user row from an id, a login, a WP_User, or an object with an ID */
-function _minn_user_row($user): ?Minn\Content\UserRecord
-{
-    $users = new Users(Runtime::current()->db);
-    if (is_object($user) && isset($user->ID)) {
-        return $users->find((int) $user->ID);
-    }
-    if (is_numeric($user)) {
-        return $users->find((int) $user);
-    }
-    return is_string($user) && $user !== '' ? $users->findByLogin($user) : null;
+    return Minn\Runtime\UserWrites::resetKey($user);
 }
 
 /** The user the key belongs to, or expired_key / invalid_key. A reference-issued key is not readable here. */
@@ -696,8 +652,7 @@ function wp_destroy_current_session()
 
 function is_user_member_of_blog($user_id = 0, $blog_id = 0)
 {
-    $user_id = $user_id ?: get_current_user_id();
-    return $user_id > 0 && get_userdata($user_id) !== false;
+    return Minn\Runtime\UserWrites::isMember($user_id, $blog_id);
 }
 
 /** The default on profile_update: a user who changed the generated password stops being reminded to. */

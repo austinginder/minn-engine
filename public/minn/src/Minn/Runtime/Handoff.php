@@ -47,7 +47,7 @@ final class Handoff
 
     /**
      * Binds answers by name: currentUser, signedIn, user, userBy,
-     * becomeUser, cacheUsers, authenticate, setPassword, password, hash,
+     * becomeUser, cacheUsers, authenticate, setPassword, password, hashPassword, hash,
      * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
      * factories newError, newPost, postInstance, newTerm, newComment,
      * commentInstance, newUser, and the query factories newQuery,
@@ -120,6 +120,12 @@ final class Handoff
     public static function password(mixed ...$args): mixed
     {
         return self::answer('password', ...$args);
+    }
+
+    /** A password hashed for storing (wp_hash_password). */
+    public static function hashPassword(mixed $password): mixed
+    {
+        return self::answer('hashPassword', $password);
     }
 
     /** A hash of the data keyed with the site's salt (wp_hash). */

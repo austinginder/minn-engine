@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 731,
-        "composes": 2231,
+        "minn": 722,
+        "composes": 2225,
         "leaf": 1016,
-        "noop": 3008,
+        "noop": 3018,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8680,
-        "minnMethods": 1292,
+        "functions": 8675,
+        "minnMethods": 1287,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -37221,25 +37221,6 @@
             "minn": [],
             "composes": []
         },
-        "_minn_insert_account": {
-            "file": "misc.php",
-            "lines": 14,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Content\\Users::__construct",
-                "Minn\\Content\\Users::insertAccount",
-                "Minn\\Content\\Users::profileMeta",
-                "Minn\\Content\\Users::update",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db",
-                "Minn\\Runtime\\UserSave::meta"
-            ],
-            "composes": [
-                "add_user_meta",
-                "clean_user_cache",
-                "do_action"
-            ]
-        },
         "_minn_join_list": {
             "file": "taxonomy.php",
             "lines": 5,
@@ -38699,50 +38680,12 @@
                 "get_site_transient"
             ]
         },
-        "_minn_update_user_profile": {
-            "file": "misc.php",
-            "lines": 33,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Content\\Users::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db",
-                "Minn\\Runtime\\UserInsert::changes",
-                "Minn\\Runtime\\UserSave::data",
-                "Minn\\Runtime\\UserSave::meta",
-                "Minn\\Support\\Kses::url"
-            ],
-            "composes": [
-                "clean_user_cache",
-                "do_action",
-                "update_user_meta",
-                "wp_hash_password",
-                "wp_unslash"
-            ]
-        },
         "_minn_upgrader_line": {
             "file": "classes/WP_Upgrader_Skin.php",
             "lines": 8,
             "kind": "leaf",
             "minn": [],
             "composes": []
-        },
-        "_minn_user_change_notices": {
-            "file": "misc.php",
-            "lines": 14,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Mail\\ChangeNotices::email",
-                "Minn\\Mail\\ChangeNotices::fill",
-                "Minn\\Mail\\ChangeNotices::password"
-            ],
-            "composes": [
-                "apply_filters",
-                "get_option",
-                "home_url",
-                "wp_mail",
-                "wp_specialchars_decode"
-            ]
         },
         "_minn_user_level": {
             "file": "deprecated.php",
@@ -38790,31 +38733,6 @@
                 "__",
                 "_doing_it_wrong",
                 "apply_filters"
-            ]
-        },
-        "_minn_user_row": {
-            "file": "user.php",
-            "lines": 8,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Content\\Users::__construct",
-                "Minn\\Content\\Users::find",
-                "Minn\\Content\\Users::findByLogin",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
-            ],
-            "composes": []
-        },
-        "_minn_user_row_filtered": {
-            "file": "misc.php",
-            "lines": 10,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\UserSave::data"
-            ],
-            "composes": [
-                "wp_hash_password",
-                "wp_unslash"
             ]
         },
         "_minn_user_styles": {
@@ -43792,15 +43710,12 @@
         },
         "clean_user_cache": {
             "file": "misc.php",
-            "lines": 15,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\RowCache::forget"
+                "Minn\\Runtime\\UserWrites::cleanCache"
             ],
-            "composes": [
-                "do_action",
-                "wp_cache_delete"
-            ]
+            "composes": []
         },
         "codepoint_to_utf8": {
             "file": "simplepie/Interfaces.php",
@@ -45490,13 +45405,12 @@
         },
         "email_exists": {
             "file": "user.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_user_by"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\UserWrites::emailExists"
+            ],
+            "composes": []
         },
         "encode": {
             "file": "requests/Parts.php",
@@ -49790,20 +49704,12 @@
         },
         "get_password_reset_key": {
             "file": "user.php",
-            "lines": 22,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Auth\\PasswordReset::mint"
+                "Minn\\Runtime\\UserWrites::resetKey"
             ],
-            "composes": [
-                "__",
-                "_minn_user_row",
-                "apply_filters",
-                "do_action",
-                "do_action_deprecated",
-                "is_wp_error",
-                "wp_update_user"
-            ]
+            "composes": []
         },
         "get_pending_comments_num": {
             "file": "comment.php",
@@ -54296,13 +54202,12 @@
         },
         "is_user_member_of_blog": {
             "file": "user.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_current_user_id",
-                "get_userdata"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\UserWrites::isMember"
+            ],
+            "composes": []
         },
         "is_utf8_charset": {
             "file": "functions.php",
@@ -63551,13 +63456,12 @@
         },
         "username_exists": {
             "file": "user.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_user_by"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\UserWrites::usernameExists"
+            ],
+            "composes": []
         },
         "utf8_uri_encode": {
             "file": "formatting.php",
@@ -63660,13 +63564,12 @@
         },
         "validate_username": {
             "file": "user.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "sanitize_user"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\UserWrites::validUsername"
+            ],
+            "composes": []
         },
         "verify_certificate": {
             "file": "requests/Parts.php",
@@ -66387,11 +66290,10 @@
             "file": "misc.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "wp_insert_user",
-                "wp_slash"
-            ]
+            "minn": [
+                "Minn\\Runtime\\UserWrites::create"
+            ],
+            "composes": []
         },
         "wp_create_user_request": {
             "file": "user.php",
@@ -67052,25 +66954,12 @@
         },
         "wp_delete_user": {
             "file": "misc.php",
-            "lines": 21,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\PostWriter::reassignAuthor",
-                "Minn\\Content\\Users::__construct",
-                "Minn\\Runtime\\Meta::rowsOf",
-                "Minn\\Runtime\\PostLookup::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
+                "Minn\\Runtime\\UserWrites::delete"
             ],
-            "composes": [
-                "_minn_meta",
-                "_minn_post_writer",
-                "clean_user_cache",
-                "delete_metadata_by_mid",
-                "do_action",
-                "get_userdata",
-                "wp_delete_post"
-            ],
+            "composes": [],
             "deadend": "admin"
         },
         "wp_dependencies_unique_hosts": {
@@ -70660,26 +70549,12 @@
         },
         "wp_insert_user": {
             "file": "misc.php",
-            "lines": 40,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::capabilities->roles",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\UserInsert::__construct",
-                "Minn\\Runtime\\UserInsert::account",
-                "Minn\\Runtime\\UserInsert::resolve",
-                "Minn\\Runtime\\UserSave::fields"
+                "Minn\\Runtime\\UserWrites::insert"
             ],
-            "composes": [
-                "_minn_insert_account",
-                "_minn_update_user_profile",
-                "_minn_user_row_filtered",
-                "email_exists",
-                "get_option",
-                "get_userdata",
-                "is_email",
-                "wp_unslash"
-            ]
+            "composes": []
         },
         "wp_install": {
             "file": "deadends.php",
@@ -70805,22 +70680,19 @@
             "file": "user.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "wp_is_application_passwords_supported"
-            ]
+            "minn": [
+                "Minn\\Runtime\\UserWrites::appPasswordsAvailable"
+            ],
+            "composes": []
         },
         "wp_is_application_passwords_available_for_user": {
             "file": "user.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_user_by",
-                "wp_is_application_passwords_available"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\UserWrites::appPasswordsAvailableFor"
+            ],
+            "composes": []
         },
         "wp_is_application_passwords_supported": {
             "file": "user.php",
@@ -76896,19 +76768,12 @@
         },
         "wp_update_user": {
             "file": "misc.php",
-            "lines": 26,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_user_change_notices",
-                "do_action",
-                "get_user_meta",
-                "get_userdata",
-                "is_wp_error",
-                "metadata_exists",
-                "wp_insert_user",
-                "wp_slash"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\UserWrites::update"
+            ],
+            "composes": []
         },
         "wp_update_user_counts": {
             "file": "misc.php",

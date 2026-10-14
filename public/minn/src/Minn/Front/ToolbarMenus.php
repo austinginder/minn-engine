@@ -18,6 +18,7 @@ use Minn\I18n\Gettext;
 use Minn\Runtime\SiteInfo;
 use Minn\Runtime\SiteUrls;
 use Minn\Runtime\ThemeSupports;
+use Minn\Runtime\UserWrites;
 use Minn\Support\Escape;
 use Minn\Support\Text;
 
@@ -135,7 +136,7 @@ final class ToolbarMenus
     /** The site's name (with its icon when it has one), then the dashboard, appearance and plugins below it. */
     public static function siteMenu(Toolbar $bar): void
     {
-        if (!Handoff::signedIn() || (!\is_user_member_of_blog() && !Can::current('manage_network'))) {
+        if (!Handoff::signedIn() || (!UserWrites::isMember() && !Can::current('manage_network'))) {
             return;
         }
         $name = (string) SiteInfo::get('name');

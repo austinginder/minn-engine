@@ -44,7 +44,7 @@ final readonly class UserEvents
             return $quietly();
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
-        $id = \wp_insert_user(['role' => false] + self::prepared($userdata, $wpRequest));
+        $id = UserWrites::insert(['role' => false] + self::prepared($userdata, $wpRequest));
         if ($id instanceof Errors) {
             throw new RestError($id->get_error_code(), $id->get_error_message(), 400);
         }
@@ -74,7 +74,7 @@ final readonly class UserEvents
             return;
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
-        $result = \wp_update_user(self::prepared(['ID' => $id] + $userdata, $wpRequest));
+        $result = UserWrites::update(self::prepared(['ID' => $id] + $userdata, $wpRequest));
         if ($result instanceof Errors) {
             throw new RestError($result->get_error_code(), $result->get_error_message(), 400);
         }
@@ -102,7 +102,7 @@ final readonly class UserEvents
             return;
         }
         $user = Handoff::user($id);
-        \wp_delete_user($id, $reassign);
+        UserWrites::delete($id, $reassign);
         Runtime::hooks()->action('rest_delete_user', [$user, Handoff::newRestResponse($data, 200), RuntimeRoutes::wpRequest($request)]);
     }
 

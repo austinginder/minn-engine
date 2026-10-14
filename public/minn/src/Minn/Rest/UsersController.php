@@ -27,6 +27,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\UserWrites;
 use Minn\Support\Kses;
 
 /** wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. */
@@ -401,7 +402,7 @@ final readonly class UsersController
      */
     private static function loginRefusal(string $login): ?string
     {
-        $valid = \validate_username($login);
+        $valid = UserWrites::validUsername($login);
         if (!$valid) {
             return 'This username is invalid because it uses illegal characters. Please enter a valid username.';
         }

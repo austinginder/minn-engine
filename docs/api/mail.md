@@ -75,6 +75,8 @@ address changes, as templates: plugins filter them (password_change_email,
 email_change_email) with the placeholders still in them and the site name
 still a %s in the subject, and fill() finishes them after.
 
+Used by: `Minn\Runtime\UserWrites`
+
 ### static `password(): array`
 
 The password notice: subject and message, placeholders unfilled. @return array{subject: string, message: string}

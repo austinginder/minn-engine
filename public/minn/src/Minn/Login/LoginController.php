@@ -185,7 +185,7 @@ final readonly class LoginController
      */
     private function retrieve(Request $request, string $login, string $siteName): Response
     {
-        $result = \retrieve_password($login);
+        $result = AccountFlows::retrievePassword($login);
         $requested = (string) ($request->form['redirect_to'] ?? $request->query('redirect_to') ?? '');
         if (!$result instanceof Errors) {
             // The form's own address when it named one, else "check your email" (lostpassword_redirect wrote it into the form).
@@ -258,7 +258,7 @@ final readonly class LoginController
         if (!$refusal->isEmpty()) {
             return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, '', $this->parts('resetpass', 'Reset Password', $siteName, $user, $refusal)));
         }
-        \reset_password(Handoff::newUser($user->id), $pass1);
+        AccountFlows::resetPassword(Handoff::newUser($user->id), $pass1);
         return $this->signIn->endAll(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url($this->base($request)))), $user->id)
             ->withCookie('wp-resetpass-' . $this->signIn->hash(), ' ', ['expires' => time() - 31536000, 'path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
     }

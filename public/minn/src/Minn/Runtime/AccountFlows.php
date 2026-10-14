@@ -54,7 +54,7 @@ final class AccountFlows
         if (!Runtime::hooks()->filter('send_retrieve_password_email', [true, $user->user_login, $user])) {
             return true;
         }
-        $key = \get_password_reset_key($user);
+        $key = UserWrites::resetKey($user);
         if ($key instanceof Errors) {
             return $key;
         }
@@ -90,8 +90,8 @@ final class AccountFlows
         $email = (string) Runtime::hooks()->filter('user_registration_email', [$email]);
         $nameError = match (true) {
             $name === '' => ['empty_username', '<strong>Error:</strong> Please enter a username.'],
-            !\validate_username($login) => ['invalid_username', '<strong>Error:</strong> This username is invalid because it uses illegal characters. Please enter a valid username.'],
-            (bool) \username_exists($name) => ['username_exists', '<strong>Error:</strong> This username is already registered. Please choose another one.'],
+            !UserWrites::validUsername($login) => ['invalid_username', '<strong>Error:</strong> This username is invalid because it uses illegal characters. Please enter a valid username.'],
+            (bool) UserWrites::usernameExists($name) => ['username_exists', '<strong>Error:</strong> This username is already registered. Please choose another one.'],
             in_array(strtolower($name), array_map('strtolower', (array) Runtime::hooks()->filter('illegal_user_logins', [[]])), true) => ['invalid_username', '<strong>Error:</strong> Sorry, that username is not allowed.'],
             default => null,
         };
@@ -102,7 +102,7 @@ final class AccountFlows
         $emailError = match (true) {
             $email === '' => ['empty_email', Gettext::text('<strong>Error:</strong> Please type your email address.')],
             !Sanitize::isEmail($email) => ['invalid_email', Gettext::text('<strong>Error:</strong> The email address is not correct.')],
-            (bool) \email_exists($email) => ['email_exists', sprintf(Gettext::text('<strong>Error:</strong> This email address is already registered. <a href="%s">Log in</a> with this address or choose another one.'), SiteUrls::login())],
+            (bool) UserWrites::emailExists($email) => ['email_exists', sprintf(Gettext::text('<strong>Error:</strong> This email address is already registered. <a href="%s">Log in</a> with this address or choose another one.'), SiteUrls::login())],
             default => null,
         };
         if ($emailError !== null) {
@@ -114,7 +114,7 @@ final class AccountFlows
         if ($errors->has_errors()) {
             return $errors;
         }
-        $id = \wp_create_user($name, Handoff::password(12, false), $email);
+        $id = UserWrites::create($name, Handoff::password(12, false), $email);
         if (!is_int($id) || $id < 1) {
             return Handoff::newError('registerfail', sprintf(Gettext::text('<strong>Error:</strong> Could not register you&hellip; please contact the <a href="mailto:%s">site admin</a>!'), Runtime::options()->filtered('admin_email')));
         }
@@ -143,7 +143,7 @@ final class AccountFlows
         if ($notify === 'admin' || (empty($deprecated) && $notify === '') || !Runtime::hooks()->filter('wp_send_new_user_notification_to_user', [true, $user])) {
             return;
         }
-        $key = \get_password_reset_key($user);
+        $key = UserWrites::resetKey($user);
         if ($key instanceof Errors) {
             return;
         }

@@ -16238,6 +16238,17 @@ and `data()`; `CronEvents::clearHook()` answers wp_clear_scheduled_hook and
 Column reads use keyed destructuring, so the bracket reads of post columns stay at 205. The http-transports
 probe stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 32, accounts.** `Runtime\UserWrites` writes accounts as the facade's user functions did: `insert()`
+(each field through its pre_user_ filter first; a new account's row, password, profile meta and role, or an
+update's changed columns), `update()` (the notices a changed password or email sends), `create()`, `delete()`
+(posts deleted or handed on, meta removed row by row), `resetKey()`, `cleanCache()`, and the checks that
+guard them (`validUsername()`, `usernameExists()`, `emailExists()`, `isMember()`, `appPasswordsAvailable()`,
+`appPasswordsAvailableFor()`). A password is hashed through the pluggable `Handoff::hashPassword()`; the
+reset flows are called on AccountFlows directly. Column reads use keyed destructuring, so the bracket reads of
+user columns stay at 70. Full run 31 (after batch 31) was green once minn-v1 and comments, red and skipped while Cove reloaded, were
+run again on their own. The http-transports probe stays out of the comparison; the other probes give
+identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

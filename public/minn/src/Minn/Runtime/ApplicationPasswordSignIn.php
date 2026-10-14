@@ -98,8 +98,8 @@ final class ApplicationPasswordSignIn
         return match (true) {
             !$user instanceof User && Sanitize::isEmail($username) => Handoff::newError('invalid_email', Gettext::text('<strong>Error:</strong> Unknown email address. Check again or try your username.')),
             !$user instanceof User => Handoff::newError('invalid_username', Gettext::text('<strong>Error:</strong> Unknown username. Check again or try your email address.')),
-            !\wp_is_application_passwords_available() => Handoff::newError('application_passwords_disabled', Gettext::text('Application passwords are not available.')),
-            !\wp_is_application_passwords_available_for_user($user) => Handoff::newError('application_passwords_disabled_for_user', Gettext::text('Application passwords are not available for your account. Please contact the site administrator for assistance.')),
+            !UserWrites::appPasswordsAvailable() => Handoff::newError('application_passwords_disabled', Gettext::text('Application passwords are not available.')),
+            !UserWrites::appPasswordsAvailableFor($user) => Handoff::newError('application_passwords_disabled_for_user', Gettext::text('Application passwords are not available for your account. Please contact the site administrator for assistance.')),
             default => null,
         };
     }

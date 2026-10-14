@@ -736,6 +736,7 @@ Handoff::bind([
     'authenticate' => static fn ($username, $password) => wp_authenticate($username, $password),
     'setPassword' => static fn ($password, $user_id) => wp_set_password($password, $user_id),
     'password' => static fn (...$args) => wp_generate_password(...$args),
+    'hashPassword' => static fn ($password) => wp_hash_password($password),
     'hash' => static fn (...$args) => wp_hash(...$args),
     'createNonce' => static fn (...$args) => wp_create_nonce(...$args),
     'verifyNonce' => static fn (...$args) => wp_verify_nonce(...$args),
