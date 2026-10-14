@@ -5034,6 +5034,459 @@
                 "body": "b95feffc965e"
             }
         },
+        "formatting.php": {
+            "__checked_selected_helper": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Html::chosen's attribute, echoed by the display flag and returned",
+                "body": "6b1b1c70ed72"
+            },
+            "_deep_replace": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Text",
+                "why": "removes the search strings until none is left; Url::clean runs the same loop inline (case-insensitively) for line breaks",
+                "body": "8d6fbf27916d"
+            },
+            "_get_component_from_parsed_url_array": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Url",
+                "why": "picks one part out of parsed URL parts by its PHP_URL_* constant, the same constant-to-key map Url::parse holds inline; a Url::component would serve both",
+                "body": "c818d54e2030"
+            },
+            "_links_add_base": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "gates": [
+                    "globals"
+                ],
+                "why": "makes one attribute's URL absolute against the $_links_add_base global unless it has an allowed scheme; part of links_add_base_url's rule",
+                "body": "e4b08688c621"
+            },
+            "_links_add_target": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "gates": [
+                    "globals"
+                ],
+                "why": "rewrites one tag with its old target dropped and the $_links_add_target global's added; part of links_add_target's rule",
+                "body": "833ac5f7b783"
+            },
+            "_make_clickable_rel_attr": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Clickable",
+                "why": "decides nofollow and ugc for a made link and fires make_clickable_rel; the rel rule of make_clickable",
+                "doubt": "WordPress asks wp_is_internal_link (the wp_internal_hosts filter) and current_filter() === 'comment_text'; here only the home host counts and doing_filter is true inside nested filters too",
+                "body": "86da6926530a"
+            },
+            "_make_email_clickable_cb": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Clickable",
+                "why": "joins the address and builds the mailto anchor; link markup by rule for Clickable::make",
+                "body": "c748b201b069"
+            },
+            "_make_url_clickable_cb": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Clickable",
+                "why": "balances the URL's parentheses, escapes it and builds the anchor with its rel; link markup by rule for Clickable::make",
+                "body": "ae9581647dff"
+            },
+            "_make_web_ftp_clickable_cb": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Clickable",
+                "why": "prefixes http, moves a trailing . or ) outside, escapes and builds the anchor with its rel; link markup by rule for Clickable::make",
+                "body": "d73259da124d"
+            },
+            "_minn_smilies": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the smiley table: $wpsmiliestrans once smilies_init ran, else the defaults through the smilies filter; it moves with the smiley rules",
+                "body": "cbd8cd408db6"
+            },
+            "_minn_smilies_defaults": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "why": "a function static caching data/smilies.json; engine data and state beside TextFilters::smilies",
+                "body": "6e91c4e3e13b"
+            },
+            "_sanitize_text_fields": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the empty answer for arrays and objects, then Html::textField with wp_check_invalid_utf8 and wp_pre_kses_less_than handed in as its closures",
+                "body": "a0e0286e4241"
+            },
+            "_split_str_by_whitespace": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Text",
+                "why": "cuts text into chunks at the last whitespace before the goal, or the first after it; a text algorithm for Support\\Text",
+                "doubt": "WordPress drops a last chunk of '0' (its truthiness test); here it is kept",
+                "body": "76347824109b"
+            },
+            "_wp_array_get": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Lists",
+                "why": "walks a key path into nested arrays with a default; Blocks\\StyleEngine::at and Blocks\\Selector::at hold private copies of the same walk",
+                "doubt": "WordPress answers the default when a path element is not a string, integer or null; here an array element throws in array_key_exists",
+                "body": "13a70cacd15f"
+            },
+            "_wp_array_set": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Lists",
+                "gates": [
+                    "refs"
+                ],
+                "why": "sets a value at a key path by reference, making the arrays on the way; the setting half of the path walk",
+                "doubt": "WordPress leaves the array alone when any path element is not a string, integer or null; here such a key is cast or throws",
+                "body": "2af8d2713387"
+            },
+            "_wp_emoji_list": {
+                "verdict": "delegate",
+                "to": "Minn\\Content\\Emoji::list",
+                "why": "a second static cache of data/emoji.json; Emoji::list already loads and keeps exactly this list (private today), picking entities or partials is the only conversion",
+                "body": "643c09a718eb"
+            },
+            "_wp_has_noncharacters_fallback": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then the noncharacter test wp_has_noncharacters makes (Utf8::hasNoncharacters)",
+                "body": "55d4004cfb72"
+            },
+            "_wp_json_prepare_data": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then the value as given",
+                "body": "b117a2773832"
+            },
+            "_wp_scan_utf8": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "spreads Utf8::scan's answer onto the by-reference position, invalid length and noncharacter flag",
+                "body": "cec29653954d"
+            },
+            "_wp_specialchars": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Escape",
+                "why": "picks the double-encoding path (Entities::specialchars with every ampersand encoded) or Escape::specialchars (references normalised first); that rule should be a doubleEncode parameter of Escape::specialchars",
+                "body": "fff1bf02637a"
+            },
+            "_wp_utf8_codepoint_count": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "clamps the byte offset and length onto the string, then counts Utf8::characters",
+                "body": "426502ab66e8"
+            },
+            "_wp_utf8_codepoint_span": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Utf8::span's byte span, its code point count written through the reference",
+                "body": "10eb4a78dd03"
+            },
+            "addslashes_gpc": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then wp_slash",
+                "body": "f8e3326c1044"
+            },
+            "antispambot": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Email",
+                "why": "scrambles an address character by character into plain, decimal or hex references at random, @ always encoded; an address rule for Support\\Email",
+                "doubt": "WordPress's third choice is a %XX percent escape (for mailto hrefs) and a character may stay plain with hex encoding on; here hex encoding gives &#x..; references and never plain text",
+                "body": "9cdfe9d26928"
+            },
+            "attribute_escape": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then esc_attr",
+                "body": "d48a9f85d3c8"
+            },
+            "backslashit": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Text",
+                "why": "backslashes every letter, and a leading digit, so date() reads them literally; a text rule for Support\\Text",
+                "body": "374615efc13c"
+            },
+            "clean_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice naming sanitize_url or esc_url by context, then esc_url",
+                "body": "1e446e814895"
+            },
+            "convert_smilies": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the use_smilies option check and the table lookup in front of TextFilters::smilies; reading the option and choosing the table are engine work",
+                "doubt": "WordPress converts nothing until smilies_init has built $wp_smiliessearch and replaces through that pattern; here the filtered defaults apply earlier and a plugin's own $wp_smiliessearch is never read",
+                "body": "c332de8cd7ff"
+            },
+            "esc_sql": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "escapes through the global $wpdb's _escape, which a db drop-in may replace, walking arrays; the engine db only when there is none",
+                "body": "ed930130ddd0"
+            },
+            "format_for_editor": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Escape",
+                "why": "encodes the specials for an editor textarea in the site charset and fires format_for_editor; editor escaping beside Escape::textarea",
+                "body": "31e2a79c4b0c"
+            },
+            "get_url_in_content": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Url",
+                "why": "finds the first anchor's href by regex and sanitizes it; URL finding beside where F5 sent wp_extract_urls",
+                "doubt": "WordPress's pattern takes href= with no spaces around the equals sign; this one allows them",
+                "body": "f5594fb9f59e"
+            },
+            "htmlentities2": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Entities",
+                "why": "encodes every character with an entity, then restores known named and numeric references; an encoding rule for Support\\Entities",
+                "doubt": "WordPress keeps the ampersand itself and escapes one only when no short name ([A-Za-z]{0,4}\\w{2,3};) or two-to-three digit reference follows, known or not; here unknown names are escaped and longer numeric references kept",
+                "body": "e6bd38de4439"
+            },
+            "human_time_diff": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Time",
+                "why": "words Time::span's count and unit with plural forms and fires human_time_diff; the wording belongs beside Time::span (F5 sent human_readable_duration there)",
+                "doubt": "WordPress words minutes as '%s min' and '%s mins'; the unit name here gives '%s minute' and '%s minutes'",
+                "body": "d97c766901b9"
+            },
+            "iso8601_timezone_to_offset": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\SiteTime",
+                "why": "parses an ISO 8601 offset into seconds; a time rule beside iso8601_to_datetime's",
+                "doubt": "WordPress reads the minutes from the fourth character on, so +05:30 counts five hours there, and answers a float; here the colon form gives 19800",
+                "body": "0b1680357f19"
+            },
+            "iso8601_to_datetime": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\SiteTime",
+                "why": "parses an ISO 8601 date with its offset (or the site zone) and writes it in the site zone or GMT; site time conversion beside SiteTime::toGmt",
+                "doubt": "WordPress answers false for a timezone argument other than 'gmt' or 'user'; here anything but gmt reads as user",
+                "body": "bf4d018d9a7d"
+            },
+            "like_escape": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Sql",
+                "why": "deprecated, its own escape of % and _ (no backslash, unlike Sql::like); beside Sql::like, the notice stays",
+                "body": "16ad6443977c"
+            },
+            "links_add_target": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "gates": [
+                    "globals"
+                ],
+                "why": "sets the target in the $_links_add_target global and rewrites the named tags by regex through _links_add_target; a markup rule for TextFilters",
+                "body": "57b7901b6b26"
+            },
+            "sanitize_locale_name": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Sanitize",
+                "why": "keeps letters, digits, _ and - and fires sanitize_locale_name; a sanitizer with its filter for Support\\Sanitize",
+                "body": "0264ef1c7046"
+            },
+            "sanitize_mime_type": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Sanitize",
+                "why": "strips characters a MIME type may not hold and fires sanitize_mime_type; a sanitizer with its filter for Support\\Sanitize",
+                "body": "a52078f8cef1"
+            },
+            "sanitize_sql_orderby": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Sql",
+                "why": "validates an ORDER BY list (columns, backticked or not, with ASC or DESC, or RAND()) by regex; an SQL rule beside Sql",
+                "body": "81c91e78ee3e"
+            },
+            "sanitize_trackback_urls": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Sanitize",
+                "why": "splits the ping list on whitespace, keeps http and https addresses, sanitizes each and fires sanitize_trackback_urls; a sanitizer with its filter",
+                "body": "71ee6ab20700"
+            },
+            "seems_utf8": {
+                "verdict": "delegate",
+                "to": "Minn\\Support\\Utf8::isValid",
+                "why": "deprecated: the notice, then a UTF-8 test its own pattern repeats; Utf8::isValid, behind wp_is_valid_utf8, already makes it",
+                "body": "7359c3f40119"
+            },
+            "shortcode_unautop": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Shortcodes",
+                "why": "builds the standalone-shortcode pattern from the registry's names and unwraps it from its paragraph; a rule beside Shortcodes::pattern",
+                "doubt": "WordPress allows wp_spaces_regexp() spaces (a no-break space, &nbsp;) between the paragraph and the shortcode; \\s here does not match them",
+                "body": "b2a7ae39553a"
+            },
+            "size_format": {
+                "verdict": "move",
+                "to": "Minn\\Support\\ByteSize",
+                "why": "the unit table and the largest-unit pick over number_format_i18n are byte size rules; Admin\\Format::size is a fixed one-decimal twin and F7 put wp_convert_bytes_to_hr in the same class",
+                "doubt": "WordPress 6.0 and later also has ZB and YB (and their constants), so a size past 1024 EB still reads in EB here; the unit symbols are not translated",
+                "body": "960a6ecac73b"
+            },
+            "smilies_init": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the filtered, reverse-sorted smiley table under the use_smilies option, then sets $wpsmiliestrans and $wp_smiliessearch; the table building moves, the two global writes stay",
+                "doubt": "WordPress builds the search pattern with wp_spaces_regexp(), so its filter applies; TextFilters::smiliesSearch hard-codes the default spaces",
+                "body": "e530e4792fd2"
+            },
+            "translate_smiley": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "why": "looks the code up in the smiley table and builds the image markup through smilies_src for an image file, else the emoji; the image half of TextFilters::smilies",
+                "doubt": "WordPress's image extensions are jpg, jpeg, jpe, gif, png, webp (and avif); svg counting as an image here, and jpe and avif not, looks off",
+                "body": "35b18f681748"
+            },
+            "url_shorten": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Url",
+                "why": "drops the scheme, www. and a trailing slash, then cuts to the length with an ellipsis; a URL display rule for Support\\Url",
+                "body": "c0701f43e048"
+            },
+            "wp_array_slice_assoc": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Lists",
+                "why": "keeps the named keys that are set, a list helper for Support\\Lists",
+                "body": "1465aec60451"
+            },
+            "wp_check_invalid_utf8": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Escape",
+                "why": "decides what an invalid string becomes (empty, or scrubbed to U+FFFD when stripping) around Escape::validUtf8 and Utf8::scrub; the strip choice belongs in Escape::validUtf8",
+                "doubt": "WordPress returns the text untouched when the site charset is not UTF-8 (its static is_utf8_charset check); here every string is checked",
+                "body": "91a82163594c"
+            },
+            "wp_embed_excerpt_more": {
+                "verdict": "move",
+                "to": "Minn\\Front\\EmbedCard",
+                "why": "on an embed, builds the Continue reading link markup to the permalink; a piece of the embed card",
+                "doubt": "'Continue reading %s' is not translated; WordPress runs it through __()",
+                "body": "8d7967438506"
+            },
+            "wp_filter_object_list": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "WP_List_Util's filter then pluck, the public class whose methods run Lists::filter and Lists::pluck",
+                "body": "531f3723b0cd"
+            },
+            "wp_htmledit_pre": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Escape",
+                "why": "deprecated, its own editor escaping and htmledit_pre filter, never format_for_editor; beside the editor escaping, the notice stays",
+                "body": "ec595674b142"
+            },
+            "wp_is_internal_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_parse_url's scheme against wp_allowed_protocols and host against wp_internal_hosts, both filtered public functions",
+                "body": "9c8af1bd359b"
+            },
+            "wp_is_numeric_array": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Lists",
+                "why": "an array whose keys are all numeric, a list predicate for Support\\Lists",
+                "body": "7a3ebd646370"
+            },
+            "wp_iso_descrambler": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\HeaderWords",
+                "why": "decodes a Q encoded subject (underscores to spaces, =XX to bytes); a narrower twin of HeaderWords::decode",
+                "body": "363c0b9926aa"
+            },
+            "wp_json_encode": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Json::encode with the reference's false on failure, rethrowing only when JSON_THROW_ON_ERROR was asked for",
+                "body": "dc4f8f73052a"
+            },
+            "wp_parse_str": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Url",
+                "gates": [
+                    "refs"
+                ],
+                "why": "parse_str then the wp_parse_str filter over the result; query parsing with its hook (Lists::args parses without it)",
+                "body": "258aad8c6f8e"
+            },
+            "wp_privacy_anonymize_data": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "the anonymous stand-in for each data type (the IP through wp_privacy_anonymize_ip) and its filter; personal data rules",
+                "doubt": "the text and longtext stand-ins are not translated; WordPress runs both through __()",
+                "body": "a9fb3461c406"
+            },
+            "wp_replace_in_html_tags": {
+                "verdict": "move",
+                "to": "Minn\\Html",
+                "why": "replaces only inside the tag pieces of Html::split; a markup rule beside Html::split",
+                "body": "eeba9a75aad2"
+            },
+            "wp_richedit_pre": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Escape",
+                "why": "deprecated, convert_chars and wpautop then its own escaping and the richedit_pre filter; beside the editor escaping, the notice stays",
+                "body": "68d4f1a87ed6"
+            },
+            "wp_slash_strings_only": {
+                "verdict": "delegate",
+                "to": "Minn\\Support\\Slashes::add",
+                "why": "slashes strings only, recursing arrays; Slashes::add already slashes every string and leaves other values, walking objects too as WordPress's map_deep does",
+                "body": "0580977f62ae"
+            },
+            "wp_spaces_regexp": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "why": "a function static holding the filtered spaces pattern; engine state, and TextFilters::smiliesSearch hard-codes the unfiltered pattern",
+                "body": "53655956db8a"
+            },
+            "wp_specialchars": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then _wp_specialchars with the arguments given or esc_html for the text alone",
+                "body": "acb1cf16565c"
+            },
+            "wp_sprintf": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Sprintf",
+                "why": "a format parser: %% literals, positional and ordered arguments, each fragment through the wp_sprintf filter before sprintf; a new Support class, with wp_sprintf_l beside it",
+                "body": "816a26484315"
+            },
+            "wp_staticize_emoji_for_email": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Emoji",
+                "why": "reads the mail's content type from its headers (the parse MailHeaders::parse already does), filters it and staticizes the emoji of an HTML message; beside Emoji::staticize",
+                "doubt": "WordPress stops at the first Content-Type header; this loop lets the last one win",
+                "body": "1e82a8bc6801"
+            },
+            "wp_targeted_link_rel": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "why": "deprecated, its own pass over links with a target (skipping script and style, serialized text left alone); a text filter beside TextFilters::rel, the notice stays",
+                "body": "780f8b39cbe4"
+            },
+            "wp_targeted_link_rel_callback": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "why": "deprecated, rewrites one link's attributes with the filtered rel words merged, quoting by whether the text was slashed; beside TextFilters::linkRel, the notice stays",
+                "body": "dcdebd9ea55b"
+            },
+            "wp_trim_excerpt": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Excerpt",
+                "why": "generates the excerpt: content without shortcodes, blocks and footnotes through the_content with do_blocks and the image filter unhooked, cut by excerpt_length with excerpt_more, then wp_trim_excerpt; the generated excerpt Excerpt::render already makes for the engine",
+                "body": "745b9c6db48a"
+            }
+        },
         "functions.php": {
             "_ajax_wp_die_handler": {
                 "verdict": "keep",
@@ -7481,6 +7934,330 @@
                 "reason": "shape",
                 "why": "hands out the API's one WP_Metadata_Lazyloader object",
                 "body": "23a84e8dc99e"
+            }
+        },
+        "misc.php": {
+            "_minn_rewrite": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "makes the global $wp_rewrite (with the built-in rules) and the global $wp (with the public query vars) on first use; those globals are what plugins reach",
+                "body": "31115776387c"
+            },
+            "_oembed_rest_pre_serve_request": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "for the oEmbed routes asked as XML, the server's response_to_data and send_header around _oembed_create_xml, echoed",
+                "doubt": "WordPress answers a 501 when no XML is made (and when SimpleXMLElement is missing); here an empty document is echoed and true returned",
+                "body": "9fcfcc1fc4fc"
+            },
+            "_post_format_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Permalinks",
+                "gates": [
+                    "globals"
+                ],
+                "why": "a term_link callback dropping the post-format- prefix from a format's address, pretty or plain by the global $wp_rewrite's permastruct; Front\\Permalinks already strips that prefix when it builds the address",
+                "body": "2882f34275fd"
+            },
+            "add_feed": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "adds the feed name to the global $wp_rewrite's feeds and hooks the callback on do_feed_{name}, returning that hook",
+                "doubt": "WordPress first removes a default callback named like the hook (remove_action($hook, $hook)), so add_feed('rss2', ...) replaces do_feed_rss2; here both run",
+                "body": "0e60c122d325"
+            },
+            "add_rewrite_tag": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "validates the %tag%, adds its query var to the global $wp and the tag to the global $wp_rewrite plugins observe",
+                "body": "af0c20e7e507"
+            },
+            "calendar_week_mod": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Calendar",
+                "why": "the non-negative weekday remainder the calendar grid uses; calendar arithmetic beside Front\\Calendar",
+                "body": "aa0c4462eb78"
+            },
+            "copy_dir": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the dirlist_failed_copy_dir WP_Error for a missing source, else FileTree::copy",
+                "doubt": "WordPress copies through the global $wp_filesystem and answers true or a WP_Error (mkdir_failed_copy_dir, copy_failed_copy_dir); here a failed copy returns FileTree's bare false",
+                "body": "3432e86479d2"
+            },
+            "edit_post_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\EditLinks",
+                "why": "builds the edit anchor (class, escaped address, text) around EditLinks::post and fires edit_post_link; template tag markup by rule, the before and after echo stays",
+                "doubt": "the default 'Edit This' is not translated; WordPress runs it through __()",
+                "body": "70791d9a43e1"
+            },
+            "get_comment_type": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_comment's type, an empty one read as comment, through the get_comment_type filter",
+                "body": "296f39d453cb"
+            },
+            "get_oembed_endpoint_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "rest_url for the oEmbed route with the url and non-json format added by add_query_arg, then oembed_endpoint_url",
+                "body": "f019dbcc1a66"
+            },
+            "get_oembed_response_data_for_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "url_to_postid through oembed_request_post_id, then get_oembed_response_data",
+                "doubt": "WordPress returns the data as an object ((object) $data) and takes a missing width as 0 (so the 200 minimum); here the array comes back and the width defaults to 600",
+                "body": "41e15c947c24"
+            },
+            "get_post_format_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term_by for the prefixed slug, then get_term_link; false when there is no term",
+                "body": "2ae1a63881fe"
+            },
+            "get_post_format_slugs": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the keys of get_post_format_strings, keyed by themselves",
+                "body": "76b1f4078157"
+            },
+            "get_post_format_string": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a format's label from get_post_format_strings, standard for none, '' for an unknown slug",
+                "body": "75a48e743268"
+            },
+            "get_preview_post_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_permalink through set_url_scheme with preview=true added by add_query_arg for a viewable type, then preview_post_link",
+                "body": "43a277823497"
+            },
+            "has_post_format": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "prefixes each format with post-format- through sanitize_key and asks has_term",
+                "body": "e59b061f0787"
+            },
+            "links_add_base_url": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "gates": [
+                    "globals"
+                ],
+                "why": "sets the base in the $_links_add_base global and rewrites the named attributes by regex through _links_add_base; a markup rule for TextFilters",
+                "body": "b56e176755b5"
+            },
+            "list_files": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "false for no folder or no levels, else FileTree::files with the exclusions",
+                "doubt": "$include_hidden is ignored (WordPress skips dot files unless asked); exclusions apply at every depth where WordPress applies them at the top only; an empty subfolder is not listed with its slash",
+                "body": "2112f20d9ff1"
+            },
+            "move_dir": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "moves through the global $wp_filesystem plugins and hosts set up, with the reference's WP_Error refusals and copy_dir as the fallback, then wp_opcache_invalidate_directory",
+                "doubt": "copy_dir here can return a bare false (FileTree::copy), which is not a WP_Error, so a failed copy still deletes the source; WordPress deletes it only when the copy returned true",
+                "body": "4f489d738c65"
+            },
+            "set_post_format": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "sanitize_key and get_post_format_slugs pick the term (standard or unknown clears), then wp_set_post_terms by name so its term hooks fire; the WP_Error for no post is shape",
+                "body": "94a98267af6a"
+            },
+            "verify_file_signature": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Signatures",
+                "why": "checks a file's sha384 hash against each ed25519 signature and trusted key with sodium, answering true or the reference's WP_Errors; Ops\\EngineUpdate::signed runs the same key loop privately",
+                "doubt": "the failure's data lacks the keys, signatures, skipped counts and versions WordPress reports, and the unsupported error carries no data",
+                "body": "2d332a298de3"
+            },
+            "win_is_writable": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "why": "judges writability by is_writable on the path or its folder, in place of the reference's temp file test; a file system rule for Support\\Files",
+                "body": "257c25c15e09"
+            },
+            "wp_check_jsonp_callback": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Jsonp",
+                "why": "a JSONP callback name may hold only word characters and dots; a REST serving rule with no engine home yet",
+                "body": "80e4b415d4b2"
+            },
+            "wp_check_post_lock": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostLock",
+                "why": "parses the _edit_lock meta (time and user, _edit_last as fallback) and answers the other user while the filtered 150 second window holds; Rest\\PostObject::lockHolder repeats the rule privately",
+                "body": "ef45c375511b"
+            },
+            "wp_custom_css_cb": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "prints wp_get_custom_css, tags stripped, in the wp-custom-css style element (type attribute by html5 support) when there is css or a customizer preview",
+                "body": "1b4fafe10d37"
+            },
+            "wp_embed_defaults": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the default embed size from the theme's $content_width (500 without), height one and a half times capped at 1000, then embed_defaults; oEmbed sizing for the engine",
+                "body": "41b85c5c8d46"
+            },
+            "wp_filesize": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "why": "the size from pre_wp_filesize, else the disk, then wp_filesize; a file read with its filters for Support\\Files",
+                "doubt": "WordPress returns an integer from pre_wp_filesize at once (null is its default, 0 a real answer) without wp_filesize; here 0 falls through to the disk and the pre value still passes wp_filesize",
+                "body": "abf2d352376e"
+            },
+            "wp_filter_oembed_iframe_title_attribute": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "for a rich or video result, takes the iframe's own title or the data's, filters it and writes it as the iframe's title attribute; oEmbed markup by rule beside OEmbed::html",
+                "body": "fcc3988fa7f5"
+            },
+            "wp_get_custom_css": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_custom_css_post's content, '' for none, through wp_get_custom_css",
+                "body": "26674cbe5da2"
+            },
+            "wp_get_custom_css_post": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CustomCssPost",
+                "why": "finds a theme's custom_css post, trusting and recording the custom_css_post_id theme mod for the active theme (-1 for none); stored data the engine should own, as UserStylesPost does for global styles",
+                "doubt": "WordPress queries the name as sanitize_title($stylesheet); here the raw stylesheet is the name",
+                "body": "02aac6bd269f"
+            },
+            "wp_get_mu_plugins": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Plugins",
+                "why": "lists the sorted .php files of the must-use folder; Runtime\\Plugins::boot globs the same folder to load them",
+                "body": "dc90ec33d255"
+            },
+            "wp_get_pomo_file_data": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TranslationFiles",
+                "why": "reads a .po file's four headers through get_file_data and trims the quoted line endings; a translation file reader beside TranslationFiles",
+                "body": "5c4cf5db39ad"
+            },
+            "wp_is_maintenance_mode": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Maintenance",
+                "gates": [
+                    "globals"
+                ],
+                "why": "includes .maintenance into the global $upgrading and applies the ten minute window and enable_maintenance_mode; Front\\Maintenance::answer makes the same check inline",
+                "doubt": "WordPress says no once time() - $upgrading reaches 600; here an $upgrading exactly 600 seconds old still counts",
+                "body": "948da9f29316"
+            },
+            "wp_json_file_decode": {
+                "verdict": "move",
+                "to": "Minn\\Json",
+                "why": "reads and decodes a JSON file, objects or arrays by the associative option, with a notice for a missing file or bad JSON; Json::file does the read and decode as arrays only",
+                "body": "239f5e7151d6"
+            },
+            "wp_list_post_revisions": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "picks the readable revisions by type and prints their list items in the hide-if-js wrapper; revision list markup by rule",
+                "body": "5cf9be18b4f7"
+            },
+            "wp_maybe_update_user_counts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_is_large_user_count, the enable_live_network_counts filter deciding, then wp_update_user_counts by name",
+                "doubt": "WordPress returns false when the filter says no; here nothing (null) comes back",
+                "body": "adbaa48802b5"
+            },
+            "wp_oembed_add_provider": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "writes the provider onto _wp_oembed_get_object's providers after plugins_loaded, else into WP_oEmbed's early list",
+                "body": "dde65c69156d"
+            },
+            "wp_oembed_remove_provider": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "removes the provider from _wp_oembed_get_object's providers after plugins_loaded, else through WP_oEmbed's early list",
+                "body": "ca52297024a0"
+            },
+            "wp_opcache_invalidate": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Opcache",
+                "why": "decides whether opcache can and may invalidate a file (function present, the filter, enable and enable_cli) and does it; opcode cache control for the engine",
+                "doubt": "WordPress only invalidates .php files and checks opcache.restrict_api against the running script; here any existing file passes and restrict_api is not checked",
+                "body": "b8e2b9ff5dee"
+            },
+            "wp_opcache_invalidate_directory": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Opcache",
+                "why": "walks a folder and invalidates each file through wp_opcache_invalidate; opcode cache control beside it",
+                "doubt": "WordPress forces each invalidation (force true) and lists through the global $wp_filesystem; here force is false",
+                "body": "bdba723b8066"
+            },
+            "wp_post_revision_title": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "words a revision's date with its edit link and the current or autosave marker; revision title markup by rule",
+                "doubt": "WordPress links get_edit_post_link (the post's edit screen for the current post, none when it gives none) and translates the strings; here it is always revision.php and untranslated",
+                "body": "304b095504e2"
+            },
+            "wp_post_revision_title_expanded": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostRevisions",
+                "why": "the avatar, author, time ago and linked date with the current or autosave marker, then its filter; revision title markup by rule",
+                "body": "d1b4e7082a02"
+            },
+            "wp_recursive_ksort": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Lists",
+                "gates": [
+                    "refs"
+                ],
+                "why": "sorts an array's keys at every depth by reference; a list helper",
+                "doubt": "WordPress returns nothing; here ksort's true comes back",
+                "body": "a3d0ac0611f6"
+            },
+            "wp_reset_vars": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets each named global from the request's form or query values; writing those globals is the point",
+                "doubt": "WordPress reads $_POST then $_GET as plugins left them, an empty POST value falling through to GET; here the engine's parsed request is read and an empty form value wins",
+                "body": "310d70375e82"
+            },
+            "wp_set_post_lock": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostLock",
+                "why": "writes the time:user _edit_lock meta for the current user and answers both; the lock format Admin\\EditorController also writes",
+                "body": "dea6f3c7d1dc"
+            },
+            "wp_sprintf_l": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Sprintf",
+                "why": "the %l directive: joins a list with the filtered between words; it goes beside wp_sprintf's parser",
+                "doubt": "WordPress answers '' for an empty list and casts a single value to a one-item list; here a non-array returns the pattern unchanged and an empty list keeps the pattern's tail",
+                "body": "cda8b9b60cef"
+            },
+            "wp_templating_constants": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "defines TEMPLATEPATH, STYLESHEETPATH and WP_DEFAULT_THEME, the constants plugins read",
+                "body": "b5fbf39011a2"
+            },
+            "wp_update_custom_css_post": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CustomCssPost",
+                "why": "filters the css data, then updates or inserts the theme's custom_css post and records the theme mod for the active theme; the WP_Error and WP_Post answers stay as shape",
+                "doubt": "WordPress saves a first revision of a newly inserted custom_css post (wp_save_post_revision when it has none); here no revision is made",
+                "body": "4131ece27367"
             }
         },
         "nav-menu-template.php": {
