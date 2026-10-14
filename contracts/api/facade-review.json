@@ -116,6 +116,53 @@
                 "body": "a19412d39d04"
             }
         },
+        "canonical.php": {
+            "_minn_guess_post_types": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Canonical",
+                "why": "the searchable types the guess may look in",
+                "body": "10102f0cde01"
+            },
+            "_minn_guessed_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Canonical",
+                "why": "the guessed post's address, its comments feed or a page of it",
+                "body": "adf0f1e6a7b5"
+            },
+            "_minn_query_date_sql": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Canonical",
+                "why": "the date conditions the guess adds from the query",
+                "body": "3163b13a4bc7"
+            },
+            "_remove_qs_args_if_not_in_url": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Canonical",
+                "why": "drops query arguments the requested address did not carry; part of the canonical redirect",
+                "body": "bdb64796e14b"
+            },
+            "redirect_guess_404_permalink": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Canonical",
+                "gates": [
+                    "globals"
+                ],
+                "why": "guesses a post for a 404 by its name, types and date with its three filters, through the global $wpdb today",
+                "body": "7e5e00731f54"
+            },
+            "strip_fragment_from_url": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Url",
+                "why": "rebuilds an address without its fragment; a URL rule beside the engine's others",
+                "body": "a825ceaadb18"
+            },
+            "wp_redirect_admin_locations": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Redirects",
+                "why": "on a 404, sends the dashboard and login shortcuts to their real addresses; the engine reads the request itself",
+                "body": "e0299ac1b630"
+            }
+        },
         "classes/WP_Widget.php": {
             "WP_Widget::WP_Widget": {
                 "verdict": "keep",
@@ -430,6 +477,130 @@
                 "body": "cd3e7585b21b"
             }
         },
+        "embed.php": {
+            "_minn_oembed_secured": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "adds the secret, sandbox and classes to an untrusted embed's markup; part of the same rule",
+                "body": "e855067a2b5f"
+            },
+            "locale_stylesheet": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "prints the locale stylesheet link when there is one",
+                "body": "6ef26768d78e"
+            },
+            "print_embed_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the embed card styles printed",
+                "body": "88878811982b"
+            },
+            "wp_embed_handler_video": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "turns a video address into a video shortcode with its size, then its filter; an embed handler's rule",
+                "body": "3ad37963e95a"
+            },
+            "wp_embed_handler_youtube": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "hands the watch address to the global $wp_embed, which plugins may replace, then its filter",
+                "body": "a4a09afeb758"
+            },
+            "wp_enqueue_embed_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "swaps the old style printer for an enqueued inline style through the hook and style APIs",
+                "body": "2623d1405115"
+            },
+            "wp_filter_oembed_result": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "the security rule for untrusted rich and video embeds (allowed tags, blockquote and iframe kept, then secured)",
+                "body": "a12371ce6712"
+            },
+            "wp_filter_pre_oembed_result": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "answers a local address from get_oembed_response_data_for_url through the oEmbed object's data2html",
+                "body": "37b6beae6e20"
+            },
+            "wp_maybe_enqueue_oembed_host_js": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "enqueues the host script when content holds an embedded post; a rule over the content",
+                "body": "8b22a0765ee4"
+            },
+            "wp_maybe_load_embeds": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "the default embed handlers and their patterns (YouTube embed, audio and video by extension) are engine data; the filters choosing callbacks go with them",
+                "body": "238c6ce1c6b5"
+            },
+            "wp_oembed_register_route": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers the oEmbed controller's routes through the API class",
+                "body": "3ec0ea1952d4"
+            }
+        },
+        "feed.php": {
+            "_minn_load_simplepie": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "requires the SimplePie facade files once, on first use",
+                "body": "965c6a6adb32"
+            },
+            "_minn_register_core_rss_block": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "bridges the registered core/rss block to its renderer through the facade's bridge",
+                "body": "f26223a56679"
+            },
+            "_minn_rss_block_item": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Rss",
+                "why": "one feed item's markup (title, link, date, author, excerpt); part of the renderer",
+                "body": "e9e6b4065f56"
+            },
+            "fetch_feed": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "builds the SimplePie object with the API's classes, lets plugins configure it on wp_feed_options, returns it or a WP_Error",
+                "body": "cff46d6b56d9"
+            },
+            "get_comment_guid": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the post's guid with the comment's anchor, from get_comment and get_the_guid",
+                "body": "430a837363a0"
+            },
+            "get_self_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FeedTags",
+                "why": "the feed's own address from the home host and the request; the engine reads the request itself",
+                "body": "a2c9a5436fc8"
+            },
+            "post_comments_feed_link": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps the comments feed address in a link, filters the markup and echoes it",
+                "body": "62ad36daa251"
+            },
+            "prep_atom_text_construct": {
+                "verdict": "move",
+                "to": "Minn\\Feed\\FeedWriter",
+                "why": "chooses an Atom text construct (text, xhtml, html) by whether the text is well-formed markup",
+                "body": "cbc8375645f8"
+            },
+            "render_block_core_rss": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Rss",
+                "why": "renders the RSS block's list by its attributes; a block renderer",
+                "body": "37329aefa98b"
+            }
+        },
         "fonts.php": {
             "_wp_after_delete_font_family": {
                 "verdict": "move",
@@ -468,6 +639,44 @@
                 "body": "b95feffc965e"
             }
         },
+        "https.php": {
+            "wp_get_https_detection_errors": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Https",
+                "why": "requests the home page over HTTPS, retries without verification, and names what failed; the engine's HTTPS check",
+                "body": "bbeb0cdb70e7"
+            },
+            "wp_is_local_html_output": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Https",
+                "why": "decides whether markup came from this site by the head link it should carry",
+                "body": "44dff3235599"
+            },
+            "wp_replace_insecure_home_url": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Https",
+                "why": "applies the replace rule before TextFilters::secureHome; the rule and the call belong together in the engine",
+                "body": "3c92d0309cd2"
+            },
+            "wp_should_replace_insecure_home_url": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Https",
+                "why": "the replace rule (using https, migration needed, home and site on one host) with its filter",
+                "body": "8064f3da466d"
+            },
+            "wp_update_https_migration_required": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Https",
+                "why": "records whether an http to https change needs content migrated; stays as the named home option callback",
+                "body": "3cd79f2d3c98"
+            },
+            "wp_update_urls_to_https": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Https",
+                "why": "switches home and siteurl to https and puts them back when the site does not then use it",
+                "body": "83cfbd2aa6e2"
+            }
+        },
         "icons.php": {
             "_wp_register_default_icons": {
                 "verdict": "move",
@@ -480,6 +689,97 @@
                 "to": "Minn\\Media\\Icons",
                 "why": "builds an icon's svg with its label, class and size attributes; markup by rules belongs with the engine's icons",
                 "body": "9dfe86f12e40"
+            }
+        },
+        "mail.php": {
+            "_minn_wp_mail_default_from": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\MailSettings",
+                "why": "the default sender: the stored address, else wordpress@ the site's host without www",
+                "body": "5f9f129559ca"
+            },
+            "_minn_wp_mail_failed": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "turns the mailer's exception into the WP_Error that wp_mail_failed carries",
+                "body": "dbefc1caec06"
+            },
+            "_minn_wp_mail_files": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Message",
+                "why": "the embedded image arguments and their filter are mail rules; adding them to the PHPMailer object stays",
+                "body": "e38e771fded1"
+            },
+            "_minn_wp_mail_prepare": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Message",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "decides sender, name, content type and charset with their filters; the decisions move, filling the PHPMailer object stays",
+                "body": "fa825f4e8d0f"
+            },
+            "_minn_wp_mail_recipients": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "fills the PHPMailer object's recipients from the engine's parsed headers, skipping ones it refuses",
+                "body": "2428cc9f11a9"
+            },
+            "_minn_wp_mail_transport": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\MailSettings",
+                "why": "chooses the transport from the engine's mail settings; applying it to the PHPMailer object stays",
+                "body": "4d3e4afaca44"
+            },
+            "_minn_wp_phpmailer": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reuses and clears the global $phpmailer plugins configure on phpmailer_init",
+                "body": "20a0ba6b9ebd"
+            }
+        },
+        "meta.php": {
+            "_get_meta_table": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "answers from the global $wpdb's table properties, which plugins and drop-ins may set",
+                "body": "0d696649bcc2"
+            },
+            "_minn_meta_action": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Meta",
+                "why": "fires a meta write's actions and the legacy postmeta ones; hook order around writes is the engine's",
+                "body": "4d0c6286e830"
+            },
+            "get_registered_metadata": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\MetaKeys",
+                "why": "reads an object's registered meta, one key by its single flag or all registered keys; the engine holds the registrations",
+                "body": "d2d63bbb7e1c"
+            },
+            "register_term_meta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "names the taxonomy as the subtype and hands over to register_meta, whose filters run",
+                "body": "dc3e7f43c317"
+            },
+            "update_meta_cache": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Meta",
+                "why": "normalises the ids, honours the short-circuit filter, then primes; the filter belongs with Meta::prime",
+                "body": "b153aef124c8"
+            },
+            "update_metadata_by_mid": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Meta",
+                "why": "updates a meta row by id: its filter, sanitising, actions, the write and the cache; engine storage behaviour",
+                "body": "eb4332051b84"
+            },
+            "wp_metadata_lazyloader": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "hands out the API's one WP_Metadata_Lazyloader object",
+                "body": "23a84e8dc99e"
             }
         },
         "nav-menu-template.php": {
