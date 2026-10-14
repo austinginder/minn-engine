@@ -90,6 +90,26 @@ $query = static function (array $vars) use (&$fired, $mask): array {
     $posts = $q->query($vars + ['cache_results' => false]);
     remove_filter('posts_clauses', $grab);
     $titles = array_map(static fn ($p) => is_object($p) ? ($p->post_title ?? $p->ID) : $p, (array) $posts);
+    // Ordered by date alone, posts sharing a date come back in whatever order the database
+    // keeps them (the install's Sample Page and Privacy Policy share one): each such run is
+    // compared by title, so the probe pins the order the query asks for and nothing more.
+    if (preg_match('/ORDER BY wp_posts\.post_date (ASC|DESC)( LIMIT|$)/', (string) preg_replace('/\s+/', ' ', trim((string) $q->request))) === 1) {
+        $runs = [];
+        foreach ((array) $posts as $i => $p) {
+            $date = is_object($p) ? (string) ($p->post_date ?? '') : '';
+            $last = array_key_last($runs);
+            if ($last !== null && $date !== '' && $runs[$last][0] === $date) {
+                $runs[$last][1][] = $titles[$i];
+            } else {
+                $runs[] = [$date, [$titles[$i]]];
+            }
+        }
+        $titles = [];
+        foreach ($runs as [, $run]) {
+            sort($run);
+            array_push($titles, ...$run);
+        }
+    }
     return $mask([
         'clauses' => $clauses,
         'request' => preg_replace('/\s+/', ' ', trim((string) $q->request)),
