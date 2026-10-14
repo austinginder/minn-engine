@@ -16323,6 +16323,12 @@ StoredMetadata: PHP class names ignore case, so a plain import of Media\Metadata
 for Runtime\MetaData too. The http-transports probe stays
 out of the comparison; the other probes give identical output before and after.
 
+**Batch 42, an attachment's image.** `Runtime\AttachmentImages` answers the registered sizes,
+wp_constrain_dimensions, wp_image_matches_ratio, image_constrain_size_for_editor, image_get_intermediate_size,
+image_downsize, wp_get_attachment_image_src, the srcset and sizes, wp_get_loading_optimization_attributes,
+wp_lazy_loading_enabled, image_hwstring, wp_get_attachment_image, get_site_icon_url and has_site_icon. The
+http-transports probe stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\I18n\Gettext;
 use Minn\I18n\Numbers;
+use Minn\Runtime\AttachmentImages;
 use Minn\Runtime\Attachments;
 use Minn\Runtime\CommentTags;
 use Minn\Runtime\MainQuery;
@@ -68,7 +69,7 @@ final class EmbedCard
         }
         return "\t\t\t<div class=\"wp-embed-featured-image {$shape}\">"
             . "\n\t\t\t\t<a href=\"" . Escape::url((string) PostLinks::permalink()) . "\" target=\"_top\">\n\t\t\t\t\t"
-            . \wp_get_attachment_image($thumbnail[0], $thumbnail[1]) . "\t\t\t\t</a>\n\t\t\t</div>\n\t\t";
+            . AttachmentImages::image($thumbnail[0], $thumbnail[1]) . "\t\t\t\t</a>\n\t\t\t</div>\n\t\t";
     }
 
     /** The site's name and icon, linking home, the whole block through embed_site_title_html. */
@@ -77,7 +78,7 @@ final class EmbedCard
         $title = sprintf(
             '<div class="wp-embed-site-title"><a href="%s" target="_top"><img src="%s" width="32" height="32" alt="" class="wp-embed-site-icon" /><span>%s</span></a></div>',
             Escape::url(SiteUrls::home()),
-            Escape::url((string) \get_site_icon_url(32, SiteUrls::includes('images/w-logo-gray-white-bg.svg'))),
+            Escape::url((string) AttachmentImages::siteIconUrl(32, SiteUrls::includes('images/w-logo-gray-white-bg.svg'))),
             Escape::html((string) SiteInfo::get('name')),
         );
         return (string) Runtime::hooks()->filter('embed_site_title_html', [$title]);

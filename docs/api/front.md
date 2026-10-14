@@ -516,7 +516,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 122)
+Internals: `enclosures()` (private, line 123)
 
 
 ## FeedTemplates
@@ -875,7 +875,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 133)
+Internals: `append()` (private, line 134)
 
 
 ## PostNavigation
@@ -1690,7 +1690,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 62), `creatable()` (private, line 264), `editPost()` (private, line 311), `editTerm()` (private, line 321)
+Internals: `profileUrl()` (private, line 63), `creatable()` (private, line 265), `editPost()` (private, line 312), `editTerm()` (private, line 322)
 
 
 ## ToolbarTree

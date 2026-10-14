@@ -207,6 +207,8 @@ a type that is empty) is the default icon.
 
 - const `CORE` = `array (   0 => 'archive',   1 => 'audio',   2 => 'code',   3 => 'default',   4 => 'document',   5 => 'interactive',   6 => 'spreadsheet',   7 => 'text',   8 => 'video', )` — Core's icons, each kept as .png and .svg.
 
+Used by: `Minn\Runtime\AttachmentImages`
+
 ### static `forType(string|int $mime, string $preferred): string|false`
 
 The icon's address for a type or an attachment id.
@@ -330,6 +332,8 @@ Internals: `fromIptc()` (private, line 62), `fromExif()` (private, line 91), `de
 The image size arithmetic the media functions share: the crop or scale a
 resize needs, the registered size a requested box picks, and the srcset
 candidates an image's sizes yield. Behaviour pinned by contracts/fixtures/api/media.json.
+
+Used by: `Minn\Runtime\AttachmentImages`
 
 ### static `constrain(int $width, int $height, int $maxWidth, int $maxHeight): array`
 

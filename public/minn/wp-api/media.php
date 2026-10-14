@@ -15,25 +15,13 @@ use Minn\Runtime\Runtime;
 /** @internal the registered sizes: the four from the options, then add_image_size's (the two big ones first) */
 function _minn_image_sizes(): array
 {
-    $sizes = [
-        'thumbnail' => ['width' => (int) get_option('thumbnail_size_w'), 'height' => (int) get_option('thumbnail_size_h'), 'crop' => (bool) get_option('thumbnail_crop')],
-        'medium' => ['width' => (int) get_option('medium_size_w'), 'height' => (int) get_option('medium_size_h'), 'crop' => false],
-        'medium_large' => ['width' => (int) get_option('medium_large_size_w'), 'height' => (int) get_option('medium_large_size_h'), 'crop' => false],
-        'large' => ['width' => (int) get_option('large_size_w'), 'height' => (int) get_option('large_size_h'), 'crop' => false],
-    ];
-    foreach (wp_get_additional_image_sizes() as $name => $size) {
-        $sizes[$name] = $size;
-    }
-    return $sizes;
+    return Minn\Runtime\AttachmentImages::sizes();
 }
 
 /** The sizes plugins and themes added, kept where they read them: $_wp_additional_image_sizes. */
 function wp_get_additional_image_sizes()
 {
-    if (!isset($GLOBALS['_wp_additional_image_sizes']) || !is_array($GLOBALS['_wp_additional_image_sizes'])) {
-        $GLOBALS['_wp_additional_image_sizes'] = [];
-    }
-    return $GLOBALS['_wp_additional_image_sizes'];
+    return Minn\Runtime\AttachmentImages::additionalSizes();
 }
 
 /**
@@ -92,11 +80,7 @@ function wp_get_registered_image_subsizes()
 
 function wp_constrain_dimensions($current_width, $current_height, $max_width = 0, $max_height = 0)
 {
-    $constrained = Sizing::constrain((int) $current_width, (int) $current_height, (int) $max_width, (int) $max_height);
-    if (!(int) $max_width && !(int) $max_height) {
-        return $constrained;
-    }
-    return apply_filters('wp_constrain_dimensions', $constrained, (int) $current_width, (int) $current_height, (int) $max_width, (int) $max_height);
+    return Minn\Runtime\AttachmentImages::constrain($current_width, $current_height, $max_width, $max_height);
 }
 
 function image_resize_dimensions($orig_w, $orig_h, $dest_w, $dest_h, $crop = false)
@@ -119,26 +103,7 @@ function image_resize_dimensions($orig_w, $orig_h, $dest_w, $dest_h, $crop = fal
 
 function image_constrain_size_for_editor($width, $height, $size = 'medium', $context = null)
 {
-    $width = (int) $width;
-    $height = (int) $height;
-    if (is_array($size)) {
-        $max_width = (int) $size[0];
-        $max_height = (int) $size[1];
-    } elseif ($size === 'thumb' || $size === 'thumbnail') {
-        $max_width = (int) get_option('thumbnail_size_w') ?: 128;
-        $max_height = (int) get_option('thumbnail_size_h') ?: 96;
-    } elseif ($size === 'full') {
-        return [$width, $height];
-    } else {
-        $sizes = _minn_image_sizes();
-        if (!isset($sizes[$size])) {
-            return [$width, $height];
-        }
-        $max_width = (int) $sizes[$size]['width'];
-        $max_height = (int) $sizes[$size]['height'];
-    }
-    [$max_width, $max_height] = (array) apply_filters('editor_max_image_size', [$max_width, $max_height], $size, $context) + [0, 0];
-    return wp_constrain_dimensions($width, $height, (int) $max_width, (int) $max_height);
+    return Minn\Runtime\AttachmentImages::constrainForEditor($width, $height, $size, $context);
 }
 
 function wp_get_attachment_metadata($attachment_id = 0, $unfiltered = false)
@@ -186,62 +151,17 @@ function wp_get_video_extensions()
 
 function image_get_intermediate_size($post_id, $size = 'thumbnail')
 {
-    $post_id = (int) $post_id;
-    $meta = wp_get_attachment_metadata($post_id);
-    if (!is_array($meta) || !$size) {
-        return false;
-    }
-    $data = Sizing::intermediate($meta, $size, wp_get_attachment_url($post_id) ?: null, static fn (int $w, int $h, array $box): array => image_constrain_size_for_editor($w, $h, $box), static fn (int $w, int $h, int $tw, int $th): bool => wp_image_matches_ratio($w, $h, $tw, $th));
-    return $data === null ? false : apply_filters('image_get_intermediate_size', $data, $post_id, $size);
+    return Minn\Runtime\AttachmentImages::intermediate($post_id, $size);
 }
 
 function image_downsize($id, $size = 'medium')
 {
-    $post = get_post((int) $id);
-    if ($post === null || !wp_attachment_is_image($post->ID)) {
-        return false;
-    }
-    $out = apply_filters('image_downsize', false, $post->ID, $size);
-    if ($out) {
-        return $out;
-    }
-    $img_url = wp_get_attachment_url($post->ID);
-    $meta = wp_get_attachment_metadata($post->ID);
-    $width = 0;
-    $height = 0;
-    $is_intermediate = false;
-    $img_url_basename = wp_basename((string) $img_url);
-    $intermediate = image_get_intermediate_size($post->ID, $size);
-    if ($intermediate) {
-        $img_url = str_replace($img_url_basename, $intermediate['file'], (string) $img_url);
-        $width = (int) $intermediate['width'];
-        $height = (int) $intermediate['height'];
-        $is_intermediate = true;
-    } elseif ($size === 'thumbnail' && ($old = Sizing::oldThumbnail((string) get_attached_file($post->ID), is_array($meta) && is_string($meta['thumb'] ?? null) ? $meta['thumb'] : '')) !== null) {
-        // The old thumbnail beside the file, while it is still there (probe image-downsize).
-        [$name, $width, $height] = $old;
-        $img_url = str_replace($img_url_basename, $name, (string) $img_url);
-        $is_intermediate = true;
-    }
-    if (!$width && !$height && is_array($meta) && isset($meta['width'], $meta['height'])) {
-        $width = (int) $meta['width'];
-        $height = (int) $meta['height'];
-    }
-    if ($img_url) {
-        [$width, $height] = image_constrain_size_for_editor($width, $height, $size);
-        return [$img_url, $width, $height, $is_intermediate];
-    }
-    return false;
+    return Minn\Runtime\AttachmentImages::downsize($id, $size);
 }
 
 function wp_get_attachment_image_src($attachment_id, $size = 'thumbnail', $icon = false)
 {
-    $image = image_downsize((int) $attachment_id, $size);
-    if (!$image && $icon) {
-        $src = wp_mime_type_icon((int) $attachment_id);
-        $image = $src ? [$src, 64, 64, false] : false;
-    }
-    return apply_filters('wp_get_attachment_image_src', $image, $attachment_id, $size, $icon);
+    return Minn\Runtime\AttachmentImages::src($attachment_id, $size, $icon);
 }
 
 function wp_get_attachment_image_url($attachment_id, $size = 'thumbnail', $icon = false)
@@ -258,55 +178,13 @@ function wp_mime_type_icon($mime = 0, $preferred_ext = '.png')
 
 function wp_get_attachment_image($attachment_id, $size = 'thumbnail', $icon = false, $attr = '')
 {
-    $attachment_id = (int) $attachment_id;
-    $image = wp_get_attachment_image_src($attachment_id, $size, $icon);
-    if (!$image) {
-        return '';
-    }
-    [$src, $width, $height] = $image;
-    $size_class = is_array($size) ? implode('x', $size) : $size;
-    $attr = wp_parse_args($attr, ['src' => $src, 'class' => "attachment-{$size_class} size-{$size_class}", 'alt' => trim(strip_tags((string) get_post_meta($attachment_id, '_wp_attachment_image_alt', true)))]);
-    // A post thumbnail names its own context while it is fetched (_wp_post_thumbnail_context_filter).
-    $context = apply_filters('wp_get_attachment_image_context', 'wp_get_attachment_image');
-    $attr = _minn_attachment_image_attributes($attachment_id, $attr, $src, (int) $width, (int) $height, (string) $context);
-    $attr = apply_filters('wp_get_attachment_image_attributes', $attr, get_post($attachment_id), $size);
-    $attr = array_map('esc_attr', array_filter($attr, static fn ($v) => $v !== false && $v !== null));
-    $html = rtrim('<img ' . image_hwstring($width, $height));
-    foreach ($attr as $name => $value) {
-        $html .= " {$name}=\"{$value}\"";
-    }
-    return apply_filters('wp_get_attachment_image', $html . ' />', $attachment_id, $size, $icon, $attr);
-}
-
-/** @internal the loading attributes and the srcset/sizes pair an attachment image carries unless the caller set them */
-function _minn_attachment_image_attributes(int $attachment_id, array $attr, string $src, int $width, int $height, string $context = 'wp_get_attachment_image'): array
-{
-    $loading = wp_get_loading_optimization_attributes('img', $attr + ['width' => $width, 'height' => $height], $context);
-    foreach (['loading', 'fetchpriority'] as $key) {
-        if (array_key_exists($key, $attr) && !$attr[$key]) {
-            unset($loading[$key]);
-        }
-    }
-    $attr = array_merge($attr, $loading);
-    $meta = empty($attr['srcset']) ? wp_get_attachment_metadata($attachment_id) : null;
-    if (is_array($meta)) {
-        $srcset = wp_calculate_image_srcset([$width, $height], $src, $meta, $attachment_id);
-        $sizes = wp_calculate_image_sizes([$width, $height], $src, $meta, $attachment_id);
-        if ($srcset && ($sizes || !empty($attr['sizes']))) {
-            $attr['srcset'] = $srcset;
-            $attr['sizes'] = empty($attr['sizes']) ? $sizes : $attr['sizes'];
-        }
-    }
-    if (($attr['loading'] ?? '') === 'lazy' && !empty($attr['sizes']) && is_string($attr['sizes']) && !wp_sizes_attribute_includes_valid_auto($attr['sizes']) && apply_filters('wp_img_tag_add_auto_sizes', true)) {
-        $attr['sizes'] = 'auto, ' . $attr['sizes'];
-    }
-    return $attr;
+    return Minn\Runtime\AttachmentImages::image($attachment_id, $size, $icon, $attr);
 }
 
 /** Whether a sizes list starts with auto, alone or before a comma, any case (probe media-tags). */
 function wp_sizes_attribute_includes_valid_auto($sizes_attr)
 {
-    return preg_match('/^auto(\s*,|$)/i', trim((string) $sizes_attr)) === 1;
+    return Minn\Runtime\AttachmentImages::startsWithAuto($sizes_attr);
 }
 
 /**
@@ -376,14 +254,7 @@ function wp_img_tag_add_auto_sizes($image)
 
 function image_hwstring($width, $height)
 {
-    $out = '';
-    if ($width) {
-        $out .= 'width="' . (int) $width . '" ';
-    }
-    if ($height) {
-        $out .= 'height="' . (int) $height . '" ';
-    }
-    return $out;
+    return Minn\Runtime\AttachmentImages::dimensionAttributes($width, $height);
 }
 
 /** The audio, video, object, embed and iframe elements in content, in order, kept to the types asked for (probe theme-symbols). */
@@ -431,96 +302,13 @@ function wp_img_tag_add_loading_attr($image, $context)
 
 function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
 {
-    // A plugin may answer first, and an array it returns is the answer (probe filter-inputs-3).
-    $answer = apply_filters('pre_wp_get_loading_optimization_attributes', false, $tag_name, $attr, $context);
-    if (is_array($answer)) {
-        return $answer;
-    }
-    $optimization = [];
-    // An image made while the_content runs is fitted with the rest of the content, as the reference leaves it;
-    // the template context is handled where the template is (probe theme-symbols).
-    if ($tag_name !== 'img' && $tag_name !== 'iframe' || $context === 'template' || ($context !== 'the_content' && doing_filter('the_content'))) {
-        return apply_filters('wp_get_loading_optimization_attributes', $optimization, $tag_name, $attr, $context);
-    }
-    if ($tag_name === 'img') {
-        // A caller's own decoding is kept, whatever it says.
-        $optimization['decoding'] = $attr['decoding'] ?? 'async';
-    }
-    // Only an element with both dimensions set (zero will do) is fitted further: first by the caller's
-    // own fetchpriority and loading, then by where it sits.
-    if (isset($attr['width'], $attr['height'])) {
-        $priority = in_array($attr['fetchpriority'] ?? null, ['high', 'low', 'auto'], true) ? $attr['fetchpriority'] : null;
-        if ($priority === 'low' || $priority === 'auto') {
-            $optimization['fetchpriority'] = $priority;
-        }
-        $optimization = $priority === 'low' ? $optimization : (_minn_loading_asked((string) $tag_name, (array) $attr, $priority, $optimization) ?? _minn_loading_by_place((string) $tag_name, (array) $attr, (string) $context, $optimization));
-    }
-    return apply_filters('wp_get_loading_optimization_attributes', $optimization, $tag_name, $attr, $context);
-}
-
-/**
- * @internal What a caller's own fetchpriority high or loading settles (probe
- * filter-inputs-3); null when it named neither. Only an image takes high
- * priority, and an element that names a loading other than lazy is never made
- * lazy.
- */
-function _minn_loading_asked(string $tag_name, array $attr, ?string $priority, array $optimization): ?array
-{
-    $loading = $attr['loading'] ?? null;
-    if ($priority === 'high') {
-        if ($tag_name === 'img') {
-            $optimization['fetchpriority'] = 'high';
-        }
-        if ($loading === 'lazy') {
-            // Both are kept, and the reference reports the pair as a mistake.
-            if ($tag_name === 'img') {
-                _doing_it_wrong('wp_get_loading_optimization_attributes', __('An image should not be lazy-loaded and marked as high priority at the same time.'), '6.3.0');
-            }
-            return $optimization + ['loading' => 'lazy'];
-        }
-        // A caller that asks for high priority keeps it, and no later image competes.
-        if ($tag_name === 'img') {
-            RenderState::current()->closePriority();
-        }
-        return $optimization;
-    }
-    if ($loading === null) {
-        return null;
-    }
-    // Never lazy unless asked, and high priority only for an image large enough to deserve it (a logo usually is not).
-    return $loading === 'lazy' ? $optimization + ['loading' => 'lazy'] : $optimization + _minn_earned_priority($tag_name, $attr);
-}
-
-/**
- * @internal Where an element sits settles the rest. One in a header context
- * (as the filter leaves the list) is in view: never lazy, one of the eager
- * images (probes custom-header, theme-symbols). Inside a page's template, or
- * its main loop, an image shares the engine's budget: three eager images, and
- * the first one large enough to be worth the network's attention takes high
- * priority (a thumbnail or an avatar is not, so the flag can fall to a later
- * image). Anything else waits, where lazy loading is on.
- */
-function _minn_loading_by_place(string $tag_name, array $attr, string $context, array $optimization): array
-{
-    $header = apply_filters('wp_loading_optimization_force_header_contexts', ['template_part_header' => true, 'get_header_image_tag' => true]);
-    if (is_array($header) && isset($header[$context])) {
-        RenderState::current()->nextImage();
-        return $optimization + _minn_earned_priority($tag_name, $attr);
-    }
-    if ($tag_name === 'img' && ((RenderState::current()->inside('template') && RenderState::current()->depth() > 0) || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {
-        return $optimization + _minn_earned_priority($tag_name, $attr);
-    }
-    return wp_lazy_loading_enabled($tag_name, $context) ? $optimization + ['loading' => 'lazy'] : $optimization;
+    return Minn\Runtime\AttachmentImages::loadingAttributes($tag_name, $attr, $context);
 }
 
 /** @internal fetchpriority high for an image large enough to deserve it, while no other image has taken it */
 function _minn_earned_priority(string $tag_name, array $attr): array
 {
-    if ($tag_name !== 'img') {
-        return [];
-    }
-    $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
-    return $pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority() ? ['fetchpriority' => 'high'] : [];
+    return Minn\Runtime\AttachmentImages::earnedPriority($tag_name, $attr);
 }
 
 function wp_high_priority_element_flag($value = null)
@@ -775,21 +563,12 @@ function get_previous_image_link($size = 'thumbnail', $text = false)
 
 function wp_lazy_loading_enabled($tag_name, $context)
 {
-    return apply_filters('wp_lazy_loading_enabled', $tag_name === 'img' || $tag_name === 'iframe', $tag_name, $context);
+    return Minn\Runtime\AttachmentImages::lazyLoading($tag_name, $context);
 }
 
 function wp_calculate_image_srcset($size_array, $image_src, $image_meta, $attachment_id = 0)
 {
-    $image_meta = apply_filters('wp_calculate_image_srcset_meta', $image_meta, $size_array, $image_src, $attachment_id);
-    if (!is_array($image_meta)) {
-        return false;
-    }
-    $sources = Sizing::sources([(int) ($size_array[0] ?? 0), (int) ($size_array[1] ?? 0)], (string) $image_src, $image_meta, static fn (int $sw, int $sh, int $tw, int $th): bool => (bool) wp_image_matches_ratio($sw, $sh, $tw, $th), (string) wp_get_upload_dir()['baseurl'], static fn (array $size): int => (int) apply_filters('max_srcset_image_width', 2048, $size));
-    if ($sources === []) {
-        return false;
-    }
-    $sources = apply_filters('wp_calculate_image_srcset', $sources, $size_array, $image_src, $image_meta, $attachment_id);
-    return Sizing::srcset(is_array($sources) ? $sources : []) ?? false;
+    return Minn\Runtime\AttachmentImages::srcset($size_array, $image_src, $image_meta, $attachment_id);
 }
 
 /**
@@ -799,46 +578,17 @@ function wp_calculate_image_srcset($size_array, $image_src, $image_meta, $attach
  */
 function wp_image_matches_ratio($source_width, $source_height, $target_width, $target_height)
 {
-    if (!$source_width || !$source_height || !$target_width || !$target_height) {
-        return false;
-    }
-    [$wide, $other] = $source_width > $target_width ? [[$source_width, $source_height], [$target_width, $target_height]] : [[$target_width, $target_height], [$source_width, $source_height]];
-    $constrained = wp_constrain_dimensions($wide[0], $wide[1], $other[0], $other[1]);
-    return abs($constrained[0] - $other[0]) <= 1 && abs($constrained[1] - $other[1]) <= 1;
+    return Minn\Runtime\AttachmentImages::matchesRatio($source_width, $source_height, $target_width, $target_height);
 }
 
 function wp_calculate_image_sizes($size, $image_src = null, $image_meta = null, $attachment_id = 0)
 {
-    $width = 0;
-    if (is_array($size)) {
-        $width = absint($size[0]);
-    } elseif (is_string($size)) {
-        if (!$image_meta && $attachment_id) {
-            $image_meta = wp_get_attachment_metadata($attachment_id);
-        }
-        if (is_array($image_meta)) {
-            $size_array = _wp_get_image_size_from_meta($size, $image_meta);
-            if ($size_array) {
-                $width = absint($size_array[0]);
-            }
-        }
-    }
-    if (!$width) {
-        return false;
-    }
-    $sizes = sprintf('(max-width: %1$dpx) 100vw, %1$dpx', $width);
-    return apply_filters('wp_calculate_image_sizes', $sizes, $size, $image_src, $image_meta, $attachment_id);
+    return Minn\Runtime\AttachmentImages::sizesAttribute($size, $image_src, $image_meta, $attachment_id);
 }
 
 function _wp_get_image_size_from_meta($size_name, $image_meta)
 {
-    if ($size_name === 'full') {
-        return [absint($image_meta['width']), absint($image_meta['height'])];
-    }
-    if (!empty($image_meta['sizes'][$size_name])) {
-        return [absint($image_meta['sizes'][$size_name]['width']), absint($image_meta['sizes'][$size_name]['height'])];
-    }
-    return false;
+    return Minn\Runtime\AttachmentImages::sizeFromMeta($size_name, $image_meta);
 }
 
 function wp_get_attachment_image_srcset($attachment_id, $size = 'medium', $image_meta = null)
@@ -1374,19 +1124,12 @@ function wp_delete_file_from_directory($file, $directory)
 
 function get_site_icon_url($size = 512, $url = '', $blog_id = 0)
 {
-    $site_icon_id = (int) get_option('site_icon');
-    if ($site_icon_id > 0) {
-        $url_data = wp_get_attachment_image_src($site_icon_id, [$size, $size]);
-        if ($url_data) {
-            $url = $url_data[0];
-        }
-    }
-    return apply_filters('get_site_icon_url', $url, $size, $blog_id);
+    return Minn\Runtime\AttachmentImages::siteIconUrl($size, $url, $blog_id);
 }
 
 function has_site_icon($blog_id = 0)
 {
-    return (bool) get_site_icon_url(512, '', $blog_id);
+    return Minn\Runtime\AttachmentImages::hasSiteIcon($blog_id);
 }
 
 function site_icon_url($size = 512, $url = '', $blog_id = 0)

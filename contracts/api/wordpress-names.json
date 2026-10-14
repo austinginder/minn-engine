@@ -1,20 +1,18 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 38,
-        "functions": 29,
+        "functionCalls": 29,
+        "functions": 25,
         "hookApi": 0,
         "classReferences": 2,
         "classes": 1,
-        "files": 20
+        "files": 15
     },
     "families": {
         "functions": {
-            "wp-includes/general-template.php": 6,
             "wp-includes/block-template-utils.php": 5,
             "wp-includes/post.php": 5,
             "wp-includes/blocks.php": 5,
-            "wp-includes/media.php": 3,
             "wp-admin/includes/file.php": 3,
             "wp-includes/post-template.php": 2,
             "wp-includes/template.php": 2,
@@ -29,15 +27,6 @@
         }
     },
     "functions": {
-        "get_site_icon_url": {
-            "uses": 5,
-            "family": "wp-includes/general-template.php",
-            "files": {
-                "Minn/Front/EmbedCard.php": 1,
-                "Minn/Front/FeedTags.php": 2,
-                "Minn/Front/ToolbarMenus.php": 2
-            }
-        },
         "get_default_block_template_types": {
             "uses": 2,
             "family": "wp-includes/block-template-utils.php",
@@ -58,14 +47,6 @@
             "files": {
                 "Minn/Rest/MediaController.php": 1,
                 "Minn/Runtime/PostWrites.php": 1
-            }
-        },
-        "wp_get_attachment_image": {
-            "uses": 2,
-            "family": "wp-includes/media.php",
-            "files": {
-                "Minn/Front/CustomLogo.php": 1,
-                "Minn/Front/EmbedCard.php": 1
             }
         },
         "wp_insert_attachment": {
@@ -146,13 +127,6 @@
                 "Minn/Rest/TemplatesController.php": 1
             }
         },
-        "has_site_icon": {
-            "uses": 1,
-            "family": "wp-includes/general-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
         "register_block_core_footnotes_post_meta": {
             "uses": 1,
             "family": "wp-includes/blocks/footnotes.php",
@@ -193,13 +167,6 @@
             "family": "wp-admin/includes/image.php",
             "files": {
                 "Minn/Runtime/PostEvents.php": 1
-            }
-        },
-        "wp_get_attachment_image_src": {
-            "uses": 1,
-            "family": "wp-includes/media.php",
-            "files": {
-                "Minn/Front/PostEmbed.php": 1
             }
         },
         "wp_handle_sideload": {

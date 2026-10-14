@@ -18936,6 +18936,7 @@
                 "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\Excerpt",
                 "Minn\\Front\\FeedController",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\PageRenderer"
@@ -46409,6 +46410,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Runtime",
@@ -46441,8 +46443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 49
+                    "line": 30,
+                    "end": 50
                 }
             ]
         },
@@ -46460,6 +46462,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\I18n\\Gettext",
                 "Minn\\I18n\\Numbers",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\MainQuery",
@@ -46488,8 +46491,8 @@
                         "@return array{0: int, 1: string, 2: string}|null"
                     ],
                     "params": [],
-                    "line": 38,
-                    "end": 61
+                    "line": 39,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -46515,8 +46518,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 72
+                    "line": 65,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -46527,8 +46530,8 @@
                     "doc": "The site's name and icon, linking home, the whole block through embed_site_title_html.",
                     "shapes": [],
                     "params": [],
-                    "line": 75,
-                    "end": 84
+                    "line": 76,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -46539,8 +46542,8 @@
                     "doc": "The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open.",
                     "shapes": [],
                     "params": [],
-                    "line": 87,
-                    "end": 96
+                    "line": 88,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -46551,8 +46554,8 @@
                     "doc": "The button that opens the sharing dialog; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 99,
-                    "end": 105
+                    "line": 100,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -46563,8 +46566,8 @@
                     "doc": "The sharing dialog: the post's address and its embed code, each a tab; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 108,
-                    "end": 121
+                    "line": 109,
+                    "end": 122
                 }
             ]
         },
@@ -46740,6 +46743,7 @@
                 "Minn\\Media\\FileTypes",
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\Query",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MainQuery",
@@ -46789,8 +46793,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 45
+                    "line": 43,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -46809,8 +46813,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 59
+                    "line": 49,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -46821,8 +46825,8 @@
                     "doc": "The feed the query asks for run by its do_feed_{feed} handlers\n(do_feed): leading underscores dropped, the default for none; a 404\nwhen nothing handles it.",
                     "shapes": [],
                     "params": [],
-                    "line": 66,
-                    "end": 76
+                    "line": 67,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -46833,8 +46837,8 @@
                     "doc": "The feed the site serves by default (get_default_feed): default_feed's, \"rss\" read as rss2.",
                     "shapes": [],
                     "params": [],
-                    "line": 79,
-                    "end": 83
+                    "line": 80,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -46853,8 +46857,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 93
+                    "line": 87,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -46873,8 +46877,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 99
+                    "line": 97,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -46893,8 +46897,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 119
+                    "line": 103,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -46905,8 +46909,8 @@
                     "doc": "The current post's enclosures as RSS has them: address, length, and the type the third line starts with.",
                     "shapes": [],
                     "params": [],
-                    "line": 132,
-                    "end": 143
+                    "line": 133,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -46917,8 +46921,8 @@
                     "doc": "The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.",
                     "shapes": [],
                     "params": [],
-                    "line": 146,
-                    "end": 163
+                    "line": 147,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -46944,8 +46948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 188
+                    "line": 167,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -46964,8 +46968,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 214
+                    "line": 196,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -46976,8 +46980,8 @@
                     "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 217,
-                    "end": 227
+                    "line": 218,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -46988,8 +46992,8 @@
                     "doc": "The site icon as an Atom icon, or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 230,
-                    "end": 234
+                    "line": 231,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -47002,8 +47006,8 @@
                         "@return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted"
                     ],
                     "params": [],
-                    "line": 122,
-                    "end": 129
+                    "line": 123,
+                    "end": 130
                 }
             ]
         },
@@ -48972,6 +48976,7 @@
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\User",
                 "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostLinks",
@@ -49020,8 +49025,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 61
+                    "line": 38,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -49063,8 +49068,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 79
+                    "line": 65,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -49097,8 +49102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 102
+                    "line": 83,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -49117,8 +49122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 116
+                    "line": 106,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -49144,8 +49149,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 122
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -49173,8 +49178,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 130
+                    "line": 126,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -49202,8 +49207,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 144
+                    "line": 134,
+                    "end": 145
                 }
             ]
         },
@@ -53449,6 +53454,7 @@
                 "Minn\\I18n\\Numbers",
                 "Minn\\Objects\\Toolbar",
                 "Minn\\Objects\\User",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\CommentReads",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\EditLinks",
@@ -53501,8 +53507,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 84
+                    "line": 69,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -53521,8 +53527,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 101
+                    "line": 88,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -53541,8 +53547,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 109
+                    "line": 105,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -53561,8 +53567,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 137
+                    "line": 113,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -53581,8 +53587,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 167
+                    "line": 141,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -53601,8 +53607,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 191
+                    "line": 171,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -53621,8 +53627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 205
+                    "line": 195,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -53641,8 +53647,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 217
+                    "line": 209,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -53661,8 +53667,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 230
+                    "line": 221,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -53681,8 +53687,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 243
+                    "line": 234,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -53701,8 +53707,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 261
+                    "line": 247,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -53721,8 +53727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 308
+                    "line": 294,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -53741,8 +53747,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 339
+                    "line": 332,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -53761,8 +53767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 346
+                    "line": 343,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -53781,8 +53787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 360
+                    "line": 350,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -53801,8 +53807,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 363,
-                    "end": 374
+                    "line": 364,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -53821,8 +53827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 65
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -53835,8 +53841,8 @@
                         "@return array<string, array{0: string, 1: string}> the admin page => [the label, the node id], for what the user may create"
                     ],
                     "params": [],
-                    "line": 264,
-                    "end": 290
+                    "line": 265,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -53857,8 +53863,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 318
+                    "line": 312,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -53879,8 +53885,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 328
+                    "line": 322,
+                    "end": 329
                 }
             ]
         },
@@ -70528,6 +70534,7 @@
                 "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\MenuEvents",
@@ -81690,7 +81697,9 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\AttachmentImages"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -82300,7 +82309,9 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\AttachmentImages"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -119801,6 +119812,778 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\AttachmentImages",
+            "short": "AttachmentImages",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/AttachmentImages.php",
+            "lines": 422,
+            "doc": "An attachment's image as WordPress's media functions make it: the\nregistered sizes, a size fitted to a box, the file for a size (or an\nicon), the srcset and sizes pair, the loading attributes an image earns\nwhere it sits, the img element itself, and the site icon.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Blocks\\RenderState",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Media\\Icons",
+                "Minn\\Media\\Sizing",
+                "Minn\\Runtime\\Attachments",
+                "Minn\\Runtime\\MainQuery",
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\Notices",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Lists",
+                "Minn\\Support\\Text"
+            ],
+            "usedBy": [
+                "Minn\\Front\\CustomLogo",
+                "Minn\\Front\\EmbedCard",
+                "Minn\\Front\\FeedTags",
+                "Minn\\Front\\PostEmbed",
+                "Minn\\Front\\ToolbarMenus"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "sizes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sizes(): array",
+                    "doc": "The registered sizes (_minn_image_sizes): the four from the options,\nthen the ones add_image_size added.",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [],
+                    "line": 29,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "additionalSizes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "additionalSizes(): array",
+                    "doc": "The sizes plugins and themes added (wp_get_additional_image_sizes),\nkept where they read them: $_wp_additional_image_sizes.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 50,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "constrain",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "constrain(mixed $width, mixed $height, mixed $maxWidth = 0, mixed $maxHeight = 0): mixed",
+                    "doc": "Dimensions fitted inside a box (wp_constrain_dimensions), through\nwp_constrain_dimensions when there is a box.",
+                    "shapes": [
+                        "@return array{0: int, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "width",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxWidth",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxHeight",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "matchesRatio",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "matchesRatio(mixed $sourceWidth, mixed $sourceHeight, mixed $targetWidth, mixed $targetHeight): bool",
+                    "doc": "Whether two sizes share a ratio (wp_image_matches_ratio): the wider one, fitted into the other's box, comes within a pixel of it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "sourceWidth",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sourceHeight",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "targetWidth",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "targetHeight",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "constrainForEditor",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "constrainForEditor(mixed $width, mixed $height, mixed $size = 'medium', mixed $context = NULL): mixed",
+                    "doc": "Dimensions fitted for the editor to a named or given size\n(image_constrain_size_for_editor), within editor_max_image_size.",
+                    "shapes": [
+                        "@return array{0: int, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "width",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "size",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'medium'",
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "intermediate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "intermediate(mixed $postId, mixed $size = 'thumbnail'): mixed",
+                    "doc": "An attachment's file for a size (image_get_intermediate_size), as image_get_intermediate_size leaves it; false for none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "size",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'thumbnail'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "downsize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "downsize(mixed $id, mixed $size = 'medium'): mixed",
+                    "doc": "An image attachment at a size (image_downsize): its address, width,\nheight and whether that is a resized copy, unless image_downsize\nanswers first; false for no image.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "size",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'medium'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 131,
+                    "end": 167
+                },
+                {
+                    "routes": [],
+                    "name": "src",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "src(mixed $attachmentId, mixed $size = 'thumbnail', mixed $icon = false): mixed",
+                    "doc": "An attachment's image at a size, or its icon when asked (wp_get_attachment_image_src), as wp_get_attachment_image_src leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "size",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'thumbnail'",
+                            "doc": ""
+                        },
+                        {
+                            "name": "icon",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 170,
+                    "end": 178
+                },
+                {
+                    "routes": [],
+                    "name": "sizeFromMeta",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sizeFromMeta(mixed $sizeName, mixed $imageMeta): mixed",
+                    "doc": "A named size's dimensions from an image's metadata\n(_wp_get_image_size_from_meta): full for the original; false for one\nit lacks.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "sizeName",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "imageMeta",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 185,
+                    "end": 194
+                },
+                {
+                    "routes": [],
+                    "name": "srcset",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "srcset(mixed $sizeArray, mixed $imageSrc, mixed $imageMeta, mixed $attachmentId = 0): mixed",
+                    "doc": "The srcset of an image's sizes with its ratio (wp_calculate_image_srcset), as wp_calculate_image_srcset leaves the sources; false for none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "sizeArray",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "imageSrc",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "imageMeta",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 197,
+                    "end": 210
+                },
+                {
+                    "routes": [],
+                    "name": "sizesAttribute",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sizesAttribute(mixed $size, mixed $imageSrc = NULL, mixed $imageMeta = NULL, mixed $attachmentId = 0): mixed",
+                    "doc": "The sizes attribute for an image's width (wp_calculate_image_sizes), as wp_calculate_image_sizes leaves it; false without a width.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "size",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "imageSrc",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "imageMeta",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 213,
+                    "end": 234
+                },
+                {
+                    "routes": [],
+                    "name": "startsWithAuto",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "startsWithAuto(mixed $sizes): bool",
+                    "doc": "Whether a sizes list starts with auto, alone or before a comma, in any case (wp_sizes_attribute_includes_valid_auto).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "sizes",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 237,
+                    "end": 240
+                },
+                {
+                    "routes": [],
+                    "name": "dimensionAttributes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "dimensionAttributes(mixed $width, mixed $height): string",
+                    "doc": "The width and height attributes for an image (image_hwstring), each when set.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "width",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 243,
+                    "end": 253
+                },
+                {
+                    "routes": [],
+                    "name": "lazyLoading",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "lazyLoading(mixed $tagName, mixed $context): mixed",
+                    "doc": "Whether lazy loading is on for a tag in a context (wp_lazy_loading_enabled): images and iframes, as wp_lazy_loading_enabled leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tagName",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 256,
+                    "end": 259
+                },
+                {
+                    "routes": [],
+                    "name": "loadingAttributes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "loadingAttributes(mixed $tagName, mixed $attr, mixed $context): mixed",
+                    "doc": "The loading attributes an image or iframe earns\n(wp_get_loading_optimization_attributes), unless a plugin answers\nfirst: decoding async for an image; with both dimensions set, the\ncaller's own priority and loading, else where it sits.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tagName",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attr",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 267,
+                    "end": 289
+                },
+                {
+                    "routes": [],
+                    "name": "earnedPriority",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "earnedPriority(string $tagName, array $attr): array",
+                    "doc": "Fetch priority high for an image large enough to deserve it, while no\nother image has taken it.",
+                    "shapes": [
+                        "@param array<string, mixed> $attr",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "tagName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attr",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 298,
+                    "end": 305
+                },
+                {
+                    "routes": [],
+                    "name": "imageAttributes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "imageAttributes(int $attachmentId, array $attr, string $src, int $width, int $height, string $context = 'wp_get_attachment_image'): array",
+                    "doc": "The loading attributes and the srcset and sizes pair an attachment's\nimage carries unless the caller set them.",
+                    "shapes": [
+                        "@param array<string, mixed> $attr",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "attachmentId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attr",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "src",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "width",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'wp_get_attachment_image'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 314,
+                    "end": 336
+                },
+                {
+                    "routes": [],
+                    "name": "image",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "image(mixed $attachmentId, mixed $size = 'thumbnail', mixed $icon = false, mixed $attr = ''): mixed",
+                    "doc": "An attachment's img element at a size (wp_get_attachment_image): its\nclass, alt text, loading attributes and srcset, through\nwp_get_attachment_image_attributes and wp_get_attachment_image; empty\nfor none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "size",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'thumbnail'",
+                            "doc": ""
+                        },
+                        {
+                            "name": "icon",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "attr",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 344,
+                    "end": 364
+                },
+                {
+                    "routes": [],
+                    "name": "siteIconUrl",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "siteIconUrl(mixed $size = 512, mixed $url = '', mixed $blogId = 0): mixed",
+                    "doc": "The site icon's address at a size (get_site_icon_url), the address given when the site has none; as get_site_icon_url leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "size",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "512",
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "blogId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 367,
+                    "end": 377
+                },
+                {
+                    "routes": [],
+                    "name": "hasSiteIcon",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hasSiteIcon(mixed $blogId = 0): bool",
+                    "doc": "Whether the site has an icon (has_site_icon).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "blogId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 380,
+                    "end": 383
+                },
+                {
+                    "routes": [],
+                    "name": "asked",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "asked(string $tagName, array $attr, ?string $priority, array $optimization): ?array",
+                    "doc": "What a caller's own fetchpriority high or loading settles; null when it\nnamed neither. Only an image takes high priority, and an element that\nnames a loading other than lazy is never made lazy.",
+                    "shapes": [
+                        "@param array<string, mixed> $attr",
+                        "@param array<string, mixed> $optimization",
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "tagName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attr",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "priority",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "optimization",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 394,
+                    "end": 416
+                },
+                {
+                    "routes": [],
+                    "name": "byPlace",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "byPlace(string $tagName, array $attr, string $context, array $optimization): array",
+                    "doc": "Where an element sits settles the rest. One in a header context is in\nview: never lazy, one of the eager images. Inside a page's template, or\nits main loop, an image shares the engine's budget: three eager images,\nthe first one large enough to deserve it high priority. Anything else\nwaits, where lazy loading is on.",
+                    "shapes": [
+                        "@param array<string, mixed> $attr",
+                        "@param array<string, mixed> $optimization",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "tagName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attr",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "optimization",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 429,
+                    "end": 441
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Attachments",
             "short": "Attachments",
             "namespace": "Minn\\Runtime",
@@ -119828,6 +120611,7 @@
                 "Minn\\Front\\EmbedCard",
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Media\\Icons",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostWrites"
@@ -130166,6 +130950,7 @@
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Front\\SitemapRequest",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\EditLinks",
@@ -131513,6 +132298,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\MenuEvents",
@@ -133171,6 +133957,7 @@
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AbilityRun",
                 "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\Hooks",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\PostQuery",
@@ -144079,6 +144866,7 @@
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\AbilityRun",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
@@ -147276,6 +148064,7 @@
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
@@ -161142,6 +161931,7 @@
                 "Minn\\Front\\ToolbarMarkup",
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Rest\\SiteSchema",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\NavMenu",
@@ -163529,6 +164319,7 @@
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\RegisteredFields",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryWhere",
                 "Minn\\Runtime\\CommentTags",
@@ -165463,6 +166254,7 @@
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Rest\\Api",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostQueryTax",
                 "Minn\\Runtime\\PostQueryWhere",

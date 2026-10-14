@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 700,
-        "composes": 2169,
-        "leaf": 1012,
-        "noop": 3099,
+        "minn": 693,
+        "composes": 2159,
+        "leaf": 1010,
+        "noop": 3115,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8674,
-        "minnMethods": 1359,
+        "functions": 8671,
+        "minnMethods": 1373,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -35714,20 +35714,6 @@
             ],
             "composes": []
         },
-        "_minn_attachment_image_attributes": {
-            "file": "media.php",
-            "lines": 20,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "wp_calculate_image_sizes",
-                "wp_calculate_image_srcset",
-                "wp_get_attachment_metadata",
-                "wp_get_loading_optimization_attributes",
-                "wp_sizes_attribute_includes_valid_auto"
-            ]
-        },
         "_minn_attachment_js_fields": {
             "file": "media.php",
             "lines": 25,
@@ -36783,14 +36769,12 @@
         },
         "_minn_earned_priority": {
             "file": "media.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Blocks\\RenderState::current"
+                "Minn\\Runtime\\AttachmentImages::earnedPriority"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "_minn_embed_featured_image": {
             "file": "embed.php",
@@ -37123,13 +37107,12 @@
         },
         "_minn_image_sizes": {
             "file": "media.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_option",
-                "wp_get_additional_image_sizes"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::sizes"
+            ],
+            "composes": []
         },
         "_minn_image_sources": {
             "file": "media.php",
@@ -37351,34 +37334,6 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
-        },
-        "_minn_loading_asked": {
-            "file": "media.php",
-            "lines": 23,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Blocks\\RenderState::current"
-            ],
-            "composes": [
-                "__",
-                "_doing_it_wrong",
-                "_minn_earned_priority"
-            ]
-        },
-        "_minn_loading_by_place": {
-            "file": "media.php",
-            "lines": 9,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Blocks\\RenderState::current"
-            ],
-            "composes": [
-                "_minn_earned_priority",
-                "apply_filters",
-                "in_the_loop",
-                "is_main_query",
-                "wp_lazy_loading_enabled"
-            ]
         },
         "_minn_locale_switcher": {
             "file": "l10n.php",
@@ -40393,12 +40348,12 @@
         },
         "_wp_get_image_size_from_meta": {
             "file": "media.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "absint"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::sizeFromMeta"
+            ],
+            "composes": []
         },
         "_wp_get_post_revision_version": {
             "file": "post.php",
@@ -50696,14 +50651,12 @@
         },
         "get_site_icon_url": {
             "file": "media.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_option",
-                "wp_get_attachment_image_src"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::siteIconUrl"
+            ],
+            "composes": []
         },
         "get_site_option": {
             "file": "option.php",
@@ -52461,10 +52414,10 @@
             "file": "media.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "get_site_icon_url"
-            ]
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::hasSiteIcon"
+            ],
+            "composes": []
         },
         "has_tag": {
             "file": "taxonomy.php",
@@ -52721,34 +52674,21 @@
         },
         "image_constrain_size_for_editor": {
             "file": "media.php",
-            "lines": 20,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_image_sizes",
-                "apply_filters",
-                "get_option",
-                "wp_constrain_dimensions"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::constrainForEditor"
+            ],
+            "composes": []
         },
         "image_downsize": {
             "file": "media.php",
-            "lines": 35,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Media\\Sizing::oldThumbnail"
+                "Minn\\Runtime\\AttachmentImages::downsize"
             ],
-            "composes": [
-                "apply_filters",
-                "get_attached_file",
-                "get_post",
-                "image_constrain_size_for_editor",
-                "image_get_intermediate_size",
-                "wp_attachment_is_image",
-                "wp_basename",
-                "wp_get_attachment_metadata",
-                "wp_get_attachment_url"
-            ]
+            "composes": []
         },
         "image_edit_apply_changes": {
             "file": "deadends.php",
@@ -52760,24 +52700,20 @@
         },
         "image_get_intermediate_size": {
             "file": "media.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Media\\Sizing::intermediate"
+                "Minn\\Runtime\\AttachmentImages::intermediate"
             ],
-            "composes": [
-                "apply_filters",
-                "image_constrain_size_for_editor",
-                "wp_get_attachment_metadata",
-                "wp_get_attachment_url",
-                "wp_image_matches_ratio"
-            ]
+            "composes": []
         },
         "image_hwstring": {
             "file": "media.php",
-            "lines": 8,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::dimensionAttributes"
+            ],
             "composes": []
         },
         "image_link_input_fields": {
@@ -65379,29 +65315,21 @@
         },
         "wp_calculate_image_sizes": {
             "file": "media.php",
-            "lines": 19,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_wp_get_image_size_from_meta",
-                "absint",
-                "apply_filters",
-                "wp_get_attachment_metadata"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::sizesAttribute"
+            ],
+            "composes": []
         },
         "wp_calculate_image_srcset": {
             "file": "media.php",
-            "lines": 10,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Media\\Sizing::sources",
-                "Minn\\Media\\Sizing::srcset"
+                "Minn\\Runtime\\AttachmentImages::srcset"
             ],
-            "composes": [
-                "apply_filters",
-                "wp_get_upload_dir",
-                "wp_image_matches_ratio"
-            ]
+            "composes": []
         },
         "wp_can_install_language_pack": {
             "file": "misc.php",
@@ -65850,14 +65778,12 @@
         },
         "wp_constrain_dimensions": {
             "file": "media.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Media\\Sizing::constrain"
+                "Minn\\Runtime\\AttachmentImages::constrain"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_convert_bytes_to_hr": {
             "file": "deprecated.php",
@@ -67932,9 +67858,11 @@
         },
         "wp_get_additional_image_sizes": {
             "file": "media.php",
-            "lines": 4,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::additionalSizes"
+            ],
             "composes": []
         },
         "wp_get_admin_notice": {
@@ -68007,18 +67935,12 @@
         },
         "wp_get_attachment_image": {
             "file": "media.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_attachment_image_attributes",
-                "apply_filters",
-                "get_post",
-                "get_post_meta",
-                "image_hwstring",
-                "wp_get_attachment_image_src",
-                "wp_parse_args"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::image"
+            ],
+            "composes": []
         },
         "wp_get_attachment_image_sizes": {
             "file": "media.php",
@@ -68034,14 +67956,12 @@
         },
         "wp_get_attachment_image_src": {
             "file": "media.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "image_downsize",
-                "wp_mime_type_icon"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::src"
+            ],
+            "composes": []
         },
         "wp_get_attachment_image_srcset": {
             "file": "media.php",
@@ -68864,16 +68784,12 @@
         },
         "wp_get_loading_optimization_attributes": {
             "file": "media.php",
-            "lines": 25,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_loading_asked",
-                "_minn_loading_by_place",
-                "apply_filters",
-                "doing_filter",
-                "set"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::loadingAttributes"
+            ],
+            "composes": []
         },
         "wp_get_media_creation_timestamp": {
             "file": "media.php",
@@ -70065,12 +69981,12 @@
         },
         "wp_image_matches_ratio": {
             "file": "media.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_constrain_dimensions"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::matchesRatio"
+            ],
+            "composes": []
         },
         "wp_image_src_get_dimensions": {
             "file": "media.php",
@@ -71160,10 +71076,10 @@
             "file": "media.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::lazyLoading"
+            ],
+            "composes": []
         },
         "wp_lazyload_comment_meta": {
             "file": "comment.php",
@@ -75365,7 +75281,9 @@
             "file": "media.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::startsWithAuto"
+            ],
             "composes": []
         },
         "wp_skip_border_serialization": {

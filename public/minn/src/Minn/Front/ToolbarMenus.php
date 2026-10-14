@@ -8,6 +8,7 @@ use Minn\Auth\Can;
 use Minn\I18n\Numbers;
 use Minn\Objects\Toolbar;
 use Minn\Objects\User;
+use Minn\Runtime\AttachmentImages;
 use Minn\Runtime\CommentReads;
 use Minn\Runtime\CurrentUser;
 use Minn\Runtime\EditLinks;
@@ -146,9 +147,9 @@ final class ToolbarMenus
         $name = $name !== '' ? $name : (string) preg_replace('#^(https?://)?(www\.)?#', '', SiteUrls::home());
         $title = Text::htmlExcerpt($name, 40, '&hellip;');
         $meta = ['menu_title' => $title];
-        if (Runtime::hooks()->filter('wp_admin_bar_show_site_icons', [true]) && \has_site_icon()) {
-            $small = (string) \get_site_icon_url(32);
-            $large = (string) \get_site_icon_url(64);
+        if (Runtime::hooks()->filter('wp_admin_bar_show_site_icons', [true]) && AttachmentImages::hasSiteIcon()) {
+            $small = (string) AttachmentImages::siteIconUrl(32);
+            $large = (string) AttachmentImages::siteIconUrl(64);
             $title = '<img class="site-icon" src="' . Escape::url($small) . '"' . ($large !== $small ? ' srcset="' . Escape::url($large) . ' 2x"' : '') . ' alt="" width="20" height="20" />' . $title;
             $meta['class'] = 'has-site-icon';
         }

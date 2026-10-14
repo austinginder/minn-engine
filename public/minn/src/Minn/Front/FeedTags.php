@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Media\FileTypes;
+use Minn\Runtime\AttachmentImages;
 use Minn\Theme\ClassicContent;
 use Minn\Runtime\DocumentTitle;
 use Minn\Content\PostRecord;
@@ -218,7 +219,7 @@ final class FeedTags
     {
         $title = FeedTags::wpTitleRss();
         $title = $title !== '' ? $title : SiteInfo::rss('name');
-        $url = \get_site_icon_url(32);
+        $url = AttachmentImages::siteIconUrl(32);
         if (!$url) {
             return '';
         }
@@ -229,7 +230,7 @@ final class FeedTags
     /** The site icon as an Atom icon, or '' without one. */
     public static function atomIcon(): string
     {
-        $url = \get_site_icon_url(32);
+        $url = AttachmentImages::siteIconUrl(32);
         return $url ? '<icon>' . Text::encodeAmpersands($url) . "</icon>\n" : '';
     }
 }

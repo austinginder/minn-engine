@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\AttachmentImages;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\MetaData;
 use Minn\Runtime\Runtime;
@@ -40,7 +41,7 @@ final class CustomLogo
                 $attrs['alt'] = SiteInfo::get('name', 'display');
             }
             $attrs = Runtime::hooks()->filter('get_custom_logo_image_attributes', [$attrs, $logo, $blogId]);
-            $image = (string) \wp_get_attachment_image($logo, 'full', false, $attrs);
+            $image = (string) AttachmentImages::image($logo, 'full', false, $attrs);
             $html = $unlinked
                 ? sprintf('<span class="custom-logo-link">%s</span>', $image)
                 : sprintf('<a href="%1$s" class="custom-logo-link" rel="home"%2$s>%3$s</a>', Escape::url(SiteUrls::home('/')), $front ? ' aria-current="page"' : '', $image);
