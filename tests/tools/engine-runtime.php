@@ -15,7 +15,7 @@ $config = str_replace("require_once ABSPATH . 'wp-settings.php';", '', $config);
 define('ABSPATH', $siteRoot . '/public/');
 eval('?>' . $config);
 if (!defined('MINN_ENGINE_VERSION')) {
-    define('MINN_ENGINE_VERSION', '0.0.1');
+    define('MINN_ENGINE_VERSION', '0.1.0');
     define('MINN_ENGINE_DIR', $root . '/public/minn');
 }
 require $root . '/public/minn/src/Minn/Autoloader.php';
