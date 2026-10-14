@@ -4845,6 +4845,266 @@
                 "body": "01c111b7d575"
             }
         },
+        "rest-api.php": {
+            "_minn_core_rest_controllers": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the API's controller objects for the types, taxonomies and core classes, for code that walks them",
+                "body": "e68b6eed8604"
+            },
+            "_minn_rest_error_entries": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a WP_Error's codes, messages and data as response entries",
+                "body": "85398d73d040"
+            },
+            "_minn_rest_search_handlers": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "holds the search handler objects plugins extend, filtered once",
+                "body": "7b68480a160d"
+            },
+            "_minn_rest_search_subtypes": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SearchController",
+                "why": "the subtypes a search asks for, any meaning all",
+                "body": "8d86407b3d98"
+            },
+            "_minn_rest_search_through_handlers": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "runs a search through the API's search controller and handlers, with its parameters checked",
+                "body": "945bd85c9849"
+            },
+            "create_initial_rest_routes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers the routes of the API's controller classes plugins extend, and plugin types' own controllers",
+                "body": "7b6739e79ce5"
+            },
+            "register_rest_field": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "adds the field to the global $wp_rest_additional_fields plugins and controllers read",
+                "body": "c6bd347490d1"
+            },
+            "register_rest_route": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RouteArgs",
+                "why": "the namespace and route rules with their notices beside RouteArgs::normalise; registering on the server object stays",
+                "body": "2d5a010bfce4"
+            },
+            "rest_add_application_passwords_to_index": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RouteIndex",
+                "why": "adds the application passwords endpoint to the REST index when they are available",
+                "body": "58ec64a6af7d"
+            },
+            "rest_api_default_filters": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "hooks the REST handlers by name, the notice-to-header ones only while serving REST",
+                "body": "83262b11641a"
+            },
+            "rest_api_init": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers the REST rewrites and adds rest_route to the global $wp's query vars",
+                "body": "c2da77564e19"
+            },
+            "rest_api_register_rewrites": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the four wp-json rules through add_rewrite_rule by name",
+                "body": "f51150eaa1a0"
+            },
+            "rest_application_password_check_errors": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "answers from the recorded global status, a 401 for a failure",
+                "body": "93919fcd87f8"
+            },
+            "rest_application_password_collect_status": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "records the application password result in the globals the REST check reads",
+                "body": "ab12a4b5f75f"
+            },
+            "rest_cookie_check_errors": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Caller",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the cookie nonce rule for a signed-in REST request, beside the engine's own caller resolution",
+                "body": "6f4a4cd31de6"
+            },
+            "rest_cookie_collect_status": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "records which cookie hook ran in the global $wp_rest_auth_cookie",
+                "body": "b123e8bbeae8"
+            },
+            "rest_do_request": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "rest_ensure_request, then the server object's dispatch",
+                "body": "8d1629ec4207"
+            },
+            "rest_ensure_request": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "makes a WP_REST_Request from a path or arguments",
+                "body": "ed37a336d8bb"
+            },
+            "rest_format_combining_operation_error": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\SchemaChoices::combiningFailure",
+                "why": "the engine words the failure; the title and reason are argument conversion",
+                "body": "5e36f4290874"
+            },
+            "rest_get_avatar_urls": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_avatar_url at the three sizes",
+                "body": "7efca1a09a70"
+            },
+            "rest_get_combining_operation_error": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\SchemaChoices::combiningError",
+                "why": "the engine words the error; turning the WP_Errors into refusals is argument conversion",
+                "body": "d9903a3f7f85"
+            },
+            "rest_get_date_with_gmt": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RestDates",
+                "why": "parses a date with or without a zone into its local and UTC forms",
+                "body": "792b598209b5"
+            },
+            "rest_get_queried_resource_route": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RestUrl",
+                "why": "the queried object's REST route by the query's kind, then its filter",
+                "body": "b6d8edb89937"
+            },
+            "rest_get_route_for_post": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RestUrl",
+                "why": "a post's REST route from its type's route, then its filter",
+                "body": "ad73cca82f34"
+            },
+            "rest_get_route_for_post_type_items": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RestUrl",
+                "why": "a type's REST collection route from its namespace and base, then its filter",
+                "body": "79749ce63c23"
+            },
+            "rest_get_route_for_taxonomy_items": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RestUrl",
+                "why": "a taxonomy's REST collection route from its namespace and base, then its filter",
+                "body": "16e04c5430ac"
+            },
+            "rest_get_route_for_term": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RestUrl",
+                "why": "a term's REST route from its taxonomy's route, then its filter",
+                "body": "f6ee73c3a6d7"
+            },
+            "rest_handle_deprecated_argument": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Reply",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "turns a deprecated argument into its X-WP header under WP_DEBUG",
+                "body": "e9da04385aee"
+            },
+            "rest_handle_deprecated_function": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Reply",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "turns a deprecated call into its X-WP header under WP_DEBUG; the header goes out on the engine's response",
+                "body": "87a06cbfba5d"
+            },
+            "rest_handle_doing_it_wrong": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Reply",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "turns a doing-it-wrong notice into its X-WP header under WP_DEBUG",
+                "body": "55df5fd8db82"
+            },
+            "rest_handle_options_request": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RuntimeRoutes",
+                "why": "answers an OPTIONS request for a plugin route with its help data, standing down for the engine's routes",
+                "body": "280591c84e21"
+            },
+            "rest_output_link_header": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\HeadLinks",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the REST root and resource Link headers; they go out on the engine's response",
+                "body": "4f2b13f24743"
+            },
+            "rest_output_link_wp_head": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes the engine's head links for the request, or the plain REST link",
+                "body": "47b6f65afdc7"
+            },
+            "rest_parse_embed_param": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Embed",
+                "why": "the _embed parameter as true or a list of relations",
+                "body": "07a173f646e0"
+            },
+            "rest_parse_request_arg": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "validate then sanitize through the two public functions",
+                "body": "8be0a9117483"
+            },
+            "rest_preload_api_request": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Preload",
+                "why": "dispatches a preload path or path and method and keeps its body and headers in the memo",
+                "body": "b56bdbd7d243"
+            },
+            "rest_sanitize_request_arg": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the route argument's schema from the request, then rest_sanitize_value_from_schema by name",
+                "body": "5a542445dd1e"
+            },
+            "rest_send_allow_header": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\RuntimeRoutes::allowedMethods",
+                "why": "the engine answers the allowed methods; picking the engine's or the runtime routes' and setting the header is the call's wrapper",
+                "body": "176d7249d140"
+            },
+            "rest_send_cors_headers": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Cors",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the CORS headers by the request's origin and method; they go out on the engine's response",
+                "body": "940cfc434598"
+            },
+            "rest_validate_request_arg": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the route argument's schema from the request, then rest_validate_value_from_schema by name",
+                "body": "deeb2325da2f"
+            }
+        },
         "robots-template.php": {
             "wp_robots": {
                 "verdict": "move",
