@@ -35,9 +35,9 @@ final class RegisteredFields
         $links = $item['_links'] ?? null;
         unset($item['_links']);
         $handed = $context === 'embed' ? Embed::shape($type, $item) : $item;
-        $handed = $wanted === null ? $handed : array_filter($handed, static fn ($key) => $key === 'id' || \rest_is_field_included((string) $key, $wanted), ARRAY_FILTER_USE_KEY);
+        $handed = $wanted === null ? $handed : array_filter($handed, static fn ($key) => $key === 'id' || Responses::fieldIncluded((string) $key, $wanted), ARRAY_FILTER_USE_KEY);
         foreach ($fields as $name => $options) {
-            if (empty($options['get_callback']) || !self::inContext($options, $context) || ($wanted !== null && !\rest_is_field_included((string) $name, $wanted))) {
+            if (empty($options['get_callback']) || !self::inContext($options, $context) || ($wanted !== null && !Responses::fieldIncluded((string) $name, $wanted))) {
                 continue;
             }
             $value = call_user_func($options['get_callback'], $handed, $name, $request, $type);

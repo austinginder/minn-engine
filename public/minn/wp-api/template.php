@@ -391,13 +391,7 @@ function esc_xml($text)
 
 function sanitize_hex_color($color)
 {
-    if ($color === '' || $color === null) {
-        return '';
-    }
-    if (preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', (string) $color)) {
-        return $color;
-    }
-    return null;
+    return Minn\Support\Sanitize::hexColor($color);
 }
 
 function sanitize_hex_color_no_hash($color)

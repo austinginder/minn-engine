@@ -143,14 +143,14 @@ final class RuntimePrepare
         }
         $response = RuntimeRoutes::itemResponse($item);
         $before = [$response->get_data(), $response->get_links()];
-        $filtered = \rest_ensure_response(Runtime::hooks()->filter((string) $filter, [$response, $described(), $request]));
+        $filtered = Responses::ensure(Runtime::hooks()->filter((string) $filter, [$response, $described(), $request]));
         if ($filtered instanceof Errors) {
             return $item;
         }
         if ($filtered === $response && [$response->get_data(), $response->get_links()] === $before) {
             return $item;
         }
-        $data = \rest_get_server()->response_to_data($filtered, false);
+        $data = Responses::server()->response_to_data($filtered, false);
         return is_array($data) ? $data : $item;
     }
 

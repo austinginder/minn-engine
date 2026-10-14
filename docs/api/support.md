@@ -27,7 +27,7 @@ escaping, serialized readers, small helpers
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 95 | File-system path and permission spellings, and whether a path is safe to use. |
-| [`Sanitize`](#sanitize) | final class | 71 | Text made fit to store the way WordPress's sanitizers make it, each ending |
+| [`Sanitize`](#sanitize) | final class | 92 | Text made fit to store the way WordPress's sanitizers make it, each ending |
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 369 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
@@ -167,7 +167,7 @@ encoded; for a textarea, everything encoded; for an inline script, a
 single-quoted string's specials; and an address (esc_url) cleaned, its
 protocol checked against the allowed ones.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\CommentTags`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\CommentTags`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -893,7 +893,7 @@ in the filter plugins hook there, handed the result and what was given: a
 title (accents gone when saving), a key, a line of plain text, a user name,
 an email address and the check of one.
 
-Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Login\LoginHooks`, `Minn\Query\PostOrder`, `Minn\Rest\MediaController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`
+Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Login\LoginHooks`, `Minn\Query\PostOrder`, `Minn\Rest\MediaController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`
 
 ### static `title(mixed $title, mixed $fallback = '', mixed $context = 'save'): string`
 
@@ -917,6 +917,14 @@ spaces collapsed; strictly, only letters, digits, spaces and _ . - @.
 A class name for HTML (sanitize_html_class): escaped octets and
 anything but letters, digits, _ and - taken out; the fallback's when
 nothing is left; then the filter.
+
+### static `hexColor(mixed $color): mixed`
+
+A hex colour as given when it is one (#abc or #aabbcc), empty for none, else null (sanitize_hex_color).
+
+### static `textareaField(mixed $text): mixed`
+
+Lines of plain text (sanitize_textarea_field): as a text field, line breaks kept; then the filter.
 
 ### static `email(mixed $email): string`
 

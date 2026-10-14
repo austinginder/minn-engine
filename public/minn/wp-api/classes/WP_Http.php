@@ -3,7 +3,7 @@
 namespace {
 
     #[AllowDynamicProperties]
-    class WP_HTTP_Response
+    class WP_HTTP_Response implements \Minn\Objects\HttpResponse
     {
         public $data;
         public $headers;

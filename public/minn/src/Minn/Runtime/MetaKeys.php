@@ -9,6 +9,7 @@ use Minn\I18n\Gettext;
 use Minn\Objects\Comment;
 use Minn\Objects\Term;
 use Minn\Objects\User;
+use Minn\Rest\SiteSchema;
 
 /**
  * The meta keys code registers, kept where the reference keeps them
@@ -207,6 +208,6 @@ final class MetaKeys
         if (is_array($args['show_in_rest']) && isset($args['show_in_rest']['schema']) && is_array($args['show_in_rest']['schema'])) {
             $schema = array_merge($schema, $args['show_in_rest']['schema']);
         }
-        return !Records::isError(\rest_validate_value_from_schema($args['default'], $schema));
+        return !Records::isError(SiteSchema::validate($args['default'], $schema));
     }
 }

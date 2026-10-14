@@ -40807,6 +40807,7 @@
                 "Minn\\Login\\ServeLogin",
                 "Minn\\RestError",
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\Types",
                 "Minn\\Runtime\\AjaxController",
@@ -40848,8 +40849,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 72,
-                "end": 77
+                "line": 73,
+                "end": 78
             },
             "cases": [],
             "constants": [
@@ -40890,8 +40891,8 @@
                     "doc": "The front door: answer the request that arrived and send it. This is\nthe only place the engine touches the world, so everything under it\nis a function of a request, callable more than once in a process.",
                     "shapes": [],
                     "params": [],
-                    "line": 84,
-                    "end": 90
+                    "line": 85,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -40910,8 +40911,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 118
+                    "line": 98,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -40930,8 +40931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 128
+                    "line": 122,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -40964,8 +40965,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 169
+                    "line": 136,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -40991,8 +40992,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 191
+                    "line": 179,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -41018,8 +41019,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 216
+                    "line": 201,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -41038,8 +41039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 230
+                    "line": 225,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -41065,8 +41066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 263
+                    "line": 242,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -41085,8 +41086,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 270
+                    "line": 267,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -41112,8 +41113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 331
+                    "line": 273,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -41209,8 +41210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 400
+                    "line": 335,
+                    "end": 401
                 }
             ]
         },
@@ -71031,7 +71032,8 @@
             ],
             "usedBy": [
                 "Minn\\Front\\EmbedCard",
-                "Minn\\Front\\ToolbarMenus"
+                "Minn\\Front\\ToolbarMenus",
+                "Minn\\Rest\\SiteSchema"
             ],
             "constructor": null,
             "cases": [],
@@ -82985,6 +82987,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
@@ -83005,6 +83008,26 @@
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\Upgrade",
                 "Minn\\Runtime\\UserEvents"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\HttpResponse",
+            "short": "HttpResponse",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/HttpResponse.php",
+            "lines": 3,
+            "doc": "An HTTP response as the WordPress layer hands it to plugins\n(WP_HTTP_Response): its data, status and headers. The engine knows these\nobjects by this mark and makes them through Runtime\\Handoff, so it never\nnames the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\Responses"
             ],
             "constructor": null,
             "cases": [],
@@ -83105,6 +83128,7 @@
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\PostListArgs",
                 "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
@@ -83135,6 +83159,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Handoff"
@@ -83157,6 +83182,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RuntimeRoutes"
             ],
             "constructor": null,
@@ -93452,6 +93478,7 @@
                 "Minn\\RestError",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\Reply",
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\Types",
                 "Minn\\Runtime\\Handoff",
@@ -97048,6 +97075,7 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
@@ -104004,6 +104032,7 @@
                 "Minn\\Objects\\RestRequest",
                 "Minn\\RestError",
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\Responses",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Support\\Lists"
             ],
@@ -104972,6 +105001,188 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\Responses",
+            "short": "Responses",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/Responses.php",
+            "lines": 95,
+            "doc": "REST answers as the WordPress layer shapes them: any value made a\nresponse, a list of errors made one (its status from the errors' data),\nthe REST server (made, and rest_api_init told, the first time it is\nasked), the fields a request asked for kept, and the status that tells\na signed-out caller from one who may not.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Objects\\Errors",
+                "Minn\\Objects\\HttpResponse",
+                "Minn\\Objects\\RestRequest",
+                "Minn\\Objects\\RestResponse",
+                "Minn\\Objects\\RestServer",
+                "Minn\\Rest\\Fields",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Engine",
+                "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\RestMeta",
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Rest\\RuntimeRoutes"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "ensure",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ensure(mixed $response): mixed",
+                    "doc": "A value as a REST response (rest_ensure_response): errors and responses as they are; an HTTP response's parts carried over.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "fromErrors",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromErrors(mixed $error): Minn\\Objects\\RestResponse",
+                    "doc": "A list of errors as a REST response (rest_convert_error_to_response):\nthe first error the body, the rest as additional_errors; the status\nthe last one the errors' data name, 500 when none does.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "server",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "server(): mixed",
+                    "doc": "The REST server (rest_get_server): made the first time, of the class wp_rest_server_class names, and rest_api_init told.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 54,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "fieldIncluded",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fieldIncluded(mixed $field, mixed $fields): bool",
+                    "doc": "Whether a field is among those asked for (rest_is_field_included), a nested one by its parent or child.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "field",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "filterFields",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "filterFields(mixed $response, mixed $server, mixed $request): mixed",
+                    "doc": "A response with only the fields the request's _fields asks for (rest_filter_response_fields), a list item by item.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "server",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "authorizationRequiredCode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "authorizationRequiredCode(): int",
+                    "doc": "The status refusing a caller (rest_authorization_required_code): 403 for one signed in, 401 for one who is not.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 93,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "entries",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "entries(mixed $error): array",
+                    "doc": "Each error as the REST body writes it: code, message, its code's last\ndata, and the earlier data as additional_data.",
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 115
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\RestMeta",
             "short": "RestMeta",
             "namespace": "Minn\\Rest",
@@ -104988,7 +105199,9 @@
                 "Minn\\Objects\\RestRequest",
                 "Minn\\RestError",
                 "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\Schema",
+                "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\Records",
@@ -107197,6 +107410,7 @@
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\RestRequest",
                 "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Records",
@@ -107522,6 +107736,7 @@
                 "Minn\\Objects\\RestServer",
                 "Minn\\RestError",
                 "Minn\\Rest\\Reply",
+                "Minn\\Rest\\Responses",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -108309,6 +108524,7 @@
                 "Minn\\Rest\\SchemaChoices",
                 "Minn\\Rest\\SchemaValues",
                 "Minn\\Rest\\Services",
+                "Minn\\Rest\\SiteSchema",
                 "Minn\\Rest\\UsersController"
             ],
             "constructor": {
@@ -111467,6 +111683,147 @@
                     ],
                     "line": 229,
                     "end": 234
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\SiteSchema",
+            "short": "SiteSchema",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/SiteSchema.php",
+            "lines": 38,
+            "doc": "The site's JSON-schema handler: one Schema whose email test, number\nformatter and string-format sanitizers carry the filters plugins hook\n(is_email, number_format_i18n, the sanitizers), and the answers the REST\nhelpers give with it (true or a list of errors).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Numbers",
+                "Minn\\Rest\\Schema",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Refusal",
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Sanitize"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\RestMeta",
+                "Minn\\Runtime\\AbilityRun",
+                "Minn\\Runtime\\MetaKeys",
+                "Minn\\Runtime\\ThemeSupports"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "schema",
+                    "type": "?Minn\\Rest\\Schema",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "get",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "get(): Minn\\Rest\\Schema",
+                    "doc": "The site's schema handler.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 24,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "validate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "validate(mixed $value, mixed $args, mixed $param = ''): mixed",
+                    "doc": "Whether a value fits a schema (rest_validate_value_from_schema): true, or the errors saying why not.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "sanitize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sanitize(mixed $value, mixed $args, mixed $param = ''): mixed",
+                    "doc": "A value made to fit a schema (rest_sanitize_value_from_schema).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "result",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "result(Minn\\Runtime\\Refusal|true $result): mixed",
+                    "doc": "True, or the list of errors a refusal reads as.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "result",
+                            "type": "Minn\\Runtime\\Refusal|true",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 55
                 }
             ]
         },
@@ -116376,6 +116733,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Objects\\Errors",
+                "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Records"
@@ -116417,8 +116775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 23,
-                    "end": 30
+                    "line": 24,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -116444,8 +116802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 39
+                    "line": 34,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -116478,8 +116836,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 46
+                    "line": 43,
+                    "end": 47
                 }
             ]
         },
@@ -122778,10 +123136,12 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RenderedFields",
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SidebarsController",
+                "Minn\\Rest\\SiteSchema",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetObject",
@@ -126571,6 +126931,7 @@
                 "Minn\\Objects\\Comment",
                 "Minn\\Objects\\Term",
                 "Minn\\Objects\\User",
+                "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Records",
@@ -126631,8 +126992,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 74
+                    "line": 32,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -126665,8 +127026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 97
+                    "line": 78,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -126694,8 +127055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 104
+                    "line": 101,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -126723,8 +127084,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 110
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -126771,8 +127132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 133
+                    "line": 118,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -126798,8 +127159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 147
+                    "line": 137,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -126835,8 +127196,8 @@
                             "doc": "the object id, then the key"
                         }
                     ],
-                    "line": 159,
-                    "end": 183
+                    "line": 160,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -126871,8 +127232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 201
+                    "line": 187,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -126893,8 +127254,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 211
+                    "line": 205,
+                    "end": 212
                 }
             ]
         },
@@ -136507,6 +136868,7 @@
                 "Minn\\Rest\\RouteMatch",
                 "Minn\\Rest\\Schema",
                 "Minn\\Rest\\SchemaChoices",
+                "Minn\\Rest\\SiteSchema",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\Connectors",
                 "Minn\\Runtime\\Patterns",
@@ -138732,6 +139094,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RegisteredType",
                 "Minn\\Rest\\RenderedFields",
+                "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RuntimeEnvelope",
@@ -145765,6 +146128,7 @@
                 "Minn\\Json",
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\RestRequest",
+                "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime"
@@ -145832,8 +146196,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 43,
-                    "end": 46
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -145861,8 +146225,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 67
+                    "line": 50,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -145881,8 +146245,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 79
+                    "line": 71,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -145893,8 +146257,8 @@
                     "doc": "_add_default_theme_supports: what every block theme supports before its own setup.",
                     "shapes": [],
                     "params": [],
-                    "line": 82,
-                    "end": 90
+                    "line": 83,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -145913,8 +146277,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 100
+                    "line": 94,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -145925,8 +146289,8 @@
                     "doc": "_custom_header_background_just_in_time: the header's and background's defaults filled in once loaded.",
                     "shapes": [],
                     "params": [],
-                    "line": 103,
-                    "end": 126
+                    "line": 104,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -145952,8 +146316,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 155
+                    "line": 130,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -145966,8 +146330,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 158,
-                    "end": 163
+                    "line": 159,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -145988,8 +146352,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 183
+                    "line": 167,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -146031,8 +146395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 201
+                    "line": 194,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -146060,8 +146424,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 207
+                    "line": 205,
+                    "end": 208
                 }
             ]
         },
@@ -149696,6 +150060,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Front\\ToolbarMarkup",
                 "Minn\\Front\\ToolbarMenus",
+                "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\OptionSanitizer",
@@ -152737,7 +153102,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Sanitize.php",
-            "lines": 71,
+            "lines": 92,
             "doc": "Text made fit to store the way WordPress's sanitizers make it, each ending\nin the filter plugins hook there, handed the result and what was given: a\ntitle (accents gone when saving), a key, a line of plain text, a user name,\nan email address and the check of one.",
             "implements": [],
             "extends": null,
@@ -152756,6 +153121,7 @@
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Query\\PostOrder",
                 "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\CommentForm",
@@ -152911,6 +153277,46 @@
                 },
                 {
                     "routes": [],
+                    "name": "hexColor",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hexColor(mixed $color): mixed",
+                    "doc": "A hex colour as given when it is one (#abc or #aabbcc), empty for none, else null (sanitize_hex_color).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "color",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "textareaField",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "textareaField(mixed $text): mixed",
+                    "doc": "Lines of plain text (sanitize_textarea_field): as a text field, line breaks kept; then the filter.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 93
+                },
+                {
+                    "routes": [],
                     "name": "email",
                     "static": true,
                     "visibility": "public",
@@ -152926,8 +153332,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 79
+                    "line": 96,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -152946,8 +153352,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 86
+                    "line": 103,
+                    "end": 107
                 }
             ]
         },

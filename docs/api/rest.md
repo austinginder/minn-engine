@@ -50,6 +50,7 @@ the wp/v2 surface: shapes and controllers
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
 | [`RenderedFields`](#renderedfields) | final class | 68 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
+| [`Responses`](#responses) | final class | 95 | REST answers as the WordPress layer shapes them: any value made a |
 | [`RestMeta`](#restmeta) | final class | 265 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 237 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
@@ -70,6 +71,7 @@ the wp/v2 surface: shapes and controllers
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
 | [`SidebarsController`](#sidebarscontroller) | final readonly class | 206 | wp/v2/sidebars and wp/v2/widget-types as the reference answers them |
+| [`SiteSchema`](#siteschema) | final class | 38 | The site's JSON-schema handler: one Schema whose email test, number |
 | [`StatusesController`](#statusescontroller) | final readonly class | 97 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
 | [`Subjects`](#subjects) | final readonly class | 53 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
@@ -1036,7 +1038,7 @@ the whole payload otherwise, which is why _fields on the associative
 types response strips every key and yields [] over HTTP, a reference
 quirk the engine reproduces by construction.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\Responses`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 - readonly `array $paths`
 - readonly `bool $deferred`
@@ -2183,6 +2185,47 @@ A list response with the total and page-count headers.
 A REST error as the reference's error body.
 
 
+## Responses
+
+`final class Minn\Rest\Responses` · `public/minn/src/Minn/Rest/Responses.php`
+
+REST answers as the WordPress layer shapes them: any value made a
+response, a list of errors made one (its status from the errors' data),
+the REST server (made, and rest_api_init told, the first time it is
+asked), the fields a request asked for kept, and the status that tells
+a signed-out caller from one who may not.
+
+Used by: `Minn\Engine`, `Minn\Rest\BatchController`, `Minn\Rest\RegisteredFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`
+
+### static `ensure(mixed $response): mixed`
+
+A value as a REST response (rest_ensure_response): errors and responses as they are; an HTTP response's parts carried over.
+
+### static `fromErrors(mixed $error): Minn\Objects\RestResponse`
+
+A list of errors as a REST response (rest_convert_error_to_response):
+the first error the body, the rest as additional_errors; the status
+the last one the errors' data name, 500 when none does.
+
+### static `server(): mixed`
+
+The REST server (rest_get_server): made the first time, of the class wp_rest_server_class names, and rest_api_init told.
+
+### static `fieldIncluded(mixed $field, mixed $fields): bool`
+
+Whether a field is among those asked for (rest_is_field_included), a nested one by its parent or child.
+
+### static `filterFields(mixed $response, mixed $server, mixed $request): mixed`
+
+A response with only the fields the request's _fields asks for (rest_filter_response_fields), a list item by item.
+
+### static `authorizationRequiredCode(): int`
+
+The status refusing a caller (rest_authorization_required_code): 403 for one signed in, 401 for one who is not.
+
+Internals: `entries()` (private, line 104)
+
+
 ## RestMeta
 
 `final class Minn\Rest\RestMeta` · `public/minn/src/Minn/Rest/RestMeta.php`
@@ -2724,7 +2767,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `KEYWORDS` = `array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )` — Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\RestMeta`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`, `Minn\Rest\UsersController`
+Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\RestMeta`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`, `Minn\Rest\SiteSchema`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)
@@ -3334,6 +3377,35 @@ The widgets are registered on init; a runtime that stopped short of it
 registers them now. Without the runtime there are no widgets to serve.
 
 Internals: `item()` (private, line 176), `type()` (private, line 202), `widgetTypes()` (private, line 219), `requireSidebar()` (private, line 229)
+
+
+## SiteSchema
+
+`final class Minn\Rest\SiteSchema` · `public/minn/src/Minn/Rest/SiteSchema.php`
+
+The site's JSON-schema handler: one Schema whose email test, number
+formatter and string-format sanitizers carry the filters plugins hook
+(is_email, number_format_i18n, the sanitizers), and the answers the REST
+helpers give with it (true or a list of errors).
+
+Used by: `Minn\Rest\RestMeta`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\ThemeSupports`
+
+
+### static `get(): Minn\Rest\Schema`
+
+The site's schema handler.
+
+### static `validate(mixed $value, mixed $args, mixed $param = ''): mixed`
+
+Whether a value fits a schema (rest_validate_value_from_schema): true, or the errors saying why not.
+
+### static `sanitize(mixed $value, mixed $args, mixed $param = ''): mixed`
+
+A value made to fit a schema (rest_sanitize_value_from_schema).
+
+### static `result(Minn\Runtime\Refusal|true $result): mixed`
+
+True, or the list of errors a refusal reads as.
 
 
 ## StatusesController

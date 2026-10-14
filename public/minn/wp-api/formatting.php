@@ -113,7 +113,7 @@ function sanitize_text_field($str)
 
 function sanitize_textarea_field($str)
 {
-    return apply_filters('sanitize_textarea_field', _sanitize_text_fields($str, true), $str);
+    return Sanitize::textareaField($str);
 }
 
 function wp_strip_all_tags($text, $remove_breaks = false)

@@ -128,7 +128,7 @@ final readonly class BatchController
         if (!Records::isError($valid)) {
             return null;
         }
-        $response = \rest_convert_error_to_response($valid);
+        $response = Responses::fromErrors($valid);
         return ['body' => RuntimeRoutes::server()->response_to_data($response, false), 'status' => $response->get_status(), 'headers' => []];
     }
 

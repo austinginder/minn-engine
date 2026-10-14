@@ -71,6 +71,27 @@ final class Sanitize
         return Runtime::hooks()->filter('sanitize_html_class', [$sanitized, $classname, $fallback]);
     }
 
+    /** A hex colour as given when it is one (#abc or #aabbcc), empty for none, else null (sanitize_hex_color). */
+    public static function hexColor(mixed $color): mixed
+    {
+        if ($color === '' || $color === null) {
+            return '';
+        }
+        return preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', (string) $color) ? $color : null;
+    }
+
+    /** Lines of plain text (sanitize_textarea_field): as a text field, line breaks kept; then the filter. */
+    public static function textareaField(mixed $text): mixed
+    {
+        $clean = is_object($text) || is_array($text) ? '' : Html::textField(
+            (string) $text,
+            true,
+            static fn (string $t): string => Escape::validUtf8($t),
+            static fn (string $t): string => Kses::lessThan($t, static fn (string $plain): string => Escape::html($plain)),
+        );
+        return Runtime::hooks()->filter('sanitize_textarea_field', [$clean, $text]);
+    }
+
     /** An email address with what may not be in one taken out (sanitize_email), and why when nothing is left. */
     public static function email(mixed $email): string
     {

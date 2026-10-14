@@ -16087,6 +16087,16 @@ gain one interface each. Full run 26 (after batch 16) was green once the suites 
 windows were rerun (another session's test runs loaded the machine). All 370 probes give identical
 output before and after.
 
+**Batch 18, the REST helpers (function calls 386 → 362).** `Rest\Responses` carries what
+rest_ensure_response (a value made a response; an HTTP response's parts carried over),
+rest_convert_error_to_response (the first error the body, the rest as additional_errors, the status
+from the errors' data), rest_get_server (made of the class wp_rest_server_class names, rest_api_init
+told), rest_is_field_included, rest_filter_response_fields and rest_authorization_required_code did.
+`Rest\SiteSchema` is the site's schema handler, its email test, number formatter and string
+sanitizers Minn's own (`Sanitize::hexColor()` and `textareaField()` are new), with `validate()` and
+`sanitize()` for the two schema helpers. WP_HTTP_Response carries the `Minn\Objects\HttpResponse`
+mark. The facade maps onto them. All 370 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 801,
-        "composes": 2334,
-        "leaf": 1022,
-        "noop": 2851,
+        "minn": 800,
+        "composes": 2330,
+        "leaf": 1020,
+        "noop": 2858,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1174,
+        "minnMethods": 1188,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -38501,20 +38501,12 @@
         },
         "_minn_schema": {
             "file": "rest-api.php",
-            "lines": 12,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Schema::__construct"
+                "Minn\\Rest\\SiteSchema::get"
             ],
-            "composes": [
-                "is_email",
-                "number_format_i18n",
-                "sanitize_email",
-                "sanitize_hex_color",
-                "sanitize_text_field",
-                "sanitize_textarea_field",
-                "sanitize_url"
-            ]
+            "composes": []
         },
         "_minn_schema_match": {
             "file": "rest-api.php",
@@ -38529,7 +38521,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::result"
+            ],
             "composes": []
         },
         "_minn_script_globals": {
@@ -59682,19 +59676,19 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "is_user_logged_in"
-            ]
+            "minn": [
+                "Minn\\Rest\\Responses::authorizationRequiredCode"
+            ],
+            "composes": []
         },
         "rest_convert_error_to_response": {
             "file": "rest-api.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_rest_error_entries"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\Responses::fromErrors"
+            ],
+            "composes": []
         },
         "rest_cookie_check_errors": {
             "file": "rest-api.php",
@@ -59745,38 +59739,40 @@
         },
         "rest_ensure_response": {
             "file": "rest-api.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "is_wp_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\Responses::ensure"
+            ],
+            "composes": []
         },
         "rest_filter_response_by_context": {
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::filterByContext"
+            ],
             "composes": [
                 "_minn_schema"
             ]
         },
         "rest_filter_response_fields": {
             "file": "rest-api.php",
-            "lines": 6,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Rest\\Fields::fromQuery"
+                "Minn\\Rest\\Responses::filterFields"
             ],
-            "composes": [
-                "wp_is_numeric_array"
-            ]
+            "composes": []
         },
         "rest_find_any_matching_schema": {
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::choices"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_match"
@@ -59795,7 +59791,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::choices"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_match"
@@ -59804,8 +59802,10 @@
         "rest_format_combining_operation_error": {
             "file": "rest-api.php",
             "lines": 3,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SiteSchema::choices"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_result"
@@ -59857,6 +59857,7 @@
             "lines": 2,
             "kind": "minn",
             "minn": [
+                "Minn\\Rest\\SiteSchema::choices",
                 "Minn\\Runtime\\Refusal::__construct"
             ],
             "composes": [
@@ -59946,13 +59947,12 @@
         },
         "rest_get_server": {
             "file": "rest-api.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "do_action"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\Responses::server"
+            ],
+            "composes": []
         },
         "rest_get_url_prefix": {
             "file": "link-template.php",
@@ -60028,9 +60028,11 @@
         },
         "rest_is_field_included": {
             "file": "rest-api.php",
-            "lines": 9,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\Responses::fieldIncluded"
+            ],
             "composes": []
         },
         "rest_is_integer": {
@@ -60191,10 +60193,10 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_schema"
-            ]
+            "minn": [
+                "Minn\\Rest\\SiteSchema::sanitize"
+            ],
+            "composes": []
         },
         "rest_send_allow_header": {
             "file": "rest-api.php",
@@ -60248,7 +60250,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::validateAs"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_result"
@@ -60258,7 +60262,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::validateAs"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_result"
@@ -60268,7 +60274,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::validateEnum"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_result"
@@ -60278,7 +60286,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::validateAs"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_result"
@@ -60297,7 +60307,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::validateAs"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_result"
@@ -60307,7 +60319,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::validateAs"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_result"
@@ -60317,7 +60331,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::validateAs"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_result"
@@ -60336,7 +60352,9 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Rest\\SiteSchema::validateAs"
+            ],
             "composes": [
                 "_minn_schema",
                 "_minn_schema_result"
@@ -60346,11 +60364,10 @@
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_schema",
-                "_minn_schema_result"
-            ]
+            "minn": [
+                "Minn\\Rest\\SiteSchema::validate"
+            ],
+            "composes": []
         },
         "restore_current_locale": {
             "file": "l10n.php",
@@ -60549,9 +60566,11 @@
         },
         "sanitize_hex_color": {
             "file": "template.php",
-            "lines": 7,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Sanitize::hexColor"
+            ],
             "composes": []
         },
         "sanitize_hex_color_no_hash": {
@@ -60674,11 +60693,10 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_sanitize_text_fields",
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Support\\Sanitize::textareaField"
+            ],
+            "composes": []
         },
         "sanitize_title": {
             "file": "formatting.php",

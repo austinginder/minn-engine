@@ -45,7 +45,7 @@ final class RuntimeRoutes
     {
         $error = Runtime::hooks()->filter('rest_authentication_errors', [null]);
         if ($error instanceof Errors) {
-            return self::toResponse(\rest_convert_error_to_response($error));
+            return self::toResponse(Responses::fromErrors($error));
         }
         return self::predispatch($request);
     }
@@ -89,7 +89,7 @@ final class RuntimeRoutes
         self::allow($result, (string) $matched[0], $wpRequest);
         // A plugin's answer keeps only its _fields, as the engine's own do (serve() then skips the filter).
         if (Runtime::hooks()->has('rest_post_dispatch', 'rest_filter_response_fields') === self::DISPATCH_DONE['rest_filter_response_fields']) {
-            $result = \rest_filter_response_fields($result, $server, $wpRequest);
+            $result = Responses::filterFields($result, $server, $wpRequest);
         }
         return self::toResponse(self::ensure($result));
     }
@@ -350,8 +350,8 @@ final class RuntimeRoutes
         [$route, $handler] = self::$matches[$request] ?? [null, null];
         $result->set_matched_route($route);
         $result->set_matched_handler($handler);
-        $result = \rest_ensure_response(Runtime::hooks()->filterWithout('rest_post_dispatch', [\rest_ensure_response($result), $server, $wpRequest], $done));
-        $result = $result instanceof Errors ? \rest_convert_error_to_response($result) : $result;
+        $result = Responses::ensure(Runtime::hooks()->filterWithout('rest_post_dispatch', [Responses::ensure($result), $server, $wpRequest], $done));
+        $result = $result instanceof Errors ? Responses::fromErrors($result) : $result;
         $headers = Reply::HEADERS;
         foreach ((array) $result->get_headers() as $name => $value) {
             $headers[$name] = (string) $value;
@@ -481,15 +481,15 @@ final class RuntimeRoutes
     /** A callback's return as a response object, an error converted. */
     public static function ensure(mixed $result): RestResponse
     {
-        $response = \rest_ensure_response($result);
-        return $response instanceof Errors ? \rest_convert_error_to_response($response) : $response;
+        $response = Responses::ensure($result);
+        return $response instanceof Errors ? Responses::fromErrors($response) : $response;
     }
 
     /** The runtime's response as the engine sends it, with the reference's header set. */
     /** The runtime's REST server, the one door to it (built, with rest_api_init, on first use). */
     public static function server(): RestServer
     {
-        return \rest_get_server();
+        return Responses::server();
     }
 
     private static function toResponse(RestResponse $response): Response

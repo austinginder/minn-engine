@@ -1,12 +1,12 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 386,
-        "functions": 236,
+        "functionCalls": 362,
+        "functions": 228,
         "hookApi": 0,
         "classReferences": 155,
         "classes": 33,
-        "files": 121
+        "files": 118
     },
     "families": {
         "functions": {
@@ -15,7 +15,6 @@
             "wp-includes/theme.php": 32,
             "wp-includes/comment.php": 32,
             "wp-includes/general-template.php": 27,
-            "wp-includes/rest-api.php": 24,
             "wp-includes/user.php": 18,
             "wp-includes/cron.php": 13,
             "wp-includes/meta.php": 12,
@@ -119,15 +118,6 @@
                 "Minn/Theme/ClassicRenderer.php": 1
             }
         },
-        "rest_validate_value_from_schema": {
-            "uses": 6,
-            "family": "wp-includes/rest-api.php",
-            "files": {
-                "Minn/Rest/RestMeta.php": 3,
-                "Minn/Runtime/AbilityRun.php": 2,
-                "Minn/Runtime/MetaKeys.php": 1
-            }
-        },
         "checked": {
             "uses": 5,
             "family": "wp-includes/general-template.php",
@@ -199,22 +189,6 @@
                 "Minn/Blocks/Dynamic/Theme/Structure.php": 1,
                 "Minn/Rest/InstalledThemesController.php": 1,
                 "Minn/Runtime/BlockHooks.php": 2
-            }
-        },
-        "rest_convert_error_to_response": {
-            "uses": 4,
-            "family": "wp-includes/rest-api.php",
-            "files": {
-                "Minn/Rest/BatchController.php": 1,
-                "Minn/Rest/RuntimeRoutes.php": 3
-            }
-        },
-        "rest_ensure_response": {
-            "uses": 4,
-            "family": "wp-includes/rest-api.php",
-            "files": {
-                "Minn/Rest/RuntimePrepare.php": 1,
-                "Minn/Rest/RuntimeRoutes.php": 3
             }
         },
         "retrieve_widgets": {
@@ -336,23 +310,6 @@
                 "Minn/Theme/ClassicRenderer.php": 1,
                 "Minn/Theme/EmbedRenderer.php": 1,
                 "Minn/Theme/PageRenderer.php": 1
-            }
-        },
-        "rest_get_server": {
-            "uses": 3,
-            "family": "wp-includes/rest-api.php",
-            "files": {
-                "Minn/Engine.php": 1,
-                "Minn/Rest/RuntimePrepare.php": 1,
-                "Minn/Rest/RuntimeRoutes.php": 1
-            }
-        },
-        "rest_sanitize_value_from_schema": {
-            "uses": 3,
-            "family": "wp-includes/rest-api.php",
-            "files": {
-                "Minn/Rest/RestMeta.php": 2,
-                "Minn/Runtime/ThemeSupports.php": 1
             }
         },
         "wp_get_inline_script_tag": {
@@ -558,13 +515,6 @@
             "family": "wp-includes/meta.php",
             "files": {
                 "Minn/Runtime/MetaKeys.php": 2
-            }
-        },
-        "rest_is_field_included": {
-            "uses": 2,
-            "family": "wp-includes/rest-api.php",
-            "files": {
-                "Minn/Rest/RegisteredFields.php": 2
             }
         },
         "shortcode_atts": {
@@ -1221,20 +1171,6 @@
             "family": "wp-includes/user.php",
             "files": {
                 "Minn/Login/LoginController.php": 1
-            }
-        },
-        "rest_authorization_required_code": {
-            "uses": 1,
-            "family": "wp-includes/rest-api.php",
-            "files": {
-                "Minn/Rest/RestMeta.php": 1
-            }
-        },
-        "rest_filter_response_fields": {
-            "uses": 1,
-            "family": "wp-includes/rest-api.php",
-            "files": {
-                "Minn/Rest/RuntimeRoutes.php": 1
             }
         },
         "retrieve_password": {

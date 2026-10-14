@@ -10,14 +10,7 @@ use Minn\Rest\RouteArgs;
 
 function rest_get_server()
 {
-    $server = $GLOBALS['wp_rest_server'] ?? null;
-    if (!$server instanceof WP_REST_Server) {
-        $class = apply_filters('wp_rest_server_class', 'WP_REST_Server');
-        $server = new $class();
-        $GLOBALS['wp_rest_server'] = $server;
-        do_action('rest_api_init', $server);
-    }
-    return $server;
+    return Minn\Rest\Responses::server();
 }
 
 /**
@@ -143,28 +136,12 @@ function rest_ensure_request($request)
 
 function rest_ensure_response($response)
 {
-    if (is_wp_error($response)) {
-        return $response;
-    }
-    if ($response instanceof WP_REST_Response) {
-        return $response;
-    }
-    if ($response instanceof WP_HTTP_Response) {
-        return new WP_REST_Response($response->get_data(), $response->get_status(), $response->get_headers());
-    }
-    return new WP_REST_Response($response);
+    return Minn\Rest\Responses::ensure($response);
 }
 
 function rest_convert_error_to_response($error)
 {
-    $status = array_reduce($error->get_all_error_data(), static fn ($status, $error_data) => is_array($error_data) && isset($error_data['status']) ? $error_data['status'] : $status, 500);
-    $errors = _minn_rest_error_entries($error);
-    $data = $errors[0];
-    if (count($errors) > 1) {
-        array_shift($errors);
-        $data['additional_errors'] = $errors;
-    }
-    return new WP_REST_Response($data, $status);
+    return Minn\Rest\Responses::fromErrors($error);
 }
 
 /** @internal each message of a WP_Error as a REST error entry: code, message, the code's last data, and its earlier data when there is any */
@@ -302,24 +279,13 @@ function rest_get_date_with_gmt($date, $is_utc = false)
 /** @internal the schema handler; the closures carry the reference's filters into it */
 function _minn_schema(): Schema
 {
-    static $schema = null;
-    return $schema ??= new Schema(
-        static fn (string $email): bool => (bool) is_email($email),
-        static fn (int|float $n): string => (string) number_format_i18n($n),
-        static fn (string $format, mixed $value): mixed => match ($format) {
-            'hex-color' => (string) sanitize_hex_color($value),
-            'email' => sanitize_email($value),
-            'uri' => sanitize_url($value),
-            'textarea-field' => sanitize_textarea_field($value),
-            default => sanitize_text_field($value),
-        },
-    );
+    return Minn\Rest\SiteSchema::get();
 }
 
 /** @internal true, or the WP_Error a refusal reads as */
 function _minn_schema_result(true|Refusal $result): bool|WP_Error
 {
-    return $result === true ? true : new WP_Error($result->code, $result->message, $result->data);
+    return Minn\Rest\SiteSchema::result($result);
 }
 
 function rest_is_boolean($maybe_bool)
@@ -369,7 +335,7 @@ function rest_handle_multi_type_schema($value, $args, $param = '')
 
 function rest_validate_value_from_schema($value, $args, $param = '')
 {
-    return _minn_schema_result(_minn_schema()->validate($value, (array) $args, (string) $param));
+    return Minn\Rest\SiteSchema::validate($value, $args, $param);
 }
 
 function rest_are_values_equal($value1, $value2)
@@ -384,7 +350,7 @@ function rest_find_matching_pattern_property_schema($property, $args)
 
 function rest_sanitize_value_from_schema($value, $args, $param = '')
 {
-    return _minn_schema()->sanitize($value, (array) $args, (string) $param);
+    return Minn\Rest\SiteSchema::sanitize($value, $args, $param);
 }
 
 function rest_validate_request_arg($value, $request, $param)
@@ -528,15 +494,7 @@ function rest_find_any_matching_schema($value, $args, $param)
 /** Whether a field is asked for: named, or a parent or a child of it named (probe rest-api-helpers). */
 function rest_is_field_included($field, $fields)
 {
-    if (in_array($field, $fields, true)) {
-        return true;
-    }
-    foreach ($fields as $accepted_field) {
-        if (str_starts_with($accepted_field, "$field.") || str_starts_with((string) $field, "$accepted_field.")) {
-            return true;
-        }
-    }
-    return false;
+    return Minn\Rest\Responses::fieldIncluded($field, $fields);
 }
 
 function rest_default_additional_properties_to_false($schema)
@@ -547,12 +505,7 @@ function rest_default_additional_properties_to_false($schema)
 /** An answer cut to the request's _fields (dot paths descend), each item of a list on its own; an error is left whole. */
 function rest_filter_response_fields($response, $server, $request)
 {
-    $fields = $request instanceof WP_REST_Request ? Fields::fromQuery(['_fields' => $request->get_param('_fields')]) : null;
-    if (!$response instanceof WP_REST_Response || $response->is_error() || $fields === null || !is_array($data = $response->get_data())) {
-        return $response;
-    }
-    $response->set_data(wp_is_numeric_array($data) ? array_map(static fn ($item) => is_array($item) ? $fields->apply($item) : $item, $data) : $fields->apply($data));
-    return $response;
+    return Minn\Rest\Responses::filterFields($response, $server, $request);
 }
 
 /**
@@ -644,7 +597,7 @@ function rest_sanitize_boolean($value)
 
 function rest_authorization_required_code()
 {
-    return is_user_logged_in() ? 403 : 401;
+    return Minn\Rest\Responses::authorizationRequiredCode();
 }
 
 function rest_is_ip_address($ip)

@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Json;
 use Minn\Objects\Errors;
 use Minn\Objects\RestRequest;
+use Minn\Rest\SiteSchema;
 
 /**
  * What a theme supports, as add_theme_support keeps it (probe rest-themes):
@@ -197,7 +198,7 @@ final class ThemeSupports
         if (is_callable($rest['prepare_callback'] ?? null)) {
             return call_user_func($rest['prepare_callback'], $support, $config, $feature, $request);
         }
-        return \rest_sanitize_value_from_schema($support, (array) ($rest['schema'] ?? []), (string) ($rest['name'] ?? $feature));
+        return SiteSchema::sanitize($support, (array) ($rest['schema'] ?? []), (string) ($rest['name'] ?? $feature));
     }
 
     /** @param array<string, mixed> $config */

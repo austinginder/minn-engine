@@ -145,18 +145,18 @@ final class RestMeta
         if ($value === '' && in_array($schema['type'] ?? null, ['boolean', 'integer', 'number'], true)) {
             $value = self::emptyValue((string) $schema['type']);
         }
-        return Records::isError(\rest_validate_value_from_schema($value, $schema)) ? null : \rest_sanitize_value_from_schema($value, $schema);
+        return Records::isError(SiteSchema::validate($value, $schema)) ? null : SiteSchema::sanitize($value, $schema);
     }
 
     /** @param array<string, mixed> $field */
     private static function update(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?Errors
     {
-        $valid = \rest_validate_value_from_schema($value, $field['schema'], 'meta.' . $field['name']);
+        $valid = SiteSchema::validate($value, $field['schema'], 'meta.' . $field['name']);
         if (Records::isError($valid)) {
             $valid->add_data(['status' => 400]);
             return $valid;
         }
-        $value = \rest_sanitize_value_from_schema($value, $field['schema']);
+        $value = SiteSchema::sanitize($value, $field['schema']);
         return $field['single'] ? self::store($objectType, $objectId, $subtype, $key, $field, $value) : self::storeAll($objectType, $objectId, $subtype, $key, $field, (array) $value);
     }
 
@@ -216,7 +216,7 @@ final class RestMeta
     /** A key deleted once the user may delete it (a single key's invalid stored value refuses null). @param array<string, mixed> $field */
     public static function delete(string $objectType, int $objectId, string $key, array $field): ?Errors
     {
-        if ($field['single'] && Records::isError(\rest_validate_value_from_schema(\get_metadata($objectType, $objectId, $key, true), $field['schema']))) {
+        if ($field['single'] && Records::isError(SiteSchema::validate(\get_metadata($objectType, $objectId, $key, true), $field['schema']))) {
             return self::nullStored($field['name']);
         }
         if (!Can::current("delete_{$objectType}_meta", $objectId, $key)) {
@@ -242,7 +242,7 @@ final class RestMeta
     private static function refused(string $code, string $name): Errors
     {
         /* translators: %s: Custom field key. */
-        return Handoff::newError($code, sprintf(Gettext::text('Sorry, you are not allowed to edit the %s custom field.'), $name), ['key' => $name, 'status' => \rest_authorization_required_code()]);
+        return Handoff::newError($code, sprintf(Gettext::text('Sorry, you are not allowed to edit the %s custom field.'), $name), ['key' => $name, 'status' => Responses::authorizationRequiredCode()]);
     }
 
     private static function failed(string $key, string $name): Errors
