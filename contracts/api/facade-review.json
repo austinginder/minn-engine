@@ -1766,6 +1766,489 @@
                 "body": "569fbd647543"
             }
         },
+        "comment.php": {
+            "_clear_modified_cache_on_transition_comment_status": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_cache_delete by name for the three lastcommentmodified keys, which a cache drop-in may define; the only decision is whether approved was involved",
+                "body": "f7d9fc87b1af"
+            },
+            "_close_comments_for_old_post": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\CommentCloser::open",
+                "why": "builds the closer from the two discussion options and asks CommentCloser::open with the post's columns and now; argument conversion only",
+                "doubt": "an undated draft (post_date_gmt 0000-00-00 00:00:00) parses as ancient in CommentCloser and closes, where the API leaves it open",
+                "body": "656321b9db97"
+            },
+            "_close_comments_for_old_posts": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentCloser",
+                "why": "the singular-query and option guards, close_comments_for_post_types and closing the first post's comment and ping status wrap CommentCloser::closes; the whole callback fits there",
+                "body": "55bf2652be82"
+            },
+            "_get_comment_reply_id": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentFormMarkup",
+                "gates": [
+                    "globals"
+                ],
+                "why": "validates ?replytocom= as a positive id naming an approved comment on the post; Http\\Request::queryVariable reads $_GET live, so the rule can move",
+                "body": "a9bb6154fb99"
+            },
+            "_minn_comment_cookies_field": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentFormMarkup",
+                "why": "the cookies consent checkbox markup, checked for a remembered commenter; form markup by rules",
+                "body": "6f23ac7cf903"
+            },
+            "_minn_comment_form_args": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentFormMarkup",
+                "why": "the default texts and markup (notes, logged-in line, block-theme button classes), comment_form_default_fields and comment_form_defaults, then the merge; form rules",
+                "doubt": "format defaults to xhtml without asking current_theme_supports('html5', 'comment-form'), so an html5 theme's form gets no novalidate",
+                "body": "eb311b37c5fb"
+            },
+            "_minn_comment_form_body": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentFormMarkup",
+                "why": "the form element, logged-in or notes line, the field list with the cookies box, each field filter and the before and after actions, the submit field and id fields; markup by rules",
+                "doubt": "comment_form_after_fields never fires when the comment field is last (the common move-it-down snippet); a signed-in user's comment_form_fields sees only the comment field yet prints any field a plugin adds",
+                "body": "d20e2356e258"
+            },
+            "_minn_comment_form_fields": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentFormMarkup",
+                "why": "builds the author, email and url field markup from the remembered commenter and require_name_email, plus the cookies box; form markup by rules",
+                "doubt": "the inputs are always type email and url with a bare required, where the API uses type text and required=\"required\" for an xhtml form",
+                "body": "5d72d61d8de5"
+            },
+            "_minn_comments_flattened": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\CommentThreads::flatten",
+                "why": "each top-level comment then its flat children is exactly CommentThreads::flatten over the top level with format flat and the query's status and orderby; unthreaded passes through",
+                "body": "b850214b5f5f"
+            },
+            "_minn_comments_template_args": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentPages",
+                "why": "builds the classic template's comment query: statuses, the reader's held ones, threading, the page offset and the newest-first last page from a top-level count; the twin of BlockQueries::comments for the block path",
+                "body": "aa39cb2e8392"
+            },
+            "_minn_list_comments_args": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentList",
+                "why": "wp_list_comments' defaults (html5 support), wp_list_comments_args, then per_page, max_depth and reverse_top_level from the discussion options; list rules for the engine",
+                "body": "79fd4d24c86d"
+            },
+            "_minn_post_comments_form": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "for the post-comments-form block: enqueues comment-reply while threaded and buffers comment_form by name so its hooks run",
+                "body": "190a1c6bc909"
+            },
+            "_wp_batch_update_comment_type": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Comments",
+                "gates": [
+                    "globals"
+                ],
+                "why": "selects a filtered batch of untyped comments, sets their type through $wpdb, clears their cache, marks the update finished or schedules the next batch; stored-data migration",
+                "doubt": "no update_comment_type.lock option, so two overlapping cron runs work the same batch",
+                "body": "615638462f06"
+            },
+            "_wp_check_for_scheduled_update_comment_type": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_option, wp_next_scheduled and wp_schedule_single_event by name; one finished-or-scheduled test",
+                "body": "1af6279b5b0e"
+            },
+            "comment_author": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_comment_author through comment_author",
+                "body": "fde23d405606"
+            },
+            "comment_author_email": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_comment_author_email through author_email",
+                "body": "a1bde70a7ea3"
+            },
+            "comment_author_url": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_comment_author_url through comment_url",
+                "body": "0590b28fea46"
+            },
+            "comment_class": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps get_comment_class in class=\"...\" and echoes or returns it by the display flag",
+                "body": "39b1232c25fa"
+            },
+            "comment_excerpt": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_comment_excerpt through comment_excerpt",
+                "body": "2887a7ab6cdd"
+            },
+            "comment_exists": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Comments",
+                "gates": [
+                    "globals"
+                ],
+                "why": "an SQL lookup of the post id by author and local or GMT date through $wpdb; a row read for the comment store",
+                "body": "111dc0956c9f"
+            },
+            "comment_form": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentFormMarkup",
+                "why": "the closed and missing-post answers, the respond wrapper, title, cancel link, must-log-in or form body and their actions; markup by rules, only the echo stays",
+                "body": "51985b1dae57"
+            },
+            "comment_form_title": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentFormMarkup",
+                "why": "picks the plain or reply heading and links the parent's author; form markup by rules, the echo stays",
+                "doubt": "the parent is linked as #comment-N where the API uses get_comment_link, and the global $comment the API sets for the form's template tags is not set",
+                "body": "670470dc63fe"
+            },
+            "comment_text": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_comment_text through comment_text",
+                "body": "d72934468e3e"
+            },
+            "comments_popup_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "why": "chooses the comments-off span, the respond or comments address, the default wording with the screen-reader title and the anchor with its attributes filter; markup by rules",
+                "doubt": "$none false prints nothing where the API prints Comments Off with the title; an unset $zero, $one or $more becomes '' and blanks that text instead of its default; no password-required message",
+                "body": "5adb30da764c"
+            },
+            "comments_template": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "fills $wp_query's comment fields, $overridden_cpage and the template's local commenter variables, then requires comments.php in this scope; the query rules sit in the _minn helpers, which move",
+                "doubt": "comments_template filters the located file (or theme-compat) and requires the answer unchecked, where the API filters the stylesheet path and then falls back by file_exists to the parent theme and theme-compat",
+                "body": "30afaa7ef191"
+            },
+            "edit_comment_link": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps get_edit_comment_link in the comment-edit-link anchor, edit_comment_link, before and after, and echoes it for those who may edit",
+                "body": "601583b39b47"
+            },
+            "get_approved_comments": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "approved, oldest-first defaults for one post handed to get_comments by name; an empty post id answers []",
+                "body": "ca8772f30a26"
+            },
+            "get_cancel_comment_reply_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentFormMarkup",
+                "why": "the default text, hidden unless a reply is named, the request URL without the reply arguments and the anchor, then its filter; form markup by rules",
+                "body": "2f14eda15c2b"
+            },
+            "get_comment_ID": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "the current comment's id through get_comment_ID; a template-tag read beside CommentTags::author",
+                "doubt": "no comment gives '' where the API gives '0'",
+                "body": "5ba30d5bd3e3"
+            },
+            "get_comment_author_IP": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "reads the IP column and fires get_comment_author_IP; a template-tag read beside CommentTags::author",
+                "body": "d7732971f931"
+            },
+            "get_comment_author_email": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "reads the email column and fires get_comment_author_email; a template-tag read beside CommentTags::author",
+                "body": "9e52931912e6"
+            },
+            "get_comment_author_email_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "the comment_email filter, the empty and @ checks and the mailto anchor with before and after; markup by rules",
+                "doubt": "the address is scrambled by antispambot, which the API leaves to a comment_email filter, so the mailto and text differ (and vary per call)",
+                "body": "5ebc6ee83e14"
+            },
+            "get_comment_author_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "picks the rel words by whether the URL is on the site, filters them and builds the author anchor, then get_comment_author_link; markup by rules",
+                "doubt": "internal is a home_url() prefix test where the API compares hosts (wp_is_internal_link, wp_internal_hosts), so an http/https or listed-host mismatch gets external nofollow",
+                "body": "078cad84ff2f"
+            },
+            "get_comment_author_url_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "strips http://, www. and one trailing slash for the default text and builds the rel=external anchor with its filter; markup by rules",
+                "doubt": "a given link text keeps its http:// and trailing slash, where the API strips them from whatever text it shows",
+                "body": "deca5aff7896"
+            },
+            "get_comment_class": {
+                "verdict": "move",
+                "to": "Minn\\Content\\CommentClasses",
+                "gates": [
+                    "globals"
+                ],
+                "why": "looks up the author and post, advances the odd/even and thread counters and builds the list through CommentClasses::build, then comment_class; the counter rules join build, the globals stay readable",
+                "body": "c7dab701a493"
+            },
+            "get_comment_count": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\CommentQuery::breakdown",
+                "why": "renames wp_count_comments' keys; CommentQuery::breakdown already counts the same statuses and totals, only moderated becomes awaiting_moderation",
+                "doubt": "it goes through wp_count_comments and its filter, so a plugin's filtered counts (or a partial object) reach get_comment_count, which the API counts straight from the table; key order differs too",
+                "body": "02556181465c"
+            },
+            "get_comment_date": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "the default date format, the stored local date formatted and its get_comment_date filter; the twin of CommentTags::time",
+                "doubt": "only '' falls back to date_format; a null or false format reaches mysql2date where the API's empty() test uses the option",
+                "body": "2f8954655532"
+            },
+            "get_comment_excerpt": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "the password answer, tags and line breaks stripped, trimmed to comment_excerpt_length words and its filters; a template-tag rule beside CommentTags::author",
+                "body": "ea308a821380"
+            },
+            "get_comment_id_fields": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentFormMarkup",
+                "why": "builds the comment_post_ID and comment_parent hidden inputs from the post and the reply id, then comment_id_fields; form markup by rules",
+                "doubt": "with no post it still prints both fields with 0, where the API returns ''",
+                "body": "a0e72e71336b"
+            },
+            "get_comment_pages_count": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentPages",
+                "gates": [
+                    "globals"
+                ],
+                "why": "page arithmetic over page_comments, comments_per_page and threading (Walker_Comment's root count), or the main query's count; CommentPages owns the paging rules",
+                "body": "2f14794277e3"
+            },
+            "get_comment_reply_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "the depth and open checks, comment_reply_link_args, the login or reply anchor with its data attributes and page link, then comment_reply_link; markup by rules",
+                "body": "20257df5835e"
+            },
+            "get_comment_text": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "the comment's content through get_comment_text, '' for none; a template-tag read beside CommentTags::author",
+                "body": "763c24e321fa"
+            },
+            "get_comments_number_text": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "why": "picks the zero, one or more text by the count, substitutes % and fires comments_number; a template-tag rule beside PostTags::commentsNumber",
+                "doubt": "the default texts are bare English (no __ or _n), so the gettext filters and a translated site never see No Comments, 1 Comment, %s Comments",
+                "body": "a36eca2d664f"
+            },
+            "get_comments_pagenum_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentPages",
+                "gates": [
+                    "globals"
+                ],
+                "why": "keeps the bare permalink for the default page, else comment-page-N or ?cpage=N, then #comments and its filter; CommentPages::link builds the same address",
+                "doubt": "hard-codes comment-page- where the API uses $wp_rewrite->comments_pagination_base",
+                "body": "aed7343850d2"
+            },
+            "get_edit_comment_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\EditLinks",
+                "why": "the edit capability check and the admin comment.php address with the context's ampersand, then its filter; it belongs beside EditLinks::post",
+                "body": "262ace7dc88b"
+            },
+            "get_next_comments_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\ListingLinks",
+                "gates": [
+                    "globals"
+                ],
+                "why": "resolves the page and the page count (argument, main query, get_comment_pages_count), finds the next one and builds the anchor with its attributes filter; ListingLinks holds neighbours and anchor",
+                "body": "346e6142fd50"
+            },
+            "get_pending_comments_num": {
+                "verdict": "delegate",
+                "to": "Minn\\Content\\Comments::pendingCounts",
+                "why": "Comments::pendingCounts counts held comments per post; the facade only picks the one number for a scalar id",
+                "body": "44bd3a32532c"
+            },
+            "get_post_reply_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentTags",
+                "why": "the open check, then the login anchor or the moveForm reply anchor, before and after, through post_comments_link; markup by rules",
+                "doubt": "the sign-in link has no redirect, where the API passes get_permalink() to wp_login_url; default texts are untranslated",
+                "body": "a6b02ab77c94"
+            },
+            "get_previous_comments_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\ListingLinks",
+                "why": "resolves the page, finds the previous one and builds the anchor with its attributes filter and label; ListingLinks holds neighbours and anchor",
+                "body": "cf5d9516d1d6"
+            },
+            "get_the_comments_navigation": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "gates": [
+                    "globals"
+                ],
+                "why": "gates on the comment page count, builds the previous and next divs and wraps them in _navigation_markup with the aria label; beside PostNavigation::ariaLabel",
+                "doubt": "it reads $wp_query->max_num_comment_pages where the API asks get_comment_pages_count(), which also counts $wp_query->comments when the template set no page count",
+                "body": "e056f94f203b"
+            },
+            "get_the_comments_pagination": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "defaults and the aria label (PostNavigation::ariaLabel) around paginate_comments_links and _navigation_markup by name; forcing a string type is glue",
+                "body": "73580e372eb8"
+            },
+            "get_trackback_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostLinks",
+                "why": "trackback/ under a pretty permalink or the siteurl wp-trackback.php?p= address, through trackback_url; a post address rule beside PostLinks::permalink",
+                "body": "90ea7d8e2f95"
+            },
+            "paginate_comments_links": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentPages",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the singular gate, the cpage and total defaults and the pretty or ?cpage= base are comment paging rules; paginate_links is still called by name and the echo stays",
+                "doubt": "echoes only the plain type and returns after echoing, where the API echoes any non-array type and returns nothing; the base hard-codes comment-page- instead of comments_pagination_base",
+                "body": "6af6ece6122c"
+            },
+            "sanitize_comment_cookies": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "rewrites the commenter cookies in $_COOKIE through their pre_comment_author_* filters, unslashed and escaped; the superglobal plugins and wp_get_current_commenter read afterwards is the point",
+                "body": "401e2e9cc032"
+            },
+            "separate_comments": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentList",
+                "gates": [
+                    "refs"
+                ],
+                "why": "groups comments by type with trackbacks and pingbacks also under pings; a pure grouping rule for the list",
+                "body": "c8d0d08f1c56"
+            },
+            "trackback_rdf": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a fixed RDF block printed around the_permalink, the_title_attribute and trackback_url by name, skipped for the W3C validator's user agent",
+                "body": "08a206ca2306"
+            },
+            "trackback_url": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the deprecated-argument notice, then echo or return get_trackback_url by the flag",
+                "body": "7a143774f47a"
+            },
+            "wp_blacklist_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then wp_check_comment_disallowed_list",
+                "body": "7d95227ebb02"
+            },
+            "wp_check_comment_flood": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentChecks",
+                "why": "the moderator exemption, the hour window, comment_flood_filter, the trigger action and the 429 die are flood policy; Comments::lastCommentTime already reads the row",
+                "doubt": "the hour window counts back from the comment's $date where the API counts back from now",
+                "body": "3782914d8e8c"
+            },
+            "wp_comment_form_unfiltered_html_nonce": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_nonce_field and wp_print_inline_script_tag by name for a user with unfiltered_html; the capability test is glue",
+                "body": "f02fed0eb46b"
+            },
+            "wp_comments_personal_data_eraser": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "gates": [
+                    "globals"
+                ],
+                "why": "pages through the person's comments, asks wp_anonymize_comment and writes the anonymised columns through $wpdb with the cache cleared; erasure work for the engine",
+                "doubt": "a plugin's refusal message is not passed through esc_html, and a row the update fails to change is not reported as retained",
+                "body": "8590034cbbe0"
+            },
+            "wp_comments_personal_data_exporter": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "pages through the person's comments 500 at a time and builds export items with the comment link; beside PersonalData::item",
+                "doubt": "the email address is not trimmed, which the API does first",
+                "body": "648553aef0e8"
+            },
+            "wp_list_comments": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentList",
+                "gates": [
+                    "globals"
+                ],
+                "why": "chooses the comments (given or the query's), the type, the page and the cpage the links name, then runs the walker; the choices move, the loop globals and the walker call (a class plugins extend) stay with the echo flag",
+                "body": "7daa335f3a49"
+            },
+            "wp_new_comment_notify_moderator": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the held test and notify_moderator in front of the pluggable wp_notify_moderator, called by name so a replacement runs",
+                "body": "94373c61c2ff"
+            },
+            "wp_new_comment_notify_postauthor": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "comments_notify through notify_post_author and the approved test in front of the pluggable wp_notify_postauthor, called by name",
+                "doubt": "a note is judged by comments_notify and the approved test like a comment, so a note handed on under wp_notes_notify can still go unsent",
+                "body": "81ebbd2044bb"
+            },
+            "wp_new_comment_via_rest_notify_postauthor": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "for a note while wp_notes_notify is on, hands it to wp_new_comment_notify_postauthor by name; the type test is glue",
+                "body": "8aa0ed8eda03"
+            },
+            "wp_register_comment_personal_data_eraser": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "adds the comments eraser, named by its public callback, to the list it is handed",
+                "body": "71a285819fb2"
+            },
+            "wp_register_comment_personal_data_exporter": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "adds the comments exporter, named by its public callback, to the list it is handed",
+                "body": "3a0377247999"
+            },
+            "wp_send_note_notification": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Notices",
+                "why": "words the note-mention mail (subject, body, edit link) in the user's locale and sends it; the wording belongs with the engine's message templates, wp_mail stays by name",
+                "body": "a39d26cf0ce1"
+            },
+            "wp_set_comment_cookies": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentChecks",
+                "why": "writes or clears the three commenter cookies with their hash, path, domain, secure flag and lifetime filter; CommentChecks::currentCommenter reads the same cookies",
+                "doubt": "the default lifetime is YEAR_IN_SECONDS where the API's comment_cookie_lifetime default is 30000000 seconds",
+                "body": "3d5d084b7564"
+            }
+        },
         "compat.php": {
             "_mb_chr": {
                 "verdict": "move",
