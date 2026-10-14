@@ -2573,6 +2573,285 @@
                 "body": "3734a8c8e142"
             }
         },
+        "link-template.php": {
+            "_minn_link_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Html",
+                "why": "an anchor's attribute string, href escaped as a URL; the walkers share it",
+                "body": "08db4db5be4c"
+            },
+            "_navigation_markup": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "why": "the navigation wrapper markup and its template filter",
+                "body": "3858a38e1107"
+            },
+            "adjacent_posts_rel_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "echoes get_adjacent_post_rel_link both ways",
+                "body": "1c23706ab36d"
+            },
+            "adjacent_posts_rel_link_wp_head": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "adjacent_posts_rel_link on a single view that is not an attachment",
+                "body": "e7ecc0a8b39a"
+            },
+            "edit_bookmark_link": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps get_edit_bookmark_link in a link with its filter for a user who manages links",
+                "body": "91e817570cdc"
+            },
+            "edit_tag_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "edit_term_link returned, then its filter, between before and after",
+                "body": "3a0a86013016"
+            },
+            "edit_term_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\EditLinks",
+                "why": "a term's edit link for a user who may edit it, with its filter; echo or return stays",
+                "body": "08ff6d5a823a"
+            },
+            "get_adjacent_post_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "why": "the adjacent post's link with its title fallback and filters around PostNavigation::previous and next",
+                "body": "9f5544cd6af8"
+            },
+            "get_adjacent_post_rel_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "why": "the prev or next rel link, an attachment's parent as previous, with its filter",
+                "body": "6cd2fd3307b7"
+            },
+            "get_archives_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Archives",
+                "why": "an archive link's markup by format (link, option, html, custom) with its filter",
+                "body": "f61764bcd463"
+            },
+            "get_author_feed_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FeedLinks",
+                "why": "an author's feed address, plain or pretty, then its filter",
+                "body": "10513a258447"
+            },
+            "get_edit_bookmark_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\EditLinks",
+                "why": "a link's edit address for a user who manages links, then its filter",
+                "body": "f5d7ed76bba5"
+            },
+            "get_next_posts_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\ListingLinks",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the next posts link with its attributes filter and label, around ListingLinks",
+                "body": "a30ea2ec0698"
+            },
+            "get_next_posts_page_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\ListingLinks",
+                "why": "the next listing page's address unless on the last or a single view",
+                "body": "adadac713d4e"
+            },
+            "get_pagenum_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Pagination",
+                "gates": [
+                    "globals"
+                ],
+                "why": "a page number's address from the request URI, plain or pretty, its paged argument replaced, then its filter and escaping",
+                "body": "49dec13a71a5"
+            },
+            "get_parent_theme_file_path": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "a parent theme file's path, then its filter",
+                "body": "c7f482b3d877"
+            },
+            "get_parent_theme_file_uri": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "a parent theme file's address, then its filter",
+                "body": "fdc03552a0b5"
+            },
+            "get_posts_nav_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\ListingLinks",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the previous and next listing links with the separator dropped at the ends",
+                "body": "88d5fe9b45a1"
+            },
+            "get_previous_posts_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\ListingLinks",
+                "why": "the previous posts link with its attributes filter and label, around ListingLinks",
+                "body": "4fabadf8fdd1"
+            },
+            "get_previous_posts_page_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\ListingLinks",
+                "why": "the previous listing page's address unless on a single view",
+                "body": "caf3f6b29d71"
+            },
+            "get_privacy_policy_url": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PrivacyPolicy",
+                "why": "the privacy page's address when it is published, then its filter",
+                "body": "05f3645683fb"
+            },
+            "get_rest_url": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RestUrl",
+                "why": "the REST address from the home URL, prefix and path, then its filter",
+                "doubt": "an empty branch stands where the API switches the address to https when the request is SSL on the same host; a probe over https with an http home would show whether the engine's scheme already matches",
+                "body": "c4aa9d9ab9ef"
+            },
+            "get_search_comments_feed_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FeedLinks",
+                "why": "a search's comments feed address, then its filter",
+                "body": "6f4b148032f2"
+            },
+            "get_search_feed_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FeedLinks",
+                "why": "a search's feed address, its type named even when default, then its filter",
+                "body": "48156ecac6ef"
+            },
+            "get_search_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Permalinks",
+                "why": "a search's address, plain or pretty with slashes kept, then its filter",
+                "body": "f9bf7fa53c17"
+            },
+            "get_term_feed_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FeedLinks",
+                "why": "a term's feed address, plain or pretty, through the filter for its taxonomy",
+                "body": "2d1b2898054b"
+            },
+            "get_the_post_navigation": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "why": "the post navigation's defaults and both links, wrapped in the navigation markup",
+                "body": "11837e18af54"
+            },
+            "get_the_posts_navigation": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "gates": [
+                    "globals"
+                ],
+                "why": "older and newer posts links in their slots, wrapped in the navigation markup",
+                "body": "172f83abb1f3"
+            },
+            "get_the_posts_pagination": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Pagination",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the posts pagination defaults and filter around paginate_links, wrapped in the navigation markup",
+                "body": "82e4255c45a6"
+            },
+            "get_the_privacy_policy_link": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PrivacyPolicy",
+                "why": "the privacy page link's markup and its filter",
+                "body": "9c7754b87633"
+            },
+            "get_theme_file_path": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "a theme file's path, the child's when it has the file, else the parent's, then its filter",
+                "body": "d5695c02a6d1"
+            },
+            "get_theme_file_uri": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "a theme file's address, the child's when it has the file, else the parent's, then its filter",
+                "body": "1bf90003d063"
+            },
+            "next_posts": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "get_next_posts_page_link escaped, echoed or returned",
+                "body": "1685be215dd7"
+            },
+            "paginate_links": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Pagination",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the pagination defaults from the main query and rewrite, the carried query arguments and each link's filter around Pagination::links",
+                "body": "39dd2452a2fd"
+            },
+            "permalink_anchor": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostTags",
+                "why": "the post's anchor by id or title mode",
+                "body": "18a301ba852c"
+            },
+            "previous_posts": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "get_previous_posts_page_link escaped, echoed or returned",
+                "body": "e2504d1fa608"
+            },
+            "rel_canonical": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "prints wp_get_canonical_url as the canonical link on a singular view",
+                "body": "1aea1760712e"
+            },
+            "the_shortlink": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps wp_get_shortlink in a link with its text and filter, between before and after",
+                "body": "ab6c8a63f7b1"
+            },
+            "user_admin_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "network_site_url with the path appended, then its filter",
+                "body": "27c0913a45ca"
+            },
+            "wp_force_plain_post_permalink": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Permalinks",
+                "why": "whether a post's address must be plain by its status's visibility, privacy or protection",
+                "body": "2f0b6a2cc959"
+            },
+            "wp_get_canonical_url": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Canonical",
+                "why": "a post's canonical address with its page and comment page, then its filter",
+                "body": "8cc5534360bd"
+            },
+            "wp_lostpassword_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "add_query_arg over network_site_url, then its filter",
+                "body": "1ddd893b7d5f"
+            },
+            "wp_shortlink_wp_head": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "prints wp_get_shortlink as the shortlink link",
+                "body": "379464fc233e"
+            }
+        },
         "load.php": {
             "_minn_browser_globals": {
                 "verdict": "keep",
