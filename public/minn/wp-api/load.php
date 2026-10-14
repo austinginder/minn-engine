@@ -750,3 +750,13 @@ Minn\Runtime\Handoff::bind([
     'commentInstance' => static fn ($id) => WP_Comment::get_instance($id),
     'newUser' => static fn (...$args) => new WP_User(...$args),
 ]);
+
+// The queries, made through Minn\Runtime\Handoff like the records.
+Minn\Runtime\Handoff::bind([
+    'newQuery' => static fn (...$args) => new WP_Query(...$args),
+    'newCommentQuery' => static fn (...$args) => new WP_Comment_Query(...$args),
+    'newUserQuery' => static fn (...$args) => new WP_User_Query(...$args),
+    'newTermQuery' => static fn (...$args) => new WP_Term_Query(...$args),
+    'newMetaQuery' => static fn (...$args) => new WP_Meta_Query(...$args),
+    'newDateQuery' => static fn (...$args) => new WP_Date_Query(...$args),
+]);

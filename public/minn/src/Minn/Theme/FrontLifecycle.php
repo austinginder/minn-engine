@@ -8,7 +8,9 @@ namespace Minn\Theme;
 use Minn\Http\NoCache;
 use Minn\Http\Response;
 use Minn\Objects\Post;
+use Minn\Objects\Query;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
@@ -66,7 +68,7 @@ final class FrontLifecycle
      * status and no-cache headers follow. A feed is never a 404: one of
      * nothing is an empty feed.
      */
-    public static function handle404(\WP_Query $query, bool $notFound): void
+    public static function handle404(Query $query, bool $notFound): void
     {
         if (Runtime::hooks()->filter('pre_handle_404', [false, $query]) !== false || $query->is_404()) {
             return;
@@ -110,8 +112,8 @@ final class FrontLifecycle
             $headers = array_merge($headers, $feed);
             $status = $fresh ? 304 : null;
         }
-        if (\is_singular()) {
-            $post = \get_queried_object();
+        if (MainQuery::current()->is_singular()) {
+            $post = MainQuery::current()->get_queried_object();
             if ($post instanceof Post && PostTags::pingsOpen($post)) {
                 $headers['X-Pingback'] = \get_bloginfo('pingback_url', 'display');
             }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Objects\Comment;
+use Minn\Objects\CommentsQuery;
 use Minn\Runtime\CommentEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -50,7 +51,7 @@ final readonly class CommentsController
         $this->allowed($wp, $context, (string) $request->query('author_email', ''));
         $registered = (array) Runtime::hooks()->filter('rest_comment_collection_params', [Args::CONTEXT + Args::COMMENTS]);
         $args = (array) Runtime::hooks()->filter('rest_comment_query', [CommentListArgs::of($wp, $registered, $request->method->value), $wp]);
-        $query = new \WP_Comment_Query();
+        $query = Handoff::newCommentQuery();
         $found = $query->query($args);
         [$total, $pages] = self::totals($query, $args, (int) $wp['per_page']);
         if ($request->method === Method::Head) {
@@ -73,14 +74,14 @@ final readonly class CommentsController
      * @param array<string, mixed> $args
      * @return array{0: int, 1: int}
      */
-    private static function totals(\WP_Comment_Query $query, array $args, int $perPage): array
+    private static function totals(CommentsQuery $query, array $args, int $perPage): array
     {
         $total = (int) $query->found_comments;
         if ($total >= 1) {
             return [$total, (int) $query->max_num_pages];
         }
         unset($args['number'], $args['offset']);
-        $total = (int) (new \WP_Comment_Query())->query(['count' => true, 'orderby' => 'none'] + $args);
+        $total = (int) (Handoff::newCommentQuery())->query(['count' => true, 'orderby' => 'none'] + $args);
         return [$total, $perPage > 0 ? (int) ceil($total / $perPage) : 0];
     }
 

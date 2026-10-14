@@ -7,6 +7,7 @@ namespace Minn\Theme;
 use Minn\Content\PostClasses;
 use Minn\Db;
 use Minn\Objects\Post;
+use Minn\Objects\Query;
 use Minn\Objects\Term;
 use Minn\Objects\User;
 
@@ -35,7 +36,7 @@ final readonly class QueryClasses
      *
      * @return list<string>
      */
-    public function of(\WP_Query $query): array
+    public function of(Query $query): array
     {
         $object = $query->get_queried_object();
         $id = (int) $query->get_queried_object_id();
@@ -68,7 +69,7 @@ final readonly class QueryClasses
     }
 
     /** @return list<string> */
-    private function singular(Post $post, \WP_Query $query): array
+    private function singular(Post $post, Query $query): array
     {
         if ($post->post_type !== 'page') {
             $classes = ['single', 'single-' . PostClasses::htmlClass($post->post_type), 'postid-' . $post->ID];
@@ -97,7 +98,7 @@ final readonly class QueryClasses
     }
 
     /** @return list<string> */
-    private static function archive(\WP_Query $query, mixed $object, int $id): array
+    private static function archive(Query $query, mixed $object, int $id): array
     {
         if ($query->is_post_type_archive()) {
             $type = $query->get('post_type');
@@ -124,7 +125,7 @@ final readonly class QueryClasses
      *
      * @return list<string>
      */
-    private static function paging(\WP_Query $query): array
+    private static function paging(Query $query): array
     {
         $page = max((int) $query->get('paged'), (int) $query->get('page'));
         if ($page < 2 || $query->is_404()) {

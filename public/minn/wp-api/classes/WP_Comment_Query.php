@@ -9,7 +9,7 @@ use Minn\Runtime\CommentQueryRunner;
  * clauses and request, and threads the results when asked.
  */
 #[AllowDynamicProperties]
-class WP_Comment_Query
+class WP_Comment_Query implements \Minn\Objects\CommentsQuery
 {
     public $request;
     public $meta_query = false;

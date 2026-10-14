@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Content\TagBalancer;
 use Minn\Objects\Post;
+use Minn\Objects\Query;
 
 /**
  * The loop's view of a post, as the reference's generate_postdata and
@@ -20,6 +21,36 @@ use Minn\Objects\Post;
 final class PostData
 {
     /**
+     * A post made the one being read (setup_postdata): through the query
+     * being answered when there is one (which tells the_post), else its
+     * globals set here; false for no post.
+     */
+    public static function setup(mixed $post): mixed
+    {
+        $query = $GLOBALS['wp_query'] ?? null;
+        if ($query instanceof Query) {
+            return $query->setup_postdata($post);
+        }
+        $post = Records::post($post);
+        if ($post === null) {
+            return false;
+        }
+        $GLOBALS['post'] = $post;
+        Runtime::current()->set('post', $post);
+        self::globals($post);
+        return true;
+    }
+
+    /** The loop's globals for a post: its id, author, dates, pages and whether more shows. */
+    public static function globals(Post $post): void
+    {
+        $elements = self::generate($post);
+        foreach (['id', 'authordata', 'currentday', 'currentmonth', 'page', 'pages', 'multipage', 'more', 'numpages'] as $name) {
+            $GLOBALS[$name] = $elements[$name];
+        }
+    }
+
+    /**
      * id, authordata, currentday, currentmonth, page, pages, multipage,
      * more, numpages. The page comes from the query given (the main query
      * otherwise); more is set on a single, a page or a feed, or past the
@@ -27,7 +58,7 @@ final class PostData
      *
      * @return array<string, mixed>
      */
-    public static function generate(Post $post, ?\WP_Query $query = null): array
+    public static function generate(Post $post, ?Query $query = null): array
     {
         $content = str_replace("\n<!--nextpage-->\n", '<!--nextpage-->', (string) $post->post_content);
         $content = str_replace(["\n<!--nextpage-->", "<!--nextpage-->\n"], '<!--nextpage-->', $content);
@@ -35,7 +66,7 @@ final class PostData
             $content = substr($content, strlen('<!--nextpage-->'));
         }
         $pages = (array) Runtime::hooks()->filter('content_pagination', [explode('<!--nextpage-->', $content), $post]);
-        $page = max(1, (int) ($query === null ? \get_query_var('page') : $query->get('page')));
+        $page = max(1, (int) ($query === null ? MainQuery::current()->get('page') : $query->get('page')));
         return [
             'id' => (int) $post->ID,
             'authordata' => Handoff::user((int) $post->post_author),
@@ -44,7 +75,7 @@ final class PostData
             'page' => $page,
             'pages' => $pages,
             'multipage' => count($pages) > 1 ? 1 : 0,
-            'more' => \is_single() || \is_page() || \is_feed() || (count($pages) > 1 && $page > 1) ? 1 : 0,
+            'more' => MainQuery::current()->is_single() || MainQuery::current()->is_page() || MainQuery::current()->is_feed() || (count($pages) > 1 && $page > 1) ? 1 : 0,
             'numpages' => count($pages),
         ];
     }

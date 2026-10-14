@@ -41,10 +41,11 @@ the WordPress runtime plugins load against
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 194 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 231 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 385 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
+| [`MainQuery`](#mainquery) | final class | 16 | The query the request answers ($wp_query), as WordPress keeps it: the |
 | [`MenuEvents`](#menuevents) | final readonly class | 225 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
 | [`Meta`](#meta) | final readonly class | 242 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
@@ -69,7 +70,7 @@ the WordPress runtime plugins load against
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 272 | Loads the site's plugins into the runtime the way the reference does: |
-| [`PostData`](#postdata) | final class | 68 | The loop's view of a post, as the reference's generate_postdata and |
+| [`PostData`](#postdata) | final class | 98 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 165 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 211 | Post addresses as the reference's link functions build them (probe |
@@ -125,7 +126,7 @@ the WordPress runtime plugins load against
 | [`UserInsert`](#userinsert) | final readonly class | 122 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserOrder`](#userorder) | final class | 43 | A user query's ORDER BY keys as the reference writes them (probe |
 | [`UserQueryRoles`](#userqueryroles) | final class | 91 | A user query's roles and capabilities as the meta clauses the reference |
-| [`UserQueryRunner`](#userqueryrunner) | final class | 218 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
+| [`UserQueryRunner`](#userqueryrunner) | final class | 229 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
 | [`UserSave`](#usersave) | final class | 74 | An account's fields through the filters the reference's wp_insert_user |
 | [`VersionCheck`](#versioncheck) | final class | 27 | Whether the WordPress version Minn reports and the PHP it runs on meet a |
 | [`WidgetAreas`](#widgetareas) | final class | 184 | The widgets helper functions as the reference answers them (probe |
@@ -1018,15 +1019,15 @@ first, as many as a feed carries.
 
 Used by: `Minn\Runtime\PostQuery`
 
-### static `listing(WP_Query $query, Minn\Runtime\PostQueryParts $parts, object $wpdb): void`
+### static `listing(Minn\Objects\Query $query, Minn\Runtime\PostQueryParts $parts, object $wpdb): void`
 
 A listing's comments, then its posts narrowed to theirs: the posts query's join and where as they stand after posts_join.
 
-### static `single(WP_Query $query, object $wpdb): void`
+### static `single(Minn\Objects\Query $query, object $wpdb): void`
 
 A single post's comments, once the query has found the post.
 
-Internals: `request()` (private, line 49), `keep()` (private, line 60)
+Internals: `request()` (private, line 51), `keep()` (private, line 62)
 
 
 ## CommentForm
@@ -1137,11 +1138,11 @@ __construct(object $wpdb)
 ```
 
 
-### `run(WP_Comment_Query $query): mixed`
+### `run(Minn\Objects\CommentsQuery $query): mixed`
 
 Runs the query, as WP_Comment_Query::get_comments() does: a count, ids, or comments.
 
-### `ids(WP_Comment_Query $query, array $meta): array|int`
+### `ids(Minn\Objects\CommentsQuery $query, array $meta): array|int`
 
 The comment IDs for the query's vars (get_comment_ids), or the count
 when it counts; the request is written, and the found rows read when
@@ -1150,7 +1151,7 @@ the request counts them and found some.
 - `@param array{join?: string, where?: string} $meta`
 - `@return list<int>|int`
 
-Internals: `request()` (private, line 90), `comments()` (private, line 122)
+Internals: `request()` (private, line 91), `comments()` (private, line 123)
 
 
 ## CommentQueryWhere
@@ -1178,7 +1179,7 @@ __construct(object $wpdb)
 ```
 
 
-### `pieces(WP_Comment_Query $query, array $meta): array`
+### `pieces(Minn\Objects\CommentsQuery $query, array $meta): array`
 
 The WHERE pieces (joined with AND by the caller) and the posts join
 ('' when no post field is asked after).
@@ -1192,7 +1193,7 @@ A LIKE test over the columns (get_search_sql), as an AND clause. @param list<str
 
 - `@param list<string> $columns`
 
-Internals: `approved()` (private, line 76), `post()` (private, line 96), `types()` (private, line 111), `parentAndUser()` (private, line 139), `search()` (private, line 152), `posts()` (private, line 175), `given()` (private, line 195), `listOf()` (private, line 201), `bare()` (private, line 210)
+Internals: `approved()` (private, line 77), `post()` (private, line 97), `types()` (private, line 112), `parentAndUser()` (private, line 140), `search()` (private, line 153), `posts()` (private, line 176), `given()` (private, line 196), `listOf()` (private, line 202), `bare()` (private, line 211)
 
 
 ## CommentTags
@@ -1231,7 +1232,7 @@ one lists the top level and then each level in its query's order.
 
 Used by: `Minn\Runtime\CommentQueryRunner`
 
-### `fill(WP_Comment_Query $query, array $top): array`
+### `fill(Minn\Objects\CommentsQuery $query, array $top): array`
 
 The query's top-level comments with their descendants filled in.
 
@@ -1662,7 +1663,7 @@ plugins have had their chance), so a plugin's version answers the engine
 as it answers WordPress. Arguments pass as given, so each answer's own
 defaults hold.
 
-Used by: `Minn\Auth\Can`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Theme\FrontLifecycle`
+Used by: `Minn\Auth\Can`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Theme\FrontLifecycle`
 
 
 ### static `bind(array $answers): void`
@@ -1671,7 +1672,8 @@ Binds answers by name: currentUser, signedIn, user, userBy,
 becomeUser, cacheUsers, authenticate, setPassword, password, hash,
 createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
 factories newError, newPost, postInstance, newTerm, newComment,
-commentInstance, newUser.
+commentInstance, newUser, and the query factories newQuery,
+newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery.
 
 - `@param array<string, Closure> $answers`
 
@@ -1787,7 +1789,31 @@ The comment object for an id, or false (WP_Comment::get_instance).
 
 A user object by id (or login, with no id), nobody for 0 (new WP_User).
 
-Internals: `answer()` (private, line 215)
+### static `newQuery(mixed ...$args): Minn\Objects\Query`
+
+A posts query, run at once when given its variables (new WP_Query).
+
+### static `newCommentQuery(mixed ...$args): Minn\Objects\CommentsQuery`
+
+A comments query, run at once when given its variables (new WP_Comment_Query).
+
+### static `newUserQuery(mixed ...$args): Minn\Objects\UsersQuery`
+
+A users query, run at once when given its variables (new WP_User_Query).
+
+### static `newTermQuery(mixed ...$args): Minn\Objects\TermsQuery`
+
+A terms query, run at once when given its variables (new WP_Term_Query).
+
+### static `newMetaQuery(mixed ...$args): object`
+
+A meta query from its clauses (new WP_Meta_Query).
+
+### static `newDateQuery(mixed ...$args): object`
+
+A date query from its clauses and column (new WP_Date_Query).
+
+Internals: `answer()` (private, line 256)
 
 
 ## Heartbeat
@@ -2031,6 +2057,21 @@ HTML with its directives resolved on the server.
 Internals: `namespace()` (private, line 144), `tokenize()` (private, line 155), `walk()` (private, line 215), `applyDirectives()` (private, line 277), `bind()` (private, line 339), `interactiveNamespace()` (private, line 365), `pushContext()` (private, line 378), `evaluate()` (private, line 395), `expandEach()` (private, line 436), `markChildren()` (private, line 470), `attributeMap()` (private, line 502), `relative()` (private, line 515), `escape()` (private, line 520), `camel()` (private, line 525), `follow()` (private, line 536)
 
 
+## MainQuery
+
+`final class Minn\Runtime\MainQuery` · `public/minn/src/Minn/Runtime/MainQuery.php`
+
+The query the request answers ($wp_query), as WordPress keeps it: the
+main query ($wp_the_query) unless a plugin swapped in another, an empty
+one made when there is none yet.
+
+Used by: `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTemplates`, `Minn\Front\SitemapController`, `Minn\Front\SitemapRequest`, `Minn\Runtime\CommentPages`, `Minn\Runtime\PostData`, `Minn\Theme\ClassicContent`, `Minn\Theme\FrontLifecycle`
+
+### static `current(): Minn\Objects\Query`
+
+The query being answered: $wp_query, else the main one, made empty when there is none.
+
+
 ## MenuEvents
 
 `final readonly class Minn\Runtime\MenuEvents` · `public/minn/src/Minn/Runtime/MenuEvents.php`
@@ -2147,7 +2188,7 @@ and current_item_ancestor flags for what the main query has in view.
 - `@param list<object> $items`
 - `@return list<object>`
 
-Internals: `own()` (private, line 66), `related()` (private, line 114), `isCurrent()` (private, line 146), `view()` (private, line 164), `postTerms()` (private, line 203), `ancestors()` (private, line 221), `currentUrl()` (private, line 226)
+Internals: `own()` (private, line 67), `related()` (private, line 115), `isCurrent()` (private, line 147), `view()` (private, line 165), `postTerms()` (private, line 204), `ancestors()` (private, line 222), `currentUrl()` (private, line 227)
 
 
 ## Meta
@@ -3211,7 +3252,19 @@ the content of that page, cut at the more tag with a more link (or run
 on past it when "more" is set), the teaser dropped when asked or marked
 <!--noteaser-->.
 
-### static `generate(Minn\Objects\Post $post, ?WP_Query $query = NULL): array`
+Used by: `Minn\Rest\BlockRendererController`, `Minn\Rest\RenderedFields`
+
+### static `setup(mixed $post): mixed`
+
+A post made the one being read (setup_postdata): through the query
+being answered when there is one (which tells the_post), else its
+globals set here; false for no post.
+
+### static `globals(Minn\Objects\Post $post): void`
+
+The loop's globals for a post: its id, author, dates, pages and whether more shows.
+
+### static `generate(Minn\Objects\Post $post, ?Minn\Objects\Query $query = NULL): array`
 
 id, authordata, currentday, currentmonth, page, pages, multipage,
 more, numpages. The page comes from the query given (the main query
@@ -3542,12 +3595,12 @@ __construct(Minn\Db $db)
 ```
 
 
-### `run(WP_Query $query, object $wpdb, mixed $urlSearch): mixed`
+### `run(Minn\Objects\Query $query, object $wpdb, mixed $urlSearch): mixed`
 
 Runs a query object's variables and fills it in: the posts (or ids, or
 id => parent), the request, the counts. Returns what get_posts returns.
 
-### `search(WP_Query $query, array $q, mixed $urlSearch): string`
+### `search(Minn\Objects\Query $query, array $q, mixed $urlSearch): string`
 
 A search's WHERE fragment, settling the search variables (the terms,
 how many the string split into, the title matches its order ranks by).
@@ -3560,7 +3613,7 @@ The search stopwords, translated and filtered. @return list<string>
 
 - `@return list<string>`
 
-Internals: `prepare()` (private, line 51), `defaults()` (private, line 69), `pageSize()` (private, line 122), `clauses()` (private, line 152), `taxonomies()` (private, line 186), `searchOrder()` (private, line 251), `filtered()` (private, line 269), `through()` (private, line 292), `paging()` (private, line 302), `execute()` (private, line 318), `idsOnly()` (private, line 353), `select()` (private, line 375), `foundPosts()` (private, line 396)
+Internals: `prepare()` (private, line 52), `defaults()` (private, line 70), `pageSize()` (private, line 123), `clauses()` (private, line 153), `taxonomies()` (private, line 187), `searchOrder()` (private, line 252), `filtered()` (private, line 270), `through()` (private, line 293), `paging()` (private, line 303), `execute()` (private, line 319), `idsOnly()` (private, line 354), `select()` (private, line 376), `foundPosts()` (private, line 397)
 
 
 ## PostQueryParts
@@ -3628,7 +3681,7 @@ the post objects, count and current post set.
 Used by: `Minn\Runtime\PostQuery`
 
 ```php
-__construct(WP_Query $query, Minn\Runtime\PostQueryParts $parts)
+__construct(Minn\Objects\Query $query, Minn\Runtime\PostQueryParts $parts)
 ```
 
 
@@ -3638,7 +3691,7 @@ Settles the posts a query found: status check, stickies, the_posts, then the cou
 
 - `@param array<string, mixed> $q`
 
-Internals: `singleStatus()` (private, line 45), `visible()` (private, line 67), `stickies()` (private, line 95)
+Internals: `singleStatus()` (private, line 46), `visible()` (private, line 68), `stickies()` (private, line 96)
 
 
 ## PostQueryStatus
@@ -3657,7 +3710,7 @@ the signed-in user may read. A single post: the type clause alone.
 Used by: `Minn\Runtime\PostQuery`
 
 ```php
-__construct(WP_Query $query, Minn\Runtime\PostQueryParts $parts)
+__construct(Minn\Objects\Query $query, Minn\Runtime\PostQueryParts $parts)
 ```
 
 
@@ -3672,7 +3725,7 @@ Appends the type and status clause. @param array<string, mixed> $q
 
 - `@param array<string, mixed> $q`
 
-Internals: `typeWhere()` (private, line 64), `cap()` (private, line 90), `named()` (private, line 97), `listing()` (private, line 141), `privateStatuses()` (private, line 170)
+Internals: `typeWhere()` (private, line 65), `cap()` (private, line 91), `named()` (private, line 98), `listing()` (private, line 142), `privateStatuses()` (private, line 171)
 
 
 ## PostQueryTax
@@ -3688,7 +3741,7 @@ taxonomy and term variables set from the terms queried.
 
 Used by: `Minn\Runtime\PostQuery`
 
-### static `clauses(WP_Query $query, array $q): array`
+### static `clauses(Minn\Objects\Query $query, array $q): array`
 
 The tax query a set of variables makes, settling the variables it reads.
 
@@ -3704,7 +3757,7 @@ string, several sorted, none as `any`.
 - `@param list<string> $taxonomies`
 - `@return string|list<string>`
 
-### static `compat(WP_Query $query, array $q, array $queried): void`
+### static `compat(Minn\Objects\Query $query, array $q, array $queried): void`
 
 The compatibility variables the queried terms set: taxonomy and term
 (or term_id) from the first taxonomy other than category and post_tag
@@ -3712,7 +3765,7 @@ when none is set, and cat, category_name and tag_id from those two.
 
 - `@param array<string, array{terms?: list<mixed>, field?: string}> $queried`
 
-Internals: `queryVar()` (private, line 56), `cat()` (private, line 71), `categoryLists()` (private, line 88), `tag()` (private, line 111), `tagLists()` (private, line 131)
+Internals: `queryVar()` (private, line 57), `cat()` (private, line 72), `categoryLists()` (private, line 89), `tag()` (private, line 112), `tagLists()` (private, line 132)
 
 
 ## PostQueryWhere
@@ -3731,7 +3784,7 @@ handed and settles the variables it reads, as the reference leaves them.
 Used by: `Minn\Runtime\PostQuery`
 
 ```php
-__construct(WP_Query $query, Minn\Runtime\PostQueryParts $parts, string $table)
+__construct(Minn\Objects\Query $query, Minn\Runtime\PostQueryParts $parts, string $table)
 ```
 
 
@@ -3763,7 +3816,7 @@ A password, or whether there is one, and comment and ping status. @param array<s
 
 - `@param array<string, mixed> $q`
 
-Internals: `nameList()` (private, line 89), `typeQueryVar()` (private, line 99), `pagename()` (private, line 121), `ids()` (private, line 160), `authorName()` (private, line 235), `commentCount()` (private, line 248)
+Internals: `nameList()` (private, line 90), `typeQueryVar()` (private, line 100), `pagename()` (private, line 122), `ids()` (private, line 161), `authorName()` (private, line 236), `commentCount()` (private, line 249)
 
 
 ## PostRevisions
@@ -4037,7 +4090,7 @@ id (or the one being read), made from a row or an object, and given back
 as the object, an associative array (ARRAY_A) or a list (ARRAY_N); and
 whether a value is a list of errors.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Cli\CronCommand`, `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Media\Icons`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\CommentObject`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentTags`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`
+Used by: `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Cli\CronCommand`, `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Media\Icons`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\CommentObject`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentTags`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`
 
 ### static `post(mixed $post = NULL, mixed $output = 'OBJECT', mixed $filter = 'raw'): mixed`
 
@@ -5576,11 +5629,11 @@ Used by: `Minn\Runtime\TermQueryRunner`
 
 ASC when asked for, DESC for anything else.
 
-### static `clause(WP_Term_Query $query, string $raw): string`
+### static `clause(Minn\Objects\TermsQuery $query, string $raw): string`
 
 The ORDER BY body for an orderby value, filtered as the reference filters it.
 
-### static `meta(WP_Term_Query $query, string $orderby): string`
+### static `meta(Minn\Objects\TermsQuery $query, string $orderby): string`
 
 A meta key, meta_value[_num] or a named meta clause as SQL (parse_orderby_meta), or '' when the query has no such clause.
 
@@ -5691,12 +5744,12 @@ all of it through terms_clauses, terms_pre_query, and the results shaped
 by TermQueryTree (children, padded counts, the empty hidden, the page).
 
 
-### `run(WP_Term_Query $query, object $wpdb): mixed`
+### `run(Minn\Objects\TermsQuery $query, object $wpdb): mixed`
 
 Runs a term query object's variables: its terms in the shape the
 fields ask for, a count, or what a plugin answered first.
 
-Internals: `lists()` (private, line 77), `hierarchical()` (private, line 89), `settle()` (private, line 103), `inHierarchy()` (private, line 120), `order()` (private, line 131), `clauses()` (private, line 142), `exclusions()` (private, line 169), `names()` (private, line 190), `likes()` (private, line 209), `select()` (private, line 226), `limits()` (private, line 255), `meta()` (private, line 265)
+Internals: `lists()` (private, line 78), `hierarchical()` (private, line 90), `settle()` (private, line 104), `inHierarchy()` (private, line 121), `order()` (private, line 132), `clauses()` (private, line 143), `exclusions()` (private, line 170), `names()` (private, line 191), `likes()` (private, line 210), `select()` (private, line 227), `limits()` (private, line 256), `meta()` (private, line 266)
 
 
 ## TermQueryTree
@@ -6329,11 +6382,11 @@ Used by: `Minn\Runtime\UserQueryRunner`
 
 ASC when asked for, DESC for anything else.
 
-### static `clause(WP_User_Query $query, string $orderby, object $wpdb): string`
+### static `clause(Minn\Objects\UsersQuery $query, string $orderby, object $wpdb): string`
 
 The column or expression one orderby key stands for.
 
-Internals: `postCount()` (private, line 52)
+Internals: `postCount()` (private, line 53)
 
 
 ## UserQueryRoles
@@ -6388,7 +6441,14 @@ __construct(object $wpdb)
 ```
 
 
-### `prepare(WP_User_Query $query): void`
+### static `fillVars(mixed $args): array`
+
+A users query's variables with their defaults filled in
+(WP_User_Query::fill_query_vars), on this one site.
+
+- `@return array<string, mixed>`
+
+### `prepare(Minn\Objects\UsersQuery $query): void`
 
 Builds the query's pieces from its variables, as prepare_query does.
 
@@ -6399,11 +6459,11 @@ by LIKE with wildcards at the leading or trailing end, or both.
 
 - `@param list<string> $columns`
 
-### `query(WP_User_Query $query): void`
+### `query(Minn\Objects\UsersQuery $query): void`
 
 Runs the query: users_pre_query may answer it; the count follows; the results take the fields' shape.
 
-Internals: `fields()` (private, line 67), `published()` (private, line 82), `names()` (private, line 93), `meta()` (private, line 110), `order()` (private, line 143), `search()` (private, line 169)
+Internals: `fields()` (private, line 79), `published()` (private, line 94), `names()` (private, line 105), `meta()` (private, line 122), `order()` (private, line 155), `search()` (private, line 181)
 
 
 ## UserSave

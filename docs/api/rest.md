@@ -435,7 +435,7 @@ Route: `POST /wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+} (public)`
 
 The block's markup, as {"rendered": "..."}.
 
-Internals: `refuseInvalid()` (private, line 66), `permit()` (private, line 84), `rendered()` (private, line 98)
+Internals: `refuseInvalid()` (private, line 67), `permit()` (private, line 85), `rendered()` (private, line 99)
 
 
 ## BlockTypesController
@@ -798,7 +798,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 76), `events()` (private, line 153), `allowed()` (private, line 222), `readablePost()` (private, line 263), `readable()` (private, line 272), `plainComment()` (private, line 282), `prepared()` (private, line 304)
+Internals: `totals()` (private, line 77), `events()` (private, line 154), `allowed()` (private, line 223), `readablePost()` (private, line 264), `readable()` (private, line 273), `plainComment()` (private, line 283), `prepared()` (private, line 305)
 
 
 ## Context
@@ -1933,7 +1933,7 @@ One post of any type, with the reference's read rules.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `totals()` (private, line 110), `readable()` (private, line 129), `visibleStatuses()` (private, line 152)
+Internals: `totals()` (private, line 112), `readable()` (private, line 131), `visibleStatuses()` (private, line 154)
 
 
 ## PostsWriteController
@@ -2145,7 +2145,7 @@ stock and type): the filter's answer without repeats, in order.
 - `@param list<string> $classes`
 - `@return list<string>`
 
-Internals: `withPost()` (private, line 56)
+Internals: `withPost()` (private, line 57)
 
 
 ## Reply
@@ -3968,7 +3968,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `listAllowed()` (private, line 109), `totals()` (private, line 133), `hasPublishedContent()` (private, line 168), `validRole()` (private, line 177), `validLocale()` (private, line 192), `assignableRole()` (private, line 204), `validEmail()` (private, line 213), `loginRefusal()` (private, line 399)
+Internals: `listAllowed()` (private, line 111), `totals()` (private, line 135), `hasPublishedContent()` (private, line 170), `validRole()` (private, line 179), `validLocale()` (private, line 194), `assignableRole()` (private, line 206), `validEmail()` (private, line 215), `loginRefusal()` (private, line 401)
 
 
 ## ViewConfigPatch

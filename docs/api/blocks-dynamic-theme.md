@@ -28,7 +28,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Con
 
 Registers this family's blocks with the renderer.
 
-### static `query(array $vars): WP_Comment_Query`
+### static `query(array $vars): Minn\Objects\CommentsQuery`
 
 The comment query a comment template's vars ask for, run once a
 request: the template and its pagination links ask for the same one,
@@ -37,7 +37,7 @@ drops it (RowCache).
 
 - `@param array<string, mixed> $vars`
 
-Internals: `comments()` (private, line 55), `title()` (private, line 69), `template()` (private, line 109), `records()` (private, line 133), `count()` (private, line 146), `list()` (private, line 152), `avatar()` (private, line 183), `authorAvatar()` (private, line 195), `date()` (private, line 211), `commentPost()` (private, line 227), `authorName()` (private, line 233), `content()` (private, line 247), `replyLink()` (private, line 258), `form()` (private, line 271), `commentForm()` (private, line 286)
+Internals: `comments()` (private, line 57), `title()` (private, line 71), `template()` (private, line 111), `records()` (private, line 135), `count()` (private, line 148), `list()` (private, line 154), `avatar()` (private, line 185), `authorAvatar()` (private, line 197), `date()` (private, line 213), `commentPost()` (private, line 229), `authorName()` (private, line 235), `content()` (private, line 249), `replyLink()` (private, line 260), `form()` (private, line 273), `commentForm()` (private, line 288)
 
 
 ## Navigation
@@ -116,7 +116,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Site $site, Minn\Front\Perma
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 54), `queried()` (private, line 75), `loop()` (private, line 91), `current()` (private, line 104), `total()` (private, line 117), `postTemplate()` (private, line 133), `postClasses()` (private, line 167), `queryTitle()` (private, line 197), `noResults()` (private, line 217), `pagination()` (private, line 231), `paginationBase()` (private, line 277), `numbers()` (private, line 292), `archiveTitle()` (private, line 304)
+Internals: `query()` (private, line 55), `queried()` (private, line 76), `loop()` (private, line 92), `current()` (private, line 105), `total()` (private, line 118), `postTemplate()` (private, line 134), `postClasses()` (private, line 168), `queryTitle()` (private, line 198), `noResults()` (private, line 218), `pagination()` (private, line 232), `paginationBase()` (private, line 278), `numbers()` (private, line 293), `archiveTitle()` (private, line 305)
 
 
 ## Structure

@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\Media\FileTypes;
 use Minn\Objects\Post;
+use Minn\Objects\Query;
 use Minn\Runtime\PostLinks;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
@@ -149,7 +150,7 @@ final class FeedTags
         $query = $GLOBALS['wp_query'] ?? null;
         $utc = new \DateTimeZone('UTC');
         $datetime = false;
-        if ($query instanceof \WP_Query && $query->have_posts()) {
+        if ($query instanceof Query && $query->have_posts()) {
             $times = array_map(static fn ($post) => (string) $post->post_modified_gmt, $query->posts);
             if ($query->is_comment_feed() && $query->comment_count) {
                 $times = array_merge($times, array_map(static fn ($comment) => (string) $comment->comment_date_gmt, (array) $query->comments));

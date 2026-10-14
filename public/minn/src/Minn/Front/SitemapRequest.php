@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Runtime\Handoff;
+use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Support\Sanitize;
 use Minn\Theme\Printed;
@@ -24,12 +25,12 @@ final class SitemapRequest
     /** The canonical step: a sitemap asked for by another address is sent to its own. */
     public static function canonical(): void
     {
-        $sitemap = (string) \get_query_var('sitemap');
+        $sitemap = (string) MainQuery::current()->get('sitemap');
         $request = Runtime::current()->request;
-        if ($sitemap === '' || \is_404() || $request === null) {
+        if ($sitemap === '' || MainQuery::current()->is_404() || $request === null) {
             return;
         }
-        $url = \get_sitemap_url($sitemap, (string) \get_query_var('sitemap-subtype'), (int) \get_query_var('paged'));
+        $url = \get_sitemap_url($sitemap, (string) MainQuery::current()->get('sitemap-subtype'), (int) MainQuery::current()->get('paged'));
         $wanted = is_string($url) ? (string) parse_url($url, PHP_URL_PATH) : '';
         $queryForm = parse_url((string) $url, PHP_URL_QUERY) === null && $request->has('sitemap');
         if ($wanted === '' || ($wanted === $request->path && !$queryForm)) {
@@ -42,8 +43,8 @@ final class SitemapRequest
     /** What the sitemaps server does with the request (render_sitemaps). */
     public static function serve(\WP_Sitemaps $server): void
     {
-        $sitemap = (string) Sanitize::textField(\get_query_var('sitemap'));
-        $stylesheet = (string) Sanitize::textField(\get_query_var('sitemap-stylesheet'));
+        $sitemap = (string) Sanitize::textField(MainQuery::current()->get('sitemap'));
+        $stylesheet = (string) Sanitize::textField(MainQuery::current()->get('sitemap-stylesheet'));
         if ($sitemap === '' && $stylesheet === '') {
             return;
         }
@@ -59,7 +60,7 @@ final class SitemapRequest
             $server->renderer->render_index($server->index->get_sitemap_list());
             throw new Printed();
         }
-        self::page($server, $sitemap, (string) Sanitize::textField(\get_query_var('sitemap-subtype')));
+        self::page($server, $sitemap, (string) Sanitize::textField(MainQuery::current()->get('sitemap-subtype')));
     }
 
     /** One provider's page: printed, or a 404 when the subtype is not the provider's or the page has nothing. */
@@ -74,7 +75,7 @@ final class SitemapRequest
             self::notFound();
             return;
         }
-        $urls = $provider->get_url_list(max(1, (int) abs((int) (\get_query_var('paged')))), $subtype);
+        $urls = $provider->get_url_list(max(1, (int) abs((int) (MainQuery::current()->get('paged')))), $subtype);
         if (empty($urls)) {
             self::notFound();
             return;

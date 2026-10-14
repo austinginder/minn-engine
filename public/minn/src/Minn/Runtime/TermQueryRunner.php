@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\TermsQuery;
 use Minn\Query\Sql;
 use Minn\Support\Lists;
 use Minn\Support\Sanitize;
@@ -20,7 +21,7 @@ use Minn\Support\Sanitize;
  */
 final class TermQueryRunner
 {
-    private \WP_Term_Query $query;
+    private TermsQuery $query;
     private object $wpdb;
     /** @var array<string, string> */
     private array $where = [];
@@ -31,13 +32,13 @@ final class TermQueryRunner
      *
      * @param object $wpdb the database object plugins see
      */
-    public function run(\WP_Term_Query $query, object $wpdb): mixed
+    public function run(TermsQuery $query, object $wpdb): mixed
     {
         $this->query = $query;
         $this->wpdb = $wpdb;
         $query->parse_query($query->query_vars);
         $args = &$query->query_vars;
-        $query->meta_query = new \WP_Meta_Query();
+        $query->meta_query = Handoff::newMetaQuery();
         $query->meta_query->parse_query_vars($args);
         Runtime::hooks()->actionRefArray('pre_get_terms', [&$query]);
         $taxonomies = (array) $args['taxonomy'];

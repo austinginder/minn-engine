@@ -6,6 +6,8 @@ namespace Minn\Rest;
 
 use Minn\I18n\TranslationFiles;
 use Minn\Objects\User;
+use Minn\Objects\UsersQuery;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\UserEvents;
@@ -86,7 +88,7 @@ final readonly class UsersController
         $types = (array) ($params['has_published_posts']['items']['enum'] ?? []);
         $reader = $this->caller->can('list_users') ? 'lister' : 'public';
         $args = (array) Runtime::hooks()->filter('rest_user_query', [UserListArgs::of($wp, $registered, $request->method->value, $types, $reader), $wp]);
-        $query = new \WP_User_Query($args);
+        $query = Handoff::newUserQuery($args);
         [$total, $pages] = self::totals($query, $args);
         if ($request->method === Method::Head) {
             return Reply::list([], $total, $pages, null);
@@ -130,13 +132,13 @@ final readonly class UsersController
      * @param array<string, mixed> $args
      * @return array{0: int, 1: int}
      */
-    private static function totals(\WP_User_Query $query, array $args): array
+    private static function totals(UsersQuery $query, array $args): array
     {
         $perPage = (int) ($args['number'] ?? 0);
         $total = (int) $query->get_total();
         if ($total < 1) {
             unset($args['number'], $args['offset']);
-            $total = (int) (new \WP_User_Query($args))->get_total();
+            $total = (int) (Handoff::newUserQuery($args))->get_total();
         }
         return [$total, $perPage > 0 ? (int) ceil($total / $perPage) : 0];
     }

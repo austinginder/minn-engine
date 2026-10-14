@@ -502,7 +502,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 74)
+Internals: `enclosures()` (private, line 75)
 
 
 ## FeedTemplates
@@ -527,7 +527,7 @@ rdf, rss), between wp_before_load_template and wp_after_load_template.
 
 - `@param Closure(string): void $send sends a header line (the Content-Type)`
 
-Internals: `syndication()` (private, line 67), `rss2()` (private, line 72), `rss2Item()` (private, line 91), `atom()` (private, line 117), `atomEntry()` (private, line 136), `rdf()` (private, line 163), `rdfItem()` (private, line 187), `rss()` (private, line 202), `commentsTitle()` (private, line 220), `commentTitle()` (private, line 232), `current()` (private, line 241), `rss2Comments()` (private, line 248), `rss2Comment()` (private, line 266), `atomComments()` (private, line 280), `atomComment()` (private, line 302)
+Internals: `syndication()` (private, line 68), `rss2()` (private, line 73), `rss2Item()` (private, line 92), `atom()` (private, line 118), `atomEntry()` (private, line 137), `rdf()` (private, line 164), `rdfItem()` (private, line 188), `rss()` (private, line 203), `commentsTitle()` (private, line 221), `commentTitle()` (private, line 233), `current()` (private, line 242), `rss2Comments()` (private, line 249), `rss2Comment()` (private, line 267), `atomComments()` (private, line 281), `atomComment()` (private, line 303)
 
 
 ## FeedWriter
@@ -1045,7 +1045,7 @@ none before one stands.
 
 The interim page for a resolution, without a theme: a listing shows the main query's page of posts.
 
-Internals: `article()` (private, line 63), `archive()` (private, line 73)
+Internals: `article()` (private, line 64), `archive()` (private, line 74)
 
 
 ## RequestParse
@@ -1415,7 +1415,7 @@ The sitemap index stylesheet.
 
 The query form (?sitemap=, ?sitemap-stylesheet=) on the front page, with plugins loaded.
 
-Internals: `served()` (private, line 80)
+Internals: `served()` (private, line 81)
 
 
 ## SitemapRequest
@@ -1441,7 +1441,7 @@ The canonical step: a sitemap asked for by another address is sent to its own.
 
 What the sitemaps server does with the request (render_sitemaps).
 
-Internals: `page()` (private, line 66), `notFound()` (private, line 87)
+Internals: `page()` (private, line 67), `notFound()` (private, line 88)
 
 
 ## SitemapXml

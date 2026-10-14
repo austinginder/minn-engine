@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
@@ -26,7 +27,7 @@ final class CustomLogo
         $logo = (int) \get_theme_mod('custom_logo');
         $html = '';
         if ($logo > 0) {
-            $front = \is_front_page() && !\is_paged();
+            $front = MainQuery::current()->is_front_page() && !MainQuery::current()->is_paged();
             $unlinked = $front && \get_theme_support('custom-logo', 'unlink-homepage-logo');
             $attrs = ['class' => 'custom-logo', 'loading' => false];
             if ($unlinked) {

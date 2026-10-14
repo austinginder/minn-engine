@@ -16065,6 +16065,18 @@ through its filter. `Runtime\CommentTags` answers get_comment_time and get_comme
 tags (they read post meta) wait for the meta batch. All 370 probes give identical output before and
 after.
 
+**Batch 16, the queries (function calls 433 → 386, class references 287 → 223).** The engine knows
+WP_Query, WP_Comment_Query, WP_User_Query and WP_Term_Query by the `Minn\Objects` marks `Query`,
+`CommentsQuery`, `UsersQuery` and `TermsQuery`, and makes them, and meta and date queries, through
+`Handoff` (`newQuery()`, `newCommentQuery()`, `newUserQuery()`, `newTermQuery()`, `newMetaQuery()`,
+`newDateQuery()`). `Runtime\MainQuery::current()` is the query being answered ($wp_query, else the
+main one, made empty when there is none), and the query conditionals the engine asked (get_query_var,
+is_singular, have_posts, the_post, is_404 and the rest) are now asked of it directly: those functions
+were one line each over the same object. `PostData::setup()` is setup_postdata and
+`PostData::globals()` the loop's globals; `UserQueryRunner::fillVars()` is
+WP_User_Query::fill_query_vars. The facade maps onto them. All 370 probes give identical output
+before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

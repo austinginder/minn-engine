@@ -21,6 +21,8 @@ use Minn\Content\Users;
 use Minn\Content\Texturize;
 use Minn\Front\Permalinks;
 use Minn\Html;
+use Minn\Objects\CommentsQuery;
+use Minn\Runtime\Handoff;
 use Minn\Support\Kses;
 use Minn\Content\PasswordGate;
 use Minn\Runtime\Avatar;
@@ -101,9 +103,9 @@ final readonly class Comments
      *
      * @param array<string, mixed> $vars
      */
-    public static function query(array $vars): \WP_Comment_Query
+    public static function query(array $vars): CommentsQuery
     {
-        return RowCache::remember('comment_queries', md5(serialize($vars)), static fn (): \WP_Comment_Query => new \WP_Comment_Query($vars));
+        return RowCache::remember('comment_queries', md5(serialize($vars)), static fn (): CommentsQuery => Handoff::newCommentQuery($vars));
     }
 
     private function template(Block $block, Renderer $renderer): string

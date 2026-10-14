@@ -9,6 +9,7 @@ use Minn\Content\Blocks;
 use Minn\Content\PostRecord;
 use Minn\Objects\Post;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\PostData;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 
@@ -61,13 +62,13 @@ final class RenderedFields
         }
         $previous = $GLOBALS['post'] ?? null;
         $GLOBALS['post'] = $post;
-        \setup_postdata($post);
+        PostData::setup($post);
         try {
             return $render($post);
         } finally {
             $GLOBALS['post'] = $previous;
             if ($previous instanceof Post) {
-                \setup_postdata($previous);
+                PostData::setup($previous);
             }
         }
     }

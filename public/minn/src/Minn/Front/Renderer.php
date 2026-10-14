@@ -10,6 +10,7 @@ use Minn\Content\Page;
 use Minn\Content\Excerpt;
 use Minn\Db;
 use Minn\Html;
+use Minn\Objects\Query;
 use Minn\Theme\QueryClasses;
 use Minn\Content\PasswordGate;
 
@@ -35,7 +36,7 @@ final readonly class Renderer
     public function bodyClasses(): array
     {
         $query = $GLOBALS['wp_query'] ?? null;
-        return $query instanceof \WP_Query ? (new QueryClasses($this->db))->of($query) : [];
+        return $query instanceof Query ? (new QueryClasses($this->db))->of($query) : [];
     }
 
     /** The interim page for a resolution, without a theme: a listing shows the main query's page of posts. */

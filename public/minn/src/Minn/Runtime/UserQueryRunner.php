@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\UsersQuery;
 use Minn\Query\Sql;
 use Minn\Support\Lists;
 use Minn\Support\Sanitize;
@@ -20,6 +21,17 @@ use Minn\Support\Sanitize;
  */
 final class UserQueryRunner
 {
+    /**
+     * A users query's variables with their defaults filled in
+     * (WP_User_Query::fill_query_vars), on this one site.
+     *
+     * @return array<string, mixed>
+     */
+    public static function fillVars(mixed $args): array
+    {
+        return Lists::args($args, ['blog_id' => 1, 'role' => '', 'role__in' => [], 'role__not_in' => [], 'capability' => '', 'capability__in' => [], 'capability__not_in' => [], 'meta_key' => '', 'meta_value' => '', 'meta_compare' => '', 'include' => [], 'exclude' => [], 'search' => '', 'search_columns' => [], 'orderby' => 'login', 'order' => 'ASC', 'offset' => '', 'number' => '', 'paged' => 1, 'count_total' => true, 'fields' => 'all', 'who' => '', 'has_published_posts' => null, 'nicename' => '', 'nicename__in' => [], 'nicename__not_in' => [], 'login' => '', 'login__in' => [], 'login__not_in' => [], 'cache_results' => true]);
+    }
+
     private const COLUMNS = ['id', 'user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_key', 'user_status', 'display_name'];
     private const SEARCHABLE = ['ID', 'user_login', 'user_email', 'user_url', 'user_nicename', 'display_name'];
     private const EMAIL = 'user_email';
@@ -30,11 +42,11 @@ final class UserQueryRunner
     }
 
     /** Builds the query's pieces from its variables, as prepare_query does. */
-    public function prepare(\WP_User_Query $query): void
+    public function prepare(UsersQuery $query): void
     {
         Runtime::hooks()->actionRefArray('pre_get_users', [&$query]);
         $qv = &$query->query_vars;
-        $qv = \WP_User_Query::fill_query_vars($qv);
+        $qv = self::fillVars($qv);
         $users = $this->wpdb->users;
         $query->query_fields = $this->fields($qv);
         $query->query_from = "FROM {$users}";
@@ -58,7 +70,7 @@ final class UserQueryRunner
             $query->query_where .= " AND {$users}.ID NOT IN (" . implode(',', Lists::ids($qv['exclude'])) . ')';
         }
         if (!empty($qv['date_query']) && is_array($qv['date_query'])) {
-            $query->query_where .= (new \WP_Date_Query($qv['date_query'], 'user_registered'))->get_sql();
+            $query->query_where .= (Handoff::newDateQuery($qv['date_query'], 'user_registered'))->get_sql();
         }
         Runtime::hooks()->actionRefArray('pre_user_query', [&$query]);
     }
@@ -107,9 +119,9 @@ final class UserQueryRunner
     }
 
     /** The meta query with roles and capabilities, joined and written in. @param array<string, mixed> $qv */
-    private function meta(\WP_User_Query $query, array &$qv, int $blog): void
+    private function meta(UsersQuery $query, array &$qv, int $blog): void
     {
-        $query->meta_query = new \WP_Meta_Query();
+        $query->meta_query = Handoff::newMetaQuery();
         $query->meta_query->parse_query_vars($qv);
         // Only the caller's own meta query can ask for DISTINCT: the role clauses join in after it was read.
         $distinct = $query->meta_query->has_or_relation();
@@ -126,7 +138,7 @@ final class UserQueryRunner
             $queries = (new UserQueryRoles($prefix . 'capabilities'))->clauses($qv, $queries, (array) (\wp_roles()->roles ?? []));
         }
         if ($queries !== (array) $query->meta_query->queries) {
-            $query->meta_query = new \WP_Meta_Query($queries);
+            $query->meta_query = Handoff::newMetaQuery($queries);
         }
         if (empty($query->meta_query->queries)) {
             return;
@@ -140,7 +152,7 @@ final class UserQueryRunner
     }
 
     /** ORDER BY from a key, a list, or a map of keys to directions; user_login when none is usable. @param array<string, mixed> $qv */
-    private function order(\WP_User_Query $query, array &$qv): string
+    private function order(UsersQuery $query, array &$qv): string
     {
         $qv['order'] = isset($qv['order']) ? strtoupper((string) $qv['order']) : '';
         $order = UserOrder::direction($qv['order']);
@@ -166,7 +178,7 @@ final class UserQueryRunner
      *
      * @param list<string> $given
      */
-    private function search(\WP_User_Query $query, string $search, array $given): string
+    private function search(UsersQuery $query, string $search, array $given): string
     {
         $leading = ltrim($search, '*') !== $search;
         $trailing = rtrim($search, '*') !== $search;
@@ -198,7 +210,7 @@ final class UserQueryRunner
     }
 
     /** Runs the query: users_pre_query may answer it; the count follows; the results take the fields' shape. */
-    public function query(\WP_User_Query $query): void
+    public function query(UsersQuery $query): void
     {
         $qv = &$query->query_vars;
         if (is_array($qv['fields']) && count($qv['fields']) > 3) {

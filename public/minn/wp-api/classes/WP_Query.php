@@ -14,7 +14,7 @@ use Minn\Runtime\Runtime;
  * reference does: its clauses, its filters, its request.
  */
 #[AllowDynamicProperties]
-class WP_Query
+class WP_Query implements \Minn\Objects\Query
 {
     public $query;
     public $query_vars = [];

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Query;
+
 /**
  * The comments a comments feed's main query carries, as the reference
  * finds them (probe comment-feed-query). For a listing (the site's, an
@@ -16,7 +18,7 @@ namespace Minn\Runtime;
 final class CommentFeedQuery
 {
     /** A listing's comments, then its posts narrowed to theirs: the posts query's join and where as they stand after posts_join. */
-    public static function listing(\WP_Query $query, PostQueryParts $parts, object $wpdb): void
+    public static function listing(Query $query, PostQueryParts $parts, object $wpdb): void
     {
         $comments = $wpdb->comments;
         $posts = $wpdb->posts;
@@ -37,7 +39,7 @@ final class CommentFeedQuery
     }
 
     /** A single post's comments, once the query has found the post. */
-    public static function single(\WP_Query $query, object $wpdb): void
+    public static function single(Query $query, object $wpdb): void
     {
         $comments = $wpdb->comments;
         $id = $query->posts[0]->ID;
@@ -46,7 +48,7 @@ final class CommentFeedQuery
     }
 
     /** The request, its pieces through the comment_feed_* filters. */
-    private static function request(\WP_Query $query, string $join, string $where, string $groupby, string $select): string
+    private static function request(Query $query, string $join, string $where, string $groupby, string $select): string
     {
         $join = Runtime::hooks()->filterRefArray('comment_feed_join', [$join, &$query]);
         $where = Runtime::hooks()->filterRefArray('comment_feed_where', [$where, &$query]);
@@ -57,7 +59,7 @@ final class CommentFeedQuery
     }
 
     /** @param list<mixed> $rows rows or ids, each made a WP_Comment */
-    private static function keep(\WP_Query $query, array $rows): void
+    private static function keep(Query $query, array $rows): void
     {
         $query->comments = array_values(array_filter(array_map(static fn (mixed $row): mixed => Records::comment($row), $rows)));
         $query->comment_count = count($query->comments);

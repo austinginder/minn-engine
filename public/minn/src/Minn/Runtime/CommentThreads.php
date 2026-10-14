@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Objects\Comment;
+use Minn\Objects\CommentsQuery;
 
 /**
  * A threaded or flat comment query's descendants as the reference fills
@@ -24,7 +25,7 @@ final class CommentThreads
      * @param list<Comment> $top
      * @return array<int, Comment>
      */
-    public function fill(\WP_Comment_Query $query, array $top): array
+    public function fill(CommentsQuery $query, array $top): array
     {
         $threaded = ($query->query_vars['hierarchical'] ?? '') === 'threaded';
         $byId = [];
@@ -34,7 +35,7 @@ final class CommentThreads
         $all = $top;
         $parents = array_keys($byId);
         while ($parents !== []) {
-            $children = (new \WP_Comment_Query())->query(['parent__in' => $parents] + self::LEVEL + $query->query_vars);
+            $children = (Handoff::newCommentQuery())->query(['parent__in' => $parents] + self::LEVEL + $query->query_vars);
             $parents = [];
             foreach (is_array($children) ? $children : [] as $child) {
                 $id = $child instanceof Comment ? (int) $child->comment_ID : 0;

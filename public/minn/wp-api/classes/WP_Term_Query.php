@@ -6,7 +6,7 @@ use Minn\Runtime\TermQueryTree;
 
 /** Term queries as the reference runs them: Minn\Runtime\TermQueryRunner writes the clauses, runs the filters and the request. */
 #[AllowDynamicProperties]
-class WP_Term_Query
+class WP_Term_Query implements \Minn\Objects\TermsQuery
 {
     public $request;
     public $meta_query = false;

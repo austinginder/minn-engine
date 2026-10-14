@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\TermsQuery;
 use Minn\Support\Lists;
 use Minn\Support\Sanitize;
 
@@ -29,7 +30,7 @@ final class TermOrder
     }
 
     /** The ORDER BY body for an orderby value, filtered as the reference filters it. */
-    public static function clause(\WP_Term_Query $query, string $raw): string
+    public static function clause(TermsQuery $query, string $raw): string
     {
         $orderby = strtolower($raw);
         $vars = $query->query_vars;
@@ -54,7 +55,7 @@ final class TermOrder
     }
 
     /** A meta key, meta_value[_num] or a named meta clause as SQL (parse_orderby_meta), or '' when the query has no such clause. */
-    public static function meta(\WP_Term_Query $query, string $orderby): string
+    public static function meta(TermsQuery $query, string $orderby): string
     {
         $query->meta_query->get_sql('term', 't', 'term_id');
         $clauses = (array) $query->meta_query->get_clauses();

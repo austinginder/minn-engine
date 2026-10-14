@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\UsersQuery;
 use Minn\Support\Lists;
 
 /**
@@ -28,7 +29,7 @@ final class UserOrder
     }
 
     /** The column or expression one orderby key stands for. */
-    public static function clause(\WP_User_Query $query, string $orderby, object $wpdb): string
+    public static function clause(UsersQuery $query, string $orderby, object $wpdb): string
     {
         $vars = $query->query_vars;
         $clauses = (array) $query->meta_query->get_clauses();
@@ -49,7 +50,7 @@ final class UserOrder
     }
 
     /** Joins each author's published post count in, and orders by it. */
-    private static function postCount(\WP_User_Query $query, object $wpdb): string
+    private static function postCount(UsersQuery $query, object $wpdb): string
     {
         $where = \get_posts_by_author_sql('post');
         $query->query_from .= " LEFT OUTER JOIN (\n\t\t\t\tSELECT post_author, COUNT(*) as post_count\n\t\t\t\tFROM {$wpdb->posts}\n\t\t\t\t{$where}\n\t\t\t\tGROUP BY post_author\n\t\t\t) p ON ({$wpdb->users}.ID = p.post_author)";

@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\I18n\Gettext;
 use Minn\I18n\Numbers;
+use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostLinks;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Runtime;
@@ -81,7 +82,7 @@ final class EmbedCard
     /** The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open. */
     public static function commentsButton(): string
     {
-        if (\is_404() || !((int) PostTags::commentsNumber() || PostTags::commentsOpen())) {
+        if (MainQuery::current()->is_404() || !((int) PostTags::commentsNumber() || PostTags::commentsOpen())) {
             return '';
         }
         $count = (int) PostTags::commentsNumber();
@@ -93,7 +94,7 @@ final class EmbedCard
     /** The button that opens the sharing dialog; none on a 404. */
     public static function sharingButton(): string
     {
-        if (\is_404()) {
+        if (MainQuery::current()->is_404()) {
             return '';
         }
         return "\t<div class=\"wp-embed-share\">\n\t\t<button type=\"button\" class=\"wp-embed-share-dialog-open\" aria-label=\"Open sharing dialog\">\n\t\t\t<span class=\"dashicons dashicons-share\"></span>\n\t\t</button>\n\t</div>\n\t";
@@ -102,7 +103,7 @@ final class EmbedCard
     /** The sharing dialog: the post's address and its embed code, each a tab; none on a 404. */
     public static function sharingDialog(): string
     {
-        if (\is_404()) {
+        if (MainQuery::current()->is_404()) {
             return '';
         }
         $key = PostTags::id() . '-' . mt_rand();

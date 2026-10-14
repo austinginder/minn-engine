@@ -13,6 +13,7 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Objects\Post;
 use Minn\RestError;
+use Minn\Runtime\PostData;
 use Minn\Runtime\Records;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
@@ -102,7 +103,7 @@ final readonly class BlockRendererController
         $context = [];
         if ($postId > 0) {
             $GLOBALS['post'] = Records::post($postId);
-            \setup_postdata($GLOBALS['post']);
+            PostData::setup($GLOBALS['post']);
             $context = ['postId' => $postId, 'postType' => \get_post_type($postId)];
         }
         try {
@@ -112,7 +113,7 @@ final readonly class BlockRendererController
             $GLOBALS['post'] = $outer;
             Runtime::current()->set('post', $outerRuntime);
             if ($outer instanceof Post) {
-                \setup_postdata($outer);
+                PostData::setup($outer);
             }
         }
     }

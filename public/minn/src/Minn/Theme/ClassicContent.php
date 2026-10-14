@@ -11,6 +11,7 @@ use Minn\Content\PasswordGate;
 use Minn\Content\Texturize;
 use Minn\Extension\Extensions;
 use Minn\Front\Permalinks;
+use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Html;
 
@@ -39,7 +40,7 @@ final class ClassicContent
         }
         $more = strpos($raw, '<!--more-->');
         // The teaser stops at the more tag unless the whole text is wanted: a single post or page, or a feed ($more, as setup_postdata leaves it).
-        if (!\is_singular() && empty($GLOBALS['more']) && $more !== false) {
+        if (!MainQuery::current()->is_singular() && empty($GLOBALS['more']) && $more !== false) {
             $label = $moreLinkText ?? \Minn\I18n\Gettext::text('(more&hellip;)');
             $suffix = "\n" . ' <a href="' . Html::attr($permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . $label . '</span></a>';
             $content = rtrim(Blocks::render(substr($raw, 0, $more))) . $suffix;

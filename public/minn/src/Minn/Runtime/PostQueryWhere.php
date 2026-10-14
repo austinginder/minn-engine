@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Query;
 use Minn\Query\Sql;
 use Minn\Support\Sanitize;
 use Minn\Support\Text;
@@ -20,7 +21,7 @@ final class PostQueryWhere
 {
     private const LEGACY_DATE = [4 => 'MONTH', 6 => 'DAYOFMONTH', 8 => 'HOUR', 10 => 'MINUTE', 12 => 'SECOND'];
 
-    public function __construct(private readonly \WP_Query $query, private readonly PostQueryParts $parts, private readonly string $table)
+    public function __construct(private readonly Query $query, private readonly PostQueryParts $parts, private readonly string $table)
     {
     }
 
@@ -45,10 +46,10 @@ final class PostQueryWhere
         $params = array_filter(['hour' => $q['hour'], 'minute' => $q['minute'], 'second' => $q['second']], static fn ($v) => $v !== '');
         $params += array_filter(['year' => $q['year'], 'monthnum' => $q['monthnum'], 'week' => $q['w'], 'day' => $q['day']]);
         if ($params !== []) {
-            $this->parts->where .= (new \WP_Date_Query([$params]))->get_sql();
+            $this->parts->where .= (Handoff::newDateQuery([$params]))->get_sql();
         }
         if (!empty($q['date_query'])) {
-            $this->query->date_query = new \WP_Date_Query($q['date_query']);
+            $this->query->date_query = Handoff::newDateQuery($q['date_query']);
             $this->parts->where .= $this->query->date_query->get_sql();
         }
     }

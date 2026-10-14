@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Content\RowCache;
 
 use Minn\Objects\Comment;
+use Minn\Objects\CommentsQuery;
 use Minn\Query\CommentOrder;
 
 /**
@@ -26,11 +27,11 @@ final class CommentQueryRunner
     }
 
     /** Runs the query, as WP_Comment_Query::get_comments() does: a count, ids, or comments. */
-    public function run(\WP_Comment_Query $query): mixed
+    public function run(CommentsQuery $query): mixed
     {
         $query->parse_query();
         Runtime::hooks()->actionRefArray('pre_get_comments', [&$query]);
-        $query->meta_query = new \WP_Meta_Query();
+        $query->meta_query = Handoff::newMetaQuery();
         $query->meta_query->parse_query_vars($query->query_vars);
         $meta = empty($query->meta_query->queries) ? [] : (array) $query->meta_query->get_sql('comment', $this->wpdb->comments, 'comment_ID', $query);
         $answer = Runtime::hooks()->filterRefArray('comments_pre_query', [null, &$query]);
@@ -64,7 +65,7 @@ final class CommentQueryRunner
      * @param array{join?: string, where?: string} $meta
      * @return list<int>|int
      */
-    public function ids(\WP_Comment_Query $query, array $meta): array|int
+    public function ids(CommentsQuery $query, array $meta): array|int
     {
         $qv = $query->query_vars;
         [$request, $found] = $this->request($query, $meta);
@@ -87,7 +88,7 @@ final class CommentQueryRunner
      * @param array{join?: string, where?: string} $meta
      * @return array{0: string, 1: bool}
      */
-    private function request(\WP_Comment_Query $query, array $meta): array
+    private function request(CommentsQuery $query, array $meta): array
     {
         $qv = $query->query_vars;
         $counted = !empty($qv['count']);

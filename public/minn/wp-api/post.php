@@ -1008,27 +1008,13 @@ function has_post_thumbnail($post = null)
 
 function setup_postdata($post)
 {
-    $query = $GLOBALS['wp_query'] ?? null;
-    if ($query instanceof WP_Query) {
-        return $query->setup_postdata($post);
-    }
-    $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $GLOBALS['post'] = $post;
-    Runtime::current()->set('post', $post);
-    _minn_postdata_globals($post);
-    return true;
+    return Minn\Runtime\PostData::setup($post);
 }
 
 /** @internal the globals the loop's template tags read, from generate_postdata */
 function _minn_postdata_globals(WP_Post $post): void
 {
-    $elements = PostData::generate($post);
-    foreach (['id', 'authordata', 'currentday', 'currentmonth', 'page', 'pages', 'multipage', 'more', 'numpages'] as $name) {
-        $GLOBALS[$name] = $elements[$name];
-    }
+    Minn\Runtime\PostData::globals($post);
 }
 
 function wp_reset_postdata()

@@ -402,7 +402,7 @@ the main query's to build, after.
 - `@param array<string, mixed> $given the query string and form, where a plugin's own variables are read`
 - `@param (\Closure(list<string>): array<string, mixed>)|null $parse the reference's parse vars for the public vars, when the request is known`
 
-### static `handle404(WP_Query $query, bool $notFound): void`
+### static `handle404(Minn\Objects\Query $query, bool $notFound): void`
 
 The 404 decision, the one place it is made: a plugin's
 pre_handle_404 may make it; otherwise a request for something the
@@ -691,7 +691,7 @@ vars it was asked under.
 
 Posts per page.
 
-Internals: `vars()` (private, line 112), `postVars()` (private, line 124), `queried()` (private, line 143), `seeded()` (private, line 156)
+Internals: `vars()` (private, line 113), `postVars()` (private, line 125), `queried()` (private, line 144), `seeded()` (private, line 157)
 
 
 ## NotModified
@@ -854,13 +854,13 @@ __construct(Minn\Db $db)
 ```
 
 
-### `of(WP_Query $query): array`
+### `of(Minn\Objects\Query $query): array`
 
 The tokens for a main query.
 
 - `@return list<string>`
 
-Internals: `format()` (private, line 64), `singular()` (private, line 71), `archive()` (private, line 100), `paging()` (private, line 127), `named()` (private, line 148)
+Internals: `format()` (private, line 65), `singular()` (private, line 72), `archive()` (private, line 101), `paging()` (private, line 128), `named()` (private, line 149)
 
 
 ## SpacingScale

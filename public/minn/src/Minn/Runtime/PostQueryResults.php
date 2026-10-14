@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Auth\Can;
+use Minn\Objects\Query;
 
 /**
  * What WP_Query does with its posts once it has them, as the reference does
@@ -16,7 +17,7 @@ use Minn\Auth\Can;
  */
 final class PostQueryResults
 {
-    public function __construct(private readonly \WP_Query $query, private readonly PostQueryParts $parts)
+    public function __construct(private readonly Query $query, private readonly PostQueryParts $parts)
     {
     }
 

@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 803,
-        "composes": 2335,
-        "leaf": 1023,
-        "noop": 2847,
+        "minn": 801,
+        "composes": 2334,
+        "leaf": 1022,
+        "noop": 2851,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1132,
+        "minnMethods": 1174,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -31696,13 +31696,12 @@
         },
         "WP_User_Query::fill_query_vars": {
             "file": "classes/WP_User_Query.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_current_blog_id",
-                "wp_parse_args"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\UserQueryRunner::fillVars"
+            ],
+            "composes": []
         },
         "WP_User_Query::generate_cache_key": {
             "file": "classes/WP_User_Query.php",
@@ -37519,9 +37518,11 @@
         },
         "_minn_main_query": {
             "file": "query.php",
-            "lines": 9,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\MainQuery::current"
+            ],
             "composes": []
         },
         "_minn_media_attach": {
@@ -38043,10 +38044,10 @@
         },
         "_minn_postdata_globals": {
             "file": "post.php",
-            "lines": 4,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\PostData::generate"
+                "Minn\\Runtime\\PostData::globals"
             ],
             "composes": []
         },
@@ -50966,7 +50967,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::get_queried_object"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -50975,7 +50978,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::get_queried_object_id"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -51004,7 +51009,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::get"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53218,7 +53225,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::have_comments"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53227,7 +53236,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::have_posts"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53768,7 +53779,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_404"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53832,7 +53845,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_archive"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53841,7 +53856,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_attachment"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53850,7 +53867,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_author"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53895,7 +53914,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_category"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53914,7 +53935,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_comment_feed"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53947,7 +53970,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_date"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53956,7 +53981,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_day"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -53984,7 +54011,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_embed"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54000,7 +54029,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_favicon"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54009,7 +54040,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_feed"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54018,7 +54051,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_front_page"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54044,7 +54079,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_home"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54114,7 +54151,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_main_query"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54130,7 +54169,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_month"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54231,7 +54272,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_page"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54251,7 +54294,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_paged"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54346,7 +54391,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_post_type_archive"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54373,7 +54420,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_preview"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54382,7 +54431,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_privacy_policy"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54455,7 +54506,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_robots"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54471,7 +54524,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_search"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54496,7 +54551,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_single"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54505,7 +54562,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_singular"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54576,7 +54635,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_tag"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54585,7 +54646,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_tax"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54659,7 +54722,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_time"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54668,7 +54733,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_trackback"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -54761,7 +54828,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::is_year"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -60353,7 +60422,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::rewind_posts"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -60990,7 +61061,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::set"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -61097,16 +61170,12 @@
         },
         "setup_postdata": {
             "file": "post.php",
-            "lines": 12,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::set"
+                "Minn\\Runtime\\PostData::setup"
             ],
-            "composes": [
-                "_minn_postdata_globals",
-                "get_post"
-            ]
+            "composes": []
         },
         "setup_userdata": {
             "file": "user.php",
@@ -61889,7 +61958,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::the_comment"
+            ],
             "composes": [
                 "_minn_main_query"
             ]
@@ -62171,7 +62242,9 @@
             "file": "query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\MainQuery::the_post"
+            ],
             "composes": [
                 "_minn_main_query"
             ]

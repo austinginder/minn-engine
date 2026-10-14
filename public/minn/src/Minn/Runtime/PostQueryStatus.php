@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Auth\Can;
+use Minn\Objects\Query;
 use Minn\Query\Sql;
 use Minn\Support\Sanitize;
 
@@ -20,7 +21,7 @@ use Minn\Support\Sanitize;
  */
 final class PostQueryStatus
 {
-    public function __construct(private readonly \WP_Query $query, private readonly PostQueryParts $parts)
+    public function __construct(private readonly Query $query, private readonly PostQueryParts $parts)
     {
     }
 

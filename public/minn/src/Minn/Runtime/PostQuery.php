@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Db;
+use Minn\Objects\Query;
 use Minn\Query\PostOrder;
 use Minn\Query\PostSearch;
 use Minn\I18n\Gettext;
@@ -19,7 +20,7 @@ use Minn\I18n\Gettext;
  */
 final class PostQuery
 {
-    private \WP_Query $query;
+    private Query $query;
     private object $wpdb;
     private PostQueryParts $parts;
 
@@ -34,7 +35,7 @@ final class PostQuery
      * @param object $wpdb the database object plugins see, so the request runs where their filters expect it
      * @param mixed $urlSearch the search string the URL carries, if any (a search from elsewhere is url-decoded)
      */
-    public function run(\WP_Query $query, object $wpdb, mixed $urlSearch): mixed
+    public function run(Query $query, object $wpdb, mixed $urlSearch): mixed
     {
         $this->query = $query;
         $this->wpdb = $wpdb;
@@ -56,7 +57,7 @@ final class PostQuery
         $query->query_vars = $query->fill_query_vars($query->query_vars);
         $query->allow_query_attachment_by_filename = Runtime::hooks()->filter('wp_allow_query_attachment_by_filename', [false]);
         Runtime::hooks()->removeAll('wp_allow_query_attachment_by_filename', false);
-        $query->meta_query = new \WP_Meta_Query();
+        $query->meta_query = Handoff::newMetaQuery();
         $query->meta_query->parse_query_vars($query->query_vars);
         $hash = md5(serialize($query->query_vars));
         if ($hash !== $query->query_vars_hash) {
@@ -213,7 +214,7 @@ final class PostQuery
      *
      * @param array<string, mixed> $q
      */
-    public function search(\WP_Query $query, array &$q, mixed $urlSearch): string
+    public function search(Query $query, array &$q, mixed $urlSearch): string
     {
         $this->query = $query;
         if (!isset($this->parts)) {

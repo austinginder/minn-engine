@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Objects\Post;
+use Minn\Objects\Query;
 use Minn\Objects\Term;
 use Minn\Support\Url;
 
@@ -161,7 +162,7 @@ final class MenuItemMarks
      *
      * @return array<string, mixed>
      */
-    private static function view(\WP_Query $query): array
+    private static function view(Query $query): array
     {
         $queried = $query->get_queried_object();
         $post = $queried instanceof Post ? $queried : null;

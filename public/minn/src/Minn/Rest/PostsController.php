@@ -17,7 +17,9 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Objects\Post;
+use Minn\Objects\Query;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\PostLinks;
 use Minn\Runtime\Records;
 use Minn\Runtime\Registered;
@@ -72,7 +74,7 @@ final readonly class PostsController
         if ($type === 'attachment' && !empty($vars['s'])) {
             Runtime::hooks()->add('wp_allow_query_attachment_by_filename', '__return_true');
         }
-        $query = new \WP_Query();
+        $query = Handoff::newQuery();
         $posts = $query->query($vars);
         [$total, $pages] = $this->totals($query, $vars);
         if ($request->method === Method::Head) {
@@ -107,13 +109,13 @@ final readonly class PostsController
      * @param array<string, mixed> $vars
      * @return array{0: int, 1: int}
      */
-    private function totals(\WP_Query $query, array $vars): array
+    private function totals(Query $query, array $vars): array
     {
         $page = (int) ($vars['paged'] ?? 0);
         $total = (int) $query->found_posts;
         if ($total < 1 && $page > 1) {
             unset($vars['paged']);
-            $count = new \WP_Query();
+            $count = Handoff::newQuery();
             $count->query($vars);
             $total = (int) $count->found_posts;
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\CommentsQuery;
 use Minn\Query\Sql;
 use Minn\Support\Lists;
 
@@ -35,7 +36,7 @@ final class CommentQueryWhere
      * @param array{join?: string, where?: string} $meta the meta query's SQL, when it has clauses
      * @return array{0: list<string>, 1: string}
      */
-    public function pieces(\WP_Comment_Query $query, array $meta): array
+    public function pieces(CommentsQuery $query, array $meta): array
     {
         $qv = $query->query_vars;
         $where = array_values(array_filter([$this->approved($qv), $this->post($qv)]));
@@ -61,7 +62,7 @@ final class CommentQueryWhere
             $where[] = self::bare($meta['where']);
         }
         if (!empty($qv['date_query']) && is_array($qv['date_query'])) {
-            $query->date_query = new \WP_Date_Query($qv['date_query'], 'comment_date');
+            $query->date_query = Handoff::newDateQuery($qv['date_query'], 'comment_date');
             $where[] = self::bare((string) $query->date_query->get_sql());
         }
         return [array_values(array_filter($where, static fn ($piece) => $piece !== '')), $join];

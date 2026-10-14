@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Query;
 use Minn\Support\Sanitize;
 use Minn\Support\Text;
 
@@ -23,7 +24,7 @@ final class PostQueryTax
      * @param array<string, mixed> $q
      * @return list<array<string, mixed>>|array<string, mixed>
      */
-    public static function clauses(\WP_Query $query, array &$q): array
+    public static function clauses(Query $query, array &$q): array
     {
         $singular = (bool) $query->is_singular;
         $clauses = !empty($q['tax_query']) && is_array($q['tax_query']) ? $q['tax_query'] : [];
@@ -182,7 +183,7 @@ final class PostQueryTax
      *
      * @param array<string, array{terms?: list<mixed>, field?: string}> $queried
      */
-    public static function compat(\WP_Query $query, array &$q, array $queried): void
+    public static function compat(Query $query, array &$q, array $queried): void
     {
         if (!isset($q['taxonomy'])) {
             foreach ($queried as $taxonomy => $items) {

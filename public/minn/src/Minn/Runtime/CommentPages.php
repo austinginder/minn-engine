@@ -39,7 +39,7 @@ final class CommentPages
         $options = Runtime::options();
         // Paged comments take the page size from the query, then from the setting.
         if ($options->filtered('page_comments') && $args['per_page'] === '') {
-            $args['per_page'] = \get_query_var('comments_per_page');
+            $args['per_page'] = MainQuery::current()->get('comments_per_page');
             if ($args['per_page'] === '') {
                 $args['per_page'] = $options->filtered('comments_per_page');
             }
@@ -55,7 +55,7 @@ final class CommentPages
             if ($args['max_depth'] > 1 && (int) $comment->comment_parent !== 0) {
                 return self::pageOf($comment->comment_parent, $args);
             }
-            $older = (int) (new \WP_Comment_Query())->query(self::olderQuery($comment, $args));
+            $older = (int) (Handoff::newCommentQuery())->query(self::olderQuery($comment, $args));
             $page = $older === 0 ? 1 : (int) ceil(($older + 1) / $args['per_page']);
         }
         return (int) Runtime::hooks()->filter('get_page_of_comment', [$page, $args, $original, $commentId]);
@@ -103,7 +103,7 @@ final class CommentPages
         }
         $page = match (true) {
             !in_array($args['page'], ['', null], true) => $args['page'],
-            !empty($GLOBALS['in_comment_loop']) => \get_query_var('cpage'),
+            !empty($GLOBALS['in_comment_loop']) => MainQuery::current()->get('cpage'),
             default => self::pageOf($comment?->comment_ID, $args),
         };
         return $options->filtered('default_comments_page') === 'oldest' && $page === 1 ? '' : $page;

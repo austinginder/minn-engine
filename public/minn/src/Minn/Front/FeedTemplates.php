@@ -8,6 +8,7 @@ use Closure;
 use Minn\I18n\Gettext;
 use Minn\Objects\Post;
 use Minn\Runtime\CommentTags;
+use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
@@ -81,8 +82,8 @@ final class FeedTemplates
             ->put("</description>\n\t<lastBuildDate>", FeedTags::buildDate('r'), "</lastBuildDate>\n\t<language>")->tag('bloginfo_rss', 'language')
             ->put("</language>\n");
         self::syndication($w)->act('rss2_head');
-        while (\have_posts()) {
-            \the_post();
+        while (MainQuery::current()->have_posts()) {
+            MainQuery::current()->the_post();
             self::rss2Item($w);
         }
         $w->put("</channel>\n</rss>\n");
@@ -126,8 +127,8 @@ final class FeedTemplates
             ->put("\" />\n\t<id>")->tag('bloginfo', 'atom_url')
             ->put("</id>\n\t<link rel=\"self\" type=\"application/atom+xml\" href=\"")->tag('self_link')
             ->put("\" />\n\n\t")->act('atom_head');
-        while (\have_posts()) {
-            \the_post();
+        while (MainQuery::current()->have_posts()) {
+            MainQuery::current()->the_post();
             self::atomEntry($w);
         }
         $w->put("</feed>\n");
@@ -171,14 +172,14 @@ final class FeedTemplates
             ->put("</link>\n\t<description>")->tag('bloginfo_rss', 'description')
             ->put("</description>\n\t<dc:date>", FeedTags::buildDate('Y-m-d\TH:i:s\Z'), "\t</dc:date>\n");
         self::syndication($w)->put("<sy:updateBase>2000-01-01T12:00+00:00</sy:updateBase>\n\t")->act('rdf_header')->put("\t<items>\n\t\t<rdf:Seq>\n");
-        while (\have_posts()) {
-            \the_post();
+        while (MainQuery::current()->have_posts()) {
+            MainQuery::current()->the_post();
             $w->put("\t\t\t\t\t<rdf:li rdf:resource=\"")->tag('the_permalink_rss')->put("\"/>\n");
         }
         $w->put("\t\t\t\t</rdf:Seq>\n\t</items>\n</channel>\n");
-        \rewind_posts();
-        while (\have_posts()) {
-            \the_post();
+        MainQuery::current()->rewind_posts();
+        while (MainQuery::current()->have_posts()) {
+            MainQuery::current()->the_post();
             self::rdfItem($w);
         }
         $w->put("</rdf:RDF>\n");
@@ -206,8 +207,8 @@ final class FeedTemplates
             ->put("</link>\n\t<description>")->tag('bloginfo_rss', 'description')
             ->put("</description>\n\t<lastBuildDate>", FeedTags::buildDate('D, d M Y H:i:s +0000'), "</lastBuildDate>\n\t<docs>http://backend.userland.com/rss092</docs>\n\t<language>")->tag('bloginfo_rss', 'language')
             ->put("</language>\n\t")->act('rss_head')->put("\n");
-        while (\have_posts()) {
-            \the_post();
+        while (MainQuery::current()->have_posts()) {
+            MainQuery::current()->the_post();
             $w->put("\t<item>\n\t\t<title>")->tag('the_title_rss')
                 ->put("</title>\n\t\t<description><![CDATA[")->cdata('the_excerpt_rss')
                 ->put("]]></description>\n\t\t<link>")->tag('the_permalink_rss')
@@ -219,10 +220,10 @@ final class FeedTemplates
     /** The heading of a comments feed: the post's, the search's, or the site's. */
     private static function commentsTitle(string $single): string
     {
-        if (\is_singular()) {
+        if (MainQuery::current()->is_singular()) {
             return sprintf(Text::numericReferences(Gettext::text($single)), FeedTags::titleRss());
         }
-        if (\is_search()) {
+        if (MainQuery::current()->is_search()) {
             return sprintf(Text::numericReferences(Gettext::text('Comments for %1$s searching on %2$s')), \get_bloginfo_rss('name'), \get_search_query());
         }
         return sprintf(Text::numericReferences(Gettext::text('Comments for %s')), \get_wp_title_rss());
@@ -231,7 +232,7 @@ final class FeedTemplates
     /** A comment's heading in a comments feed: by whom, and on what when the feed is not a single post's. */
     private static function commentTitle(Post $post): string
     {
-        if (\is_singular()) {
+        if (MainQuery::current()->is_singular()) {
             return sprintf(Text::numericReferences(Gettext::text('By: %s')), \get_comment_author_rss());
         }
         return sprintf(Text::numericReferences(Gettext::text('Comment on %1$s by %2$s')), Runtime::hooks()->filter('the_title_rss', [PostTags::title($post->ID)]), \get_comment_author_rss());
@@ -252,12 +253,12 @@ final class FeedTemplates
             ->act('rss2_ns')->put("\n\t")->act('rss2_comments_ns')
             ->put(">\n<channel>\n\t<title>\n\t", self::commentsTitle('Comments on: %s'), "\t</title>\n\t<atom:link href=\"")->tag('self_link')
             ->put("\" rel=\"self\" type=\"application/rss+xml\" />\n\t<link>");
-        \is_singular() ? $w->tag('the_permalink_rss') : $w->tag('bloginfo_rss', 'url');
+        MainQuery::current()->is_singular() ? $w->tag('the_permalink_rss') : $w->tag('bloginfo_rss', 'url');
         $w->put("</link>\n\t<description>")->tag('bloginfo_rss', 'description')
             ->put("</description>\n\t<lastBuildDate>", FeedTags::buildDate('r'), "</lastBuildDate>\n");
         self::syndication($w)->act('commentsrss2_head');
-        while (\have_comments()) {
-            \the_comment();
+        while (MainQuery::current()->have_comments()) {
+            MainQuery::current()->the_comment();
             self::rss2Comment($w);
         }
         $w->put("</channel>\n</rss>\n");
@@ -284,7 +285,7 @@ final class FeedTemplates
             ->put("\"\n\txmlns:thr=\"http://purl.org/syndication/thread/1.0\"\n\t")->act('atom_ns')->act('atom_comments_ns')
             ->put(">\n\t<title type=\"text\">\n\t", self::commentsTitle('Comments on %s'), "\t</title>\n\t<subtitle type=\"text\">")->tag('bloginfo_rss', 'description')
             ->put("</subtitle>\n\n\t<updated>", FeedTags::buildDate('Y-m-d\TH:i:s\Z'), "</updated>\n\n\t<link rel=\"alternate\" type=\"")->tag('bloginfo_rss', 'html_type')->put('" href="');
-        if (\is_singular()) {
+        if (MainQuery::current()->is_singular()) {
             $self = Escape::url(FeedTags::postCommentsFeedLink(0, 'atom'));
             $w->tag('comments_link_feed')->put("\" />\n\t<link rel=\"self\" type=\"application/atom+xml\" href=\"{$self}\" />\n\t<id>{$self}</id>\n");
         } else {
@@ -292,8 +293,8 @@ final class FeedTemplates
                 ->put("\" />\n\t<id>")->tag('bloginfo_rss', 'comments_atom_url')->put("</id>\n");
         }
         $w->act('comments_atom_head');
-        while (\have_comments()) {
-            \the_comment();
+        while (MainQuery::current()->have_comments()) {
+            MainQuery::current()->the_comment();
             self::atomComment($w);
         }
         $w->put("</feed>\n");

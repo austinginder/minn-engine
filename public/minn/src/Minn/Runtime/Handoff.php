@@ -7,10 +7,14 @@ namespace Minn\Runtime;
 use Closure;
 use LogicException;
 use Minn\Objects\Comment;
+use Minn\Objects\CommentsQuery;
 use Minn\Objects\Errors;
 use Minn\Objects\Post;
+use Minn\Objects\Query;
 use Minn\Objects\Term;
+use Minn\Objects\TermsQuery;
 use Minn\Objects\User;
+use Minn\Objects\UsersQuery;
 
 /**
  * What the engine asks of the layer it runs under, where a plugin may have
@@ -34,7 +38,8 @@ final class Handoff
      * becomeUser, cacheUsers, authenticate, setPassword, password, hash,
      * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
      * factories newError, newPost, postInstance, newTerm, newComment,
-     * commentInstance, newUser.
+     * commentInstance, newUser, and the query factories newQuery,
+     * newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery.
      *
      * @param array<string, Closure> $answers
      */
@@ -210,6 +215,42 @@ final class Handoff
     public static function newUser(mixed ...$args): User
     {
         return self::answer('newUser', ...$args);
+    }
+
+    /** A posts query, run at once when given its variables (new WP_Query). */
+    public static function newQuery(mixed ...$args): Query
+    {
+        return self::answer('newQuery', ...$args);
+    }
+
+    /** A comments query, run at once when given its variables (new WP_Comment_Query). */
+    public static function newCommentQuery(mixed ...$args): CommentsQuery
+    {
+        return self::answer('newCommentQuery', ...$args);
+    }
+
+    /** A users query, run at once when given its variables (new WP_User_Query). */
+    public static function newUserQuery(mixed ...$args): UsersQuery
+    {
+        return self::answer('newUserQuery', ...$args);
+    }
+
+    /** A terms query, run at once when given its variables (new WP_Term_Query). */
+    public static function newTermQuery(mixed ...$args): TermsQuery
+    {
+        return self::answer('newTermQuery', ...$args);
+    }
+
+    /** A meta query from its clauses (new WP_Meta_Query). */
+    public static function newMetaQuery(mixed ...$args): object
+    {
+        return self::answer('newMetaQuery', ...$args);
+    }
+
+    /** A date query from its clauses and column (new WP_Date_Query). */
+    public static function newDateQuery(mixed ...$args): object
+    {
+        return self::answer('newDateQuery', ...$args);
     }
 
     private static function answer(string $name, mixed ...$args): mixed

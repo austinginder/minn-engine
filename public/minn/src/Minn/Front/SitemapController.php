@@ -11,6 +11,7 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Runtime\MainQuery;
 use Minn\Theme\MainQueryBridge;
 
 /**
@@ -83,6 +84,6 @@ final readonly class SitemapController
         if ($printed !== null) {
             return $printed;
         }
-        return ($this->themed)(\is_404() ? Resolution::notFound() : Resolution::home());
+        return ($this->themed)(MainQuery::current()->is_404() ? Resolution::notFound() : Resolution::home());
     }
 }

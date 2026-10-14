@@ -10,6 +10,7 @@ use Minn\Content\Page;
 use Minn\Front\Kind;
 use Minn\Front\RequestParse;
 use Minn\Front\Resolution;
+use Minn\Objects\Query;
 use Minn\Runtime\Runtime;
 
 /**
@@ -92,7 +93,7 @@ final readonly class MainQueryBridge
     public static function verdict(Resolution $resolution): Resolution
     {
         $query = $GLOBALS['wp_query'] ?? null;
-        $decided = $query instanceof \WP_Query && Runtime::current()->get('front_lifecycle') === true && $query->is_404();
+        $decided = $query instanceof Query && Runtime::current()->get('front_lifecycle') === true && $query->is_404();
         return $decided && $resolution->kind !== Kind::NotFound ? Resolution::notFound()->withVars($resolution->vars) : $resolution;
     }
 

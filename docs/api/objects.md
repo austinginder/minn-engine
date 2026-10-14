@@ -5,10 +5,14 @@
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Comment`](#comment) | interface | 3 | A comment as the WordPress layer hands it to plugins (WP_Comment). The |
+| [`CommentsQuery`](#commentsquery) | interface | 3 | A comments query as the WordPress layer hands it to plugins |
 | [`Errors`](#errors) | interface | 3 | A list of errors as the WordPress layer hands it to plugins (WP_Error): |
 | [`Post`](#post) | interface | 3 | A post as the WordPress layer hands it to plugins (WP_Post). The engine |
+| [`Query`](#query) | interface | 3 | A posts query as the WordPress layer hands it to plugins (WP_Query): its |
 | [`Term`](#term) | interface | 3 | A term as the WordPress layer hands it to plugins (WP_Term). The engine |
+| [`TermsQuery`](#termsquery) | interface | 3 | A terms query as the WordPress layer hands it to plugins (WP_Term_Query). |
 | [`User`](#user) | interface | 3 | A user as the WordPress layer hands it to plugins (WP_User). The engine |
+| [`UsersQuery`](#usersquery) | interface | 3 | A users query as the WordPress layer hands it to plugins (WP_User_Query). |
 
 ## Comment
 
@@ -19,6 +23,18 @@ engine knows these objects by this mark and makes them through
 Runtime\Handoff, so it never names the WordPress layer's class.
 
 Used by: `Minn\Rest\CommentsController`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\Handoff`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\Records`
+
+
+## CommentsQuery
+
+`interface Minn\Objects\CommentsQuery` · `public/minn/src/Minn/Objects/CommentsQuery.php`
+
+A comments query as the WordPress layer hands it to plugins
+(WP_Comment_Query). The engine knows these objects by this mark and makes
+them through Runtime\Handoff, so it never names the WordPress layer's
+class.
+
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Rest\CommentsController`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\Handoff`
 
 
 ## Errors
@@ -44,6 +60,18 @@ so it never names the WordPress layer's class.
 Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Media\Icons`, `Minn\Rest\BlockRendererController`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\TermsController`, `Minn\Runtime\Handoff`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\Records`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\QueryClasses`
 
 
+## Query
+
+`interface Minn\Objects\Query` · `public/minn/src/Minn/Objects/Query.php`
+
+A posts query as the WordPress layer hands it to plugins (WP_Query): its
+variables, flags, posts and loop. The engine knows these objects by this
+mark and makes them through Runtime\Handoff, so it never names the
+WordPress layer's class.
+
+Used by: `Minn\Front\FeedTags`, `Minn\Front\Renderer`, `Minn\Rest\PostsController`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\Handoff`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\QueryClasses`
+
+
 ## Term
 
 `interface Minn\Objects\Term` · `public/minn/src/Minn/Objects/Term.php`
@@ -55,6 +83,17 @@ so it never names the WordPress layer's class.
 Used by: `Minn\Rest\TermFilters`, `Minn\Rest\TermsController`, `Minn\Runtime\Handoff`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostLinks`, `Minn\Runtime\Records`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Theme\QueryClasses`
 
 
+## TermsQuery
+
+`interface Minn\Objects\TermsQuery` · `public/minn/src/Minn/Objects/TermsQuery.php`
+
+A terms query as the WordPress layer hands it to plugins (WP_Term_Query).
+The engine knows these objects by this mark and makes them through
+Runtime\Handoff, so it never names the WordPress layer's class.
+
+Used by: `Minn\Runtime\Handoff`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`
+
+
 ## User
 
 `interface Minn\Objects\User` · `public/minn/src/Minn/Objects/User.php`
@@ -64,4 +103,15 @@ knows these objects by this mark and makes them through Runtime\Handoff,
 so it never names the WordPress layer's class.
 
 Used by: `Minn\Auth\Can`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginHooks`, `Minn\Rest\UsersController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Handoff`, `Minn\Runtime\MetaKeys`, `Minn\Theme\QueryClasses`
+
+
+## UsersQuery
+
+`interface Minn\Objects\UsersQuery` · `public/minn/src/Minn/Objects/UsersQuery.php`
+
+A users query as the WordPress layer hands it to plugins (WP_User_Query).
+The engine knows these objects by this mark and makes them through
+Runtime\Handoff, so it never names the WordPress layer's class.
+
+Used by: `Minn\Rest\UsersController`, `Minn\Runtime\Handoff`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`
 

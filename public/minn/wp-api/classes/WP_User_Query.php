@@ -9,7 +9,7 @@ use Minn\Runtime\UserQueryRunner;
  * pre_user_query, writes the request and shapes the results.
  */
 #[AllowDynamicProperties]
-class WP_User_Query
+class WP_User_Query implements \Minn\Objects\UsersQuery
 {
     public $query_vars = [];
     public $results = [];
@@ -32,8 +32,7 @@ class WP_User_Query
 
     public static function fill_query_vars($args)
     {
-        $defaults = ['blog_id' => get_current_blog_id(), 'role' => '', 'role__in' => [], 'role__not_in' => [], 'capability' => '', 'capability__in' => [], 'capability__not_in' => [], 'meta_key' => '', 'meta_value' => '', 'meta_compare' => '', 'include' => [], 'exclude' => [], 'search' => '', 'search_columns' => [], 'orderby' => 'login', 'order' => 'ASC', 'offset' => '', 'number' => '', 'paged' => 1, 'count_total' => true, 'fields' => 'all', 'who' => '', 'has_published_posts' => null, 'nicename' => '', 'nicename__in' => [], 'nicename__not_in' => [], 'login' => '', 'login__in' => [], 'login__not_in' => [], 'cache_results' => true];
-        return wp_parse_args($args, $defaults);
+        return \Minn\Runtime\UserQueryRunner::fillVars($args);
     }
 
     public function prepare_query($query = [])

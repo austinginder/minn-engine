@@ -7,15 +7,7 @@ use Minn\Runtime\Runtime;
 /** @internal the main query the page runs on; a CLI boot gets an empty one */
 function _minn_main_query(): WP_Query
 {
-    if (!isset($GLOBALS['wp_the_query']) || !$GLOBALS['wp_the_query'] instanceof WP_Query) {
-        $GLOBALS['wp_the_query'] = new WP_Query();
-        $GLOBALS['wp_the_query']->posts = [];
-        $GLOBALS['wp_the_query']->post_count = 0;
-    }
-    if (!isset($GLOBALS['wp_query']) || !$GLOBALS['wp_query'] instanceof WP_Query) {
-        $GLOBALS['wp_query'] = $GLOBALS['wp_the_query'];
-    }
-    return $GLOBALS['wp_query'];
+    return Minn\Runtime\MainQuery::current();
 }
 
 function get_query_var($query_var, $default_value = '')
