@@ -4275,6 +4275,480 @@
                 "body": "fe0de0a3d70d"
             }
         },
+        "classes/WP_REST_Application_Passwords_Controller.php": {
+            "WP_REST_Application_Passwords_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and the users/{id}/application-passwords base that register_routes and subclasses read",
+                "body": "afecfd1dc5f1"
+            },
+            "WP_REST_Application_Passwords_Controller::create_item": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ApplicationPasswordEvents",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "creates the password from the prepared item, chunks it, saves fields, fires rest_after_insert_application_password and answers 201 with a Location; ApplicationPasswordEvents::create holds the same sequence, the $this-> calls stay at their points",
+                "body": "cd3c87fe337a"
+            },
+            "WP_REST_Application_Passwords_Controller::delete_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the previous view through $this->prepare_item_for_response in the edit context, then WP_Application_Passwords::delete_application_password and the deleted answer",
+                "body": "72fd14f5ce3e"
+            },
+            "WP_REST_Application_Passwords_Controller::delete_items": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the user through $this->get_user, WP_Application_Passwords::delete_all_application_passwords, then the deleted-and-count answer",
+                "body": "3befaf0822be"
+            },
+            "WP_REST_Application_Passwords_Controller::do_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated since 5.7: the notice, then the old edit_user check through current_user_can",
+                "body": "68457bdd703c"
+            },
+            "WP_REST_Application_Passwords_Controller::get_application_password": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the user, then WP_Application_Passwords::get_user_application_password by uuid, a 404 when missing",
+                "body": "87794478d83b"
+            },
+            "WP_REST_Application_Passwords_Controller::get_current_item": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "rest_get_authenticated_app_password and the stored password by uuid, each missing step a 404, then $this->prepare_item_for_response",
+                "body": "33d8b3eda1db"
+            },
+            "WP_REST_Application_Passwords_Controller::get_current_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the user through $this->get_user, refused unless get_current_user_id is that user",
+                "body": "45dc54b2ba57"
+            },
+            "WP_REST_Application_Passwords_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_application_password, then $this->prepare_item_for_response",
+                "body": "cfa8e94c7dff"
+            },
+            "WP_REST_Application_Passwords_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches the captured application-password schema in $this->schema and adds registered fields through $this",
+                "body": "49af60f23c02"
+            },
+            "WP_REST_Application_Passwords_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the user through $this->get_user, then each stored password through $this->prepare_item_for_response and prepare_response_for_collection",
+                "body": "6766fa867205"
+            },
+            "WP_REST_Application_Passwords_Controller::get_user": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\ApplicationPasswordsController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the user a request names, me or an id, with the unavailable, signed-out, unknown and disabled-for-user refusals; the engine controller's subject makes the same checks",
+                "body": "70a2acac0efc"
+            },
+            "WP_REST_Application_Passwords_Controller::minn_may": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the user through $this->get_user, then the action's meta capability through current_user_can by name, refused with the action's code",
+                "body": "6ec367df15c8"
+            },
+            "WP_REST_Application_Passwords_Controller::prepare_item_for_database": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ApplicationPasswordEvents",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the name, and an app id only for a new password, through rest_pre_insert_application_password; ApplicationPasswordEvents::prepared builds the same item privately",
+                "body": "17c97de49565"
+            },
+            "WP_REST_Application_Passwords_Controller::prepare_item_for_response": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\ApplicationPasswordsController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds the password's fields with site-local dates, the one-time password, context, links and rest_prepare_application_password; the engine controller's item and when build the same answer",
+                "body": "ccceda2dbc8b"
+            },
+            "WP_REST_Application_Passwords_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the collection, introspect and uuid routes pointing at $this callbacks and permission checks, the methods subclasses override",
+                "body": "7043c8f18e91"
+            },
+            "WP_REST_Application_Passwords_Controller::update_item": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ApplicationPasswordEvents",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "renames the password from the prepared item, saves fields, reads it back and fires rest_after_insert_application_password; ApplicationPasswordEvents::update holds the same sequence, the $this-> calls stay at their points",
+                "body": "94428e4867e2"
+            }
+        },
+        "classes/WP_REST_Attachments_Controller.php": {
+            "WP_REST_Attachments_Controller::create_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "refuses an id, sends a url to $this->create_item_from_url, else runs the engine's upload route and answers 201 through $this->prepare_item_for_response",
+                "body": "2bcbccc7260a"
+            },
+            "WP_REST_Attachments_Controller::create_item_from_url": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MediaController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the url's filename and image type rules, the download, then the file replayed as a body upload; the engine's upload route should take a url itself",
+                "body": "6394cc8356aa"
+            },
+            "WP_REST_Attachments_Controller::create_item_permissions_check": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MediaController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the parent's checks, upload_files, edit_post on the parent named and the unsupported image refusal; MediaController::create makes the same checks",
+                "body": "1dd2abf69053"
+            },
+            "WP_REST_Attachments_Controller::edit_media_item": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEdit",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "checks the source, applies the modifiers through the image editor, saves a unique -edited copy, inserts it as an attachment, writes its metadata through wp_edited_image_metadata and answers 201; the engine has no image edit yet",
+                "body": "3d89649771da"
+            },
+            "WP_REST_Attachments_Controller::edit_media_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "upload_files through current_user_can, then $this->update_item_permissions_check",
+                "body": "2f4741037041"
+            },
+            "WP_REST_Attachments_Controller::finalize_item": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "checks provenance, merges the sideloaded sizes into the metadata through wp_generate_attachment_metadata, clears the records and answers the edit view",
+                "body": "770a8599b2ec"
+            },
+            "WP_REST_Attachments_Controller::get_attachment_filename": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MediaObject",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the original image's or the attached file's basename; MediaObject computes the same filename inline",
+                "body": "b23290030b19"
+            },
+            "WP_REST_Attachments_Controller::get_attachment_filesize": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MediaObject",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the metadata's filesize, else the file's own size; MediaObject computes the same inline",
+                "body": "562eba517368"
+            },
+            "WP_REST_Attachments_Controller::get_attachment_upload_subdir": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Uploads",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the folder under the uploads base a file lies in, or null outside it; beside Uploads::relativeOf",
+                "body": "cf78ef477cec"
+            },
+            "WP_REST_Attachments_Controller::get_collection_params": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostCollectionParams",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "re-sets the attachment status default and choices and the media_type and mime_type params, which PostCollectionParams already builds for attachments; the parent call stays",
+                "body": "e6680048d7c6"
+            },
+            "WP_REST_Attachments_Controller::get_edit_media_item_args": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the captured media-edit-args plus the attachment fields from $this->get_endpoint_args_for_item_schema",
+                "body": "6b9cc948df45"
+            },
+            "WP_REST_Attachments_Controller::get_endpoint_args_for_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's args plus the captured media-create-args when creating, the url checked through wp_http_validate_url",
+                "body": "8ce8f05bdfa9"
+            },
+            "WP_REST_Attachments_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches in $this->schema the parent's schema without password, the captured media properties and an image quality per registered size",
+                "body": "11d91c2c4469"
+            },
+            "WP_REST_Attachments_Controller::get_media_types": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostCollectionParams",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the allowed MIME types grouped by their first part; PostCollectionParams::mediaTypes does the same but lists each type once",
+                "doubt": "this keeps a MIME type twice when two extension groups share it, where the engine's mediaTypes dedupes; the probe's two added types can settle which is right",
+                "body": "197dd58eccd6"
+            },
+            "WP_REST_Attachments_Controller::get_sideloaded_file_names": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the names sideloads recorded plus the attachment's own files from its meta and metadata",
+                "body": "008ce1117f4e"
+            },
+            "WP_REST_Attachments_Controller::handle_featured_media": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MediaController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "lets only audio and video take a featured image where the type or the theme supports it, else refuses naming the MIME type",
+                "body": "5746b3eedab6"
+            },
+            "WP_REST_Attachments_Controller::insert_attachment": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MediaController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "stores the file, takes the photo's title and caption, prepares, names and inserts the attachment, then rest_insert_attachment; MediaController::insertedWithPlugins holds the same save",
+                "body": "2e4f736b771d"
+            },
+            "WP_REST_Attachments_Controller::minn_apply_modifier": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEdit",
+                "why": "applies a flip, a rotation or a percentage crop to the editor, each failure its own 500 refusal",
+                "body": "631a169812ea"
+            },
+            "WP_REST_Attachments_Controller::minn_edited_attachment": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEdit",
+                "why": "inserts the edited file as a new attachment, copying the original's title, caption, description and alt text unless the request sets them",
+                "body": "50e2e12c2f4f"
+            },
+            "WP_REST_Attachments_Controller::minn_engine": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "runs the engine's route for the request and turns its answer into the body or a WP_Error, the post cache cleared",
+                "body": "b7a62ee4e752"
+            },
+            "WP_REST_Attachments_Controller::minn_finalized_meta": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "why": "folds each sub-size into the metadata: scaled replaces the main file, source_original sets source_image, others join sizes",
+                "body": "e4734201cb20"
+            },
+            "WP_REST_Attachments_Controller::minn_media_links": {
+                "verdict": "remove",
+                "why": "the loop of WP_REST_Posts_Controller::minn_links_for_response line for line (only a variable named differently), a Minn helper no plugin calls; the one RuntimeRoutes method serves this controller too",
+                "body": "22a0905c5ee8"
+            },
+            "WP_REST_Attachments_Controller::minn_modifiers": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEdit",
+                "why": "the modifiers list, or the legacy rotation and crop fields turned into one",
+                "body": "1a6adbd3a908"
+            },
+            "WP_REST_Attachments_Controller::minn_register_actions": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers post-process and edit, and sideload and finalize when the browser processes images, all pointing at $this callbacks; the engine registers these through it",
+                "body": "f3dd17aabec8"
+            },
+            "WP_REST_Attachments_Controller::minn_sideload_recorded": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "why": "records the sideloaded name in meta; scaled or original becomes the attached file, the earlier one recorded too",
+                "body": "813a0b5418df"
+            },
+            "WP_REST_Attachments_Controller::minn_sideloaded_file": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "why": "uploads the file into the attachment's folder under a name that keeps its size suffix, through temporary upload_dir and wp_unique_filename filters",
+                "body": "999690ff8f33"
+            },
+            "WP_REST_Attachments_Controller::minn_size_refusal": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "why": "refuses unknown size names and a file more than a pixel over a registered size's maximum",
+                "body": "77651baf8df0"
+            },
+            "WP_REST_Attachments_Controller::minn_sub_sizes_checked": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "why": "each finalize sub-size's image_size checked through validate_image_size_names",
+                "body": "4af5af2902db"
+            },
+            "WP_REST_Attachments_Controller::post_process_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "wp_update_image_subsizes for the one action, then the edit view through $this->prepare_item_for_response",
+                "body": "4081f9f85bdd"
+            },
+            "WP_REST_Attachments_Controller::prepare_item_for_database": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MediaController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the parent's fields plus caption, description and parent post; MediaController::preparedAttachment maps caption and description the same way",
+                "body": "3b1fd017fe78"
+            },
+            "WP_REST_Attachments_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's media view filtered to the fields and context asked, its links added, with the global post set up as the reference does",
+                "body": "9dd2d724341d"
+            },
+            "WP_REST_Attachments_Controller::prepare_items_query": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostListArgs",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the inherit status by default and the media types or MIME types asked as post_mime_type; PostListArgs::mimeTypes holds the same rule for the engine's list",
+                "doubt": "media_type wins over mime_type here and mime_type is not limited to allowed types, where the engine's mimeTypes lets an allowed mime_type win; the move must keep one rule",
+                "body": "4ddc1e056100"
+            },
+            "WP_REST_Attachments_Controller::prepare_links": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's mediaLinks for the attachment, the first link of each rel",
+                "body": "79e1a8ebaa45"
+            },
+            "WP_REST_Attachments_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's post routes, then $this->minn_register_actions",
+                "body": "becaf1c7d1db"
+            },
+            "WP_REST_Attachments_Controller::sideload_item": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "stores a browser-made size beside the attachment's file, checks its size names and dimensions and records it for finalize; no engine counterpart yet",
+                "body": "503ed118793b"
+            },
+            "WP_REST_Attachments_Controller::upload_from_data": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MediaController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the body's refusals through Upload::refusal, a temp file written, then wp_handle_sideload; MediaController::storeWithPlugins does the same",
+                "body": "b6968a5e57ef"
+            },
+            "WP_REST_Attachments_Controller::upload_from_file": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_handle_upload by name, its errors as the REST refusals",
+                "body": "2e00101999af"
+            },
+            "WP_REST_Attachments_Controller::validate_image_size_names": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "why": "a size name or a list of names checked against the registered sizes, the special names allowed only alone",
+                "body": "70eb62d51110"
+            },
+            "WP_REST_Attachments_Controller::validate_sub_size_provenance": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Sideload",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "refuses a file or original image name that no sideload for the attachment produced",
+                "body": "a69f07f54226"
+            }
+        },
+        "classes/WP_REST_Autosaves_Controller.php": {
+            "WP_REST_Autosaves_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "fills the parent type, its controller, a revisions controller, the base and the namespace that routes and subclasses use",
+                "body": "e775b622dea8"
+            },
+            "WP_REST_Autosaves_Controller::create_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "runs the engine's autosave route and turns its answer into a WP_Error or the edit view through $this->prepare_item_for_response",
+                "doubt": "an author's own draft is saved as an autosave revision; WordPress's endpoint as known updates such a draft in place",
+                "body": "1c31395793ff"
+            },
+            "WP_REST_Autosaves_Controller::create_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "refuses a missing id, then the parent controller's update_item_permissions_check",
+                "body": "ab58dbb6b09b"
+            },
+            "WP_REST_Autosaves_Controller::create_post_autosave": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Revisions",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "reuses the user's autosave when title, content and excerpt match the post by normalized whitespace, else writes the slot through the engine's saveAutosave",
+                "doubt": "$meta is ignored, and an unchanged autosave returns the old id where WordPress's API as known deletes it and refuses with no changes",
+                "body": "9bf3813102af"
+            },
+            "WP_REST_Autosaves_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_post_autosave of the parent, refusals for a bad parent or none, then $this->prepare_item_for_response",
+                "body": "04340e47e03a"
+            },
+            "WP_REST_Autosaves_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches the revisions controller's schema with the captured preview_link in $this->schema",
+                "body": "2bf699ceb0b7"
+            },
+            "WP_REST_Autosaves_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_post_revisions of the parent, the autosaves among them by name, each through $this->prepare_item_for_response",
+                "body": "83ce1b4c31f4"
+            },
+            "WP_REST_Autosaves_Controller::get_items_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the parent through $this->get_parent, then edit_post through current_user_can",
+                "body": "ccefa476781a"
+            },
+            "WP_REST_Autosaves_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the revisions controller's answer, the preview link from get_preview_post_link in the edit context, then rest_prepare_autosave",
+                "body": "f9a451bde467"
+            },
+            "WP_REST_Autosaves_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the autosaves routes pointing at $this, the parent controller's write args and the revisions controller's permission check",
+                "body": "a12b21176bfc"
+            }
+        },
         "classes/WP_REST_Block_Pattern_Categories_Controller.php": {
             "WP_REST_Block_Pattern_Categories_Controller::__construct": {
                 "verdict": "keep",
@@ -4308,6 +4782,93 @@
                 "reason": "shape",
                 "why": "the registered category's name, label and description as the fields ask, with the additional fields and the context filter",
                 "body": "28cc517ae689"
+            }
+        },
+        "classes/WP_REST_Block_Patterns_Controller.php": {
+            "WP_REST_Block_Patterns_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and the block-patterns/patterns base that register_routes and subclasses read",
+                "body": "7fe388c221c3"
+            },
+            "WP_REST_Block_Patterns_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches the captured block-pattern schema in $this->schema and adds registered fields",
+                "body": "98d9252b58a3"
+            },
+            "WP_REST_Block_Patterns_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "loads the remote patterns once per instance through $this->remote_patterns_loaded, then each registered pattern through $this->migrate_pattern_categories and $this->prepare_item_for_response",
+                "body": "31f5a310739c"
+            },
+            "WP_REST_Block_Patterns_Controller::get_items_permissions_check": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\Caller::editsAnyRestType",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "edit_posts or any REST type's edit_posts capability is exactly Caller::editsAnyRestType; the rest_cannot_view refusal stays as shape",
+                "body": "92e956b84421"
+            },
+            "WP_REST_Block_Patterns_Controller::migrate_pattern_categories": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "renames old categories by the class's static $categories_migration map, which subclasses may change",
+                "body": "c39760c031c7"
+            },
+            "WP_REST_Block_Patterns_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the pattern's keys under their REST names, only the fields asked, its content resolved through parse_blocks, resolve_pattern_blocks and serialize_blocks",
+                "doubt": "add_additional_fields_to_object is never called, so a field registered for block patterns never shows",
+                "body": "9b65c226d8a4"
+            }
+        },
+        "classes/WP_REST_Block_Renderer_Controller.php": {
+            "WP_REST_Block_Renderer_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and the block-renderer base that register_routes and subclasses read",
+                "body": "ecb560b3b83d"
+            },
+            "WP_REST_Block_Renderer_Controller::get_item": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\BlockRendererController",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "sets up the named post as the global post, refuses an unregistered or static block and renders it through render_block; the engine controller's rendered does this and puts the global back",
+                "body": "1c81a1e1d9b3"
+            },
+            "WP_REST_Block_Renderer_Controller::get_item_permissions_check": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\BlockRendererController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "edit_post on the post named, else edit_posts, each refused as block_cannot_read; the engine controller's permit holds the same rule",
+                "body": "0ffa2e0fb482"
+            },
+            "WP_REST_Block_Renderer_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches the captured rendered-block schema in $this->schema and adds registered fields",
+                "body": "092ce31aec6d"
+            },
+            "WP_REST_Block_Renderer_Controller::minn_sanitize_attributes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the block's attributes as a closed object schema through rest_sanitize_value_from_schema by name",
+                "body": "cd11e973e062"
+            },
+            "WP_REST_Block_Renderer_Controller::minn_validate_attributes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the block's attributes as a closed object schema through rest_validate_value_from_schema by name",
+                "body": "c025cee707f4"
             }
         },
         "classes/WP_REST_Block_Types_Controller.php": {
@@ -4446,6 +5007,94 @@
                 "reason": "contract",
                 "why": "runs the update callback of each plugin field the request names, from $this->get_additional_fields(), the first WP_Error answering",
                 "body": "b3b14bbe8fca"
+            }
+        },
+        "classes/WP_REST_Icon_Collections_Controller.php": {
+            "WP_REST_Icon_Collections_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and the icon-collections base that register_routes and subclasses read",
+                "body": "477750032121"
+            },
+            "WP_REST_Icon_Collections_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_icon_collection, then $this->prepare_item_for_response",
+                "body": "db1f186b5bc0"
+            },
+            "WP_REST_Icon_Collections_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "each registered collection through $this->prepare_item_for_response and prepare_response_for_collection",
+                "body": "ad098d8f8902"
+            },
+            "WP_REST_Icon_Collections_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the collection's slug, label and description as asked, filtered by the context",
+                "body": "3aad7e865c17"
+            },
+            "WP_REST_Icon_Collections_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the collection and slug routes pointing at $this callbacks, the slug argument captured",
+                "body": "3566a20018cb"
+            }
+        },
+        "classes/WP_REST_Menu_Locations_Controller.php": {
+            "WP_REST_Menu_Locations_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and the menu-locations base that register_routes and subclasses read",
+                "body": "c6628ead3e41"
+            },
+            "WP_REST_Menu_Locations_Controller::check_has_read_only_access": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the rest_menu_read_access opener, then edit_theme_options through current_user_can",
+                "body": "f3358ad9250f"
+            },
+            "WP_REST_Menu_Locations_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the registered location or a 404, then $this->prepare_item_for_response",
+                "body": "0286bb993fa5"
+            },
+            "WP_REST_Menu_Locations_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches the captured menu-location schema in $this->schema and adds registered fields",
+                "body": "d59a036f8fb2"
+            },
+            "WP_REST_Menu_Locations_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "each registered location through $this->prepare_item_for_response, keyed by name",
+                "body": "a6c544ff0ae4"
+            },
+            "WP_REST_Menu_Locations_Controller::prepare_item_for_response": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MenusController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the location's name, description and assigned menu, fields, context, links and rest_prepare_menu_location; MenusController::locationItem builds the same",
+                "body": "e4f9d2f03b6c"
+            },
+            "WP_REST_Menu_Locations_Controller::prepare_links": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\MenusController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "self and collection links plus the assigned menu's link when its route resolves; MenusController::locationItem holds the same links",
+                "body": "e94ec1e8fab6"
+            },
+            "WP_REST_Menu_Locations_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the collection and location routes pointing at $this callbacks",
+                "body": "3c20ae16e997"
             }
         },
         "classes/WP_REST_Menus_Controller.php": {
@@ -5085,6 +5734,59 @@
                 "body": "b8eaac0b5980"
             }
         },
+        "classes/WP_REST_Search_Controller.php": {
+            "WP_REST_Search_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "fills $this->search_handlers by type, a doing-it-wrong notice for anything not a WP_REST_Search_Handler",
+                "body": "925b4872f700"
+            },
+            "WP_REST_Search_Controller::get_collection_params": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's params with type, subtype, exclude and include, the choices from the registered handlers",
+                "body": "b97cd4749b6e"
+            },
+            "WP_REST_Search_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the captured search-result schema with type and subtype choices from $this->search_handlers, cached in $this->schema",
+                "body": "e0d82237ba35"
+            },
+            "WP_REST_Search_Controller::get_items": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SearchController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "checks the handler's result and the page bound, prepares each id, and sets the total, pages and prev and next Link headers; the engine's search route answers the same headers",
+                "body": "595f767eaf04"
+            },
+            "WP_REST_Search_Controller::get_search_handler": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the handler for the request's type from $this->search_handlers, else rest_search_invalid_type",
+                "body": "0cac2acde6c7"
+            },
+            "WP_REST_Search_Controller::minn_subtypes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "every registered handler's subtypes, each once",
+                "body": "d223551f18f3"
+            },
+            "WP_REST_Search_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the handler's prepare_item and prepare_item_links with the search collection link, fields and context through $this",
+                "body": "0df334fb6540"
+            },
+            "WP_REST_Search_Controller::sanitize_subtypes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "parses the list, any alone, else the handler's own subtypes through $this->get_search_handler",
+                "body": "12b86825551d"
+            }
+        },
         "classes/WP_REST_Settings_Controller.php": {
             "WP_REST_Settings_Controller::__construct": {
                 "verdict": "keep",
@@ -5142,6 +5844,241 @@
                 ],
                 "why": "rest_pre_update_setting, then update_option, or delete_option refused for an unfit stored value, for each setting named: LiveSettings::store's write; answering through $this->get_item stays",
                 "body": "d67ed852c29d"
+            }
+        },
+        "classes/WP_REST_Sidebars_Controller.php": {
+            "WP_REST_Sidebars_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and the sidebars base that register_routes and subclasses read",
+                "body": "c945b2fc48c9"
+            },
+            "WP_REST_Sidebars_Controller::do_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "edit_theme_options through current_user_can, else rest_cannot_manage_widgets",
+                "body": "66d111183fbe"
+            },
+            "WP_REST_Sidebars_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_sidebar, then $this->prepare_item_for_response or rest_sidebar_not_found",
+                "body": "d797e4013535"
+            },
+            "WP_REST_Sidebars_Controller::get_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->check_read_permission on the sidebar, else $this->do_permissions_check",
+                "body": "47f7640feabb"
+            },
+            "WP_REST_Sidebars_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches the captured sidebar schema in $this->schema and adds registered fields",
+                "body": "8eb48e68f84d"
+            },
+            "WP_REST_Sidebars_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "each listed sidebar the caller may read, through $this->get_sidebar and $this->prepare_item_for_response",
+                "body": "354fafdd5be6"
+            },
+            "WP_REST_Sidebars_Controller::get_items_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "after $this->retrieve_widgets, true when any sidebar passes $this->check_read_permission, else $this->do_permissions_check",
+                "body": "40a458b4b540"
+            },
+            "WP_REST_Sidebars_Controller::prepare_item_for_response": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SidebarsController",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "builds the sidebar's wrapping markup, status (inactive under a block theme) and registered widgets from the sidebar globals, checked against the schema, then links and rest_prepare_sidebar; SidebarsController::item builds the same",
+                "body": "3325384cfcad"
+            },
+            "WP_REST_Sidebars_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the collection and sidebar routes pointing at $this callbacks",
+                "body": "ec6bea8c4b7e"
+            },
+            "WP_REST_Sidebars_Controller::retrieve_widgets": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "calls retrieve_widgets once per instance through $this->widgets_retrieved",
+                "body": "d5eb0d5f718c"
+            },
+            "WP_REST_Sidebars_Controller::update_item": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SidebarsController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "moves the given widgets into the sidebar and out of every other, the dropped ones to the inactive widgets, saves, then rest_save_sidebar; SidebarsController::save holds the same reassignment",
+                "body": "127b3b582e42"
+            }
+        },
+        "classes/WP_REST_Templates_Controller.php": {
+            "WP_REST_Templates_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the post type, base and namespace from its type object, read by routes and subclasses",
+                "body": "7f9431ca342c"
+            },
+            "WP_REST_Templates_Controller::_sanitize_template_id": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "decodes the id and splits theme from slug with a double slash at the last slash; TemplateIndex parts ids on that separator",
+                "body": "c2f817fbb12e"
+            },
+            "WP_REST_Templates_Controller::create_item": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\TemplatesController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "inserts a template under the slug asked, finds it back, fires rest_after_insert and wp_after_insert_post and answers 201 with a Location; the engine controller's create holds the same",
+                "doubt": "update_additional_fields_for_object is never called, so registered fields are not saved",
+                "body": "a40f4a6d4a9e"
+            },
+            "WP_REST_Templates_Controller::delete_item": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\TemplatesController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "only the site's copy goes: trashed (refused when already trashed) or with force deleted with its previous view; the engine controller's delete holds the same rules",
+                "body": "331aadc0e80c"
+            },
+            "WP_REST_Templates_Controller::get_available_actions": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the publish and unfiltered-html actions by current_user_can",
+                "body": "5f289e4a3fad"
+            },
+            "WP_REST_Templates_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "get_block_template or a 404, then $this->prepare_item_for_response",
+                "body": "0d17c9a557ad"
+            },
+            "WP_REST_Templates_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches the captured template properties plus the type's own in $this->schema",
+                "body": "7305b4864f59"
+            },
+            "WP_REST_Templates_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "get_block_templates with the request's wp_id, area and post_type, each through $this->prepare_item_for_response",
+                "body": "53cccc3d7dd8"
+            },
+            "WP_REST_Templates_Controller::get_items_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "edit_theme_options or edit_posts through current_user_can",
+                "body": "408032b3f4de"
+            },
+            "WP_REST_Templates_Controller::get_template_fallback": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\TemplatesController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the first template in the slug's hierarchy that exists, shown through $this->prepare_item_for_response; the engine controller's lookup holds the same search",
+                "body": "cd40dea5b53b"
+            },
+            "WP_REST_Templates_Controller::minn_changed_text": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateWriter",
+                "why": "content, title and description from the request, else from the theme file's template",
+                "body": "f9b96ef8c7ab"
+            },
+            "WP_REST_Templates_Controller::minn_record": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a WP_Block_Template as the engine's TemplateRecord",
+                "body": "eb380415da68"
+            },
+            "WP_REST_Templates_Controller::permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "edit_theme_options through current_user_can, else rest_cannot_manage_templates",
+                "body": "21a0aca05cf6"
+            },
+            "WP_REST_Templates_Controller::prepare_item_for_database": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateWriter",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the post fields by the template's source (new, theme file or site copy), its text, area and author, through rest_pre_insert_{type}",
+                "doubt": "a new template part with no area asked gets no area term, where the engine's create gives it uncategorized",
+                "body": "0d4d21a1e7b1"
+            },
+            "WP_REST_Templates_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's template view filtered to the fields and context asked, its links expanded, then rest_prepare_{type}",
+                "body": "091a082a1416"
+            },
+            "WP_REST_Templates_Controller::prepare_links": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the self, collection and about links from $this's namespace, base and post type",
+                "body": "3de15bd168d7"
+            },
+            "WP_REST_Templates_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the collection, lookup and id routes pointing at $this callbacks, the id sanitized through $this->_sanitize_template_id",
+                "body": "0645f75863e6"
+            },
+            "WP_REST_Templates_Controller::update_item": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\TemplatesController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "updates the site's copy or inserts one over a theme file, maps save errors to 500 or 400, then rest_after_insert and wp_after_insert_post; the engine's save through TemplateWriter holds the write",
+                "doubt": "update_additional_fields_for_object is never called, so registered fields are not saved",
+                "body": "c62be7d5b0a0"
+            }
+        },
+        "classes/WP_REST_Term_Search_Handler.php": {
+            "WP_REST_Term_Search_Handler::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the term type and the public REST taxonomies as its subtypes, read by the search controller",
+                "body": "0454625da938"
+            },
+            "WP_REST_Term_Search_Handler::prepare_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the term's id, name, link and taxonomy for the fields asked",
+                "body": "e96f3c64cfa1"
+            },
+            "WP_REST_Term_Search_Handler::prepare_item_links": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the term's route through rest_get_route_for_term and its taxonomy as about",
+                "body": "9d53f2724bf8"
+            },
+            "WP_REST_Term_Search_Handler::search_items": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SearchController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the term query from page, search, include and exclude through rest_term_search_query, then the ids and the count; the engine's search route hands terms back here and should run them itself",
+                "body": "63cfb75f1b01"
             }
         },
         "classes/WP_REST_Terms_Controller.php": {
@@ -5294,6 +6231,313 @@
                 "reason": "contract",
                 "why": "$this->get_term, then edit_term by name",
                 "body": "cf91f7a3ba70"
+            }
+        },
+        "classes/WP_REST_URL_Details_Controller.php": {
+            "WP_REST_URL_Details_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the wp-block-editor/v1 namespace and the url-details base",
+                "body": "8424b60f1e78"
+            },
+            "WP_REST_URL_Details_Controller::minn_fetch": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UrlDetails",
+                "why": "wp_safe_remote_get with the filtered 150 KB limit and user agent, a non-200 or an empty body refused",
+                "body": "206b7275387b"
+            },
+            "WP_REST_URL_Details_Controller::parse_url_details": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UrlDetails",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the page cached in a site transient by the url's hash for the filtered expiry, fetched when missing, read by UrlDetails::of, then rest_prepare_url_details",
+                "body": "767b2259b2dd"
+            }
+        },
+        "classes/WP_REST_Users_Controller.php": {
+            "WP_REST_Users_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the namespace, base and the user meta fields object that subclasses use",
+                "body": "612be671abe1"
+            },
+            "WP_REST_Users_Controller::check_reassign": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UsersController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a numeric id kept, empty or false as false, anything else rest_invalid_param; the engine's delete route checks reassign the same way",
+                "body": "3db364a54e02"
+            },
+            "WP_REST_Users_Controller::check_role_update": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UsersController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "each role must exist, may not take edit_users from oneself and must be editable; the engine's validRole and assignableRole hold most of it",
+                "body": "c37547243761"
+            },
+            "WP_REST_Users_Controller::check_user_password": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UsersController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "refuses an empty password or one with a backslash; the engine's user routes should hold it",
+                "body": "28cecfb9f9d7"
+            },
+            "WP_REST_Users_Controller::check_username": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UsersController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the validate_username and illegal_user_logins refusals; the engine controller's loginRefusal is the same rule",
+                "body": "7233a650bbc5"
+            },
+            "WP_REST_Users_Controller::create_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "refuses an id, runs the engine's create route, then answers 201 with a Location through $this->prepare_item_for_response",
+                "body": "2de57e345582"
+            },
+            "WP_REST_Users_Controller::create_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "create_users through current_user_can",
+                "body": "494e444a865e"
+            },
+            "WP_REST_Users_Controller::delete_current_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the current user's id, then $this->delete_item",
+                "body": "efc9d9ea6049"
+            },
+            "WP_REST_Users_Controller::delete_current_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the current user's id, then $this->delete_item_permissions_check",
+                "body": "d5d02b5e3a60"
+            },
+            "WP_REST_Users_Controller::delete_item": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UsersController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "refuses without force and a reassignment to the user or to nobody, shapes the previous view, then runs the engine's delete; the engine's delete route makes the same checks",
+                "doubt": "the engine's delete route does not refuse a reassignment to the user being deleted, which this does",
+                "body": "95dc5d1f8b05"
+            },
+            "WP_REST_Users_Controller::delete_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "$this->get_user, then delete_user through current_user_can",
+                "body": "c87fc23be551"
+            },
+            "WP_REST_Users_Controller::get_collection_params": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's UserCollectionParams under the parent's, view by default, then rest_user_collection_params",
+                "body": "beaa28cbd1f7"
+            },
+            "WP_REST_Users_Controller::get_current_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "rest_not_logged_in for nobody, else the current user through $this->prepare_item_for_response",
+                "body": "2af48ecafdaf"
+            },
+            "WP_REST_Users_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_user, then $this->prepare_item_for_response",
+                "body": "6177f0c2fcfb"
+            },
+            "WP_REST_Users_Controller::get_item_permissions_check": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UsersController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "oneself, then edit_user for the edit context, then edit_user, list_users or published posts in REST types to view; the engine's single route judges the same",
+                "doubt": "this asks edit_user for the edit context where the engine's single route asks list_users, and counts posts of every REST type where the engine counts published posts and pages",
+                "body": "b2b1fc4397b5"
+            },
+            "WP_REST_Users_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches the captured user properties with locale choices, avatar sizes and the meta schema in $this->schema",
+                "body": "480e51411c33"
+            },
+            "WP_REST_Users_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the engine's list route for the ids, each user through $this->prepare_item_for_response, the engine's total, pages and Link headers copied",
+                "body": "4238a81c855e"
+            },
+            "WP_REST_Users_Controller::get_items_permissions_check": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UsersController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the list_users refusals for roles, capabilities, the edit context and private orderings, then the authors refusal; the engine controller's listAllowed holds them",
+                "doubt": "the engine's listAllowed checks the edit context first and plain edit_posts for authors, where this checks roles first and each REST type that supports author; the move must keep one",
+                "body": "93c8368aa5b6"
+            },
+            "WP_REST_Users_Controller::get_user": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_userdata by id, refused as rest_user_invalid_id",
+                "body": "28b660e81256"
+            },
+            "WP_REST_Users_Controller::minn_bound": {
+                "verdict": "remove",
+                "why": "an exact duplicate of WP_REST_Posts_Controller::minn_bound, a Minn helper no plugin calls; the one SchemaData method serves this controller too",
+                "body": "9e4f54dc450b"
+            },
+            "WP_REST_Users_Controller::minn_edits_a_type": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Caller",
+                "why": "whether the caller can edit any REST type that supports author, beside Caller::editsAnyRestType",
+                "body": "9aad034e8321"
+            },
+            "WP_REST_Users_Controller::minn_engine": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "runs the engine's route and turns its answer into the body or a WP_Error, a bare 500 carrying no data",
+                "body": "48cfe0639402"
+            },
+            "WP_REST_Users_Controller::prepare_item_for_database": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\UsersController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "maps request fields to user columns where the schema has them, the id, a role cleared for later, then rest_pre_insert_user; the engine's create and update routes read the same fields",
+                "body": "60b4f6df4a7e"
+            },
+            "WP_REST_Users_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's UserObject view or edit shape filtered to the fields and context asked, its links expanded",
+                "body": "d31865ef44f5"
+            },
+            "WP_REST_Users_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the collection, id and me routes pointing at $this callbacks, reassign through $this->check_reassign",
+                "body": "936a8e66cff7"
+            },
+            "WP_REST_Users_Controller::update_current_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the current user's id, then $this->update_item",
+                "body": "c91268708bff"
+            },
+            "WP_REST_Users_Controller::update_current_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the current user's id, then $this->update_item_permissions_check",
+                "body": "9d46cbce5687"
+            },
+            "WP_REST_Users_Controller::update_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_user, the engine's update route, the user cache cleared, then $this->prepare_item_for_response",
+                "body": "2bd914f67ef8"
+            },
+            "WP_REST_Users_Controller::update_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "$this->get_user, then promote_user for roles and edit_user through current_user_can",
+                "body": "02b0b381d685"
+            }
+        },
+        "classes/WP_REST_Widget_Types_Controller.php": {
+            "WP_REST_Widget_Types_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and the widget-types base that register_routes and subclasses read",
+                "body": "38fc58e78b52"
+            },
+            "WP_REST_Widget_Types_Controller::check_read_permission": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "edit_theme_options through current_user_can, else rest_cannot_manage_widgets",
+                "body": "66d111183fbe"
+            },
+            "WP_REST_Widget_Types_Controller::encode_form_data": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SidebarsController",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "decodes the sent instance, updates it from the form through the widget and widget_update_callback, encodes it with its hash and renders the form and preview; SidebarsController::encode holds the same",
+                "body": "8047b0e58819"
+            },
+            "WP_REST_Widget_Types_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_widget, then $this->prepare_item_for_response",
+                "body": "e5b4de88f20a"
+            },
+            "WP_REST_Widget_Types_Controller::get_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->check_read_permission, then $this->get_widget",
+                "body": "5b09ad258ed4"
+            },
+            "WP_REST_Widget_Types_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "caches the captured widget-type schema in $this->schema and adds registered fields",
+                "body": "f547585c294e"
+            },
+            "WP_REST_Widget_Types_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "each type from $this->get_widgets through $this->prepare_item_for_response",
+                "body": "ddcb454b52ea"
+            },
+            "WP_REST_Widget_Types_Controller::get_widgets": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SidebarsController",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "one type per id base from the registered widgets global: names decoded, is_multi from the factory, the class name joined, sorted; SidebarsController::widgetTypes builds the engine's list",
+                "body": "ee961ecedfa2"
+            },
+            "WP_REST_Widget_Types_Controller::minn_instance": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SidebarsController",
+                "why": "decodes a sent instance and checks its hash, refusing a malformed one; the engine's encode does the same inline",
+                "body": "65e61525fe71"
+            },
+            "WP_REST_Widget_Types_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "each schema field the request asks, sanitized by its schema with its default, then context, links and rest_prepare_widget_type",
+                "body": "0c45f377b8e6"
+            },
+            "WP_REST_Widget_Types_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the list, item, encode and render routes pointing at $this callbacks, form data parsed by wp_parse_str",
+                "body": "336f785694ed"
+            },
+            "WP_REST_Widget_Types_Controller::render": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a fixed preview page shell around wp_head, the_widget and wp_footer by name",
+                "body": "6f64c51d0b29"
             }
         },
         "classes/WP_REST_Widgets_Controller.php": {
