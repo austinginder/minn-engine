@@ -1110,6 +1110,140 @@
                 "body": "3d2e5108ddfd"
             }
         },
+        "custom-header.php": {
+            "_custom_background_cb": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomBackground",
+                "why": "the custom background style from the theme mods and supports by rules",
+                "body": "5667b59d1bd5"
+            },
+            "_get_random_header_data": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "gates": [
+                    "globals"
+                ],
+                "why": "picks a random uploaded or default header once per request and fills its folder addresses",
+                "body": "d705963448fc"
+            },
+            "add_custom_background": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then add_theme_support",
+                "body": "21be8b2cc527"
+            },
+            "add_custom_image_header": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then add_theme_support",
+                "body": "34be3be8a23f"
+            },
+            "display_header_text": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "why": "whether the header text shows by theme support and the stored colour",
+                "body": "9d66902c4aae"
+            },
+            "get_custom_header": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the header data: random, stored, or the theme default matched against the registered defaults, sizes as whole numbers",
+                "body": "8c3319768e14"
+            },
+            "get_custom_header_markup": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps get_header_image_tag in the custom header div",
+                "body": "0d9a3170384b"
+            },
+            "get_header_image": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "why": "the header image from the theme mod or a random pick, removed or not, then its filter",
+                "body": "dbad02837e8d"
+            },
+            "get_header_image_tag": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "why": "the header image tag's attributes (alt, srcset, sizes, loading) with its two filters; markup by rules",
+                "body": "63c6baa359cf"
+            },
+            "get_header_video_settings": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "why": "the header video player's settings and type detection, then its filter",
+                "body": "6da879670523"
+            },
+            "get_header_video_url": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "why": "the header video from the attachment or the external address, then its filter",
+                "body": "3c5766cb6eb5"
+            },
+            "get_random_header_image": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the picked random header's address, empty for none",
+                "body": "ec919d09d1c2"
+            },
+            "get_uploaded_header_images": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "why": "the theme's uploaded headers from their attachments and metadata",
+                "body": "c6bad261cf8d"
+            },
+            "header_image": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_header_image escaped",
+                "body": "90721c9e2a07"
+            },
+            "is_header_video_active": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "why": "the video support and its active callback, then the filter",
+                "body": "668b153cb0a0"
+            },
+            "is_random_header_image": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CustomHeader",
+                "why": "the random header rule by type from the stored mod",
+                "body": "39218cf2b494"
+            },
+            "remove_custom_background": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then remove_theme_support",
+                "body": "20dc386bd181"
+            },
+            "remove_custom_image_header": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then remove_theme_support",
+                "body": "159dbb7bfc72"
+            },
+            "the_custom_header_markup": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "echoes the markup, then enqueues and localizes the video script through the public asset functions",
+                "body": "7adb2098b130"
+            },
+            "the_header_video_url": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_header_video_url escaped",
+                "body": "d6343a087bbc"
+            },
+            "unregister_default_headers": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "takes headers out of the global $_wp_default_headers themes register into",
+                "body": "5c96cb919637"
+            }
+        },
         "customize.php": {
             "WP_Customize_Control::__construct": {
                 "verdict": "keep",
@@ -3635,6 +3769,204 @@
                 "to": "Minn\\Runtime\\ViewConfigs",
                 "why": "builds an entity's view config by kind from the engine's data and the type's labels; the WP_View_Config_Data wrap and its filters stay",
                 "body": "1eb302f836f3"
+            }
+        },
+        "widgets.php": {
+            "_minn_rss_widget_item": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\RssWidget",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "one RSS widget item's markup (title, link, date, summary, author)",
+                "body": "7113f7f5cc45"
+            },
+            "_minn_widget_factory": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "makes the global $wp_widget_factory plugins register widgets on, once",
+                "body": "14a0403ddf33"
+            },
+            "_minn_widget_nav": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetForms",
+                "why": "the navigation wrapper the html5 widget format asks for",
+                "body": "ac76960c0560"
+            },
+            "_minn_widget_nav_label": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetForms",
+                "why": "the navigation_widgets_format filter and the label rule",
+                "body": "87b3bfe2eb19"
+            },
+            "_register_widget_form_callback": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the form callback registration rules and sizes; the global registry stays in step",
+                "body": "6b2eb9ded747"
+            },
+            "_register_widget_update_callback": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the update callback per id base, kept or taken away; the global registry stays in step",
+                "body": "9c71bec45d88"
+            },
+            "_wp_block_theme_register_classic_sidebars": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "puts a block theme's stored classic sidebars into the global $wp_registered_sidebars",
+                "body": "f82a5523c773"
+            },
+            "_wp_remove_unregistered_widgets": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "gates": [
+                    "globals"
+                ],
+                "why": "drops widget ids that are not registered from each sidebar",
+                "body": "ee4e1d486b2b"
+            },
+            "dynamic_sidebar": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "gates": [
+                    "globals"
+                ],
+                "why": "renders a sidebar's widgets in turn (params, before_widget, its filters and actions); the loop beside WidgetAreas::render",
+                "body": "404681302216"
+            },
+            "is_active_sidebar": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "why": "the sidebar index rule and whether it holds widgets, then its filter",
+                "body": "051dbc569e56"
+            },
+            "is_active_widget": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "gates": [
+                    "globals"
+                ],
+                "why": "finds the sidebar holding a widget by callback, id or id base, skipping inactive ones",
+                "body": "557404f91f96"
+            },
+            "is_dynamic_sidebar": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_sidebars_widgets and is_registered_sidebar by name",
+                "body": "d9e8069e97b7"
+            },
+            "next_widget_id_number": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the next free number for an id base among the registered widgets",
+                "body": "d53e8d759e89"
+            },
+            "register_sidebar": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "gates": [
+                    "globals"
+                ],
+                "why": "a sidebar's defaults, its two filters, the missing-id notice, the theme support and its action; the global $wp_registered_sidebars stays in step",
+                "body": "e04c412f3ff7"
+            },
+            "register_sidebar_widget": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the old name forms, then wp_register_sidebar_widget",
+                "body": "db4653b4281d"
+            },
+            "register_sidebars": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "why": "numbers several sidebars' names and ids by its rule before registering each",
+                "body": "06d088cd5a2e"
+            },
+            "register_widget_control": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the old name forms, then wp_register_widget_control",
+                "body": "286c2d5861f5"
+            },
+            "wp_check_widget_editor_deps": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "warns through _doing_it_wrong when the old editor assets are queued beside the widgets editor",
+                "body": "3c4d4a7217b0"
+            },
+            "wp_convert_widget_settings": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "why": "turns single-widget settings into numbered ones with the multiwidget mark",
+                "doubt": "$option_name is never used and the sidebars keep the old single id; the reference renames the widget to its -2 id in the sidebars and stores both in the admin, which a probe of a single-widget option would show",
+                "body": "0f9d5c86624d"
+            },
+            "wp_map_sidebars_widgets": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\WidgetAreas::map",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the engine maps the widgets; the body hands it the theme mod and the global registries' keys",
+                "body": "d5e8b90e0c0d"
+            },
+            "wp_register_sidebar_widget": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the widget registration rules (id base, empty callback takes it away, re-registration only after widgets_init) and its action; the global registry stays in step",
+                "body": "14d0a56da6ab"
+            },
+            "wp_register_widget_control": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\WidgetAreas",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the control registration rules (sizes, the update entry per id base, re-registration after widgets_init); the global registries stay in step",
+                "body": "077ee4849493"
+            },
+            "wp_sidebar_description": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a registered sidebar's description through wp_kses by name",
+                "body": "3270d7d67199"
+            },
+            "wp_unregister_sidebar_widget": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "its action, then the widget out of the three global registries plugins read",
+                "body": "7b222ab42d46"
+            },
+            "wp_widget_rss_output": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\RssWidget",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the RSS widget's list markup, its item count rule and error messages",
+                "body": "210cc39f4260"
+            },
+            "wp_widget_rss_process": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\RssWidget",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "cleans the RSS widget's settings and checks its feed",
+                "body": "7655c3efd9ca"
             }
         }
     }
