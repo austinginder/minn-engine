@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\I18n\Gettext;
 use Minn\I18n\Numbers;
+use Minn\Runtime\Attachments;
 use Minn\Runtime\CommentTags;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostLinks;
@@ -37,7 +38,7 @@ final class EmbedCard
     public static function thumbnail(): ?array
     {
         $id = PostTags::hasThumbnail() ? (int) PostTags::thumbnailId() : 0;
-        if (PostReads::type() === 'attachment' && \wp_attachment_is_image()) {
+        if (PostReads::type() === 'attachment' && Attachments::isImage()) {
             $id = (int) PostTags::id();
         }
         $id = (int) Runtime::hooks()->filter('embed_thumbnail_id', [$id]);
@@ -45,7 +46,7 @@ final class EmbedCard
             return null;
         }
         [$ratio, $measurements, $size] = [1, [1, 1], 'full'];
-        $meta = (array) \wp_get_attachment_metadata($id);
+        $meta = (array) Attachments::metadata($id);
         foreach ((array) ($meta['sizes'] ?? []) as $name => $data) {
             $data = (array) $data;
             if ((int) ($data['height'] ?? 0) > 0 && (int) $data['width'] / (int) $data['height'] > $ratio) {

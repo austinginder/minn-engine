@@ -127,7 +127,7 @@ final readonly class PostEvents
      */
     public function attachmentGenerated(int $id, string $file): void
     {
-        \wp_update_attachment_metadata($id, \wp_generate_attachment_metadata($id, $file));
+        Attachments::setMetadata($id, \wp_generate_attachment_metadata($id, $file));
     }
 
     /** rest_insert_{type}, before the request's own terms and fields are applied; a post with no $before is a new one. */

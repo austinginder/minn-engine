@@ -16312,6 +16312,17 @@ a value as PHP holds it now. The classic content asks the post's address once, s
 unfiltered permalink stay at 30. The http-transports probe stays out of the comparison; the other probes give
 identical output before and after.
 
+**Batch 41, attachments' files, addresses and metadata.** `Runtime\Attachments` answers _wp_upload_dir,
+wp_get_upload_dir, wp_upload_dir, wp_mkdir_p, _wp_relative_upload_path, get_attached_file,
+update_attached_file, wp_get_attachment_url, wp_get_attachment_metadata, wp_update_attachment_metadata,
+wp_attachment_is, wp_attachment_is_image and the audio and video extensions. Full run 34 (after batch 40) was green but for two reds
+the environment makes: the changelog check, which reads Minn Admin's changelog from GitHub while that
+repository moves, and the wp-query-sql row whose two pages share a post_date, so the database may order them
+either way (a fresh run gave the reference's order). The meta parser is imported as
+StoredMetadata: PHP class names ignore case, so a plain import of Media\Metadata would have answered
+for Runtime\MetaData too. The http-transports probe stays
+out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

@@ -58,7 +58,7 @@ final class FileUpload
             }
             $type = $checked['type'] ? (string) $checked['type'] : $type;
         }
-        $uploads = \wp_upload_dir($time);
+        $uploads = Attachments::uploadDirMade($time);
         if (($uploads['error'] ?? false) !== false) {
             return ['error' => (string) $uploads['error']];
         }

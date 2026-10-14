@@ -136,11 +136,7 @@ function wp_get_image_mime($file)
 
 function get_attached_file($attachment_id, $unfiltered = false)
 {
-    $file = (string) get_post_meta((int) $attachment_id, '_wp_attached_file', true);
-    if ($file !== '' && !str_starts_with($file, '/') && !preg_match('|^.:\\\\|', $file)) {
-        $file = wp_get_upload_dir()['basedir'] . '/' . $file;
-    }
-    return $unfiltered ? $file : apply_filters('get_attached_file', $file, (int) $attachment_id);
+    return Minn\Runtime\Attachments::file($attachment_id, $unfiltered);
 }
 
 function wp_upload_bits($name, $deprecated, $bits, $time = null)
@@ -175,17 +171,7 @@ function wp_upload_bits($name, $deprecated, $bits, $time = null)
 
 function wp_mkdir_p($target)
 {
-    $target = rtrim(str_replace('//', '/', (string) $target), '/');
-    if ($target === '') {
-        $target = '/';
-    }
-    if (is_dir($target)) {
-        return @is_writable($target);
-    }
-    if (@mkdir($target, 0777, true)) {
-        return true;
-    }
-    return is_dir($target);
+    return Minn\Runtime\Attachments::makeDir($target);
 }
 
 function wp_is_writable($path)

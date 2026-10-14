@@ -6,6 +6,7 @@ namespace Minn\Content;
 
 use Minn\Media\FileTypes;
 use Minn\Objects\Post;
+use Minn\Runtime\Attachments;
 use Minn\Runtime\PostReads;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\QueryArgs;
@@ -40,7 +41,7 @@ final class MediaShortcodes
         if ($override !== '') {
             return (string) $override;
         }
-        $types = (array) \wp_get_video_extensions();
+        $types = (array) Attachments::videoExtensions();
         $defaults = ['src' => '', 'poster' => '', 'loop' => '', 'autoplay' => '', 'muted' => 'false', 'preload' => 'metadata', 'width' => 640, 'height' => 360, 'class' => 'wp-video-shortcode'] + array_fill_keys($types, '');
         $atts = Shortcodes::atts($defaults, (array) $attr, 'video');
         $hosted = match (true) {
@@ -76,7 +77,7 @@ final class MediaShortcodes
         if ($override !== '') {
             return (string) $override;
         }
-        $types = (array) \wp_get_audio_extensions();
+        $types = (array) Attachments::audioExtensions();
         $defaults = ['src' => '', 'loop' => '', 'autoplay' => '', 'muted' => 'false', 'preload' => 'none', 'class' => 'wp-audio-shortcode', 'style' => 'width: 100%;'] + array_fill_keys($types, '');
         $atts = Shortcodes::atts($defaults, (array) $attr, 'audio');
         $sources = self::sources($atts, $types, null, 'audio');
@@ -123,7 +124,7 @@ final class MediaShortcodes
         } elseif (!self::anyOwnFormat($atts, $types)) {
             $media = self::attached($kind, self::postId());
             $attachment = $media === [] ? null : reset($media);
-            $atts['src'] = $attachment instanceof Post ? (string) \wp_get_attachment_url($attachment->ID) : '';
+            $atts['src'] = $attachment instanceof Post ? (string) Attachments::url($attachment->ID) : '';
             if ($atts['src'] === '') {
                 return null;
             }

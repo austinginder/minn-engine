@@ -303,22 +303,17 @@ function wp_customize_url($stylesheet = '')
 
 function wp_upload_dir($time = null, $create_dir = true, $refresh_cache = false)
 {
-    $dir = wp_get_upload_dir();
-    if ($create_dir && $dir['error'] === false) {
-        wp_mkdir_p($dir['path']);
-    }
-    return $dir;
+    return Minn\Runtime\Attachments::uploadDirMade($time, $create_dir, $refresh_cache);
 }
 
 function wp_get_upload_dir()
 {
-    return _wp_upload_dir();
+    return Minn\Runtime\Attachments::uploadDir();
 }
 
 function _wp_upload_dir($time = null)
 {
-    $layout = Uploads::layout((string) get_option('upload_path'), (string) get_option('upload_url_path'), (string) get_option('siteurl'), WP_CONTENT_DIR, WP_CONTENT_URL, ABSPATH, (bool) get_option('uploads_use_yearmonth_folders'), (string) ($time ?? current_time('mysql')));
-    return apply_filters('upload_dir', $layout);
+    return Minn\Runtime\Attachments::uploadDir($time);
 }
 
 

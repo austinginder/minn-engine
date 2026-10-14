@@ -143,58 +143,17 @@ function image_constrain_size_for_editor($width, $height, $size = 'medium', $con
 
 function wp_get_attachment_metadata($attachment_id = 0, $unfiltered = false)
 {
-    $attachment_id = (int) $attachment_id ?: get_the_ID();
-    $post = get_post($attachment_id);
-    if ($post === null) {
-        return false;
-    }
-    $data = get_post_meta($post->ID, '_wp_attachment_metadata', true);
-    if (!is_array($data)) {
-        $blob = _minn_posts()->meta($post->ID, '_wp_attachment_metadata');
-        $data = $blob === null ? false : Metadata::parse($blob);
-    }
-    if ($data === false || $data === '') {
-        return false;
-    }
-    return $unfiltered ? $data : apply_filters('wp_get_attachment_metadata', $data, $post->ID);
+    return Minn\Runtime\Attachments::metadata($attachment_id, $unfiltered);
 }
 
 function wp_update_attachment_metadata($attachment_id, $data)
 {
-    $post = get_post((int) $attachment_id);
-    if ($post === null) {
-        return false;
-    }
-    $data = apply_filters('wp_update_attachment_metadata', $data, $post->ID);
-    if ($data) {
-        return update_post_meta($post->ID, '_wp_attachment_metadata', $data);
-    }
-    return delete_post_meta($post->ID, '_wp_attachment_metadata');
+    return Minn\Runtime\Attachments::setMetadata($attachment_id, $data);
 }
 
 function wp_get_attachment_url($attachment_id = 0)
 {
-    $post = get_post((int) $attachment_id);
-    if ($post === null || $post->post_type !== 'attachment') {
-        return false;
-    }
-    $file = (string) get_post_meta($post->ID, '_wp_attached_file', true);
-    $url = '';
-    if ($file !== '') {
-        $uploads = wp_get_upload_dir();
-        if (str_starts_with($file, $uploads['basedir'])) {
-            $url = str_replace($uploads['basedir'], $uploads['baseurl'], $file);
-        } elseif (str_contains($file, 'wp-content/uploads')) {
-            $url = trailingslashit($uploads['baseurl'] . '/' . get_current_user_id()) . '../' . ltrim(substr($file, strpos($file, 'wp-content/uploads') + 18), '/');
-        } else {
-            $url = $uploads['baseurl'] . '/' . ltrim($file, '/');
-        }
-    }
-    if ($url === '') {
-        $url = $post->guid;
-    }
-    $url = apply_filters('wp_get_attachment_url', $url, $post->ID);
-    return $url === '' ? false : $url;
+    return Minn\Runtime\Attachments::url($attachment_id);
 }
 
 /** The thumbnail's address: the thumbnail size, the old thumbnail, or the image itself (probe image-downsize). */
@@ -207,28 +166,22 @@ function wp_get_attachment_thumb_url($post_id = 0)
 
 function wp_attachment_is($type, $post = null)
 {
-    $post = get_post($post);
-    $file = $post === null ? '' : (string) get_attached_file($post->ID);
-    if ($file === '') {
-        return false;
-    }
-    $check = wp_check_filetype($file);
-    return Kind::matches((string) $type, (string) $post->post_mime_type, (string) ($check['ext'] ?: ''), wp_get_audio_extensions(), wp_get_video_extensions());
+    return Minn\Runtime\Attachments::is($type, $post);
 }
 
 function wp_attachment_is_image($post = null)
 {
-    return wp_attachment_is('image', $post);
+    return Minn\Runtime\Attachments::isImage($post);
 }
 
 function wp_get_audio_extensions()
 {
-    return apply_filters('wp_audio_extensions', ['mp3', 'ogg', 'flac', 'm4a', 'wav']);
+    return Minn\Runtime\Attachments::audioExtensions();
 }
 
 function wp_get_video_extensions()
 {
-    return apply_filters('wp_video_extensions', ['mp4', 'm4v', 'webm', 'ogv', 'flv']);
+    return Minn\Runtime\Attachments::videoExtensions();
 }
 
 function image_get_intermediate_size($post_id, $size = 'thumbnail')
@@ -1004,26 +957,12 @@ function attachment_url_to_postid($url)
 
 function update_attached_file($attachment_id, $file)
 {
-    $post = get_post((int) $attachment_id);
-    if ($post === null) {
-        return false;
-    }
-    $file = apply_filters('update_attached_file', (string) $file, $post->ID);
-    $file = _wp_relative_upload_path($file);
-    if ($file !== '') {
-        return update_post_meta($post->ID, '_wp_attached_file', $file);
-    }
-    return delete_post_meta($post->ID, '_wp_attached_file');
+    return Minn\Runtime\Attachments::setFile($attachment_id, $file);
 }
 
 function _wp_relative_upload_path($path)
 {
-    $new_path = (string) $path;
-    $uploads = wp_get_upload_dir();
-    if (str_starts_with($new_path, $uploads['basedir'])) {
-        $new_path = ltrim(str_replace($uploads['basedir'], '', $new_path), '/');
-    }
-    return apply_filters('_wp_relative_upload_path', $new_path, $path);
+    return Minn\Runtime\Attachments::relativePath($path);
 }
 
 function wp_get_original_image_path($attachment_id, $unfiltered = false)

@@ -29325,6 +29325,7 @@
                 "Minn\\Media\\FileTypes",
                 "Minn\\Objects\\Post",
                 "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\QueryArgs",
@@ -29379,8 +29380,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 69
+                    "line": 37,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -29408,8 +29409,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 92
+                    "line": 73,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -29435,8 +29436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 103
+                    "line": 96,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -29480,8 +29481,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 139
+                    "line": 115,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -29509,8 +29510,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 150
+                    "line": 143,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -29552,8 +29553,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 164
+                    "line": 154,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -29581,8 +29582,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 177
+                    "line": 168,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -29610,8 +29611,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 184
+                    "line": 181,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -29630,8 +29631,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 195
+                    "line": 188,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -29657,8 +29658,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -29669,8 +29670,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 203,
-                    "end": 206
+                    "line": 204,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -29689,8 +29690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 215
+                    "line": 210,
+                    "end": 216
                 }
             ]
         },
@@ -33913,6 +33914,7 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\Subjects",
                 "Minn\\Rest\\TemplateObject",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostReads",
@@ -46458,6 +46460,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\I18n\\Gettext",
                 "Minn\\I18n\\Numbers",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\PostLinks",
@@ -46485,8 +46488,8 @@
                         "@return array{0: int, 1: string, 2: string}|null"
                     ],
                     "params": [],
-                    "line": 37,
-                    "end": 60
+                    "line": 38,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -46512,8 +46515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 71
+                    "line": 64,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -46524,8 +46527,8 @@
                     "doc": "The site's name and icon, linking home, the whole block through embed_site_title_html.",
                     "shapes": [],
                     "params": [],
-                    "line": 74,
-                    "end": 83
+                    "line": 75,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -46536,8 +46539,8 @@
                     "doc": "The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open.",
                     "shapes": [],
                     "params": [],
-                    "line": 86,
-                    "end": 95
+                    "line": 87,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -46548,8 +46551,8 @@
                     "doc": "The button that opens the sharing dialog; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 98,
-                    "end": 104
+                    "line": 99,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -46560,8 +46563,8 @@
                     "doc": "The sharing dialog: the post's address and its embed code, each a tab; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 107,
-                    "end": 120
+                    "line": 108,
+                    "end": 121
                 }
             ]
         },
@@ -48969,6 +48972,7 @@
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\User",
                 "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostReads",
@@ -49016,8 +49020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 60
+                    "line": 37,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -49059,8 +49063,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 78
+                    "line": 64,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -49093,8 +49097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 101
+                    "line": 82,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -49113,8 +49117,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 115
+                    "line": 105,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -49140,8 +49144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 119,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -49169,8 +49173,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 129
+                    "line": 125,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -49198,8 +49202,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 143
+                    "line": 133,
+                    "end": 144
                 }
             ]
         },
@@ -81334,6 +81338,7 @@
                 "Minn\\Front\\FeedTags",
                 "Minn\\Media\\Icons",
                 "Minn\\Rest\\PostCollectionParams",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\FileTypeCheck"
             ],
             "constructor": null,
@@ -81680,6 +81685,7 @@
             "uses": [
                 "Minn\\Media\\FileTypes",
                 "Minn\\Objects\\Post",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls"
@@ -81721,8 +81727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 52
+                    "line": 29,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -81743,8 +81749,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 71
+                    "line": 56,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -81779,8 +81785,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 88
+                    "line": 75,
+                    "end": 89
                 }
             ]
         },
@@ -81843,7 +81849,9 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\Attachments"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -81958,7 +81966,8 @@
                 "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Content\\SiteIcon",
-                "Minn\\Media\\PhotoMeta"
+                "Minn\\Media\\PhotoMeta",
+                "Minn\\Runtime\\Attachments"
             ],
             "constructor": null,
             "cases": [],
@@ -82940,7 +82949,8 @@
                 "Minn\\Media\\Upload",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\MediaObject",
-                "Minn\\Rest\\Services"
+                "Minn\\Rest\\Services",
+                "Minn\\Runtime\\Attachments"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Front\\Permalinks $permalinks, string $baseDir)",
@@ -119791,6 +119801,340 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\Attachments",
+            "short": "Attachments",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/Attachments.php",
+            "lines": 175,
+            "doc": "Attachments as WordPress's media functions keep them: the uploads folder\nand its address, an attachment's file (stored relative to the folder),\nits address and metadata, and what kind of file it is; each as its\nfilter leaves it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Posts",
+                "Minn\\Media\\FileTypes",
+                "Minn\\Media\\Kind",
+                "Minn\\Media\\Metadata",
+                "Minn\\Media\\Uploads",
+                "Minn\\Runtime\\CurrentUser",
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime"
+            ],
+            "usedBy": [
+                "Minn\\Content\\MediaShortcodes",
+                "Minn\\Front\\EmbedCard",
+                "Minn\\Front\\PostEmbed",
+                "Minn\\Media\\Icons",
+                "Minn\\Runtime\\FileUpload",
+                "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostWrites"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "uploadDir",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uploadDir(mixed $time = NULL): mixed",
+                    "doc": "The uploads folder and its address for a time, the month's folder too\nwhen uploads go by month (_wp_upload_dir, wp_get_upload_dir), as\nupload_dir leaves them.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "time",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "uploadDirMade",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uploadDirMade(mixed $time = NULL, mixed $createDir = true, mixed $refreshCache = false): mixed",
+                    "doc": "The uploads folder made on disk when asked (wp_upload_dir), and returned.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "time",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "createDir",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        },
+                        {
+                            "name": "refreshCache",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "makeDir",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "makeDir(mixed $target): bool",
+                    "doc": "A folder made with its parents (wp_mkdir_p): whether it is there and may be written to.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "target",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "relativePath",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "relativePath(mixed $path): mixed",
+                    "doc": "A path under the uploads folder made relative to it (_wp_relative_upload_path), as _wp_relative_upload_path leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "file",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "file(mixed $attachmentId, mixed $unfiltered = false): mixed",
+                    "doc": "An attachment's file on disk (get_attached_file), the uploads folder before a relative one; through get_attached_file unless asked not to be.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "unfiltered",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "setFile",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setFile(mixed $attachmentId, mixed $file): mixed",
+                    "doc": "An attachment's file recorded (update_attached_file), relative to the uploads folder; an empty one removes the record.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "file",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 83,
+                    "end": 95
+                },
+                {
+                    "routes": [],
+                    "name": "url",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "url(mixed $attachmentId = 0): mixed",
+                    "doc": "An attachment's address (wp_get_attachment_url): its file under the\nuploads address, else its guid; false for no attachment or no address.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "metadata",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "metadata(mixed $attachmentId = 0, mixed $unfiltered = false): mixed",
+                    "doc": "An attachment's metadata (wp_get_attachment_metadata), the post being\nread's for none; one stored in a shape the meta reader refuses is\nparsed from its row; false for none; through\nwp_get_attachment_metadata unless asked not to be.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "unfiltered",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 132,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "setMetadata",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setMetadata(mixed $attachmentId, mixed $data): mixed",
+                    "doc": "An attachment's metadata stored (wp_update_attachment_metadata) as wp_update_attachment_metadata leaves it; an empty one removed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 162
+                },
+                {
+                    "routes": [],
+                    "name": "is",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "is(mixed $type, mixed $post = NULL): bool",
+                    "doc": "Whether an attachment is a kind of file (wp_attachment_is): image, audio, video, or a MIME type or extension.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 165,
+                    "end": 174
+                },
+                {
+                    "routes": [],
+                    "name": "isImage",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isImage(mixed $post = NULL): bool",
+                    "doc": "Whether an attachment is an image (wp_attachment_is_image).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 177,
+                    "end": 180
+                },
+                {
+                    "routes": [],
+                    "name": "audioExtensions",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "audioExtensions(): mixed",
+                    "doc": "The audio file extensions the player takes (wp_get_audio_extensions), as wp_audio_extensions leaves them.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 183,
+                    "end": 186
+                },
+                {
+                    "routes": [],
+                    "name": "videoExtensions",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "videoExtensions(): mixed",
+                    "doc": "The video file extensions the player takes (wp_get_video_extensions), as wp_video_extensions leaves them.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 189,
+                    "end": 192
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Avatar",
             "short": "Avatar",
             "namespace": "Minn\\Runtime",
@@ -125117,6 +125461,7 @@
             ],
             "usedBy": [
                 "Minn\\Front\\ToolbarMenus",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\MenuEvents",
@@ -126340,6 +126685,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Can",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [],
@@ -131167,6 +131513,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
@@ -136963,6 +137310,7 @@
                 "Minn\\Rest\\RegisteredType",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostWrites",
@@ -141874,6 +142222,7 @@
                 "Minn\\Front\\FeedTags",
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Front\\PostEmbed",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\DocumentTitle",
@@ -142281,6 +142630,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Objects\\Post",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\CronEvents",
@@ -143729,6 +144079,7 @@
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\AbilityRun",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentFeedQuery",
@@ -146925,6 +147276,7 @@
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\CommentChecks",
@@ -149645,6 +149997,7 @@
             "usedBy": [
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Query\\DateSql",
+                "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentTags",

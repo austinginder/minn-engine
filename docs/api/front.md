@@ -875,7 +875,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 132)
+Internals: `append()` (private, line 133)
 
 
 ## PostNavigation

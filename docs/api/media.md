@@ -122,7 +122,7 @@ MIME type, the ones a user may upload, the kind each extension is (image,
 audio, document...), and the type a file name's extension says, each
 list through the filter plugins hook.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Media\Icons`, `Minn\Rest\PostCollectionParams`, `Minn\Runtime\FileTypeCheck`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Media\Icons`, `Minn\Rest\PostCollectionParams`, `Minn\Runtime\Attachments`, `Minn\Runtime\FileTypeCheck`
 
 
 ### static `table(): array`
@@ -211,7 +211,7 @@ a type that is empty) is the default icon.
 
 The icon's address for a type or an attachment id.
 
-Internals: `map()` (private, line 55), `files()` (private, line 74)
+Internals: `map()` (private, line 56), `files()` (private, line 75)
 
 
 ## ImageMime
@@ -244,6 +244,8 @@ Whether an attachment is an image, audio, video, or a given extension, judged by
 a comma list of full types) => its plural label, its manage label, and
 the singular and plural count labels.
 
+Used by: `Minn\Runtime\Attachments`
+
 ### static `matchWildcards(array $patterns, array $reals): array`
 
 Real mime types grouped under the wildcard patterns that match them
@@ -270,7 +272,7 @@ image_meta as a:13 with alt last.
 
 - const `IMAGE_META_KEYS` = `array (   0 => 'aperture',   1 => 'credit',   2 => 'camera',   3 => 'caption',   4 => 'created_timestamp',   5 => 'copyright',   6 => 'focal_length',   7 => 'iso',   8 => 'shutter_speed',   9 => 'title',   10 => 'orientation', )`
 
-Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Content\SiteIcon`, `Minn\Media\PhotoMeta`
+Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Content\SiteIcon`, `Minn\Media\PhotoMeta`, `Minn\Runtime\Attachments`
 
 ### static `namesFile(string $location, array $meta): bool`
 
@@ -459,7 +461,7 @@ The uploads directory: paths, URLs, the allowed types, and landing a file.
 
 - const `MIMES` = `array (   'png' => 'image/png',   'jpg' => 'image/jpeg',   'jpeg' => 'image/jpeg',   'gif' => 'image/gif',   'webp' => 'image/webp',   'pdf' => 'application/pdf',   'txt' => 'text/plain',   'mp4' => 'video/mp4',   'mp3' => 'audio/mpeg',   'zip' => 'application/zip', )` — extension => canonical mime
 
-Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`
+Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`, `Minn\Runtime\Attachments`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks, string $baseDir)

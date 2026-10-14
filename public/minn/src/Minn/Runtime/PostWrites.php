@@ -477,7 +477,7 @@ final class PostWrites
     private static function attachmentSaved(int $id, array $postarr, ?Post $postBefore): int
     {
         if (!empty($postarr['file'])) {
-            \update_attached_file($id, (string) $postarr['file']);
+            Attachments::setFile($id, (string) $postarr['file']);
         }
         PostCaches::clean($postBefore ?? $id);
         $hooks = Runtime::hooks();

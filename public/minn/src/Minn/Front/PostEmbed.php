@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Objects\Post;
 use Minn\Objects\User;
 use Minn\Runtime\AssetQueue;
+use Minn\Runtime\Attachments;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\PostLinks;
 use Minn\Runtime\PostReads;
@@ -66,7 +67,7 @@ final class PostEmbed
         $data['height'] = abs($height);
         $data['type'] = 'rich';
         $data['html'] = self::html($width, $height, $post);
-        $thumbnail = \wp_attachment_is_image($post) ? $post->ID : (int) PostTags::thumbnailId($post);
+        $thumbnail = Attachments::isImage($post) ? $post->ID : (int) PostTags::thumbnailId($post);
         if ($thumbnail > 0) {
             // The size chosen by the width alone (probe embed-remaining).
             $image = \wp_get_attachment_image_src($thumbnail, [$width, 0]);

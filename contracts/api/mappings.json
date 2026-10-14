@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 703,
-        "composes": 2175,
-        "leaf": 1013,
-        "noop": 3089,
+        "minn": 700,
+        "composes": 2169,
+        "leaf": 1012,
+        "noop": 3099,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8674,
-        "minnMethods": 1350,
+        "minnMethods": 1359,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -41015,13 +41015,12 @@
         },
         "_wp_relative_upload_path": {
             "file": "media.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "wp_get_upload_dir"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Attachments::relativePath"
+            ],
+            "composes": []
         },
         "_wp_remove_unregistered_widgets": {
             "file": "widgets.php",
@@ -41172,16 +41171,12 @@
         },
         "_wp_upload_dir": {
             "file": "link-template.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Media\\Uploads::layout"
+                "Minn\\Runtime\\Attachments::uploadDir"
             ],
-            "composes": [
-                "apply_filters",
-                "current_time",
-                "get_option"
-            ]
+            "composes": []
         },
         "_wp_utf8_codepoint_count": {
             "file": "formatting.php",
@@ -46899,14 +46894,12 @@
         },
         "get_attached_file": {
             "file": "functions.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_post_meta",
-                "wp_get_upload_dir"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Attachments::file"
+            ],
+            "composes": []
         },
         "get_attached_media": {
             "file": "media.php",
@@ -62270,16 +62263,12 @@
         },
         "update_attached_file": {
             "file": "media.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_wp_relative_upload_path",
-                "apply_filters",
-                "delete_post_meta",
-                "get_post",
-                "update_post_meta"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Attachments::setFile"
+            ],
+            "composes": []
         },
         "update_category_cache": {
             "file": "deprecated.php",
@@ -64901,27 +64890,21 @@
         },
         "wp_attachment_is": {
             "file": "media.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Media\\Kind::matches"
+                "Minn\\Runtime\\Attachments::is"
             ],
-            "composes": [
-                "get_attached_file",
-                "get_post",
-                "wp_check_filetype",
-                "wp_get_audio_extensions",
-                "wp_get_video_extensions"
-            ]
+            "composes": []
         },
         "wp_attachment_is_image": {
             "file": "media.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "wp_attachment_is"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Attachments::isImage"
+            ],
+            "composes": []
         },
         "wp_audio_shortcode": {
             "file": "media.php",
@@ -68100,18 +68083,12 @@
         },
         "wp_get_attachment_metadata": {
             "file": "media.php",
-            "lines": 14,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Posts::meta",
-                "Minn\\Media\\Metadata::parse"
+                "Minn\\Runtime\\Attachments::metadata"
             ],
-            "composes": [
-                "_minn_posts",
-                "apply_filters",
-                "get_post",
-                "get_post_meta"
-            ]
+            "composes": []
         },
         "wp_get_attachment_thumb_file": {
             "file": "deprecated.php",
@@ -68139,26 +68116,21 @@
         },
         "wp_get_attachment_url": {
             "file": "media.php",
-            "lines": 21,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_current_user_id",
-                "get_post",
-                "get_post_meta",
-                "trailingslashit",
-                "wp_get_upload_dir"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Attachments::url"
+            ],
+            "composes": []
         },
         "wp_get_audio_extensions": {
             "file": "media.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Attachments::audioExtensions"
+            ],
+            "composes": []
         },
         "wp_get_auto_update_message": {
             "file": "deadends.php",
@@ -69706,10 +69678,10 @@
             "file": "link-template.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_wp_upload_dir"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Attachments::uploadDir"
+            ],
+            "composes": []
         },
         "wp_get_user_contact_methods": {
             "file": "user.php",
@@ -69757,10 +69729,10 @@
             "file": "media.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Attachments::videoExtensions"
+            ],
+            "composes": []
         },
         "wp_get_view_transitions_admin_css": {
             "file": "deadends.php",
@@ -71921,9 +71893,11 @@
         },
         "wp_mkdir_p": {
             "file": "functions.php",
-            "lines": 11,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Attachments::makeDir"
+            ],
             "composes": []
         },
         "wp_nav_menu": {
@@ -76297,15 +76271,12 @@
         },
         "wp_update_attachment_metadata": {
             "file": "media.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "delete_post_meta",
-                "get_post",
-                "update_post_meta"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Attachments::setMetadata"
+            ],
+            "composes": []
         },
         "wp_update_category": {
             "file": "taxonomy.php",
@@ -76599,13 +76570,12 @@
         },
         "wp_upload_dir": {
             "file": "link-template.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_get_upload_dir",
-                "wp_mkdir_p"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Attachments::uploadDirMade"
+            ],
+            "composes": []
         },
         "wp_use_widgets_block_editor": {
             "file": "widgets.php",
