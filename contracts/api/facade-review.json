@@ -101,6 +101,431 @@
                 "body": "687a6e2f7e84"
             }
         },
+        "admin.php": {
+            "WP_Filesystem": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "puts an instance of the filtered method's class in the global $wp_filesystem plugins write through, defines the FS_ constants and connects",
+                "doubt": "a method whose class is not loaded is refused without the filesystem_method_file filter WordPress asks for its file",
+                "body": "c51dc6cc5b40"
+            },
+            "_draft_or_post_title": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_the_title, '(no title)' when empty, escaped",
+                "body": "db7eb25d430b"
+            },
+            "_minn_inline_extras": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\PostListMarkup",
+                "why": "builds quick edit's further fields by rules (parent, template, order, each quick-edit taxonomy's terms, sticky, format) and buffers add_inline_data; markup PostListMarkup::inline should build",
+                "doubt": "tag names skip get_terms_to_edit and its terms_to_edit filter",
+                "body": "defbfb177458"
+            },
+            "_post_states": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "PostListMarkup::states for get_post_states, echoed by the display flag and returned",
+                "body": "dd7693c8bbdf"
+            },
+            "_wp_admin_html_begin": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\IframeShell",
+                "why": "prints the admin document's doctype, html tag (the toolbar class, the language attributes) and charset meta; markup by rules",
+                "doubt": "no space separates the class attribute from the language attributes (they print run together), and the admin_xml_ns action is not fired",
+                "body": "966631bd78d6"
+            },
+            "_wp_oembed_get_object": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "a function static holding the one WP_oEmbed every oEmbed caller shares; per-request state the engine should own",
+                "body": "11c92dd0e247"
+            },
+            "activate_plugin": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginActivation",
+                "why": "the network-wide branch (already in active_sitewide_plugins, else the site option written with the time) is stored-data behaviour PluginActivation::activate should own; the WP_Error from its refusal stays",
+                "body": "3926b0d74004"
+            },
+            "activate_plugins": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "activate_plugin by name for each plugin, the errors gathered into one plugins_invalid WP_Error, else true",
+                "body": "8a7fa7e8a493"
+            },
+            "add_menu_page": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\AdminMenu",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the top-level row by rules (the hook name, the default icon and its class, the next free position) and records it in $menu, $admin_page_hooks and $_registered_pages, hooking the callback for a user who may; the rules move, the globals stay the store plugins edit",
+                "doubt": "a taken position moves to the next free integer and the menu is ksorted where WordPress keeps a fractional string key; the generic icon class goes on custom icons rather than on the default one; $_parent_pages[slug] = false is never set, so menu_page_url answers '' for a top-level page",
+                "body": "99b76df4c320"
+            },
+            "add_meta_box": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "files the box under its screen's id, context and priority in the global $wp_meta_boxes plugins read and edit, once per screen of a list",
+                "doubt": "a box marked removed comes back when re-added at core priority, a box already filed under another context or priority is not moved (it is kept twice), and with no screen and no current screen it is filed under 'post' where WordPress adds nothing",
+                "body": "20f2820bb669"
+            },
+            "add_screen_option": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_current_screen, then its add_option, nothing without a screen",
+                "body": "e7f9eeed1d66"
+            },
+            "add_settings_section": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "files the section, its arguments laid over the defaults, in the global $wp_settings_sections plugins read",
+                "doubt": "the removed misc and privacy pages are not mapped to general and reading with their deprecation notices",
+                "body": "b37bbf455036"
+            },
+            "add_submenu_page": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\AdminMenu",
+                "gates": [
+                    "globals"
+                ],
+                "why": "refuses a user without the capability (noting $_wp_submenu_nopriv), seeds the parent's own row, inserts at the position and records the hook in $submenu, $_registered_pages and $_parent_pages; the rules move, the globals stay the store plugins edit",
+                "doubt": "the parent is remapped through $_parent_pages where WordPress maps it through $_wp_real_parent_file, so a submenu under another submenu's slug lands under that page's parent; a non-numeric position is taken silently where WordPress gives _doing_it_wrong",
+                "body": "b310eb158868"
+            },
+            "deactivate_plugins": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\PluginActivation::deactivate",
+                "why": "the engine deactivates and announces; the facade only turns the list into trimmed basenames and the silent flag into no hooks",
+                "body": "c7bb41eda859"
+            },
+            "delete_theme": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ThemeSwitch",
+                "why": "refuses the active theme or its parent before ThemeSwitch::delete; that guard belongs in delete, the could_not_remove_theme WP_Error stays",
+                "doubt": "WordPress's delete_theme does not refuse the active theme itself (its callers do), and its failure message names the theme",
+                "body": "9622d192577f"
+            },
+            "do_meta_boxes": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\MetaBoxes",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "prints a context's boxes from $wp_meta_boxes by priority in the postbox markup around each callback and counts them; markup by rules",
+                "doubt": "renders the classic editor's meta box columns, an admin screen Minn leaves out; WordPress also applies the user's meta-box-order, the sorted priority, the hidden and postbox_classes classes and the move and toggle buttons, none of which is here",
+                "body": "0f5f7630d5ec"
+            },
+            "do_settings_fields": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\SettingsSections",
+                "gates": [
+                    "globals"
+                ],
+                "why": "prints a section's fields from $wp_settings_fields as table rows, the row class and label_for taken from the arguments, around each callback; markup by rules",
+                "doubt": "a settings page's rows, part of an admin screen Minn leaves out",
+                "body": "1e6173bd7843"
+            },
+            "do_settings_sections": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\SettingsSections",
+                "gates": [
+                    "globals"
+                ],
+                "why": "prints a page's sections from $wp_settings_sections: the before and after wrap, a numbered heading through a request counter, the callback and the fields table; markup by rules with engine state",
+                "doubt": "before_section and after_section are printed raw where WordPress passes them through wp_kses_post, and after_section prints for a section without fields where WordPress skips it; a settings page body is an admin screen Minn leaves out",
+                "body": "086a1cc8e0a9"
+            },
+            "enqueue_comment_hotkeys_js": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_enqueue_script for the table hotkeys when the user's comment_shortcuts option is on",
+                "body": "0f24293caec9"
+            },
+            "get_admin_page_parent": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "answers the parent given, else the $parent_file global the admin screen sets; reading that global is the point",
+                "doubt": "a given parent is not mapped through $_wp_real_parent_file, and with none given WordPress works the parent out from $pagenow, $plugin_page, $menu and $submenu (and sets $parent_file) where this only returns $parent_file",
+                "body": "63c342880402"
+            },
+            "get_column_headers": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\ListColumns",
+                "why": "a function static caching each screen's manage_{screen}_columns answer; request state the engine should own",
+                "body": "fb15156c5ad2"
+            },
+            "get_hidden_columns": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\ListColumns",
+                "why": "a screen's hidden columns: the user's stored choice, else default_hidden_columns, then hidden_columns; a stored preference with its filters",
+                "body": "049f3112db45"
+            },
+            "get_hidden_meta_boxes": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\MetaBoxes",
+                "why": "a screen's hidden boxes: the user's stored choice, else the editor defaults by type through default_hidden_meta_boxes, then hidden_meta_boxes; a stored preference with its rules",
+                "body": "49f4a1b9b0d7"
+            },
+            "get_home_path": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\SiteUrls",
+                "gates": [
+                    "globals"
+                ],
+                "why": "works out the site's root folder from home, siteurl and SCRIPT_FILENAME when WordPress sits in a subfolder; path rules beside SiteUrls, the superglobal passed in",
+                "body": "c2cf59a1698b"
+            },
+            "get_importers": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sorts the global $wp_importers by name in place and returns it",
+                "body": "39fff5957e02"
+            },
+            "get_inline_data": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\PostListMarkup",
+                "why": "checks the type and edit_post, escapes the fields and runs editable_slug before PostListMarkup::inline; the field rules join inline, the echo stays",
+                "doubt": "quick edit's hidden data for the admin posts list, a screen Minn leaves out",
+                "body": "9b91aa699c50"
+            },
+            "get_plugin_page_hook": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_plugin_page_hookname, then the name only when has_action finds something hooked to it",
+                "body": "ee70f0bd524e"
+            },
+            "get_plugin_page_hookname": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\AdminMenu",
+                "gates": [
+                    "globals"
+                ],
+                "why": "names a plugin page's hook (toplevel, the parent's hook name or admin, then the cleaned slug) from $admin_page_hooks; a naming rule beside the menu registry",
+                "doubt": "every character outside [a-zA-Z0-9_:.] becomes a hyphen where WordPress only strips .php, so a dir/page.php slug names a different hook; core parents are never seeded into $admin_page_hooks (_minn_admin_page_hooks is defined but unused), so an options page hooks as admin_page_x, not settings_page_x",
+                "body": "00e19bb8551f"
+            },
+            "get_post_states": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\PostListMarkup",
+                "gates": [
+                    "globals"
+                ],
+                "why": "decides a post's states from its status, password, stickiness and the page options, leaving out the one the list is filtered to ($_REQUEST), then display_post_states; the rules belong beside PostListMarkup::states",
+                "body": "2ae474de8237"
+            },
+            "get_settings_errors": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RegisteredSettings",
+                "gates": [
+                    "globals"
+                ],
+                "why": "merges $wp_settings_errors with the errors stored in the settings_errors transient (deleting it) after an optional sanitize, filtered by setting; stored state beside RegisteredSettings::addError",
+                "doubt": "the transient is read on every call where WordPress reads it only after a save (settings-updated in the query), and it is merged into a local copy, not $wp_settings_errors, so a second call loses those errors once the transient is gone",
+                "body": "85cc341ec32d"
+            },
+            "get_submit_button": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\Buttons",
+                "why": "turns the type into button classes by rule, folds the id out of the attributes and builds the submit input, wrapped by the flag; markup by rules",
+                "doubt": "the default 'Save Changes' is not translated, and a '0' text stays where WordPress's empty() test replaces it",
+                "body": "ba8739a3595f"
+            },
+            "iframe_footer": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\IframeShell",
+                "why": "closes the iframe document: a hidden block with the auth check and the footer actions, then the onload script; one document with iframe_header",
+                "doubt": "it calls wp_auth_check_html itself where WordPress hooks it in only for a signed-in user through wp_auth_check_load and its filter, and admin_footer gets '' and the footer hook the screen id where WordPress passes $hook_suffix",
+                "body": "30661dc488a1"
+            },
+            "iframe_header": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\IframeShell",
+                "why": "hides the toolbar and prints the iframe document's head: the title, the viewport, the screen's admin hooks and a body class from the screen id; a document built by rules",
+                "doubt": "with no screen admin_enqueue_scripts and the suffixed hooks are skipped, and they are named from the screen id, not $hook_suffix; admin_body_class, the locale and rtl classes, $body_id, the colors style and the ajaxurl script are left out; the admin iframe shell is a screen Minn leaves out",
+                "body": "d65792b25049"
+            },
+            "is_super_admin": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the current or given user asked has_cap('delete_users'), the single-site rule, through the public user functions and their filters",
+                "doubt": "an id of 0 or null looks that id up where WordPress takes any falsy id as the current user",
+                "body": "0e043d8947bc"
+            },
+            "menu_page_url": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\AdminMenu",
+                "gates": [
+                    "globals"
+                ],
+                "why": "looks the page's parent up in $_parent_pages and builds its address by rule (the parent's script with page=, or admin.php); the escaping and the display flag stay",
+                "doubt": "the test is the parent being admin.php where WordPress asks whether the parent is itself a registered page, so a submenu under a plugin's top-level menu gets wp-admin/my-top?page=sub instead of admin.php?page=sub",
+                "body": "a52ba06b9cd0"
+            },
+            "plugins_api": {
+                "verdict": "delegate",
+                "to": "Minn\\Ops\\DirectoryApi::ask",
+                "gates": [
+                    "globals"
+                ],
+                "why": "DirectoryApi::ask already runs the args, api and result filters and asks the directory; the body only builds it for plugins, which a factory would make one call",
+                "doubt": "the content folder is ABSPATH . 'wp-content' where wp_update_plugins uses Runtime::contentDir(), so a moved WP_CONTENT_DIR points Packages at the wrong folder",
+                "body": "cdc59ba6b60e"
+            },
+            "postbox_classes": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\MetaBoxes",
+                "gates": [
+                    "globals"
+                ],
+                "why": "closed when the user's closedpostboxes option lists the box and it is not being edited ($_GET), then its filter; a stored preference rule",
+                "body": "44c2968833a1"
+            },
+            "print_admin_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the style queue's do_items, then the print_admin_styles filter fired for plugins that listen; the handles done",
+                "body": "8553a97b2839"
+            },
+            "register_importer": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "files the importer in the global $wp_importers plugins read; an error passed as the callback comes back",
+                "body": "0fb6a496f741"
+            },
+            "remove_menu_page": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "takes the first row with the slug out of the global $menu and returns it; editing the global plugins read is the point",
+                "body": "ec97ad2ea5e0"
+            },
+            "remove_meta_box": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "marks the box false at every priority of its screen and context in the global $wp_meta_boxes plugins read; editing the global is the point",
+                "doubt": "an empty screen is filed under '' where WordPress uses the current screen",
+                "body": "12dcdb4fa8e3"
+            },
+            "remove_submenu_page": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "takes the row with the slug out of the parent's list in the global $submenu and returns it; editing the global plugins read is the point",
+                "body": "efca4d482056"
+            },
+            "request_filesystem_credentials": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the request_filesystem_credentials filter's answer, else true, the direct method's answer",
+                "body": "5e8b6af5a5b2"
+            },
+            "set_current_screen": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "puts the screen for the hook in the global $current_screen and fires current_screen; it repeats WP_Screen::set_current_screen, which it could call",
+                "doubt": "WordPress also sets $typenow and $taxnow from the screen; neither is set here nor in WP_Screen::set_current_screen",
+                "body": "79015c8e958f"
+            },
+            "set_screen_options": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\ScreenOptions",
+                "gates": [
+                    "globals"
+                ],
+                "why": "handles the Screen Options form from $_POST: the nonce, the option name check, the filters, the user meta write and the redirect; request handling and a stored write",
+                "doubt": "it fires set_screen_option where WordPress's older filter is set-screen-option (only for _page options and layout_columns), and the core per-page options are not accepted as integers 1 to 999, so they are dropped unless filtered; the Screen Options form belongs to admin list screens Minn leaves out",
+                "body": "ea8b1b7a005a"
+            },
+            "settings_errors": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\AdminNotice",
+                "why": "maps each error's type to its notice class and builds the dismissible notice markup, unless hidden after an update; markup by rules, the echo stays",
+                "doubt": "the code and type go into the id and class unescaped where WordPress uses esc_attr, and hide_on_update reads the engine's request rather than $_GET as plugins left it; these are a settings screen's notices, an admin screen Minn leaves out",
+                "body": "70e8f9ea3cfc"
+            },
+            "settings_fields": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the option_page and action hidden inputs, then wp_nonce_field for the group's nonce by name",
+                "body": "f3a901e3755c"
+            },
+            "show_message": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "turns a WP_Error into its message (and its data when text), echoes it in a paragraph and flushes the buffers",
+                "body": "b9fe1c12aa86"
+            },
+            "themes_api": {
+                "verdict": "delegate",
+                "to": "Minn\\Ops\\DirectoryApi::ask",
+                "gates": [
+                    "globals"
+                ],
+                "why": "DirectoryApi::ask already runs the args, api and result filters and asks the directory; the body only builds it for themes, which a factory would make one call",
+                "doubt": "the content folder is ABSPATH . 'wp-content' where wp_update_themes uses Runtime::contentDir(), so a moved WP_CONTENT_DIR points Packages at the wrong folder",
+                "body": "31990e32b74c"
+            },
+            "validate_plugin_requirements": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "turns PluginRequirements::check's refusal into a WP_Error, true when nothing is unmet",
+                "body": "b6a467297010"
+            },
+            "wp_add_dashboard_widget": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "add_meta_box on the current screen with the widget's context and priority, nothing without a screen",
+                "doubt": "the __widget_basename callback argument and the control callback ($wp_dashboard_control_callbacks, the Configure link) are dropped, and core widget ids are not moved to side or high",
+                "body": "924408c93100"
+            },
+            "wp_add_privacy_policy_content": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a _doing_it_wrong outside the admin or before admin_init, else WP_Privacy_Policy_Content::add",
+                "doubt": "in the admin before admin_init WordPress words the notice differently (use the admin_init action, see the inline documentation); one message serves both cases here",
+                "body": "1d63a6b4bb38"
+            },
+            "wp_clean_plugins_cache": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "delete_site_transient for update_plugins by the flag, then wp_cache_delete of the plugins list, each by name",
+                "body": "9a13ae220a39"
+            },
+            "wp_clean_themes_cache": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "delete_site_transient for update_themes by the flag, then search_theme_directories forced",
+                "body": "58523fb74f31"
+            },
+            "wp_get_code_editor_settings": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\CodeEditor",
+                "why": "the CodeMirror, CSSLint, JSHint and HTMLHint defaults and the mode chosen by type, then wp_code_editor_settings; editor configuration by rules",
+                "doubt": "every type but CSS gets its MIME type as the mode (WordPress maps HTML to htmlmixed, and JavaScript, JSON, PHP, SQL and others to their modes with lint options per type), no type defaults to text/html, and $args['file'] and the args' codemirror, csslint, jshint and htmlhint overrides are ignored",
+                "body": "508f67f56128"
+            },
+            "wp_iframe": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\IframeShell",
+                "gates": [
+                    "globals"
+                ],
+                "why": "prints the media popup's admin document around the callback: the head, the title, the admin head and footer actions and $body_id on the body; a document built by rules",
+                "doubt": "the colors and deprecated-media styles and the ajaxurl, pagenow and isRtl script WordPress prints are left out; the media upload popup is an admin screen Minn leaves out",
+                "body": "ba42f3eac0ca"
+            },
+            "wp_version_check": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Updates",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "keeps Minn's own latest offer in update_core, rewritten when stale, forced or left by WordPress; update state beside Updates::checkForWordPress",
+                "doubt": "new_bundled is a fixed '6.7' whatever version Minn reports",
+                "body": "f55bf60164ef"
+            }
+        },
         "ai-client.php": {
             "_minn_load_ai_client": {
                 "verdict": "keep",
