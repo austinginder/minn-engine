@@ -2524,6 +2524,299 @@
                 "body": "3734a8c8e142"
             }
         },
+        "load.php": {
+            "_minn_browser_globals": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets the browser globals plugins read from BrowserGlobals::detect, Chrome Frame through its filter",
+                "body": "d53c7838ff21"
+            },
+            "_minn_in_admin": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "asks the global $current_screen plugins set, else the admin constant",
+                "body": "b1d91a10ad21"
+            },
+            "_minn_request_uri_from_parts": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "rebuilds the request URI from PATH_INFO and the query string in $_SERVER",
+                "body": "dbac020c5dcc"
+            },
+            "_minn_require_wp_db": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "loads the db.php drop-in into scope, else makes the global $wpdb",
+                "body": "8c3941c3eb92"
+            },
+            "_minn_script_globals": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets $pagenow and the script server variables plugins read for the request's script",
+                "body": "7d3d0800c2e7"
+            },
+            "_minn_start_object_cache": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "starts the cache and its groups through the cache API a drop-in may define, and hands a drop-in the options group",
+                "body": "97e27d1db15d"
+            },
+            "is_login": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RequestKind",
+                "gates": [
+                    "globals"
+                ],
+                "why": "whether the request is the sign-in screen, by its script or its path",
+                "body": "1272ed4fdc41"
+            },
+            "is_protected_ajax_action": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RequestKind",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the protected ajax actions with their filter, against the request's action",
+                "body": "001de205d512"
+            },
+            "is_protected_endpoint": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RequestKind",
+                "gates": [
+                    "globals"
+                ],
+                "why": "whether the request is one recovery must protect (sign-in, admin, a protected ajax action), then its filter",
+                "body": "f4bcdcf4f7fd"
+            },
+            "shutdown_action_hook": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires shutdown, then closes the cache through wp_cache_close, which a drop-in may define",
+                "body": "18a04228c5c1"
+            },
+            "timer_start": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets the global $timestart plugins read",
+                "body": "64425b6c4932"
+            },
+            "timer_stop": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "the time since the global $timestart, formatted and echoed by the flag",
+                "body": "4056e14cabe6"
+            },
+            "wp_check_php_mysql_versions": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Environment",
+                "why": "the PHP floor and the database extension check, answering 500 with the problem",
+                "body": "7ef479b1c949"
+            },
+            "wp_convert_hr_to_bytes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PhpLimits",
+                "why": "parses a PHP size (k, m, g) into bytes; Ops\\Diagnostics parses the same sizes, one owner",
+                "body": "5274c2185ad0"
+            },
+            "wp_debug_mode": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DebugMode",
+                "why": "its filter, DebugMode's settings, and display_errors off for the request kinds that must not print them",
+                "body": "431c6b548fb4"
+            },
+            "wp_favicon_request": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FrontController",
+                "gates": [
+                    "globals"
+                ],
+                "why": "answers a bare favicon request with its type and nothing else; front routing",
+                "body": "7155ce6d8439"
+            },
+            "wp_finalize_scraping_edited_file_errors": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\EditedFileCheck",
+                "why": "prints whether the edited file left a fatal error, between the scrape markers",
+                "body": "c847f87c6a28"
+            },
+            "wp_fix_server_vars": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "normalises the $_SERVER variables plugins read (request URI, script, PHP_SELF, basic auth)",
+                "body": "60648642c42e"
+            },
+            "wp_get_active_and_valid_themes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the child and parent theme folders from the directory functions",
+                "body": "feb284cd2a94"
+            },
+            "wp_get_development_mode": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Environment",
+                "why": "the development mode from its constant, empty unless one of the four",
+                "body": "e350dcc4e59a"
+            },
+            "wp_get_environment_type": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Environment",
+                "why": "the environment type from the constant or the environment, production unless one of the four",
+                "body": "d41a340c15e7"
+            },
+            "wp_get_extension_error_description": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Recovery",
+                "why": "words an extension's error from its type name, line, file and message",
+                "body": "4718a713f56c"
+            },
+            "wp_installing": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Runtime",
+                "why": "reads and sets the installing state the engine holds for the request",
+                "body": "bc3081cffd3e"
+            },
+            "wp_is_development_mode": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_development_mode by name, all counting for every mode",
+                "body": "1f41859325ca"
+            },
+            "wp_is_fatal_error_handler_enabled": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Recovery",
+                "why": "the fatal error handler switch (its constant, then its filter) is the engine's recovery policy",
+                "body": "137a21d59a0c"
+            },
+            "wp_is_ini_value_changeable": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PhpLimits",
+                "why": "whether an ini setting may be changed at run time, from PHP's ini table kept for the request",
+                "body": "c98f4c935540"
+            },
+            "wp_is_json_request": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RequestHeaders",
+                "gates": [
+                    "globals"
+                ],
+                "why": "whether the request accepts or sends JSON, by its Accept and Content-Type headers",
+                "body": "9341e1482a83"
+            },
+            "wp_is_xml_request": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RequestHeaders",
+                "gates": [
+                    "globals"
+                ],
+                "why": "whether the request accepts or sends one of the XML types",
+                "body": "d663a8250c82"
+            },
+            "wp_load_translations_early": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "once, before init, loads the default text domain by WPLANG and sets the global $wp_locale",
+                "body": "0aba8e0d086c"
+            },
+            "wp_magic_quotes": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "slashes the request superglobals plugins read and rebuilds $_REQUEST",
+                "body": "af766710cf3c"
+            },
+            "wp_maintenance": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "in maintenance, loads the maintenance.php drop-in into scope, else dies with the 503 message",
+                "body": "62307bb1b7b9"
+            },
+            "wp_not_installed": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "is_blog_installed and wp_installing by name, then the redirect to the installer",
+                "body": "31218465449c"
+            },
+            "wp_paused_plugins": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "hands out the API's one paused-plugins storage object",
+                "body": "3bc6e94aea1c"
+            },
+            "wp_paused_themes": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "hands out the API's one paused-themes storage object",
+                "body": "58aa33cacf2a"
+            },
+            "wp_populate_basic_auth_from_authorization_header": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "fills PHP_AUTH_USER and PHP_AUTH_PW in $_SERVER from a basic Authorization header",
+                "body": "c417794663ff"
+            },
+            "wp_raise_memory_limit": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PhpLimits",
+                "why": "the memory limit by context with its filters, raised only upward",
+                "body": "b60cc5191f66"
+            },
+            "wp_recovery_mode": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "hands out the API's one WP_Recovery_Mode object",
+                "body": "c0e8d1d704d4"
+            },
+            "wp_set_internal_encoding": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "sets PHP's internal encoding from the blog_charset option",
+                "body": "742e47d7b357"
+            },
+            "wp_set_lang_dir": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "defines the language folder constants",
+                "body": "43c3162de767"
+            },
+            "wp_set_wpdb_vars": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets the global $wpdb's integer field types",
+                "body": "a214555f7f45"
+            },
+            "wp_skip_paused_plugins": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Recovery",
+                "why": "leaves out paused plugins by file or folder; the engine already pauses plugins itself",
+                "body": "5622c9269e56"
+            },
+            "wp_skip_paused_themes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Recovery",
+                "why": "leaves out paused themes by folder",
+                "body": "72bcbd5956bb"
+            },
+            "wp_ssl_constants": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "defines FORCE_SSL_ADMIN from the site address and applies the SSL constants",
+                "body": "d0d8631ef526"
+            },
+            "wp_start_scraping_edited_file_errors": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\EditedFileCheck",
+                "gates": [
+                    "globals"
+                ],
+                "why": "checks the scrape key and nonce from the request and registers the result printer",
+                "body": "39b6979f99ee"
+            },
+            "wp_using_ext_object_cache": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads and sets the global $_wp_using_ext_object_cache drop-ins and plugins read",
+                "body": "d3bd6163b749"
+            }
+        },
         "mail.php": {
             "_minn_wp_mail_default_from": {
                 "verdict": "move",
