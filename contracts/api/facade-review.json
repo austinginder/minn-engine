@@ -44,6 +44,35 @@
                 "body": "e403d2cf9144"
             }
         },
+        "ajax-actions.php": {
+            "wp_ajax_heartbeat": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Heartbeat::answer",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the engine answers the heartbeat; the missing-nonce refusal belongs inside answer, the JSON send stays",
+                "body": "36b610207f9f"
+            },
+            "wp_ajax_nopriv_heartbeat": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Heartbeat",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the signed-out heartbeat answer (its filters, tick action and server time) beside the signed-in one the engine already has; the JSON send stays",
+                "body": "e3efb88256de"
+            },
+            "wp_refresh_heartbeat_nonces": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Heartbeat",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "adds the fresh REST and heartbeat nonces to the answer; stays as the named heartbeat callback",
+                "body": "95aa0c9f7140"
+            }
+        },
         "avif-info.php": {
             "read": {
                 "verdict": "keep",
@@ -56,6 +85,35 @@
                 "reason": "library",
                 "why": "the Avifinfo library's byte helper; the engine unpacks integers its own way in Minn\\Media\\AvifInfo",
                 "body": "713264e1e1f1"
+            }
+        },
+        "block-patterns.php": {
+            "_minn_core_block_patterns": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\CorePatterns",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "reads the engine's core pattern data once and keeps it",
+                "body": "e1fe8255c8c3"
+            },
+            "_register_core_block_patterns_and_categories": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers the engine's core patterns and categories through the public registration functions plugins hear",
+                "body": "6117c1e4f3a5"
+            },
+            "_register_theme_block_patterns": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\ThemePatterns",
+                "why": "finds the theme's and parent's pattern files, skips registered or missing ones and translates titles and descriptions; the theme reader's work",
+                "body": "9e60538690f2"
+            },
+            "wp_normalize_remote_block_pattern": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "renames a remote pattern's keys into the local shape",
+                "body": "a19412d39d04"
             }
         },
         "classes/WP_Widget.php": {
@@ -284,6 +342,94 @@
                 "body": "33f843da6a61"
             }
         },
+        "cron.php": {
+            "_minn_cron_failed": {
+                "verdict": "move",
+                "to": "Minn\\Cron\\Cron",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "logs a failed reschedule or unschedule and fires its action; cron's own failure handling",
+                "body": "48677b33d6b8"
+            },
+            "_minn_update_check_is_fresh": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Updates",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "whether a stored update check is under twelve hours old; the engine's update rule",
+                "body": "ad183cb9643a"
+            },
+            "spawn_cron": {
+                "verdict": "move",
+                "to": "Minn\\Cron\\Cron",
+                "why": "the cron lock, due-event check and the non-blocking request with its filters; engine cron behaviour",
+                "body": "16bc8f19928c"
+            },
+            "wp_clean_update_cache": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Updates",
+                "why": "the update transients to clear are the engine's update records",
+                "body": "f12b7c71d361"
+            },
+            "wp_get_schedule": {
+                "verdict": "move",
+                "to": "Minn\\Cron\\Cron",
+                "why": "an event's schedule name with the get_schedule filter; the engine owns the events",
+                "body": "3d2e5108ddfd"
+            }
+        },
+        "customize.php": {
+            "WP_Customize_Control::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the id and the known properties plugins read back, subclasses calling it",
+                "body": "cd3e7585b21b"
+            },
+            "WP_Customize_Manager::add_control": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the Customizer is a dead end; this only holds what plugins add in customize_register, so their chained calls work",
+                "body": "17b6512099f5"
+            },
+            "WP_Customize_Manager::add_panel": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the Customizer is a dead end; this only holds what plugins add in customize_register, so their chained calls work",
+                "body": "95dfb92ab824"
+            },
+            "WP_Customize_Manager::add_section": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the Customizer is a dead end; this only holds what plugins add in customize_register, so their chained calls work",
+                "body": "6507b1fb6d79"
+            },
+            "WP_Customize_Manager::add_setting": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the Customizer is a dead end; this only holds what plugins add in customize_register, so their chained calls work",
+                "body": "9ee7ab4d5a2b"
+            },
+            "WP_Customize_Partial::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the id and every given property, as plugins and subclasses expect",
+                "body": "765596958a02"
+            },
+            "WP_Customize_Section::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the id and the known properties plugins read back, subclasses calling it",
+                "body": "cd3e7585b21b"
+            },
+            "WP_Customize_Setting::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the id and the known properties plugins read back, subclasses calling it",
+                "body": "cd3e7585b21b"
+            }
+        },
         "fonts.php": {
             "_wp_after_delete_font_family": {
                 "verdict": "move",
@@ -334,6 +480,20 @@
                 "to": "Minn\\Media\\Icons",
                 "why": "builds an icon's svg with its label, class and size attributes; markup by rules belongs with the engine's icons",
                 "body": "9dfe86f12e40"
+            }
+        },
+        "nav-menu-template.php": {
+            "wp_nav_menu": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "why": "argument defaults, item spacing, the pre and final filters and the fallback around NavMenu::build belong with the builder; echo or return stays",
+                "body": "973d2dd86922"
+            },
+            "wp_page_menu": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "why": "builds the page menu markup (home item, page list, container, fallback list) by rules; echo or return stays",
+                "body": "3a3e47b42fd2"
             }
         },
         "option.php": {
@@ -469,6 +629,181 @@
                 ],
                 "why": "cleaning and storing the settings pairs is engine behaviour; $_updated_user_settings stays set for plugins",
                 "body": "d440edafb180"
+            }
+        },
+        "robots-template.php": {
+            "wp_robots": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Robots",
+                "why": "turns the filtered directives into the robots meta tag (string values as directive:value, truthy ones bare); markup by rules",
+                "body": "0f8df39659b3"
+            },
+            "wp_robots_max_image_preview_large": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Robots",
+                "why": "the large image preview directive for a public site; stays as the named wp_robots callback",
+                "body": "2ffd938f36f6"
+            },
+            "wp_robots_no_robots": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Robots",
+                "why": "noindex with follow or nofollow by the site's visibility; stays as the named wp_robots callback",
+                "body": "7618a39c1c8d"
+            },
+            "wp_robots_sensitive_page": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Robots",
+                "why": "the sensitive page directives beside the others; stays as the named wp_robots callback",
+                "body": "94ec10aa47d4"
+            }
+        },
+        "shortcodes.php": {
+            "add_shortcode": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Shortcodes",
+                "why": "the tag rules (not empty, no reserved characters) belong in the engine's registry beside add",
+                "doubt": "an empty or invalid tag is refused silently; the reference may warn through _doing_it_wrong, which a probe with a notice listener would show",
+                "body": "4296a405a376"
+            },
+            "get_shortcode_regex": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's pattern without its delimiters and flags, the form the API returns",
+                "body": "2b0678fc04df"
+            },
+            "get_shortcode_tags_in_content": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Shortcodes",
+                "why": "collects the tags in content, nested ones included; a parse the engine's shortcodes own",
+                "body": "98fc03a91d4d"
+            },
+            "has_shortcode": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Shortcodes",
+                "why": "matches content against one registered tag's pattern; the engine has the pattern",
+                "body": "0cd3a758320c"
+            }
+        },
+        "sitemaps.php": {
+            "get_sitemap_url": {
+                "verdict": "delegate",
+                "to": "Minn\\Front\\SitemapRequest::url",
+                "why": "the engine's SitemapRequest::url answers the same question (index, provider, subtype, page)",
+                "body": "984d0105e1b2"
+            },
+            "wp_sitemaps_get_server": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "builds the sitemaps server once, before it starts, and puts it in $wp_sitemaps where plugins reach it, then fires wp_sitemaps_init",
+                "body": "f3266e0424ba"
+            }
+        },
+        "speculative-loading.php": {
+            "wp_get_speculation_rules": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SpeculationRules",
+                "why": "builds the exclusions and the document rule by rules; the WP_Speculation_Rules object and its action stay as the wrapper",
+                "body": "e48a95d71271"
+            },
+            "wp_get_speculation_rules_configuration": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SpeculationRules",
+                "why": "decides whether speculation runs and with which mode and eagerness, with its filter and validation",
+                "body": "fab4312e1bcf"
+            },
+            "wp_get_speculative_loading_override": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SpeculationRules",
+                "why": "reads an override from a constant or the environment; part of the speculation rules policy",
+                "body": "2c9eaa31a6a2"
+            },
+            "wp_print_speculation_rules": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "prints the rules through wp_print_inline_script_tag, which fires its own filters",
+                "body": "9766dc147e3f"
+            }
+        },
+        "theme-previews.php": {
+            "wp_block_theme_activate_nonce": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "prints the activation nonce in a small inline script",
+                "body": "9d47d02a62e2"
+            },
+            "wp_enqueue_block_template_skip_link": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Templates",
+                "gates": [
+                    "globals"
+                ],
+                "why": "once per request, enqueues the skip link style when a block template rendered; whether one rendered is the engine's to know",
+                "body": "d7a1f5118639"
+            },
+            "wp_get_theme_preview_path": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\ThemePreview",
+                "why": "decides the previewed theme (capability, the requested stylesheet, a valid theme, template or stylesheet by the running filter); stays as the named stylesheet and template callback",
+                "body": "56ada4dab83f"
+            },
+            "wp_initialize_theme_preview_hooks": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "hooks the named preview callbacks through the hook API when a preview is asked for",
+                "body": "51f3b2c88307"
+            }
+        },
+        "upgrade.php": {
+            "__get_option": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Options",
+                "gates": [
+                    "globals"
+                ],
+                "why": "reads an option straight from its row (home and siteurl from their constants, home falling back to siteurl); a raw read the engine's options should own",
+                "body": "729e2b15528c"
+            },
+            "add_clean_index": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DbDelta",
+                "gates": [
+                    "globals"
+                ],
+                "why": "drops then adds an index; schema work for the engine's delta, today through the global $wpdb",
+                "body": "062543b5e38a"
+            },
+            "dbDelta": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DbDelta",
+                "why": "splits the queries and runs the dbdelta filters before the engine's DbDelta; the splitting and filters belong with it",
+                "body": "e39022c42e47"
+            },
+            "drop_index": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DbDelta",
+                "gates": [
+                    "globals"
+                ],
+                "why": "drops an index and its numbered copies; schema work for the engine's delta, today through the global $wpdb",
+                "body": "26a681f56eb3"
+            },
+            "maybe_add_column": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DbDelta",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "adds a column unless it exists, through the engine's delta",
+                "body": "79db6b477509"
+            },
+            "maybe_create_table": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DbDelta",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "creates a table unless it exists, through the engine's delta",
+                "body": "0ac83b984d7a"
             }
         },
         "view-config.php": {
