@@ -105,7 +105,7 @@ final class FeedTemplates
         if (Runtime::options()->filtered('rss_use_excerpt')) {
             $w->put("\t\t\n");
         } else {
-            $content = \get_the_content_feed('rss2');
+            $content = FeedTags::contentFeed('rss2');
             $w->put("\t\t\t\t\t\t\t\t\t\t<content:encoded><![CDATA[");
             strlen($content) > 0 ? $w->put($content) : $w->cdata('the_excerpt_rss');
             $w->put("]]></content:encoded>\n\t\t\t\t\t\n");
@@ -227,7 +227,7 @@ final class FeedTemplates
         if (MainQuery::current()->is_search()) {
             return sprintf(Text::numericReferences(Gettext::text('Comments for %1$s searching on %2$s')), SiteInfo::rss('name'), MainQuery::searchQuery());
         }
-        return sprintf(Text::numericReferences(Gettext::text('Comments for %s')), \get_wp_title_rss());
+        return sprintf(Text::numericReferences(Gettext::text('Comments for %s')), FeedTags::wpTitleRss());
     }
 
     /** A comment's heading in a comments feed: by whom, and on what when the feed is not a single post's. */

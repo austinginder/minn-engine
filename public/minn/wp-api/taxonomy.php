@@ -790,17 +790,7 @@ function single_cat_title($prefix = '', $display = true)
 /** The queried term's name after a prefix, printed or returned; null off a term archive. */
 function single_term_title($prefix = '', $display = true)
 {
-    $term = get_queried_object();
-    if (!$term instanceof WP_Term || !(is_category() || is_tag() || is_tax())) {
-        return null;
-    }
-    $filter = match ($term->taxonomy) { 'category' => 'single_cat_title', 'post_tag' => 'single_tag_title', default => 'single_term_title' };
-    $title = $prefix . apply_filters($filter, $term->name);
-    if ($display) {
-        echo $title;
-        return null;
-    }
-    return $title;
+    return Minn\Runtime\DocumentTitle::term($prefix, $display);
 }
 
 /**

@@ -8,13 +8,7 @@ use Minn\Runtime\Runtime;
 /** @internal */
 function _minn_assets(string $kind): Assets
 {
-    $runtime = Runtime::current();
-    $assets = $runtime->get('assets_' . $kind);
-    if (!$assets instanceof Assets) {
-        $assets = new Assets($kind);
-        $runtime->set('assets_' . $kind, $assets);
-    }
-    return $assets;
+    return Minn\Runtime\AssetQueue::assets($kind);
 }
 
 /** @internal a registered src as the URL the tag prints */
@@ -57,14 +51,7 @@ function _minn_dep_list($deps): array
  */
 function _wp_scripts_maybe_doing_it_wrong($function_name, $handle = '')
 {
-    if (did_action('init') || did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts') || did_action('login_enqueue_scripts')) {
-        return;
-    }
-    $message = sprintf(__('Scripts and styles should not be registered or enqueued until the %1$s, %2$s, or %3$s hooks.'), '<code>wp_enqueue_scripts</code>', '<code>admin_enqueue_scripts</code>', '<code>login_enqueue_scripts</code>');
-    if ($handle) {
-        $message .= ' ' . sprintf(__('This notice was triggered by the %s handle.'), '<code>' . $handle . '</code>');
-    }
-    _doing_it_wrong($function_name, $message, '3.3.0');
+    Minn\Runtime\AssetQueue::warnTooEarly($function_name, $handle);
 }
 
 /** A registered script's arguments as its data: in_footer as group 1, then a strategy and a fetch priority (the registry refuses ones it does not know). */

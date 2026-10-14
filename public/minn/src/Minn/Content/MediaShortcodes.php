@@ -14,6 +14,7 @@ use Minn\Runtime\Runtime;
 use Minn\Runtime\Shortcodes;
 use Minn\Support\Escape;
 use Minn\Support\Flag;
+use Minn\Runtime\AssetQueue;
 
 /**
  * The [video] and [audio] shortcodes as the reference prints them: a
@@ -187,8 +188,8 @@ final class MediaShortcodes
     {
         $library = (string) Runtime::hooks()->filter("wp_{$kind}_shortcode_library", ['mediaelement']);
         if ($library === 'mediaelement' && Runtime::hooks()->actionsDone('init')) {
-            \wp_enqueue_style('wp-mediaelement');
-            \wp_enqueue_script('wp-mediaelement');
+            AssetQueue::enqueueStyle('wp-mediaelement');
+            AssetQueue::enqueueScript('wp-mediaelement');
         }
         return $library;
     }

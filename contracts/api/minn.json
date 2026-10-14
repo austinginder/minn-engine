@@ -29323,6 +29323,7 @@
             "uses": [
                 "Minn\\Media\\FileTypes",
                 "Minn\\Objects\\Post",
+                "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\QueryArgs",
@@ -29377,8 +29378,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 68
+                    "line": 36,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -29406,8 +29407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 91
+                    "line": 72,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -29433,8 +29434,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 102
+                    "line": 95,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -29478,8 +29479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 138
+                    "line": 114,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -29507,8 +29508,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 149
+                    "line": 142,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -29550,8 +29551,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 163
+                    "line": 153,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -29579,8 +29580,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 176
+                    "line": 167,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -29608,8 +29609,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 183
+                    "line": 180,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -29628,8 +29629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 194
+                    "line": 187,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -29655,8 +29656,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 200
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -29667,8 +29668,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 205
+                    "line": 203,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -29687,8 +29688,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 214
+                    "line": 209,
+                    "end": 215
                 }
             ]
         },
@@ -31776,6 +31777,7 @@
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
+                "Minn\\Front\\FeedTags",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolution",
@@ -46695,16 +46697,18 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/FeedTags.php",
-            "lines": 177,
+            "lines": 197,
             "doc": "The template tags a feed is written with that take more than a line, as\nthe reference answers them in a feed's loop (probe feed-tags): a post's\ncategories and tags in each feed's markup, its enclosures for RSS and\nAtom, the link to its comments feed, the feed's build date, and the site\nicon a feed carries; and the small ones: the site's default feed, a feed's\ncontent type and a post's title for a feed.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Content\\PostRecord",
                 "Minn\\Front\\FeedWriter",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Media\\FileTypes",
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\Query",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\MetaData",
@@ -46720,7 +46724,8 @@
                 "Minn\\Runtime\\TermTags",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Text",
-                "Minn\\Support\\Url"
+                "Minn\\Support\\Url",
+                "Minn\\Theme\\ClassicContent"
             ],
             "usedBy": [
                 "Minn\\Front\\FeedController",
@@ -46737,6 +46742,46 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "wpTitleRss",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "wpTitleRss(mixed $deprecated = '&#8211;'): mixed",
+                    "doc": "The page's document title as a feed's title (get_wp_title_rss), as get_wp_title_rss leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "deprecated",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'&#8211;'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "contentFeed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "contentFeed(mixed $feedType = NULL): mixed",
+                    "doc": "The content of the post being read, rendered for a feed item (get_the_content_feed): CDATA's close escaped, then the_content_feed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "feedType",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 48,
+                    "end": 59
+                },
+                {
+                    "routes": [],
                     "name": "serve",
                     "static": true,
                     "visibility": "public",
@@ -46744,8 +46789,8 @@
                     "doc": "The feed the query asks for run by its do_feed_{feed} handlers\n(do_feed): leading underscores dropped, the default for none; a 404\nwhen nothing handles it.",
                     "shapes": [],
                     "params": [],
-                    "line": 43,
-                    "end": 53
+                    "line": 66,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -46756,8 +46801,8 @@
                     "doc": "The feed the site serves by default (get_default_feed): default_feed's, \"rss\" read as rss2.",
                     "shapes": [],
                     "params": [],
-                    "line": 56,
-                    "end": 60
+                    "line": 79,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -46776,8 +46821,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 70
+                    "line": 86,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -46796,8 +46841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 76
+                    "line": 96,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -46816,8 +46861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 96
+                    "line": 102,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -46828,8 +46873,8 @@
                     "doc": "The current post's enclosures as RSS has them: address, length, and the type the third line starts with.",
                     "shapes": [],
                     "params": [],
-                    "line": 109,
-                    "end": 120
+                    "line": 132,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -46840,8 +46885,8 @@
                     "doc": "The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.",
                     "shapes": [],
                     "params": [],
-                    "line": 123,
-                    "end": 140
+                    "line": 146,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -46867,8 +46912,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 165
+                    "line": 166,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -46887,8 +46932,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 191
+                    "line": 195,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -46899,8 +46944,8 @@
                     "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 194,
-                    "end": 204
+                    "line": 217,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -46911,8 +46956,8 @@
                     "doc": "The site icon as an Atom icon, or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 207,
-                    "end": 211
+                    "line": 230,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -46925,8 +46970,8 @@
                         "@return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted"
                     ],
                     "params": [],
-                    "line": 99,
-                    "end": 106
+                    "line": 122,
+                    "end": 129
                 }
             ]
         },
@@ -48894,6 +48939,7 @@
             "uses": [
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\User",
+                "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostReads",
@@ -48940,8 +48986,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 59
+                    "line": 36,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -48983,8 +49029,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 77
+                    "line": 63,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -49017,8 +49063,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 100
+                    "line": 81,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -49037,8 +49083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 114
+                    "line": 104,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -49066,8 +49112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 122
+                    "line": 118,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -49095,8 +49141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 136
+                    "line": 126,
+                    "end": 137
                 }
             ]
         },
@@ -68008,6 +68054,7 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\RequestHeaders",
                 "Minn\\Theme\\EmbedRenderer",
@@ -70342,6 +70389,8 @@
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
+                "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenuItems",
@@ -83384,6 +83433,7 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\TermsController",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\PostData",
@@ -83705,6 +83755,7 @@
             "usedBy": [
                 "Minn\\Rest\\TermFilters",
                 "Minn\\Rest\\TermsController",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\MetaKeys",
@@ -118552,6 +118603,169 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\AssetQueue",
+            "short": "AssetQueue",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/AssetQueue.php",
+            "lines": 60,
+            "doc": "The scripts and styles a request queues, as WordPress's asset functions\nqueue them: each kind's registry kept for the request, a handle queued\n(with the notice for one queued before init), and a script's element,\nfrom a file or inline, through the attribute filters.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Assets",
+                "Minn\\Runtime\\Notices",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\ScriptTag"
+            ],
+            "usedBy": [
+                "Minn\\Content\\MediaShortcodes",
+                "Minn\\Front\\PostEmbed",
+                "Minn\\Runtime\\ScriptModules"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "assets",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "assets(string $kind): Minn\\Runtime\\Assets",
+                    "doc": "The request's registry of one kind of asset, script or style, made the first time it is asked for.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 28
+                },
+                {
+                    "routes": [],
+                    "name": "warnTooEarly",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "warnTooEarly(mixed $function, mixed $handle = ''): void",
+                    "doc": "The notice (doing it wrong, 3.3.0) for an asset function run before\ninit and before any of the enqueue actions\n(_wp_scripts_maybe_doing_it_wrong), naming the handle when there is one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "function",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "handle",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "enqueueScript",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "enqueueScript(string $handle): void",
+                    "doc": "A registered script queued (wp_enqueue_script with a handle alone).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "enqueueStyle",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "enqueueStyle(string $handle): void",
+                    "doc": "A registered style queued (wp_enqueue_style with a handle alone).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "tag",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "tag(mixed $attributes): string",
+                    "doc": "A script file's element (wp_get_script_tag), its attributes through wp_script_attributes first.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attributes",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "inlineTag",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "inlineTag(mixed $data, mixed $attributes = array ( )): string",
+                    "doc": "Inline code's element (wp_get_inline_script_tag): the code trimmed between newlines, wp_inline_script_attributes asked.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attributes",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 74
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Assets",
             "short": "Assets",
             "namespace": "Minn\\Runtime",
@@ -118566,6 +118780,7 @@
             ],
             "usedBy": [
                 "Minn\\Runtime\\AssetEdits",
+                "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\ScriptLoading"
             ],
             "constructor": {
@@ -125029,6 +125244,171 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\DocumentTitle",
+            "short": "DocumentTitle",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/DocumentTitle.php",
+            "lines": 95,
+            "doc": "The page's title as WordPress's title functions make it from the main\nquery: the document title and its parts (what is shown, the page number,\nthe site or its tagline), and the title tags of a post type archive, a\nterm archive and a single post, printed or returned.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Response",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Objects\\Post",
+                "Minn\\Objects\\Term",
+                "Minn\\Runtime\\MainQuery",
+                "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteInfo"
+            ],
+            "usedBy": [
+                "Minn\\Front\\FeedTags"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "get",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "get(): string",
+                    "doc": "The document title (wp_get_document_title), through the title filters, ready to print inside <title>.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 21,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "parts",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parts(): array",
+                    "doc": "The document title's parts from the main query's state: the title of\nwhat is shown, the page number past the first, then the tagline on\nthe front page or the site's name elsewhere.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 40,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "postTypeArchive",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "postTypeArchive(mixed $prefix = '', mixed $display = true): mixed",
+                    "doc": "On a post type archive, the type's plural name after a prefix (post_type_archive_title), printed or returned; null elsewhere.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "prefix",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "display",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "term",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "term(mixed $prefix = '', mixed $display = true): mixed",
+                    "doc": "The queried term's name after a prefix (single_term_title), printed or returned; null off a term archive.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "prefix",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "display",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "post(mixed $prefix = '', mixed $display = true): mixed",
+                    "doc": "The queried post's title after a prefix (single_post_title), printed or returned; null when no post is queried.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "prefix",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "display",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "shown",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "shown(string $title, mixed $display): ?string",
+                    "doc": "A title printed (null back) or returned.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "display",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 111
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\EarlyFilters",
             "short": "EarlyFilters",
             "namespace": "Minn\\Runtime",
@@ -125604,7 +125984,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 407,
+            "lines": 413,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -125732,7 +126112,10 @@
                 "Minn\\Runtime\\UserQueryRunner",
                 "Minn\\Runtime\\UserSave",
                 "Minn\\Runtime\\UserWrites",
+                "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\FrontLifecycle",
+                "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\ThemeJsonData"
             ],
             "constructor": null,
@@ -126986,6 +127369,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "loadTemplate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "loadTemplate(mixed ...$args): void",
+                    "doc": "A theme template file run where templates run (load_template): in the layer's globals, the query's variables in scope.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 439,
+                    "end": 442
+                },
+                {
+                    "routes": [],
                     "name": "newTheme",
                     "static": true,
                     "visibility": "public",
@@ -127001,8 +127404,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 442
+                    "line": 445,
+                    "end": 448
                 },
                 {
                     "routes": [],
@@ -127028,8 +127431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 444,
-                    "end": 448
+                    "line": 450,
+                    "end": 454
                 }
             ]
         },
@@ -128841,6 +129244,7 @@
                 "Minn\\Front\\SitemapController",
                 "Minn\\Front\\SitemapRequest",
                 "Minn\\Runtime\\CommentPages",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Theme\\ClassicContent",
@@ -131806,6 +132210,7 @@
                 "Minn\\Query\\DateSql",
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AbilityRun",
+                "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\Hooks",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\PostQuery",
@@ -140583,7 +140988,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostTags.php",
-            "lines": 182,
+            "lines": 193,
             "doc": "What the post template tags tell about a post (the one being read when\nnone is named): its id and title, whether a password stands before it,\nwhether comments and pings are open, how many comments it has, and its\nfeatured image; each through the filter plugins hook there.",
             "implements": [],
             "extends": null,
@@ -140608,6 +141013,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentTags",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Theme\\FrontLifecycle"
@@ -140775,6 +141181,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "date",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "date(mixed $format = '', mixed $post = NULL): mixed",
+                    "doc": "When a post was published, in the format given or the site's date format (get_the_date), as get_the_date leaves it; false for no post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "format",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 121,
+                    "end": 129
+                },
+                {
+                    "routes": [],
                     "name": "id",
                     "static": true,
                     "visibility": "public",
@@ -140782,8 +141215,8 @@
                     "doc": "The id of the post being read (get_the_ID), or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 121,
-                    "end": 125
+                    "line": 132,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -140802,8 +141235,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 147
+                    "line": 143,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -140822,8 +141255,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 159
+                    "line": 162,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -140842,8 +141275,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 166
+                    "line": 173,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -140862,8 +141295,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 173
+                    "line": 180,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -140882,8 +141315,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 184
+                    "line": 187,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -140902,8 +141335,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 191
+                    "line": 198,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -140922,8 +141355,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 198
+                    "line": 205,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -143214,6 +143647,7 @@
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\MetaKeys",
@@ -145537,6 +145971,7 @@
                 "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\ArchiveLinks",
+                "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\CommentChecks",
@@ -145552,6 +145987,7 @@
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Deferrals",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\Heartbeat",
@@ -146707,6 +147143,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Json",
+                "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -147981,6 +148418,7 @@
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Front\\ToolbarMenus",
+                "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Theme\\FrontLifecycle",
                 "Minn\\Theme\\HeadLinks"
             ],
@@ -162376,7 +162814,9 @@
             "uses": [
                 "Minn\\Support\\Escape"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\AssetQueue"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -164949,7 +165389,9 @@
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\Runtime"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Front\\FeedTags"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -165004,6 +165446,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
                 "Minn\\Html",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\ThemeMods",
@@ -165077,8 +165520,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 40
+                "line": 32,
+                "end": 41
             },
             "cases": [],
             "constants": [],
@@ -165200,8 +165643,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 48
+                    "line": 44,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -165227,8 +165670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 77
+                    "line": 52,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -165256,8 +165699,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 117
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -165268,8 +165711,8 @@
                     "doc": "The reference's loader order: the first true conditional whose template exists wins, index.php last.",
                     "shapes": [],
                     "params": [],
-                    "line": 80,
-                    "end": 110
+                    "line": 81,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -165295,8 +165738,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 133
+                    "line": 120,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -165307,8 +165750,8 @@
                     "doc": "The piece only the renderer holds: the engine stylesheets. The head defaults registered at setup_theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 136,
-                    "end": 139
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -165319,8 +165762,8 @@
                     "doc": "The engine's block stylesheet, and the theme.json presets when the theme ships one, where the reference prints its block-library and global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 142,
-                    "end": 152
+                    "line": 143,
+                    "end": 153
                 }
             ]
         },
@@ -165592,6 +166035,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\MainQueryBridge"
             ],
@@ -165613,8 +166057,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 29
+                "line": 27,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -165654,8 +166098,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 36
+                    "line": 33,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -165683,8 +166127,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 55
+                    "line": 46,
+                    "end": 56
                 }
             ]
         },
@@ -167682,6 +168126,7 @@
                 "Minn\\Html",
                 "Minn\\I18n\\Gettext",
                 "Minn\\I18n\\SiteLanguage",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\HeadLinks",
@@ -167750,8 +168195,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 36,
-                "end": 45
+                "line": 37,
+                "end": 46
             },
             "cases": [],
             "constants": [],
@@ -167866,8 +168311,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 57
+                    "line": 49,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -167895,8 +168340,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 73
+                    "line": 69,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -167924,8 +168369,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 110
+                    "line": 77,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -167951,8 +168396,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 133
+                    "line": 114,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -167994,8 +168439,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 171
+                    "line": 142,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -168016,8 +168461,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 185
+                    "line": 180,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -168050,8 +168495,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 217
+                    "line": 195,
+                    "end": 218
                 }
             ]
         },

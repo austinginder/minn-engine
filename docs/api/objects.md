@@ -126,7 +126,7 @@ A post as the WordPress layer hands it to plugins (WP_Post). The engine
 knows these objects by this mark and makes them through Runtime\Handoff,
 so it never names the WordPress layer's class.
 
-Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Media\Icons`, `Minn\Rest\BlockRendererController`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\TermsController`, `Minn\Runtime\Handoff`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\QueryClasses`
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Media\Icons`, `Minn\Rest\BlockRendererController`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\TermsController`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\Handoff`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\QueryClasses`
 
 
 ## PostType
@@ -282,7 +282,7 @@ A term as the WordPress layer hands it to plugins (WP_Term). The engine
 knows these objects by this mark and makes them through Runtime\Handoff,
 so it never names the WordPress layer's class.
 
-Used by: `Minn\Rest\TermFilters`, `Minn\Rest\TermsController`, `Minn\Runtime\Handoff`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostLinks`, `Minn\Runtime\Records`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Theme\QueryClasses`
+Used by: `Minn\Rest\TermFilters`, `Minn\Rest\TermsController`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\Handoff`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostLinks`, `Minn\Runtime\Records`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Theme\QueryClasses`
 
 
 ## TermsQuery

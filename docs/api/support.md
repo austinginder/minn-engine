@@ -950,6 +950,8 @@ such a sequence is not printed at all.
 - const `ESCAPABLE` = `array (   0 => '',   1 => 'module',   2 => 'application/json',   3 => 'importmap',   4 => 'speculationrules',   5 => 'application/ecmascript',   6 => 'application/javascript',   7 => 'application/x-ecmascript',   8 => 'application/x-javascript',   9 => 'text/ecmascript',   10 => 'text/javascript',   11 => 'text/javascript1.0',   12 => 'text/javascript1.1',   13 => 'text/javascript1.2',   14 => 'text/javascript1.3',   15 => 'text/javascript1.4',   16 => 'text/javascript1.5',   17 => 'text/jscript',   18 => 'text/livescript',   19 => 'text/x-ecmascript',   20 => 'text/x-javascript', )` — The script types inline code is JavaScript or JSON in (lowercase, trimmed; no type at all counts as JavaScript).
 - const `TAG` = `'#<(/?)(s)(cript[\\t\\n\\f\\r />])#i'` — A sequence that would open or close a script element inside one.
 
+Used by: `Minn\Runtime\AssetQueue`
+
 ### static `element(array $attributes): string`
 
 The empty element for a script file.

@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\Objects\Post;
 use Minn\Objects\User;
+use Minn\Runtime\AssetQueue;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\PostLinks;
 use Minn\Runtime\PostReads;
@@ -95,7 +96,7 @@ final class PostEmbed
             Escape::attr($secret),
         );
         $script = (string) file_get_contents(MINN_ENGINE_DIR . '/assets/embed-host.js');
-        $output .= \wp_get_inline_script_tag($script . "\n//# sourceURL=" . SiteUrls::includes('js/wp-embed.min.js'));
+        $output .= AssetQueue::inlineTag($script . "\n//# sourceURL=" . SiteUrls::includes('js/wp-embed.min.js'));
         return (string) Runtime::hooks()->filter('embed_html', [$output, $post, $width, $height]);
     }
 

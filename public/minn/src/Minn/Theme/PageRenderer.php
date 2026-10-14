@@ -22,6 +22,7 @@ use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
 use Minn\I18n\SiteLanguage;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Html;
 
@@ -125,7 +126,7 @@ final readonly class PageRenderer
         if ($swapped !== $canvas && $swapped !== '' && is_file($swapped)) {
             return TemplateBuffer::around($swapped, static function () use ($swapped): string {
                 ob_start();
-                \load_template($swapped, false);
+                Handoff::loadTemplate($swapped, false);
                 return (string) ob_get_clean();
             });
         }

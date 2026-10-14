@@ -271,16 +271,7 @@ function _minn_wp_title_date(): array
 
 function single_post_title($prefix = '', $display = true)
 {
-    $post = get_queried_object();
-    if (!$post instanceof WP_Post) {
-        return null;
-    }
-    $title = apply_filters('single_post_title', $post->post_title, $post);
-    if ($display) {
-        echo $prefix . $title;
-        return null;
-    }
-    return $prefix . $title;
+    return Minn\Runtime\DocumentTitle::post($prefix, $display);
 }
 
 /** The reference titles archives as a label prefix around the bare name: `Category: <span>Uncategorized</span>`. */
@@ -429,39 +420,13 @@ function _minn_seed_wp_request(array $vars): void
 /** The document title from the main query's state, through the reference's title filters; ready to print inside <title>. */
 function wp_get_document_title()
 {
-    $title = apply_filters('pre_get_document_title', '');
-    if (!empty($title)) {
-        return (string) $title;
-    }
-    $sep = apply_filters('document_title_separator', '-');
-    $parts = apply_filters('document_title_parts', _minn_query_title_parts());
-    // The document_title filter's defaults texturize and escape it.
-    return (string) apply_filters('document_title', implode(" $sep ", array_filter((array) $parts)));
+    return Minn\Runtime\DocumentTitle::get();
 }
 
 /** @internal the document title's parts as the reference makes them from the main query's state (probe feed-tags) */
-function _minn_query_title_parts(): array
+function _minn_query_title_parts()
 {
-    $title = match (true) {
-        is_404() => __('Page not found'),
-        is_search() => sprintf(__('Search Results for &#8220;%s&#8221;'), get_search_query()),
-        is_front_page() => get_bloginfo('name', 'display'),
-        is_post_type_archive() => post_type_archive_title('', false),
-        is_tax() => single_term_title('', false),
-        is_home() || is_singular() => single_post_title('', false),
-        is_category() || is_tag() => single_term_title('', false),
-        is_author() && get_queried_object() => get_queried_object()->display_name,
-        is_year() => get_the_date(_x('Y', 'yearly archives date format')),
-        is_month() => get_the_date(_x('F Y', 'monthly archives date format')),
-        is_day() => get_the_date(),
-        default => '',
-    };
-    $parts = ['title' => $title];
-    $paged = max((int) ($GLOBALS['paged'] ?? 0), (int) ($GLOBALS['page'] ?? 0));
-    if ($paged >= 2 && !is_404()) {
-        $parts['page'] = sprintf(__('Page %s'), $paged);
-    }
-    return $parts + (is_front_page() ? ['tagline' => get_bloginfo('description', 'display')] : ['site' => get_bloginfo('name', 'display')]);
+    return Minn\Runtime\DocumentTitle::parts();
 }
 
 /**
@@ -612,21 +577,7 @@ function single_month_title($prefix = '', $display = true)
 /** On a post type archive, the type's plural name (post_type_archive_title) after a prefix; null elsewhere. */
 function post_type_archive_title($prefix = '', $display = true)
 {
-    if (!is_post_type_archive()) {
-        return null;
-    }
-    $type = get_query_var('post_type');
-    $type = is_array($type) ? (string) reset($type) : (string) $type;
-    $object = get_post_type_object($type);
-    if ($object === null) {
-        return null;
-    }
-    $title = $prefix . apply_filters('post_type_archive_title', $object->labels->name, $type);
-    if ($display) {
-        echo $title;
-        return null;
-    }
-    return $title;
+    return Minn\Runtime\DocumentTitle::postTypeArchive($prefix, $display);
 }
 
 /**

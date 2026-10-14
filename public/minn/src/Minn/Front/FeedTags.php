@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Media\FileTypes;
+use Minn\Theme\ClassicContent;
+use Minn\Runtime\DocumentTitle;
+use Minn\Content\PostRecord;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\Handoff;
 use Minn\I18n\Gettext;
@@ -35,6 +38,26 @@ use Minn\Runtime\TermFields;
  */
 final class FeedTags
 {
+    /** The page's document title as a feed's title (get_wp_title_rss), as get_wp_title_rss leaves it. */
+    public static function wpTitleRss(mixed $deprecated = '&#8211;'): mixed
+    {
+        return Runtime::hooks()->filter('get_wp_title_rss', [DocumentTitle::get(), $deprecated]);
+    }
+
+    /** The content of the post being read, rendered for a feed item (get_the_content_feed): CDATA's close escaped, then the_content_feed. */
+    public static function contentFeed(mixed $feedType = null): mixed
+    {
+        if (!$feedType) {
+            $feedType = self::defaultFeed();
+        }
+        $post = Records::post();
+        if ($post === null) {
+            return '';
+        }
+        $content = str_replace(']]>', ']]&gt;', ClassicContent::render(PostRecord::fromRow($post->to_array()), null));
+        return Runtime::hooks()->filter('the_content_feed', [$content, $feedType]);
+    }
+
     /**
      * The feed the query asks for run by its do_feed_{feed} handlers
      * (do_feed): leading underscores dropped, the default for none; a 404
@@ -193,7 +216,7 @@ final class FeedTags
     /** The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one. */
     public static function rss2Icon(): string
     {
-        $title = \get_wp_title_rss();
+        $title = FeedTags::wpTitleRss();
         $title = $title !== '' ? $title : SiteInfo::rss('name');
         $url = \get_site_icon_url(32);
         if (!$url) {

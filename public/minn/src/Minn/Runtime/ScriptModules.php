@@ -169,7 +169,7 @@ final class ScriptModules
         if ($imports === []) {
             return '';
         }
-        return \wp_get_inline_script_tag(Json::encode(['imports' => $imports], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'importmap', 'id' => 'wp-importmap']);
+        return AssetQueue::inlineTag(Json::encode(['imports' => $imports], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'importmap', 'id' => 'wp-importmap']);
     }
 
     /** The modulepreload links. */
@@ -209,7 +209,7 @@ final class ScriptModules
             if ($data === []) {
                 continue;
             }
-            $out .= \wp_get_inline_script_tag(Json::encode($data, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'application/json', 'id' => 'wp-script-module-data-' . $id]);
+            $out .= AssetQueue::inlineTag(Json::encode($data, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'application/json', 'id' => 'wp-script-module-data-' . $id]);
         }
         return $out;
     }
@@ -242,7 +242,7 @@ final class ScriptModules
             $attributes = ['type' => 'module', 'src' => $this->urlOf($id), 'id' => $id . '-js-module']
                 + ($item['fetchpriority'] !== 'auto' ? ['fetchpriority' => $item['fetchpriority']] : [])
                 + $item['attributes'];
-            $out .= \wp_get_script_tag($attributes);
+            $out .= AssetQueue::tag($attributes);
         }
         return $out;
     }

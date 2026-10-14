@@ -174,7 +174,7 @@ function the_title_rss()
 /** The page's document title as a feed's title, through get_wp_title_rss. */
 function get_wp_title_rss($deprecated = '&#8211;')
 {
-    return apply_filters('get_wp_title_rss', wp_get_document_title(), $deprecated);
+    return Minn\Front\FeedTags::wpTitleRss($deprecated);
 }
 
 function wp_title_rss($deprecated = '&#8211;')
@@ -282,16 +282,7 @@ function atom_site_icon()
 /** The rendered content for a feed item: the full pipeline, CDATA close escaped, then the feed filter. */
 function get_the_content_feed($feed_type = null)
 {
-    if (!$feed_type) {
-        $feed_type = get_default_feed();
-    }
-    $post = get_post();
-    if ($post === null) {
-        return '';
-    }
-    $content = \Minn\Theme\ClassicContent::render(Minn\Content\PostRecord::fromRow($post->to_array()), null);
-    $content = str_replace(']]>', ']]&gt;', $content);
-    return apply_filters('the_content_feed', $content, $feed_type);
+    return Minn\Front\FeedTags::contentFeed($feed_type);
 }
 
 /** The feed the query asks for (leading underscores dropped; the default for none), by its do_feed_{feed} handlers; a 404 when nothing handles it. */

@@ -435,6 +435,12 @@ final class Handoff
         self::answer('resetKses');
     }
 
+    /** A theme template file run where templates run (load_template): in the layer's globals, the query's variables in scope. */
+    public static function loadTemplate(mixed ...$args): void
+    {
+        self::answer('loadTemplate', ...$args);
+    }
+
     /** A theme by its folder and root (new WP_Theme). */
     public static function newTheme(mixed ...$args): Theme
     {

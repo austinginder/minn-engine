@@ -16,7 +16,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CustomLogo`](#customlogo) | final class | 25 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
 | [`FeedController`](#feedcontroller) | final readonly class | 60 | The feeds, wherever a request asks for one: the feed var of the rule its |
-| [`FeedTags`](#feedtags) | final class | 177 | The template tags a feed is written with that take more than a line, as |
+| [`FeedTags`](#feedtags) | final class | 197 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
 | [`FrontController`](#frontcontroller) | final readonly class | 105 | The public site. One catch-all route: resolve the URL, then either |
@@ -460,6 +460,14 @@ content type and a post's title for a feed.
 
 Used by: `Minn\Front\FeedController`, `Minn\Front\FeedTemplates`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\SiteInfo`, `Minn\Theme\FeedHeaders`, `Minn\Theme\HeadLinks`
 
+### static `wpTitleRss(mixed $deprecated = '&#8211;'): mixed`
+
+The page's document title as a feed's title (get_wp_title_rss), as get_wp_title_rss leaves it.
+
+### static `contentFeed(mixed $feedType = NULL): mixed`
+
+The content of the post being read, rendered for a feed item (get_the_content_feed): CDATA's close escaped, then the_content_feed.
+
 ### static `serve(): void`
 
 The feed the query asks for run by its do_feed_{feed} handlers
@@ -508,7 +516,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 99)
+Internals: `enclosures()` (private, line 122)
 
 
 ## FeedTemplates
@@ -863,7 +871,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 125)
+Internals: `append()` (private, line 126)
 
 
 ## PostNavigation

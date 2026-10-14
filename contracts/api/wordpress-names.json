@@ -1,25 +1,22 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 87,
-        "functions": 68,
+        "functionCalls": 75,
+        "functions": 61,
         "hookApi": 0,
         "classReferences": 2,
         "classes": 1,
-        "files": 41
+        "files": 39
     },
     "families": {
         "functions": {
             "wp-includes/post.php": 12,
             "wp-includes/general-template.php": 6,
-            "wp-includes/template.php": 5,
             "wp-admin/includes/plugin.php": 5,
             "wp-includes/block-template-utils.php": 5,
             "wp-includes/media.php": 5,
             "wp-includes/blocks.php": 5,
-            "wp-includes/script-loader.php": 4,
             "wp-includes/comment.php": 4,
-            "wp-includes/feed.php": 3,
             "wp-includes/plugin.php": 3,
             "wp-includes/l10n.php": 3,
             "wp-admin/includes/file.php": 3,
@@ -27,6 +24,7 @@
             "wp-admin/includes/post.php": 2,
             "wp-includes/post-template.php": 2,
             "wp-includes/rewrite.php": 2,
+            "wp-includes/template.php": 2,
             "wp-includes/widgets.php": 2,
             "wp-admin/includes/image.php": 2,
             "wp-includes/update.php": 2,
@@ -36,8 +34,6 @@
             "wp-includes/sitemaps.php": 1,
             "wp-includes/blocks/footnotes.php": 1,
             "wp-includes/nav-menu-template.php": 1,
-            "wp-includes/functions.wp-scripts.php": 1,
-            "wp-includes/functions.wp-styles.php": 1,
             "wp-includes/user.php": 1
         },
         "classes": {
@@ -52,23 +48,6 @@
                 "Minn/Front/EmbedCard.php": 1,
                 "Minn/Front/FeedTags.php": 2,
                 "Minn/Front/ToolbarMenus.php": 2
-            }
-        },
-        "load_template": {
-            "uses": 3,
-            "family": "wp-includes/template.php",
-            "files": {
-                "Minn/Theme/ClassicRenderer.php": 1,
-                "Minn/Theme/EmbedRenderer.php": 1,
-                "Minn/Theme/PageRenderer.php": 1
-            }
-        },
-        "wp_get_inline_script_tag": {
-            "uses": 3,
-            "family": "wp-includes/script-loader.php",
-            "files": {
-                "Minn/Front/PostEmbed.php": 1,
-                "Minn/Runtime/ScriptModules.php": 2
             }
         },
         "_get_plugin_data_markup_translate": {
@@ -106,14 +85,6 @@
             "family": "wp-includes/post-template.php",
             "files": {
                 "Minn/Front/FeedTemplates.php": 2
-            }
-        },
-        "get_wp_title_rss": {
-            "uses": 2,
-            "family": "wp-includes/feed.php",
-            "files": {
-                "Minn/Front/FeedTags.php": 1,
-                "Minn/Front/FeedTemplates.php": 1
             }
         },
         "wp_attachment_is_image": {
@@ -267,13 +238,6 @@
                 "Minn/Rest/TemplatesController.php": 1
             }
         },
-        "get_the_content_feed": {
-            "uses": 1,
-            "family": "wp-includes/feed.php",
-            "files": {
-                "Minn/Front/FeedTemplates.php": 1
-            }
-        },
         "get_user_locale": {
             "uses": 1,
             "family": "wp-includes/l10n.php",
@@ -372,20 +336,6 @@
                 "Minn/Runtime/Plugins.php": 1
             }
         },
-        "wp_enqueue_script": {
-            "uses": 1,
-            "family": "wp-includes/functions.wp-scripts.php",
-            "files": {
-                "Minn/Content/MediaShortcodes.php": 1
-            }
-        },
-        "wp_enqueue_style": {
-            "uses": 1,
-            "family": "wp-includes/functions.wp-styles.php",
-            "files": {
-                "Minn/Content/MediaShortcodes.php": 1
-            }
-        },
         "wp_generate_attachment_metadata": {
             "uses": 1,
             "family": "wp-admin/includes/image.php",
@@ -426,13 +376,6 @@
             "family": "wp-includes/l10n.php",
             "files": {
                 "Minn/Runtime/PluginRemoval.php": 1
-            }
-        },
-        "wp_get_script_tag": {
-            "uses": 1,
-            "family": "wp-includes/script-loader.php",
-            "files": {
-                "Minn/Runtime/ScriptModules.php": 1
             }
         },
         "wp_get_translation_updates": {

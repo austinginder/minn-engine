@@ -10,6 +10,7 @@ use Minn\Front\PrintedResponse;
 use Minn\Front\Resolution;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -48,7 +49,7 @@ final readonly class EmbedRenderer
             Runtime::current()->set('classic_body_classes', array_values(array_diff($bodyClasses(), ['minn-front-bar'])));
             $template = (string) Runtime::hooks()->filter('template_include', [\get_embed_template()]);
             if ($template !== '' && is_file($template)) {
-                \load_template($template, false);
+                Handoff::loadTemplate($template, false);
             }
         }, $resolution);
         return $response ?? Response::html('', $resolution->status);

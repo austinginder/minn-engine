@@ -813,3 +813,6 @@ Minn\Runtime\Handoff::bind(['resetKses' => static function (): void {
     kses_remove_filters();
     kses_init_filters();
 }]);
+
+// A theme template runs in this layer's globals, so the engine asks for it through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind(['loadTemplate' => static fn (...$args) => load_template(...$args)]);

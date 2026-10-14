@@ -11,6 +11,7 @@ use Minn\Front\AdminBar;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Plugins;
 use Minn\Runtime\Runtime;
 use Minn\Html;
@@ -71,7 +72,7 @@ final readonly class ClassicRenderer
         // A template that fails half-way leaves nothing in the buffer for the error page to follow.
         return TemplateBuffer::around($template, static function () use ($template): string {
             ob_start();
-            \load_template($template, false);
+            Handoff::loadTemplate($template, false);
             return (string) ob_get_clean();
         });
     }

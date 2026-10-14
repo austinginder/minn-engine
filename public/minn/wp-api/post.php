@@ -193,12 +193,7 @@ function get_the_password_form($post = 0)
 
 function get_the_date($format = '', $post = null)
 {
-    $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $format = $format === '' ? get_option('date_format') : $format;
-    return apply_filters('get_the_date', get_post_time($format, false, $post, true), $format, $post);
+    return Minn\Runtime\PostTags::date($format, $post);
 }
 
 function get_the_time($format = '', $post = null)

@@ -245,9 +245,7 @@ function add_thickbox()
 /** Inline code's element: the code trimmed between newlines, wp_inline_script_attributes asked, escaped as Minn\Support\ScriptTag says. */
 function wp_get_inline_script_tag($data, $attributes = [])
 {
-    $data = "\n" . trim((string) $data, "\n\r ") . "\n";
-    $attributes = apply_filters('wp_inline_script_attributes', $attributes, $data);
-    return Minn\Support\ScriptTag::inline($data, (array) $attributes);
+    return Minn\Runtime\AssetQueue::inlineTag($data, $attributes);
 }
 
 function wp_print_inline_script_tag($data, $attributes = [])
@@ -271,7 +269,7 @@ function wp_sanitize_script_attributes($attributes)
 /** A script file's element, its attributes through wp_script_attributes first. */
 function wp_get_script_tag($attributes)
 {
-    return Minn\Support\ScriptTag::element((array) apply_filters('wp_script_attributes', $attributes));
+    return Minn\Runtime\AssetQueue::tag($attributes);
 }
 
 function wp_print_script_tag($attributes)

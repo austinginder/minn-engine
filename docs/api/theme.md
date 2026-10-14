@@ -132,6 +132,8 @@ What a classic theme's the_content() prints: the engine's block pipeline
 embeds, then the runtime's shortcodes and the_content filters so plugin
 code sees the same hook order the reference runs.
 
+Used by: `Minn\Front\FeedTags`
+
 ### static `render(Minn\Content\PostRecord $post, ?string $moreLinkText): string`
 
 A post's content as the classic loop prints it, with the more link.
@@ -170,7 +172,7 @@ The body-class tokens before plugins filter them (get_body_class filters them). 
 
 - `@return list<string>`
 
-Internals: `template()` (private, line 80), `bodyClasses()` (private, line 119), `registerHead()` (private, line 136), `registerStyles()` (private, line 142)
+Internals: `template()` (private, line 81), `bodyClasses()` (private, line 120), `registerHead()` (private, line 137), `registerStyles()` (private, line 143)
 
 
 ## ClassicTheme
@@ -745,7 +747,7 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `document()` (private, line 141), `skipLinkTarget()` (private, line 179), `head()` (private, line 194)
+Internals: `document()` (private, line 142), `skipLinkTarget()` (private, line 180), `head()` (private, line 195)
 
 
 ## PatternHeaders

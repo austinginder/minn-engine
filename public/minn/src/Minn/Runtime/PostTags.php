@@ -117,6 +117,17 @@ final class PostTags
         return $title;
     }
 
+    /** When a post was published, in the format given or the site's date format (get_the_date), as get_the_date leaves it; false for no post. */
+    public static function date(mixed $format = '', mixed $post = null): mixed
+    {
+        $post = Records::post($post);
+        if ($post === null) {
+            return false;
+        }
+        $format = $format === '' ? Runtime::options()->filtered('date_format') : $format;
+        return Runtime::hooks()->filter('get_the_date', [self::time($format, false, $post, true), $format, $post]);
+    }
+
     /** The id of the post being read (get_the_ID), or false. */
     public static function id(): mixed
     {

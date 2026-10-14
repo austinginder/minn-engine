@@ -16274,6 +16274,14 @@ get_post_format, get_category_link and get_category_parents. `PostTags::authorMe
 shortcode_atts. The http-transports probe stays out of the comparison; the other probes give identical output
 before and after.
 
+**Batch 36, the document title, the asset queue and the feed's text.** `Runtime\DocumentTitle` answers
+wp_get_document_title and its parts, post_type_archive_title, single_term_title and single_post_title;
+`PostTags::date()` get_the_date. `Runtime\AssetQueue` keeps the request's script and style registries, the
+too-early notice, a handle queued, and the script elements (wp_get_script_tag, wp_get_inline_script_tag).
+`FeedTags::wpTitleRss()` and `contentFeed()` answer get_wp_title_rss and get_the_content_feed. A theme template
+runs in the layer's globals, so the engine loads one through `Handoff::loadTemplate()`. Full run 32 (after batch 34) was green
+throughout. The http-transports probe stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
