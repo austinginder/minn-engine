@@ -713,6 +713,798 @@
                 "body": "9bfca6183c92"
             }
         },
+        "blocks.php": {
+            "_add_block_template_info": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Adds the title and post types wp_get_theme_data_custom_templates declares for the slug, under a theme.json theme.",
+                "body": "3d2d063201bf"
+            },
+            "_add_block_template_part_area_info": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Adds the title and area wp_get_theme_data_template_parts declares (through _filter_block_template_part_area), else the uncategorized area.",
+                "body": "206f43aec464"
+            },
+            "_add_template_loader_filters": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "Reads $_GET for _wp-find-template as the request left it and hooks the new-post resolver on pre_get_posts.",
+                "doubt": "locate_block_template is not hooked on each {type}_template filter at priority 20 (embed aside) as WP does; get_query_template calls it first, so it runs before plugins' earlier filters and cannot be unhooked.",
+                "body": "59ec50cf3523"
+            },
+            "_block_bindings_pattern_overrides_get_value": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Reads the named block's override for the attribute out of the instance's pattern/overrides context, null for an unnamed block.",
+                "body": "3b719cac3dd2"
+            },
+            "_block_bindings_post_data_get_value": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "The post-data source's callback: a readability check, then get_the_date, get_the_modified_date or get_permalink by field, each with its own filters.",
+                "body": "526f6602137e"
+            },
+            "_block_bindings_post_meta_get_value": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "The post-meta source's callback: readability, protected-key and show_in_rest checks through public functions whose filters decide, then get_post_meta.",
+                "body": "4fe5b1e1fac2"
+            },
+            "_block_bindings_term_data_get_value": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "The term-data source's callback: get_term from the context, then the field asked for, the link through get_term_link.",
+                "doubt": "No viewability check: WP's source appears to return null to a visitor without read for a term of a non-viewable taxonomy, and (6.9) to read navigation-link and submenu blocks' id and type attributes instead of context.",
+                "body": "1cb267eb70b0"
+            },
+            "_block_template_render_without_post_block_context": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Context",
+                "why": "Drops postId and postType from a block context whose post type is wp_template, a block context rule for Context.",
+                "body": "9a53d6f95801"
+            },
+            "_build_block_template_object_from_post_object": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "why": "Builds a template from a post, terms and meta with its own rules for theme file, custom flag, origin and area, which TemplateIndex::postRecord already decides for stored rows; the rules should be shared there.",
+                "doubt": "A saved customization of a plugin-registered template does not take the registration's plugin, origin, title and description, which WP (6.7+) fills in.",
+                "body": "89c5f53ecf26"
+            },
+            "_build_block_template_result_from_file": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "why": "Reads the file, applies the part theme and sets title, description, custom flag, post types and area by rule, what TemplateIndex's file record already computes, leaving only the object fill.",
+                "doubt": "No hooked blocks are applied to the file's content; WP runs the Block Hooks here (a part wrapped in core/template-part for its first and last child).",
+                "body": "2d94cb5a78a5"
+            },
+            "_build_block_template_result_from_post": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Resolves the post and its wp_theme term through the public API, a WP_Error when there is none, and shapes the engine's postRecord with the term's theme and id.",
+                "doubt": "No hooked blocks are applied to the saved content, which WP does here as it does for theme files.",
+                "body": "0f0e648bde6e"
+            },
+            "_excerpt_render_inner_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Excerpt",
+                "why": "The recursive half of the excerpt walk, rendering only the innermost allowed blocks; it moves with the rest of the excerpt rules.",
+                "body": "b5f7839e7d4c"
+            },
+            "_filter_block_template_part_area": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Checks the area against get_allowed_block_template_part_areas and notices through wp_trigger_error when it falls back.",
+                "body": "949a3b0ddd9e"
+            },
+            "_flatten_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Tree",
+                "gates": [
+                    "refs"
+                ],
+                "why": "Breadth-first flattening of a block tree into references into the caller's list, a tree algorithm for a new Blocks class.",
+                "body": "c6845a7610de"
+            },
+            "_get_block_template_file": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Null for a type that is neither template nor part, otherwise TemplateIndex::fileInfo as it answers.",
+                "body": "768555b7e91f"
+            },
+            "_get_block_templates_files": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "why": "Filters the index's files by slug__in, slug__not_in, area and post_type, the query rules _minn_block_template_matches repeats; TemplateIndex should apply them.",
+                "doubt": "With a post_type query a custom template that declares no postTypes is dropped; WP offers such templates for every post type.",
+                "body": "0640f79b779d"
+            },
+            "_get_block_templates_paths": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "Walks a folder recursively for .html files, file reading Theme already does (partialFiles walks the same way for JSON).",
+                "body": "15afb62eb189"
+            },
+            "_inject_theme_attribute_in_block_template_content": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Deprecated: a notice, then traverse_and_serialize_blocks over parse_blocks with the theme injector.",
+                "body": "a7bdbc488d24"
+            },
+            "_inject_theme_attribute_in_template_part_block": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplatePartTheme",
+                "gates": [
+                    "refs"
+                ],
+                "why": "Sets the active theme on a template-part block that names none, the rule TemplatePartTheme::apply already applies to markup.",
+                "body": "144dae063f2b"
+            },
+            "_minn_apply_hooks_to_template_part": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Wraps a part in a core/template-part delimiter, runs apply_block_hooks_to_content and unwraps it, all public functions; BlockHooks::forPart calls it.",
+                "body": "ca56b7257a98"
+            },
+            "_minn_block_asset_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "Maps a block asset file to a URL under the theme, its parent, wp-includes or the plugins folder, false when missing; close to get_block_asset_url, both path-to-URL rules for BlockMetadata.",
+                "body": "985179f67779"
+            },
+            "_minn_block_template_from": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "Copies a TemplateRecord onto a WP_Block_Template but also decides is_custom, applies the part theme to theme-file markup, looks up post types and rewrites dates; those belong on the record, the object fill staying as shape.",
+                "body": "c36a2a97959a"
+            },
+            "_minn_block_template_matches": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "The slug__in, slug__not_in, area, wp_id and post_type rules over one template, query logic for TemplateIndex.",
+                "doubt": "With a post_type query a custom template with no post_types is excluded, where WP keeps it and instead drops non-custom saved templates.",
+                "body": "8a1348bc92a5"
+            },
+            "_minn_core_block_rows": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\CoreBlocks",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "A second static cache of data/blocks.json beside the one CoreBlocks::metadata already keeps; CoreBlocks should hand out every row so the file is read and held once.",
+                "body": "b03cc57c4b8f"
+            },
+            "_minn_core_block_type": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Copies a core row onto a new WP_Block_Type and points core/template-part at its lazy variation callback by name: the WordPress object built from engine data.",
+                "body": "a9e495cef473"
+            },
+            "_minn_excerpt_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Excerpt",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "The top-level keep rule of the excerpt walk (wrappers opened, a block kept only when its children are plain allowed blocks), which moves with excerpt_remove_blocks.",
+                "body": "41448db92f98"
+            },
+            "_minn_hooked_block_types": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockHooks",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "Reads the hooked types for an anchor and position and fires hooked_block_types on them, the Block Hooks lookup BlockHooks::hooked already starts.",
+                "body": "79a1cc6f259c"
+            },
+            "_minn_pagination_arrow": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "Picks the arrow or chevron glyph and builds its span markup, the same glyph table QueryBlocks keeps inline for query pagination.",
+                "body": "82356c9a1cf2"
+            },
+            "_minn_pattern_markup": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplatePatterns",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "Builds a Theme from the runtime's database and permalinks to read a pattern file, then falls back to the registered pattern: a theme-first lookup that belongs beside TemplatePatterns' own pattern resolution.",
+                "body": "ecc2ca2cd303"
+            },
+            "_minn_register_core_block": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Looks up the core type and registers it through the public block type registry, whose duplicate refusal is the point.",
+                "body": "491d834b5fa1"
+            },
+            "_minn_registered_block_template": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "Fills a WP_Block_Template from a plugin registration by fixed rules (active theme id, plugin source and origin, publish, custom); TemplateIndex::fromPlugin already builds that record, so it can go through the shared record path.",
+                "body": "604105e0a349"
+            },
+            "_minn_render_core_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Renderer",
+                "gates": [
+                    "globals",
+                    "unprobed"
+                ],
+                "why": "Maps a WP_Block's context onto the renderer: pushes the context post or the global one, scopes the comment, provides the rest, picks the render mode and restores; that set-up belongs to the renderer, the WP_Block staying the argument.",
+                "body": "687c7485dbf2"
+            },
+            "_minn_render_core_callback": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Turns a core render callback's arguments into a WP_Block (the instance as given, or one rebuilt with the attributes passed or from the saved markup) for the engine render in _minn_render_core_block.",
+                "body": "f019bc7856b9"
+            },
+            "_minn_resolve_pattern_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplatePatterns",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "The recursive core/pattern expansion: loop guard, unknown slugs kept, trimmed markup parsed, single-block patterns named in metadata; TemplatePatterns already expands patterns in markup and should own the block-array form too.",
+                "doubt": "A pattern nested in a block that expands to several blocks, or is dropped as recursive, leaves the parent's innerContent null slots unchanged so they no longer match innerBlocks; WP splices the nulls to fit.",
+                "body": "283bc6e189e3"
+            },
+            "_minn_template_index": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "Wires a TemplateIndex from the runtime's theme, the shared database, a new Site and the registered templates on each call: a factory TemplateIndex should own.",
+                "body": "49fb9605501c"
+            },
+            "_minn_traverse_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Serializer",
+                "gates": [
+                    "refs",
+                    "unprobed"
+                ],
+                "why": "Serializes a block while calling the visitors around each inner block with its parent and siblings by reference, both before serializing: the visitor form of Serializer::block.",
+                "body": "35ad95e5ca30"
+            },
+            "_remove_theme_attribute_from_template_part_block": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplatePartTheme",
+                "gates": [
+                    "refs"
+                ],
+                "why": "Removes the theme attribute from a template-part block, the inverse rule, for TemplatePartTheme.",
+                "body": "a315829c5908"
+            },
+            "_remove_theme_attribute_in_block_template_content": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Deprecated: a notice, then traverse_and_serialize_blocks over parse_blocks with the theme remover.",
+                "body": "05b45a2f3c01"
+            },
+            "_resolve_template_for_new_post": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Acts on the main query only and unhooks itself, through the query object and the hook API.",
+                "doubt": "It never sets the main query's post_status to auto-draft when page_id or p names an auto-draft the user can edit, which WP does for the site editor.",
+                "body": "c6b4fc865ef8"
+            },
+            "_restore_wpautop_hook": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Puts wpautop back on the_content one priority below itself and unhooks itself, hook API calls only.",
+                "body": "21ee89772f50"
+            },
+            "_wp_apply_block_content_filters": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Runs shortcode_unautop, do_shortcode, do_blocks, wptexturize, convert_smilies and wp_filter_content_tags by name, holding the id in the caller's seen list by reference.",
+                "body": "d516f6657b12"
+            },
+            "_wp_build_title_and_description_for_single_post_type_block_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_type_object and get_posts find the post; the title and description are translated sprintf over them.",
+                "body": "603a078d89cf"
+            },
+            "_wp_build_title_and_description_for_taxonomy_block_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_taxonomy, get_term_by and get_terms find the term and any namesake; the title and description are translated sprintf over them.",
+                "body": "942a88d48a26"
+            },
+            "_wp_filter_post_meta_footnotes": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Footnotes",
+                "why": "Parses the footnotes JSON, drops notes missing an id or content, sanitizes ids, kses the content and re-encodes: a stored-data sanitizer for a new Content class.",
+                "body": "88445eec896e"
+            },
+            "_wp_footnotes_force_filtered_html_on_import_filter": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Hooks the footnotes filter when an import forces filtered HTML and returns the argument, a filter callback over the hook API.",
+                "body": "95494512cd76"
+            },
+            "_wp_footnotes_kses_init": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Unhooks, then rehooks the footnotes filter for a user without unfiltered_html, all public hook and capability calls.",
+                "body": "5f7560cf2576"
+            },
+            "apply_block_hooks_to_content": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Picks the visitors make_before_block_visitor and make_after_block_visitor build (or the theme-attribute injector alone) and runs traverse_and_serialize_blocks over parse_blocks, all by name.",
+                "doubt": "A null context is not defaulted to the current post, and hooked types with supports.multiple false are not kept to one instance; WP (6.7+) does both.",
+                "body": "88087c7bde7a"
+            },
+            "apply_block_hooks_to_content_from_post_object": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockHooks",
+                "gates": [
+                    "refs"
+                ],
+                "why": "Reads a navigation's stored ignored list from meta, wraps its items in a core/navigation block for root hooks and unwraps them, handing the root list back by reference: Block Hooks behaviour the engine reaches through Handoff::blockHooksForPost.",
+                "doubt": "Only a navigation is wrapped: WP (6.8) wraps every post's content (core/post-content, core/block for wp_block) with its stored list, and still applies hooks for a non-post context instead of returning the content.",
+                "body": "01d409404c6f"
+            },
+            "block_core_calendar_has_published_posts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Reads the cached flag through get_option and refreshes it through the public updater when absent.",
+                "doubt": "Multisite is not special-cased: WP answers from the post_count option there instead of its own flag.",
+                "body": "fe56d7cecda5"
+            },
+            "block_core_calendar_update_has_published_post_on_delete": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Re-asks the calendar question when a published post is deleted: guards over get_post, then the public updater.",
+                "doubt": "WP returns early on multisite here; this refreshes the flag there too.",
+                "body": "5a84f2201dbc"
+            },
+            "block_core_calendar_update_has_published_post_on_transition_post_status": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Re-asks the calendar question when a post moves into or out of publish: guards over get_post_type, then the public updater.",
+                "body": "cd4f18c39709"
+            },
+            "block_core_calendar_update_has_published_posts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Asks the engine whether a published post exists and stores the answer through update_option, whose option hooks plugins see.",
+                "body": "365d788f9aa3"
+            },
+            "block_core_post_template_uses_featured_image": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "why": "Searches inner blocks (WP_Block or parsed) for a featured image or a cover using it, a rule of the post-template block QueryBlocks renders.",
+                "body": "a2c41590f4c2"
+            },
+            "block_core_social_link_get_name": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "A service's name from block_core_social_link_services by name, else the translated Share Icon.",
+                "body": "eb99b9aa0ebd"
+            },
+            "block_core_social_link_services": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\SocialLinks",
+                "why": "Holds the services data file in a static cache, fires block_core_social_link_get_services and picks a service or a field: engine data and state for SocialLinks, which already reads the icons file.",
+                "body": "6b4bfd3db032"
+            },
+            "block_has_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "The supports lookup rule (a one-element path flattened, nested paths walked, only true or an array counts) the engine's own supports reads should share, in a new Blocks class for supports rules.",
+                "body": "eb741054bd84"
+            },
+            "block_template_part": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_block_template for the active theme's part, then echoes do_blocks of its content.",
+                "body": "43d818dc9d17"
+            },
+            "build_template_part_block_variations": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Loads the theme data, then the area and instance variation builders by name.",
+                "body": "e06c392ddd2c"
+            },
+            "do_blocks": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "parse_blocks and render_block per block by name, then takes wpautop off the_content for this run through the public hook API plugins observe.",
+                "body": "c0a5bcd77d41"
+            },
+            "excerpt_remove_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Excerpt",
+                "why": "Builds the excerpt allow and wrapper lists, fires their filters and walks the blocks; the engine's Excerpt already keeps its own allow list, so the lists, filters and walk belong there, render_block still called per kept block.",
+                "body": "5255c08ed784"
+            },
+            "extract_serialized_parent_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Serializer",
+                "why": "The complementary offset slice keeping only a serialized block's delimiters, a serialization rule for Serializer beside remove_serialized_parent_block.",
+                "body": "983347beeb19"
+            },
+            "filter_block_core_template_part_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Kses",
+                "why": "Blanks a template part's tagName unless the allowed tags list it, a kses rule for Kses.",
+                "doubt": "A named allowlist (a context such as 'post') is not resolved through wp_kses_allowed_html, so every tagName is blanked; WP also passes an empty value through unchanged.",
+                "body": "4cd02dcb245a"
+            },
+            "filter_block_kses": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Applies filter_block_kses_value to a block's attributes and recurses into its inner blocks by name, no rules of its own.",
+                "body": "668904d4983f"
+            },
+            "filter_block_kses_value": {
+                "verdict": "delegate",
+                "to": "Minn\\Support\\Kses::cleanValue",
+                "why": "Walks keys and values through wp_kses, strings only, which Kses::cleanValue already does for blockAttributes; that method is private today, and a renamed key keeps its place there where this body moves it last.",
+                "doubt": "$block_context is ignored: WP (6.5.5+) passes a core/template-part block's values through filter_block_core_template_part_attributes here, so an unsafe tagName is not blanked.",
+                "body": "0c40f8be10e7"
+            },
+            "get_block_asset_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "Maps a block asset path to a URL under wp-includes, the theme or its parent, else the plugins folder: the path-to-URL rule _minn_block_asset_url also holds.",
+                "body": "d9cf653d75de"
+            },
+            "get_block_categories": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Wraps a post in WP_Block_Editor_Context and runs the default categories through block_categories_all and the deprecated block_categories.",
+                "body": "f9876b19cb04"
+            },
+            "get_block_core_post_featured_image_border_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "Assembles the featured image's border style object by rule (a preset colour, per-side values) before the style engine call; the featured image block's rules live in PostBlocks.",
+                "body": "b8d90842da1d"
+            },
+            "get_block_file_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "pre_get_block_file_template, then _get_block_template_file and _build_block_template_result_from_file for an active theme id, then get_block_file_template: public functions and filters by name.",
+                "body": "59f61bad406a"
+            },
+            "get_block_template": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "why": "Splits the id, finds the active theme's record or a plugin registration by slug or name and applies part hooks, between its pre and post filters: lookup rules TemplateIndex::find should hold.",
+                "doubt": "Saved templates of a theme other than the active one are never found (WP queries them by the wp_theme term), and the file fallback skips get_block_file_template so its filters never fire.",
+                "body": "d33d677db53a"
+            },
+            "get_block_templates": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\TemplateIndex",
+                "why": "Lists the index's records less plugin ones, matches the query, then merges plugin registrations unless a post_type query has no slugs, between its pre and post filters: query logic TemplateIndex should hold.",
+                "doubt": "Template parts listed here never get hooked blocks while get_block_template applies them to a part; WP applies them through the _build_ helpers in both.",
+                "body": "44112a9f420a"
+            },
+            "get_block_wrapper_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Wrapper",
+                "why": "The merge rules for the supports' and the caller's attributes (styles joined and cleaned through safecss_filter_attr, classes deduplicated, the caller's id and aria-label winning, a fixed order) are markup rules for Wrapper; the supports call and the string stay.",
+                "doubt": "Attributes a block support returns beyond style, class, id and aria-label are printed; WP keeps only the caller's extra attributes past those four.",
+                "body": "19a3c769e2cb"
+            },
+            "get_classic_theme_supports_block_editor_settings": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Reads the classic theme supports through get_theme_support into the editor settings keys.",
+                "doubt": "No spacingSizes from editor-spacing-sizes support, which WP (6.6+) adds beside colors, font sizes and gradients.",
+                "body": "75193cbba98f"
+            },
+            "get_comment_delimited_block_content": {
+                "verdict": "delegate",
+                "to": "Minn\\Blocks\\Serializer::delimited",
+                "why": "Wraps content in a block's delimiters, self-closing when empty, exactly what Serializer::delimited does; the engine tests content === '' where this uses empty(), so a '0' body needs care when delegating.",
+                "body": "b809983461af"
+            },
+            "get_dynamic_block_names": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Lists the registered types whose is_dynamic() says so, through the public registry plugins fill.",
+                "body": "cf98d47ebb8e"
+            },
+            "has_block": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Guards with has_blocks, resolves a post to its content and hands the test to Parser::contains: argument normalisation around the engine's check.",
+                "body": "1f7a3d562fe5"
+            },
+            "has_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Parser",
+                "why": "Resolves a post to its content, then the '<!-- wp:' test the engine repeats inline in Content/Blocks.php, ContentScan and the REST post and template objects; the test belongs in Parser, the post lookup stays as shape.",
+                "body": "58a0f1f0eb03"
+            },
+            "inject_ignored_hooked_blocks_metadata_attributes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Builds the template context through the public _build_ helpers (from the saved post, or from the changes stamped with the time and user) and runs apply_block_hooks_to_content with the metadata callback.",
+                "doubt": "Passing $deprecated raises no _deprecated_argument notice, and an existing template is built from its saved row rather than with the pending changes merged in as WP does.",
+                "body": "68af5131cd52"
+            },
+            "insert_hooked_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockHooks",
+                "gates": [
+                    "refs"
+                ],
+                "why": "Builds each hooked block, fires hooked_block and its per-type filter, skips ignored or nulled ones and serializes the rest: the Block Hooks insertion algorithm for BlockHooks, the anchor still passed by reference.",
+                "doubt": "The ignoredHookedBlocks test runs before the hooked_block filters, so they never fire for an ignored type; WP filters first and then skips it (and its parsed block has no innerHTML key).",
+                "body": "50b76c8e556b"
+            },
+            "insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "insert_hooked_blocks, then set_ignored_hooked_blocks_metadata on the same anchor, the two public functions by name.",
+                "body": "d5a08c82e283"
+            },
+            "insert_hooked_blocks_into_rest_response": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RuntimePrepare",
+                "why": "Hooks the raw content, puts a navigation's root list in meta and re-renders through the_content: the steps RuntimePrepare::hookedBlocks already runs on REST items, so one engine path should serve both.",
+                "doubt": "The rendered content is rebuilt even when the response had none; WP leaves an empty rendered as it is.",
+                "body": "76e752f86d16"
+            },
+            "locate_block_template": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "Writes the globals $_wp_current_template_id and $_wp_current_template_content the canvas and plugins read, after trimming the hierarchy and calling resolve_block_template.",
+                "doubt": "With no block template and no PHP template WP returns false for a non-index type so the loader keeps looking, and answers a _wp-find-template request with JSON; here $template comes back.",
+                "body": "ec7e1799c413"
+            },
+            "parse_blocks": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Instantiates the parser class block_parser_class names, so a theme or plugin parser swapped in through the filter does the parse.",
+                "body": "74a2fa1e2ae6"
+            },
+            "register_block_core_footnotes_post_meta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Registers the footnotes meta through register_post_meta for each REST type supporting editor, custom fields and revisions, asked through public predicates.",
+                "body": "9fb4e411199a"
+            },
+            "register_block_script_handle": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "Resolves a block.json script entry (file: prefix, handle reuse, the .asset.php for dependencies and version, the URL, a deferred view script, translations); the rules belong in BlockMetadata, with wp_register_script still called by name.",
+                "doubt": "The .asset.php handle key is ignored and the registered check runs before the asset file is read; WP takes the handle from the asset file when it names one.",
+                "body": "81e59514f926"
+            },
+            "register_block_script_module_id": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "Resolves a block.json module entry (file: prefix, generated id, asset file, a URL from the plugins folder or the site root); the rules belong in BlockMetadata, wp_register_script_module still called by name.",
+                "doubt": "With no .asset.php the module's version is false; WP falls back to the block.json version, as it does for scripts.",
+                "body": "d87d869f46fb"
+            },
+            "register_block_style_handle": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "Resolves a block.json style entry (file: prefix, handle reuse, block version, URL); the rules belong in BlockMetadata beside its handle naming, with wp_register_style still called by name.",
+                "doubt": "No path style data and no RTL replace for an -rtl.css beside the file, both of which WP adds after registering, so inlining and RTL swaps miss block styles.",
+                "body": "f81c0f2a3f85"
+            },
+            "register_block_type": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Routes a block.json path to register_block_type_from_metadata and anything else to the public registry, both by name.",
+                "body": "4d457f3d00f0"
+            },
+            "register_block_type_from_metadata": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "Finds and decodes block.json (or the collection's manifest), stamps the file and fires block_type_metadata and block_type_metadata_settings around BlockMetadata::settings; the reading and filters move there, the render template closure stays in the facade for its require scope.",
+                "doubt": "A block.json with no name is refused even when $args names it, its strings are never translated through the textdomain, and nothing hooks wp_migrate_old_typography_shape on block_type_metadata as WP's defaults do.",
+                "body": "aad171022d96"
+            },
+            "register_core_block_types_from_metadata": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\CoreBlocks",
+                "why": "Hard-codes which core blocks register from metadata alone; that list is core block data CoreBlocks should derive from data/blocks.json, leaving the facade a loop over it.",
+                "body": "5208b841f21e"
+            },
+            "remove_block_asset_path_prefix": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "Strips the file: prefix and a leading ./ from a block.json asset reference, a parsing rule for BlockMetadata.",
+                "body": "b339148b3e54"
+            },
+            "remove_serialized_parent_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Serializer",
+                "why": "Slices the content between a serialized block's first opening and last closing delimiter by offsets, a serialization rule for Serializer.",
+                "body": "cf8a50d6b2e4"
+            },
+            "render_block": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockFilters",
+                "gates": [
+                    "globals"
+                ],
+                "why": "Fires pre_render_block, render_block_data and render_block_context around a context built from the global post; BlockFilters::before and its context() already run this pipeline for engine blocks, so only the WP_Block render stays.",
+                "body": "3633ab614dd6"
+            },
+            "render_block_core_template_part": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Renderer",
+                "why": "Strips wp-block-template-part from the engine's markup by regex when no block is rendering; the renderer's callback mode should produce that markup itself.",
+                "body": "20acd594a43d"
+            },
+            "resolve_block_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Strips the suffixes, asks get_block_templates by name for the hierarchy's slugs so its filters apply, and sorts by hierarchy order.",
+                "doubt": "$fallback_template is ignored: WP lets a child theme's PHP template win over a parent theme's block template of the same slug.",
+                "body": "b5859050383b"
+            },
+            "serialize_block": {
+                "verdict": "delegate",
+                "to": "Minn\\Blocks\\Serializer::block",
+                "why": "Serializes a parsed block and its inner blocks through their innerContent slots, which Serializer::block does on the value object; the array converts with Block::fromArray.",
+                "body": "986b3db6075f"
+            },
+            "set_ignored_hooked_blocks_metadata": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockHooks",
+                "gates": [
+                    "refs"
+                ],
+                "why": "Merges the hooked types into the anchor's ignoredHookedBlocks metadata, part of the Block Hooks algorithm for BlockHooks.",
+                "doubt": "hooked_block and hooked_block_{type} are never asked, so a type a filter suppresses with null is still recorded as ignored; WP (6.6+) drops those first.",
+                "body": "170bbd6a3b9e"
+            },
+            "strip_core_block_namespace": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\BlockName",
+                "why": "The core/ prefix rule for block names, which Serializer::delimited repeats inline; one engine method should hold it.",
+                "body": "8cd5f802628a"
+            },
+            "traverse_and_serialize_block": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "Hands the walk in _minn_traverse_block a null parent by reference; the behaviour lives in that helper.",
+                "body": "c8dc3b5d21ea"
+            },
+            "traverse_and_serialize_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Serializer",
+                "why": "The top-level visitor walk over a block list with a null parent, the same algorithm as _minn_traverse_block; both belong in Serializer.",
+                "body": "d76b4d482a3d"
+            },
+            "update_ignored_hooked_blocks_postmeta": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RuntimePrepare",
+                "why": "Marks ignored hooked blocks in the content and puts a navigation's root list in meta_input, the same body RuntimePrepare::savedWithHookedBlocks has behind its type filter.",
+                "doubt": "The root list replaces the stored _wp_ignored_hooked_blocks instead of merging with it, and only a navigation gets one; WP merges with the stored list for every wrapped type.",
+                "body": "9941b4558b5e"
+            },
+            "wp_apply_generated_classname_support": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "block_has_support for className, then wp_get_block_default_classname, both public and filterable, returned as a class attribute.",
+                "body": "1769b1815305"
+            },
+            "wp_get_block_css_selector": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Selector",
+                "why": "Derives the unfiltered default class from the type's name by rule before calling Selector::resolve; Selector should derive that class itself so the facade only passes the type's fields.",
+                "body": "a38d317a8733"
+            },
+            "wp_get_block_default_classname": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\BlockName",
+                "why": "Builds wp-block- plus the name (core prefix dropped, slash to dash) and fires block_default_classname; Renderer::generatedClass builds and filters the same class, so the rule and its filter belong in one engine method.",
+                "body": "d084b54a0e2d"
+            },
+            "wp_get_block_name_from_theme_json_path": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\ThemeJsonData",
+                "why": "Reads a block name from a theme.json path (after styles and blocks, else the first core/ item), a theme.json rule.",
+                "body": "6cc14d8cb71d"
+            },
+            "wp_get_first_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Tree",
+                "why": "A depth-first search of a parsed block tree by name, a tree algorithm for a new Blocks class beside _flatten_blocks.",
+                "body": "143485b9a10d"
+            },
+            "wp_get_global_styles_svg_filters": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Deprecated: a notice, then the merged theme.json data's SVG filters for the origins wp_theme_has_theme_json allows.",
+                "body": "ac7a812eb14d"
+            },
+            "wp_global_styles_render_svg_filters": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Deprecated: a notice, then echoes wp_get_global_styles_svg_filters outside the admin.",
+                "doubt": "WP still prints in the admin on block editor screens (get_current_screen()->is_block_editor()); this returns on every admin page.",
+                "body": "2236e446dc88"
+            },
+            "wp_has_border_feature_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "Whether a type supports a border feature, all at once or per feature, a supports rule beside block_has_support.",
+                "doubt": "A per-feature value is cast to bool where WP (through block_has_support) counts only true or an array, so a value such as 1 reads as supported here.",
+                "body": "ba4fb8b6852e"
+            },
+            "wp_interactivity_data_wp_context": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Interactivity",
+                "why": "Encodes the context as hex-escaped JSON ('{}' when empty) with the store namespace prefix inside a single-quoted data-wp-context attribute: a markup rule for Interactivity, which already parses that attribute.",
+                "body": "33e677e01d9c"
+            },
+            "wp_migrate_old_typography_shape": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "Moves the old typography supports under supports.typography with a notice for each, a block.json migration rule for BlockMetadata.",
+                "body": "0e6b44e5a7ae"
+            },
+            "wp_register_block_types_from_metadata_collection": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Registers the manifest when given, then register_block_type_from_metadata for each file the public metadata registry lists.",
+                "body": "5d7ca6cdd42f"
+            },
+            "wp_set_unique_slug_on_create_template_part": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "On an auto-draft part, wp_update_post for a missing slug and wp_set_post_terms for a missing theme, public writes plugins hook.",
+                "body": "cbc940f4aa92"
+            },
+            "wp_should_load_block_assets_on_demand": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "False in the admin, a feed or REST through public predicates, else wp_is_block_theme through its filter.",
+                "body": "b436c6e4abee"
+            },
+            "wp_should_skip_block_supports_serialization": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "Reads a support set's __experimentalSkipSerialization (all, or a list of features), a rule Elements::skips and Layout::skipsGap repeat privately; one engine method should hold it.",
+                "body": "ce3aa31b7321"
+            },
+            "wp_style_engine_get_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "WP_Style_Engine's public parse, compile and store calls, the output keyed as css, declarations and classnames.",
+                "body": "5c1db1da6280"
+            },
+            "wp_style_engine_get_stylesheet_from_css_rules": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "Turns each valid rule into a WP_Style_Engine_CSS_Rule, storing it when a context is given, and compiles them through WP_Style_Engine.",
+                "body": "110abde77d14"
+            }
+        },
         "bookmark.php": {
             "_minn_bookmark_anchor": {
                 "verdict": "move",
