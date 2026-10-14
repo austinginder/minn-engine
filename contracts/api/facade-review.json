@@ -1,6 +1,63 @@
 {
     "method": "tests/tools/facade-review.php: a verdict for each facade definition holding logic (facade-logic.php), by file and name; body is a hash of the body the verdict was given for",
     "verdicts": {
+        "abilities.php": {
+            "_minn_ability_matches": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Abilities",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the query's category, namespace and meta test",
+                "body": "920eb1efd606"
+            },
+            "_wp_get_abilities_match_meta": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Abilities",
+                "why": "the recursive meta match the query uses",
+                "body": "37de42cc7210"
+            },
+            "wp_get_abilities": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Abilities",
+                "why": "the abilities query: category, namespace and meta matching, the item callback and filter, the result callback and filter",
+                "body": "4a17d470a11d"
+            },
+            "wp_register_ability": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Abilities",
+                "why": "the registration window (only during wp_abilities_api_init) is a rule the engine's registry should hold beside its others",
+                "body": "ab3ca26e0875"
+            },
+            "wp_register_ability_category": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Abilities",
+                "why": "the registration window (only during wp_abilities_api_categories_init) is a rule the engine's registry should hold beside its others",
+                "body": "5ad80eb2a232"
+            }
+        },
+        "ai-client.php": {
+            "_minn_load_ai_client": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "requires the ai-client facade files once, on first use",
+                "body": "e403d2cf9144"
+            }
+        },
+        "avif-info.php": {
+            "read": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "the Avifinfo library's stream helper; the engine reads AVIF from bytes in Minn\\Media\\AvifInfo",
+                "body": "f83f6a458ab1"
+            },
+            "read_big_endian": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "the Avifinfo library's byte helper; the engine unpacks integers its own way in Minn\\Media\\AvifInfo",
+                "body": "713264e1e1f1"
+            }
+        },
         "classes/WP_Widget.php": {
             "WP_Widget::WP_Widget": {
                 "verdict": "keep",
@@ -127,6 +184,156 @@
                 "reason": "contract",
                 "why": "the widgets array plugins read and change directly",
                 "body": "569fbd647543"
+            }
+        },
+        "compat.php": {
+            "_mb_chr": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Utf8",
+                "why": "refuses non-integers and non-UTF-8 charsets before Utf8::fromCodePoint; the charset rule belongs in the engine",
+                "body": "a341ef5ba74e"
+            },
+            "_mb_ord": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Utf8",
+                "why": "refuses non-UTF-8 charsets before Utf8::firstCodePoint; the charset rule belongs in the engine",
+                "body": "d96f305c7b03"
+            },
+            "_mb_substr": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Utf8",
+                "why": "picks byte or character slicing by the site's charset; a charset-aware substring belongs beside Utf8::characters",
+                "body": "0a50f218e3e2"
+            },
+            "_wp_can_use_pcre_u": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a deprecated-argument notice through _deprecated_argument, then the fixed answer",
+                "body": "2c46a64b6140"
+            },
+            "array_all": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a polyfill for PHP's own array_all, defined only where PHP lacks it",
+                "body": "7f36ba175699"
+            },
+            "array_find": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a polyfill for PHP's own array_find, defined only where PHP lacks it",
+                "body": "4923bbf19e41"
+            },
+            "array_find_key": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a polyfill for PHP's own array_find_key, defined only where PHP lacks it",
+                "body": "ea17204cc60e"
+            },
+            "clamp": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a polyfill for PHP's own clamp, with its ValueErrors, defined only where PHP lacks it",
+                "body": "583bccca2f33"
+            }
+        },
+        "connectors.php": {
+            "_minn_connector_answer": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Connectors",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the masking and invalid-key rules for one setting, beside Connectors::mask",
+                "body": "d25a63751038"
+            },
+            "_wp_connectors_get_connector_script_module_data": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Connectors",
+                "why": "builds each connector's page data (key source, connected, installed, active) from the engine's rows",
+                "body": "715dd5262f33"
+            },
+            "_wp_connectors_init": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "builds the registry object plugins receive, fills it through the engine store and the public registration function, fires wp_connectors_init",
+                "body": "ad37c45cd8d3"
+            },
+            "_wp_connectors_is_ai_api_key_valid": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a _doing_it_wrong notice and null, the answer for a provider the AI client does not hold",
+                "doubt": "always reports the provider as unregistered, even one a plugin registered with the AI client; a probe with a registered provider should settle it",
+                "body": "a947f34b60a4"
+            },
+            "_wp_connectors_rest_settings_dispatch": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Connectors",
+                "why": "masks and validates connector keys in the settings response; the rules move, the response object handling stays as the wrapper",
+                "body": "5eb15d8af470"
+            },
+            "_wp_register_default_connector_settings": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Connectors",
+                "why": "decides which connectors get an API-key setting (method, setting name, plugin active); the engine owns the connector rows",
+                "body": "3bfc2c2b5e45"
+            },
+            "wp_supports_ai": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Connectors",
+                "why": "the AI support rule (the WP_AI_SUPPORT constant, then the wp_supports_ai filter) is engine policy",
+                "body": "33f843da6a61"
+            }
+        },
+        "fonts.php": {
+            "_wp_after_delete_font_family": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\FontLibrary",
+                "why": "deletes a deleted family's faces; the font library's storage rule",
+                "body": "26a1eac98d37"
+            },
+            "_wp_before_delete_font_face": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\FontLibrary",
+                "why": "deletes a deleted face's file from the fonts folder; the font library's storage rule",
+                "body": "a74c503977a2"
+            },
+            "_wp_filter_font_directory": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\FontLibrary",
+                "why": "the fonts folder under uploads and its font_dir filter; stays as the named upload_dir callback",
+                "body": "661ea659be21"
+            },
+            "wp_font_dir": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "asks wp_upload_dir with the font filter added for the call, so plugins' upload_dir filters run as they do for uploads",
+                "body": "3cbb815dd127"
+            },
+            "wp_print_font_faces": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the theme's fonts from the resolver when none are given, printed through WP_Font_Face, both API classes plugins can replace",
+                "body": "46079ec39197"
+            },
+            "wp_print_font_faces_from_style_variations": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the style variations' fonts from the resolver, printed through wp_print_font_faces",
+                "body": "b95feffc965e"
+            }
+        },
+        "icons.php": {
+            "_wp_register_default_icons": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Icons",
+                "why": "reads the engine's icon data and art and registers each core icon; the data is the engine's",
+                "body": "b6d3c600de86"
+            },
+            "wp_get_icon": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Icons",
+                "why": "builds an icon's svg with its label, class and size attributes; markup by rules belongs with the engine's icons",
+                "body": "9dfe86f12e40"
             }
         },
         "option.php": {
@@ -262,6 +469,56 @@
                 ],
                 "why": "cleaning and storing the settings pairs is engine behaviour; $_updated_user_settings stays set for plugins",
                 "body": "d440edafb180"
+            }
+        },
+        "view-config.php": {
+            "_minn_view_config_set": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ViewConfigs",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "merges a type's views into its data entry; part of the same builder",
+                "body": "fa39afa918d3"
+            },
+            "_minn_view_configs": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ViewConfigs",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "reads the engine's view-configs data once and keeps it; data and its cache are the engine's",
+                "body": "32d8cf29ea59"
+            },
+            "_wp_get_entity_view_config_posttype_page": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ViewConfigs",
+                "why": "the page type's default view and views from the engine's data; the function stays as the named filter callback",
+                "body": "a2767290215b"
+            },
+            "_wp_get_entity_view_config_posttype_wp_block": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ViewConfigs",
+                "why": "a view per pattern category plus Uncategorized, sorted by title; stays as the named filter callback",
+                "body": "3c3725716273"
+            },
+            "_wp_get_entity_view_config_posttype_wp_template": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ViewConfigs",
+                "why": "the template views, one for the active theme's name; stays as the named filter callback",
+                "body": "36462637e391"
+            },
+            "_wp_get_entity_view_config_posttype_wp_template_part": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ViewConfigs",
+                "why": "a view per template part area, General last; stays as the named filter callback",
+                "body": "0bf418aa8296"
+            },
+            "wp_get_entity_view_config": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ViewConfigs",
+                "why": "builds an entity's view config by kind from the engine's data and the type's labels; the WP_View_Config_Data wrap and its filters stay",
+                "body": "1eb302f836f3"
             }
         }
     }

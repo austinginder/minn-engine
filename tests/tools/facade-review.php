@@ -15,7 +15,8 @@ declare(strict_types=1);
  *             WP_Post, echo or return, output modes), compose (built only from the API's own public
  *             functions, an older name or a fallback, where calling them by name is the point: a plugin
  *             or a drop-in may replace them), contract (a class's own `$this->` calls, the points
- *             plugins override)
+ *             plugins override), library (a bundled library's small internals the engine has no use
+ *             for, its own way of doing the job being elsewhere, kept for code that calls them)
  *   remove    nothing needs it, or it repeats another definition; the `why` says which (a dead end or
  *             an omission is Austin's call, so a remove verdict is a proposal)
  *
@@ -29,6 +30,7 @@ declare(strict_types=1);
  *   php tests/tools/facade-review.php --next[=N]      the files with the most unreviewed lines
  *   php tests/tools/facade-review.php --show FILE     each definition holding logic in FILE, its probes and its verdict (--bodies prints them)
  *   php tests/tools/facade-review.php --merge PATH    record the verdicts in PATH ({file: {name: {verdict, ...}}}), all or none
+ *   php tests/tools/facade-review.php --validate PATH the same checks, and every definition of each file named judged; writes nothing
  *   php tests/tools/facade-review.php --check         exit 1 on a verdict that is stale, malformed, or for a definition no longer holding logic
  *   php tests/tools/facade-review.php --json          the summary as JSON
  */
@@ -40,7 +42,7 @@ $facadeDir = "{$root}/public/minn/wp-api";
 $ledgerPath = "{$root}/contracts/api/facade-review.json";
 
 const VERDICTS = ['delegate', 'move', 'keep', 'remove'];
-const KEEP_REASONS = ['scope', 'shape', 'compose', 'contract'];
+const KEEP_REASONS = ['scope', 'shape', 'compose', 'contract', 'library'];
 const GATES = ['subclass', 'pluggable', 'unprobed', 'globals', 'refs'];
 
 /** A body's fingerprint: its text with whitespace runs made one space. */
@@ -153,10 +155,10 @@ $mode = $argv[1] ?? '--summary';
 $definitions = logic_definitions($facadeDir);
 $verdicts = read_ledger($ledgerPath);
 
-if ($mode === '--merge') {
+if ($mode === '--merge' || $mode === '--validate') {
     $proposals = json_decode((string) @file_get_contents($argv[2] ?? ''), true);
     if (!is_array($proposals)) {
-        fwrite(STDERR, "usage: facade-review.php --merge PATH (a JSON object {file: {name: verdict}})\n");
+        fwrite(STDERR, "usage: facade-review.php {$mode} PATH (a JSON object {file: {name: verdict}})\n");
         exit(2);
     }
     $problems = [];
@@ -173,10 +175,21 @@ if ($mode === '--merge') {
             $verdicts[$file][$name] = array_filter($entry, static fn (mixed $value): bool => $value !== [] && $value !== '' && $value !== null);
             $merged++;
         }
+        // Every definition of a file the proposals name is judged, here or before.
+        foreach (array_keys($definitions[$file] ?? []) as $name) {
+            $entry = $verdicts[$file][$name] ?? null;
+            if ($entry === null || ($entry['body'] ?? '') !== $definitions[$file][$name]['hash']) {
+                $problems[] = "{$file} {$name}: no verdict";
+            }
+        }
     }
     if ($problems !== []) {
         fwrite(STDERR, implode("\n", $problems) . "\nnothing recorded\n");
         exit(1);
+    }
+    if ($mode === '--validate') {
+        printf("%d verdicts valid, every definition of the %d files judged; nothing recorded\n", $merged, count($proposals));
+        exit(0);
     }
     write_ledger($ledgerPath, $verdicts);
     printf("recorded %d verdicts\n", $merged);
