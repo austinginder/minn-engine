@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\RestRequest;
+
 /**
  * The WP_User_Query arguments a user list request makes, as the reference
  * makes them before rest_user_query (probe rest-user-lists): each declared
@@ -29,7 +31,7 @@ final class UserListArgs
      * @param array<string, string> $types the REST post types, by name
      * @return array<string, mixed>
      */
-    public static function of(\WP_REST_Request $wp, array $registered, string $method, array $types, string $reader): array
+    public static function of(RestRequest $wp, array $registered, string $method, array $types, string $reader): array
     {
         $args = [];
         foreach (self::MAPPINGS as $param => $var) {

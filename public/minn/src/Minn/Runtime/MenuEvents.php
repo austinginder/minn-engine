@@ -148,7 +148,7 @@ final readonly class MenuEvents
     {
         $term = Records::term($menuId, 'nav_menu');
         $this->deleteMenu($menuId);
-        Runtime::hooks()->action('rest_delete_nav_menu', [$term, new \WP_REST_Response(['deleted' => true, 'previous' => $previous], 200), RuntimeRoutes::wpRequest($request)]);
+        Runtime::hooks()->action('rest_delete_nav_menu', [$term, Handoff::newRestResponse(['deleted' => true, 'previous' => $previous], 200), RuntimeRoutes::wpRequest($request)]);
     }
 
     /**

@@ -4,7 +4,7 @@ use Minn\Rest\ParamCheck;
 
 /** The request object a route callback receives. Shapes from contracts/fixtures/api/rest.json. */
 #[AllowDynamicProperties]
-class WP_REST_Request implements ArrayAccess
+class WP_REST_Request implements ArrayAccess, \Minn\Objects\RestRequest
 {
     protected $method = '';
     protected $params;

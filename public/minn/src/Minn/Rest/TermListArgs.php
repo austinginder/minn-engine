@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\RestRequest;
+
 /**
  * The get_terms arguments a term list request makes, as the reference
  * makes them before rest_{taxonomy}_query (probe rest-term-lists): the
@@ -22,7 +24,7 @@ final class TermListArgs
      * @param array<string, mixed> $registered the collection, as rest_{taxonomy}_collection_params left it
      * @return array<string, mixed>
      */
-    public static function of(\WP_REST_Request $wp, array $registered, string $taxonomy, string $method): array
+    public static function of(RestRequest $wp, array $registered, string $taxonomy, string $method): array
     {
         $args = ['taxonomy' => $taxonomy];
         foreach (self::MAPPINGS as $param => $var) {

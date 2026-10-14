@@ -39,7 +39,7 @@ the wp/v2 surface: shapes and controllers
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 243 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PolicyGate`](#policygate) | final readonly class | 167 | Judges a route's policy against the caller, with the reference's |
+| [`PolicyGate`](#policygate) | final readonly class | 166 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 171 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 533 | Builds the wp/v2 post and page objects in the reference's shape: the |
@@ -119,7 +119,7 @@ The API for one request: the shared services and the route table.
 
 Who is making this request.
 
-### `listPosts(string $route, string $type, Closure $shape, ?WP_REST_Request $as = NULL): Minn\Http\Response`
+### `listPosts(string $route, string $type, Closure $shape, ?Minn\Objects\RestRequest $as = NULL): Minn\Http\Response`
 
 A post type's list as its route serves it (the caller, the statuses,
 the parameters, the query, the totals and page links), each post given
@@ -177,7 +177,7 @@ A template as wp/v2 shapes it in a context, for the route's own type (templates 
 
 - `@return array<string, mixed>`
 
-### `themeFields(WP_Theme $theme, WP_REST_Request $request): array`
+### `themeFields(WP_Theme $theme, Minn\Objects\RestRequest $request): array`
 
 A theme in the wp/v2 shape, links included, before rest_prepare_theme. @return array<string, mixed>
 
@@ -224,14 +224,14 @@ route's request.
 
 A REST answer as it leaves over HTTP: pointing at the API's root, unless it carries a Link header of its own (a batch's parts do not).
 
-### `writePost(string $verb, string $route, string $type, string $base, string $id = '', ?WP_REST_Request $as = NULL): Minn\Http\Response`
+### `writePost(string $verb, string $route, string $type, string $base, string $id = '', ?Minn\Objects\RestRequest $as = NULL): Minn\Http\Response`
 
 A post of a REST type the engine has no route for (one under a
 namespace of its own, probe namespaced-type) created, updated or
 deleted by the engine's own writer, for the type's controller, whose
 permission checks have already run.
 
-### `handleEngineOnly(string $route, ?WP_REST_Request $as = NULL): ?Minn\Http\Response`
+### `handleEngineOnly(string $route, ?Minn\Objects\RestRequest $as = NULL): ?Minn\Http\Response`
 
 The engine's own answer to a route, or null when no engine route
 takes it; the runtime's table is never consulted. This is what the
@@ -239,14 +239,14 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-### `allowedOn(string $route, ?WP_REST_Request $as = NULL): array`
+### `allowedOn(string $route, ?Minn\Objects\RestRequest $as = NULL): array`
 
 The methods this caller may use on one of the engine's routes, as
 its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 74), `engineResponse()` (private, line 403), `withPageLinks()` (private, line 417), `options()` (private, line 448), `withSchema()` (private, line 465), `withAllow()` (private, line 486)
+Internals: `controllers()` (private, line 75), `engineResponse()` (private, line 404), `withPageLinks()` (private, line 418), `options()` (private, line 449), `withSchema()` (private, line 466), `withAllow()` (private, line 487)
 
 
 ## ApplicationPasswordsController
@@ -385,7 +385,7 @@ Route: `POST /batch/v1 (public)`
 
 The requests answered in turn.
 
-Internals: `refusal()` (private, line 90), `invalid()` (private, line 108), `claims()` (private, line 135), `batchablePath()` (private, line 145), `subRequest()` (private, line 163), `error()` (private, line 181), `envelope()` (private, line 187)
+Internals: `refusal()` (private, line 91), `invalid()` (private, line 109), `claims()` (private, line 136), `batchablePath()` (private, line 146), `subRequest()` (private, line 164), `error()` (private, line 182), `envelope()` (private, line 188)
 
 
 ## BatchRequest
@@ -715,7 +715,7 @@ none is given, and ids alone for a HEAD request.
 
 Used by: `Minn\Rest\CommentsController`
 
-### static `of(WP_REST_Request $wp, array $registered, string $method): array`
+### static `of(Minn\Objects\RestRequest $wp, array $registered, string $method): array`
 
 The arguments before plugins see them: a parameter maps when the
 collection (as rest_comment_collection_params left it) still has it.
@@ -798,7 +798,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 77), `events()` (private, line 154), `allowed()` (private, line 223), `readablePost()` (private, line 264), `readable()` (private, line 273), `plainComment()` (private, line 283), `prepared()` (private, line 305)
+Internals: `totals()` (private, line 78), `events()` (private, line 155), `allowed()` (private, line 224), `readablePost()` (private, line 265), `readable()` (private, line 274), `plainComment()` (private, line 284), `prepared()` (private, line 306)
 
 
 ## Context
@@ -1232,7 +1232,7 @@ Route: `GET /wp/v2/themes/{stylesheet:[^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?} (
 
 One theme by its stylesheet.
 
-### `fields(WP_Theme $theme, WP_REST_Request $request): array`
+### `fields(WP_Theme $theme, Minn\Objects\RestRequest $request): array`
 
 A theme in the wp/v2 shape, its links included, before
 rest_prepare_theme (the runtime's WP_REST_Themes_Controller shapes
@@ -1240,7 +1240,7 @@ through here); the request is what the supports' callbacks are handed.
 
 - `@return array<string, mixed>`
 
-Internals: `item()` (private, line 77), `links()` (private, line 124), `viewsThemes()` (private, line 147), `viewsActive()` (private, line 153), `status()` (private, line 158), `requireRuntime()` (private, line 164)
+Internals: `item()` (private, line 79), `links()` (private, line 126), `viewsThemes()` (private, line 149), `viewsActive()` (private, line 155), `status()` (private, line 160), `requireRuntime()` (private, line 166)
 
 
 ## Links
@@ -1723,7 +1723,7 @@ Throws the refusal the policy names, or returns.
 
 - `@param array<string, string> $captures`
 
-Internals: `subject()` (private, line 73), `type()` (private, line 93), `taxonomy()` (private, line 124), `opened()` (private, line 156), `capabilities()` (private, line 163), `own()` (private, line 177)
+Internals: `subject()` (private, line 74), `type()` (private, line 94), `taxonomy()` (private, line 125), `opened()` (private, line 157), `capabilities()` (private, line 163), `own()` (private, line 177)
 
 
 ## PostCollectionParams
@@ -1804,14 +1804,14 @@ mapped to the query's, and stickies left where they fall unless asked.
 
 Used by: `Minn\Rest\PostsController`
 
-### static `of(WP_REST_Request $request, array $registered, string $type): array`
+### static `of(Minn\Objects\RestRequest $request, array $registered, string $type): array`
 
 The arguments before plugins see them.
 
 - `@param array<string, mixed> $registered the list's parameters`
 - `@return array<string, mixed>`
 
-### static `queryVars(array $args, WP_REST_Request $request): array`
+### static `queryVars(array $args, Minn\Objects\RestRequest $request): array`
 
 The query variables from the arguments plugins left: each through
 rest_query_var-{name}, and the list's orderby names as the query's.
@@ -1819,7 +1819,7 @@ rest_query_var-{name}, and the list's orderby names as the query's.
 - `@param array<string, mixed> $args`
 - `@return array<string, mixed>`
 
-Internals: `mimeTypes()` (private, line 101), `sticky()` (private, line 113), `taxonomies()` (private, line 127), `termClause()` (private, line 148), `formats()` (private, line 172)
+Internals: `mimeTypes()` (private, line 102), `sticky()` (private, line 114), `taxonomies()` (private, line 128), `termClause()` (private, line 149), `formats()` (private, line 173)
 
 
 ## PostObject
@@ -2018,17 +2018,17 @@ returns is the write's answer.
 
 Used by: `Minn\Rest\Embed`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
-### static `add(array $item, string $type, WP_REST_Request $request): array`
+### static `add(array $item, string $type, Minn\Objects\RestRequest $request): array`
 
 The item with the type's registered fields added, answering the request. @param array<string, mixed> $item @return array<string, mixed>
 
 - `@param array<string, mixed> $item @return array<string, mixed>`
 
-### static `update(object $object, string $type, WP_REST_Request $request): void`
+### static `update(object $object, string $type, Minn\Objects\RestRequest $request): void`
 
 Runs the update callbacks for the fields the request's body names; an error one returns is thrown as the write's answer.
 
-### static `context(WP_REST_Request $request, string $type): string`
+### static `context(Minn\Objects\RestRequest $request, string $type): string`
 
 The context the item is answered in, set on the request as the
 reference's controllers set it: a write and a delete answer in edit
@@ -2040,7 +2040,7 @@ The names of the fields registered for the type that show in the context. @retur
 
 - `@return list<string>`
 
-Internals: `of()` (private, line 96), `wanted()` (private, line 103), `inContext()` (private, line 113), `refusal()` (private, line 119)
+Internals: `of()` (private, line 97), `wanted()` (private, line 104), `inContext()` (private, line 114), `refusal()` (private, line 120)
 
 
 ## RegisteredPostFields
@@ -2210,14 +2210,14 @@ The meta field of an object in a context (the one the request answers in, when n
 
 - `@return array<string, mixed>`
 
-### static `value(string $objectType, int $objectId, string $key, array $field, WP_REST_Request $request): mixed`
+### static `value(string $objectType, int $objectId, string $key, array $field, Minn\Objects\RestRequest $request): mixed`
 
 One field's value for an object: a single key's first stored value (its
 default when none), a multiple key's each one, prepared for the response.
 
 - `@param array<string, mixed> $field`
 
-### static `writeFrom(WP_REST_Request $request, string $objectType, int $objectId, string $subtype): void`
+### static `writeFrom(Minn\Objects\RestRequest $request, string $objectType, int $objectId, string $subtype): void`
 
 Applies the meta a write request names, when it names any.
 
@@ -2240,7 +2240,7 @@ REST does not know are left out.
 
 - `@return array<string, array{name: string, single: bool, schema: array<string, mixed>, prepare_callback: mixed}>`
 
-### static `prepare(mixed $value, array $field, WP_REST_Request $request): mixed`
+### static `prepare(mixed $value, array $field, Minn\Objects\RestRequest $request): mixed`
 
 A value for the response: through the field's prepare callback, or checked against its schema (null when it does not fit) and cast. @param array<string, mixed> $field
 
@@ -2274,7 +2274,7 @@ Whether a value sanitizes to what is stored (scalar types compared as the text t
 
 A type's empty value: '' for a string, false, 0, or an empty list.
 
-Internals: `update()` (private, line 151), `replaceAll()` (private, line 191), `refused()` (private, line 241), `failed()` (private, line 247), `nullStored()` (private, line 253), `gathered()` (private, line 260), `request()` (private, line 290)
+Internals: `update()` (private, line 152), `replaceAll()` (private, line 192), `refused()` (private, line 242), `failed()` (private, line 248), `nullStored()` (private, line 254), `gathered()` (private, line 261), `request()` (private, line 291)
 
 
 ## RestUrl
@@ -2519,7 +2519,7 @@ __construct(Minn\Rest\Types $types)
 
 The route's answer with the server's filters around it, or as the route gives it when no plugin can hear.
 
-Internals: `plain()` (private, line 76), `run()` (private, line 88), `routeName()` (private, line 98), `handler()` (private, line 116), `defaults()` (private, line 131), `typed()` (private, line 149)
+Internals: `plain()` (private, line 77), `run()` (private, line 89), `routeName()` (private, line 99), `handler()` (private, line 117), `defaults()` (private, line 132), `typed()` (private, line 150)
 
 
 ## RuntimePrepare
@@ -2540,11 +2540,11 @@ before the filter runs.
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostObject`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`, `Minn\Runtime\PostSave`
 
-### static `answering(WP_REST_Request $request): void`
+### static `answering(Minn\Objects\RestRequest $request): void`
 
 Remembers the request a REST call is answering, for the filters its items pass through (on the request's own runtime).
 
-### static `during(WP_REST_Request $request, Closure $run): mixed`
+### static `during(Minn\Objects\RestRequest $request, Closure $run): mixed`
 
 Runs an in-process REST call answering its own request (the filters
 hand plugins that one), then puts back the request it interrupted.
@@ -2576,7 +2576,7 @@ One item through a rest_prepare filter.
 - `@param \Closure(): mixed $described the object the item describes, fetched only when a plugin listens`
 - `@return array<string, mixed>`
 
-Internals: `hookedBlocks()` (private, line 78), `withHookedBlocks()` (private, line 115), `objectType()` (private, line 156)
+Internals: `hookedBlocks()` (private, line 80), `withHookedBlocks()` (private, line 117), `objectType()` (private, line 158)
 
 
 ## RuntimeRoutes
@@ -2615,7 +2615,7 @@ route at all. Null lets the router proceed.
 
 Null when the runtime has no route for the request either.
 
-### static `allowedMethods(string $route, WP_REST_Request $wpRequest): array`
+### static `allowedMethods(string $route, Minn\Objects\RestRequest $wpRequest): array`
 
 The methods of a plugin's route whose handler lets this request through (a handler with no permission callback does). @return list<string>
 
@@ -2636,18 +2636,18 @@ Allow header is (probe rest-registry-controllers).
 
 The engine's index plus the namespaces and routes the runtime holds.
 
-### static `adopt(Minn\Http\Request $request, WP_REST_Request $wpRequest): void`
+### static `adopt(Minn\Http\Request $request, Minn\Objects\RestRequest $wpRequest): void`
 
 An in-process call's own request object stands for the engine's request: the server sets its route's parameters on it, as the reference's dispatch does.
 
-### static `sanitized(Minn\Http\Request $request, array $registered): WP_REST_Request`
+### static `sanitized(Minn\Http\Request $request, array $registered): Minn\Objects\RestRequest`
 
 The request as the list's handler reads it: its parameters with their
 defaults, sanitized by their schemas, as plugins' filters see it too.
 
 - `@param array<string, array<string, mixed>> $registered`
 
-### static `wpRequest(Minn\Http\Request $request): WP_REST_Request`
+### static `wpRequest(Minn\Http\Request $request): Minn\Objects\RestRequest`
 
 The request as the runtime's server reads it, and as a REST filter or action hands it to plugins: the same object each time.
 
@@ -2661,7 +2661,7 @@ Keeps the route and handler a request matched, for the response plugins see at s
 
 An engine refusal as plugins handle one.
 
-### static `toWp(Minn\Http\Response $response): WP_REST_Response`
+### static `toWp(Minn\Http\Response $response): Minn\Objects\RestResponse`
 
 An engine answer as plugins handle one: its data decoded (an empty
 object stays one), its links on the response rather than in the data,
@@ -2675,7 +2675,7 @@ a list's totals are numbers, but the comments list's stay text.
 - `@param array<string, string> $headers`
 - `@return array<string, string|int>`
 
-### static `itemResponse(array $item): WP_REST_Response`
+### static `itemResponse(array $item): Minn\Objects\RestResponse`
 
 One item a response carries, as a response object: its data without
 _links, the links on the response.
@@ -2700,15 +2700,15 @@ Whether the answer went out as oEmbed's XML. The reference prints it
 in rest_pre_serve_request ahead of rest_send_cors_headers, so none of
 the CORS headers follow it, Vary: Origin among them.
 
-### static `ensure(mixed $result): WP_REST_Response`
+### static `ensure(mixed $result): Minn\Objects\RestResponse`
 
 A callback's return as a response object, an error converted.
 
-### static `server(): WP_REST_Server`
+### static `server(): Minn\Objects\RestServer`
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 100), `dispatchDone()` (private, line 306), `asksForXml()` (private, line 381), `oembedXml()` (private, line 392), `look()` (private, line 406), `remember()` (private, line 411), `decode()` (private, line 418), `expand()` (private, line 438), `newWpRequest()` (private, line 463), `toResponse()` (private, line 492)
+Internals: `allow()` (private, line 103), `dispatchDone()` (private, line 309), `asksForXml()` (private, line 384), `oembedXml()` (private, line 395), `look()` (private, line 409), `remember()` (private, line 414), `decode()` (private, line 421), `expand()` (private, line 441), `newWpRequest()` (private, line 466), `toResponse()` (private, line 495)
 
 
 ## Schema
@@ -3628,7 +3628,7 @@ takes, and ids alone for a HEAD request.
 
 Used by: `Minn\Rest\TermsController`
 
-### static `of(WP_REST_Request $wp, array $registered, string $taxonomy, string $method): array`
+### static `of(Minn\Objects\RestRequest $wp, array $registered, string $taxonomy, string $method): array`
 
 The arguments before plugins see them.
 
@@ -3858,7 +3858,7 @@ only), and ids alone for a HEAD request.
 
 Used by: `Minn\Rest\UsersController`
 
-### static `of(WP_REST_Request $wp, array $registered, string $method, array $types, string $reader): array`
+### static `of(Minn\Objects\RestRequest $wp, array $registered, string $method, array $types, string $reader): array`
 
 The arguments before plugins see them, for a reader who is a 'lister'
 (may list users) or 'public'.
@@ -3968,7 +3968,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `listAllowed()` (private, line 111), `totals()` (private, line 135), `hasPublishedContent()` (private, line 170), `validRole()` (private, line 179), `validLocale()` (private, line 194), `assignableRole()` (private, line 206), `validEmail()` (private, line 215), `loginRefusal()` (private, line 401)
+Internals: `listAllowed()` (private, line 112), `totals()` (private, line 136), `hasPublishedContent()` (private, line 171), `validRole()` (private, line 180), `validLocale()` (private, line 195), `assignableRole()` (private, line 207), `validEmail()` (private, line 216), `loginRefusal()` (private, line 402)
 
 
 ## ViewConfigPatch

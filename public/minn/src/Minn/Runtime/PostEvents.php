@@ -154,7 +154,7 @@ final readonly class PostEvents
     public function restDeleted(PostRecord $post, array $data, Request $request): void
     {
         if ($this->live()) {
-            Runtime::hooks()->action("rest_delete_{$post->type}", [self::wpPost($post), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
+            Runtime::hooks()->action("rest_delete_{$post->type}", [self::wpPost($post), Handoff::newRestResponse($data, 200), RuntimeRoutes::wpRequest($request)]);
         }
     }
 

@@ -41,7 +41,7 @@ the WordPress runtime plugins load against
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 231 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 257 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 385 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
@@ -376,7 +376,7 @@ wp_delete_application_password), then rest_after_insert_application_password.
 
 Used by: `Minn\Rest\ApplicationPasswordsController`
 
-### static `create(int $userId, array $body, WP_REST_Request $request): Minn\Objects\Errors|array`
+### static `create(int $userId, array $body, Minn\Objects\RestRequest $request): Minn\Objects\Errors|array`
 
 A new password: its record and its plain text in groups of four, or
 the reference's refusal.
@@ -384,14 +384,14 @@ the reference's refusal.
 - `@param array<string, mixed> $body`
 - `@return array{0: array<string, mixed>, 1: string}|Errors`
 
-### static `update(int $userId, string $uuid, array $body, WP_REST_Request $request): Minn\Objects\Errors|array`
+### static `update(int $userId, string $uuid, array $body, Minn\Objects\RestRequest $request): Minn\Objects\Errors|array`
 
 A password renamed (when the body names it): its record as it stands.
 
 - `@param array<string, mixed> $body`
 - `@return array<string, mixed>|Errors`
 
-Internals: `prepared()` (private, line 60)
+Internals: `prepared()` (private, line 61)
 
 
 ## ApplicationPasswordSignIn
@@ -1002,7 +1002,7 @@ rest_delete_comment, after a trash or a delete, with the comment as it was and t
 
 - `@param array<string, mixed> $data`
 
-Internals: `preprocessed()` (private, line 140), `requireContent()` (private, line 155), `field()` (private, line 165), `requireLengths()` (private, line 171), `refusal()` (private, line 180)
+Internals: `preprocessed()` (private, line 141), `requireContent()` (private, line 156), `field()` (private, line 166), `requireLengths()` (private, line 172), `refusal()` (private, line 181)
 
 
 ## CommentFeedQuery
@@ -1663,7 +1663,7 @@ plugins have had their chance), so a plugin's version answers the engine
 as it answers WordPress. Arguments pass as given, so each answer's own
 defaults hold.
 
-Used by: `Minn\Auth\Can`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Theme\FrontLifecycle`
+Used by: `Minn\Auth\Can`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Theme\FrontLifecycle`
 
 
 ### static `bind(array $answers): void`
@@ -1673,7 +1673,9 @@ becomeUser, cacheUsers, authenticate, setPassword, password, hash,
 createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
 factories newError, newPost, postInstance, newTerm, newComment,
 commentInstance, newUser, and the query factories newQuery,
-newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery.
+newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
+and the REST ones newRestRequest, restRequestFromUrl, newRestResponse,
+restController.
 
 - `@param array<string, Closure> $answers`
 
@@ -1813,7 +1815,23 @@ A meta query from its clauses (new WP_Meta_Query).
 
 A date query from its clauses and column (new WP_Date_Query).
 
-Internals: `answer()` (private, line 256)
+### static `newRestRequest(mixed ...$args): Minn\Objects\RestRequest`
+
+A REST request for a method and route (new WP_REST_Request).
+
+### static `restRequestFromUrl(mixed $url): mixed`
+
+A REST request for an address on this site's API, or false (WP_REST_Request::from_url).
+
+### static `newRestResponse(mixed ...$args): Minn\Objects\RestResponse`
+
+A REST response with data, a status and headers (new WP_REST_Response).
+
+### static `restController(string $kind, mixed ...$args): object`
+
+One of the REST controllers a filter is handed, by kind: menus, menu-items or menu-locations.
+
+Internals: `answer()` (private, line 284)
 
 
 ## Heartbeat
@@ -5985,13 +6003,13 @@ Core's features, then those registered since. @return array<string, array<string
 
 - `@return array<string, array<string, mixed>>`
 
-### static `forRest(WP_REST_Request $request): array`
+### static `forRest(Minn\Objects\RestRequest $request): array`
 
 The active theme's supports as wp/v2/themes shows them: each feature shown in REST, shaped by its schema. @return array<string, mixed>
 
 - `@return array<string, mixed>`
 
-### static `prepared(mixed $support, array $config, string $feature, WP_REST_Request $request): mixed`
+### static `prepared(mixed $support, array $config, string $feature, Minn\Objects\RestRequest $request): mixed`
 
 One feature's support as the REST API shows it (the runtime's
 WP_REST_Themes_Controller::prepare_theme_support): a feature that is
@@ -6000,7 +6018,7 @@ or else cut to its schema.
 
 - `@param array<string, mixed> $config the feature as it was registered`
 
-Internals: `unwrapped()` (private, line 203)
+Internals: `unwrapped()` (private, line 204)
 
 
 ## ThemeSwitch
@@ -6313,7 +6331,7 @@ none), then rest_delete_user with the account as it was.
 - `@param array<string, mixed> $data the response`
 - `@param Closure(): void $quietly the engine's own delete`
 
-Internals: `prepared()` (private, line 116)
+Internals: `prepared()` (private, line 117)
 
 
 ## UserInsert

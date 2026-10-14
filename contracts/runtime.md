@@ -16077,6 +16077,16 @@ were one line each over the same object. `PostData::setup()` is setup_postdata a
 WP_User_Query::fill_query_vars. The facade maps onto them. All 370 probes give identical output
 before and after.
 
+**Batch 17, REST requests and responses (class references 223 → 155).** The engine knows
+WP_REST_Request, WP_REST_Response and WP_REST_Server by the `Minn\Objects` marks `RestRequest`,
+`RestResponse` and `RestServer`, and makes requests and responses through `Handoff`
+(`newRestRequest()`, `restRequestFromUrl()`, `newRestResponse()`). A policy's opener (the filter that may
+open a route to anyone, handed the controller the reference passes) names its controller by kind
+(menus, menu-items, menu-locations), and `Handoff::restController()` makes it. The facade's classes
+gain one interface each. Full run 26 (after batch 16) was green once the suites in two Cove restart
+windows were rerun (another session's test runs loaded the machine). All 370 probes give identical
+output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

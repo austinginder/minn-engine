@@ -25,6 +25,7 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Router;
+use Minn\Objects\RestRequest;
 use Minn\RestError;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
@@ -141,7 +142,7 @@ final readonly class Api
      *
      * @param \Closure(\Minn\Content\PostRecord, Context): array<string, mixed> $shape
      */
-    public function listPosts(string $route, string $type, \Closure $shape, ?\WP_REST_Request $as = null): Response
+    public function listPosts(string $route, string $type, \Closure $shape, ?RestRequest $as = null): Response
     {
         $s = $this->services;
         $request = $this->request->withPath('/' . trim($route, '/'));
@@ -224,7 +225,7 @@ final readonly class Api
     }
 
     /** A theme in the wp/v2 shape, links included, before rest_prepare_theme. @return array<string, mixed> */
-    public function themeFields(\WP_Theme $theme, \WP_REST_Request $request): array
+    public function themeFields(\WP_Theme $theme, RestRequest $request): array
     {
         return (new InstalledThemesController($this->services->url(), $this->services->caller()))->fields($theme, $request);
     }
@@ -345,7 +346,7 @@ final readonly class Api
      * deleted by the engine's own writer, for the type's controller, whose
      * permission checks have already run.
      */
-    public function writePost(string $verb, string $route, string $type, string $base, string $id = '', ?\WP_REST_Request $as = null): Response
+    public function writePost(string $verb, string $route, string $type, string $base, string $id = '', ?RestRequest $as = null): Response
     {
         $s = $this->services;
         $request = $this->request->withPath('/' . trim($route, '/'));
@@ -371,7 +372,7 @@ final readonly class Api
      * declines cannot bounce between the two. $as is the caller's own
      * request object, which the route's parameters are set on.
      */
-    public function handleEngineOnly(string $route, ?\WP_REST_Request $as = null): ?Response
+    public function handleEngineOnly(string $route, ?RestRequest $as = null): ?Response
     {
         $request = $this->request->withPath('/' . trim($route, '/'));
         if ($as !== null) {
@@ -391,7 +392,7 @@ final readonly class Api
      *
      * @return list<string>
      */
-    public function allowedOn(string $route, ?\WP_REST_Request $as = null): array
+    public function allowedOn(string $route, ?RestRequest $as = null): array
     {
         $request = $this->request->withPath('/' . trim($route, '/'));
         if ($as !== null) {

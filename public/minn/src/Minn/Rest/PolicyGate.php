@@ -11,6 +11,7 @@ use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\RouteMiss;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -148,15 +149,14 @@ final readonly class PolicyGate
 
     /**
      * Whether a policy's opener lets any caller through: the filter it names,
-     * handed false, the request, and a controller of the class the reference
-     * passes (built with the argument given).
+     * handed false, the request, and the controller the reference passes, by
+     * its kind (built with the argument given).
      *
-     * @param array{0: string, 1: class-string, 2?: string} $opener
+     * @param array{0: string, 1: string, 2?: string} $opener
      */
     private function opened(array $opener, Request $request): bool
     {
-        $class = $opener[1];
-        $controller = isset($opener[2]) ? new $class($opener[2]) : new $class();
+        $controller = isset($opener[2]) ? Handoff::restController($opener[1], $opener[2]) : Handoff::restController($opener[1]);
         return (bool) Runtime::hooks()->filter((string) $opener[0], [false, RuntimeRoutes::wpRequest($request), $controller]);
     }
 

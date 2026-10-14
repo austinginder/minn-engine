@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Closure;
 use Minn\Http\Request;
 use Minn\Objects\Errors;
+use Minn\Objects\RestRequest;
 use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
@@ -102,7 +103,7 @@ final readonly class UserEvents
         }
         $user = Handoff::user($id);
         \wp_delete_user($id, $reassign);
-        Runtime::hooks()->action('rest_delete_user', [$user, new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
+        Runtime::hooks()->action('rest_delete_user', [$user, Handoff::newRestResponse($data, 200), RuntimeRoutes::wpRequest($request)]);
     }
 
     /**
@@ -113,7 +114,7 @@ final readonly class UserEvents
      * @param array<string, mixed> $userdata
      * @return array<string, mixed>
      */
-    private static function prepared(array $userdata, \WP_REST_Request $request): array
+    private static function prepared(array $userdata, RestRequest $request): array
     {
         $filtered = Runtime::hooks()->filter('rest_pre_insert_user', [(object) $userdata, $request]);
         if ($filtered instanceof Errors) {

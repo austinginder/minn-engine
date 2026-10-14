@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\RestRequest;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
@@ -31,7 +32,7 @@ final class PostListArgs
      * @param array<string, mixed> $registered the list's parameters
      * @return array<string, mixed>
      */
-    public static function of(\WP_REST_Request $request, array $registered, string $type): array
+    public static function of(RestRequest $request, array $registered, string $type): array
     {
         $given = static fn (string $param): bool => isset($registered[$param], $request[$param]);
         $args = [];
@@ -73,7 +74,7 @@ final class PostListArgs
      * @param array<string, mixed> $args
      * @return array<string, mixed>
      */
-    public static function queryVars(array $args, \WP_REST_Request $request): array
+    public static function queryVars(array $args, RestRequest $request): array
     {
         $vars = [];
         foreach ($args as $key => $value) {
@@ -98,7 +99,7 @@ final class PostListArgs
      * @param array<string, mixed> $vars
      * @return array<string, mixed>
      */
-    private static function mimeTypes(array $vars, \WP_REST_Request $request): array
+    private static function mimeTypes(array $vars, RestRequest $request): array
     {
         $byType = PostCollectionParams::mediaTypes();
         $allowed = array_merge(...array_values($byType));
@@ -124,7 +125,7 @@ final class PostListArgs
     }
 
     /** Each REST taxonomy's include (ids, or a query with children and an operator) and exclude, under the request's relation. @param array<string, mixed> $args @return array<string, mixed> */
-    private static function taxonomies(array $args, \WP_REST_Request $request, string $type): array
+    private static function taxonomies(array $args, RestRequest $request, string $type): array
     {
         if ($request['tax_relation']) {
             $args['tax_query'] = ['relation' => $request['tax_relation']];

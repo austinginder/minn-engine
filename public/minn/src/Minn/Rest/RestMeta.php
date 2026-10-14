@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Auth\Can;
 use Minn\Objects\Errors;
+use Minn\Objects\RestRequest;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\MetaKeys;
@@ -54,7 +55,7 @@ final class RestMeta
      *
      * @param array<string, mixed> $field
      */
-    public static function value(string $objectType, int $objectId, string $key, array $field, \WP_REST_Request $request): mixed
+    public static function value(string $objectType, int $objectId, string $key, array $field, RestRequest $request): mixed
     {
         $stored = \get_metadata($objectType, $objectId, $key, false);
         $stored = is_array($stored) ? array_values($stored) : [];
@@ -65,7 +66,7 @@ final class RestMeta
     }
 
     /** Applies the meta a write request names, when it names any. */
-    public static function writeFrom(\WP_REST_Request $request, string $objectType, int $objectId, string $subtype): void
+    public static function writeFrom(RestRequest $request, string $objectType, int $objectId, string $subtype): void
     {
         $meta = $request['meta'];
         if (is_array($meta) && $meta !== []) {
@@ -135,7 +136,7 @@ final class RestMeta
     }
 
     /** A value for the response: through the field's prepare callback, or checked against its schema (null when it does not fit) and cast. @param array<string, mixed> $field */
-    public static function prepare(mixed $value, array $field, \WP_REST_Request $request): mixed
+    public static function prepare(mixed $value, array $field, RestRequest $request): mixed
     {
         if (is_callable($field['prepare_callback'] ?? null)) {
             return call_user_func($field['prepare_callback'], $value, $request, $field);
@@ -287,9 +288,9 @@ final class RestMeta
         };
     }
 
-    private static function request(): \WP_REST_Request
+    private static function request(): RestRequest
     {
         $request = Runtime::current()->get('rest_prepare_request');
-        return $request instanceof \WP_REST_Request ? $request : new \WP_REST_Request('GET', '/');
+        return $request instanceof RestRequest ? $request : Handoff::newRestRequest('GET', '/');
     }
 }

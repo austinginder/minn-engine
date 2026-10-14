@@ -11,6 +11,8 @@ use Minn\Objects\CommentsQuery;
 use Minn\Objects\Errors;
 use Minn\Objects\Post;
 use Minn\Objects\Query;
+use Minn\Objects\RestRequest;
+use Minn\Objects\RestResponse;
 use Minn\Objects\Term;
 use Minn\Objects\TermsQuery;
 use Minn\Objects\User;
@@ -39,7 +41,9 @@ final class Handoff
      * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
      * factories newError, newPost, postInstance, newTerm, newComment,
      * commentInstance, newUser, and the query factories newQuery,
-     * newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery.
+     * newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
+     * and the REST ones newRestRequest, restRequestFromUrl, newRestResponse,
+     * restController.
      *
      * @param array<string, Closure> $answers
      */
@@ -251,6 +255,30 @@ final class Handoff
     public static function newDateQuery(mixed ...$args): object
     {
         return self::answer('newDateQuery', ...$args);
+    }
+
+    /** A REST request for a method and route (new WP_REST_Request). */
+    public static function newRestRequest(mixed ...$args): RestRequest
+    {
+        return self::answer('newRestRequest', ...$args);
+    }
+
+    /** A REST request for an address on this site's API, or false (WP_REST_Request::from_url). */
+    public static function restRequestFromUrl(mixed $url): mixed
+    {
+        return self::answer('restRequestFromUrl', $url);
+    }
+
+    /** A REST response with data, a status and headers (new WP_REST_Response). */
+    public static function newRestResponse(mixed ...$args): RestResponse
+    {
+        return self::answer('newRestResponse', ...$args);
+    }
+
+    /** One of the REST controllers a filter is handed, by kind: menus, menu-items or menu-locations. */
+    public static function restController(string $kind, mixed ...$args): object
+    {
+        return self::answer('restController', $kind, ...$args);
     }
 
     private static function answer(string $name, mixed ...$args): mixed

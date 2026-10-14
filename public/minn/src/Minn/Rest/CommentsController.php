@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Objects\Comment;
 use Minn\Objects\CommentsQuery;
+use Minn\Objects\RestRequest;
 use Minn\Runtime\CommentEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -220,7 +221,7 @@ final readonly class CommentsController
      * author_email to anyone who can edit posts (the email judged as sent,
      * before sanitizing empties a bad one).
      */
-    private function allowed(\WP_REST_Request $wp, Context $context, string $email): void
+    private function allowed(RestRequest $wp, Context $context, string $email): void
     {
         if ($context->isEdit() && !$this->caller->can('moderate_comments')) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit comments.');

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Objects\Errors;
+use Minn\Objects\RestRequest;
 use Minn\RestError;
 use Minn\Runtime\Registered;
 use Minn\Support\Lists;
@@ -23,7 +24,7 @@ use Minn\Support\Lists;
 final class RegisteredFields
 {
     /** The item with the type's registered fields added, answering the request. @param array<string, mixed> $item @return array<string, mixed> */
-    public static function add(array $item, string $type, \WP_REST_Request $request): array
+    public static function add(array $item, string $type, RestRequest $request): array
     {
         $fields = self::of($type);
         if ($fields === []) {
@@ -50,7 +51,7 @@ final class RegisteredFields
     }
 
     /** Runs the update callbacks for the fields the request's body names; an error one returns is thrown as the write's answer. */
-    public static function update(object $object, string $type, \WP_REST_Request $request): void
+    public static function update(object $object, string $type, RestRequest $request): void
     {
         foreach (self::of($type) as $name => $options) {
             if (empty($options['update_callback']) || !isset($request[$name])) {
@@ -68,7 +69,7 @@ final class RegisteredFields
      * reference's controllers set it: a write and a delete answer in edit
      * (a term's delete in view); a read in the one asked for, or view.
      */
-    public static function context(\WP_REST_Request $request, string $type): string
+    public static function context(RestRequest $request, string $type): string
     {
         $method = $request->get_method();
         if ($method !== 'GET' && $method !== 'HEAD') {
@@ -100,7 +101,7 @@ final class RegisteredFields
     }
 
     /** The fields _fields names, or null when it names none. @return list<string>|null */
-    private static function wanted(\WP_REST_Request $request): ?array
+    private static function wanted(RestRequest $request): ?array
     {
         if (!isset($request['_fields'])) {
             return null;

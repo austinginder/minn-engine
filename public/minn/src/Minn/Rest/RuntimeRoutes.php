@@ -9,6 +9,9 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Json;
 use Minn\Objects\Errors;
+use Minn\Objects\RestRequest;
+use Minn\Objects\RestResponse;
+use Minn\Objects\RestServer;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
@@ -97,7 +100,7 @@ final class RuntimeRoutes
      * handler's permission callback lets this request through (a handler
      * with none counts). Left alone when the handler set one itself.
      */
-    private static function allow(\WP_REST_Response $result, string $route, \WP_REST_Request $wpRequest): void
+    private static function allow(RestResponse $result, string $route, RestRequest $wpRequest): void
     {
         $allowed = self::allowedMethods($route, $wpRequest);
         if (!isset($result->get_headers()['Allow']) && $allowed !== []) {
@@ -106,7 +109,7 @@ final class RuntimeRoutes
     }
 
     /** The methods of a plugin's route whose handler lets this request through (a handler with no permission callback does). @return list<string> */
-    public static function allowedMethods(string $route, \WP_REST_Request $wpRequest): array
+    public static function allowedMethods(string $route, RestRequest $wpRequest): array
     {
         $allowed = [];
         foreach ((array) (self::server()->get_routes()[$route] ?? []) as $handler) {
@@ -130,8 +133,8 @@ final class RuntimeRoutes
      */
     public static function targetHints(string $href): ?array
     {
-        $wpRequest = \WP_REST_Request::from_url($href);
-        if (!$wpRequest instanceof \WP_REST_Request) {
+        $wpRequest = Handoff::restRequestFromUrl($href);
+        if (!$wpRequest instanceof RestRequest) {
             return null;
         }
         $server = self::server();
@@ -172,7 +175,7 @@ final class RuntimeRoutes
         return new Response($response->status, $response->headers, Json::encode($data, Json::ESCAPED));
     }
 
-    /** @var \WeakMap<Request, \WP_REST_Request>|null the one request object plugins see for one request, filters and actions alike */
+    /** @var \WeakMap<Request, RestRequest>|null the one request object plugins see for one request, filters and actions alike */
     private static ?\WeakMap $requests = null;
 
     /** @var \WeakMap<Request, array{0: string, 1: array<string, mixed>}>|null the route and handler a request matched */
@@ -182,7 +185,7 @@ final class RuntimeRoutes
     private static ?\WeakMap $origins = null;
 
     /** An in-process call's own request object stands for the engine's request: the server sets its route's parameters on it, as the reference's dispatch does. */
-    public static function adopt(Request $request, \WP_REST_Request $wpRequest): void
+    public static function adopt(Request $request, RestRequest $wpRequest): void
     {
         self::$requests ??= new \WeakMap();
         self::$requests[$request] = $wpRequest;
@@ -194,7 +197,7 @@ final class RuntimeRoutes
      *
      * @param array<string, array<string, mixed>> $registered
      */
-    public static function sanitized(Request $request, array $registered): \WP_REST_Request
+    public static function sanitized(Request $request, array $registered): RestRequest
     {
         $wp = self::wpRequest($request);
         $args = array_map(static fn (array $arg): array => array_diff_key($arg, [Args::HANDLER_VALIDATES => true]) + ['validate_callback' => 'rest_validate_request_arg', 'sanitize_callback' => 'rest_sanitize_request_arg'], $registered);
@@ -205,7 +208,7 @@ final class RuntimeRoutes
     }
 
     /** The request as the runtime's server reads it, and as a REST filter or action hands it to plugins: the same object each time. */
-    public static function wpRequest(Request $request): \WP_REST_Request
+    public static function wpRequest(Request $request): RestRequest
     {
         self::$requests ??= new \WeakMap();
         return self::$requests[$request] ??= self::newWpRequest($request);
@@ -236,7 +239,7 @@ final class RuntimeRoutes
      * object stays one), its links on the response rather than in the data,
      * its status and headers.
      */
-    public static function toWp(Response $response): \WP_REST_Response
+    public static function toWp(Response $response): RestResponse
     {
         $data = self::decode($response->body);
         $links = [];
@@ -248,7 +251,7 @@ final class RuntimeRoutes
         foreach (array_keys(Reply::HEADERS) as $name) {
             unset($headers[$name]);
         }
-        $wpResponse = new \WP_REST_Response($data, $response->status, self::wpHeaders($headers));
+        $wpResponse = Handoff::newRestResponse($data, $response->status, self::wpHeaders($headers));
         $wpResponse->add_links($links);
         self::remember($wpResponse, $response, self::look($wpResponse));
         return $wpResponse;
@@ -280,11 +283,11 @@ final class RuntimeRoutes
      *
      * @param array<string, mixed> $item
      */
-    public static function itemResponse(array $item): \WP_REST_Response
+    public static function itemResponse(array $item): RestResponse
     {
         $links = isset($item['_links']) && is_array($item['_links']) ? self::expand($item['_links']) : [];
         unset($item['_links']);
-        $response = new \WP_REST_Response($item, 200);
+        $response = Handoff::newRestResponse($item, 200);
         $response->add_links($links);
         return $response;
     }
@@ -403,7 +406,7 @@ final class RuntimeRoutes
     }
 
     /** What a response looks like to the code that may change it. @return array<int, mixed> */
-    private static function look(\WP_REST_Response $response): array
+    private static function look(RestResponse $response): array
     {
         return [$response->get_data(), $response->get_status(), $response->get_headers(), $response->get_links()];
     }
@@ -460,9 +463,9 @@ final class RuntimeRoutes
         return $out;
     }
 
-    private static function newWpRequest(Request $request): \WP_REST_Request
+    private static function newWpRequest(Request $request): RestRequest
     {
-        $wpRequest = new \WP_REST_Request($request->method->value, $request->path);
+        $wpRequest = Handoff::newRestRequest($request->method->value, $request->path);
         $wpRequest->set_query_params($request->query);
         $wpRequest->set_body_params($request->form);
         $wpRequest->set_file_params($request->files);
@@ -476,7 +479,7 @@ final class RuntimeRoutes
     }
 
     /** A callback's return as a response object, an error converted. */
-    public static function ensure(mixed $result): \WP_REST_Response
+    public static function ensure(mixed $result): RestResponse
     {
         $response = \rest_ensure_response($result);
         return $response instanceof Errors ? \rest_convert_error_to_response($response) : $response;
@@ -484,12 +487,12 @@ final class RuntimeRoutes
 
     /** The runtime's response as the engine sends it, with the reference's header set. */
     /** The runtime's REST server, the one door to it (built, with rest_api_init, on first use). */
-    public static function server(): \WP_REST_Server
+    public static function server(): RestServer
     {
         return \rest_get_server();
     }
 
-    private static function toResponse(\WP_REST_Response $response): Response
+    private static function toResponse(RestResponse $response): Response
     {
         $data = self::server()->response_to_data($response, false);
         $headers = Reply::HEADERS;

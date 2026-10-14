@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Objects\Errors;
+use Minn\Objects\RestRequest;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 
@@ -22,7 +24,7 @@ use Minn\Runtime\Runtime;
 final class RuntimePrepare
 {
     /** Remembers the request a REST call is answering, for the filters its items pass through (on the request's own runtime). */
-    public static function answering(\WP_REST_Request $request): void
+    public static function answering(RestRequest $request): void
     {
         Runtime::current()->set('rest_prepare_request', $request);
     }
@@ -35,7 +37,7 @@ final class RuntimePrepare
      * @param \Closure(): T $run
      * @return T
      */
-    public static function during(\WP_REST_Request $request, \Closure $run): mixed
+    public static function during(RestRequest $request, \Closure $run): mixed
     {
         $outer = Runtime::current()->get('rest_prepare_request');
         self::answering($request);
@@ -134,7 +136,7 @@ final class RuntimePrepare
             $item = self::hookedBlocks($item, $postType, $described);
         }
         $request = Runtime::current()->get('rest_prepare_request');
-        $request = $request instanceof \WP_REST_Request ? $request : new \WP_REST_Request('GET', '/');
+        $request = $request instanceof RestRequest ? $request : Handoff::newRestRequest('GET', '/');
         $item = RegisteredFields::add($item, self::objectType($filter), $request);
         if (!Runtime::hooks()->has($filter)) {
             return $item;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\I18n\TranslationFiles;
+use Minn\Objects\RestRequest;
 use Minn\Objects\User;
 use Minn\Objects\UsersQuery;
 use Minn\Runtime\Handoff;
@@ -108,7 +109,7 @@ final readonly class UsersController
      * edit context, an email or registration order, roles, capabilities;
      * the authors shorthand is for those who may edit posts.
      */
-    private function listAllowed(\WP_REST_Request $wp, Context $context): void
+    private function listAllowed(RestRequest $wp, Context $context): void
     {
         $lister = $this->caller->can('list_users');
         $refusals = [

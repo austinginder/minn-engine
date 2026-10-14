@@ -83088,6 +83088,84 @@
             "methods": []
         },
         {
+            "name": "Minn\\Objects\\RestRequest",
+            "short": "RestRequest",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/RestRequest.php",
+            "lines": 3,
+            "doc": "A REST request as the WordPress layer hands it to plugins\n(WP_REST_Request): its route, method, parameters, headers and body. The\nengine knows these objects by this mark and makes them through\nRuntime\\Handoff, so it never names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\CommentListArgs",
+                "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\InstalledThemesController",
+                "Minn\\Rest\\PostListArgs",
+                "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\RestMeta",
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Rest\\TermListArgs",
+                "Minn\\Rest\\UserListArgs",
+                "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\ApplicationPasswordEvents",
+                "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\ThemeSupports",
+                "Minn\\Runtime\\UserEvents"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\RestResponse",
+            "short": "RestResponse",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/RestResponse.php",
+            "lines": 3,
+            "doc": "A REST response as the WordPress layer hands it to plugins\n(WP_REST_Response): its data, status, headers and links. The engine knows\nthese objects by this mark and makes them through Runtime\\Handoff, so it\nnever names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\RuntimeEnvelope",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\Handoff"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\RestServer",
+            "short": "RestServer",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/RestServer.php",
+            "lines": 3,
+            "doc": "The REST server as the WordPress layer hands it to plugins\n(WP_REST_Server). The engine knows these objects by this mark and makes\nthem through Runtime\\Handoff, so it never names the WordPress layer's\nclass.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\RuntimeRoutes"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Objects\\Term",
             "short": "Term",
             "namespace": "Minn\\Objects",
@@ -91696,6 +91774,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Router",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\RestError",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
@@ -91791,8 +91870,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 40,
-                "end": 46
+                "line": 41,
+                "end": 47
             },
             "cases": [],
             "constants": [],
@@ -91846,8 +91925,8 @@
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
                     "params": [],
-                    "line": 53,
-                    "end": 56
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -91873,8 +91952,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 66
+                    "line": 60,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -91885,15 +91964,15 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 132,
-                    "end": 135
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
                     "name": "listPosts",
                     "static": false,
                     "visibility": "public",
-                    "signature": "listPosts(string $route, string $type, Closure $shape, ?WP_REST_Request $as = NULL): Minn\\Http\\Response",
+                    "signature": "listPosts(string $route, string $type, Closure $shape, ?Minn\\Objects\\RestRequest $as = NULL): Minn\\Http\\Response",
                     "doc": "A post type's list as its route serves it (the caller, the statuses,\nthe parameters, the query, the totals and page links), each post given\nthe shape asked for: the facade's controller class shapes them itself.",
                     "shapes": [
                         "@param \\Closure(\\Minn\\Content\\PostRecord, Context): array<string, mixed> $shape"
@@ -91922,14 +92001,14 @@
                         },
                         {
                             "name": "as",
-                            "type": "?WP_REST_Request",
+                            "type": "?Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": "NULL",
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 156
+                    "line": 145,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -91957,8 +92036,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 163
+                    "line": 160,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -92005,8 +92084,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 169
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -92017,8 +92096,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 172,
-                    "end": 175
+                    "line": 173,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -92029,8 +92108,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 178,
-                    "end": 181
+                    "line": 179,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -92041,8 +92120,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 184,
-                    "end": 187
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -92053,8 +92132,8 @@
                     "doc": "The wp/v2 menu shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 190,
-                    "end": 194
+                    "line": 191,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -92082,8 +92161,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 202
+                    "line": 198,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -92111,8 +92190,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 209
+                    "line": 206,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -92140,8 +92219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 216
+                    "line": 213,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -92176,15 +92255,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 224
+                    "line": 220,
+                    "end": 225
                 },
                 {
                     "routes": [],
                     "name": "themeFields",
                     "static": false,
                     "visibility": "public",
-                    "signature": "themeFields(WP_Theme $theme, WP_REST_Request $request): array",
+                    "signature": "themeFields(WP_Theme $theme, Minn\\Objects\\RestRequest $request): array",
                     "doc": "A theme in the wp/v2 shape, links included, before rest_prepare_theme. @return array<string, mixed>",
                     "shapes": [
                         "@return array<string, mixed>"
@@ -92199,14 +92278,14 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 230
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -92234,8 +92313,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 233,
-                    "end": 236
+                    "line": 234,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -92246,8 +92325,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 239,
-                    "end": 242
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -92258,8 +92337,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 245,
-                    "end": 248
+                    "line": 246,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -92285,8 +92364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 265
+                    "line": 257,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -92305,8 +92384,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 295
+                    "line": 269,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -92332,8 +92411,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 333
+                    "line": 309,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -92352,15 +92431,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 340
+                    "line": 337,
+                    "end": 341
                 },
                 {
                     "routes": [],
                     "name": "writePost",
                     "static": false,
                     "visibility": "public",
-                    "signature": "writePost(string $verb, string $route, string $type, string $base, string $id = '', ?WP_REST_Request $as = NULL): Minn\\Http\\Response",
+                    "signature": "writePost(string $verb, string $route, string $type, string $base, string $id = '', ?Minn\\Objects\\RestRequest $as = NULL): Minn\\Http\\Response",
                     "doc": "A post of a REST type the engine has no route for (one under a\nnamespace of its own, probe namespaced-type) created, updated or\ndeleted by the engine's own writer, for the type's controller, whose\npermission checks have already run.",
                     "shapes": [],
                     "params": [
@@ -92401,21 +92480,21 @@
                         },
                         {
                             "name": "as",
-                            "type": "?WP_REST_Request",
+                            "type": "?Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": "NULL",
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 365
+                    "line": 349,
+                    "end": 366
                 },
                 {
                     "routes": [],
                     "name": "handleEngineOnly",
                     "static": false,
                     "visibility": "public",
-                    "signature": "handleEngineOnly(string $route, ?WP_REST_Request $as = NULL): ?Minn\\Http\\Response",
+                    "signature": "handleEngineOnly(string $route, ?Minn\\Objects\\RestRequest $as = NULL): ?Minn\\Http\\Response",
                     "doc": "The engine's own answer to a route, or null when no engine route\ntakes it; the runtime's table is never consulted. This is what the\nruntime's server calls for a core route, so a route the engine\ndeclines cannot bounce between the two. $as is the caller's own\nrequest object, which the route's parameters are set on.",
                     "shapes": [],
                     "params": [
@@ -92428,21 +92507,21 @@
                         },
                         {
                             "name": "as",
-                            "type": "?WP_REST_Request",
+                            "type": "?Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": "NULL",
                             "doc": ""
                         }
                     ],
-                    "line": 374,
-                    "end": 386
+                    "line": 375,
+                    "end": 387
                 },
                 {
                     "routes": [],
                     "name": "allowedOn",
                     "static": false,
                     "visibility": "public",
-                    "signature": "allowedOn(string $route, ?WP_REST_Request $as = NULL): array",
+                    "signature": "allowedOn(string $route, ?Minn\\Objects\\RestRequest $as = NULL): array",
                     "doc": "The methods this caller may use on one of the engine's routes, as\nits Allow header lists them (rest_send_allow_header asks).",
                     "shapes": [
                         "@return list<string>"
@@ -92457,14 +92536,14 @@
                         },
                         {
                             "name": "as",
-                            "type": "?WP_REST_Request",
+                            "type": "?Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": "NULL",
                             "doc": ""
                         }
                     ],
-                    "line": 394,
-                    "end": 401
+                    "line": 395,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -92492,8 +92571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 129
+                    "line": 75,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -92512,8 +92591,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 403,
-                    "end": 410
+                    "line": 404,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -92539,8 +92618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 417,
-                    "end": 439
+                    "line": 418,
+                    "end": 440
                 },
                 {
                     "routes": [],
@@ -92559,8 +92638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 448,
-                    "end": 455
+                    "line": 449,
+                    "end": 456
                 },
                 {
                     "routes": [],
@@ -92589,8 +92668,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 465,
-                    "end": 480
+                    "line": 466,
+                    "end": 481
                 },
                 {
                     "routes": [],
@@ -92616,8 +92695,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 486,
-                    "end": 490
+                    "line": 487,
+                    "end": 491
                 }
             ]
         },
@@ -93375,6 +93454,7 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\Types",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime"
@@ -93419,8 +93499,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 58,
-                "end": 60
+                "line": 59,
+                "end": 61
             },
             "cases": [],
             "constants": [
@@ -93495,8 +93575,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 87
+                    "line": 65,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -93517,8 +93597,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 105
+                    "line": 91,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -93539,8 +93619,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 132
+                    "line": 109,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -93568,8 +93648,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 142
+                    "line": 136,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -93588,8 +93668,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 160
+                    "line": 146,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -93617,8 +93697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 178
+                    "line": 164,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -93646,8 +93726,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 181,
-                    "end": 184
+                    "line": 182,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -93668,8 +93748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 191
+                    "line": 188,
+                    "end": 192
                 }
             ]
         },
@@ -95125,7 +95205,9 @@
             "doc": "The WP_Comment_Query arguments a comment list request makes, as the\nreference makes them before rest_comment_query (probe\nrest-comment-lists): each declared parameter the request carries under\nits query name, an empty email and search when none is given, the\norderby name mapped to the query's, the found rows counted, the posts\nloaded, the date bounds as one clause, the offset the page makes when\nnone is given, and ids alone for a HEAD request.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Objects\\RestRequest"
+            ],
             "usedBy": [
                 "Minn\\Rest\\CommentsController"
             ],
@@ -95152,7 +95234,7 @@
                     "name": "of",
                     "static": true,
                     "visibility": "public",
-                    "signature": "of(WP_REST_Request $wp, array $registered, string $method): array",
+                    "signature": "of(Minn\\Objects\\RestRequest $wp, array $registered, string $method): array",
                     "doc": "The arguments before plugins see them: a parameter maps when the\ncollection (as rest_comment_collection_params left it) still has it.",
                     "shapes": [
                         "@param array<string, mixed> $registered",
@@ -95161,7 +95243,7 @@
                     "params": [
                         {
                             "name": "wp",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -95181,8 +95263,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 48
+                    "line": 30,
+                    "end": 50
                 }
             ]
         },
@@ -95404,6 +95486,7 @@
                 "Minn\\Http\\Subject",
                 "Minn\\Objects\\Comment",
                 "Minn\\Objects\\CommentsQuery",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentListArgs",
@@ -95455,8 +95538,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 39
+                "line": 34,
+                "end": 40
             },
             "cases": [],
             "constants": [],
@@ -95518,8 +95601,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 68
+                    "line": 48,
+                    "end": 69
                 },
                 {
                     "routes": [
@@ -95547,8 +95630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 107
+                    "line": 91,
+                    "end": 108
                 },
                 {
                     "routes": [
@@ -95569,8 +95652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 151
+                    "line": 112,
+                    "end": 152
                 },
                 {
                     "routes": [
@@ -95600,8 +95683,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 181
+                    "line": 164,
+                    "end": 182
                 },
                 {
                     "routes": [
@@ -95629,8 +95712,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 213
+                    "line": 186,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -95666,8 +95749,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 86
+                    "line": 78,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -95678,21 +95761,21 @@
                     "doc": "Tells plugins about the writes, through the runtime's comment functions.",
                     "shapes": [],
                     "params": [],
-                    "line": 154,
-                    "end": 157
+                    "line": 155,
+                    "end": 158
                 },
                 {
                     "routes": [],
                     "name": "allowed",
                     "static": false,
                     "visibility": "private",
-                    "signature": "allowed(WP_REST_Request $wp, Minn\\Rest\\Context $context, string $email): void",
+                    "signature": "allowed(Minn\\Objects\\RestRequest $wp, Minn\\Rest\\Context $context, string $email): void",
                     "doc": "What this caller may ask the list for: the edit context and other\nstatuses are for moderators and editors; comments without a post\nbelong to moderators, an unreadable post's to those who may read it\n(or who give its password); type, author, author_exclude and\nauthor_email to anyone who can edit posts (the email judged as sent,\nbefore sanitizing empties a bad one).",
                     "shapes": [],
                     "params": [
                         {
                             "name": "wp",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -95712,8 +95795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 257
+                    "line": 224,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -95739,8 +95822,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 270
+                    "line": 265,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -95766,8 +95849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 280
+                    "line": 274,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -95786,8 +95869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 290
+                    "line": 284,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -95816,8 +95899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 323
+                    "line": 306,
+                    "end": 324
                 }
             ]
         },
@@ -98002,12 +98085,14 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Support\\Lists"
@@ -98036,8 +98121,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 36
+                "line": 36,
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -98088,8 +98173,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 56
+                    "line": 42,
+                    "end": 58
                 },
                 {
                     "routes": [
@@ -98117,15 +98202,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 74
+                    "line": 62,
+                    "end": 76
                 },
                 {
                     "routes": [],
                     "name": "fields",
                     "static": false,
                     "visibility": "public",
-                    "signature": "fields(WP_Theme $theme, WP_REST_Request $request): array",
+                    "signature": "fields(WP_Theme $theme, Minn\\Objects\\RestRequest $request): array",
                     "doc": "A theme in the wp/v2 shape, its links included, before\nrest_prepare_theme (the runtime's WP_REST_Themes_Controller shapes\nthrough here); the request is what the supports' callbacks are handed.",
                     "shapes": [
                         "@return array<string, mixed>"
@@ -98140,14 +98225,14 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 121
+                    "line": 92,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -98168,8 +98253,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 81
+                    "line": 79,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -98190,8 +98275,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 144
+                    "line": 126,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -98202,8 +98287,8 @@
                     "doc": "May list the installed themes.",
                     "shapes": [],
                     "params": [],
-                    "line": 147,
-                    "end": 150
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -98214,8 +98299,8 @@
                     "doc": "May read the active theme: anyone who lists themes, or edits a type shown in REST.",
                     "shapes": [],
                     "params": [],
-                    "line": 153,
-                    "end": 156
+                    "line": 155,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -98234,8 +98319,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 161
+                    "line": 160,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -98246,8 +98331,8 @@
                     "doc": "A theme's supports come from its own code: without the runtime there is no answer to give.",
                     "shapes": [],
                     "params": [],
-                    "line": 164,
-                    "end": 169
+                    "line": 166,
+                    "end": 171
                 }
             ]
         },
@@ -100964,7 +101049,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PolicyGate.php",
-            "lines": 167,
+            "lines": 166,
             "doc": "Judges a route's policy against the caller, with the reference's\nrefusals: a caller who is not signed in gets the policy's sign-in code\nat 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a\nsigned-in caller who lacks a capability gets the refusal code at 403.\nA subject the policy names is looked up first and answers its 404\nbefore any of those. The edit-context policy is judged as well when\nthe request asks for it.",
             "implements": [],
             "extends": null,
@@ -100982,6 +101067,7 @@
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\Types",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -101015,8 +101101,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 29
+                "line": 28,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -101059,8 +101145,8 @@
                     "doc": "The judge as the router takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 35
+                    "line": 33,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -101095,8 +101181,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 64
+                    "line": 43,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -101124,8 +101210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 83
+                    "line": 74,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -101153,8 +101239,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 115
+                    "line": 94,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -101182,8 +101268,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 147
+                    "line": 125,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -101191,15 +101277,15 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "opened(array $opener, Minn\\Http\\Request $request): bool",
-                    "doc": "Whether a policy's opener lets any caller through: the filter it names,\nhanded false, the request, and a controller of the class the reference\npasses (built with the argument given).",
+                    "doc": "Whether a policy's opener lets any caller through: the filter it names,\nhanded false, the request, and the controller the reference passes, by\nits kind (built with the argument given).",
                     "shapes": [
-                        "@param array{0: string, 1: class-string, 2?: string} $opener"
+                        "@param array{0: string, 1: string, 2?: string} $opener"
                     ],
                     "params": [
                         {
                             "name": "opener",
                             "type": "array",
-                            "shape": "array{0: string, 1: class-string, 2?: string}",
+                            "shape": "array{0: string, 1: string, 2?: string}",
                             "default": null,
                             "doc": ""
                         },
@@ -101211,7 +101297,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
+                    "line": 157,
                     "end": 161
                 },
                 {
@@ -101632,6 +101718,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Objects\\RestRequest",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\SchemaValues",
                 "Minn\\Runtime\\Registered",
@@ -101681,7 +101768,7 @@
                     "name": "of",
                     "static": true,
                     "visibility": "public",
-                    "signature": "of(WP_REST_Request $request, array $registered, string $type): array",
+                    "signature": "of(Minn\\Objects\\RestRequest $request, array $registered, string $type): array",
                     "doc": "The arguments before plugins see them.",
                     "shapes": [
                         "@param array<string, mixed> $registered the list's parameters",
@@ -101690,7 +101777,7 @@
                     "params": [
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -101710,15 +101797,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 67
+                    "line": 35,
+                    "end": 68
                 },
                 {
                     "routes": [],
                     "name": "queryVars",
                     "static": true,
                     "visibility": "public",
-                    "signature": "queryVars(array $args, WP_REST_Request $request): array",
+                    "signature": "queryVars(array $args, Minn\\Objects\\RestRequest $request): array",
                     "doc": "The query variables from the arguments plugins left: each through\nrest_query_var-{name}, and the list's orderby names as the query's.",
                     "shapes": [
                         "@param array<string, mixed> $args",
@@ -101734,21 +101821,21 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 91
+                    "line": 77,
+                    "end": 92
                 },
                 {
                     "routes": [],
                     "name": "mimeTypes",
                     "static": true,
                     "visibility": "private",
-                    "signature": "mimeTypes(array $vars, WP_REST_Request $request): array",
+                    "signature": "mimeTypes(array $vars, Minn\\Objects\\RestRequest $request): array",
                     "doc": "A media list's MIME types, set after plugins have seen the query: the\nMIME types asked for (those the site allows), else every one of the\nmedia types asked for.",
                     "shapes": [
                         "@param array<string, mixed> $vars",
@@ -101764,14 +101851,14 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 110
+                    "line": 102,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -101799,15 +101886,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 124
+                    "line": 114,
+                    "end": 125
                 },
                 {
                     "routes": [],
                     "name": "taxonomies",
                     "static": true,
                     "visibility": "private",
-                    "signature": "taxonomies(array $args, WP_REST_Request $request, string $type): array",
+                    "signature": "taxonomies(array $args, Minn\\Objects\\RestRequest $request, string $type): array",
                     "doc": "Each REST taxonomy's include (ids, or a query with children and an operator) and exclude, under the request's relation. @param array<string, mixed> $args @return array<string, mixed>",
                     "shapes": [
                         "@param array<string, mixed> $args @return array<string, mixed>"
@@ -101822,7 +101909,7 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -101835,8 +101922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 145
+                    "line": 128,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -101864,8 +101951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 162
+                    "line": 149,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -101895,8 +101982,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 189
+                    "line": 173,
+                    "end": 190
                 }
             ]
         },
@@ -103914,6 +104001,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\RestError",
                 "Minn\\Rest\\Embed",
                 "Minn\\Runtime\\Registered",
@@ -103938,7 +104026,7 @@
                     "name": "add",
                     "static": true,
                     "visibility": "public",
-                    "signature": "add(array $item, string $type, WP_REST_Request $request): array",
+                    "signature": "add(array $item, string $type, Minn\\Objects\\RestRequest $request): array",
                     "doc": "The item with the type's registered fields added, answering the request. @param array<string, mixed> $item @return array<string, mixed>",
                     "shapes": [
                         "@param array<string, mixed> $item @return array<string, mixed>"
@@ -103960,21 +104048,21 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 50
+                    "line": 27,
+                    "end": 51
                 },
                 {
                     "routes": [],
                     "name": "update",
                     "static": true,
                     "visibility": "public",
-                    "signature": "update(object $object, string $type, WP_REST_Request $request): void",
+                    "signature": "update(object $object, string $type, Minn\\Objects\\RestRequest $request): void",
                     "doc": "Runs the update callbacks for the fields the request's body names; an error one returns is thrown as the write's answer.",
                     "shapes": [],
                     "params": [
@@ -103994,27 +104082,27 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 64
+                    "line": 54,
+                    "end": 65
                 },
                 {
                     "routes": [],
                     "name": "context",
                     "static": true,
                     "visibility": "public",
-                    "signature": "context(WP_REST_Request $request, string $type): string",
+                    "signature": "context(Minn\\Objects\\RestRequest $request, string $type): string",
                     "doc": "The context the item is answered in, set on the request as the\nreference's controllers set it: a write and a delete answer in edit\n(a term's delete in view); a read in the one asked for, or view.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -104027,8 +104115,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 87
+                    "line": 72,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -104056,8 +104144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -104078,15 +104166,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 100
+                    "line": 97,
+                    "end": 101
                 },
                 {
                     "routes": [],
                     "name": "wanted",
                     "static": true,
                     "visibility": "private",
-                    "signature": "wanted(WP_REST_Request $request): ?array",
+                    "signature": "wanted(Minn\\Objects\\RestRequest $request): ?array",
                     "doc": "The fields _fields names, or null when it names none. @return list<string>|null",
                     "shapes": [
                         "@return list<string>|null"
@@ -104094,14 +104182,14 @@
                     "params": [
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 110
+                    "line": 104,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -104129,8 +104217,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 117
+                    "line": 114,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -104149,8 +104237,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 126
+                    "line": 120,
+                    "end": 127
                 }
             ]
         },
@@ -104897,6 +104985,7 @@
                 "Minn\\Auth\\Can",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\RestError",
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\Schema",
@@ -104970,15 +105059,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 49
+                    "line": 37,
+                    "end": 50
                 },
                 {
                     "routes": [],
                     "name": "value",
                     "static": true,
                     "visibility": "public",
-                    "signature": "value(string $objectType, int $objectId, string $key, array $field, WP_REST_Request $request): mixed",
+                    "signature": "value(string $objectType, int $objectId, string $key, array $field, Minn\\Objects\\RestRequest $request): mixed",
                     "doc": "One field's value for an object: a single key's first stored value (its\ndefault when none), a multiple key's each one, prepared for the response.",
                     "shapes": [
                         "@param array<string, mixed> $field"
@@ -105014,27 +105103,27 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 65
+                    "line": 58,
+                    "end": 66
                 },
                 {
                     "routes": [],
                     "name": "writeFrom",
                     "static": true,
                     "visibility": "public",
-                    "signature": "writeFrom(WP_REST_Request $request, string $objectType, int $objectId, string $subtype): void",
+                    "signature": "writeFrom(Minn\\Objects\\RestRequest $request, string $objectType, int $objectId, string $subtype): void",
                     "doc": "Applies the meta a write request names, when it names any.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -105061,8 +105150,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 74
+                    "line": 69,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -105102,8 +105191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 83
+                    "line": 78,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -105145,8 +105234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 104
+                    "line": 87,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -105174,15 +105263,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 135
+                    "line": 115,
+                    "end": 136
                 },
                 {
                     "routes": [],
                     "name": "prepare",
                     "static": true,
                     "visibility": "public",
-                    "signature": "prepare(mixed $value, array $field, WP_REST_Request $request): mixed",
+                    "signature": "prepare(mixed $value, array $field, Minn\\Objects\\RestRequest $request): mixed",
                     "doc": "A value for the response: through the field's prepare callback, or checked against its schema (null when it does not fit) and cast. @param array<string, mixed> $field",
                     "shapes": [
                         "@param array<string, mixed> $field"
@@ -105204,14 +105293,14 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 148
+                    "line": 139,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -105267,8 +105356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 173
+                    "line": 164,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -105324,8 +105413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 182
+                    "line": 177,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -105367,8 +105456,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 228
+                    "line": 217,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -105424,8 +105513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 239
+                    "line": 232,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -105444,8 +105533,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 288
+                    "line": 280,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -105501,8 +105590,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 160
+                    "line": 152,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -105559,8 +105648,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 213
+                    "line": 192,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -105586,8 +105675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 245
+                    "line": 242,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -105613,8 +105702,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 251
+                    "line": 248,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -105633,8 +105722,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 257
+                    "line": 254,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -105655,20 +105744,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 276
+                    "line": 261,
+                    "end": 277
                 },
                 {
                     "routes": [],
                     "name": "request",
                     "static": true,
                     "visibility": "private",
-                    "signature": "request(): WP_REST_Request",
+                    "signature": "request(): Minn\\Objects\\RestRequest",
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 290,
-                    "end": 294
+                    "line": 291,
+                    "end": 295
                 }
             ]
         },
@@ -106839,6 +106928,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\RestResponse",
                 "Minn\\RestError",
                 "Minn\\Rest\\EngineRoutes",
                 "Minn\\Rest\\RuntimeRoutes",
@@ -106863,8 +106953,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 36,
-                "end": 38
+                "line": 37,
+                "end": 39
             },
             "cases": [],
             "constants": [
@@ -106932,8 +107022,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 73
+                    "line": 42,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -106966,15 +107056,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 85
+                    "line": 77,
+                    "end": 86
                 },
                 {
                     "routes": [],
                     "name": "run",
                     "static": true,
                     "visibility": "private",
-                    "signature": "run(Closure $invoke): WP_REST_Response|Minn\\Objects\\Errors",
+                    "signature": "run(Closure $invoke): Minn\\Objects\\RestResponse|Minn\\Objects\\Errors",
                     "doc": "The route's answer as the server's filters hand it on: a response object, or the error it refused with.",
                     "shapes": [],
                     "params": [
@@ -106986,8 +107076,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 95
+                    "line": 89,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -107013,8 +107103,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 107
+                    "line": 99,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -107042,8 +107132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 128
+                    "line": 117,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -107064,8 +107154,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 131,
-                    "end": 140
+                    "line": 132,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -107087,8 +107177,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 150,
+                    "end": 153
                 }
             ]
         },
@@ -107105,8 +107195,10 @@
             "uses": [
                 "Minn\\Json",
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -107146,27 +107238,27 @@
                     "name": "answering",
                     "static": true,
                     "visibility": "public",
-                    "signature": "answering(WP_REST_Request $request): void",
+                    "signature": "answering(Minn\\Objects\\RestRequest $request): void",
                     "doc": "Remembers the request a REST call is answering, for the filters its items pass through (on the request's own runtime).",
                     "shapes": [],
                     "params": [
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 28
+                    "line": 27,
+                    "end": 30
                 },
                 {
                     "routes": [],
                     "name": "during",
                     "static": true,
                     "visibility": "public",
-                    "signature": "during(WP_REST_Request $request, Closure $run): mixed",
+                    "signature": "during(Minn\\Objects\\RestRequest $request, Closure $run): mixed",
                     "doc": "Runs an in-process REST call answering its own request (the filters\nhand plugins that one), then puts back the request it interrupted.",
                     "shapes": [
                         "@param \\Closure(): T $run"
@@ -107174,7 +107266,7 @@
                     "params": [
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -107187,8 +107279,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 47
+                    "line": 40,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -107231,8 +107323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 64
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -107258,8 +107350,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 112
+                    "line": 104,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -107303,8 +107395,8 @@
                             "doc": "a post item's type, given its hooked blocks first (hookedBlocks())"
                         }
                     ],
-                    "line": 128,
-                    "end": 153
+                    "line": 130,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -107341,8 +107433,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 94
+                    "line": 80,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -107384,8 +107476,8 @@
                             "doc": "a navigation's root ignored list, filled in"
                         }
                     ],
-                    "line": 115,
-                    "end": 118
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -107404,8 +107496,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 165
+                    "line": 158,
+                    "end": 167
                 }
             ]
         },
@@ -107425,6 +107517,9 @@
                 "Minn\\Http\\Response",
                 "Minn\\Json",
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\RestRequest",
+                "Minn\\Objects\\RestResponse",
+                "Minn\\Objects\\RestServer",
                 "Minn\\RestError",
                 "Minn\\Rest\\Reply",
                 "Minn\\Runtime\\Handoff",
@@ -107520,8 +107615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 48
+                    "line": 44,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -107540,8 +107635,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 73
+                    "line": 59,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -107560,15 +107655,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 92
+                    "line": 79,
+                    "end": 95
                 },
                 {
                     "routes": [],
                     "name": "allowedMethods",
                     "static": true,
                     "visibility": "public",
-                    "signature": "allowedMethods(string $route, WP_REST_Request $wpRequest): array",
+                    "signature": "allowedMethods(string $route, Minn\\Objects\\RestRequest $wpRequest): array",
                     "doc": "The methods of a plugin's route whose handler lets this request through (a handler with no permission callback does). @return list<string>",
                     "shapes": [
                         "@return list<string>"
@@ -107583,14 +107678,14 @@
                         },
                         {
                             "name": "wpRequest",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 119
+                    "line": 112,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -107611,8 +107706,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 143
+                    "line": 134,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -107631,15 +107726,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 173
+                    "line": 149,
+                    "end": 176
                 },
                 {
                     "routes": [],
                     "name": "adopt",
                     "static": true,
                     "visibility": "public",
-                    "signature": "adopt(Minn\\Http\\Request $request, WP_REST_Request $wpRequest): void",
+                    "signature": "adopt(Minn\\Http\\Request $request, Minn\\Objects\\RestRequest $wpRequest): void",
                     "doc": "An in-process call's own request object stands for the engine's request: the server sets its route's parameters on it, as the reference's dispatch does.",
                     "shapes": [],
                     "params": [
@@ -107652,21 +107747,21 @@
                         },
                         {
                             "name": "wpRequest",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 189
+                    "line": 188,
+                    "end": 192
                 },
                 {
                     "routes": [],
                     "name": "sanitized",
                     "static": true,
                     "visibility": "public",
-                    "signature": "sanitized(Minn\\Http\\Request $request, array $registered): WP_REST_Request",
+                    "signature": "sanitized(Minn\\Http\\Request $request, array $registered): Minn\\Objects\\RestRequest",
                     "doc": "The request as the list's handler reads it: its parameters with their\ndefaults, sanitized by their schemas, as plugins' filters see it too.",
                     "shapes": [
                         "@param array<string, array<string, mixed>> $registered"
@@ -107687,15 +107782,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 205
+                    "line": 200,
+                    "end": 208
                 },
                 {
                     "routes": [],
                     "name": "wpRequest",
                     "static": true,
                     "visibility": "public",
-                    "signature": "wpRequest(Minn\\Http\\Request $request): WP_REST_Request",
+                    "signature": "wpRequest(Minn\\Http\\Request $request): Minn\\Objects\\RestRequest",
                     "doc": "The request as the runtime's server reads it, and as a REST filter or action hands it to plugins: the same object each time.",
                     "shapes": [],
                     "params": [
@@ -107707,8 +107802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 212
+                    "line": 211,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -107743,8 +107838,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 223
+                    "line": 222,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -107763,15 +107858,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 232
+                    "line": 229,
+                    "end": 235
                 },
                 {
                     "routes": [],
                     "name": "toWp",
                     "static": true,
                     "visibility": "public",
-                    "signature": "toWp(Minn\\Http\\Response $response): WP_REST_Response",
+                    "signature": "toWp(Minn\\Http\\Response $response): Minn\\Objects\\RestResponse",
                     "doc": "An engine answer as plugins handle one: its data decoded (an empty\nobject stays one), its links on the response rather than in the data,\nits status and headers.",
                     "shapes": [],
                     "params": [
@@ -107783,8 +107878,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 255
+                    "line": 242,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -107813,15 +107908,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 275
+                    "line": 267,
+                    "end": 278
                 },
                 {
                     "routes": [],
                     "name": "itemResponse",
                     "static": true,
                     "visibility": "public",
-                    "signature": "itemResponse(array $item): WP_REST_Response",
+                    "signature": "itemResponse(array $item): Minn\\Objects\\RestResponse",
                     "doc": "One item a response carries, as a response object: its data without\n_links, the links on the response.",
                     "shapes": [
                         "@param array<string, mixed> $item"
@@ -107835,8 +107930,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 290
+                    "line": 286,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -107855,8 +107950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 303
+                    "line": 296,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -107882,8 +107977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 368
+                    "line": 327,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -107909,15 +108004,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 375,
-                    "end": 378
+                    "line": 378,
+                    "end": 381
                 },
                 {
                     "routes": [],
                     "name": "ensure",
                     "static": true,
                     "visibility": "public",
-                    "signature": "ensure(mixed $result): WP_REST_Response",
+                    "signature": "ensure(mixed $result): Minn\\Objects\\RestResponse",
                     "doc": "A callback's return as a response object, an error converted.",
                     "shapes": [],
                     "params": [
@@ -107929,33 +108024,33 @@
                             "doc": ""
                         }
                     ],
-                    "line": 479,
-                    "end": 483
+                    "line": 482,
+                    "end": 486
                 },
                 {
                     "routes": [],
                     "name": "server",
                     "static": true,
                     "visibility": "public",
-                    "signature": "server(): WP_REST_Server",
+                    "signature": "server(): Minn\\Objects\\RestServer",
                     "doc": "The runtime's REST server, the one door to it (built, with rest_api_init, on first use).",
                     "shapes": [],
                     "params": [],
-                    "line": 487,
-                    "end": 490
+                    "line": 490,
+                    "end": 493
                 },
                 {
                     "routes": [],
                     "name": "allow",
                     "static": true,
                     "visibility": "private",
-                    "signature": "allow(WP_REST_Response $result, string $route, WP_REST_Request $wpRequest): void",
+                    "signature": "allow(Minn\\Objects\\RestResponse $result, string $route, Minn\\Objects\\RestRequest $wpRequest): void",
                     "doc": "The Allow header a plugin's route answers with, as the reference's\nrest_send_allow_header sets it: every method of the route whose\nhandler's permission callback lets this request through (a handler\nwith none counts). Left alone when the handler set one itself.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "result",
-                            "type": "WP_REST_Response",
+                            "type": "Minn\\Objects\\RestResponse",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -107969,14 +108064,14 @@
                         },
                         {
                             "name": "wpRequest",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 106
+                    "line": 103,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -107997,8 +108092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 315
+                    "line": 309,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -108017,8 +108112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 384
+                    "line": 384,
+                    "end": 387
                 },
                 {
                     "routes": [],
@@ -108044,15 +108139,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 403
+                    "line": 395,
+                    "end": 406
                 },
                 {
                     "routes": [],
                     "name": "look",
                     "static": true,
                     "visibility": "private",
-                    "signature": "look(WP_REST_Response $response): array",
+                    "signature": "look(Minn\\Objects\\RestResponse $response): array",
                     "doc": "What a response looks like to the code that may change it. @return array<int, mixed>",
                     "shapes": [
                         "@return array<int, mixed>"
@@ -108060,14 +108155,14 @@
                     "params": [
                         {
                             "name": "response",
-                            "type": "WP_REST_Response",
+                            "type": "Minn\\Objects\\RestResponse",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 406,
-                    "end": 409
+                    "line": 409,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -108100,8 +108195,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 415
+                    "line": 414,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -108120,8 +108215,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 418,
-                    "end": 428
+                    "line": 421,
+                    "end": 431
                 },
                 {
                     "routes": [],
@@ -108143,15 +108238,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 438,
-                    "end": 461
+                    "line": 441,
+                    "end": 464
                 },
                 {
                     "routes": [],
                     "name": "newWpRequest",
                     "static": true,
                     "visibility": "private",
-                    "signature": "newWpRequest(Minn\\Http\\Request $request): WP_REST_Request",
+                    "signature": "newWpRequest(Minn\\Http\\Request $request): Minn\\Objects\\RestRequest",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -108163,28 +108258,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 463,
-                    "end": 476
+                    "line": 466,
+                    "end": 479
                 },
                 {
                     "routes": [],
                     "name": "toResponse",
                     "static": true,
                     "visibility": "private",
-                    "signature": "toResponse(WP_REST_Response $response): Minn\\Http\\Response",
+                    "signature": "toResponse(Minn\\Objects\\RestResponse $response): Minn\\Http\\Response",
                     "doc": "",
                     "shapes": [],
                     "params": [
                         {
                             "name": "response",
-                            "type": "WP_REST_Response",
+                            "type": "Minn\\Objects\\RestResponse",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 492,
-                    "end": 500
+                    "line": 495,
+                    "end": 503
                 }
             ]
         },
@@ -113078,7 +113173,9 @@
             "doc": "The get_terms arguments a term list request makes, as the reference\nmakes them before rest_{taxonomy}_query (probe rest-term-lists): the\ntaxonomy, each declared parameter the request carries under its query\nname (include_slugs ordering as slug__in), the offset (the page's unless\nthe list takes one and it is given), the parent a hierarchical list\ntakes, and ids alone for a HEAD request.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Objects\\RestRequest"
+            ],
             "usedBy": [
                 "Minn\\Rest\\TermsController"
             ],
@@ -113099,7 +113196,7 @@
                     "name": "of",
                     "static": true,
                     "visibility": "public",
-                    "signature": "of(WP_REST_Request $wp, array $registered, string $taxonomy, string $method): array",
+                    "signature": "of(Minn\\Objects\\RestRequest $wp, array $registered, string $taxonomy, string $method): array",
                     "doc": "The arguments before plugins see them.",
                     "shapes": [
                         "@param array<string, mixed> $registered the collection, as rest_{taxonomy}_collection_params left it",
@@ -113108,7 +113205,7 @@
                     "params": [
                         {
                             "name": "wp",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -113135,8 +113232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 41
+                    "line": 27,
+                    "end": 43
                 }
             ]
         },
@@ -114229,7 +114326,9 @@
             "doc": "The WP_User_Query arguments a user list request makes, as the reference\nmakes them before rest_user_query (probe rest-user-lists): each declared\nparameter the request carries under its query name (a search wrapped in\nwildcards), the offset (the page's when none is given), the orderby name\nmapped to the query's, the published authors (every REST post type, for\na reader who may not list users), the authors shorthand, the search\ncolumns (a reader who may not list users searches names and logins\nonly), and ids alone for a HEAD request.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Objects\\RestRequest"
+            ],
             "usedBy": [
                 "Minn\\Rest\\UsersController"
             ],
@@ -114268,7 +114367,7 @@
                     "name": "of",
                     "static": true,
                     "visibility": "public",
-                    "signature": "of(WP_REST_Request $wp, array $registered, string $method, array $types, string $reader): array",
+                    "signature": "of(Minn\\Objects\\RestRequest $wp, array $registered, string $method, array $types, string $reader): array",
                     "doc": "The arguments before plugins see them, for a reader who is a 'lister'\n(may list users) or 'public'.",
                     "shapes": [
                         "@param array<string, mixed> $registered the collection, as rest_user_collection_params left it",
@@ -114278,7 +114377,7 @@
                     "params": [
                         {
                             "name": "wp",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -114312,8 +114411,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 62
+                    "line": 34,
+                    "end": 64
                 }
             ]
         },
@@ -114569,6 +114668,7 @@
                 "Minn\\Http\\Route",
                 "Minn\\Http\\Subject",
                 "Minn\\I18n\\TranslationFiles",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\Objects\\User",
                 "Minn\\Objects\\UsersQuery",
                 "Minn\\RestError",
@@ -114654,8 +114754,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 44
+                "line": 35,
+                "end": 45
             },
             "cases": [],
             "constants": [],
@@ -114753,8 +114853,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 56
+                    "line": 49,
+                    "end": 57
                 },
                 {
                     "routes": [
@@ -114777,8 +114877,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 65
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [
@@ -114799,8 +114899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 72
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [
@@ -114821,8 +114921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 104
+                    "line": 82,
+                    "end": 105
                 },
                 {
                     "routes": [
@@ -114850,8 +114950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 168
+                    "line": 149,
+                    "end": 169
                 },
                 {
                     "routes": [
@@ -114872,8 +114972,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 271
+                    "line": 223,
+                    "end": 272
                 },
                 {
                     "routes": [
@@ -114903,8 +115003,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 344
+                    "line": 278,
+                    "end": 345
                 },
                 {
                     "routes": [
@@ -114932,21 +115032,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 394
+                    "line": 349,
+                    "end": 395
                 },
                 {
                     "routes": [],
                     "name": "listAllowed",
                     "static": false,
                     "visibility": "private",
-                    "signature": "listAllowed(WP_REST_Request $wp, Minn\\Rest\\Context $context): void",
+                    "signature": "listAllowed(Minn\\Objects\\RestRequest $wp, Minn\\Rest\\Context $context): void",
                     "doc": "What a reader who may not list users may not ask the list for: the\nedit context, an email or registration order, roles, capabilities;\nthe authors shorthand is for those who may edit posts.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "wp",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -114959,8 +115059,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 126
+                    "line": 112,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -114989,8 +115089,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 144
+                    "line": 136,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -115009,8 +115109,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 176
+                    "line": 171,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -115029,8 +115129,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 185
+                    "line": 180,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -115051,8 +115151,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 203
+                    "line": 195,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -115071,8 +115171,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 213
+                    "line": 207,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -115091,8 +115191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 218
+                    "line": 216,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -115111,8 +115211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 401,
-                    "end": 409
+                    "line": 402,
+                    "end": 410
                 }
             ]
         },
@@ -116765,6 +116865,7 @@
             "uses": [
                 "Minn\\Auth\\ApplicationPasswords",
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Slashes"
             ],
@@ -116781,7 +116882,7 @@
                     "name": "create",
                     "static": true,
                     "visibility": "public",
-                    "signature": "create(int $userId, array $body, WP_REST_Request $request): Minn\\Objects\\Errors|array",
+                    "signature": "create(int $userId, array $body, Minn\\Objects\\RestRequest $request): Minn\\Objects\\Errors|array",
                     "doc": "A new password: its record and its plain text in groups of four, or\nthe reference's refusal.",
                     "shapes": [
                         "@param array<string, mixed> $body",
@@ -116804,21 +116905,21 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 39
+                    "line": 29,
+                    "end": 40
                 },
                 {
                     "routes": [],
                     "name": "update",
                     "static": true,
                     "visibility": "public",
-                    "signature": "update(int $userId, string $uuid, array $body, WP_REST_Request $request): Minn\\Objects\\Errors|array",
+                    "signature": "update(int $userId, string $uuid, array $body, Minn\\Objects\\RestRequest $request): Minn\\Objects\\Errors|array",
                     "doc": "A password renamed (when the body names it): its record as it stands.",
                     "shapes": [
                         "@param array<string, mixed> $body",
@@ -116848,21 +116949,21 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 57
+                    "line": 48,
+                    "end": 58
                 },
                 {
                     "routes": [],
                     "name": "prepared",
                     "static": true,
                     "visibility": "private",
-                    "signature": "prepared(array $fields, WP_REST_Request $request): object",
+                    "signature": "prepared(array $fields, Minn\\Objects\\RestRequest $request): object",
                     "doc": "The item the request prepares (its name; a new one's app id), through rest_pre_insert_application_password. @param array<string, mixed> $fields",
                     "shapes": [
                         "@param array<string, mixed> $fields"
@@ -116877,14 +116978,14 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 61,
+                    "end": 64
                 }
             ]
         },
@@ -119167,6 +119268,7 @@
                 "Minn\\Content\\Comments",
                 "Minn\\Http\\Request",
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\RestError",
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RestMeta",
@@ -119194,8 +119296,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 30
+                "line": 29,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -119220,8 +119322,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 33,
-                    "end": 36
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -119254,8 +119356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 44
+                    "line": 40,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -119283,8 +119385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 83
+                    "line": 58,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -119326,8 +119428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 110
+                    "line": 94,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -119353,8 +119455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 132
+                    "line": 119,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -119375,8 +119477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 198
+                    "line": 188,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -119411,8 +119513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 231
+                    "line": 208,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -119431,8 +119533,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 244
+                    "line": 235,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -119451,8 +119553,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 255
+                    "line": 248,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -119485,8 +119587,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 269
+                    "line": 259,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -119521,15 +119623,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 278
+                    "line": 273,
+                    "end": 279
                 },
                 {
                     "routes": [],
                     "name": "preprocessed",
                     "static": true,
                     "visibility": "private",
-                    "signature": "preprocessed(array $prepared, WP_REST_Request $request): array",
+                    "signature": "preprocessed(array $prepared, Minn\\Objects\\RestRequest $request): array",
                     "doc": "rest_preprocess_comment over the prepared comment.",
                     "shapes": [
                         "@param array<string, mixed> $prepared",
@@ -119545,14 +119647,14 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 147
+                    "line": 141,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -119573,8 +119675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 162
+                    "line": 156,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -119602,8 +119704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 168
+                    "line": 166,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -119624,8 +119726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 177
+                    "line": 172,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -119644,8 +119746,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 184
+                    "line": 181,
+                    "end": 185
                 }
             ]
         },
@@ -122634,7 +122736,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 231,
+            "lines": 257,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -122644,6 +122746,8 @@
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\Query",
+                "Minn\\Objects\\RestRequest",
+                "Minn\\Objects\\RestResponse",
                 "Minn\\Objects\\Term",
                 "Minn\\Objects\\TermsQuery",
                 "Minn\\Objects\\User",
@@ -122665,13 +122769,17 @@
                 "Minn\\Mail\\Mailer",
                 "Minn\\Ops\\DirectoryApi",
                 "Minn\\Ops\\UpgraderRun",
+                "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenuItemObject",
+                "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RestMeta",
+                "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\UserObject",
@@ -122706,6 +122814,7 @@
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\ThemeSupports",
@@ -122737,7 +122846,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "bind(array $answers): void",
-                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery.",
+                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,\nand the REST ones newRestRequest, restRequestFromUrl, newRestResponse,\nrestController.",
                     "shapes": [
                         "@param array<string, Closure> $answers"
                     ],
@@ -122750,8 +122859,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 49
+                    "line": 50,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -122762,8 +122871,8 @@
                     "doc": "The user the request is (wp_get_current_user).",
                     "shapes": [],
                     "params": [],
-                    "line": 52,
-                    "end": 55
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -122774,8 +122883,8 @@
                     "doc": "Whether someone is signed in (is_user_logged_in).",
                     "shapes": [],
                     "params": [],
-                    "line": 58,
-                    "end": 61
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -122794,8 +122903,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 67
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -122821,8 +122930,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 73
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -122841,8 +122950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 79
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -122861,8 +122970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 85
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -122888,8 +122997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 91
+                    "line": 92,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -122915,8 +123024,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 97
+                    "line": 98,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -122935,8 +123044,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 103
+                    "line": 104,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -122955,8 +123064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 109
+                    "line": 110,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -122975,8 +123084,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 115
+                    "line": 116,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -122995,8 +123104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 122,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -123015,8 +123124,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 127
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -123035,8 +123144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 133
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -123055,8 +123164,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 139
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -123075,8 +123184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 145
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -123095,8 +123204,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 151
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -123136,8 +123245,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 158
+                    "line": 158,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -123156,8 +123265,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 164
+                    "line": 165,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -123176,8 +123285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 170
+                    "line": 171,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -123196,8 +123305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 176
+                    "line": 177,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -123216,8 +123325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 182
+                    "line": 183,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -123236,8 +123345,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 188
+                    "line": 189,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -123256,8 +123365,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 194
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -123276,8 +123385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 200
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -123296,8 +123405,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 206
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -123316,8 +123425,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 212
+                    "line": 213,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -123336,8 +123445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 218
+                    "line": 219,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -123356,8 +123465,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 224
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -123376,8 +123485,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 230
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -123396,8 +123505,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 236
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -123416,8 +123525,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 242
+                    "line": 243,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -123436,8 +123545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 248
+                    "line": 249,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -123456,8 +123565,95 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 254
+                    "line": 255,
+                    "end": 258
+                },
+                {
+                    "routes": [],
+                    "name": "newRestRequest",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newRestRequest(mixed ...$args): Minn\\Objects\\RestRequest",
+                    "doc": "A REST request for a method and route (new WP_REST_Request).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 261,
+                    "end": 264
+                },
+                {
+                    "routes": [],
+                    "name": "restRequestFromUrl",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "restRequestFromUrl(mixed $url): mixed",
+                    "doc": "A REST request for an address on this site's API, or false (WP_REST_Request::from_url).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 267,
+                    "end": 270
+                },
+                {
+                    "routes": [],
+                    "name": "newRestResponse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newRestResponse(mixed ...$args): Minn\\Objects\\RestResponse",
+                    "doc": "A REST response with data, a status and headers (new WP_REST_Response).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 273,
+                    "end": 276
+                },
+                {
+                    "routes": [],
+                    "name": "restController",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "restController(string $kind, mixed ...$args): object",
+                    "doc": "One of the REST controllers a filter is handed, by kind: menus, menu-items or menu-locations.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 279,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -123483,8 +123679,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 260
+                    "line": 284,
+                    "end": 288
                 }
             ]
         },
@@ -143078,6 +143274,7 @@
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
@@ -145567,6 +145764,7 @@
             "uses": [
                 "Minn\\Json",
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime"
@@ -145634,8 +145832,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 42,
-                    "end": 45
+                    "line": 43,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -145663,8 +145861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 66
+                    "line": 49,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -145683,8 +145881,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 78
+                    "line": 70,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -145695,8 +145893,8 @@
                     "doc": "_add_default_theme_supports: what every block theme supports before its own setup.",
                     "shapes": [],
                     "params": [],
-                    "line": 81,
-                    "end": 89
+                    "line": 82,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -145715,8 +145913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 99
+                    "line": 93,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -145727,8 +145925,8 @@
                     "doc": "_custom_header_background_just_in_time: the header's and background's defaults filled in once loaded.",
                     "shapes": [],
                     "params": [],
-                    "line": 102,
-                    "end": 125
+                    "line": 103,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -145754,8 +145952,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 154
+                    "line": 129,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -145768,15 +145966,15 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 157,
-                    "end": 162
+                    "line": 158,
+                    "end": 163
                 },
                 {
                     "routes": [],
                     "name": "forRest",
                     "static": true,
                     "visibility": "public",
-                    "signature": "forRest(WP_REST_Request $request): array",
+                    "signature": "forRest(Minn\\Objects\\RestRequest $request): array",
                     "doc": "The active theme's supports as wp/v2/themes shows them: each feature shown in REST, shaped by its schema. @return array<string, mixed>",
                     "shapes": [
                         "@return array<string, mixed>"
@@ -145784,21 +145982,21 @@
                     "params": [
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 182
+                    "line": 166,
+                    "end": 183
                 },
                 {
                     "routes": [],
                     "name": "prepared",
                     "static": true,
                     "visibility": "public",
-                    "signature": "prepared(mixed $support, array $config, string $feature, WP_REST_Request $request): mixed",
+                    "signature": "prepared(mixed $support, array $config, string $feature, Minn\\Objects\\RestRequest $request): mixed",
                     "doc": "One feature's support as the REST API shows it (the runtime's\nWP_REST_Themes_Controller::prepare_theme_support): a feature that is\nnot variadic shown by its first value, through its prepare_callback\nor else cut to its schema.",
                     "shapes": [
                         "@param array<string, mixed> $config the feature as it was registered"
@@ -145827,14 +146025,14 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 200
+                    "line": 193,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -145862,8 +146060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 206
+                    "line": 204,
+                    "end": 207
                 }
             ]
         },
@@ -147325,6 +147523,7 @@
             "uses": [
                 "Minn\\Http\\Request",
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\RestRequest",
                 "Minn\\RestError",
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RestMeta",
@@ -147349,8 +147548,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 27,
-                    "end": 30
+                    "line": 28,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -147393,8 +147592,8 @@
                             "doc": "the engine's own write"
                         }
                     ],
-                    "line": 40,
-                    "end": 60
+                    "line": 41,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -147444,8 +147643,8 @@
                             "doc": "the engine's own write"
                         }
                     ],
-                    "line": 69,
-                    "end": 88
+                    "line": 70,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -147495,15 +147694,15 @@
                             "doc": "the engine's own delete"
                         }
                     ],
-                    "line": 97,
-                    "end": 106
+                    "line": 98,
+                    "end": 107
                 },
                 {
                     "routes": [],
                     "name": "prepared",
                     "static": true,
                     "visibility": "private",
-                    "signature": "prepared(array $userdata, WP_REST_Request $request): array",
+                    "signature": "prepared(array $userdata, Minn\\Objects\\RestRequest $request): array",
                     "doc": "rest_pre_insert_user over the prepared user (the request's fields), as\nthe reference runs it before the save; what the filter changes is\nsaved, an error refuses.",
                     "shapes": [
                         "@param array<string, mixed> $userdata",
@@ -147519,14 +147718,14 @@
                         },
                         {
                             "name": "request",
-                            "type": "WP_REST_Request",
+                            "type": "Minn\\Objects\\RestRequest",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 124
+                    "line": 117,
+                    "end": 125
                 }
             ]
         },

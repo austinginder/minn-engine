@@ -9,6 +9,9 @@
 | [`Errors`](#errors) | interface | 3 | A list of errors as the WordPress layer hands it to plugins (WP_Error): |
 | [`Post`](#post) | interface | 3 | A post as the WordPress layer hands it to plugins (WP_Post). The engine |
 | [`Query`](#query) | interface | 3 | A posts query as the WordPress layer hands it to plugins (WP_Query): its |
+| [`RestRequest`](#restrequest) | interface | 3 | A REST request as the WordPress layer hands it to plugins |
+| [`RestResponse`](#restresponse) | interface | 3 | A REST response as the WordPress layer hands it to plugins |
+| [`RestServer`](#restserver) | interface | 3 | The REST server as the WordPress layer hands it to plugins |
 | [`Term`](#term) | interface | 3 | A term as the WordPress layer hands it to plugins (WP_Term). The engine |
 | [`TermsQuery`](#termsquery) | interface | 3 | A terms query as the WordPress layer hands it to plugins (WP_Term_Query). |
 | [`User`](#user) | interface | 3 | A user as the WordPress layer hands it to plugins (WP_User). The engine |
@@ -70,6 +73,42 @@ mark and makes them through Runtime\Handoff, so it never names the
 WordPress layer's class.
 
 Used by: `Minn\Front\FeedTags`, `Minn\Front\Renderer`, `Minn\Rest\PostsController`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\Handoff`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\QueryClasses`
+
+
+## RestRequest
+
+`interface Minn\Objects\RestRequest` · `public/minn/src/Minn/Objects/RestRequest.php`
+
+A REST request as the WordPress layer hands it to plugins
+(WP_REST_Request): its route, method, parameters, headers and body. The
+engine knows these objects by this mark and makes them through
+Runtime\Handoff, so it never names the WordPress layer's class.
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\CommentListArgs`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\PostListArgs`, `Minn\Rest\RegisteredFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\TermListArgs`, `Minn\Rest\UserListArgs`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Handoff`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`
+
+
+## RestResponse
+
+`interface Minn\Objects\RestResponse` · `public/minn/src/Minn/Objects/RestResponse.php`
+
+A REST response as the WordPress layer hands it to plugins
+(WP_REST_Response): its data, status, headers and links. The engine knows
+these objects by this mark and makes them through Runtime\Handoff, so it
+never names the WordPress layer's class.
+
+Used by: `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimeRoutes`, `Minn\Runtime\Handoff`
+
+
+## RestServer
+
+`interface Minn\Objects\RestServer` · `public/minn/src/Minn/Objects/RestServer.php`
+
+The REST server as the WordPress layer hands it to plugins
+(WP_REST_Server). The engine knows these objects by this mark and makes
+them through Runtime\Handoff, so it never names the WordPress layer's
+class.
+
+Used by: `Minn\Rest\RuntimeRoutes`
 
 
 ## Term

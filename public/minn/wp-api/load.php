@@ -760,3 +760,15 @@ Minn\Runtime\Handoff::bind([
     'newMetaQuery' => static fn (...$args) => new WP_Meta_Query(...$args),
     'newDateQuery' => static fn (...$args) => new WP_Date_Query(...$args),
 ]);
+
+// REST requests, responses and the controllers a filter is handed, made through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind([
+    'newRestRequest' => static fn (...$args) => new WP_REST_Request(...$args),
+    'restRequestFromUrl' => static fn ($url) => WP_REST_Request::from_url($url),
+    'newRestResponse' => static fn (...$args) => new WP_REST_Response(...$args),
+    'restController' => static fn (string $kind, ...$args) => match ($kind) {
+        'menus' => new WP_REST_Menus_Controller(...$args),
+        'menu-items' => new WP_REST_Menu_Items_Controller(...$args),
+        'menu-locations' => new WP_REST_Menu_Locations_Controller(...$args),
+    },
+]);

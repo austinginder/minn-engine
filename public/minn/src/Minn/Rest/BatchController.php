@@ -15,6 +15,7 @@ use Minn\Http\Router;
 use Minn\Json;
 use Minn\Objects\Errors;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Records;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
@@ -93,7 +94,7 @@ final readonly class BatchController
         if ($engine !== []) {
             return $this->batchablePath($sub->path) ? null : self::error(new RestError('rest_batch_not_allowed', 'The requested route does not support batch requests.', 400), $this->router->allowed($sub));
         }
-        $wpRequest = new \WP_REST_Request($sub->method->value, $sub->path);
+        $wpRequest = Handoff::newRestRequest($sub->method->value, $sub->path);
         $matched = RuntimeRoutes::server()->match_request_to_handler($wpRequest);
         if ($matched instanceof Errors) {
             return self::error(RestError::noRoute(), []);

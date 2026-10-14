@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Auth\ApplicationPasswords;
 use Minn\Objects\Errors;
+use Minn\Objects\RestRequest;
 use Minn\Support\Slashes;
 
 /**
@@ -25,7 +26,7 @@ final class ApplicationPasswordEvents
      * @param array<string, mixed> $body
      * @return array{0: array<string, mixed>, 1: string}|Errors
      */
-    public static function create(int $userId, array $body, \WP_REST_Request $request): array|Errors
+    public static function create(int $userId, array $body, RestRequest $request): array|Errors
     {
         $fields = array_intersect_key($body, ['name' => true]) + (empty($body['app_id']) ? [] : ['app_id' => $body['app_id']]);
         $prepared = self::prepared($fields, $request);
@@ -44,7 +45,7 @@ final class ApplicationPasswordEvents
      * @param array<string, mixed> $body
      * @return array<string, mixed>|Errors
      */
-    public static function update(int $userId, string $uuid, array $body, \WP_REST_Request $request): array|Errors
+    public static function update(int $userId, string $uuid, array $body, RestRequest $request): array|Errors
     {
         $prepared = self::prepared(array_intersect_key($body, ['name' => true]), $request);
         $updated = \WP_Application_Passwords::update_application_password($userId, $uuid, Slashes::add((array) $prepared));
@@ -57,7 +58,7 @@ final class ApplicationPasswordEvents
     }
 
     /** The item the request prepares (its name; a new one's app id), through rest_pre_insert_application_password. @param array<string, mixed> $fields */
-    private static function prepared(array $fields, \WP_REST_Request $request): object
+    private static function prepared(array $fields, RestRequest $request): object
     {
         return (object) Runtime::hooks()->filter('rest_pre_insert_application_password', [(object) $fields, $request]);
     }

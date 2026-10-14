@@ -11,7 +11,9 @@ use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Objects\RestRequest;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\ThemeSupports;
 use Minn\Support\Lists;
@@ -77,7 +79,7 @@ final readonly class InstalledThemesController
     private function item(\WP_Theme $theme): array
     {
         $stylesheet = $theme->get_stylesheet();
-        return RuntimePrepare::item('rest_prepare_theme', $this->fields($theme, Runtime::current()->get('rest_prepare_request') ?? new \WP_REST_Request('GET', '/wp/v2/themes')), static fn () => \wp_get_theme($stylesheet));
+        return RuntimePrepare::item('rest_prepare_theme', $this->fields($theme, Runtime::current()->get('rest_prepare_request') ?? Handoff::newRestRequest('GET', '/wp/v2/themes')), static fn () => \wp_get_theme($stylesheet));
     }
 
     /**
@@ -87,7 +89,7 @@ final readonly class InstalledThemesController
      *
      * @return array<string, mixed>
      */
-    public function fields(\WP_Theme $theme, \WP_REST_Request $request): array
+    public function fields(\WP_Theme $theme, RestRequest $request): array
     {
         $stylesheet = $theme->get_stylesheet();
         $active = self::status($stylesheet) === 'active';

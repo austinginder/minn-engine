@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\RestRequest;
+
 /**
  * The WP_Comment_Query arguments a comment list request makes, as the
  * reference makes them before rest_comment_query (probe
@@ -25,7 +27,7 @@ final class CommentListArgs
      * @param array<string, mixed> $registered
      * @return array<string, mixed>
      */
-    public static function of(\WP_REST_Request $wp, array $registered, string $method): array
+    public static function of(RestRequest $wp, array $registered, string $method): array
     {
         $args = [];
         $given = static fn (string $param): bool => isset($registered[$param], $wp[$param]);

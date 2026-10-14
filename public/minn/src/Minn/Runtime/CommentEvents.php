@@ -8,6 +8,7 @@ use Minn\Content\CommentRecord;
 use Minn\Content\Comments;
 use Minn\Http\Request;
 use Minn\Objects\Errors;
+use Minn\Objects\RestRequest;
 use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
@@ -137,7 +138,7 @@ final readonly class CommentEvents
      * @param array<string, mixed> $prepared
      * @return array<string, mixed>
      */
-    private static function preprocessed(array $prepared, \WP_REST_Request $request): array
+    private static function preprocessed(array $prepared, RestRequest $request): array
     {
         $prepared = Runtime::hooks()->filter('rest_preprocess_comment', [$prepared, $request]);
         if ($prepared instanceof Errors) {
@@ -273,7 +274,7 @@ final readonly class CommentEvents
     {
         if ($this->live()) {
             $fields = array_map(static fn ($value) => is_int($value) || is_float($value) ? (string) $value : $value, $comment->row());
-            Runtime::hooks()->action('rest_delete_comment', [Handoff::newComment((object) $fields), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
+            Runtime::hooks()->action('rest_delete_comment', [Handoff::newComment((object) $fields), Handoff::newRestResponse($data, 200), RuntimeRoutes::wpRequest($request)]);
         }
     }
 }

@@ -23,7 +23,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Login`](login.md) | 5 | /wp-login.php and the sign-in surface |
 | [`Minn\Mail`](mail.md) | 24 | sending mail and the notices the engine sends |
 | [`Minn\Media`](media.md) | 14 | uploads, image sizes and attachment metadata |
-| [`Minn\Objects`](objects.md) | 9 |  |
+| [`Minn\Objects`](objects.md) | 12 |  |
 | [`Minn\Ops`](ops.md) | 18 |  |
 | [`Minn\Query`](query.md) | 10 | shared SQL fragments |
 | [`Minn\Rest`](rest.md) | 85 | the wp/v2 surface: shapes and controllers |

@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Json;
 use Minn\Objects\Errors;
+use Minn\Objects\RestRequest;
 
 /**
  * What a theme supports, as add_theme_support keeps it (probe rest-themes):
@@ -162,7 +163,7 @@ final class ThemeSupports
     }
 
     /** The active theme's supports as wp/v2/themes shows them: each feature shown in REST, shaped by its schema. @return array<string, mixed> */
-    public static function forRest(\WP_REST_Request $request): array
+    public static function forRest(RestRequest $request): array
     {
         $out = [];
         foreach (self::features() as $feature => $config) {
@@ -189,7 +190,7 @@ final class ThemeSupports
      *
      * @param array<string, mixed> $config the feature as it was registered
      */
-    public static function prepared(mixed $support, array $config, string $feature, \WP_REST_Request $request): mixed
+    public static function prepared(mixed $support, array $config, string $feature, RestRequest $request): mixed
     {
         $rest = (array) ($config['show_in_rest'] ?? []);
         $support = self::unwrapped($support, $config);

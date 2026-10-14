@@ -118,7 +118,7 @@ final readonly class TermEvents
         }
         $term = Records::term($termId, $taxonomy);
         \wp_delete_term($termId, $taxonomy);
-        Runtime::hooks()->action("rest_delete_{$taxonomy}", [$term, new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
+        Runtime::hooks()->action("rest_delete_{$taxonomy}", [$term, Handoff::newRestResponse($data, 200), RuntimeRoutes::wpRequest($request)]);
     }
 
     /** rest_insert_{taxonomy}, then rest_after_insert_{taxonomy}, with the term as it stands and the request. */

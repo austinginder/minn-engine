@@ -18,7 +18,7 @@ use Minn\Runtime\Runtime;
  * does not hold are answered by the engine's own REST layer.
  */
 #[AllowDynamicProperties]
-class WP_REST_Server
+class WP_REST_Server implements \Minn\Objects\RestServer
 {
     const READABLE = 'GET';
     const CREATABLE = 'POST';

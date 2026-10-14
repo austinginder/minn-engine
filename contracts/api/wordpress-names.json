@@ -4,9 +4,9 @@
         "functionCalls": 386,
         "functions": 236,
         "hookApi": 0,
-        "classReferences": 223,
-        "classes": 39,
-        "files": 127
+        "classReferences": 155,
+        "classes": 33,
+        "files": 121
     },
     "families": {
         "functions": {
@@ -61,11 +61,9 @@
             "wp-includes/vars.php": 1
         },
         "classes": {
-            "wp-includes/rest-api/class-wp-rest-request.php": 47,
             "wp-includes/class-wp-widget.php": 27,
             "wp-includes/class-wp-admin-bar.php": 16,
             "wp-includes/class-wp-rewrite.php": 16,
-            "wp-includes/rest-api/class-wp-rest-response.php": 14,
             "wp-includes/class-wp-post-type.php": 13,
             "wp-admin/includes/class-wp-upgrader.php": 13,
             "wp-includes/class-wp-block-type.php": 8,
@@ -82,9 +80,6 @@
             "wp-includes/class-wp.php": 2,
             "wp-includes/class-wp-block-patterns-registry.php": 2,
             "wp-includes/class-wp-locale.php": 2,
-            "wp-includes/rest-api/endpoints/class-wp-rest-menu-items-controller.php": 2,
-            "wp-includes/rest-api/endpoints/class-wp-rest-menu-locations-controller.php": 2,
-            "wp-includes/rest-api/endpoints/class-wp-rest-menus-controller.php": 2,
             "wp-includes/sitemaps/class-wp-sitemaps.php": 2,
             "wp-includes/class-wp-theme-json-resolver.php": 2,
             "wp-includes/class-wp-dependency.php": 2,
@@ -95,7 +90,6 @@
             "wp-includes/class-wp-block-styles-registry.php": 1,
             "wp-includes/class-wp-block-template.php": 1,
             "wp-includes/html-api/class-wp-html-tag-processor.php": 1,
-            "wp-includes/rest-api/class-wp-rest-server.php": 1,
             "wp-includes/sitemaps/class-wp-sitemaps-provider.php": 1,
             "wp-includes/sitemaps/class-wp-sitemaps-stylesheet.php": 1,
             "wp-includes/class-wp-textdomain-registry.php": 1,
@@ -1826,29 +1820,6 @@
         }
     },
     "classes": {
-        "WP_REST_Request": {
-            "uses": 47,
-            "family": "wp-includes/rest-api/class-wp-rest-request.php",
-            "files": {
-                "Minn/Rest/Api.php": 5,
-                "Minn/Rest/BatchController.php": 1,
-                "Minn/Rest/CommentListArgs.php": 1,
-                "Minn/Rest/CommentsController.php": 1,
-                "Minn/Rest/InstalledThemesController.php": 2,
-                "Minn/Rest/PostListArgs.php": 4,
-                "Minn/Rest/RegisteredFields.php": 4,
-                "Minn/Rest/RestMeta.php": 6,
-                "Minn/Rest/RuntimePrepare.php": 4,
-                "Minn/Rest/RuntimeRoutes.php": 9,
-                "Minn/Rest/TermListArgs.php": 1,
-                "Minn/Rest/UserListArgs.php": 1,
-                "Minn/Rest/UsersController.php": 1,
-                "Minn/Runtime/ApplicationPasswordEvents.php": 3,
-                "Minn/Runtime/CommentEvents.php": 1,
-                "Minn/Runtime/ThemeSupports.php": 2,
-                "Minn/Runtime/UserEvents.php": 1
-            }
-        },
         "WP_Widget": {
             "uses": 27,
             "family": "wp-includes/class-wp-widget.php",
@@ -1874,19 +1845,6 @@
                 "Minn/Runtime/ArchiveLinks.php": 1,
                 "Minn/Runtime/CommentPages.php": 1,
                 "Minn/Runtime/RewriteRules.php": 13
-            }
-        },
-        "WP_REST_Response": {
-            "uses": 14,
-            "family": "wp-includes/rest-api/class-wp-rest-response.php",
-            "files": {
-                "Minn/Rest/RuntimeEnvelope.php": 1,
-                "Minn/Rest/RuntimeRoutes.php": 8,
-                "Minn/Runtime/CommentEvents.php": 1,
-                "Minn/Runtime/MenuEvents.php": 1,
-                "Minn/Runtime/PostEvents.php": 1,
-                "Minn/Runtime/TermEvents.php": 1,
-                "Minn/Runtime/UserEvents.php": 1
             }
         },
         "WP_Post_Type": {
@@ -2020,27 +1978,6 @@
                 "Minn/Runtime/Runtime.php": 1
             }
         },
-        "WP_REST_Menu_Items_Controller": {
-            "uses": 2,
-            "family": "wp-includes/rest-api/endpoints/class-wp-rest-menu-items-controller.php",
-            "files": {
-                "Minn/Rest/MenusController.php": 2
-            }
-        },
-        "WP_REST_Menu_Locations_Controller": {
-            "uses": 2,
-            "family": "wp-includes/rest-api/endpoints/class-wp-rest-menu-locations-controller.php",
-            "files": {
-                "Minn/Rest/MenusController.php": 2
-            }
-        },
-        "WP_REST_Menus_Controller": {
-            "uses": 2,
-            "family": "wp-includes/rest-api/endpoints/class-wp-rest-menus-controller.php",
-            "files": {
-                "Minn/Rest/MenusController.php": 2
-            }
-        },
         "WP_Sitemaps": {
             "uses": 2,
             "family": "wp-includes/sitemaps/class-wp-sitemaps.php",
@@ -2109,13 +2046,6 @@
             "family": "wp-includes/html-api/class-wp-html-tag-processor.php",
             "files": {
                 "Minn/Blocks/Bindings.php": 1
-            }
-        },
-        "WP_REST_Server": {
-            "uses": 1,
-            "family": "wp-includes/rest-api/class-wp-rest-server.php",
-            "files": {
-                "Minn/Rest/RuntimeRoutes.php": 1
             }
         },
         "WP_Sitemaps_Provider": {

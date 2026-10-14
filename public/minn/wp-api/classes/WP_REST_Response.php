@@ -1,7 +1,7 @@
 <?php
 
 /** The response object a route callback returns. */
-class WP_REST_Response extends WP_HTTP_Response
+class WP_REST_Response extends WP_HTTP_Response implements \Minn\Objects\RestResponse
 {
     protected $links = [];
     protected $matched_route = '';
