@@ -3951,6 +3951,125 @@
                 "body": "59178a8a55ba"
             }
         },
+        "classes/WP_Plugin_Dependencies.php": {
+            "WP_Plugin_Dependencies::check_for_circular_dependencies": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "walks a dependent's dependencies, pairing self-requirements and recursing off the path; the loop-finding algorithm",
+                "body": "e16ea8029a5e"
+            },
+            "WP_Plugin_Dependencies::check_plugin_dependencies_during_ajax": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "the install screen's AJAX check: nonce, the posted slug, its unmet dependencies and the JSON answer; the unmet lookup moves, the $_POST read and wp_send_json stay as the wrapper",
+                "doubt": "answers errorCode unmet_dependencies listing slugs; as I recall the reference answers inactive_dependencies with the dependencies' names, singular or plural wording and errorData",
+                "body": "4d170ba2ba30"
+            },
+            "WP_Plugin_Dependencies::convert_to_slug": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "a plugin file's slug: its folder, or its file name without .php, hello.php being hello-dolly; the slug rule the graph keys on",
+                "body": "33dc82f18057"
+            },
+            "WP_Plugin_Dependencies::display_admin_notice_for_circular_dependencies": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "builds the list of looping pairs, each once, named from headers, into the warning markup; markup by rules over the graph",
+                "doubt": "the notice text is not translated",
+                "body": "e952db24c741"
+            },
+            "WP_Plugin_Dependencies::display_admin_notice_for_unmet_dependencies": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "decides whether any dependent has unmet requirements and builds the warning with a Manage plugins link off the plugins screen; the decision is engine behaviour, wp_admin_notice the wrapper",
+                "doubt": "the message is not translated, and the reference's multisite wording (network link or contact your network administrator) and plugin-dependencies notice class are missing",
+                "body": "36299df7a39f"
+            },
+            "WP_Plugin_Dependencies::get_circular_dependencies": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "collects every dependency loop pair across the plugins, cached statically",
+                "body": "6aa9732861de"
+            },
+            "WP_Plugin_Dependencies::get_dependency_api_data": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "on admin screens, asks plugins_api about dependencies that are not installed and keeps the answers in a site transient for a day; stored data and a remote query",
+                "doubt": "only missing dependencies are asked about; the reference also keeps API data for installed dependencies (with a Name key) and times each slug out separately",
+                "body": "60ac1dc676d5"
+            },
+            "WP_Plugin_Dependencies::get_dependency_filepaths": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "maps each dependency slug to its installed plugin file or false, cached statically",
+                "body": "ceb80f26bc23"
+            },
+            "WP_Plugin_Dependencies::get_dependency_names": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "each required slug named from the installed plugin's header, the plugins API data, or the slug",
+                "doubt": "an installed dependency is named from its header first; as I know the reference, the API data's name is preferred when present",
+                "body": "7597e827d503"
+            },
+            "WP_Plugin_Dependencies::get_dependent_names": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "the names of the plugins depending on this one, sorted, from the header data",
+                "body": "5406be251a9c"
+            },
+            "WP_Plugin_Dependencies::get_plugin_dirnames": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "maps each installed plugin's slug to its file, cached statically",
+                "body": "559d79074375"
+            },
+            "WP_Plugin_Dependencies::has_active_dependents": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "whether any plugin depending on this one's slug is active; a question over the dependency graph",
+                "body": "d78a2eea1df5"
+            },
+            "WP_Plugin_Dependencies::has_circular_dependency": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "computes the loops and asks whether this plugin's slug is in one; graph state",
+                "body": "42553fd5a780"
+            },
+            "WP_Plugin_Dependencies::has_unmet_dependencies": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "whether any required slug is not installed or not active; the unmet rule PluginRequirements also applies at activation",
+                "body": "7066c98c5aa3"
+            },
+            "WP_Plugin_Dependencies::initialize": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "reads every plugin's Requires Plugins once and the API data, guarded by a static flag; per-request dependency state the engine should own (the probe's subclass resets these statics, so the engine needs a reset)",
+                "body": "75da0bac2909"
+            },
+            "WP_Plugin_Dependencies::loops_through": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "the recursive half of the loop walk: pairs each dependent on the path a dependency needs back, then continues with its own dependencies",
+                "body": "02639aaa59f0"
+            },
+            "WP_Plugin_Dependencies::read_dependencies_from_plugin_headers": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "builds the dependency map, dependent slugs and the unique dependency slugs from every plugin's Requires Plugins header",
+                "body": "4f959831435c"
+            },
+            "WP_Plugin_Dependencies::sanitize_dependency_slugs": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PluginDependencies",
+                "why": "splits a Requires Plugins header, filters each slug through wp_plugin_dependencies_slug, keeps valid lowercase-hyphen slugs once, sorted; the slug rule PluginRequirements repeats without the filter",
+                "body": "c630336ed9b4"
+            }
+        },
         "classes/WP_Query.php": {
             "WP_Query::__construct": {
                 "verdict": "keep",
@@ -6891,6 +7010,481 @@
                 "body": "8100de8aff2e"
             }
         },
+        "classes/WP_Site_Health.php": {
+            "WP_Site_Health::__construct": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "records the starting memory limit, sets the missed and late cron timeouts by DISABLE_WP_CRON, hangs its $this callbacks and schedules the weekly check when it is missing; the timeouts and the scheduling are engine behaviour, the hooks stay",
+                "body": "56f380546df0"
+            },
+            "WP_Site_Health::admin_body_class": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "adds the site-health class when get_current_screen is the Site Health screen; trivial glue on a public function",
+                "body": "b53dcc8475f1"
+            },
+            "WP_Site_Health::available_object_cache_services": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the object cache services PHP has available, filtered",
+                "body": "b8615c2543c4"
+            },
+            "WP_Site_Health::can_perform_loopback": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the loopback request to the admin with the visitor's cookies",
+                "body": "07ad9cf8e626"
+            },
+            "WP_Site_Health::check_for_page_caching": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the loopback requests to the home page collecting cache headers and response times",
+                "body": "3360529df2f2"
+            },
+            "WP_Site_Health::check_wp_version_check_exists": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the loopback answer the background-updates test asks: whether wp_version_check is still hooked",
+                "body": "37c663f0d57e"
+            },
+            "WP_Site_Health::detect_plugin_theme_auto_update_issues": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for whether the auto-update filters disagree with the per-item settings",
+                "body": "97ee68457c94"
+            },
+            "WP_Site_Health::enqueue_scripts": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder; on the Site Health screen and dashboard the reference runs the direct tests and reads the stored issue counts into the screen script's data, behaviour the engine should own with wp_localize_script as the wrapper",
+                "body": "a6d3b368c601"
+            },
+            "WP_Site_Health::get_autoloaded_options_size": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Diagnostics",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the total size of the autoloaded options; Diagnostics::autoloadSummary already sums it (private, with a fixed autoload value list), so the size belongs there",
+                "body": "d8563f9f1025"
+            },
+            "WP_Site_Health::get_cron_tasks": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for reading the cron array into the test's task list; CronTable already reads it",
+                "body": "46e4bbf8493b"
+            },
+            "WP_Site_Health::get_good_response_time_threshold": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the good response time limit through site_status_good_response_time_threshold",
+                "body": "bf2068aff63c"
+            },
+            "WP_Site_Health::get_page_cache_detail": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for judging the page cache from those headers and the median response time",
+                "body": "1825121782f8"
+            },
+            "WP_Site_Health::get_page_cache_headers": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the cache headers and how each is read, the list cache plugins extend through its filter",
+                "body": "c6f1c6f4bc1b"
+            },
+            "WP_Site_Health::get_test_authorization_header": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that the Authorization header reaches PHP",
+                "body": "0ae8eb3a76ef"
+            },
+            "WP_Site_Health::get_test_autoloaded_options": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the autoloaded options size test against its filtered limit",
+                "body": "b218183edee0"
+            },
+            "WP_Site_Health::get_test_available_updates_disk_space": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the free disk space test for updates in wp-content/upgrade",
+                "body": "b4a64fab48e5"
+            },
+            "WP_Site_Health::get_test_background_updates": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the background updates test, which runs the automatic-update checks",
+                "body": "0c9ad2621d00"
+            },
+            "WP_Site_Health::get_test_dotorg_communication": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that the site can reach the update service",
+                "body": "fba1c573eae5"
+            },
+            "WP_Site_Health::get_test_file_uploads": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the uploads test: file_uploads on and post_max_size against upload_max_filesize",
+                "body": "65a206038e86"
+            },
+            "WP_Site_Health::get_test_http_requests": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test of WP_HTTP_BLOCK_EXTERNAL and WP_ACCESSIBLE_HOSTS",
+                "body": "033f2844de71"
+            },
+            "WP_Site_Health::get_test_https_status": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the HTTPS test: the home and site addresses on https and whether https is supported",
+                "body": "ccace5b3b266"
+            },
+            "WP_Site_Health::get_test_insecure_registration": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that open registration does not hand out a privileged default role",
+                "body": "50ebf1e97270"
+            },
+            "WP_Site_Health::get_test_is_in_debug_mode": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the debug test: WP_DEBUG, a public debug.log, errors displayed; Diagnostics already reads these constants",
+                "body": "acc5ff6e676b"
+            },
+            "WP_Site_Health::get_test_loopback_requests": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the loopback test, from can_perform_loopback",
+                "body": "0bd4b0f6e50a"
+            },
+            "WP_Site_Health::get_test_opcode_cache": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the opcode cache test; Diagnostics already knows whether OPcache is on",
+                "body": "53b534a31181"
+            },
+            "WP_Site_Health::get_test_page_cache": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the page cache test, from get_page_cache_detail",
+                "body": "95941bf9a735"
+            },
+            "WP_Site_Health::get_test_persistent_object_cache": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test suggesting a persistent object cache, from should_suggest_persistent_object_cache",
+                "body": "c4d226979a6f"
+            },
+            "WP_Site_Health::get_test_php_default_timezone": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that PHP's default timezone is still UTC",
+                "body": "7693f939ec26"
+            },
+            "WP_Site_Health::get_test_php_extensions": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the required and optional PHP modules test, the list filtered by site_status_test_php_modules",
+                "body": "ebd15eebcfb7"
+            },
+            "WP_Site_Health::get_test_php_sessions": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that no PHP session is left open",
+                "body": "ed14aaf34f25"
+            },
+            "WP_Site_Health::get_test_php_version": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the PHP version test against the supported and recommended versions",
+                "body": "439b078ab38d"
+            },
+            "WP_Site_Health::get_test_plugin_theme_auto_updates": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that plugin and theme auto-updates behave as configured; AutoUpdates holds the gate it reads",
+                "body": "97e3cc9fbe6b"
+            },
+            "WP_Site_Health::get_test_plugin_version": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the plugin test: plugins with updates waiting and inactive plugins to remove",
+                "body": "191cf2c1def4"
+            },
+            "WP_Site_Health::get_test_rest_availability": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that the REST API answers a loopback request",
+                "body": "ed39459dd9a0"
+            },
+            "WP_Site_Health::get_test_scheduled_events": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the cron test: missed or late events, from the cron tasks and the timeouts",
+                "body": "84651da31fc9"
+            },
+            "WP_Site_Health::get_test_search_engine_visibility": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that blog_public lets search engines index the site",
+                "body": "ecb834ccd290"
+            },
+            "WP_Site_Health::get_test_sql_server": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the database server version test, from prepare_sql_data",
+                "body": "ddf23c6893f9"
+            },
+            "WP_Site_Health::get_test_ssl_support": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that PHP can make secure connections",
+                "body": "11097e948df7"
+            },
+            "WP_Site_Health::get_test_theme_version": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the theme test: themes with updates, inactive themes, the parent and default theme kept",
+                "body": "a3f6abf99461"
+            },
+            "WP_Site_Health::get_test_update_temp_backup_writable": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the test that the upgrade-temp-backup folder Upgrade sets copies aside in is writable",
+                "body": "4e6366c5d950"
+            },
+            "WP_Site_Health::get_test_wordpress_version": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the core version test against the update offers, good, recommended or critical by minor or major",
+                "body": "fbcbe1e001ce"
+            },
+            "WP_Site_Health::get_tests": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the direct and async test list passed through site_status_tests, the filter plugins add their tests with",
+                "doubt": "returns null, so site_status_tests never fires and callers reading get_tests()['direct'] or ['async'] get nothing",
+                "body": "c61a32f7494d"
+            },
+            "WP_Site_Health::has_late_cron": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for whether any event is past the late-cron timeout, remembering the last one",
+                "body": "8ba03b2737d3"
+            },
+            "WP_Site_Health::has_missed_cron": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for whether any event is past the missed-cron timeout, remembering the last one",
+                "body": "05a10bdc213c"
+            },
+            "WP_Site_Health::is_development_environment": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for whether the environment type is development or local",
+                "body": "b62d9ea47482"
+            },
+            "WP_Site_Health::maybe_create_scheduled_event": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for scheduling the weekly check when it is missing and the site is not installing",
+                "doubt": "does nothing when called, while the constructor holds the exact scheduling this method should do",
+                "body": "0e64081574b3"
+            },
+            "WP_Site_Health::perform_test": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for running one test callback and passing its result through site_status_test_result, the hook plugins rewrite results with",
+                "body": "271ea5a3d749"
+            },
+            "WP_Site_Health::prepare_sql_data": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for reading the database server version, MariaDB or MySQL, and whether it meets the required and recommended versions; Diagnostics already reads the server version",
+                "body": "c2ea3f1e89c1"
+            },
+            "WP_Site_Health::should_suggest_persistent_object_cache": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for whether the site is large enough to suggest an object cache, by filtered thresholds",
+                "body": "a2fa6e396eab"
+            },
+            "WP_Site_Health::show_site_health_tab": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "in the reference it only requires the wp-admin Site Health info template into scope for the debug tab; Minn has no such screen, so it stays a facade dead end",
+                "body": "2bd09d6180d7"
+            },
+            "WP_Site_Health::test_php_extension_availability": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for checking one PHP module by extension, function, constant or class",
+                "body": "75595ef72241"
+            },
+            "WP_Site_Health::wp_cron_scheduled_check": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for the weekly run of every test, the good, recommended and critical counts stored for the dashboard",
+                "body": "7dba8cc74fb2"
+            },
+            "WP_Site_Health::wp_schedule_test_init": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\SiteHealth",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a placeholder for reading the cron schedules and the cron tasks for the scheduled events test",
+                "body": "820c12e3cde2"
+            }
+        },
         "classes/WP_Tax_Query.php": {
             "WP_Tax_Query::__construct": {
                 "verdict": "keep",
@@ -6968,6 +7562,387 @@
                 "reason": "contract",
                 "why": "the vars, then $this->get_terms",
                 "body": "8b3d76698692"
+            }
+        },
+        "classes/WP_Upgrader.php": {
+            "Core_Upgrader::should_update_to_version": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\AutoUpdates",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "decides whether core may auto-update to an offered version: minor or major by branch, WP_AUTO_UPDATE_CORE, the auto_update_core_ site options and the allow_*_auto_core_updates filters; auto-update policy AutoUpdates already holds for plugins and themes",
+                "doubt": "the auto_core_update_failed record (a critical failure, or a retry of the same failed update) and the development-version allow_dev_auto_core_updates filter are never consulted",
+                "body": "6f515d236a80"
+            },
+            "Plugin_Upgrader::active_after": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the class's upgrader_post_install callback: maintenance mode off through $this->maintenance_mode under the same conditions as active_before",
+                "body": "168083c0d68a"
+            },
+            "Plugin_Upgrader::active_before": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the class's upgrader_pre_install callback: maintenance mode on through $this->maintenance_mode for an active plugin updated by cron outside a bulk pass",
+                "body": "43044c5566ca"
+            },
+            "Plugin_Upgrader::bulk_upgrade": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the pass is already Upgrade::bulk; the offers read from update_plugins, the maintenance decision for active plugins, the filter wiring and the per-item skin info left here should join it",
+                "doubt": "the reference turns maintenance mode on for any non-empty list on multisite; only active plugins with offers count here",
+                "body": "48bd0e95aaa2"
+            },
+            "Plugin_Upgrader::check_package": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "validates an unpacked plugin: scans its top PHP files for a Plugin Name header, records new_plugin_data, refuses with incompatible_archive_no_plugins, then checks the PHP and WordPress requirements; package checking by rules",
+                "body": "dd4cddd3cf02"
+            },
+            "Plugin_Upgrader::deactivate_plugin_before_upgrade": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the class's upgrader_pre_install callback: passes errors and cron runs through and silently deactivates an active plugin with one PluginActivation::deactivate call",
+                "doubt": "a hook_extra without a plugin passes the response through; the reference answers a bad_request error",
+                "body": "6b707c1f6f24"
+            },
+            "Plugin_Upgrader::delete_old_plugin": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "works out the plugin's folder (or its single file) under WP_PLUGIN_DIR and deletes the tree, refusing with remove_old_failed; the same job as Upgrade::clear plus the plugin path rule",
+                "doubt": "nothing stops the folder being the plugins root: a plugin value with a leading slash ('/x.php') makes dirname '/', so the whole plugins folder is deleted, where the reference deletes a folder only when it is not the plugins root",
+                "body": "330bad9074ab"
+            },
+            "Plugin_Upgrader::install": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "a template method: init, strings, check_package hung on upgrader_source_selection, $this->run with the install options, then the plugins cache cleaned and upgrader_overwrote_package told; every step is a $this-> call or a public function",
+                "body": "eb60bdfafb09"
+            },
+            "Plugin_Upgrader::install_strings": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the install words set on $this->strings, which skins read by key and subclasses replace",
+                "body": "d14d8ab72320"
+            },
+            "Plugin_Upgrader::plugin_info": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the installed plugin's file from $this->result's destination_name and get_plugins of that folder; the class's own result read as the reference reads it",
+                "body": "f975f00a785e"
+            },
+            "Plugin_Upgrader::upgrade": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "reads the plugin's offer from the update_plugins transient, answers up_to_date through the skin, hangs the deactivate, maintenance, delete and check filters and runs with the update's temp_backup options; Upgrade::bulk already holds the bulk twin, the single pass joins it keeping each $this-> call",
+                "doubt": "after a successful update the reference drops the plugin from the auto_plugin_theme_update_emails option; nothing here does",
+                "body": "681ee2480a07"
+            },
+            "Plugin_Upgrader::upgrade_strings": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the update words set on $this->strings, which skins read by key and subclasses replace",
+                "body": "66c9031c6440"
+            },
+            "Theme_Upgrader::bulk_upgrade": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the pass is already Upgrade::bulk; the offers read from update_themes, the maintenance decision for the active stylesheet or template, the filter wiring and the per-item theme_info left here should join it",
+                "doubt": "the reference turns maintenance mode on for any non-empty list on multisite; only the active theme with an offer counts here",
+                "body": "29b90e95c0ba"
+            },
+            "Theme_Upgrader::check_package": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "validates an unpacked theme: style.css present with a Theme Name, an index template unless it is a child theme, then the PHP and WordPress requirements, recording new_theme_data; package checking by rules",
+                "body": "1ec2645927ea"
+            },
+            "Theme_Upgrader::check_parent_theme_filter": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "after a child theme installs, reads its Template header, looks for the parent and says found or not found through the skin, hiding the activate links when missing; theme install policy, keeping each $this->skin->feedback",
+                "doubt": "a missing parent is never looked up through themes_api and installed by a nested $this->run as the reference does; it is only reported not found",
+                "body": "4ac403977b64"
+            },
+            "Theme_Upgrader::current_after": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the class's upgrader_post_install callback: maintenance mode off through $this->maintenance_mode under the same conditions as current_before",
+                "body": "e1de37bca6f0"
+            },
+            "Theme_Upgrader::current_before": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the class's upgrader_pre_install callback: maintenance mode on through $this->maintenance_mode when the active theme is updated outside a bulk pass",
+                "body": "a3277808d818"
+            },
+            "Theme_Upgrader::delete_old_theme": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "deletes the theme's folder under its theme root as the upgrader_clear_destination callback; the same job as Upgrade::clear plus the theme path rule",
+                "doubt": "a hook_extra without a theme answers false where the reference passes $removed through, and an already absent folder answers $removed where the reference answers true",
+                "body": "1e701f788277"
+            },
+            "Theme_Upgrader::hide_activate_preview_actions": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the class's install_theme_complete_actions callback dropping the activate and preview links; a hook target unhooked by name",
+                "body": "6fbcc4df7445"
+            },
+            "Theme_Upgrader::install": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "a template method: init, strings, check_package and check_parent_theme_filter hung on their filters, $this->run with the install options, then the themes cache cleaned and upgrader_overwrote_package told",
+                "body": "34fb15300567"
+            },
+            "Theme_Upgrader::install_strings": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the theme install and parent-theme words set on $this->strings, which skins read by key and subclasses replace",
+                "body": "894d262f8b3c"
+            },
+            "Theme_Upgrader::theme_info": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the WP_Theme for the given folder or for $this->result's destination_name, false without one; the class's own result presented as the reference does",
+                "body": "44007911b3ed"
+            },
+            "Theme_Upgrader::upgrade": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "reads the theme's offer from the update_themes transient, answers up_to_date through the skin, hangs the maintenance, delete and check filters and runs with the update's temp_backup options; the single pass beside Upgrade::bulk, keeping each $this-> call",
+                "doubt": "after a successful update the reference drops the theme from the auto_plugin_theme_update_emails option; nothing here does",
+                "body": "39cc3ac02868"
+            },
+            "Theme_Upgrader::upgrade_strings": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the theme update words set on $this->strings, which skins read by key and subclasses replace",
+                "body": "1153b8b6c3ba"
+            },
+            "WP_Upgrader::create_lock": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "an option lock taken when free or older than the timeout, rewritten with the current time; stored-data locking the engine's updaters should own",
+                "doubt": "add_option is not the atomic INSERT IGNORE the reference uses, and an expired lock is overwritten in place rather than released and taken again, so two processes can both win an expired lock",
+                "body": "14a9af58f4c6"
+            },
+            "WP_Upgrader::download_package": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the download step: upgrader_pre_download answers first, a local file is used where it lies, an empty package is refused, download_url fetches and its error is rewrapped; Upgrade already owns unpack and install, this joins them keeping $this->skin->feedback and the strings",
+                "body": "280721cd05de"
+            },
+            "WP_Upgrader::flatten_dirlist": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "flattens a nested filesystem dirlist into path keyed entries by recursion; a tree algorithm for the upgrade code, the $this->flatten_dirlist recursion kept as the override point",
+                "body": "3e91116b1c14"
+            },
+            "WP_Upgrader::fs_connect": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "asks the skin for credentials and connects through WP_Filesystem; a step Upgrade::run calls on the upgrader so subclasses can replace it, nothing for the engine to own",
+                "doubt": "when WP_Filesystem fails the reference asks the skin again with the error and returns false; here fs_unavailable comes back, and the reference's folder checks (fs_no_content_dir, fs_no_plugins_dir...) are never made",
+                "body": "d290ca8965d4"
+            },
+            "WP_Upgrader::init": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "hands the skin this upgrader and loads the generic strings, two $this-> steps subclasses override",
+                "body": "4fef21774d8d"
+            },
+            "WP_Upgrader::unpack_package": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "Upgrade::unpack does the unpacking; the package's deletion behind $delete_package is a file removal that should join it, the method staying one call",
+                "body": "cff51e127e68"
+            },
+            "_minn_package_requirements": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Upgrade",
+                "why": "refuses an uploaded plugin or theme whose Requires PHP or Requires at least is not met, in the upgrader's words; package checking that belongs with check_package in Upgrade, comparing through VersionCheck",
+                "body": "14834ee8bc7a"
+            }
+        },
+        "classes/WP_Upgrader_Skin.php": {
+            "Automatic_Upgrader_Skin::feedback": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "keeps a line as a message instead of printing it, cut by wp_kses to a, br, em and strong and trimmed; the override get_upgrade_messages reads back",
+                "doubt": "an array is turned into the message Array (with a warning); the reference ignores array feedback",
+                "body": "ab61e3d012b4"
+            },
+            "Automatic_Upgrader_Skin::footer": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "what was printed since header becomes one more message through $this->feedback",
+                "body": "e4ea21d57eff"
+            },
+            "Automatic_Upgrader_Skin::request_filesystem_credentials": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "records the context and asks the parent with its output buffered away; the override the automatic skin exists for",
+                "body": "769cba7307d5"
+            },
+            "Bulk_Upgrader_Skin::error": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "records the item's error text in $this->error for the bulk screen, then the parent's error",
+                "doubt": "an error's string data is not appended to $this->error as the reference appends it, and the reference's bulk skin does not print the lines through the parent",
+                "body": "5f11609029a3"
+            },
+            "Bulk_Upgrader_Skin::flush_output": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_ob_end_flush_all then flush, nothing of its own",
+                "body": "ca528239f5a7"
+            },
+            "Bulk_Upgrader_Skin::reset": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "clears the loop flag and the recorded error, the skin's own state",
+                "body": "a982c8f2a1b3"
+            },
+            "Language_Pack_Upgrader_Skin::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "skip_header_footer marks header and footer done and hides the footer actions, then the parent's options",
+                "body": "154256498103"
+            },
+            "Plugin_Installer_Skin::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "type, url, api and overwrite filled from the arguments, then the parent's options",
+                "body": "d10599e65f2c"
+            },
+            "Plugin_Upgrader_Skin::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the plugin argument and its active state filled into properties, then the parent's options",
+                "doubt": "plugin_network_active is never set from is_plugin_active_for_network as the reference sets it",
+                "body": "dd846110b0c2"
+            },
+            "Theme_Installer_Skin::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "type, url, api and overwrite filled from the arguments, then the parent's options",
+                "body": "8fa96bfb4983"
+            },
+            "Theme_Upgrader_Skin::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the theme argument filled into its property with the default title, then the parent's options",
+                "body": "f4a97e0e5d3c"
+            },
+            "WP_Ajax_Upgrader_Skin::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the parent's options plus the empty WP_Error the skin gathers into",
+                "body": "ab2aa0a28be5"
+            },
+            "WP_Ajax_Upgrader_Skin::error": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "gathers a string error under unknown_upgrade_error_<n> or an error's codes into $this->errors, then the parent's error",
+                "body": "0b96793df895"
+            },
+            "WP_Ajax_Upgrader_Skin::feedback": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "gathers an error object's codes into $this->errors, then the parent's feedback",
+                "body": "db867fffadd3"
+            },
+            "WP_Ajax_Upgrader_Skin::get_error_messages": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the gathered errors as one comma-separated line, each with its text data; the skin's own state presented",
+                "body": "764c6d241494"
+            },
+            "WP_Upgrader_Skin::error": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "opens the header if needed and says a string or each error message through $this->feedback, adding text data; skins override it",
+                "doubt": "the reference appends the error's first data (get_error_data with no code) to every message; here each code's own data is appended",
+                "body": "3af428209823"
+            },
+            "WP_Upgrader_Skin::feedback": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "one line from the upgrader's strings with its placeholders filled, printed by show_message; the method every skin overrides",
+                "body": "1d860ff87629"
+            },
+            "WP_Upgrader_Skin::footer": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "closes the wrap once, guarded by $this->done_footer; the presentation subclasses override",
+                "body": "0a5b25849cad"
+            },
+            "WP_Upgrader_Skin::header": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "prints the wrap and title once, guarded by $this->done_header; the presentation subclasses override",
+                "body": "c7a7ad7b7042"
+            },
+            "WP_Upgrader_Skin::request_filesystem_credentials": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the skin's own url, nonce and context handed to request_filesystem_credentials; the method skins override (the automatic skin swallows its output)",
+                "body": "99dba3a11d94"
+            },
+            "WP_Upgrader_Skin::set_upgrader": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "keeps the upgrader by reference and calls $this->add_strings, the hook subclasses fill",
+                "body": "afc1d0b9a3ce"
+            },
+            "_minn_upgrader_line": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "turns a feedback key and its arguments into the line WordPress shows: the upgrader's string, placeholders filled with stripped and (unless asked not to) escaped arguments; shared by the skins' feedback and error",
+                "body": "bb80151e7f49"
             }
         },
         "classes/WP_User_Query.php": {
