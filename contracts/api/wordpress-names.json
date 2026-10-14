@@ -1,12 +1,12 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 51,
-        "functions": 41,
+        "functionCalls": 48,
+        "functions": 38,
         "hookApi": 0,
         "classReferences": 2,
         "classes": 1,
-        "files": 25
+        "files": 22
     },
     "families": {
         "functions": {
@@ -15,13 +15,13 @@
             "wp-includes/block-template-utils.php": 5,
             "wp-includes/media.php": 5,
             "wp-includes/blocks.php": 5,
-            "wp-includes/comment.php": 4,
             "wp-admin/includes/file.php": 3,
             "wp-includes/functions.php": 3,
             "wp-includes/post-template.php": 2,
             "wp-includes/template.php": 2,
             "wp-admin/includes/image.php": 2,
             "wp-includes/blocks/footnotes.php": 1,
+            "wp-includes/comment.php": 1,
             "wp-includes/user.php": 1
         },
         "classes": {
@@ -189,13 +189,6 @@
                 "Minn/Runtime/PostWrites.php": 1
             }
         },
-        "wp_allow_comment": {
-            "uses": 1,
-            "family": "wp-includes/comment.php",
-            "files": {
-                "Minn/Runtime/CommentEvents.php": 1
-            }
-        },
         "wp_check_filetype_and_ext": {
             "uses": 1,
             "family": "wp-includes/functions.php",
@@ -252,13 +245,6 @@
                 "Minn/Content/MediaShortcodes.php": 1
             }
         },
-        "wp_get_unapproved_comment_author_email": {
-            "uses": 1,
-            "family": "wp-includes/comment.php",
-            "files": {
-                "Minn/Runtime/CommentPages.php": 1
-            }
-        },
         "wp_get_video_extensions": {
             "uses": 1,
             "family": "wp-includes/media.php",
@@ -278,13 +264,6 @@
             "family": "wp-admin/includes/file.php",
             "files": {
                 "Minn/Rest/MediaController.php": 1
-            }
-        },
-        "wp_new_comment": {
-            "uses": 1,
-            "family": "wp-includes/comment.php",
-            "files": {
-                "Minn/Runtime/CommentForm.php": 1
             }
         },
         "wp_read_image_metadata": {

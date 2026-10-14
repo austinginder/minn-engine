@@ -55,7 +55,7 @@ A comment as the WordPress layer hands it to plugins (WP_Comment). The
 engine knows these objects by this mark and makes them through
 Runtime\Handoff, so it never names the WordPress layer's class.
 
-Used by: `Minn\Rest\CommentsController`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\Handoff`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\Records`
+Used by: `Minn\Rest\CommentsController`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\Handoff`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\Records`
 
 
 ## CommentsQuery

@@ -31,9 +31,10 @@ final class ClassicContent
             return '';
         }
         $raw = (string) ($post->content);
+        $link = static fn (): string => $permalinks->forPost($post);
         if (PasswordGate::is($post)) {
             // The form takes the content's place and runs the content filters, paragraphs first, as the reference's the_content does.
-            return Runtime::contentFilter(Autop::apply(PasswordGate::formForReader($post, $permalinks->url(''), $permalinks->forPost($post))));
+            return Runtime::contentFilter(Autop::apply(PasswordGate::formForReader($post, $permalinks->url(''), $link())));
         }
         if (trim($raw) === '') {
             return '';
@@ -42,7 +43,7 @@ final class ClassicContent
         // The teaser stops at the more tag unless the whole text is wanted: a single post or page, or a feed ($more, as setup_postdata leaves it).
         if (!MainQuery::current()->is_singular() && empty($GLOBALS['more']) && $more !== false) {
             $label = $moreLinkText ?? \Minn\I18n\Gettext::text('(more&hellip;)');
-            $suffix = "\n" . ' <a href="' . Html::attr($permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . $label . '</span></a>';
+            $suffix = "\n" . ' <a href="' . Html::attr($link() . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . $label . '</span></a>';
             $content = rtrim(Blocks::render(substr($raw, 0, $more))) . $suffix;
         } else {
             $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw));

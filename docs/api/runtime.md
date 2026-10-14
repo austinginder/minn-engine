@@ -23,7 +23,7 @@ the WordPress runtime plugins load against
 | [`BlockTemplates`](#blocktemplates) | final class | 67 | Block templates plugins register at runtime, by their namespaced name |
 | [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
 | [`BrowserGlobals`](#browserglobals) | final class | 45 | The browser and web server a request names, as the reference's globals |
-| [`CommentChecks`](#commentchecks) | final class | 75 | What WordPress checks of a comment before and after it is stored: the |
+| [`CommentChecks`](#commentchecks) | final class | 296 | What WordPress checks of a comment before and after it is stored: the |
 | [`CommentCloser`](#commentcloser) | final readonly class | 30 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentEvents`](#commentevents) | final readonly class | 254 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
@@ -95,7 +95,7 @@ the WordPress runtime plugins load against
 | [`PostQueryStatus`](#postquerystatus) | final class | 165 | WP_Query's post type and status clause as the reference writes it (probe |
 | [`PostQueryTax`](#postquerytax) | final class | 193 | The taxonomy side of WP_Query as the reference runs it (probe |
 | [`PostQueryWhere`](#postquerywhere) | final class | 264 | The WHERE fragments WP_Query writes from its variables, in the reference's |
-| [`PostReads`](#postreads) | final class | 245 | What WordPress's post functions tell about posts: a page's path and a |
+| [`PostReads`](#postreads) | final class | 290 | What WordPress's post functions tell about posts: a page's path and a |
 | [`PostRevisions`](#postrevisions) | final class | 181 | A post's revisions as the reference's wp_save_post_revision keeps them |
 | [`PostSave`](#postsave) | final class | 253 | A REST save's columns through the filters the reference's save runs |
 | [`PostTags`](#posttags) | final class | 193 | What the post template tags tell about a post (the one being read when |
@@ -1013,7 +1013,7 @@ lengths the table allows its fields, each field through its pre_comment_
 filter, the status a stored comment has in words, and whether a new
 post of a type starts open to comments or pings.
 
-Used by: `Minn\Content\Site`, `Minn\Front\CommentPostController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostWrites`
+Used by: `Minn\Content\Site`, `Minn\Front\CommentPostController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostWrites`
 
 ### static `fieldMaxLengths(): mixed`
 
@@ -1043,6 +1043,60 @@ A comment's status (wp_get_comment_status): approved, unapproved, spam or trash;
 Whether a new post of a type starts open (get_default_comment_status):
 a page starts closed; another type follows the site's default when it
 supports comments (or trackbacks, for pings).
+
+### static `passes(mixed $author, mixed $email, mixed $url, mixed $comment, mixed $userIp, mixed $userAgent, mixed $commentType): bool`
+
+Whether a comment needs no moderation (check_comment): never while
+moderation is on; the links counted in the comment as comment_text
+shows it (comment_max_links_url may recount) against comment_max_links;
+the moderation words; and, when asked, an earlier approved comment from
+the same author (a pingback from one of the site's own posts, as
+wp_auto_approve_ping decides; a trackback never).
+
+### static `disallowed(mixed $author, mixed $email, mixed $url, mixed $comment, mixed $userIp, mixed $userAgent): bool`
+
+Whether a line of disallowed_keys appears in the comment's fields
+(wp_check_comment_disallowed_list): a word match, or an address's
+start; the comment read without its tags and entities too.
+
+### static `approval(mixed $data): mixed`
+
+A comment's approval as its data asks (wp_check_comment_data): the
+post's author and a moderator are approved; anyone else's comment
+passes check_comment or is held, and the disallowed words send it to
+the trash (spam with the trash off); pre_comment_approved has the last
+word. The data may be slashed.
+
+### static `allow(mixed $commentdata, mixed $wpError = false): mixed`
+
+1, 0, "spam" or "trash" for a comment that may be stored
+(wp_allow_comment), in the reference's order: a duplicate, which
+duplicate_comment_id may name or clear, refuses with 409;
+check_comment_flood and wp_is_comment_flood refuse a flood with 429;
+then the approval. The error when asked for one, else the stop page,
+for a refusal.
+
+### static `create(mixed $commentdata, mixed $wpError = false): mixed`
+
+A comment from outside stored the way the comment form stores one
+(wp_new_comment): preprocess_comment; the ids, user, parent, address,
+agent and dates filled in; wp_allow_comment; the pre_comment_
+filters; the approval judged again on what they left; the comment
+stored; comment_post. The id, or the error when asked for one (false
+without).
+
+### static `currentCommenter(): mixed`
+
+The commenter remembered by the comment_author_ cookies (wp_get_current_commenter), as wp_get_current_commenter leaves them.
+
+### static `unapprovedEmail(): string`
+
+The address of the reader whose held comment the page may show
+(wp_get_unapproved_comment_author_email): from a held comment's link
+(its hash right, under ten minutes old), or else from the commenter's
+cookie.
+
+Internals: `filledIn()` (private, line 280), `refused()` (private, line 303), `comments()` (private, line 312)
 
 
 ## CommentCloser
@@ -1468,7 +1522,7 @@ fires in its order, and the cached rows let go.
 
 - const `DEFAULTS` = `array (   'comment_post_ID' => 0,   'comment_author' => '',   'comment_author_email' => '',   'comment_author_url' => '',   'comment_author_IP' => '',   'comment_date' => '',   'comment_date_gmt' => '',   'comment_content' => '',   'comment_karma' => 0,   'comment_approved' => '1',   'comment_agent' => '',   'comment_type' => '',   'comment_parent' => 0,   'user_id' => 0, )` — The columns a stored comment has, each with what a new comment takes when it gives none (an integer column is read as one).
 
-Used by: `Minn\Runtime\CommentEvents`, `Minn\Runtime\Deferrals`, `Minn\Runtime\PostWrites`
+Used by: `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Deferrals`, `Minn\Runtime\PostWrites`
 
 ### static `insert(mixed $commentdata): int`
 
@@ -4368,7 +4422,7 @@ get_sample_permalink shows a draft as it would be published.
 - const `SAMPLE` = `2` — The address an editor previews: a draft as if published.
 - const `UNPUBLISHED` = `array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft',   3 => 'future', )`
 
-Used by: `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentTags`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostData`, `Minn\Runtime\PostWrites`
+Used by: `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentTags`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostData`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`
 
 ### static `permalink(mixed $post = 0, mixed $leavename = false): mixed`
 
@@ -4755,7 +4809,7 @@ viewed, when posts last changed, posts by query arguments and a post's
 children and categories, the SQL that limits a query to what an author
 may read, and the caches primed for a list of posts.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Rest\BlockRendererController`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\UserOrder`, `Minn\Theme\FeedHeaders`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Rest\BlockRendererController`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\UserOrder`, `Minn\Theme\FeedHeaders`
 
 ### static `pageUri(mixed $page = 0): mixed`
 
@@ -4832,7 +4886,13 @@ Posts read into the caches together (_prime_post_caches): rows, and their meta a
 
 A list of posts kept in the caches (update_post_caches): whole posts kept as they are, then primed.
 
-Internals: `idList()` (private, line 256), `store()` (private, line 261)
+### static `idFromUrl(mixed $url): int`
+
+The post an address names (url_to_postid): a ?p= or ?page_id= id, else
+with pretty permalinks a page by its path, a post whose own address it
+is, or an attachment by its own; 0 for none.
+
+Internals: `idList()` (private, line 302), `store()` (private, line 307)
 
 
 ## PostRevisions
@@ -6516,7 +6576,7 @@ Time as the site keeps it: its timezone (the named one, else the UTC
 offset), now in that zone or in UTC, a moment written in the site's
 language, and a stored date read back in a format.
 
-Used by: `Minn\Front\FeedTemplates`, `Minn\Query\DateSql`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostData`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Theme\FeedHeaders`
+Used by: `Minn\Front\FeedTemplates`, `Minn\Query\DateSql`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostData`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Theme\FeedHeaders`
 
 ### static `zoneName(): string`
 
@@ -6561,7 +6621,7 @@ scheme settled and its filter run), whether the request came over HTTPS,
 the switch that forces the admin onto it, and the trailing slash the
 permalink structure asks for.
 
-Used by: `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Media\Icons`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\EditLinks`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostTags`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\TermLookup`, `Minn\Runtime\Themes`, `Minn\Runtime\UserWrites`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Media\Icons`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\EditLinks`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostTags`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\TermLookup`, `Minn\Runtime\Themes`, `Minn\Runtime\UserWrites`, `Minn\Widgets\WidgetForms`
 
 
 ### static `secure(): bool`

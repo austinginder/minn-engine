@@ -1059,7 +1059,7 @@ Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash):
 added to or stripped from every string inside a value, arrays and
 objects walked all the way down, anything else left as it is.
 
-Used by: `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
 
 ### static `add(mixed $value): mixed`
 
@@ -1181,7 +1181,7 @@ URL shaping the escaping and query helpers share: the character cleanup
 esc_url applies, bracket encoding outside the authority, and query
 argument merging. Behaviour pinned by contracts/fixtures/api/functions.json.
 
-Used by: `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostLinks`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\Upgrade`, `Minn\Support\Escape`
+Used by: `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostReads`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\Upgrade`, `Minn\Support\Escape`
 
 ### static `withTrailingSlash(string $value): string`
 

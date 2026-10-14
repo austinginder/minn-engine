@@ -46,6 +46,18 @@ final readonly class Request
         return $_SERVER[$name] ?? null;
     }
 
+    /** A query variable as PHP holds it now, null when unset: plugin code may have set it since the request was read. */
+    public static function queryVariable(string $name): mixed
+    {
+        return $_GET[$name] ?? null;
+    }
+
+    /** A cookie as PHP holds it now, null when unset: plugin code may have set it since the request was read. */
+    public static function cookieVariable(string $name): mixed
+    {
+        return $_COOKIE[$name] ?? null;
+    }
+
     /** The request PHP received, read once from the superglobals. */
     public static function fromGlobals(): self
     {

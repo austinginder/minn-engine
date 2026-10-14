@@ -10,6 +10,7 @@ use Minn\Objects\Post;
 use Minn\Query\AuthorPostsSql;
 use Minn\Query\MimeWhere;
 use Minn\Support\Lists;
+use Minn\Support\Url;
 
 /**
  * What WordPress's post functions tell about posts: a page's path and a
@@ -250,6 +251,51 @@ final class PostReads
         }
         self::store()->rememberRows(array_map(static fn (object $post): array => get_object_vars($post), array_values(array_filter((array) $posts, static fn (mixed $post): bool => $post instanceof Post))));
         self::prime(array_map(static fn (mixed $post): int => is_object($post) ? (int) ($post->ID ?? 0) : (int) $post, (array) $posts), $updateTermCache, $updateMetaCache);
+    }
+
+    /**
+     * The post an address names (url_to_postid): a ?p= or ?page_id= id, else
+     * with pretty permalinks a page by its path, a post whose own address it
+     * is, or an attachment by its own; 0 for none.
+     */
+    public static function idFromUrl(mixed $url): int
+    {
+        $url = (string) preg_replace('/#.*$/', '', (string) Runtime::hooks()->filter('url_to_postid', [(string) $url]));
+        $home = SiteUrls::home();
+        if (preg_match('/[?&]p=(\d+)/', $url, $m)) {
+            return (int) $m[1];
+        }
+        if (preg_match('/[?&]page_id=(\d+)/', $url, $m)) {
+            return (int) $m[1];
+        }
+        if (str_starts_with($url, 'http')) {
+            if (!str_starts_with($url, $home)) {
+                return 0;
+            }
+            $url = substr($url, strlen($home));
+        }
+        $path = trim((string) parse_url($url, PHP_URL_PATH), '/');
+        if ($path === '') {
+            return 0;
+        }
+        $permalinks = Runtime::current()->get('permalinks');
+        if ($permalinks !== null) {
+            $segments = explode('/', $path);
+            $store = self::store();
+            $page = $store->pageByPathAnyStatus($segments);
+            if ($page !== null) {
+                return $page->id;
+            }
+            $post = $store->findByNameAnyStatus(end($segments), ['post']);
+            if ($post !== null && $permalinks->forPost($post) === rtrim($home, '/') . '/' . $path . '/') {
+                return $post->id;
+            }
+            $attachment = $store->findByNameAnyStatus(end($segments), ['attachment']);
+            if ($attachment !== null && Url::withoutTrailingSlash((string) PostLinks::permalink($attachment->id)) === rtrim($home, '/') . '/' . $path) {
+                return $attachment->id;
+            }
+        }
+        return 0;
     }
 
     /** @return array<int, int> ids from a list or a string, each once, as positive integers */

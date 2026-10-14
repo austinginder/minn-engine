@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 707,
-        "composes": 2180,
+        "minn": 703,
+        "composes": 2175,
         "leaf": 1013,
-        "noop": 3081,
+        "noop": 3089,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8675,
-        "minnMethods": 1346,
+        "functions": 8674,
+        "minnMethods": 1350,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -36460,19 +36460,6 @@
                 "wp_get_current_commenter"
             ]
         },
-        "_minn_comment_defaults": {
-            "file": "comment.php",
-            "lines": 15,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request"
-            ],
-            "composes": [
-                "current_time",
-                "wp_get_comment_status"
-            ]
-        },
         "_minn_comment_edit_anchor": {
             "file": "core-blocks.php",
             "lines": 2,
@@ -43446,17 +43433,12 @@
         },
         "check_comment": {
             "file": "comment.php",
-            "lines": 24,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::previouslyApproved"
+                "Minn\\Runtime\\CommentChecks::passes"
             ],
-            "composes": [
-                "_minn_comments",
-                "apply_filters",
-                "get_option",
-                "url_to_postid"
-            ]
+            "composes": []
         },
         "check_comment_flood_db": {
             "file": "comment.php",
@@ -63058,23 +63040,12 @@
         },
         "url_to_postid": {
             "file": "post.php",
-            "lines": 37,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Posts::findByNameAnyStatus",
-                "Minn\\Content\\Posts::pageByPathAnyStatus",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::forPost",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Runtime\\PostReads::idFromUrl"
             ],
-            "composes": [
-                "_minn_posts",
-                "apply_filters",
-                "get_permalink",
-                "home_url",
-                "parse_url",
-                "untrailingslashit"
-            ]
+            "composes": []
         },
         "urldecode_deep": {
             "file": "formatting.php",
@@ -64755,19 +64726,12 @@
         },
         "wp_allow_comment": {
             "file": "comment.php",
-            "lines": 16,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::duplicateId"
+                "Minn\\Runtime\\CommentChecks::allow"
             ],
-            "composes": [
-                "_minn_comments",
-                "apply_filters",
-                "do_action",
-                "wp_check_comment_data",
-                "wp_die",
-                "wp_unslash"
-            ]
+            "composes": []
         },
         "wp_allowed_protocols": {
             "file": "kses.php",
@@ -65492,17 +65456,12 @@
         },
         "wp_check_comment_data": {
             "file": "comment.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "check_comment",
-                "get_post",
-                "user_can",
-                "wp_check_comment_disallowed_list",
-                "wp_unslash"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentChecks::approval"
+            ],
+            "composes": []
         },
         "wp_check_comment_data_max_lengths": {
             "file": "comment.php",
@@ -65515,16 +65474,12 @@
         },
         "wp_check_comment_disallowed_list": {
             "file": "comment.php",
-            "lines": 21,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "do_action",
-                "do_action_deprecated",
-                "get_option",
-                "wp_strip_all_tags"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentChecks::disallowed"
+            ],
+            "composes": []
         },
         "wp_check_comment_flood": {
             "file": "comment.php",
@@ -68393,13 +68348,12 @@
         },
         "wp_get_current_commenter": {
             "file": "comment.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentChecks::currentCommenter"
+            ],
+            "composes": []
         },
         "wp_get_current_user": {
             "file": "pluggable.php",
@@ -69701,14 +69655,12 @@
         },
         "wp_get_unapproved_comment_author_email": {
             "file": "comment.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_comment",
-                "wp_get_current_commenter",
-                "wp_hash"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentChecks::unapprovedEmail"
+            ],
+            "composes": []
         },
         "wp_get_update_data": {
             "file": "admin.php",
@@ -72091,19 +72043,12 @@
         },
         "wp_new_comment": {
             "file": "comment.php",
-            "lines": 17,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_comment_defaults",
-                "apply_filters",
-                "do_action",
-                "is_wp_error",
-                "wp_allow_comment",
-                "wp_check_comment_data",
-                "wp_filter_comment",
-                "wp_insert_comment"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentChecks::create"
+            ],
+            "composes": []
         },
         "wp_new_comment_notify_moderator": {
             "file": "comment.php",

@@ -83,7 +83,7 @@ final class CommentForm
         if (Records::isError($lengths)) {
             return $lengths;
         }
-        $id = \wp_new_comment(Slashes::add($data), true);
+        $id = CommentChecks::create(Slashes::add($data), true);
         if (Records::isError($id)) {
             return $id;
         }

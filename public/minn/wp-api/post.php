@@ -292,43 +292,7 @@ function get_page_uri($page = 0)
 
 function url_to_postid($url)
 {
-    $url = apply_filters('url_to_postid', (string) $url);
-    $url = (string) preg_replace('/#.*$/', '', $url);
-    $home = home_url();
-    if (preg_match('/[?&]p=(\d+)/', $url, $m)) {
-        return (int) $m[1];
-    }
-    if (preg_match('/[?&]page_id=(\d+)/', $url, $m)) {
-        return (int) $m[1];
-    }
-    if (str_starts_with($url, 'http')) {
-        if (!str_starts_with($url, $home)) {
-            return 0;
-        }
-        $url = substr($url, strlen($home));
-    }
-    $path = trim((string) parse_url($url, PHP_URL_PATH), '/');
-    if ($path === '') {
-        return 0;
-    }
-    $permalinks = Runtime::current()->get('permalinks');
-    if ($permalinks !== null) {
-        $segments = explode('/', $path);
-        $page = _minn_posts()->pageByPathAnyStatus($segments);
-        if ($page !== null) {
-            return (int) $page['ID'];
-        }
-        $post = _minn_posts()->findByNameAnyStatus(end($segments), ['post']);
-        if ($post !== null && $permalinks->forPost($post) === rtrim($home, '/') . '/' . $path . '/') {
-            return (int) $post['ID'];
-        }
-        // An attachment answers to its own address (a page path finds one too on the reference).
-        $attachment = _minn_posts()->findByNameAnyStatus(end($segments), ['attachment']);
-        if ($attachment !== null && untrailingslashit((string) get_permalink((int) $attachment['ID'])) === rtrim($home, '/') . '/' . $path) {
-            return (int) $attachment['ID'];
-        }
-    }
-    return 0;
+    return Minn\Runtime\PostReads::idFromUrl($url);
 }
 
 function get_post_custom($post_id = 0)

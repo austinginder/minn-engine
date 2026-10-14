@@ -16304,6 +16304,14 @@ object, the widget factory, the sitemap server and the default menu walker are h
 The http-transports probe stays out of the comparison; the other probes give identical output before and
 after.
 
+**Batch 40, a new comment judged and stored.** `CommentChecks` gains `passes()` (check_comment),
+`disallowed()` (wp_check_comment_disallowed_list), `approval()` (wp_check_comment_data), `allow()`
+(wp_allow_comment), `create()` (wp_new_comment), `currentCommenter()` and `unapprovedEmail()`;
+`PostReads::idFromUrl()` answers url_to_postid. `Http\Request::queryVariable()` and `cookieVariable()` read
+a value as PHP holds it now. The classic content asks the post's address once, so the callers of the
+unfiltered permalink stay at 30. The http-transports probe stays out of the comparison; the other probes give
+identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

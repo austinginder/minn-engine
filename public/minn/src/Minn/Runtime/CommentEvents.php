@@ -67,7 +67,7 @@ final readonly class CommentEvents
         self::requireContent($prepared);
         $prepared += ['comment_date_gmt' => SiteTime::now('mysql', true), 'comment_author_email' => '', 'comment_author_url' => '', 'comment_agent' => ''];
         self::requireLengths($prepared);
-        $approved = \wp_allow_comment($prepared, true);
+        $approved = CommentChecks::allow($prepared, true);
         if ($approved instanceof Errors) {
             $status = ['comment_duplicate' => 409, 'comment_flood' => 400][$approved->get_error_code()] ?? null;
             throw $status === null ? self::refusal($approved) : new RestError($approved->get_error_code(), $approved->get_error_message(), $status);

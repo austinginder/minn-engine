@@ -8484,6 +8484,7 @@
                 "Minn\\Media\\FileTypes",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\RestMeta",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\FileUpload",
@@ -54107,6 +54108,7 @@
                 "Minn\\Login\\LoginNotices",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\PluginsController",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\Shortcodes",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Sanitize",
@@ -67420,7 +67422,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Request.php",
-            "lines": 155,
+            "lines": 167,
             "doc": "An immutable picture of the incoming request. Built once from the PHP\nglobals at the edge; handlers only ever see this object.",
             "implements": [],
             "extends": null,
@@ -67509,6 +67511,7 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostEvents",
@@ -67757,6 +67760,46 @@
                 },
                 {
                     "routes": [],
+                    "name": "queryVariable",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "queryVariable(string $name): mixed",
+                    "doc": "A query variable as PHP holds it now, null when unset: plugin code may have set it since the request was read.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "cookieVariable",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "cookieVariable(string $name): mixed",
+                    "doc": "A cookie as PHP holds it now, null when unset: plugin code may have set it since the request was read.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 59
+                },
+                {
+                    "routes": [],
                     "name": "fromGlobals",
                     "static": true,
                     "visibility": "public",
@@ -67764,8 +67807,8 @@
                     "doc": "The request PHP received, read once from the superglobals.",
                     "shapes": [],
                     "params": [],
-                    "line": 50,
-                    "end": 89
+                    "line": 62,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -67776,8 +67819,8 @@
                     "doc": "The JSON body as an array, or the form fields when the body is empty or a form.",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 110
+                    "line": 104,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -67796,8 +67839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 116
+                    "line": 125,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -67823,8 +67866,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 123
+                    "line": 131,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -67843,8 +67886,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 129
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -67863,8 +67906,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 135
+                    "line": 144,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -67883,8 +67926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 141
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -67903,8 +67946,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 147
+                    "line": 156,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -67923,8 +67966,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 153
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -67935,8 +67978,8 @@
                     "doc": "The path split into non-empty segments: \"/a/b/\" becomes [\"a\", \"b\"].",
                     "shapes": [],
                     "params": [],
-                    "line": 156,
-                    "end": 159
+                    "line": 168,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -67955,8 +67998,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 166
+                    "line": 174,
+                    "end": 178
                 }
             ]
         },
@@ -70481,6 +70524,7 @@
                 "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
@@ -83353,6 +83397,7 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryRunner",
@@ -120758,22 +120803,32 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CommentChecks.php",
-            "lines": 75,
+            "lines": 296,
             "doc": "What WordPress checks of a comment before and after it is stored: the\nlengths the table allows its fields, each field through its pre_comment_\nfilter, the status a stored comment has in words, and whether a new\npost of a type starts open to comments or pings.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Auth\\Can",
                 "Minn\\Content\\Comments",
+                "Minn\\Html",
+                "Minn\\Http\\Request",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Objects\\Comment",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime",
+                "Minn\\Support\\Slashes"
             ],
             "usedBy": [
                 "Minn\\Content\\Site",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\PostWrites"
             ],
@@ -120793,8 +120848,8 @@
                         "@return array<string, int>"
                     ],
                     "params": [],
-                    "line": 24,
-                    "end": 27
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -120813,8 +120868,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 40
+                    "line": 36,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -120835,8 +120890,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 65
+                    "line": 54,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -120855,8 +120910,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 75
+                    "line": 74,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -120882,8 +120937,299 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 88
+                    "line": 88,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "passes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "passes(mixed $author, mixed $email, mixed $url, mixed $comment, mixed $userIp, mixed $userAgent, mixed $commentType): bool",
+                    "doc": "Whether a comment needs no moderation (check_comment): never while\nmoderation is on; the links counted in the comment as comment_text\nshows it (comment_max_links_url may recount) against comment_max_links;\nthe moderation words; and, when asked, an earlier approved comment from\nthe same author (a pingback from one of the site's own posts, as\nwp_auto_approve_ping decides; a trackback never).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "author",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "comment",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userIp",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "commentType",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 130
+                },
+                {
+                    "routes": [],
+                    "name": "disallowed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "disallowed(mixed $author, mixed $email, mixed $url, mixed $comment, mixed $userIp, mixed $userAgent): bool",
+                    "doc": "Whether a line of disallowed_keys appears in the comment's fields\n(wp_check_comment_disallowed_list): a word match, or an address's\nstart; the comment read without its tags and entities too.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "author",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "comment",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userIp",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 137,
+                    "end": 160
+                },
+                {
+                    "routes": [],
+                    "name": "approval",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "approval(mixed $data): mixed",
+                    "doc": "A comment's approval as its data asks (wp_check_comment_data): the\npost's author and a moderator are approved; anyone else's comment\npasses check_comment or is held, and the disallowed words send it to\nthe trash (spam with the trash off); pre_comment_approved has the last\nword. The data may be slashed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 169,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "allow",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "allow(mixed $commentdata, mixed $wpError = false): mixed",
+                    "doc": "1, 0, \"spam\" or \"trash\" for a comment that may be stored\n(wp_allow_comment), in the reference's order: a duplicate, which\nduplicate_comment_id may name or clear, refuses with 409;\ncheck_comment_flood and wp_is_comment_flood refuse a flood with 429;\nthen the approval. The error when asked for one, else the stop page,\nfor a refusal.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentdata",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 195,
+                    "end": 214
+                },
+                {
+                    "routes": [],
+                    "name": "create",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "create(mixed $commentdata, mixed $wpError = false): mixed",
+                    "doc": "A comment from outside stored the way the comment form stores one\n(wp_new_comment): preprocess_comment; the ids, user, parent, address,\nagent and dates filled in; wp_allow_comment; the pre_comment_\nfilters; the approval judged again on what they left; the comment\nstored; comment_post. The id, or the error when asked for one (false\nwithout).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "commentdata",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 224,
+                    "end": 243
+                },
+                {
+                    "routes": [],
+                    "name": "currentCommenter",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "currentCommenter(): mixed",
+                    "doc": "The commenter remembered by the comment_author_ cookies (wp_get_current_commenter), as wp_get_current_commenter leaves them.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 246,
+                    "end": 251
+                },
+                {
+                    "routes": [],
+                    "name": "unapprovedEmail",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unapprovedEmail(): string",
+                    "doc": "The address of the reader whose held comment the page may show\n(wp_get_unapproved_comment_author_email): from a held comment's link\n(its hash right, under ten minutes old), or else from the commenter's\ncookie.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 259,
+                    "end": 270
+                },
+                {
+                    "routes": [],
+                    "name": "filledIn",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "filledIn(array $data): array",
+                    "doc": "What wp_new_comment fills in: integer ids, the user from user_ID, a\nparent only when it is approved or held, the request's address and\nagent, the dates now, the type \"comment\".",
+                    "shapes": [
+                        "@param array<string, mixed> $data",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 280,
+                    "end": 300
+                },
+                {
+                    "routes": [],
+                    "name": "refused",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refused(mixed $wpError, string $code, mixed $message, int $status): mixed",
+                    "doc": "A refusal: the error when one was asked for, else the stop page with the status.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "wpError",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "code",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 303,
+                    "end": 310
+                },
+                {
+                    "routes": [],
+                    "name": "comments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "comments(): Minn\\Content\\Comments",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 312,
+                    "end": 315
                 }
             ]
         },
@@ -121844,6 +122190,7 @@
             "uses": [
                 "Minn\\Objects\\Comment",
                 "Minn\\Objects\\Rewrite",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MainQuery",
@@ -122963,6 +123310,7 @@
                 "Minn\\Support\\Slashes"
             ],
             "usedBy": [
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\Deferrals",
                 "Minn\\Runtime\\PostWrites"
@@ -137653,6 +138001,7 @@
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostData",
+                "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostWrites"
             ],
             "constructor": null,
@@ -140100,7 +140449,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostReads.php",
-            "lines": 245,
+            "lines": 290,
             "doc": "What WordPress's post functions tell about posts: a page's path and a\npage by its path, a post's type, status and fields, whether it can be\nviewed, when posts last changed, posts by query arguments and a post's\nchildren and categories, the SQL that limits a query to what an author\nmay read, and the caches primed for a list of posts.",
             "implements": [],
             "extends": null,
@@ -140114,11 +140463,14 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostFields",
+                "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\TermLookup",
-                "Minn\\Support\\Lists"
+                "Minn\\Support\\Lists",
+                "Minn\\Support\\Url"
             ],
             "usedBy": [
                 "Minn\\Content\\MediaShortcodes",
@@ -140127,6 +140479,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Front\\RuleTable",
                 "Minn\\Rest\\BlockRendererController",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentQueryRunner",
                 "Minn\\Runtime\\NavMenuItems",
@@ -140163,8 +140516,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 38
+                    "line": 25,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -140197,8 +140550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 50
+                    "line": 42,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -140217,8 +140570,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 57
+                    "line": 54,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -140237,8 +140590,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 72
+                    "line": 61,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -140271,8 +140624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 82
+                    "line": 76,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -140291,8 +140644,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 89
+                    "line": 86,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -140325,8 +140678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 109
+                    "line": 97,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -140352,8 +140705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 115
+                    "line": 113,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -140379,8 +140732,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 127
+                    "line": 119,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -140401,8 +140754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 161
+                    "line": 138,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -140430,8 +140783,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 188
+                    "line": 170,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -140457,8 +140810,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 195
+                    "line": 192,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -140484,8 +140837,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -140525,8 +140878,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 218
+                    "line": 208,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -140559,8 +140912,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 243
+                    "line": 222,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -140600,8 +140953,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 253
+                    "line": 247,
+                    "end": 254
+                },
+                {
+                    "routes": [],
+                    "name": "idFromUrl",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "idFromUrl(mixed $url): int",
+                    "doc": "The post an address names (url_to_postid): a ?p= or ?page_id= id, else\nwith pretty permalinks a page by its path, a post whose own address it\nis, or an attachment by its own; 0 for none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 261,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -140622,8 +140995,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 259
+                    "line": 302,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -140634,8 +141007,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 261,
-                    "end": 264
+                    "line": 307,
+                    "end": 310
                 }
             ]
         },
@@ -149272,6 +149645,7 @@
             "usedBy": [
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Query\\DateSql",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\CommentWrites",
@@ -149494,6 +149868,7 @@
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\RequestHeaders",
                 "Minn\\Runtime\\SiteInfo",
@@ -164553,6 +164928,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\ApplicationPasswordEvents",
+                "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentWrites",
@@ -165196,6 +165572,7 @@
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\Upgrade",
@@ -166306,7 +166683,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/ClassicContent.php",
-            "lines": 39,
+            "lines": 40,
             "doc": "What a classic theme's the_content() prints: the engine's block pipeline\n(render, password gate, the more-tag teaser in listings), the cached\nembeds, then the runtime's shortcodes and the_content filters so plugin\ncode sees the same hook order the reference runs.",
             "implements": [],
             "extends": null,
@@ -166356,7 +166733,7 @@
                         }
                     ],
                     "line": 27,
-                    "end": 61
+                    "end": 62
                 }
             ]
         },

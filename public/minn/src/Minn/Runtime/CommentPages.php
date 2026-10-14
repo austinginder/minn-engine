@@ -75,7 +75,7 @@ final class CommentPages
             'parent' => 0,
             'date_query' => [['column' => $GLOBALS['wpdb']->comments . '.comment_date_gmt', 'before' => $comment->comment_date_gmt]],
         ];
-        $unapproved = Handoff::signedIn() ? CurrentUser::id() : \wp_get_unapproved_comment_author_email();
+        $unapproved = Handoff::signedIn() ? CurrentUser::id() : CommentChecks::unapprovedEmail();
         if ($unapproved) {
             $query['include_unapproved'] = [$unapproved];
         }
