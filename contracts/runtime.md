@@ -16289,6 +16289,12 @@ file's headers (get_file_data). The translation controller is handed over throug
 `Handoff::translationController()`. The http-transports probe stays out of the comparison; the other probes
 give identical output before and after.
 
+**Batch 38, a plugin's files.** `Runtime\PluginFiles` answers wp_register_plugin_realpath, plugin_basename,
+get_plugin_data, _get_plugin_data_markup_translate and is_uninstallable_plugin; `Texturize::apply()` is
+wptexturize whole. Full run 33 (after batch 37) was
+green throughout. The http-transports probe stays out of the comparison; the other probes give identical
+output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

@@ -47,7 +47,7 @@ final class PluginRemoval
      */
     public static function uninstall(string $plugin): ?bool
     {
-        $file = (string) \plugin_basename($plugin);
+        $file = (string) PluginFiles::basename($plugin);
         $registered = (array) Runtime::options()->filtered('uninstall_plugins');
         Runtime::hooks()->action('pre_uninstall_plugin', [$plugin, $registered]);
         $script = WP_PLUGIN_DIR . '/' . dirname($file) . '/uninstall.php';
@@ -55,14 +55,14 @@ final class PluginRemoval
             self::forget($file, $registered);
             // A constant lasts the process: a worker that uninstalled one plugin keeps naming it.
             defined('WP_UNINSTALL_PLUGIN') || define('WP_UNINSTALL_PLUGIN', $file);
-            \wp_register_plugin_realpath(WP_PLUGIN_DIR . '/' . $file);
+            PluginFiles::registerRealpath(WP_PLUGIN_DIR . '/' . $file);
             include_once $script;
             return true;
         }
         if (isset($registered[$file])) {
             $callback = $registered[$file];
             self::forget($file, $registered);
-            \wp_register_plugin_realpath(WP_PLUGIN_DIR . '/' . $file);
+            PluginFiles::registerRealpath(WP_PLUGIN_DIR . '/' . $file);
             include_once WP_PLUGIN_DIR . '/' . $file;
             Runtime::hooks()->add("uninstall_{$file}", $callback);
             Runtime::hooks()->action("uninstall_{$file}", []);
@@ -73,7 +73,7 @@ final class PluginRemoval
     /** One plugin, uninstalled, removed and announced; whether it is gone. @param array<string, mixed> $translations */
     private static function deleteOne(string $plugin, array $translations): bool
     {
-        if (\is_uninstallable_plugin($plugin)) {
+        if (PluginFiles::uninstallable($plugin)) {
             self::uninstall((string) $plugin);
         }
         Runtime::hooks()->action('delete_plugin', [$plugin]);

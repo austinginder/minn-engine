@@ -517,8 +517,7 @@ function activate_plugins($plugins, $redirect = '', $network_wide = false, $sile
 /** Whether a plugin can be uninstalled: it registered an uninstall callback, or ships an uninstall.php. */
 function is_uninstallable_plugin($plugin)
 {
-    $file = plugin_basename($plugin);
-    return isset(((array) get_option('uninstall_plugins'))[$file]) || file_exists(WP_PLUGIN_DIR . '/' . dirname($file) . '/uninstall.php');
+    return Minn\Runtime\PluginFiles::uninstallable($plugin);
 }
 
 function uninstall_plugin($plugin)

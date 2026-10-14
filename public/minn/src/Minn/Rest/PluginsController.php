@@ -17,6 +17,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Runtime\PluginFiles;
 use Minn\Runtime\PluginRemoval;
 use Minn\Runtime\Refusal;
 use Minn\RestError;
@@ -223,7 +224,7 @@ final readonly class PluginsController
      */
     private function pluginItem(string $relative, string $path, bool $active): array
     {
-        return self::shape($relative, $path, \get_plugin_data($path, false, false), $active ? 'active' : 'inactive') + ['_links' => $this->links((string) preg_replace('/\.php$/', '', $relative))];
+        return self::shape($relative, $path, PluginFiles::data($path, false, false), $active ? 'active' : 'inactive') + ['_links' => $this->links((string) preg_replace('/\.php$/', '', $relative))];
     }
 
     /**
@@ -238,7 +239,7 @@ final readonly class PluginsController
      */
     public static function shape(string $relative, string $path, array $headers, string $status): array
     {
-        $plain = \_get_plugin_data_markup_translate($path, $headers, false, true);
+        $plain = PluginFiles::shown($path, $headers, false, true);
         return [
             'plugin' => (string) preg_replace('/\.php$/', '', $relative),
             'status' => $status,
@@ -246,7 +247,7 @@ final readonly class PluginsController
             'plugin_uri' => $plain['PluginURI'],
             'author' => $plain['AuthorName'],
             'author_uri' => $plain['AuthorURI'],
-            'description' => ['raw' => $plain['Description'], 'rendered' => \_get_plugin_data_markup_translate($path, $headers, true, true)['Description']],
+            'description' => ['raw' => $plain['Description'], 'rendered' => PluginFiles::shown($path, $headers, true, true)['Description']],
             'version' => $plain['Version'],
             'network_only' => $headers['Network'],
             'requires_wp' => $headers['RequiresWP'],

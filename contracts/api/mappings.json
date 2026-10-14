@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 710,
-        "composes": 2189,
+        "minn": 709,
+        "composes": 2184,
         "leaf": 1014,
-        "noop": 3068,
+        "noop": 3074,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8675,
-        "minnMethods": 1337,
+        "minnMethods": 1338,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -35085,19 +35085,12 @@
         },
         "_get_plugin_data_markup_translate": {
             "file": "plugin.php",
-            "lines": 33,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "esc_url",
-                "is_textdomain_loaded",
-                "load_plugin_textdomain",
-                "plugin_basename",
-                "translate",
-                "wp_kses",
-                "wptexturize"
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PluginFiles::shown"
             ],
+            "composes": [],
             "deadend": "admin"
         },
         "_get_plugin_from_callback": {
@@ -49643,14 +49636,12 @@
         },
         "get_plugin_data": {
             "file": "plugin.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_get_plugin_data_markup_translate",
-                "get_file_data",
-                "plugin_basename"
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PluginFiles::data"
             ],
+            "composes": [],
             "deadend": "admin"
         },
         "get_plugin_files": {
@@ -54059,13 +54050,12 @@
         },
         "is_uninstallable_plugin": {
             "file": "admin.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_option",
-                "plugin_basename"
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PluginFiles::uninstallable"
             ],
+            "composes": [],
             "deadend": "admin"
         },
         "is_user_admin": {
@@ -55718,12 +55708,12 @@
         },
         "plugin_basename": {
             "file": "plugin.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_normalize_path"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PluginFiles::basename"
+            ],
+            "composes": []
         },
         "plugin_dir_path": {
             "file": "plugin.php",
@@ -73748,12 +73738,12 @@
         },
         "wp_register_plugin_realpath": {
             "file": "plugin.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_normalize_path"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PluginFiles::registerRealpath"
+            ],
+            "composes": []
         },
         "wp_register_position_support": {
             "file": "block-supports.php",
@@ -78391,14 +78381,10 @@
         },
         "wptexturize": {
             "file": "formatting.php",
-            "lines": 9,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Texturize::askAgain",
-                "Minn\\Content\\Texturize::enabled",
-                "Minn\\Content\\Texturize::entities",
-                "Minn\\Content\\Texturize::html",
-                "Minn\\Content\\Texturize::skipPattern"
+                "Minn\\Content\\Texturize::apply"
             ],
             "composes": []
         },

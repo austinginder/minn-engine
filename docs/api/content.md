@@ -43,7 +43,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 219 |  |
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
-| [`Texturize`](#texturize) | final class | 269 | The texturize subset the reference applies to rendered text: straight |
+| [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 286 |  |
 
@@ -2149,7 +2149,7 @@ texturize battery post; anything beyond it is a documented gap.
 
 - const `SKIP` = `array (   0 => 'pre',   1 => 'code',   2 => 'kbd',   3 => 'style',   4 => 'script',   5 => 'tt', )`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\PluginFiles`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
 
 ### static `enabled(): bool`
@@ -2188,6 +2188,13 @@ it over, so each text asks the filters once.
 
 Bare ampersands made entities outside the skipped elements, as wptexturize leaves them after the rest.
 
+### static `apply(mixed $text, mixed $reset = false): mixed`
+
+Text with its quotes, dashes and ellipses made typographic
+(wptexturize), its tags and the elements and shortcodes that keep
+their text skipped; empty text, or any while texturizing is off, as
+given. Asked to reset, the switches are asked again.
+
 ### static `text(string $text): string`
 
 The same substitutions on a plain string with no tags.
@@ -2222,7 +2229,7 @@ double quote becomes the closing quote, and a single one does only
 where a word ends (before the end, whitespace, a no-break space or
 . , ; : ! ? ) ] } -), staying an apostrophe or opening quote elsewhere.
 
-Internals: `shortcodePattern()` (private, line 144), `quiet()` (private, line 163), `endsWord()` (private, line 280)
+Internals: `shortcodePattern()` (private, line 144), `quiet()` (private, line 163), `endsWord()` (private, line 298)
 
 
 ## UserRecord

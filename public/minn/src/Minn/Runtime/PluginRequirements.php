@@ -24,7 +24,7 @@ final class PluginRequirements
     public static function check(string $plugin): ?Refusal
     {
         // Read as the plugin screens read it, translated (its text domain loaded), as the reference reads it here.
-        $headers = \get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
+        $headers = PluginFiles::data(WP_PLUGIN_DIR . '/' . $plugin);
         $name = (string) $headers['Name'];
         $wp = (string) ($GLOBALS['wp_version'] ?? '');
         $needsWp = (string) $headers['RequiresWP'];

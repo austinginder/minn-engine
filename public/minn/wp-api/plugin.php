@@ -5,24 +5,7 @@ use Minn\Runtime\Runtime;
 
 function plugin_basename($file)
 {
-    global $wp_plugin_paths;
-    $file = wp_normalize_path((string) $file);
-    foreach ((array) $wp_plugin_paths as $expected => $real) {
-        $real = wp_normalize_path((string) $real);
-        if ($real !== '' && str_starts_with($file, $real . '/')) {
-            $file = wp_normalize_path((string) $expected) . substr($file, strlen($real));
-            break;
-        }
-    }
-    foreach ([WP_PLUGIN_DIR, WPMU_PLUGIN_DIR] as $dir) {
-        $dir = wp_normalize_path($dir);
-        foreach (array_unique([$dir, wp_normalize_path((string) (realpath($dir) ?: $dir))]) as $root) {
-            if (str_starts_with($file, $root . '/')) {
-                return trim(substr($file, strlen($root)), '/');
-            }
-        }
-    }
-    return ltrim($file, '/');
+    return Minn\Runtime\PluginFiles::basename($file);
 }
 
 /**
@@ -32,17 +15,7 @@ function plugin_basename($file)
  */
 function wp_register_plugin_realpath($file)
 {
-    global $wp_plugin_paths;
-    $dir = wp_normalize_path(dirname((string) $file));
-    if (in_array($dir, [wp_normalize_path(WP_PLUGIN_DIR), wp_normalize_path(WPMU_PLUGIN_DIR)], true)) {
-        return false;
-    }
-    $real = realpath((string) $file);
-    $real = $real === false ? '' : wp_normalize_path(dirname($real));
-    if ($real !== $dir) {
-        $wp_plugin_paths[$dir] = $real;
-    }
-    return true;
+    return Minn\Runtime\PluginFiles::registerRealpath($file);
 }
 
 function plugin_dir_path($file)
@@ -133,17 +106,7 @@ function is_network_only_plugin($plugin)
 /** A plugin's headers; a plugin in its own folder that names no text domain uses the folder's name (probe plugin-data). */
 function get_plugin_data($plugin_file, $markup = true, $translate = true)
 {
-    $headers = ['Name' => 'Plugin Name', 'PluginURI' => 'Plugin URI', 'Version' => 'Version', 'Description' => 'Description', 'Author' => 'Author', 'AuthorURI' => 'Author URI', 'TextDomain' => 'Text Domain', 'DomainPath' => 'Domain Path', 'Network' => 'Network', 'RequiresWP' => 'Requires at least', 'RequiresPHP' => 'Requires PHP', 'UpdateURI' => 'Update URI', 'RequiresPlugins' => 'Requires Plugins'];
-    $data = get_file_data($plugin_file, $headers, 'plugin');
-    $data['Network'] = strtolower($data['Network']) === 'true';
-    // The folder's name, when the file sits in a folder directly inside the plugins folder (probes plugin-data, upgrader).
-    $folder = dirname(plugin_basename((string) $plugin_file));
-    if ($data['TextDomain'] === '' && $folder !== '.' && !str_contains($folder, '/')) {
-        $data['TextDomain'] = $folder;
-    }
-    $data['Title'] = $data['Name'];
-    $data['AuthorName'] = $data['Author'];
-    return $markup || $translate ? _get_plugin_data_markup_translate($plugin_file, $data, $markup, $translate) : $data;
+    return Minn\Runtime\PluginFiles::data($plugin_file, $markup, $translate);
 }
 
 /**
@@ -156,39 +119,7 @@ function get_plugin_data($plugin_file, $markup = true, $translate = true)
  */
 function _get_plugin_data_markup_translate($plugin_file, $plugin_data, $markup = true, $translate = true)
 {
-    $file = plugin_basename((string) $plugin_file);
-    $domain = (string) ($plugin_data['TextDomain'] ?? '');
-    if ($translate && $domain !== '') {
-        if (!is_textdomain_loaded($domain)) {
-            load_plugin_textdomain($domain, false, dirname($file) . (string) ($plugin_data['DomainPath'] ?? ''));
-        }
-        foreach (['Name', 'PluginURI', 'Description', 'Author', 'AuthorURI', 'Version'] as $field) {
-            if (!empty($plugin_data[$field])) {
-                $plugin_data[$field] = translate($plugin_data[$field], $domain);
-            }
-        }
-    }
-    $allowed = ['a' => ['href' => true, 'title' => true], 'abbr' => ['title' => true], 'acronym' => ['title' => true], 'code' => true, 'em' => true, 'strong' => true];
-    foreach (['Name', 'Description', 'Author', 'Version'] as $field) {
-        $plugin_data[$field] = wp_kses((string) ($plugin_data[$field] ?? ''), $allowed);
-    }
-    $plugin_data['Title'] = $plugin_data['Name'];
-    $plugin_data['AuthorName'] = $plugin_data['Author'];
-    $plugin_data['PluginURI'] = esc_url((string) ($plugin_data['PluginURI'] ?? ''));
-    $plugin_data['AuthorURI'] = esc_url((string) ($plugin_data['AuthorURI'] ?? ''));
-    if ($markup) {
-        if ($plugin_data['PluginURI'] !== '' && $plugin_data['Name'] !== '') {
-            $plugin_data['Title'] = '<a href="' . $plugin_data['PluginURI'] . '">' . $plugin_data['Name'] . '</a>';
-        }
-        if ($plugin_data['AuthorURI'] !== '' && $plugin_data['Author'] !== '') {
-            $plugin_data['Author'] = '<a href="' . $plugin_data['AuthorURI'] . '">' . $plugin_data['Author'] . '</a>';
-        }
-        $plugin_data['Description'] = wptexturize($plugin_data['Description']);
-        if ($plugin_data['Author'] !== '') {
-            $plugin_data['Description'] .= sprintf(' <cite>%s</cite>', sprintf(__('By %s.'), $plugin_data['Author']));
-        }
-    }
-    return $plugin_data;
+    return Minn\Runtime\PluginFiles::shown($plugin_file, $plugin_data, $markup, $translate);
 }
 
 function get_file_data($file, $default_headers, $context = '')

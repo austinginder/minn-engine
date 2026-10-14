@@ -178,6 +178,24 @@ final class Texturize
         }
     }
 
+    /**
+     * Text with its quotes, dashes and ellipses made typographic
+     * (wptexturize), its tags and the elements and shortcodes that keep
+     * their text skipped; empty text, or any while texturizing is off, as
+     * given. Asked to reset, the switches are asked again.
+     */
+    public static function apply(mixed $text, mixed $reset = false): mixed
+    {
+        if ($reset) {
+            self::askAgain();
+        }
+        if (empty($text) || !self::enabled()) {
+            return $text;
+        }
+        $skip = self::skipPattern();
+        return self::entities(self::html((string) $text, $skip), $skip);
+    }
+
     /** The same substitutions on a plain string with no tags. */
     public static function text(string $text): string
     {

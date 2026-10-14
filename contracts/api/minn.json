@@ -38070,7 +38070,7 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/Texturize.php",
-            "lines": 269,
+            "lines": 287,
             "doc": "The texturize subset the reference applies to rendered text: straight\nquotes, apostrophes, ellipses, dashes, and primes become numeric\nentities, outside the skip elements only. Coverage is pinned by the\ntexturize battery post; anything beyond it is a documented gap.",
             "implements": [],
             "extends": null,
@@ -38092,6 +38092,7 @@
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\PageRenderer"
             ],
@@ -38232,6 +38233,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "apply",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "apply(mixed $text, mixed $reset = false): mixed",
+                    "doc": "Text with its quotes, dashes and ellipses made typographic\n(wptexturize), its tags and the elements and shortcodes that keep\ntheir text skipped; empty text, or any while texturizing is off, as\ngiven. Asked to reset, the switches are asked again.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "reset",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 187,
+                    "end": 197
+                },
+                {
+                    "routes": [],
                     "name": "text",
                     "static": true,
                     "visibility": "public",
@@ -38247,8 +38275,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 203
+                    "line": 200,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -38267,8 +38295,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 213
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -38289,8 +38317,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 225
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -38326,8 +38354,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 248
+                    "line": 253,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -38367,8 +38395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 277
+                    "line": 274,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -38443,8 +38471,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 283
+                    "line": 298,
+                    "end": 301
                 }
             ]
         },
@@ -70396,6 +70424,7 @@
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\PostWrites",
@@ -101291,6 +101320,7 @@
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\Refusal",
                 "Minn\\Support\\Serialized"
@@ -101347,8 +101377,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 36,
-                "end": 44
+                "line": 37,
+                "end": 45
             },
             "cases": [],
             "constants": [],
@@ -101428,8 +101458,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 53
+                    "line": 49,
+                    "end": 54
                 },
                 {
                     "routes": [
@@ -101450,8 +101480,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 89
+                    "line": 58,
+                    "end": 90
                 },
                 {
                     "routes": [
@@ -101479,8 +101509,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [
@@ -101510,8 +101540,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 119
+                    "line": 103,
+                    "end": 120
                 },
                 {
                     "routes": [
@@ -101539,8 +101569,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 143
+                    "line": 124,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -101583,8 +101613,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 256
+                    "line": 240,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -101597,8 +101627,8 @@
                         "@return list<array>"
                     ],
                     "params": [],
-                    "line": 146,
-                    "end": 157
+                    "line": 147,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -101617,8 +101647,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 171
+                    "line": 161,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -101637,8 +101667,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 184
+                    "line": 175,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -101657,8 +101687,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 194
+                    "line": 187,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -101684,8 +101714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 217
+                    "line": 197,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -101718,8 +101748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 227
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -101738,8 +101768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 261
+                    "line": 259,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -101758,8 +101788,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 266
+                    "line": 264,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -101778,8 +101808,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 275
+                    "line": 271,
+                    "end": 276
                 }
             ]
         },
@@ -125701,6 +125731,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Translations"
@@ -129099,6 +129130,7 @@
             "usedBy": [
                 "Minn\\Blocks\\Bindings",
                 "Minn\\Runtime\\OptionSanitizer",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\Shortcodes"
             ],
@@ -135287,6 +135319,185 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\PluginFiles",
+            "short": "PluginFiles",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PluginFiles.php",
+            "lines": 122,
+            "doc": "A plugin's files as WordPress's plugin functions know them: where a\nplugin folder really is (a symlinked one noted), a plugin file's name\nunder the plugins folder, its headers as read and as the plugin screens\nshow them, and whether it can be uninstalled.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Texturize",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\FileHeaders",
+                "Minn\\Runtime\\KsesRules",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\Translations",
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Paths"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\PluginsController",
+                "Minn\\Runtime\\PluginRemoval",
+                "Minn\\Runtime\\PluginRequirements"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "HEADERS",
+                    "value": "array (   'Name' => 'Plugin Name',   'PluginURI' => 'Plugin URI',   'Version' => 'Version',   'Description' => 'Description',   'Author' => 'Author',   'AuthorURI' => 'Author URI',   'TextDomain' => 'Text Domain',   'DomainPath' => 'Domain Path',   'Network' => 'Network',   'RequiresWP' => 'Requires at least',   'RequiresPHP' => 'Requires PHP',   'UpdateURI' => 'Update URI',   'RequiresPlugins' => 'Requires Plugins', )",
+                    "doc": "The headers a plugin's main file may carry, by field.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "registerRealpath",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "registerRealpath(mixed $file): bool",
+                    "doc": "Where a plugin's folder really is, noted under the folder as given\n(wp_register_plugin_realpath); a file not on disk notes an empty\nplace. The plugins and must-use folders themselves are refused.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "basename",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "basename(mixed $file): string",
+                    "doc": "A plugin file's name under the plugins or must-use folder (plugin_basename), a symlinked folder read as noted.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "data",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "data(mixed $pluginFile, mixed $markup = true, mixed $translate = true): array",
+                    "doc": "A plugin's headers (get_plugin_data), marked up and translated unless\nasked not to be; a plugin in its own folder that names no text domain\nuses the folder's name.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "pluginFile",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "markup",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        },
+                        {
+                            "name": "translate",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "shown",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "shown(mixed $pluginFile, mixed $data, mixed $markup = true, mixed $translate = true): array",
+                    "doc": "The headers as the plugin screens show them\n(_get_plugin_data_markup_translate). Translated: the plugin's domain\nloaded from its folder unless it is already, then the name, addresses,\nversion, description and author through it. Always: the text cut to a,\nabbr, acronym, code, em and strong, the addresses escaped. Marked up:\nthe title and author linked, the description texturized with its \"By\"\nline.",
+                    "shapes": [
+                        "@param array<string, mixed> $data",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "pluginFile",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "markup",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        },
+                        {
+                            "name": "translate",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "uninstallable",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uninstallable(mixed $plugin): bool",
+                    "doc": "Whether a plugin can be uninstalled (is_uninstallable_plugin): it registered an uninstall callback, or ships an uninstall.php.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 138
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\PluginRemoval",
             "short": "PluginRemoval",
             "namespace": "Minn\\Runtime",
@@ -135300,6 +135511,7 @@
                 "Minn\\Objects\\Errors",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Transients",
                 "Minn\\Runtime\\Translations",
@@ -135499,6 +135711,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\FileHeaders",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\Refusal",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
@@ -146093,6 +146306,7 @@
                 "Minn\\Runtime\\Patterns",
                 "Minn\\Runtime\\PlaceholderTrace",
                 "Minn\\Runtime\\PluginActivation",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\PluginUpdates",
@@ -155760,6 +155974,7 @@
             ],
             "usedBy": [
                 "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\Plugins"
             ],
@@ -159814,6 +160029,7 @@
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\OptionSanitizer",
                 "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\PostFields",
                 "Minn\\Runtime\\PostTags",
@@ -162734,6 +162950,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\ThemeSwitch"
             ],

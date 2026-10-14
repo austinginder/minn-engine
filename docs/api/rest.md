@@ -1693,7 +1693,7 @@ rendered description.
 - `@param array<string, mixed> $headers the plugin's headers, as get_plugins() holds them`
 - `@return array<string, mixed>`
 
-Internals: `items()` (private, line 146), `find()` (private, line 160), `statusOf()` (private, line 174), `manifestFor()` (private, line 186), `extensionItem()` (private, line 196), `pluginItem()` (private, line 224), `links()` (private, line 258), `extensionKey()` (private, line 263), `refuse()` (private, line 270)
+Internals: `items()` (private, line 147), `find()` (private, line 161), `statusOf()` (private, line 175), `manifestFor()` (private, line 187), `extensionItem()` (private, line 197), `pluginItem()` (private, line 225), `links()` (private, line 259), `extensionKey()` (private, line 264), `refuse()` (private, line 271)
 
 
 ## PolicyGate

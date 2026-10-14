@@ -352,15 +352,7 @@ function wp_trim_words($text, $num_words = 55, $more = null)
 
 function wptexturize($text, $reset = false)
 {
-    if ($reset) {
-        Texturize::askAgain();
-    }
-    // Empty text ("0" and null too) comes back as given and asks nothing; texturizing off leaves the text as written (probe filter-inputs-3).
-    if (empty($text) || !Texturize::enabled()) {
-        return $text;
-    }
-    $skip = Texturize::skipPattern();
-    return Texturize::entities(Texturize::html((string) $text, $skip), $skip);
+    return Minn\Content\Texturize::apply($text, $reset);
 }
 
 function wpautop($text, $br = true)
