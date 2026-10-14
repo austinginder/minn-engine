@@ -842,6 +842,229 @@
                 "body": "9dfe86f12e40"
             }
         },
+        "kses.php": {
+            "_wp_add_global_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Support\\KsesAttributes",
+                "why": "the global attributes every allowed element accepts",
+                "body": "93003e09e042"
+            },
+            "_wp_kses_split_callback": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads the globals the split pass sets for its callback",
+                "body": "f1cacd2288dd"
+            },
+            "kses_init": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "unhooks, then hooks the filters again for a user without unfiltered_html",
+                "body": "6bc39f6b7a08"
+            },
+            "kses_init_filters": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "hooks the named kses filters onto the save hooks through the hook API",
+                "body": "f49025c14ed4"
+            },
+            "kses_remove_filters": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "unhooks the named kses filters through the hook API",
+                "body": "e41415af1af4"
+            },
+            "wp_filter_global_styles_post": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\UserStyles",
+                "why": "strips insecure properties from a user's global styles post and re-encodes it so kses leaves it alone",
+                "body": "135dadf20b8d"
+            },
+            "wp_kses_array_lc": {
+                "verdict": "move",
+                "to": "Minn\\Support\\KsesPolicy",
+                "why": "lower-cases an allowlist's elements and attributes",
+                "body": "40d85bd75185"
+            },
+            "wp_kses_attr_check": {
+                "verdict": "move",
+                "to": "Minn\\Support\\KsesPolicy",
+                "gates": [
+                    "refs"
+                ],
+                "why": "decides an attribute against the allowed rules and filters a style value, clearing the by-reference parts when refused",
+                "body": "0b53bb736d82"
+            },
+            "wp_kses_bad_protocol_once2": {
+                "verdict": "move",
+                "to": "Minn\\Support\\KsesProtocols",
+                "why": "normalises a scheme and accepts it only when allowed",
+                "body": "e76c2acb9985"
+            },
+            "wp_kses_hair": {
+                "verdict": "move",
+                "to": "Minn\\Support\\KsesAttributes",
+                "why": "parses attributes, decoding values, checking URI protocols and re-encoding; the engine's attribute rules",
+                "body": "348923e32936"
+            },
+            "wp_kses_named_entities": {
+                "verdict": "move",
+                "to": "Minn\\Support\\KsesEntities",
+                "why": "keeps a known named entity, escapes the rest; beside KsesEntities::known",
+                "body": "6ca301dacd62"
+            },
+            "wp_kses_normalize_entities2": {
+                "verdict": "move",
+                "to": "Minn\\Support\\KsesEntities",
+                "why": "pads a valid decimal reference, escapes an invalid one",
+                "body": "fac10e06c555"
+            },
+            "wp_kses_normalize_entities3": {
+                "verdict": "move",
+                "to": "Minn\\Support\\KsesEntities",
+                "why": "keeps a valid hex reference, escapes an invalid one",
+                "body": "c5cb09cdb2d7"
+            },
+            "wp_kses_xml_named_entities": {
+                "verdict": "move",
+                "to": "Minn\\Support\\KsesEntities",
+                "why": "keeps the XML five, decodes other known entities, escapes the rest",
+                "body": "b148fad3b1bd"
+            },
+            "wp_strip_custom_css_from_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\CustomCss",
+                "why": "removes custom css from block attributes, nested blocks included, leaving untouched content as it came",
+                "body": "fe4685a1b74c"
+            }
+        },
+        "l10n.php": {
+            "__ngettext": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then _n",
+                "body": "15e246973e55"
+            },
+            "_c": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then translate with the context bar cut",
+                "body": "75b57acbc1fb"
+            },
+            "_load_script_textdomain_from_src": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\ScriptTranslations",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the script translation file lookup (the domain's folder, the hashed relative path, its filter, the language folders); reads the global textdomain registry today",
+                "body": "57986fb10b0a"
+            },
+            "_load_textdomain_just_in_time": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "loads a waiting domain on first use unless closed; the engine's domain state decides it",
+                "body": "28f3dbc56b28"
+            },
+            "_minn_locale_switcher": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "makes the global $wp_locale_switcher plugins reach, once",
+                "body": "6dca1e81b266"
+            },
+            "_minn_reload_textdomains": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "reloads every known domain for a new locale after a switch",
+                "body": "cde7cc2c43e5"
+            },
+            "_minn_textdomain_file": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "the file a domain loads from: its own folder, then the plugins and themes language folders",
+                "body": "2da81aebcec7"
+            },
+            "before_last_bar": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\Gettext",
+                "why": "cuts a text at its last bar; the context rule beside the translator",
+                "body": "9e3f97487eb4"
+            },
+            "get_translations_for_domain": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "hands out the API's translations object for a loaded domain, the one NOOP_Translations otherwise",
+                "body": "17229a061a14"
+            },
+            "load_muplugin_textdomain": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "the must-use plugin folder and the domain-locale file name are the loader's rules",
+                "body": "b5b49287ffba"
+            },
+            "load_script_module_textdomain": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the registered module's source handed to the shared lookup",
+                "body": "e8a5499a023d"
+            },
+            "load_script_textdomain": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the registered script's absolute source handed to the shared lookup",
+                "body": "41994e2387dd"
+            },
+            "load_script_translations": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\ScriptTranslations",
+                "why": "reads a script translation file through its three filters",
+                "body": "4bae0bf985d7"
+            },
+            "load_theme_textdomain": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the theme folder (or the one named) and the domain-locale file name are the loader's rules",
+                "body": "2e3bbe1c614b"
+            },
+            "translate": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\Gettext::text",
+                "why": "the engine translates; a non-scalar text passing through the gettext filters belongs inside text",
+                "body": "c45110b2430b"
+            },
+            "translate_nooped_plural": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the noop's own domain, then _n or _nx by whether it has a context",
+                "body": "90967d6f4d5e"
+            },
+            "translate_settings_using_i18n_schema": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\Gettext",
+                "why": "walks settings by an i18n schema (strings, lists, objects, the star key), translating each string in its context",
+                "body": "9fe4dc229561"
+            },
+            "translations_api": {
+                "verdict": "move",
+                "to": "Minn\\Ops\\Directory",
+                "why": "asks the update service for translations with its filters; the request moves, the WP_Error shapes stay",
+                "body": "cb68c1639b92"
+            },
+            "wp_dropdown_languages": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the API's arguments handed to LanguageChoices::dropdown, echoed or returned",
+                "body": "c2479f9ad01b"
+            },
+            "wp_get_l10n_php_file_data": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\PhpFile",
+                "why": "a PHP translation file's headers by their names; the engine reads those files",
+                "body": "3734a8c8e142"
+            }
+        },
         "mail.php": {
             "_minn_wp_mail_default_from": {
                 "verdict": "move",
