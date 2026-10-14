@@ -8103,6 +8103,485 @@
                 "body": "9766dc147e3f"
             }
         },
+        "taxonomy.php": {
+            "_minn_category_list_body": {
+                "verdict": "move",
+                "to": "Minn\\Front\\TermLists",
+                "why": "the none item, the All link to the posts page, the current category from the queried term and the walked tree; list markup by rules for wp_list_categories",
+                "doubt": "the All link always points at the posts page or home, where the API points a taxonomy of only custom post types at the first type archive",
+                "body": "fea78d6dacef"
+            },
+            "_minn_category_list_row": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermTags",
+                "why": "one category's row for the list: its link and, by the parents mode, the linked parent chain before it or the plain chain inside its name",
+                "body": "cb87a4e16b9f"
+            },
+            "_minn_default_term": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermWrites",
+                "why": "finds the taxonomy's default term by name or inserts it and stores its id in default_term_{taxonomy}; stored data and a term write belong with TermWrites",
+                "doubt": "a stored default that still exists is kept without looking up the named term, where the API looks the default term up by name (inserting it when missing) and updates the option on every registration",
+                "body": "e5cc4f2aafe1"
+            },
+            "_minn_join_list": {
+                "verdict": "remove",
+                "why": "a narrower copy of wp_sprintf_l's %l join (no comma before and, no wp_sprintf_l filter); once get_the_taxonomies, its only caller, formats through wp_sprintf nothing needs it",
+                "body": "4c0f1a5a079e"
+            },
+            "_minn_menus": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Menus",
+                "why": "assembles the menu store from the runtime's db, post and term readers, permalinks, writer and site; that wiring is the engine's, a Menus factory as Permalinks::fromDb is",
+                "body": "69395c91f761"
+            },
+            "_minn_tag_cloud_row": {
+                "verdict": "move",
+                "to": "Minn\\Front\\TermLists",
+                "why": "one tag's count text (callback or nooped plural) and scaled count for the cloud data; part of building the cloud",
+                "doubt": "a text callback wins over topic_count_text, where the API prefers topic_count_text, treats default_topic_count_text as the plain plural and still honours single_text and multiple_text",
+                "body": "4f28793476a4"
+            },
+            "_minn_term_lookup": {
+                "verdict": "remove",
+                "why": "nothing calls it, and it repeats the private TermLookup::lookup line for line (the slug, then the saved name, a childless parent finding nothing); term_exists already goes through TermLookup::exists",
+                "body": "0c0573330909"
+            },
+            "_minn_term_numbers": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Records::termNumbers",
+                "why": "an exact copy of the private Records::termNumbers (the same five fields cast to integers); open that method and call it from WP_Term::get_instance",
+                "body": "fb4b4962903e"
+            },
+            "_minn_term_taxonomy_ids": {
+                "verdict": "move",
+                "to": "Minn\\Query\\TaxSql",
+                "why": "resolves a tax clause's terms to term_taxonomy ids by field, with children for a hierarchical taxonomy; the resolution TaxSql takes as a closure belongs inside the query builder",
+                "doubt": "a name held by several terms under different parents resolves to one term through get_term_by, where the API's term query takes every term with that name",
+                "body": "aa45376923cb"
+            },
+            "_nav_menu_item_id_use_once": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "why": "remembers which item ids have printed their id attribute, the API's static state; it joins NavMenu's own used ids",
+                "body": "f4c348edea05"
+            },
+            "_split_shared_term": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermWriter",
+                "why": "the split itself is TermWriter::split; cleaning the caches, the split_shared_term action and the _split_terms record are the rest of the same operation",
+                "doubt": "a term_taxonomy_id that belongs to another term returns the given id where the API returns the term that row holds, and finished_splitting_shared_terms is never set after the last split",
+                "body": "dff673545f15"
+            },
+            "_update_term_count_on_transition_post_status": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermWrites",
+                "why": "decides which taxonomies to recount on a status change through update_post_term_count_statuses, which TermWrites::countPublished already reads; the recount rule belongs there",
+                "doubt": "an inherit status is not resolved to the parent's status first, and a change between two counted statuses still recounts, where the API skips it",
+                "body": "6ce3715742c9"
+            },
+            "_wp_auto_add_pages_to_menu": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Menus",
+                "why": "the publish-transition rule for top-level pages and the nav_menu_options auto_add list decide the adds; Menus::autoAdd already reads that option and appendPage writes the item",
+                "doubt": "a page the menu already holds is added again, and the item is written without wp_update_nav_menu_item and its actions, where the API skips such a menu and saves through that function",
+                "body": "9d27f238db03"
+            },
+            "_wp_delete_post_menu_item": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deletes through wp_delete_post by name, so its hooks run, each menu item Menus::itemsPointingAt names for the post",
+                "body": "90002c55f436"
+            },
+            "_wp_delete_tax_menu_item": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deletes through wp_delete_post by name each item wp_get_associated_nav_menu_items names for the term",
+                "body": "1a0bb4c5b12f"
+            },
+            "_wp_reset_invalid_menu_item_parent": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\MenuEvents",
+                "why": "resets a menu item's parent when it names the item itself; a save rule for menu items, the named callback staying",
+                "doubt": "a non-array argument is read as an array, where the API returns anything but an array unchanged",
+                "body": "4094a4131da7"
+            },
+            "category_exists": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "term_exists in category, the term_id taken out of its array",
+                "body": "0ff1c25c583e"
+            },
+            "clean_object_term_cache": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermLookup",
+                "why": "forgets the engine's post_terms row cache and per-object caches, then fires clean_object_term_cache; cache invalidation belongs beside TermLookup::cleanCache",
+                "doubt": "deletes each object's post_meta cache, where the API deletes the {taxonomy}_relationships caches, moves the terms last_changed and does nothing while $_wp_suspend_cache_invalidation is set",
+                "body": "cb9b8d051088"
+            },
+            "create_initial_taxonomies": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "why": "re-registers the captured built-in taxonomies from the registry's own rows, with the post_format_rewrite_base filter and the archives label fix; registry knowledge, as for create_initial_post_types",
+                "body": "7b33cd957635"
+            },
+            "get_all_category_ids": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then get_terms for every category id",
+                "body": "4ccd751e954e"
+            },
+            "get_attachment_taxonomies": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registered",
+                "why": "builds the attachment's object types from its file extension and each part of its MIME type and merges their taxonomies; that type list belongs beside Registered::forAttachments, the post and file lookups staying as arguments",
+                "body": "c80c7f9a9dfc"
+            },
+            "get_cat_ID": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term_by name in category, its term_id or 0",
+                "body": "9343e033e131"
+            },
+            "get_cat_name": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term in category, its name or an empty string",
+                "body": "6e511f447273"
+            },
+            "get_categories": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_terms by name after its get_categories_taxonomy filter and the type link back-compat, then _make_cat_compat on each term; an error answers an empty array",
+                "body": "e8dde5e46874"
+            },
+            "get_category": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term in category, then _make_cat_compat",
+                "doubt": "the old category fields are added only to a WP_Term, so ARRAY_A output lacks cat_ID, cat_name and the rest, where _make_cat_compat also fills an array",
+                "body": "5e5cd5b4578e"
+            },
+            "get_category_by_path": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Terms",
+                "why": "decodes and sanitizes the path, finds the leaf slug's categories and compares each one's ancestor chain with it; the inverse of Terms::pathOf",
+                "body": "af65c8b22c31"
+            },
+            "get_category_by_slug": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term_by slug in category, then _make_cat_compat on a found term",
+                "body": "d644eaaa2185"
+            },
+            "get_object_taxonomies": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a post object is asked by its type and an attachment through get_attachment_taxonomies; Registered::objectTaxonomies does the lookup",
+                "doubt": "for an attachment the taxonomy names get_attachment_taxonomies returns are matched again as object types, so it finds none, where the API returns that function's result with the output asked",
+                "body": "0551ee97d887"
+            },
+            "get_objects_in_term": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the invalid-taxonomy refusal, the parsed order and the ids as strings around TermQuery::objectsIn",
+                "body": "99677959879f"
+            },
+            "get_post_taxonomies": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_object_taxonomies of get_post's post, empty for none",
+                "body": "04d5b673a8bd"
+            },
+            "get_tag_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term in post_tag, then get_term_link by name",
+                "doubt": "takes only post_tag ids and passes a WP_Error from get_term_link through, where the API goes through get_category_link, which links any term id and answers an empty string on error",
+                "body": "37c84bcc57d2"
+            },
+            "get_tags": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_terms for post_tag, then its get_tags filter",
+                "doubt": "a WP_Error becomes an empty array and an empty result still runs get_tags, where the API skips the filter only for an empty result and hands the error through it",
+                "body": "bb9a16b03d28"
+            },
+            "get_taxonomy_labels": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "why": "Registry::taxonomyLabels then taxonomy_labels_{name} around the result; the filter is part of making labels, as for get_post_type_labels",
+                "doubt": "the filtered labels are not merged back over the defaults, and the old helps and no_tagcloud arguments are not carried into separate_items_with_commas and not_found",
+                "body": "1f398f452cb8"
+            },
+            "get_term_parents_list": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermTags",
+                "why": "builds the ancestor chain with its links by rules, the job TermLists::parentChain already does for TermTags::categoryParents; a taxonomy-general twin belongs beside it",
+                "doubt": "link and inclusive are not passed through wp_validate_boolean, so the string false still links and includes the term",
+                "body": "5327d66b9ed4"
+            },
+            "get_term_to_edit": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term then sanitize_term in the edit context, an error passed on and an empty string for none",
+                "body": "7332107ee004"
+            },
+            "get_terms_to_edit": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the post's terms from get_object_term_cache or wp_get_object_terms, their names joined and escaped, then terms_to_edit",
+                "body": "4ca88eccb76a"
+            },
+            "get_the_category_by_ID": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term in category, its name or an empty string",
+                "doubt": "looks the id up only among categories and answers an empty string for an error, where the API takes any term by id and returns the WP_Error",
+                "body": "e3ae7d26a7f3"
+            },
+            "get_the_category_list": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermTags",
+                "why": "the the_category_list and the_category filters around rows built per parents mode and TermLinks::categories; template-tag markup by rules",
+                "doubt": "a post with no categories answers an empty string where the API gives Uncategorized through the_category, and rel is always category tag where the API uses category without pretty permalinks",
+                "body": "d1bbf37c552d"
+            },
+            "get_the_taxonomies": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "per taxonomy, the post's terms from get_object_term_cache or wp_get_object_terms linked through get_term_link and the caller's templates; it should format through wp_sprintf by name so %l runs wp_sprintf_l",
+                "doubt": "a taxonomy's own template, term_template and args are ignored, and taxonomies are asked by post type, so an attachment's file-type taxonomies are missed",
+                "body": "19d6ced50ce8"
+            },
+            "get_the_term_list": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermTags",
+                "why": "resolves each term's link, builds the anchors through TermLinks and fires term_links-{taxonomy} before joining with before and after; template-tag markup by rules",
+                "body": "554f05e47feb"
+            },
+            "has_term": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "should be get_post then is_object_in_term by name, false on its error, as the API builds it; the body repeats is_object_in_term's id, slug and name matching with rules of its own",
+                "body": "2576eae8cd5a"
+            },
+            "has_term_meta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_check_term_meta_support_prefilter by name, then the engine's Meta::listing for the term",
+                "body": "2de5db8e7705"
+            },
+            "is_object_in_term": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermLookup",
+                "why": "matches the object's terms against ids, slugs and names by its own rules; term matching beside TermLookup::objectTerms, the WP_Error staying",
+                "doubt": "a numeric string is compared only as an id, so a term named or slugged 2024 is missed, and an object id of 0 answers false where the API returns an invalid_object WP_Error",
+                "body": "93a8ee25e2ee"
+            },
+            "is_term_publicly_viewable": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term, then is_taxonomy_viewable of its taxonomy",
+                "body": "841f9f0e18a3"
+            },
+            "register_taxonomy": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the name length rule and refusal, the object's steps in order, the default term and both registered actions are registration, as for register_post_type; the registry can make the object through Handoff",
+                "body": "ac515faedc7b"
+            },
+            "register_taxonomy_for_object_type": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the taxonomy and post type checks and the registered_taxonomy_for_object_type action around Registry::addObjectType are one registry operation on the shared object",
+                "body": "8ada156b7b32"
+            },
+            "term_description": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the queried object or the term given through get_term, its description through term_description",
+                "doubt": "runs term_description with the term object, where the API reads get_term_field description in display context, whose filters pass the id, taxonomy and context and also run {taxonomy}_description",
+                "body": "bcc23ac4f241"
+            },
+            "term_is_ancestor_of": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "whether the first term is among get_ancestors of the second",
+                "body": "522ffdee1467"
+            },
+            "the_tags": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "should echo get_the_tag_list with the translated Tags: default, as the API does; the body rebuilds the links itself",
+                "doubt": "rebuilding the links skips get_the_tag_list's the_tags and term_links-post_tag filters, and the Tags: default is not translated",
+                "body": "06dc9f067399"
+            },
+            "the_taxonomies": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_the_taxonomies joined by sep between before and after",
+                "body": "5625ba340929"
+            },
+            "the_terms": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_the_term_list through the_terms, false on its error",
+                "body": "837d90827324"
+            },
+            "unregister_taxonomy": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the existence and built-in refusals, the object's rewrite and hook teardown and the unregistered_taxonomy action are registry behaviour beside unregisterTaxonomy",
+                "body": "d5c3031b7658"
+            },
+            "unregister_taxonomy_for_object_type": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Registry",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the taxonomy and post type checks and the action fired only on a removal around Registry::removeObjectType are one registry operation on the shared object",
+                "body": "ab6d587e3856"
+            },
+            "update_menu_item_cache": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "sorts the items' objects into post and term ids, then _prime_post_caches and _prime_term_caches by name",
+                "body": "43414fafa6e1"
+            },
+            "update_object_term_cache": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermTags",
+                "why": "fills the engine's minn_object_terms cache that TermTags::cached reads, one object and taxonomy at a time; the object term cache is engine state",
+                "doubt": "runs a query per object and taxonomy and refills objects already cached, where the API fills only uncached objects in one query into the {taxonomy}_relationships groups plugins read",
+                "body": "324ce21c1aa3"
+            },
+            "walk_category_dropdown_tree": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "calls the walker a plugin may pass, or Walker_CategoryDropdown",
+                "body": "38bb2fb36bf8"
+            },
+            "walk_category_tree": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "calls the walker a plugin may pass, or Walker_Category",
+                "body": "cc0b43c94f32"
+            },
+            "wp_check_term_hierarchy_for_loops": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Hierarchy",
+                "why": "walks the parent chain by hand over term rows; Support\\Hierarchy already finds loops in a parent chain, as for wp_check_post_hierarchy_for_loops",
+                "doubt": "an existing loop above the new parent is only stepped around, where the API breaks it by setting each member's parent to 0 through wp_update_term",
+                "body": "ee43a585fd93"
+            },
+            "wp_create_categories": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "category_exists or wp_create_category per name, then wp_set_post_categories when a post is named",
+                "body": "21038f7eff39"
+            },
+            "wp_create_category": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "category_exists, else wp_insert_category with the name and parent",
+                "body": "a6abcde6dd8a"
+            },
+            "wp_delete_nav_menu": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "resolves the menu through wp_get_nav_menu_object, false for none, and hands the deletion to MenuEvents::deleteMenu",
+                "doubt": "answers true whatever the term deletion gives, where the API returns wp_delete_term's result and fires wp_delete_nav_menu only on success",
+                "body": "94213d314977"
+            },
+            "wp_dropdown_categories": {
+                "verdict": "move",
+                "to": "Minn\\Front\\TermLists",
+                "why": "builds the select element and its all and none options by rules around the walked options, then fires wp_dropdown_cats; walk_category_dropdown_tree stays called and the echo flag stays",
+                "doubt": "selected does not default to the queried category on a category archive, and pad_counts is not turned on for hierarchical counts as the API does",
+                "body": "a7479a5bd0de"
+            },
+            "wp_generate_tag_cloud": {
+                "verdict": "move",
+                "to": "Minn\\Front\\TermLists",
+                "why": "argument defaults, tag_cloud_sort, the per-tag rows and wp_generate_tag_cloud_data sit around TermLists' cloud steps; the filters are part of building the cloud",
+                "doubt": "TermLists shuffles only for orderby random, where the API shuffles for order RAND, and an empty cloud still runs wp_generate_tag_cloud, which the API returns before",
+                "body": "c0c9897ae994"
+            },
+            "wp_get_associated_nav_menu_items": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Menus",
+                "why": "the menu items pointing at an object by type, narrowed by taxonomy for terms; Menus::itemsPointingAt already runs that query without the taxonomy check",
+                "body": "ac9713a8b74c"
+            },
+            "wp_get_split_term": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "one entry of the _split_terms option through get_option, false for none",
+                "body": "a7b2fbbe6db5"
+            },
+            "wp_get_split_terms": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "one old term's entries of the _split_terms option through get_option, empty for none",
+                "body": "b0f7ce4c4789"
+            },
+            "wp_get_term_taxonomy_parent_id": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term, then its parent as an integer, false for none",
+                "body": "796aa7753c3a"
+            },
+            "wp_insert_category": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "maps the category array onto wp_insert_term or wp_update_term by name, the parent dropped through term_exists and term_is_ancestor_of; the empty-name refusal and 0 or WP_Error are glue",
+                "body": "75c4e38e0720"
+            },
+            "wp_list_categories": {
+                "verdict": "move",
+                "to": "Minn\\Front\\TermLists",
+                "why": "argument defaults, the pad_counts and exclude_tree rules, the title_li wrapper and the wp_list_categories filter build the list by rules; walk_category_tree stays called so a walker argument applies, and echo or return stays",
+                "body": "bbfff4c78dba"
+            },
+            "wp_nav_menu_remove_menu_item_has_children_class": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "why": "drops menu-item-has-children at the last level the depth allows; the rule belongs beside NavMenu::build, which adds the class",
+                "doubt": "a negative depth keeps the class, where the API removes it at every level whenever depth is not 0",
+                "body": "3bddd09821db"
+            },
+            "wp_tag_cloud": {
+                "verdict": "move",
+                "to": "Minn\\Front\\TermLists",
+                "why": "queries the top tags, resolves each link and hands them to wp_generate_tag_cloud, then the wp_tag_cloud filter; choosing and linking the tags is cloud building, the echo flag stays",
+                "doubt": "the edit link mode and get_terms arguments other than number, include, exclude and hide_empty are dropped, and format array with echo on prints Array where the API returns the array",
+                "body": "3125cef275fd"
+            },
+            "wp_term_is_shared": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermWriter",
+                "why": "whether a term id has more than one term_taxonomy row is a count query beside TermWriter::split, the finished_splitting_shared_terms check with it",
+                "doubt": "counts through get_terms over registered taxonomies and its filters, where the API counts every term_taxonomy row for the id",
+                "body": "1d90ce231a89"
+            },
+            "wp_update_category": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "refuses a category as its own parent, merges the stored category (get_term, _make_cat_compat, wp_slash) under the changes and hands it to wp_insert_category",
+                "body": "15ef8d37dc9e"
+            }
+        },
         "template.php": {
             "_minn_archive_is_current": {
                 "verdict": "move",
