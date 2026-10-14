@@ -2135,6 +2135,958 @@
                 "body": "8f90fa0f4828"
             }
         },
+        "deprecated.php": {
+            "__ngettext_noop": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then _n_noop",
+                "body": "73d41ab2d284"
+            },
+            "_excerpt_render_inner_columns_blocks": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then _excerpt_render_inner_blocks",
+                "body": "acea3ba102ef"
+            },
+            "_filter_query_attachment_filenames": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the filter removed, the clauses unchanged",
+                "body": "5f6233195da2"
+            },
+            "_get_path_to_translation": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "deprecated, a static per-domain cache of the language folder lookup with a reset; engine state beside TextDomains, the notice stays",
+                "body": "7ffa552272ea"
+            },
+            "_get_path_to_translation_from_lang_dir": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "deprecated, a static glob of the plugins and themes language folders matched against the domain-locale file name; the loader's lookup beside TextDomains::folderFile, the notice stays",
+                "body": "d4ce2b59b2b0"
+            },
+            "_minn_link_category_id": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_term_by on the link category name, -1 when there is none; trivial glue for the byname variants",
+                "body": "3f0879899a81"
+            },
+            "_minn_old_adjacent_post": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "why": "the old neighbour link from get_adjacent_post: label, optional filtered title, anchor put in place of % in the format; markup by rules beside PostNavigation",
+                "body": "663505288cfe"
+            },
+            "_minn_post_rel_link": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\HeadLinks",
+                "why": "a head link tag to a post: %title and %date filled, the_title filter, the attribute escaped; markup by rules",
+                "body": "3596ee15bd44"
+            },
+            "_minn_user_level": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Can",
+                "why": "the old numeric user level read for the user_can_* level rules; it moves with them",
+                "body": "0997e205b5bd"
+            },
+            "_nc": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then _n with the context bar cut by before_last_bar",
+                "body": "efe858180bd3"
+            },
+            "_preview_theme_stylesheet_filter": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and ''",
+                "body": "0b9df96f3623"
+            },
+            "_preview_theme_template_filter": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and ''",
+                "body": "0b9df96f3623"
+            },
+            "_resolve_home_block_template": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Templates",
+                "why": "deprecated, its own front page choice (a static page, else the home template through resolve_block_template); beside Templates' resolution, the notice stays",
+                "body": "c9de4d6a90df"
+            },
+            "_search_terms_tidy": {
+                "verdict": "move",
+                "to": "Minn\\Query\\PostSearch",
+                "why": "deprecated, its own trim of quotes, spaces and line breaks off a search term; beside PostSearch's term trimming, the notice stays",
+                "body": "c12d003c2f21"
+            },
+            "_sort_nav_menu_items": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Lists",
+                "gates": [
+                    "globals"
+                ],
+                "why": "deprecated, its own comparator on the property the $_menu_item_sort_prop global names, numeric when both are numbers, else strcmp; beside the Lists sort, the notice stays",
+                "body": "14fda92138bd"
+            },
+            "_usort_terms_by_ID": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Lists",
+                "why": "deprecated, its own term_id comparator, not wp_list_sort; beside the Lists sort, the notice stays",
+                "body": "3dee2fdf61e9"
+            },
+            "_usort_terms_by_name": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Lists",
+                "why": "deprecated, its own name comparator (strcmp), not wp_list_sort; beside the Lists sort, the notice stays",
+                "body": "162b5d5e0897"
+            },
+            "_wp_register_meta_args_whitelist": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then _wp_register_meta_args_allowed_list",
+                "body": "1b3a44613303"
+            },
+            "automatic_feed_links": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then add_theme_support or remove_action on feed_links_extra",
+                "body": "b463f26a35b8"
+            },
+            "clean_page_cache": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then clean_post_cache",
+                "body": "be987ffbf4f8"
+            },
+            "clean_pre": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Autop",
+                "why": "deprecated, its own pre block clean-up (breaks removed, paragraphs to newlines, a match rejoined); beside Autop's pre handling, the notice stays",
+                "body": "84857c2cc650"
+            },
+            "comments_rss": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_post_comments_feed_link through esc_url",
+                "body": "083115a34a5e"
+            },
+            "comments_rss_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then post_comments_feed_link",
+                "body": "7f17538efdb4"
+            },
+            "create_user": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_create_user",
+                "body": "730ac1074f6c"
+            },
+            "debug_fopen": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and false",
+                "body": "fc15cd65e4d7"
+            },
+            "debug_fwrite": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "writes to the error log only when the $debug global is on; that global is the switch callers set",
+                "doubt": "logs for any non-empty $debug where the old check was 1 == $debug",
+                "body": "6924995c7114"
+            },
+            "delete_usermeta": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Meta",
+                "why": "deprecated, with its own delete that never calls delete_user_meta: key sanitising, the value serialised or trimmed, rows found and deleted through Meta directly between the old usermeta actions; beside Meta, the notice stays",
+                "doubt": "a value of '0' is empty to the old check, which then deletes every row under the key; here only rows holding '0' go, and the actions get the raw value, not the trimmed or serialised one",
+                "body": "3423e9441643"
+            },
+            "dropdown_cats": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the none label, then wp_dropdown_categories without the all option as the reference's query string ends up",
+                "body": "d4c527aae885"
+            },
+            "force_ssl_login": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then force_ssl_admin",
+                "body": "195e8d0a0eaa"
+            },
+            "format_to_post": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the content unchanged",
+                "body": "4dd2754783b9"
+            },
+            "funky_javascript_fix": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Text",
+                "gates": [
+                    "globals"
+                ],
+                "why": "deprecated, rewrites %uXXXX escapes as numeric entities for old IE as the $is_winIE and $is_macIE globals say; a text rule beside Text::numericReferences, the notice stays",
+                "body": "031013cd8dd8"
+            },
+            "gd_edit_image_support": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Canvas",
+                "why": "deprecated, its own GD support table (imagetypes flags, else the reader functions) per mime type; beside the GD Canvas, the notice stays",
+                "body": "ca0702a347f5"
+            },
+            "get_alloptions": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_load_alloptions",
+                "body": "f277dea1208d"
+            },
+            "get_archives": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the old arguments compacted for wp_get_archives",
+                "body": "2a8938c6b5cd"
+            },
+            "get_attachment_icon": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "deprecated, the icon's img markup with a width or height constraint by aspect ratio against attachment_max_dims, then attachment_icon; beside AttachmentImages, the notice stays",
+                "doubt": "the old function also stored the computed iconsize on the post object; nothing sets it here",
+                "body": "cb0290b21c18"
+            },
+            "get_attachment_icon_src": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "deprecated, its own source choice (the thumbnail, else the image, else the type's svg icon under icon_dir) instead of wp_get_attachment_image_src; beside AttachmentImages::src, the notice stays",
+                "body": "b4670d92123c"
+            },
+            "get_attachment_innerHTML": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "deprecated, the icon or else the escaped title through attachment_innerHTML; the fallback and its filter go with the old icon rules, the notice stays",
+                "body": "f1f2479dfb80"
+            },
+            "get_author_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_author_posts_url, echoed too when display is on",
+                "body": "99b22e2d4e5a"
+            },
+            "get_author_name": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('display_name') for the user given",
+                "body": "e315942b1ebd"
+            },
+            "get_author_rss_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_author_feed_link, echoed too when display is on",
+                "body": "16131cfe3f6f"
+            },
+            "get_autotoggle": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and 0",
+                "body": "55c9cd937597"
+            },
+            "get_boundary_post_rel_link": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\HeadLinks",
+                "why": "deprecated, the first or last post's head link with its fallback title and the start or end filter; head link markup by rules, the notice stays",
+                "body": "f58eb44ffed4"
+            },
+            "get_category_children": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermLookup",
+                "why": "deprecated, its own recursive walk over every category id building the before, id, after chain, never get_term_children; beside TermLookup::children, the notice stays",
+                "body": "fb4f29d97b52"
+            },
+            "get_category_rss_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_category_feed_link for rss2, echoed too when display is on",
+                "body": "4b9ed4f6d5c5"
+            },
+            "get_catname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_cat_name",
+                "body": "9b7898d37597"
+            },
+            "get_commentdata": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_comment as ARRAY_A",
+                "body": "01608cd11406"
+            },
+            "get_comments_popup_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and ''",
+                "body": "4cdb1405d8f5"
+            },
+            "get_index_rel_link": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\HeadLinks",
+                "why": "deprecated, builds the index head link from the site name and address, then index_rel_link; head link markup by rules, the notice stays",
+                "body": "798776f61f7f"
+            },
+            "get_linkcatname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_get_link_cats and get_category on the first; the null for a link category falls out of get_category",
+                "body": "9e2a5a0a5a29"
+            },
+            "get_linkobjects": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_bookmarks as a list",
+                "body": "2bb4513f2fab"
+            },
+            "get_linkobjectsbyname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_linkobjects for the named link category",
+                "body": "52d1696b5a2b"
+            },
+            "get_linkrating": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then sanitize_bookmark_field on the rating for display",
+                "body": "cff1f47fc824"
+            },
+            "get_links": {
+                "verdict": "move",
+                "to": "Minn\\Content\\LinkList",
+                "why": "deprecated, its own links markup from get_bookmarks (underscore order prefix, recently updated wrap, description, rating, last updated title, display flag); beside the LinkList the bookmark walker moves to, the notice stays",
+                "body": "a6816abca22f"
+            },
+            "get_links_list": {
+                "verdict": "move",
+                "to": "Minn\\Content\\LinkList",
+                "why": "deprecated, prints each link category's list item and heading markup through link_category around get_links; markup by rules, the notice stays",
+                "body": "eb610ad1e408"
+            },
+            "get_links_withrating": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_links with the rating shown",
+                "body": "ddc2af6eced0"
+            },
+            "get_linksbyname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_links for the named link category",
+                "body": "90adc36102e9"
+            },
+            "get_linksbyname_withrating": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_linksbyname with the rating shown",
+                "body": "f4161d572652"
+            },
+            "get_paged_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_query_template('paged')",
+                "body": "4d00ef740bdf"
+            },
+            "get_parent_post_rel_link": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\HeadLinks",
+                "gates": [
+                    "globals"
+                ],
+                "why": "deprecated, reads the global post's parent and builds its up head link through parent_post_rel_link; markup by rules, the notice stays",
+                "body": "fcd3c5c41c55"
+            },
+            "get_postdata": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_post's fields under the old array keys",
+                "body": "62698ca27be5"
+            },
+            "get_profile": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the login turned into an id through get_user_by, then get_the_author_meta",
+                "body": "112e95903fdb"
+            },
+            "get_settings": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_option",
+                "body": "14043822846d"
+            },
+            "get_shortcut_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then '' through shortcut_link",
+                "body": "b3036e72f770"
+            },
+            "get_the_attachment_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "deprecated, anchor markup round the inner html, to the file or the attachment page, Missing Attachment otherwise; beside the old icon rules, the notice stays",
+                "body": "efc68b19244c"
+            },
+            "get_the_author_ID": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('ID')",
+                "body": "47c1ea9be942"
+            },
+            "get_the_author_aim": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('aim')",
+                "body": "02c8288bbc52"
+            },
+            "get_the_author_description": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('description')",
+                "body": "d21724916e51"
+            },
+            "get_the_author_firstname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('first_name')",
+                "body": "9ecd18f51a17"
+            },
+            "get_the_author_icq": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('icq')",
+                "body": "ba0d37de2c0f"
+            },
+            "get_the_author_lastname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('last_name')",
+                "body": "2c1573b3e213"
+            },
+            "get_the_author_login": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('login')",
+                "body": "4868fc5d558b"
+            },
+            "get_the_author_msn": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('msn')",
+                "body": "2d54a086e8d1"
+            },
+            "get_the_author_nickname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('nickname')",
+                "body": "fd78e81c595f"
+            },
+            "get_the_author_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('url')",
+                "body": "216985b33166"
+            },
+            "get_the_author_yim": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_the_author_meta('yim')",
+                "body": "6fa4f64b87d3"
+            },
+            "get_user_metavalues": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then update_meta_cache and get_metadata per user, each value as a user_id, meta_key, meta_value object; a loop over public functions",
+                "body": "e765825b9e0f"
+            },
+            "get_usermeta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and the old key sanitising, then get_user_meta (every value unserialised when no key) folded into the old one value, list, '' or [] return",
+                "body": "22701f5e75af"
+            },
+            "get_usernumposts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then count_user_posts",
+                "body": "b59cb45e74b4"
+            },
+            "gzip_compression": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and false",
+                "body": "565852673873"
+            },
+            "index_rel_link": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a notice and an echo of get_index_rel_link",
+                "body": "dc475495e9b0"
+            },
+            "is_blog_user": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then is_user_member_of_blog for the current user",
+                "body": "04fb82e294da"
+            },
+            "is_comments_popup": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and false",
+                "body": "61026cb233d1"
+            },
+            "is_plugin_page": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "answers from the $plugin_page global the admin sets; reading it is the point",
+                "body": "7406c2011097"
+            },
+            "is_taxonomy": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then taxonomy_exists",
+                "body": "f9dbe1ca2de7"
+            },
+            "is_term": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then term_exists",
+                "body": "ca172c8fb4ec"
+            },
+            "js_escape": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then esc_js",
+                "body": "1efd63b9eeed"
+            },
+            "link_pages": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the old arguments compacted for wp_link_pages",
+                "body": "47640804d661"
+            },
+            "list_authors": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the old arguments compacted for wp_list_authors",
+                "body": "4794ed7134e7"
+            },
+            "list_cats": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the old arguments compacted for wp_list_cats",
+                "body": "70d833682a58"
+            },
+            "make_url_footnote": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FeedTags",
+                "why": "deprecated, links turned into numbered footnotes with absolute addresses and the tags stripped; feed text by rules beside the_content_rss's, the notice stays",
+                "body": "e7abaad604db"
+            },
+            "next_post": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "why": "deprecated, its old link rule (in _minn_old_adjacent_post) instead of next_post_link; the rule goes beside PostNavigation, the notice stays",
+                "body": "81c0437018a5"
+            },
+            "noindex": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_no_robots when blog_public is '0'",
+                "body": "508c99e88662"
+            },
+            "parent_post_rel_link": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a notice and an echo of get_parent_post_rel_link",
+                "body": "344359b4b60f"
+            },
+            "permalink_link": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_permalink",
+                "body": "31feaac7c65d"
+            },
+            "permalink_single_rss": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_permalink_rss",
+                "body": "417a9762a2b7"
+            },
+            "popuplinks": {
+                "verdict": "move",
+                "to": "Minn\\Content\\TextFilters",
+                "why": "deprecated, its own pattern adding target _blank and rel external to every anchor; a text filter beside TextFilters, the notice stays",
+                "body": "64dcf82169eb"
+            },
+            "post_permalink": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_permalink",
+                "body": "186fc7693610"
+            },
+            "preview_theme_ob_filter": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the content unchanged",
+                "body": "859012dae791"
+            },
+            "preview_theme_ob_filter_callback": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and ''",
+                "body": "0b9df96f3623"
+            },
+            "previous_post": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "why": "deprecated, its old link rule (in _minn_old_adjacent_post) instead of previous_post_link; the rule goes beside PostNavigation, the notice stays",
+                "body": "8cb3db1b174e"
+            },
+            "rich_edit_exists": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "caches the TinyMCE file check in the $wp_rich_edit_exists global, which callers may read or preset",
+                "body": "c8f474e4c899"
+            },
+            "sanitize_user_object": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then sanitize_user_field over each scalar field (a WP_User's left alone), the context set as filter; a loop over a public function",
+                "body": "9f27988d32ed"
+            },
+            "start_post_rel_link": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a notice and an echo of get_boundary_post_rel_link",
+                "body": "730f93c95ed1"
+            },
+            "start_wp": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "moves the global $wp_query to its next post and sets up postdata; the loop globals are the point",
+                "body": "0cd1cbd9ac52"
+            },
+            "sticky_class": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then ' sticky' printed when is_sticky says so",
+                "body": "a91a18c70bee"
+            },
+            "the_author_ID": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('ID')",
+                "body": "305c8930037c"
+            },
+            "the_author_aim": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('aim')",
+                "body": "c94f01dedf1d"
+            },
+            "the_author_description": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('description')",
+                "body": "28baf78b92f6"
+            },
+            "the_author_firstname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('first_name')",
+                "body": "8f4aaa99eaad"
+            },
+            "the_author_icq": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('icq')",
+                "body": "9f0a33a993e8"
+            },
+            "the_author_lastname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('last_name')",
+                "body": "e188f17b11e5"
+            },
+            "the_author_login": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('login')",
+                "body": "34a6e19f4a2c"
+            },
+            "the_author_msn": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('msn')",
+                "body": "d1b11f55d9bd"
+            },
+            "the_author_nickname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('nickname')",
+                "body": "6377fb46a95f"
+            },
+            "the_author_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('url')",
+                "body": "2a65a55922e3"
+            },
+            "the_author_yim": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the_author_meta('yim')",
+                "body": "2ac1f6b2adbd"
+            },
+            "the_category_ID": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the first of get_the_category's ids, echoed too when display is on",
+                "body": "bf00994614a7"
+            },
+            "the_category_head": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads and writes the $currentcat and $previouscat globals across the loop; that shared state is the point",
+                "body": "be64e6df0c22"
+            },
+            "the_content_rss": {
+                "verdict": "move",
+                "to": "Minn\\Front\\FeedTags",
+                "why": "deprecated, with its own feed text rules (encode modes, footnotes, word cut with ellipsis, the CDATA end escaped) over the_content_rss, never the_content_feed; beside FeedTags::contentFeed, the notice stays",
+                "body": "1c3572de6047"
+            },
+            "translate_with_context": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then translate with the context bar cut by before_last_bar",
+                "body": "36cb364130ed"
+            },
+            "unregister_sidebar_widget": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_unregister_sidebar_widget",
+                "body": "54145cbac372"
+            },
+            "unregister_widget_control": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_unregister_widget_control",
+                "body": "115a382de3a8"
+            },
+            "update_category_cache": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and true",
+                "body": "2eb3ea3ecec8"
+            },
+            "update_page_cache": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then update_post_cache on the same array",
+                "body": "68445bd63f06"
+            },
+            "update_usermeta": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Meta",
+                "why": "deprecated, with its own write that never calls update_user_meta: key sanitising, an empty value deleting, the stored compare, a row added or rewritten through Meta directly and the old usermeta actions; the write goes beside Meta, the notice stays",
+                "doubt": "the actions get the unserialised value and added/updated fire before the cache clean, and only the first row under the key is rewritten; the old function passed the serialised value, fired after the clean and updated every row of the key",
+                "body": "f21f280da861"
+            },
+            "url_is_accessable_via_ssl": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_remote_get on the https address, true for a 200 or 401",
+                "body": "a67fc803db59"
+            },
+            "user_can_create_draft": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Can",
+                "why": "deprecated, its own level rule (1 or more) in place of current_user_can; the rule goes beside Can, the notice stays",
+                "body": "132924be44af"
+            },
+            "user_can_create_post": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Can",
+                "why": "deprecated, its own level rule (above 1) in place of current_user_can; the rule goes beside Can, the notice stays",
+                "body": "d76b7dfc71da"
+            },
+            "user_can_delete_post": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then user_can_edit_post",
+                "body": "e9b38ea6c669"
+            },
+            "user_can_delete_post_comments": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then user_can_edit_post_comments",
+                "body": "5284651a6af6"
+            },
+            "user_can_edit_post": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Can",
+                "why": "deprecated, its own level rule (own post unless published below level 2, a lower level author's post, or level 10); beside Can, the notice stays",
+                "body": "ae3cdcf2dc22"
+            },
+            "user_can_edit_post_comments": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then user_can_edit_post",
+                "body": "e9b38ea6c669"
+            },
+            "user_can_edit_post_date": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Can",
+                "why": "deprecated, its own level rule (above 4) on top of user_can_edit_post; beside Can, the notice stays",
+                "body": "8c7c5e60a9e5"
+            },
+            "user_can_edit_user": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Can",
+                "why": "deprecated, its own level rule (a higher level, above 8, or the same user); beside Can, the notice stays",
+                "body": "854848624e40"
+            },
+            "user_can_set_post_date": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Can",
+                "why": "deprecated, its own level rule (above 4) on top of user_can_create_post; beside Can, the notice stays",
+                "body": "064ffc0afa83"
+            },
+            "user_pass_ok": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_authenticate, true unless it returns an error",
+                "body": "e4cd56dbe3e6"
+            },
+            "wp_convert_bytes_to_hr": {
+                "verdict": "move",
+                "to": "Minn\\Support\\ByteSize",
+                "why": "deprecated, its own byte to unit arithmetic (log base KB, the whole power picks the unit), never size_format; a byte size class the size_format rule would join, the notice stays",
+                "body": "51f445ec684f"
+            },
+            "wp_embed_handler_googlevideo": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and ''",
+                "body": "216a7ad53f8a"
+            },
+            "wp_explain_nonce": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and the generic are you sure message",
+                "body": "2cb1183521d8"
+            },
+            "wp_get_attachment_thumb_file": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "why": "deprecated, reads the metadata's thumb, derives its path beside the attached file, checks it exists, then its filter; beside Attachments::metadata and file, the notice stays",
+                "doubt": "refuses any post that is not an attachment, where the old function read any post's metadata",
+                "body": "7c008118665c"
+            },
+            "wp_get_http": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Download",
+                "why": "deprecated, a HEAD that follows redirects itself up to five, or a GET whose body is written to a file, returning the headers; the engine's download job, the notice stays",
+                "body": "cd0f11d083a8"
+            },
+            "wp_get_links": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the old defaults (a bare category dropped as the reference's mangling does), then wp_list_bookmarks",
+                "body": "65e14a1a4fd8"
+            },
+            "wp_get_linksbyname": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_list_bookmarks with the old defaults for the named category",
+                "body": "2e7ae3776565"
+            },
+            "wp_get_post_cats": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_get_post_categories",
+                "body": "e2a6a9d99cb5"
+            },
+            "wp_get_single_post": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_post",
+                "body": "f4efc9a34fb8"
+            },
+            "wp_img_tag_add_decoding_attr": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "deprecated, its own decoding attribute rule (double-quoted src, the filter, async, sync or auto) instead of wp_img_tag_add_loading_optimization_attrs; beside ImageTags, the notice stays",
+                "body": "62efb94c279d"
+            },
+            "wp_interactivity_process_directives_of_interactive_blocks": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the block unchanged",
+                "body": "65f9a7336953"
+            },
+            "wp_kses_js_entities": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Kses",
+                "why": "deprecated, its own pattern stripping &{...}; entities; a kses rule beside Kses, the notice stays",
+                "body": "990463d2bb05"
+            },
+            "wp_list_cats": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the old argument names mapped to wp_list_categories' and the title dropped, then wp_list_categories",
+                "body": "ab9b342995c7"
+            },
+            "wp_no_robots": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Robots",
+                "why": "deprecated, prints its own robots meta tag by blog_public, never wp_robots_no_robots; beside the robots rules, the notice stays",
+                "body": "918905d403ff"
+            },
+            "wp_print_auto_sizes_contain_css_fix": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AssetQueue",
+                "why": "deprecated, prints the contain-intrinsic-size style unless wp_img_tag_add_auto_sizes says no; the same rule and css the current enqueue moves to AssetQueue with, the notice stays",
+                "body": "ea77759fa701"
+            },
+            "wp_queue_comments_for_comment_meta_lazyload": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the WP_Comment ids gathered, then wp_lazyload_comment_meta",
+                "body": "93d4b3faa756"
+            },
+            "wp_sensitive_page_meta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, a fixed noindex,noarchive tag, then wp_strict_cross_origin_referrer",
+                "body": "1253946de602"
+            },
+            "wp_set_post_cats": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_set_post_categories",
+                "body": "33856c665094"
+            },
+            "wp_timezone_supported": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and true",
+                "body": "b9eea61b1552"
+            },
+            "wp_update_https_detection_errors": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the pre filter's errors stored when it answers, else update_option with wp_get_https_detection_errors",
+                "body": "9a0edfb72ed2"
+            }
+        },
         "embed.php": {
             "_minn_oembed_secured": {
                 "verdict": "move",
