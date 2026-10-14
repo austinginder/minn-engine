@@ -181,6 +181,538 @@
                 "body": "a19412d39d04"
             }
         },
+        "block-supports-deprecated.php": {
+            "_minn_skips_serialization": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "whether a support skips its serialization",
+                "body": "744217d61b8b"
+            },
+            "_wp_multiple_block_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the metadata unchanged",
+                "body": "34695a1e7938"
+            },
+            "_wp_theme_json_webfonts_handler": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and empty hooks",
+                "body": "c7d3eefb8e4d"
+            },
+            "_wp_tinycolor_bound_alpha": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Duotone",
+                "why": "deprecated, with its own alpha rule; beside Duotone::parse",
+                "body": "af7cd89ee3c2"
+            },
+            "block_core_navigation_submenu_build_css_colors": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "deprecated, with its own colour class and style rules; beside the navigation renderer",
+                "body": "8b3ff17ff936"
+            },
+            "wp_create_block_style_variation_instance_name": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and the old instance name",
+                "body": "5818b1b9b35e"
+            },
+            "wp_enqueue_global_styles_custom_css": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the custom css added through the hook and style APIs",
+                "body": "d94da249145a"
+            },
+            "wp_get_duotone_filter_id": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then WP_Duotone",
+                "body": "0cef89dce8bf"
+            },
+            "wp_get_duotone_filter_property": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then WP_Duotone",
+                "body": "482e29290f94"
+            },
+            "wp_get_duotone_filter_svg": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then WP_Duotone",
+                "body": "c59b7c11fd26"
+            },
+            "wp_get_global_styles_custom_css": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the merged theme data's custom css, kept for the request",
+                "body": "ce245d5921ff"
+            },
+            "wp_register_duotone_support": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then WP_Duotone",
+                "body": "0084cc5b468d"
+            },
+            "wp_render_duotone_filter_preset": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_get_duotone_filter_property",
+                "body": "e05892147834"
+            },
+            "wp_render_duotone_support": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then WP_Duotone",
+                "body": "49405e43c9e5"
+            },
+            "wp_render_elements_support": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the content unchanged",
+                "body": "b9346e16315d"
+            },
+            "wp_skip_border_serialization": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the skip check",
+                "body": "8c15b4d10b8f"
+            },
+            "wp_skip_dimensions_serialization": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the skip check",
+                "body": "8dd080ff6198"
+            },
+            "wp_skip_spacing_serialization": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the skip check",
+                "body": "e129d799a21a"
+            },
+            "wp_tinycolor_bound01": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Duotone",
+                "why": "deprecated, with its own colour arithmetic; the arithmetic goes beside Duotone::parse, the notice stays",
+                "body": "a1f55bc61d78"
+            },
+            "wp_tinycolor_hsl_to_rgb": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Duotone",
+                "why": "deprecated, hsl to rgb; the engine has the same conversion in Duotone::hsl",
+                "body": "4df1034819d3"
+            },
+            "wp_tinycolor_hue_to_rgb": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Duotone",
+                "why": "deprecated, one hue channel; the engine has the same step in Duotone::hsl",
+                "body": "721da29c0703"
+            },
+            "wp_tinycolor_rgb_to_rgb": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Duotone",
+                "why": "deprecated, bounds each channel; beside Duotone::parse",
+                "body": "90efd84b1cae"
+            },
+            "wp_tinycolor_string_to_rgb": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Duotone",
+                "why": "deprecated colour string parser; Duotone::parse reads the same forms, the deprecated output (unrounded floats) kept",
+                "body": "3a75a3df4509"
+            },
+            "wp_typography_get_css_variable_inline_style": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "deprecated, with its own preset-to-css rule; the rule goes beside the supports, the notice stays",
+                "body": "f0f60ba08d2b"
+            }
+        },
+        "block-supports-layout.php": {
+            "_minn_add_layout_classes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Layout",
+                "why": "adds layout classes to the block's wrapper or its inner wrapper",
+                "body": "f2f171e9feeb"
+            },
+            "_minn_inner_wrapper_class": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Layout",
+                "why": "finds the inner wrapper's class in a block's own markup",
+                "body": "6da7d73826ee"
+            },
+            "_minn_render_child_layout_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Layout",
+                "why": "a child's layout class from its own and its parent's layout",
+                "body": "e7eb3dc72b00"
+            },
+            "wp_add_parent_layout_to_parsed_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Layout",
+                "why": "carries the parent's layout onto a parsed child for its classes; stays as the named render_block_data callback",
+                "body": "d9a6ce98ddb6"
+            },
+            "wp_get_block_style_variation_name_from_registered_style": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Styles",
+                "why": "the first is-style class naming a registered style",
+                "body": "1c22392b82ea"
+            },
+            "wp_get_layout_definitions": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Layout",
+                "why": "reads the engine's layout definitions once and keeps them",
+                "body": "520f827b94fa"
+            },
+            "wp_get_layout_style": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\LayoutStyle",
+                "why": "chooses the gap and padding before LayoutStyle::rules and stores the stylesheet; the choice belongs with the rules",
+                "body": "7dbc099cfd51"
+            },
+            "wp_render_layout_support_flag": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Layout",
+                "why": "decides a block's layout and child-layout classes from its type's supports and adds them; the engine's layout rendering",
+                "body": "9a6056c54443"
+            },
+            "wp_restore_group_inner_container": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ClassicCompat",
+                "why": "puts back the group inner container for a theme without theme.json; markup by rules",
+                "body": "2b2be22cdfdd"
+            },
+            "wp_restore_image_outer_container": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ClassicCompat",
+                "why": "puts back an aligned image's outer div for a theme without theme.json; markup by rules",
+                "body": "5352c3c4352c"
+            }
+        },
+        "block-supports-render.php": {
+            "_minn_block_level_presets": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "whether a block carries presets of its own its type supports",
+                "body": "a81962cb0232"
+            },
+            "_minn_block_style_variation": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\GlobalStyles",
+                "why": "merges a registered variation's style data with the theme's",
+                "body": "1132dd330e16"
+            },
+            "_minn_block_style_variation_css": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "adds GlobalStyles::variationCss as an inline style through the style API",
+                "body": "18e68dc362f4"
+            },
+            "_minn_support_first_tag": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "adds classes and a style to a block's first tag; the supports' shared markup step",
+                "body": "b2c6684324d7"
+            },
+            "_wp_add_block_level_preset_styles": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\StylePresets",
+                "why": "a block's own presets as scoped properties and classes",
+                "body": "747ea1ad4497"
+            },
+            "_wp_add_block_level_presets_class": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "puts the presets class before the layout classes on the block's first tag",
+                "body": "b58ad4e8148e"
+            },
+            "wp_custom_css_force_filtered_html_on_import_filter": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "hooks the filter on import when asked",
+                "body": "98056e5915a9"
+            },
+            "wp_custom_css_kses_init": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "unhooks, then hooks the filter again for a user without edit_css",
+                "body": "3d65fd044d3d"
+            },
+            "wp_custom_css_kses_init_filters": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "hooks the named custom css filter onto the save hooks",
+                "body": "ce8d0c6c61bf"
+            },
+            "wp_custom_css_remove_filters": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "unhooks the named custom css filter",
+                "body": "04434e08192a"
+            },
+            "wp_enqueue_block_custom_css": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "enqueues the custom css style when registered",
+                "body": "305e57852d14"
+            },
+            "wp_enqueue_block_style_variation_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "enqueues the variation styles when registered",
+                "body": "4997704d914e"
+            },
+            "wp_get_block_style_variation_name_from_class": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Styles",
+                "why": "the is-style names in a class string, beside the registered-style lookup",
+                "body": "758a27d1bb44"
+            },
+            "wp_mark_auto_generate_control_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockMetadata",
+                "why": "marks a block type's non-local attributes for generated controls when it registers itself",
+                "body": "ae8ed370d7ae"
+            },
+            "wp_register_block_style_variations_from_theme_json_partials": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers each partial's style for its block types through register_block_style",
+                "body": "c2389e68fb3c"
+            },
+            "wp_render_background_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the background image styles a supporting block takes, size and position defaults included",
+                "body": "ae63b359fd0f"
+            },
+            "wp_render_block_style_variation_class_name": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Styles",
+                "why": "puts the numbered variation class on the block's first tag",
+                "body": "31347af20e8b"
+            },
+            "wp_render_block_style_variation_support_styles": {
+                "verdict": "delegate",
+                "to": "Minn\\Blocks\\Renderer::numberedStyle",
+                "why": "the engine names the numbered variation class; appending it to the class attribute is the call's wrapper",
+                "body": "447f431868e8"
+            },
+            "wp_render_block_visibility_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "hides a block entirely or per viewport with classes and media rules",
+                "body": "4e30878335e5"
+            },
+            "wp_render_custom_css_class_name": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\CustomCss",
+                "why": "puts the custom css class on the block's first tag",
+                "body": "7eee7bfaf944"
+            },
+            "wp_render_custom_css_support_styles": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\CustomCss",
+                "why": "scopes a block's custom css to a hashed class and adds it as an inline style",
+                "body": "ffd19571235d"
+            },
+            "wp_render_dimensions_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the aspect ratio styles a supporting block takes",
+                "body": "317583589230"
+            },
+            "wp_render_elements_class_name": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Elements",
+                "why": "puts the elements class on the block's first tag",
+                "body": "2ab4d68acbc2"
+            },
+            "wp_render_elements_support_styles": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Elements",
+                "why": "adds the elements class to a registered block's attributes; beside Elements::className",
+                "body": "619c51f355f7"
+            },
+            "wp_render_position_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the sticky or fixed position rule and classes a supporting block takes",
+                "body": "4b85c56b5b28"
+            },
+            "wp_render_typography_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "rewrites a block's stored font size to its fluid value",
+                "body": "9e3bdc3f0928"
+            },
+            "wp_resolve_block_style_variation_ref_values": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\GlobalStyles",
+                "gates": [
+                    "refs"
+                ],
+                "why": "resolves ref values in variation data against theme.json, in place",
+                "body": "7f9862fd64a4"
+            },
+            "wp_should_add_elements_class_name": {
+                "verdict": "delegate",
+                "to": "Minn\\Blocks\\Elements::shouldAdd",
+                "why": "the skip options turned into the engine's argument; Elements::shouldAdd decides",
+                "body": "d408b95f8af2"
+            },
+            "wp_typography_get_preset_inline_style_value": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Styles",
+                "why": "a preset reference as a css variable; beside Styles::value",
+                "body": "310d10403a55"
+            }
+        },
+        "block-supports-states.php": {
+            "wp_add_block_state_style_rule": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\States",
+                "gates": [
+                    "refs"
+                ],
+                "why": "adds a state's declarations as one rule to a list held by reference",
+                "body": "de7f8ce0421d"
+            },
+            "wp_get_block_state_element_selectors": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\States",
+                "why": "each element's selectors under a root selector",
+                "body": "b789e9770b71"
+            },
+            "wp_get_block_state_style_rules": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\States",
+                "why": "the state rules for a block's state styles, grouped by its selectors",
+                "body": "1f4541fa0a26"
+            },
+            "wp_render_block_states_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\States",
+                "why": "renders a block's state styles into a unique class and stylesheet rules",
+                "body": "cb9c7459e9f7"
+            }
+        },
+        "block-supports.php": {
+            "_minn_register_style_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the style attribute a block type gains for a style feature",
+                "body": "60feff099004"
+            },
+            "_minn_support_attributes": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "adds attribute definitions to the WP_Block_Type object without overriding its own",
+                "body": "45855965050f"
+            },
+            "_minn_support_styles": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "turns a support's styles into the class and style the wrapper takes, empty ones dropped",
+                "body": "2abc5ac51e3e"
+            },
+            "wp_apply_aria_label_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the aria-label a supporting block's wrapper takes unless its serialization is skipped",
+                "body": "0b1801a2b777"
+            },
+            "wp_apply_border_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the border classes and styles a block's wrapper takes, per side and feature",
+                "body": "59bc6da056f4"
+            },
+            "wp_apply_colors_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the colour classes and styles a block's wrapper takes by its supports and skip flags",
+                "body": "63589b11a9c2"
+            },
+            "wp_apply_dimensions_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the minimum height style a block's wrapper takes",
+                "body": "a0904700653f"
+            },
+            "wp_apply_shadow_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the shadow style a block's wrapper takes",
+                "body": "e975ea41c4af"
+            },
+            "wp_apply_spacing_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the padding and margin styles a block's wrapper takes",
+                "body": "5d17d7c271f7"
+            },
+            "wp_apply_typography_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the typography classes and styles a block's wrapper takes, fluid font size and text align included",
+                "body": "2b0ef660330e"
+            },
+            "wp_register_alignment_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the attribute an align-supporting block type gains",
+                "body": "18609f64c05a"
+            },
+            "wp_register_anchor_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the attribute an anchor-supporting block type gains",
+                "body": "f23507065f87"
+            },
+            "wp_register_aria_label_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the attribute an ariaLabel-supporting block type gains",
+                "body": "fd4762a6224a"
+            },
+            "wp_register_border_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the border attributes a block type gains by its features",
+                "body": "9c0f2197d9cb"
+            },
+            "wp_register_colors_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the colour attributes a block type gains by which colour features it supports",
+                "body": "39556f084277"
+            },
+            "wp_register_custom_classname_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the attribute a block type gains for custom class names, on by default",
+                "body": "fa70d57fbd16"
+            },
+            "wp_register_custom_css_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the attribute a block type gains for custom css, on by default",
+                "body": "a3e576a9ba65"
+            },
+            "wp_register_layout_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the attribute a layout-supporting block type gains",
+                "body": "696dd71258ca"
+            },
+            "wp_register_typography_support": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "the typography attributes a block type gains by its features",
+                "body": "9bfca6183c92"
+            }
+        },
         "bookmark.php": {
             "_minn_bookmark_anchor": {
                 "verdict": "move",
