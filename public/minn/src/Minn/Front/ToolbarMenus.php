@@ -20,6 +20,7 @@ use Minn\I18n\Gettext;
 use Minn\Runtime\SiteInfo;
 use Minn\Runtime\SiteUrls;
 use Minn\Runtime\ThemeSupports;
+use Minn\Runtime\UpdateCounts;
 use Minn\Runtime\UserWrites;
 use Minn\Support\Escape;
 use Minn\Support\Text;
@@ -218,7 +219,7 @@ final class ToolbarMenus
     /** The count of updates waiting, when there are any. */
     public static function updatesMenu(Toolbar $bar): void
     {
-        $total = (int) (\wp_get_update_data()['counts']['total'] ?? 0);
+        $total = (int) (UpdateCounts::data()['counts']['total'] ?? 0);
         if (!$total) {
             return;
         }

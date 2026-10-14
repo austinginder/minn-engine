@@ -65,7 +65,7 @@ function remove_permastruct($name)
 
 function flush_rewrite_rules($hard = true)
 {
-    _minn_rewrite()->flush_rules($hard);
+    Minn\Runtime\RewriteRules::flush($hard);
 }
 
 function add_feed($feedname, $callback)
@@ -789,7 +789,7 @@ function get_oembed_response_data_for_url($url, $args)
 /** The data as an oEmbed XML document; false for no data (probe embed-remaining). */
 function _oembed_create_xml($data, $node = null)
 {
-    return (is_array($data) || is_object($data)) && (array) $data !== [] ? PostEmbed::xml((array) $data, $node instanceof SimpleXMLElement ? $node : null) : false;
+    return Minn\Front\PostEmbed::xmlDocument($data, $node);
 }
 
 /**

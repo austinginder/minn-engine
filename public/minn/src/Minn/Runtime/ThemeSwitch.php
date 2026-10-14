@@ -64,7 +64,7 @@ final class ThemeSwitch
             OptionWrites::update('theme_switched_via_customizer', false);
         }
         Runtime::hooks()->action('after_switch_theme', [$old->exists() ? $old->get('Name') : (string) $stylesheet, $old]);
-        \flush_rewrite_rules();
+        RewriteRules::flush();
         OptionWrites::update('theme_switched', false);
     }
 

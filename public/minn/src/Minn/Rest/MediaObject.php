@@ -9,6 +9,7 @@ use Minn\Content\Posts;
 use Minn\Content\Texturize;
 use Minn\Front\Permalinks;
 use Minn\Media\Uploads;
+use Minn\Runtime\PostLinks;
 use Minn\Support\Serialized;
 
 /** The wp/v2 media object, view and edit context. */
@@ -74,7 +75,7 @@ final readonly class MediaObject
             'meta' => RestMeta::read('post', $id, 'attachment', $context->value),
         ];
         if ($edit) {
-            [$object['permalink_template'], $object['generated_slug']] = \get_sample_permalink($id, $p->title, '');
+            [$object['permalink_template'], $object['generated_slug']] = PostLinks::sampleFor($id, $p->title, '');
         }
         $object['class_list'] = RenderedFields::classes(['post-' . $id, 'attachment', 'type-attachment', 'status-' . $p->status, 'hentry'], $id);
         $object['minn_attached_to'] = null;

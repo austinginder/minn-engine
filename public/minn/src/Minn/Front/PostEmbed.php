@@ -114,6 +114,12 @@ final class PostEmbed
         return (string) Runtime::hooks()->filter('post_embed_url', [$url, $post]);
     }
 
+    /** The data as an oEmbed XML document (_oembed_create_xml); false for no data. */
+    public static function xmlDocument(mixed $data, mixed $node = null): mixed
+    {
+        return (is_array($data) || is_object($data)) && (array) $data !== [] ? self::xml((array) $data, $node instanceof \SimpleXMLElement ? $node : null) : false;
+    }
+
     /** _oembed_create_xml: the data as an oembed document (or under the root given), nested arrays as nested elements. @param array<string, mixed> $data */
     public static function xml(array $data, ?\SimpleXMLElement $root = null): string
     {

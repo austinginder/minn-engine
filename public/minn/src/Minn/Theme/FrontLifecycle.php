@@ -15,6 +15,7 @@ use Minn\Runtime\MainQuery;
 use Minn\Runtime\PostTags;
 use Minn\Runtime\Registered;
 use Minn\Runtime\RequestHeaders;
+use Minn\Runtime\RewriteRules;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteInfo;
 
@@ -56,7 +57,7 @@ final class FrontLifecycle
             }
         }
         // A date archive whose year, month or day is a post's numeric slug is that post, before plugins see the request.
-        $wp->query_vars = (array) Runtime::hooks()->filter('request', [\wp_resolve_numeric_slug_conflicts($parse === null ? $vars : $parse($wp->public_query_vars))]);
+        $wp->query_vars = (array) Runtime::hooks()->filter('request', [RewriteRules::numericSlugs($parse === null ? $vars : $parse($wp->public_query_vars))]);
         Runtime::hooks()->actionRefArray('parse_request', [&$wp]);
         return true;
     }

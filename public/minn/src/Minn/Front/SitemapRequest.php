@@ -25,6 +25,24 @@ use Minn\Theme\Printed;
  */
 final class SitemapRequest
 {
+    /** A sitemap's address (get_sitemap_url): the index, or a provider's page of a subtype; false for one that is not there. */
+    public static function url(mixed $name, mixed $subtypeName = '', mixed $page = 1): mixed
+    {
+        $sitemaps = Handoff::sitemaps();
+        if ($name === 'index') {
+            return $sitemaps->index->get_index_url();
+        }
+        $provider = $sitemaps->registry->get_provider($name);
+        if (!$provider) {
+            return false;
+        }
+        if ($subtypeName && !in_array($subtypeName, array_keys($provider->get_object_subtypes()), true)) {
+            return false;
+        }
+        $page = abs((int) $page);
+        return $provider->get_sitemap_url($subtypeName, $page === 0 ? 1 : $page);
+    }
+
     /** The canonical step: a sitemap asked for by another address is sent to its own. */
     public static function canonical(): void
     {
@@ -33,7 +51,7 @@ final class SitemapRequest
         if ($sitemap === '' || MainQuery::current()->is_404() || $request === null) {
             return;
         }
-        $url = \get_sitemap_url($sitemap, (string) MainQuery::current()->get('sitemap-subtype'), (int) MainQuery::current()->get('paged'));
+        $url = self::url($sitemap, (string) MainQuery::current()->get('sitemap-subtype'), (int) MainQuery::current()->get('paged'));
         $wanted = is_string($url) ? (string) parse_url($url, PHP_URL_PATH) : '';
         $queryForm = parse_url((string) $url, PHP_URL_QUERY) === null && $request->has('sitemap');
         if ($wanted === '' || ($wanted === $request->path && !$queryForm)) {

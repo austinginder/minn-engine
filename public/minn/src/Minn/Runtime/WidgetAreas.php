@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Widget;
+
 /**
  * The widgets helper functions as the reference answers them (probe
  * widget-helpers): a widget id split into its base and number, a sidebar
@@ -15,6 +17,47 @@ namespace Minn\Runtime;
  */
 final class WidgetAreas
 {
+    /** The widgets the engine provides. */
+    private const DEFAULT_WIDGETS = ['WP_Widget_Pages', 'WP_Widget_Calendar', 'WP_Widget_Archives', 'WP_Widget_Media_Audio', 'WP_Widget_Media_Image', 'WP_Widget_Media_Gallery', 'WP_Widget_Media_Video', 'WP_Widget_Meta', 'WP_Widget_Search', 'WP_Widget_Text', 'WP_Widget_Categories', 'WP_Widget_Recent_Posts', 'WP_Widget_Recent_Comments', 'WP_Widget_RSS', 'WP_Widget_Tag_Cloud', 'WP_Nav_Menu_Widget', 'WP_Widget_Custom_HTML', 'WP_Widget_Block'];
+
+    /**
+     * The widgets the engine provides registered, then widgets_init for
+     * plugin and theme code (wp_widgets_init); the Links widget only while
+     * the link manager is on. The block widget is the one every modern
+     * sidebar is made of, so it is registered before the action runs.
+     */
+    public static function registerDefaults(): void
+    {
+        $factory = Handoff::widgetFactory();
+        foreach (self::DEFAULT_WIDGETS as $widget) {
+            $factory->register($widget);
+        }
+        if (Runtime::options()->filtered('link_manager_enabled')) {
+            $factory->register('WP_Widget_Links');
+        }
+        Runtime::hooks()->action('widgets_init', []);
+    }
+
+    /** A registered widget shown outside a sidebar (the_widget), in a div with its class unless the arguments say otherwise. */
+    public static function show(mixed $widget, mixed $instance = [], mixed $args = []): void
+    {
+        $object = Handoff::widgetFactory()->widgets[$widget] ?? null;
+        if (!$object instanceof Widget) {
+            return;
+        }
+        $args = \Minn\Support\Lists::args($args, ['before_widget' => '<div class="widget %s">', 'after_widget' => '</div>', 'before_title' => '<h2 class="widgettitle">', 'after_title' => '</h2>']);
+        $instance = \Minn\Support\Lists::args($instance);
+        $args['before_widget'] = sprintf($args['before_widget'], $object->widget_options['classname']);
+        $hooks = Runtime::hooks();
+        $instance = $hooks->filter('widget_display_callback', [$instance, $object, $args]);
+        if ($instance === false) {
+            return;
+        }
+        $hooks->action('the_widget', [$widget, $instance, $args]);
+        $object->_set(-1);
+        $object->widget($args, $instance);
+    }
+
     /**
      * The stored sidebars and their widgets (wp_get_sidebars_widgets), as
      * sidebars_widgets leaves them.

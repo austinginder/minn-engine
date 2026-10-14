@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Front\PostEmbed;
 use Minn\Http\Args;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -402,7 +403,7 @@ final class RuntimeRoutes
             return null;
         }
         $headers = ['Content-Type' => 'text/xml; charset=' . Runtime::options()->filtered('blog_charset')] + $response->headers;
-        return new Response($response->status, $headers, (string) \_oembed_create_xml($data), $response->cookies, $response->afterSend);
+        return new Response($response->status, $headers, (string) PostEmbed::xmlDocument($data), $response->cookies, $response->afterSend);
     }
 
     /** What a response looks like to the code that may change it. @return array<int, mixed> */

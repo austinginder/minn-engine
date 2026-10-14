@@ -16295,6 +16295,15 @@ wptexturize whole. Full run 33 (after batch 37) was
 green throughout. The http-transports probe stays out of the comparison; the other probes give identical
 output before and after.
 
+**Batch 39, the last one-off calls.** `RewriteRules::flush()` and `numericSlugs()` answer flush_rewrite_rules
+and wp_resolve_numeric_slug_conflicts; `WidgetAreas::registerDefaults()` and `show()` wp_widgets_init and
+the_widget; `UpdateCounts::data()`, `translations()` and `core()` the update counts; `SitemapRequest::url()`
+get_sitemap_url; `NavMenu::walk()` walk_nav_menu_tree; `PostEmbed::xmlDocument()` _oembed_create_xml;
+`RegisteredSettings::addError()` add_settings_error; `PostLinks::sampleFor()` get_sample_permalink. The rewrite
+object, the widget factory, the sitemap server and the default menu walker are handed over through Handoff.
+The http-transports probe stays out of the comparison; the other probes give identical output before and
+after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

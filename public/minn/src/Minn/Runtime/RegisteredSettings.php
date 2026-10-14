@@ -17,6 +17,12 @@ namespace Minn\Runtime;
  */
 final class RegisteredSettings
 {
+    /** A settings error noted for the settings screen to show (add_settings_error). */
+    public static function addError(mixed $setting, mixed $code, mixed $message, mixed $type = 'error'): void
+    {
+        $GLOBALS['wp_settings_errors'][] = ['setting' => $setting, 'code' => $code, 'message' => $message, 'type' => $type];
+    }
+
     private const KEY = 'registered_settings';
 
     private const ARRAY_ITEMS = 'When registering an "array" setting to show in the REST API, you must specify the schema for each array item in "show_in_rest.schema.items".';

@@ -1406,7 +1406,7 @@ caller may take; curies when any rel is the API's own.
 
 - `@return array<string, list<array<string, mixed>>>`
 
-Internals: `buildFields()` (private, line 45), `details()` (private, line 165)
+Internals: `buildFields()` (private, line 46), `details()` (private, line 166)
 
 
 ## MenuItemObject
@@ -1883,7 +1883,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 84), `navigationView()` (private, line 95), `blockView()` (private, line 125), `viewFields()` (private, line 152), `viewTerms()` (private, line 207), `typeFields()` (private, line 223), `classList()` (private, line 252), `format()` (private, line 274), `termLinks()` (private, line 318), `editFields()` (private, line 337), `allow()` (private, line 520), `gmt()` (private, line 539)
+Internals: `meta()` (private, line 85), `navigationView()` (private, line 96), `blockView()` (private, line 126), `viewFields()` (private, line 153), `viewTerms()` (private, line 208), `typeFields()` (private, line 224), `classList()` (private, line 253), `format()` (private, line 275), `termLinks()` (private, line 319), `editFields()` (private, line 338), `allow()` (private, line 521), `gmt()` (private, line 540)
 
 
 ## PostsController
@@ -2751,7 +2751,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 103), `dispatchDone()` (private, line 309), `asksForXml()` (private, line 384), `oembedXml()` (private, line 395), `look()` (private, line 409), `remember()` (private, line 414), `decode()` (private, line 421), `expand()` (private, line 441), `newWpRequest()` (private, line 466), `toResponse()` (private, line 495)
+Internals: `allow()` (private, line 104), `dispatchDone()` (private, line 310), `asksForXml()` (private, line 385), `oembedXml()` (private, line 396), `look()` (private, line 410), `remember()` (private, line 415), `decode()` (private, line 422), `expand()` (private, line 442), `newWpRequest()` (private, line 467), `toResponse()` (private, line 496)
 
 
 ## Schema

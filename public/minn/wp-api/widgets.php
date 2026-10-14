@@ -237,21 +237,7 @@ function _get_widget_id_base($id)
 
 function the_widget($widget, $instance = [], $args = [])
 {
-    $object = _minn_widget_factory()->widgets[$widget] ?? null;
-    if (!$object instanceof WP_Widget) {
-        return;
-    }
-    $before = ['before_widget' => '<div class="widget %s">', 'after_widget' => '</div>', 'before_title' => '<h2 class="widgettitle">', 'after_title' => '</h2>'];
-    $args = wp_parse_args($args, $before);
-    $instance = wp_parse_args($instance);
-    $args['before_widget'] = sprintf($args['before_widget'], $object->widget_options['classname']);
-    $instance = apply_filters('widget_display_callback', $instance, $object, $args);
-    if ($instance === false) {
-        return;
-    }
-    do_action('the_widget', $widget, $instance, $args);
-    $object->_set(-1);
-    $object->widget($args, $instance);
+    Minn\Runtime\WidgetAreas::show($widget, $instance, $args);
 }
 
 function wp_convert_widget_settings($base_name, $option_name, $settings)
@@ -284,14 +270,7 @@ function wp_convert_widget_settings($base_name, $option_name, $settings)
  */
 function wp_widgets_init()
 {
-    foreach (['WP_Widget_Pages', 'WP_Widget_Calendar', 'WP_Widget_Archives', 'WP_Widget_Media_Audio', 'WP_Widget_Media_Image', 'WP_Widget_Media_Gallery', 'WP_Widget_Media_Video', 'WP_Widget_Meta', 'WP_Widget_Search', 'WP_Widget_Text', 'WP_Widget_Categories', 'WP_Widget_Recent_Posts', 'WP_Widget_Recent_Comments', 'WP_Widget_RSS', 'WP_Widget_Tag_Cloud', 'WP_Nav_Menu_Widget', 'WP_Widget_Custom_HTML', 'WP_Widget_Block'] as $widget) {
-        register_widget($widget);
-    }
-    // The Links widget only while the link manager is on (probe widget-methods).
-    if (get_option('link_manager_enabled')) {
-        register_widget('WP_Widget_Links');
-    }
-    do_action('widgets_init');
+    Minn\Runtime\WidgetAreas::registerDefaults();
 }
 
 function wp_use_widgets_block_editor()

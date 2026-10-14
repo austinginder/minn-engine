@@ -39,6 +39,13 @@ final class NavMenu
         return $menu ? NavMenuItems::forMenu($menu, (array) $args) : false;
     }
 
+    /** A menu's items printed through the walker its arguments name, else the default (walk_nav_menu_tree). */
+    public static function walk(mixed $items, mixed $depth, mixed $args): mixed
+    {
+        $walker = empty($args->walker) ? Handoff::newMenuWalker() : $args->walker;
+        return $walker->walk($items, $depth, $args);
+    }
+
     /**
      * The menu set for each of the theme's locations (get_nav_menu_locations).
      *
@@ -75,7 +82,7 @@ final class NavMenu
             }
         }
         $items = Runtime::hooks()->filter('wp_nav_menu_objects', [$items, $args]);
-        $markup = (string) \walk_nav_menu_tree($items, (int) $args->depth, $args);
+        $markup = (string) self::walk($items, (int) $args->depth, $args);
         $markup = (string) Runtime::hooks()->filter('wp_nav_menu_items', [$markup, $args]);
         $markup = (string) Runtime::hooks()->filter("wp_nav_menu_{$menu->slug}_items", [$markup, $args]);
         if ($markup === '') {

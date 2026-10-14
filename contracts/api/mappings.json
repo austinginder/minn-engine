@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 709,
-        "composes": 2184,
-        "leaf": 1014,
-        "noop": 3074,
+        "minn": 707,
+        "composes": 2180,
+        "leaf": 1013,
+        "noop": 3081,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8675,
-        "minnMethods": 1338,
+        "minnMethods": 1346,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -38960,7 +38960,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Front\\PostEmbed::xml"
+                "Minn\\Front\\PostEmbed::xmlDocument"
             ],
             "composes": []
         },
@@ -41730,7 +41730,9 @@
             "file": "admin.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\RegisteredSettings::addError"
+            ],
             "composes": [],
             "deadend": "admin"
         },
@@ -45829,10 +45831,10 @@
             "file": "misc.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_rewrite"
-            ]
+            "minn": [
+                "Minn\\Runtime\\RewriteRules::flush"
+            ],
+            "composes": []
         },
         "force_balance_tags": {
             "file": "formatting.php",
@@ -48139,12 +48141,12 @@
         },
         "get_core_updates": {
             "file": "admin.php",
-            "lines": 14,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_site_transient"
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\UpdateCounts::core"
             ],
+            "composes": [],
             "deadend": "admin"
         },
         "get_current_blog_id": {
@@ -50514,14 +50516,12 @@
         },
         "get_sample_permalink": {
             "file": "post.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\PostLinks::sample"
+                "Minn\\Runtime\\PostLinks::sampleFor"
             ],
-            "composes": [
-                "get_post"
-            ],
+            "composes": [],
             "deadend": "admin"
         },
         "get_sample_permalink_html": {
@@ -61727,15 +61727,12 @@
         },
         "the_widget": {
             "file": "widgets.php",
-            "lines": 15,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_widget_factory",
-                "apply_filters",
-                "do_action",
-                "wp_parse_args"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\WidgetAreas::show"
+            ],
+            "composes": []
         },
         "theme_update_available": {
             "file": "deadends.php",
@@ -63482,9 +63479,11 @@
         },
         "walk_nav_menu_tree": {
             "file": "nav-menu-template.php",
-            "lines": 2,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\NavMenu::walk"
+            ],
             "composes": []
         },
         "walk_page_dropdown_tree": {
@@ -69669,7 +69668,9 @@
             "file": "admin.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\UpdateCounts::translations"
+            ],
             "composes": []
         },
         "wp_get_typography_font_size_value": {
@@ -69711,14 +69712,12 @@
         },
         "wp_get_update_data": {
             "file": "admin.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\UpdateCounts::forCurrentUser"
+                "Minn\\Runtime\\UpdateCounts::data"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_get_update_https_url": {
             "file": "functions.php",
@@ -74362,13 +74361,12 @@
         },
         "wp_resolve_numeric_slug_conflicts": {
             "file": "query.php",
-            "lines": 20,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_option",
-                "get_page_by_path"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\RewriteRules::numericSlugs"
+            ],
+            "composes": []
         },
         "wp_resolve_post_date": {
             "file": "post.php",
@@ -76919,14 +76917,12 @@
         },
         "wp_widgets_init": {
             "file": "widgets.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "do_action",
-                "get_option",
-                "register_widget"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\WidgetAreas::registerDefaults"
+            ],
+            "composes": []
         },
         "wp_write_post": {
             "file": "deadends.php",

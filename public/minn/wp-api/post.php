@@ -459,8 +459,7 @@ function get_attachment_link($post = null, $leavename = false)
 /** The address an editor shows with the slug to edit, through get_sample_permalink (Runtime\PostLinks). */
 function get_sample_permalink($post, $title = null, $name = null)
 {
-    $post = get_post($post);
-    return $post === null ? ['', ''] : PostLinks::sample($post, $title === null ? null : (string) $title, $name === null ? null : (string) $name);
+    return Minn\Runtime\PostLinks::sampleFor($post, $title, $name);
 }
 
 /** A post type's archive address, false for a type with none (Runtime\ArchiveLinks). */

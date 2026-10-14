@@ -819,3 +819,11 @@ Minn\Runtime\Handoff::bind(['loadTemplate' => static fn (...$args) => load_templ
 
 // The translation controller, handed over through Minn\Runtime\Handoff.
 Minn\Runtime\Handoff::bind(['translationController' => static fn () => WP_Translation_Controller::get_instance()]);
+
+// The rewrite object, the widget factory, the sitemap server and the menu walker, handed over through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind([
+    'rewrite' => static fn () => _minn_rewrite(),
+    'widgetFactory' => static fn () => _minn_widget_factory(),
+    'sitemaps' => static fn () => wp_sitemaps_get_server(),
+    'newMenuWalker' => static fn () => new Walker_Nav_Menu(),
+]);

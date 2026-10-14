@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Closure;
+use Minn\Objects\Post;
 use Minn\Objects\Rewrite;
 
 /**
@@ -37,6 +38,46 @@ final class RewriteRules
 
     /** The six date and time tags that together name a post. */
     private const POST_BY_TIME = ['%year%', '%monthnum%', '%day%', '%hour%', '%minute%', '%second%'];
+
+    /** The rewrite rules built again and stored (flush_rewrite_rules), the server's file too when hard. */
+    public static function flush(mixed $hard = true): void
+    {
+        Handoff::rewrite()->flush_rules($hard);
+    }
+
+    /**
+     * A date archive's query vars read as the post they name
+     * (wp_resolve_numeric_slug_conflicts). Under a structure with %postname%
+     * first, second or third, the year, month or day in that place is a slug;
+     * when a post has it, was dated in the year (and month) the address gives,
+     * and what follows the slug is one of its pages, the vars become that
+     * post's name and page (0 for none). Anything else stays a date archive.
+     *
+     * @return array<string, mixed>
+     */
+    public static function numericSlugs(mixed $vars = []): mixed
+    {
+        if (!isset($vars['year']) && !isset($vars['monthnum']) && !isset($vars['day'])) {
+            return $vars;
+        }
+        $index = array_search('%postname%', array_values(array_filter(explode('/', (string) Runtime::options()->filtered('permalink_structure')))), true);
+        $slot = is_int($index) ? (['year', 'monthnum', 'day'][$index] ?? null) : null;
+        $post = $slot !== null && isset($vars[$slot]) ? PostReads::pageByPath((string) $vars[$slot], 'OBJECT', 'post') : null;
+        if (!$post instanceof Post) {
+            return $vars;
+        }
+        $dated = $slot === 'year' || !isset($vars['year']) || ((int) $vars['year'] === (int) substr($post->post_date, 0, 4) && ($slot !== 'day' || !isset($vars['monthnum']) || (int) $vars['monthnum'] === (int) substr($post->post_date, 5, 2)));
+        $next = ['year' => 'monthnum', 'monthnum' => 'day'][$slot] ?? null;
+        $page = $next !== null ? (int) trim((string) ($vars[$next] ?? ''), '/') : 0;
+        $pages = substr_count($post->post_content, '<!--nextpage-->') + 1;
+        if (!$dated || ($page && ($pages === 1 || $page > $pages))) {
+            return $vars;
+        }
+        $vars['page'] = $page;
+        unset($vars['year'], $vars['monthnum'], $vars['day']);
+        $vars['name'] = $post->post_name;
+        return $vars;
+    }
 
     /**
      * generate_rewrite_rules: the rules for one structure.

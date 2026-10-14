@@ -18,6 +18,42 @@ use Minn\Support\Escape;
  */
 final class UpdateCounts
 {
+    /** The updates waiting, counted for what the user may update, with their title (wp_get_update_data), as wp_get_update_data leaves them. */
+    public static function data(): mixed
+    {
+        [$data, $titles] = self::forCurrentUser();
+        return Runtime::hooks()->filter('wp_get_update_data', [$data, $titles]);
+    }
+
+    /**
+     * The translation updates waiting (wp_get_translation_updates): none, as
+     * the engine fetches no language packs on its own.
+     *
+     * @return list<object>
+     */
+    public static function translations(): array
+    {
+        return [];
+    }
+
+    /** The core releases offered (get_core_updates), each marked not dismissed; false when the offer holds none. */
+    public static function core(mixed $options = []): mixed
+    {
+        $options = array_merge(['available' => true, 'dismissed' => false], $options);
+        $fromApi = Transients::getSite('update_core');
+        if (!isset($fromApi->updates) || !is_array($fromApi->updates)) {
+            return false;
+        }
+        $result = [];
+        foreach ($fromApi->updates as $update) {
+            if ($options['available']) {
+                $update->dismissed = false;
+                $result[] = $update;
+            }
+        }
+        return $result;
+    }
+
     /**
      * The counts and their title (before the wp_get_update_data filter),
      * and the titles one by one.
@@ -34,9 +70,9 @@ final class UpdateCounts
             $waiting = $allowed ? Transients::getSite("update_{$kind}") : null;
             $counts[$kind] = is_object($waiting) && !empty($waiting->response) ? count((array) $waiting->response) : 0;
         }
-        $release = $core ? \get_core_updates(['dismissed' => false]) : [];
+        $release = $core ? self::core(['dismissed' => false]) : [];
         $counts['wordpress'] = !empty($release) && !in_array($release[0]->response ?? '', ['development', 'latest'], true) ? 1 : 0;
-        $counts['translations'] = ($core || $plugins || $themes) && \wp_get_translation_updates() ? 1 : 0;
+        $counts['translations'] = ($core || $plugins || $themes) && self::translations() ? 1 : 0;
         $counts['total'] = $counts['plugins'] + $counts['themes'] + $counts['wordpress'] + $counts['translations'];
         $titles = array_filter([
             'wordpress' => $counts['wordpress'] ? sprintf(Gettext::text('%d WordPress Update'), $counts['wordpress']) : '',

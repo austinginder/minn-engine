@@ -206,6 +206,18 @@ final class PostLinks
     }
 
     /**
+     * The address an editor shows with the slug to edit, and the slug
+     * (get_sample_permalink); two empty strings for no post.
+     *
+     * @return array{0: string, 1: string}
+     */
+    public static function sampleFor(mixed $post, mixed $title = null, mixed $name = null): array
+    {
+        $post = Records::post($post);
+        return $post === null ? ['', ''] : self::sample($post, $title === null ? null : (string) $title, $name === null ? null : (string) $name);
+    }
+
+    /**
      * The address an editor shows with the slug to edit: the post as if
      * published, its name made unique, the address with the name left,
      * a page's parents written in.

@@ -447,6 +447,30 @@ final class Handoff
         return self::answer('translationController');
     }
 
+    /** The rewrite object ($wp_rewrite), with the request's environment ($wp), made the first time they are asked for. */
+    public static function rewrite(): object
+    {
+        return self::answer('rewrite');
+    }
+
+    /** The widget factory ($wp_widget_factory) the registered widgets live in. */
+    public static function widgetFactory(): object
+    {
+        return self::answer('widgetFactory');
+    }
+
+    /** The sitemap server, started the first time it is asked for (wp_sitemaps_get_server). */
+    public static function sitemaps(): object
+    {
+        return self::answer('sitemaps');
+    }
+
+    /** The walker a menu is printed with when its arguments name none (new Walker_Nav_Menu). */
+    public static function newMenuWalker(): object
+    {
+        return self::answer('newMenuWalker');
+    }
+
     /** A theme by its folder and root (new WP_Theme). */
     public static function newTheme(mixed ...$args): Theme
     {

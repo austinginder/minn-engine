@@ -31,8 +31,7 @@ function wp_nav_menu($args = [])
 
 function walk_nav_menu_tree($items, $depth, $args)
 {
-    $walker = empty($args->walker) ? new Walker_Nav_Menu() : $args->walker;
-    return $walker->walk($items, $depth, $args);
+    return Minn\Runtime\NavMenu::walk($items, $depth, $args);
 }
 
 /** The classic fallback when no menu is assigned: a page list. The engine renders the list shape without the reference's page-walker chrome. */

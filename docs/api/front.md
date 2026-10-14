@@ -26,7 +26,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 265 | Builds public URLs from the site's permalink structure. With an empty |
-| [`PostEmbed`](#postembed) | final class | 106 | A post as other sites embed it, the oEmbed provider side, as the |
+| [`PostEmbed`](#postembed) | final class | 112 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 68 | The surface monitors, crawlers, and hosting checks hit that is not a |
@@ -41,7 +41,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
 | [`SingleQueries`](#singlequeries) | final readonly class | 117 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
-| [`SitemapRequest`](#sitemaprequest) | final class | 71 | A sitemap request at template_redirect, as the reference's sitemaps |
+| [`SitemapRequest`](#sitemaprequest) | final class | 89 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
 | [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
 | [`TermLists`](#termlists) | final class | 134 | A term's parent chain and the tag cloud, built from term rows the caller |
@@ -843,7 +843,7 @@ a publicly viewable post is embeddable; the width is held between 200
 and 600 (oembed_min_max_width) and the height is a 16:9 share of it, at
 least 200.
 
-Used by: `Minn\Front\EmbedCard`
+Used by: `Minn\Front\EmbedCard`, `Minn\Rest\RuntimeRoutes`
 
 ### static `data(mixed $post, int $width): array|false`
 
@@ -865,13 +865,17 @@ get_post_embed_html: the blockquote, the iframe and its script, through embed_ht
 
 get_post_embed_url: the post's /embed/ address (?embed=true without pretty links), through post_embed_url.
 
+### static `xmlDocument(mixed $data, mixed $node = NULL): mixed`
+
+The data as an oEmbed XML document (_oembed_create_xml); false for no data.
+
 ### static `xml(array $data, ?SimpleXMLElement $root = NULL): string`
 
 _oembed_create_xml: the data as an oembed document (or under the root given), nested arrays as nested elements. @param array<string, mixed> $data
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 126)
+Internals: `append()` (private, line 132)
 
 
 ## PostNavigation
@@ -1447,6 +1451,10 @@ sitemap page is judged: the main query no longer makes an empty page a
 
 Used by: `Minn\Front\SitemapController`
 
+### static `url(mixed $name, mixed $subtypeName = '', mixed $page = 1): mixed`
+
+A sitemap's address (get_sitemap_url): the index, or a provider's page of a subtype; false for one that is not there.
+
 ### static `canonical(): void`
 
 The canonical step: a sitemap asked for by another address is sent to its own.
@@ -1455,7 +1463,7 @@ The canonical step: a sitemap asked for by another address is sent to its own.
 
 What the sitemaps server does with the request (render_sitemaps).
 
-Internals: `page()` (private, line 70), `notFound()` (private, line 91)
+Internals: `page()` (private, line 88), `notFound()` (private, line 109)
 
 
 ## SitemapXml
@@ -1682,7 +1690,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 61), `creatable()` (private, line 263), `editPost()` (private, line 310), `editTerm()` (private, line 320)
+Internals: `profileUrl()` (private, line 62), `creatable()` (private, line 264), `editPost()` (private, line 311), `editTerm()` (private, line 321)
 
 
 ## ToolbarTree

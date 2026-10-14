@@ -343,7 +343,7 @@ function do_settings_fields($page, $section)
 
 function add_settings_error($setting, $code, $message, $type = 'error')
 {
-    $GLOBALS['wp_settings_errors'][] = ['setting' => $setting, 'code' => $code, 'message' => $message, 'type' => $type];
+    Minn\Runtime\RegisteredSettings::addError($setting, $code, $message, $type);
 }
 
 function get_settings_errors($setting = '', $sanitize = false)
@@ -795,32 +795,18 @@ function WP_Filesystem($args = false, $context = false, $allow_relaxed_file_owne
 
 function wp_get_translation_updates()
 {
-    return [];
+    return Minn\Runtime\UpdateCounts::translations();
 }
 
 function get_core_updates($options = [])
 {
-    $options = array_merge(['available' => true, 'dismissed' => false], $options);
-    $from_api = get_site_transient('update_core');
-    if (!isset($from_api->updates) || !is_array($from_api->updates)) {
-        return false;
-    }
-    $updates = $from_api->updates;
-    $result = [];
-    foreach ($updates as $update) {
-        if ($options['available']) {
-            $update->dismissed = false;
-            $result[] = $update;
-        }
-    }
-    return $result;
+    return Minn\Runtime\UpdateCounts::core($options);
 }
 
 /** The updates waiting, counted for what the user may update, with the titles that describe them. */
 function wp_get_update_data()
 {
-    [$data, $titles] = Minn\Runtime\UpdateCounts::forCurrentUser();
-    return apply_filters('wp_get_update_data', $data, $titles);
+    return Minn\Runtime\UpdateCounts::data();
 }
 
 /** Minn's own check: the update service asked when the last answer is old, the offers left in update_plugins. */

@@ -153,7 +153,7 @@ final readonly class SidebarsController
         $widget->form($instance);
         $form = trim((string) ob_get_clean());
         ob_start();
-        \the_widget(get_class($widget), $instance);
+        WidgetAreas::show(get_class($widget), $instance);
         $serialized = serialize($instance);
         $encoded = ['encoded' => base64_encode($serialized), 'hash' => Handoff::hash($serialized)] + (empty($widget->widget_options['show_instance_in_rest']) ? [] : ['raw' => $instance]);
         return Reply::item(['form' => $form, 'preview' => trim((string) ob_get_clean()), 'instance' => $encoded], null);
@@ -169,7 +169,7 @@ final readonly class SidebarsController
             throw RestError::noRoute();
         }
         if (!Runtime::hooks()->actionsDone('widgets_init')) {
-            \wp_widgets_init();
+            WidgetAreas::registerDefaults();
         }
     }
 

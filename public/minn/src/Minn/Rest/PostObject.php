@@ -10,6 +10,7 @@ use Minn\Content\Posts;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Permalinks;
+use Minn\Runtime\PostLinks;
 use Minn\Runtime\Registered;
 use Minn\Support\Serialized;
 
@@ -383,7 +384,7 @@ final readonly class PostObject
             }
             if ($key === 'class_list') {
                 // With plugins loaded both come from get_sample_permalink, as the reference's controller has them.
-                [$ordered['permalink_template'], $ordered['generated_slug']] = \get_sample_permalink($p->id, $p->title, '');
+                [$ordered['permalink_template'], $ordered['generated_slug']] = PostLinks::sampleFor($p->id, $p->title, '');
             }
             $ordered[$key] = $value;
         }
