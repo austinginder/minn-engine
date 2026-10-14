@@ -16,6 +16,9 @@ use Minn\Objects\Term;
  */
 final class TermTags
 {
+    /** A category's old field names, each with the term field it mirrors, in the order they are added. */
+    private const CATEGORY_FIELDS = ['cat_ID' => 'term_id', 'category_count' => 'count', 'category_description' => 'description', 'cat_name' => 'name', 'category_nicename' => 'slug', 'category_parent' => 'parent'];
+
     /**
      * The terms of a post that a list primed or the object cache holds
      * (get_object_term_cache), each through get_term; false when nothing
@@ -97,19 +100,14 @@ final class TermTags
     public static function categoryFields(mixed &$category): void
     {
         if ($category instanceof Term) {
-            $category->cat_ID = $category->term_id;
-            $category->category_count = $category->count;
-            $category->category_description = $category->description;
-            $category->cat_name = $category->name;
-            $category->category_nicename = $category->slug;
-            $category->category_parent = $category->parent;
+            foreach (self::CATEGORY_FIELDS as $old => $field) {
+                $category->{$old} = $category->{$field};
+            }
         } elseif (is_array($category) && isset($category['term_id'])) {
-            $category['cat_ID'] = &$category['term_id'];
-            $category['category_count'] = &$category['count'];
-            $category['category_description'] = &$category['description'];
-            $category['cat_name'] = &$category['name'];
-            $category['category_nicename'] = &$category['slug'];
-            $category['category_parent'] = &$category['parent'];
+            // An array's old names are references, so a later change to either name shows in both.
+            foreach (self::CATEGORY_FIELDS as $old => $field) {
+                $category[$old] = &$category[$field];
+            }
         }
     }
 

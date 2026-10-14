@@ -52685,7 +52685,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/SitemapRequest.php",
-            "lines": 89,
+            "lines": 83,
             "doc": "A sitemap request at template_redirect, as the reference's sitemaps\nserver answers it: a sitemap address asked for another way (the query\nform, page 0) moves to its own; with the sitemaps off, a provider nobody\nregistered, or a subtype or page that has nothing, the request is a 404\nthe theme renders; otherwise the stylesheet, the index or the provider's\npage is printed and the request ends. Since 7.1.3 this is where a\nsitemap page is judged: the main query no longer makes an empty page a\n404 first, so a page a plugin fills past the page count still prints.",
             "implements": [],
             "extends": null,
@@ -52739,7 +52739,7 @@
                         }
                     ],
                     "line": 29,
-                    "end": 44
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -52750,8 +52750,8 @@
                     "doc": "The canonical step: a sitemap asked for by another address is sent to its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 47,
-                    "end": 62
+                    "line": 41,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -52770,8 +52770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 85
+                    "line": 59,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -52804,8 +52804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 106
+                    "line": 82,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -52816,8 +52816,8 @@
                     "doc": "The main query made a 404, which the theme renders.",
                     "shapes": [],
                     "params": [],
-                    "line": 109,
-                    "end": 113
+                    "line": 103,
+                    "end": 107
                 }
             ]
         },
@@ -120633,7 +120633,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Attachments.php",
-            "lines": 257,
+            "lines": 266,
             "doc": "Attachments as WordPress's media functions keep them: the uploads folder\nand its address, an attachment's file (stored relative to the folder),\nits address and metadata, and what kind of file it is; each as its\nfilter leaves it.",
             "implements": [],
             "extends": null,
@@ -120846,7 +120846,7 @@
                         }
                     ],
                     "line": 105,
-                    "end": 128
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -120872,8 +120872,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 152
+                    "line": 145,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -120899,8 +120899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 166
+                    "line": 164,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -120926,8 +120926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 178
+                    "line": 178,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -120946,8 +120946,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 184
+                    "line": 190,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -120958,8 +120958,8 @@
                     "doc": "The audio file extensions the player takes (wp_get_audio_extensions), as wp_audio_extensions leaves them.",
                     "shapes": [],
                     "params": [],
-                    "line": 187,
-                    "end": 190
+                    "line": 196,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -120970,8 +120970,8 @@
                     "doc": "The video file extensions the player takes (wp_get_video_extensions), as wp_video_extensions leaves them.",
                     "shapes": [],
                     "params": [],
-                    "line": 193,
-                    "end": 196
+                    "line": 202,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -121018,8 +121018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 210
+                    "line": 211,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -121045,8 +121045,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 248
+                    "line": 227,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -121086,8 +121086,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 259
+                    "line": 260,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -121106,8 +121106,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 278
+                    "line": 275,
+                    "end": 287
+                },
+                {
+                    "routes": [],
+                    "name": "fileUrl",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fileUrl(string $file): string",
+                    "doc": "Where an attached file is served from, by where its stored path\npoints: inside the uploads folder, its folder swapped for the uploads\naddress; through an old uploads folder elsewhere, the part after that\nfolder, reached from a level under the uploads address; otherwise\nrelative to the uploads address.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 137
                 }
             ]
         },
@@ -127630,7 +127650,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/FileNames.php",
-            "lines": 117,
+            "lines": 119,
             "doc": "Files as WordPress's file functions name and remove them: a name made\nsafe to store, a name no file in the folder has, a file's type from its\ncontent as much as its name, and a file deleted (only inside the folder\nit should be in).",
             "implements": [],
             "extends": null,
@@ -127649,7 +127669,14 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "SPECIAL_CHARACTERS",
+                    "value": "array (   0 => '?',   1 => '[',   2 => ']',   3 => '/',   4 => '\\\\',   5 => '=',   6 => '<',   7 => '>',   8 => ':',   9 => ';',   10 => ',',   11 => '\\'',   12 => '\"',   13 => '&',   14 => '$',   15 => '#',   16 => '*',   17 => '(',   18 => ')',   19 => '|',   20 => '~',   21 => '`',   22 => '!',   23 => '{',   24 => '}',   25 => '%',   26 => '+',   27 => '’',   28 => '«',   29 => '»',   30 => '”',   31 => '“',   32 => '' . \"\\0\" . '', )",
+                    "doc": "The characters a file name loses, handed to sanitize_file_name_chars in this order.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [],
             "methods": [
                 {
@@ -127669,8 +127696,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 48
+                    "line": 30,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -127689,8 +127716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 65
+                    "line": 53,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -127723,8 +127750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 97
+                    "line": 75,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -127757,8 +127784,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 111
+                    "line": 106,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -127777,8 +127804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 121
+                    "line": 116,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -127804,8 +127831,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 133
+                    "line": 126,
+                    "end": 135
                 }
             ]
         },
@@ -142224,7 +142251,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostReads.php",
-            "lines": 290,
+            "lines": 310,
             "doc": "What WordPress's post functions tell about posts: a page's path and a\npage by its path, a post's type, status and fields, whether it can be\nviewed, when posts last changed, posts by query arguments and a post's\nchildren and categories, the SQL that limits a query to what an author\nmay read, and the caches primed for a list of posts.",
             "implements": [],
             "extends": null,
@@ -142531,7 +142558,7 @@
                         }
                     ],
                     "line": 138,
-                    "end": 162
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -142559,8 +142586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 189
+                    "line": 190,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -142586,8 +142613,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 196
+                    "line": 212,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -142613,8 +142640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 202
+                    "line": 219,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -142654,8 +142681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 219
+                    "line": 228,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -142688,8 +142715,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 244
+                    "line": 242,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -142729,8 +142756,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 254
+                    "line": 267,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -142749,8 +142776,54 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 299
+                    "line": 281,
+                    "end": 319
+                },
+                {
+                    "routes": [],
+                    "name": "filledArguments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "filledArguments(array $parsed): array",
+                    "doc": "The query arguments get_posts fills from its own: a status when none\nis given (inherit for attachments, publish for the rest), the page\nsize from numberposts when no posts_per_page is, the category as cat.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $parsed",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "parsed",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 156,
+                    "end": 165
+                },
+                {
+                    "routes": [],
+                    "name": "chosenPosts",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "chosenPosts(array $parsed): array",
+                    "doc": "The posts get_posts names by id: the included ones, the page as large\nas their number; else the ones left out; else none.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $parsed",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "parsed",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 174,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -142771,8 +142844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 305
+                    "line": 322,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -142783,8 +142856,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 307,
-                    "end": 310
+                    "line": 327,
+                    "end": 330
                 }
             ]
         },
@@ -153555,7 +153628,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/TemplateFiles.php",
-            "lines": 50,
+            "lines": 44,
             "doc": "The theme templates WordPress's template functions name: the index and\nembed templates found through the hierarchy, the slugs a block template\nstands for, and the template types and part areas core knows.",
             "implements": [],
             "extends": null,
@@ -153601,7 +153674,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 27,
-                    "end": 40
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -153636,8 +153709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 51
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -153648,8 +153721,8 @@
                     "doc": "The template types core knows (get_default_block_template_types), as default_template_types leaves them.",
                     "shapes": [],
                     "params": [],
-                    "line": 54,
-                    "end": 57
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -153660,8 +153733,8 @@
                     "doc": "The template part areas core knows (get_allowed_block_template_part_areas), as default_wp_template_part_areas leaves them.",
                     "shapes": [],
                     "params": [],
-                    "line": 60,
-                    "end": 63
+                    "line": 54,
+                    "end": 57
                 }
             ]
         },
@@ -156339,7 +156412,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/TermTags.php",
-            "lines": 130,
+            "lines": 128,
             "doc": "What WordPress's template tags tell about a post's terms: its terms of a\ntaxonomy (as a list primed them, else read), its categories with their\nold field names, its tags, its format, and a category's address and the\nchain of its parents.",
             "implements": [],
             "extends": null,
@@ -156361,7 +156434,14 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "CATEGORY_FIELDS",
+                    "value": "array (   'cat_ID' => 'term_id',   'category_count' => 'count',   'category_description' => 'description',   'cat_name' => 'name',   'category_nicename' => 'slug',   'category_parent' => 'parent', )",
+                    "doc": "A category's old field names, each with the term field it mirrors, in the order they are added.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [],
             "methods": [
                 {
@@ -156388,8 +156468,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 42
+                    "line": 27,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -156415,8 +156495,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 60
+                    "line": 48,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -156435,8 +156515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 73
+                    "line": 66,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -156455,8 +156535,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 79
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -156475,8 +156555,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 94
+                    "line": 85,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -156495,8 +156575,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 114
+                    "line": 100,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -156515,8 +156595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 121
+                    "line": 115,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -156563,8 +156643,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 145
+                    "line": 126,
+                    "end": 143
                 }
             ]
         },
@@ -160742,7 +160822,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/UserQueryRunner.php",
-            "lines": 229,
+            "lines": 232,
             "doc": "WP_User_Query as the reference runs it (probe wp-user-query-sql): the\nvariables filled and handed to pre_get_users; the fields (a column list,\nids, the count), published authors, nicenames and logins, the meta query\nwith the roles and capabilities joined in, the order (post counts joined\nin, include and list orders kept), the limit, a search over the columns\nits shape suggests (through user_search_columns), ids in or out, the date\nquery, then pre_user_query; the query (users_pre_query may answer it),\nfound_users_query, and the results shaped as the fields ask.",
             "implements": [],
             "extends": null,
@@ -160773,11 +160853,17 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 40,
-                "end": 42
+                "line": 43,
+                "end": 45
             },
             "cases": [],
             "constants": [
+                {
+                    "name": "DEFAULTS",
+                    "value": "array (   'blog_id' => 1,   'role' => '',   'role__in' =>    array (   ),   'role__not_in' =>    array (   ),   'capability' => '',   'capability__in' =>    array (   ),   'capability__not_in' =>    array (   ),   'meta_key' => '',   'meta_value' => '',   'meta_compare' => '',   'include' =>    array (   ),   'exclude' =>    array (   ),   'search' => '',   'search_columns' =>    array (   ),   'orderby' => 'login',   'order' => 'ASC',   'offset' => '',   'number' => '',   'paged' => 1,   'count_total' => true,   'fields' => 'all',   'who' => '',   'has_published_posts' => NULL,   'nicename' => '',   'nicename__in' =>    array (   ),   'nicename__not_in' =>    array (   ),   'login' => '',   'login__in' =>    array (   ),   'login__not_in' =>    array (   ),   'cache_results' => true, )",
+                    "doc": "A user query's variables before its arguments are laid over them, in the order the user query hooks receive them.",
+                    "visibility": "private"
+                },
                 {
                     "name": "COLUMNS",
                     "value": "array (   0 => 'id',   1 => 'user_login',   2 => 'user_pass',   3 => 'user_nicename',   4 => 'user_email',   5 => 'user_url',   6 => 'user_registered',   7 => 'user_activation_key',   8 => 'user_status',   9 => 'display_name', )",
@@ -160854,8 +160940,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 76
+                    "line": 48,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -160890,8 +160976,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 210
+                    "line": 208,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -160910,8 +160996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 249
+                    "line": 216,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -160932,8 +161018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 91
+                    "line": 82,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -160961,8 +161047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 102
+                    "line": 97,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -160983,8 +161069,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 119
+                    "line": 108,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -161019,8 +161105,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 152
+                    "line": 125,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -161048,8 +161134,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 172
+                    "line": 158,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -161084,8 +161170,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 197
+                    "line": 184,
+                    "end": 200
                 }
             ]
         },

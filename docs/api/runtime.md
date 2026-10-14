@@ -17,7 +17,7 @@ the WordPress runtime plugins load against
 | [`AssetQueue`](#assetqueue) | final class | 60 | The scripts and styles a request queues, as WordPress's asset functions |
 | [`Assets`](#assets) | final class | 432 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`AttachmentImages`](#attachmentimages) | final class | 422 | An attachment's image as WordPress's media functions make it: the |
-| [`Attachments`](#attachments) | final class | 257 | Attachments as WordPress's media functions keep them: the uploads folder |
+| [`Attachments`](#attachments) | final class | 266 | Attachments as WordPress's media functions keep them: the uploads folder |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 127 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 86 | The Block Hooks API on the engine's own front end: a plugin asks for its |
@@ -51,7 +51,7 @@ the WordPress runtime plugins load against
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`EditLinks`](#editlinks) | final class | 99 | The admin addresses WordPress's link functions give for editing: a |
 | [`FileHeaders`](#fileheaders) | final class | 30 | The headers at the top of a theme, plugin or translation file, as |
-| [`FileNames`](#filenames) | final class | 117 | Files as WordPress's file functions name and remove them: a name made |
+| [`FileNames`](#filenames) | final class | 119 | Files as WordPress's file functions name and remove them: a name made |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
 | [`Handoff`](#handoff) | final class | 484 | What the engine asks of the layer it runs under, where a plugin may have |
@@ -99,7 +99,7 @@ the WordPress runtime plugins load against
 | [`PostQueryStatus`](#postquerystatus) | final class | 165 | WP_Query's post type and status clause as the reference writes it (probe |
 | [`PostQueryTax`](#postquerytax) | final class | 193 | The taxonomy side of WP_Query as the reference runs it (probe |
 | [`PostQueryWhere`](#postquerywhere) | final class | 264 | The WHERE fragments WP_Query writes from its variables, in the reference's |
-| [`PostReads`](#postreads) | final class | 290 | What WordPress's post functions tell about posts: a page's path and a |
+| [`PostReads`](#postreads) | final class | 310 | What WordPress's post functions tell about posts: a page's path and a |
 | [`PostRevisions`](#postrevisions) | final class | 181 | A post's revisions as the reference's wp_save_post_revision keeps them |
 | [`PostSave`](#postsave) | final class | 253 | A REST save's columns through the filters the reference's save runs |
 | [`PostTags`](#posttags) | final class | 216 | What the post template tags tell about a post (the one being read when |
@@ -129,7 +129,7 @@ the WordPress runtime plugins load against
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
 | [`Symbols`](#symbols) | final class | 391 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 152 | Edits one start tag's attributes in place the way the reference's tag |
-| [`TemplateFiles`](#templatefiles) | final class | 50 | The theme templates WordPress's template functions name: the index and |
+| [`TemplateFiles`](#templatefiles) | final class | 44 | The theme templates WordPress's template functions name: the index and |
 | [`TermEvents`](#termevents) | final readonly class | 114 | What the reference's REST terms controller tells plugins, for the |
 | [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
 | [`TermLookup`](#termlookup) | final class | 365 | Terms looked up as WordPress's taxonomy functions find them: a list by |
@@ -138,7 +138,7 @@ the WordPress runtime plugins load against
 | [`TermQueryRunner`](#termqueryrunner) | final class | 254 | WP_Term_Query::get_terms as the reference runs it (probe |
 | [`TermQueryTree`](#termquerytree) | final class | 146 | What a term query does with its rows, as the reference does it (probe |
 | [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
-| [`TermTags`](#termtags) | final class | 130 | What WordPress's template tags tell about a post's terms: its terms of a |
+| [`TermTags`](#termtags) | final class | 128 | What WordPress's template tags tell about a post's terms: its terms of a |
 | [`TermWriter`](#termwriter) | final readonly class | 157 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`TermWrites`](#termwrites) | final class | 268 | Terms written as WordPress's taxonomy functions write them: a term made, |
 | [`ThemeMods`](#thememods) | final class | 57 | The active theme's settings (theme_mods_{stylesheet}) as WordPress keeps |
@@ -155,7 +155,7 @@ the WordPress runtime plugins load against
 | [`UserInsert`](#userinsert) | final readonly class | 122 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserOrder`](#userorder) | final class | 43 | A user query's ORDER BY keys as the reference writes them (probe |
 | [`UserQueryRoles`](#userqueryroles) | final class | 91 | A user query's roles and capabilities as the meta clauses the reference |
-| [`UserQueryRunner`](#userqueryrunner) | final class | 229 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
+| [`UserQueryRunner`](#userqueryrunner) | final class | 232 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
 | [`UserSave`](#usersave) | final class | 74 | An account's fields through the filters the reference's wp_insert_user |
 | [`UserStylesPost`](#userstylespost) | final class | 53 | A theme's user styles post as WordPress's theme.json resolver finds and |
 | [`UserWrites`](#userwrites) | final class | 354 | Accounts written as WordPress's user functions write them: an account |
@@ -974,6 +974,8 @@ An attachment's files deleted, its sizes and backups too (wp_delete_attachment_f
 A photo's own description from its IPTC and EXIF (wp_read_image_metadata),
 through wp_read_image_metadata_types and wp_read_image_metadata; false
 when there is no such file.
+
+Internals: `fileUrl()` (private, line 127)
 
 
 ## Avatar
@@ -2396,6 +2398,8 @@ Files as WordPress's file functions name and remove them: a name made
 safe to store, a name no file in the folder has, a file's type from its
 content as much as its name, and a file deleted (only inside the folder
 it should be in).
+
+- const `SPECIAL_CHARACTERS` = `array (   0 => '?',   1 => '[',   2 => ']',   3 => '/',   4 => '\\',   5 => '=',   6 => '<',   7 => '>',   8 => ':',   9 => ';',   10 => ',',   11 => '\'',   12 => '"',   13 => '&',   14 => '$',   15 => '#',   16 => '*',   17 => '(',   18 => ')',   19 => '|',   20 => '~',   21 => '`',   22 => '!',   23 => '{',   24 => '}',   25 => '%',   26 => '+',   27 => '’',   28 => '«',   29 => '»',   30 => '”',   31 => '“',   32 => '' . "\0" . '', )` — The characters a file name loses, handed to sanitize_file_name_chars in this order.
 
 Used by: `Minn\Runtime\Attachments`, `Minn\Runtime\FileUpload`
 
@@ -5226,7 +5230,7 @@ The post an address names (url_to_postid): a ?p= or ?page_id= id, else
 with pretty permalinks a page by its path, a post whose own address it
 is, or an attachment by its own; 0 for none.
 
-Internals: `idList()` (private, line 302), `store()` (private, line 307)
+Internals: `filledArguments()` (private, line 156), `chosenPosts()` (private, line 174), `idList()` (private, line 322), `store()` (private, line 327)
 
 
 ## PostRevisions
@@ -7738,6 +7742,8 @@ taxonomy (as a list primed them, else read), its categories with their
 old field names, its tags, its format, and a category's address and the
 chain of its parents.
 
+- const `CATEGORY_FIELDS` = `array (   'cat_ID' => 'term_id',   'category_count' => 'count',   'category_description' => 'description',   'cat_name' => 'name',   'category_nicename' => 'slug',   'category_parent' => 'parent', )` — A category's old field names, each with the term field it mirrors, in the order they are added.
+
 Used by: `Minn\Front\FeedTags`, `Minn\Rest\RegisteredPostFields`, `Minn\Runtime\PostLinks`, `Minn\Runtime\TemplateFiles`
 
 ### static `cached(mixed $id, mixed $taxonomy): mixed`
@@ -8627,6 +8633,7 @@ its shape suggests (through user_search_columns), ids in or out, the date
 query, then pre_user_query; the query (users_pre_query may answer it),
 found_users_query, and the results shaped as the fields ask.
 
+- const `DEFAULTS` = `array (   'blog_id' => 1,   'role' => '',   'role__in' =>    array (   ),   'role__not_in' =>    array (   ),   'capability' => '',   'capability__in' =>    array (   ),   'capability__not_in' =>    array (   ),   'meta_key' => '',   'meta_value' => '',   'meta_compare' => '',   'include' =>    array (   ),   'exclude' =>    array (   ),   'search' => '',   'search_columns' =>    array (   ),   'orderby' => 'login',   'order' => 'ASC',   'offset' => '',   'number' => '',   'paged' => 1,   'count_total' => true,   'fields' => 'all',   'who' => '',   'has_published_posts' => NULL,   'nicename' => '',   'nicename__in' =>    array (   ),   'nicename__not_in' =>    array (   ),   'login' => '',   'login__in' =>    array (   ),   'login__not_in' =>    array (   ),   'cache_results' => true, )` — A user query's variables before its arguments are laid over them, in the order the user query hooks receive them.
 - const `COLUMNS` = `array (   0 => 'id',   1 => 'user_login',   2 => 'user_pass',   3 => 'user_nicename',   4 => 'user_email',   5 => 'user_url',   6 => 'user_registered',   7 => 'user_activation_key',   8 => 'user_status',   9 => 'display_name', )`
 - const `SEARCHABLE` = `array (   0 => 'ID',   1 => 'user_login',   2 => 'user_email',   3 => 'user_url',   4 => 'user_nicename',   5 => 'display_name', )`
 - const `EMAIL` = `'user_email'`
@@ -8659,7 +8666,7 @@ by LIKE with wildcards at the leading or trailing end, or both.
 
 Runs the query: users_pre_query may answer it; the count follows; the results take the fields' shape.
 
-Internals: `fields()` (private, line 79), `published()` (private, line 94), `names()` (private, line 105), `meta()` (private, line 122), `order()` (private, line 155), `search()` (private, line 181)
+Internals: `fields()` (private, line 82), `published()` (private, line 97), `names()` (private, line 108), `meta()` (private, line 125), `order()` (private, line 158), `search()` (private, line 184)
 
 
 ## UserSave

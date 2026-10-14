@@ -33,14 +33,8 @@ final class SitemapRequest
             return $sitemaps->index->get_index_url();
         }
         $provider = $sitemaps->registry->get_provider($name);
-        if (!$provider) {
-            return false;
-        }
-        if ($subtypeName && !in_array($subtypeName, array_keys($provider->get_object_subtypes()), true)) {
-            return false;
-        }
-        $page = abs((int) $page);
-        return $provider->get_sitemap_url($subtypeName, $page === 0 ? 1 : $page);
+        $offered = $provider && (!$subtypeName || in_array($subtypeName, array_keys($provider->get_object_subtypes()), true));
+        return $offered ? $provider->get_sitemap_url($subtypeName, max(1, abs((int) $page))) : false;
     }
 
     /** The canonical step: a sitemap asked for by another address is sent to its own. */

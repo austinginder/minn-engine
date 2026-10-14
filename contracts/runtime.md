@@ -16391,6 +16391,31 @@ methods move only behind a probe that subclasses it and records which overrides 
 plugins extend facade classes and override single methods, so every `$this->` call the base class
 makes is part of its contract.
 
+## The clean room after the clean slate (2026-10-14)
+
+Measure 15 moved facade bodies into the engine, and some kept the reference's statements in its
+order: measure 18's strict figure (engine PHP sharing a 40-token stretch with the reference,
+variable names set aside) rose from 0 to 51 lines in 8 stretches, unseen, because no suite held it.
+Each is restructured around its behaviour or named as a sequence:
+
+- `SitemapRequest::url()` asks one question, whether the provider offers the subtype, and clamps the
+  page with `max`.
+- `Attachments::url()` works out a stored file's address in `fileUrl()`, by where the path points;
+  the uploads folder is still asked only when there is a file (its `upload_dir` filter runs then).
+- `PostReads::query()` (get_posts) fills the query's arguments in two steps, `filledArguments()` and
+  `chosenPosts()`, so the keys land in the order the query hooks saw before: a page size from
+  numberposts comes before `cat`, one from `include` after it.
+- `TemplateFiles::embed()` builds its candidate names as one list; `TermTags::categoryFields()`
+  copies the old category names from `CATEGORY_FIELDS`, references for an array as before.
+- `FileNames::SPECIAL_CHARACTERS` (the list sanitize_file_name_chars receives),
+  `PluginFiles::HEADERS` (the order of get_plugin_data's fields) and `UserQueryRunner::DEFAULTS`
+  (the order of the user query's variables) are named in clone-scan's SEQUENCES.
+
+A random-input comparison of the old and new passages (200,137 cases) found no difference, the
+constants equal the literals they replace, and every registered probe but http-transports gives
+identical output on the engine before and after. The style suite now holds the strict figure at 0
+whenever a reference is on the machine to compare with.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

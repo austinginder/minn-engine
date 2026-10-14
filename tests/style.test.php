@@ -189,6 +189,14 @@ $check("facade logic: their body lines stay at or under {$facadeLogicLinesCeilin
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-gen.php') . ' --check', $facadeGenOut, $facadeGenStale);
 $check('facade delegates: every delegate is recorded in contracts/api/facade-delegates.json and rendered from it', $facadeGenStale === 0, implode(' ', array_slice(array_map('trim', $facadeGenOut), 0, 6)));
 
+// Measure 18, strict: engine PHP shares no 40-token stretch with the reference's source, variable
+// names set aside (tests/tools/clone-scan.php). Code moved out of the facade can carry one in; a
+// sequence whose order is behaviour is named in the scan's SEQUENCES instead. Without a reference
+// on this machine there is nothing to compare, and the check says so.
+$cloneScan = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/clone-scan.php') . ' --json 2>/dev/null'), true);
+$strictClones = is_array($cloneScan) && is_array($cloneScan['engine'] ?? null) ? (int) $cloneScan['engine']['php']['strict']['lines'] : null;
+$check('clean room: engine PHP shares no 40-token stretch with the reference' . ($strictClones === null ? ' (no reference to compare)' : ''), is_array($cloneScan) && ($strictClones ?? 0) === 0, $strictClones === null ? 'clone-scan.php gave no engine figures' : "{$strictClones} lines: php tests/tools/clone-scan.php --list");
+
 // The app reads each capability flag by name, and a flag the boot payload lacks reads as false (an
 // empty Add plugin dialog once uploadPlugins was new). Where Minn Admin is linked in, every key its
 // boot_caps names must be one the engine computes too.

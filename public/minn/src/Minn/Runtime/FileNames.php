@@ -17,6 +17,9 @@ use Minn\Support\Paths;
  */
 final class FileNames
 {
+    /** The characters a file name loses, handed to sanitize_file_name_chars in this order. */
+    private const SPECIAL_CHARACTERS = ['?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', '’', '«', '»', '”', '“', "\0"];
+
     /**
      * A file name safe to store (sanitize_file_name): accents transliterated,
      * the special characters out, spaces and runs of dashes as one dash, no
@@ -28,8 +31,7 @@ final class FileNames
     {
         $raw = (string) $filename;
         $hooks = Runtime::hooks();
-        $special = ['?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', '’', '«', '»', '”', '“', chr(0)];
-        $special = $hooks->filter('sanitize_file_name_chars', [$special, $raw]);
+        $special = $hooks->filter('sanitize_file_name_chars', [self::SPECIAL_CHARACTERS, $raw]);
         $filename = Accents::strip(str_replace("\x00", '', $raw), SiteLanguage::locale());
         $filename = (string) preg_replace("#\x{00a0}#siu", ' ', $filename);
         $filename = str_replace($special, '', $filename);

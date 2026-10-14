@@ -27,16 +27,10 @@ final class TemplateFiles
     public static function embed(): mixed
     {
         $object = MainQuery::current()->get_queried_object();
-        $templates = [];
-        if (!empty($object->post_type)) {
-            $format = TermTags::format($object);
-            if ($format) {
-                $templates[] = "embed-{$object->post_type}-{$format}.php";
-            }
-            $templates[] = "embed-{$object->post_type}.php";
-        }
-        $templates[] = 'embed.php';
-        return Handoff::queryTemplate('embed', $templates);
+        $type = empty($object->post_type) ? null : $object->post_type;
+        $format = $type === null ? false : TermTags::format($object);
+        $names = array_filter([$format ? "embed-{$type}-{$format}" : null, $type === null ? null : "embed-{$type}", 'embed'], static fn (?string $name): bool => $name !== null);
+        return Handoff::queryTemplate('embed', array_values(array_map(static fn (string $name): string => "{$name}.php", $names)));
     }
 
     /**

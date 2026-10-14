@@ -109,22 +109,31 @@ final class Attachments
             return false;
         }
         $file = (string) MetaData::get('post', $post->ID, '_wp_attached_file', true);
-        $url = '';
-        if ($file !== '') {
-            $uploads = self::uploadDir();
-            if (str_starts_with($file, $uploads['basedir'])) {
-                $url = str_replace($uploads['basedir'], $uploads['baseurl'], $file);
-            } elseif (str_contains($file, 'wp-content/uploads')) {
-                $url = rtrim($uploads['baseurl'] . '/' . (int) CurrentUser::id(), '/\\') . '/../' . ltrim(substr($file, strpos($file, 'wp-content/uploads') + 18), '/');
-            } else {
-                $url = $uploads['baseurl'] . '/' . ltrim($file, '/');
-            }
-        }
+        $url = $file === '' ? '' : self::fileUrl($file);
         if ($url === '') {
             $url = $post->guid;
         }
         $url = Runtime::hooks()->filter('wp_get_attachment_url', [$url, $post->ID]);
         return $url === '' ? false : $url;
+    }
+
+    /**
+     * Where an attached file is served from, by where its stored path
+     * points: inside the uploads folder, its folder swapped for the uploads
+     * address; through an old uploads folder elsewhere, the part after that
+     * folder, reached from a level under the uploads address; otherwise
+     * relative to the uploads address.
+     */
+    private static function fileUrl(string $file): string
+    {
+        ['basedir' => $directory, 'baseurl' => $address] = self::uploadDir();
+        $oldFolder = 'wp-content/uploads';
+        $at = strpos($file, $oldFolder);
+        return match (true) {
+            str_starts_with($file, $directory) => str_replace($directory, $address, $file),
+            $at !== false => rtrim($address . '/' . (int) CurrentUser::id(), '/\\') . '/../' . ltrim(substr($file, $at + strlen($oldFolder)), '/'),
+            default => $address . '/' . ltrim($file, '/'),
+        };
     }
 
     /**

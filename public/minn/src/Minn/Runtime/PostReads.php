@@ -139,26 +139,46 @@ final class PostReads
     {
         $defaults = ['numberposts' => 5, 'category' => 0, 'orderby' => 'date', 'order' => 'DESC', 'include' => [], 'exclude' => [], 'meta_key' => '', 'meta_value' => '', 'post_type' => 'post', 'suppress_filters' => true];
         $parsed = Lists::args($args, $defaults);
-        ['post_type' => $type, 'post_status' => $status] = $parsed + ['post_status' => null];
-        if (empty($status)) {
-            $parsed = array_replace($parsed, ['post_status' => $type === 'attachment' ? 'inherit' : 'publish']);
-        }
-        if (!empty($parsed['numberposts']) && empty($parsed['posts_per_page'])) {
-            $parsed['posts_per_page'] = $parsed['numberposts'];
-        }
-        if (!empty($parsed['category'])) {
-            $parsed['cat'] = $parsed['category'];
-        }
-        if (!empty($parsed['include'])) {
-            $ids = self::idList($parsed['include']);
-            $parsed = array_replace($parsed, ['posts_per_page' => count($ids), 'post__in' => $ids]);
-        } elseif (!empty($parsed['exclude'])) {
-            $parsed = array_replace($parsed, ['post__not_in' => self::idList($parsed['exclude'])]);
-        }
-        $parsed['ignore_sticky_posts'] = true;
-        $parsed['no_found_rows'] = true;
+        $parsed = array_replace($parsed, self::filledArguments($parsed));
+        $parsed = array_replace($parsed, self::chosenPosts($parsed), ['ignore_sticky_posts' => true, 'no_found_rows' => true]);
         unset($parsed['numberposts'], $parsed['category'], $parsed['include'], $parsed['exclude']);
         return Handoff::newQuery()->query($parsed);
+    }
+
+    /**
+     * The query arguments get_posts fills from its own: a status when none
+     * is given (inherit for attachments, publish for the rest), the page
+     * size from numberposts when no posts_per_page is, the category as cat.
+     *
+     * @param array<array-key, mixed> $parsed
+     * @return array<string, mixed>
+     */
+    private static function filledArguments(array $parsed): array
+    {
+        ['post_type' => $type, 'post_status' => $status, 'numberposts' => $count, 'posts_per_page' => $perPage, 'category' => $category] = $parsed + ['post_status' => null, 'posts_per_page' => null];
+        $filled = [
+            'post_status' => empty($status) ? ($type === 'attachment' ? 'inherit' : 'publish') : null,
+            'posts_per_page' => empty($perPage) && !empty($count) ? $count : null,
+            'cat' => empty($category) ? null : $category,
+        ];
+        return array_filter($filled, static fn (mixed $value): bool => $value !== null);
+    }
+
+    /**
+     * The posts get_posts names by id: the included ones, the page as large
+     * as their number; else the ones left out; else none.
+     *
+     * @param array<array-key, mixed> $parsed
+     * @return array<string, mixed>
+     */
+    private static function chosenPosts(array $parsed): array
+    {
+        ['include' => $include, 'exclude' => $exclude] = $parsed;
+        if (empty($include)) {
+            return empty($exclude) ? [] : ['post__not_in' => self::idList($exclude)];
+        }
+        $ids = self::idList($include);
+        return ['posts_per_page' => count($ids), 'post__in' => $ids];
     }
 
     /**

@@ -41,7 +41,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
 | [`SingleQueries`](#singlequeries) | final readonly class | 117 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
-| [`SitemapRequest`](#sitemaprequest) | final class | 89 | A sitemap request at template_redirect, as the reference's sitemaps |
+| [`SitemapRequest`](#sitemaprequest) | final class | 83 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
 | [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
 | [`TermLists`](#termlists) | final class | 134 | A term's parent chain and the tag cloud, built from term rows the caller |
@@ -1463,7 +1463,7 @@ The canonical step: a sitemap asked for by another address is sent to its own.
 
 What the sitemaps server does with the request (render_sitemaps).
 
-Internals: `page()` (private, line 88), `notFound()` (private, line 109)
+Internals: `page()` (private, line 82), `notFound()` (private, line 103)
 
 
 ## SitemapXml

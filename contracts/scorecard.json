@@ -242,14 +242,14 @@
             "label": "Facade functions and methods holding logic",
             "ceiling": 3865,
             "started": 3865,
-            "since": "",
+            "since": "db6aa5a6",
             "rose": false
         },
         "facadeLogicLinesCeiling": {
             "label": "Lines of logic in the facade",
             "ceiling": 30383,
             "started": 30383,
-            "since": "",
+            "since": "db6aa5a6",
             "rose": false
         },
         "wporgRequestCeiling": {
@@ -301,20 +301,20 @@
             "window": 100,
             "stretches": 113,
             "lines": 2083,
-            "of": 176166
+            "of": 176186
         },
         "engine": {
-            "of": 99566,
+            "of": 99586,
             "php": {
                 "strict": {
                     "window": 40,
-                    "stretches": 8,
-                    "lines": 51
+                    "stretches": 0,
+                    "lines": 0
                 },
                 "sensitive": {
                     "window": 30,
-                    "stretches": 75,
-                    "lines": 343
+                    "stretches": 67,
+                    "lines": 292
                 }
             },
             "assets": {
@@ -328,7 +328,7 @@
                 "of": 1837,
                 "files": 20
             },
-            "sequences": 15
+            "sequences": 18
         },
         "facade": {
             "of": 76600,
