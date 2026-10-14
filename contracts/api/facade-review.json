@@ -1456,6 +1456,641 @@
                 "body": "b95feffc965e"
             }
         },
+        "functions.php": {
+            "_ajax_wp_die_handler": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes a scalar message with the status the caller named (200 by default, null keeps the one set), then exits by the flag",
+                "doubt": "the status goes out through http_response_code, so status_header's filter never hears it and no no-cache headers are sent",
+                "body": "4bfe28f6ae73"
+            },
+            "_canonical_charset": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Charset",
+                "why": "maps charset spellings to their canonical names, a rule the engine needs wherever it compares charsets (compat.php repeats the UTF-8 half)",
+                "body": "13371e7b8f7e"
+            },
+            "_default_wp_die_handler": {
+                "verdict": "move",
+                "to": "Minn\\Http\\DiePage",
+                "why": "builds the error list and the back and link markup by rule before DiePage::html draws the page; that markup belongs in DiePage, with wp_robots, headers and exit staying in the facade",
+                "body": "cf0f66e30c52"
+            },
+            "_device_can_upload": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RequestHeaders",
+                "gates": [
+                    "globals"
+                ],
+                "why": "a phone may upload unless it is an iOS before 6, read from the user agent; beside RequestHeaders::isMobile",
+                "body": "142d4be223f7"
+            },
+            "_get_non_cached_ids": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "asks the cache, which a drop-in may provide, for each id and keeps the misses",
+                "doubt": "a non-integer id is cast without _validate_cache_id's notice, and the cache is asked id by id where the API asks wp_cache_get_multiple once",
+                "body": "30df0136f118"
+            },
+            "_http_build_query": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Url",
+                "why": "the query-string builder; Url::buildQuery does the same walk without the numeric prefix, separator and encoding switches, so one method should take them",
+                "body": "a52e2ba9e896"
+            },
+            "_json_wp_die_handler": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "turns the processed die arguments into the JSON error body with its headers, then exits by the flag",
+                "doubt": "the status goes out through http_response_code, so status_header's filter never hears it and no no-cache headers are sent; the first error's data.error never reaches the body",
+                "body": "08efc06acc53"
+            },
+            "_jsonp_wp_die_handler": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the JSON error body wrapped in the _jsonp callback the request named, with its headers, then exits by the flag",
+                "doubt": "the status goes out through http_response_code, so status_header's filter never hears it and no no-cache headers are sent",
+                "body": "a439b2d181ef"
+            },
+            "_minn_dirsize": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DirectorySizes",
+                "gates": [
+                    "unprobed",
+                    "refs"
+                ],
+                "why": "the folder walk behind recurse_dirsize, summing files and recursing within the time budget",
+                "body": "f72094a7c820"
+            },
+            "_minn_enclosure_type": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Enclosures",
+                "gates": [
+                    "unprobed",
+                    "refs"
+                ],
+                "why": "matches the URL's extension against the MIME table, writing the type through a reference; part of do_enclose, its table lookup a Media\\FileTypes job",
+                "body": "9fc8a1da3de8"
+            },
+            "_minn_etc_zone_order": {
+                "verdict": "move",
+                "to": "Minn\\Support\\TimezoneChoice",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the Etc/ ordering rule (GMT+ reversed, UTC between) used by the sort callback",
+                "body": "30a39adf48c1"
+            },
+            "_minn_guessed_path": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\SiteUrls",
+                "gates": [
+                    "unprobed",
+                    "globals"
+                ],
+                "why": "the path-guessing rules behind wp_guess_url (admin and login requests, scripts at or under ABSPATH)",
+                "doubt": "a script above ABSPATH (WordPress in a subfolder) gets the request URI whole where the API strips the file and appends the subfolder",
+                "body": "29f04353cc45"
+            },
+            "_minn_kept_enclosures": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Enclosures",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "keeps the enclosures still linked and deletes the rest; part of do_enclose's behaviour",
+                "body": "bc27834e6e81"
+            },
+            "_scalar_wp_die_handler": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes a scalar message and exits by the flag",
+                "body": "16fc33129471"
+            },
+            "_validate_cache_id": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ObjectCache",
+                "why": "the cache id rule (an int, or a string that is exactly an int) with its doing-it-wrong notice belongs with the cache",
+                "body": "d83903c7e333"
+            },
+            "_wp_check_alternate_file_names": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\FileNames",
+                "why": "whether any alternate name exists on disk or among the listed files; part of the unique-name rules",
+                "body": "5a7c86205bdb"
+            },
+            "_wp_check_existing_file_names": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\FileNames",
+                "why": "tests a list of names for the file's sized, scaled or rotated variants by regex; a unique-name rule beside FileNames::unique",
+                "doubt": "a name that is only an extension ('.jpg') is tested against '-WxH.jpg' where the API answers false at once",
+                "body": "109777222f5f"
+            },
+            "_wp_die_process_input": {
+                "verdict": "move",
+                "to": "Minn\\Http\\DiePage",
+                "why": "settles the die arguments by rule (status from the error data, defaults, 500, title, code, the site charset); the WP_Error unpacking stays as the call's wrapper",
+                "doubt": "a code holding several messages gives only its first where the API lists each, a caller's code is overwritten by the error's, and the default title is not translated",
+                "body": "876ffa7d3f4d"
+            },
+            "_wp_timezone_choice_usort_callback": {
+                "verdict": "move",
+                "to": "Minn\\Support\\TimezoneChoice",
+                "why": "the zone ordering (continents, Etc last, cities then sub-cities naturally); Support\\TimezoneChoice already sorts zones for the select",
+                "body": "26665f9f2b67"
+            },
+            "_xml_wp_die_handler": {
+                "verdict": "move",
+                "to": "Minn\\Http\\DiePage",
+                "why": "renders the XML error document by template, the die page's other format beside DiePage::html; headers and exit stay in the facade",
+                "body": "772478248c83"
+            },
+            "_xmlrpc_wp_die_handler": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "answers through the global $wp_xmlrpc_server with an IXR_Error",
+                "body": "0b3d422ed939"
+            },
+            "add_magic_quotes": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Slashes",
+                "why": "slashes every string in an array recursively, the job Slashes::add does with a different walk (objects, non-strings)",
+                "doubt": "a non-string scalar comes back as given where the API's addslashes returns it as a string",
+                "body": "9bd3bebf6fc1"
+            },
+            "apache_mod_loaded": {
+                "verdict": "move",
+                "to": "Minn\\Support\\WebServer",
+                "why": "deciding Apache from the server software and looking up the module list is web-server knowledge beside WebServer::isApache",
+                "doubt": "a module missing from apache_get_modules() answers false where the API falls back to its phpinfo check and then the default, and the $is_apache global plugins may set is not read",
+                "body": "2216c61bf0b2"
+            },
+            "cache_javascript_headers": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RequestHeaders",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the script cache headers (type in the site charset, Vary, a ten-day Expires) belong beside RequestHeaders::noCache",
+                "body": "bc0db0446709"
+            },
+            "clean_dirsize_cache": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DirectorySizes",
+                "why": "drops a path and its parents from the dirsize_cache transient, the store recurse_dirsize keeps",
+                "doubt": "a non-string or empty path is not warned about as the API does",
+                "body": "2e0b1646fa14"
+            },
+            "date_i18n": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\SiteTime",
+                "why": "works out the timestamp and zone, formats through LocalDates and fires date_i18n; it belongs beside SiteTime::format (wp_date), which does the same for a true timestamp",
+                "doubt": "the filter hears the raw argument (false when omitted) where the API passes the resolved timestamp, and format 'U' prints the real epoch rather than the offset timestamp given",
+                "body": "646ee1d47f8c"
+            },
+            "dead_db": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "loads the db-error.php drop-in into scope, else dies with the global $wpdb's error or the stock message",
+                "body": "7da9efe38a38"
+            },
+            "do_enclose": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Enclosures",
+                "why": "finds the content's links, drops stale enclosure meta, asks each new link's headers and stores audio and video as enclosure meta; engine work over posts, meta and HTTP",
+                "doubt": "the audio/video test reads only the served Content-Type where the API lets the extension's type replace it, and links with no path or query are not skipped",
+                "body": "34a40b587408"
+            },
+            "do_favicon": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the do_faviconico action, wp_redirect to get_site_icon_url, then exit",
+                "body": "4a654ded576c"
+            },
+            "do_robots": {
+                "verdict": "move",
+                "to": "Minn\\Front\\RobotsTxt",
+                "why": "builds the robots lines from blog_public and the site path and filters them; Front\\ProbeController's fallback builds the same lines, so one owner should make them, the header and echo staying",
+                "body": "d22b6210aeb1"
+            },
+            "get_weekstartend": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\SiteTime",
+                "why": "week arithmetic over the site's start_of_week option is site-time behaviour",
+                "doubt": "a non-numeric $start_of_week is cast to 0 (Sunday) where the API falls back to the option",
+                "body": "eca666a72242"
+            },
+            "global_terms_enabled": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then false",
+                "body": "066a90536285"
+            },
+            "human_readable_duration": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Time",
+                "why": "parses hh:mm:ss and words each part with plural forms; duration wording beside Support\\Time::span",
+                "doubt": "a zero hour part (0:05:30) is dropped where the API words it as 0 hours",
+                "body": "3db66105fc4a"
+            },
+            "is_lighttpd_before_150": {
+                "verdict": "move",
+                "to": "Minn\\Support\\WebServer",
+                "gates": [
+                    "globals"
+                ],
+                "why": "parses the server software name and version from SERVER_SOFTWARE; web-server knowledge beside WebServer::isApache, the superglobal passed in",
+                "body": "8fa464b9a6ab"
+            },
+            "mbstring_binary_safe_encoding": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a compatibility shim: mbstring.func_overload is gone since PHP 8, so on the engine's PHP floor it always returns at the overload test and holds no state worth moving",
+                "body": "1c57f477af8c"
+            },
+            "print_emoji_styles": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Emoji",
+                "why": "the once-only flag is a function static (engine state) and the style block is emoji markup the engine should own; the deprecation notice stays",
+                "doubt": "the static survives across requests in a long-lived worker, so later requests print nothing",
+                "body": "f05e75105ae2"
+            },
+            "recurse_dirsize": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\DirectorySizes",
+                "gates": [
+                    "refs"
+                ],
+                "why": "a recursive folder size with a time budget, cached in the dirsize_cache transient and filtered by pre_recurse_dirsize; engine work over files and stored data",
+                "body": "635e960d47ed"
+            },
+            "send_frame_options_header": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RequestHeaders",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the frame-blocking header pair is header policy beside RequestHeaders::noCache",
+                "body": "e2650cc38e0c"
+            },
+            "wp": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "runs the global $wp's main() and sets $wp_the_query from $wp_query, globals plugins read",
+                "body": "592ef1b054cd"
+            },
+            "wp_admin_headers": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\RequestHeaders",
+                "why": "the admin Referrer-Policy, filtered then sent, is header policy beside the engine's other request headers",
+                "body": "c94c6a60420b"
+            },
+            "wp_admin_notice": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fires wp_admin_notice and echoes wp_get_admin_notice through wp_kses_post",
+                "body": "bb0a7a32dde5"
+            },
+            "wp_auth_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the heartbeat filter callback: one key set from is_user_logged_in, hooked and unhooked by name",
+                "body": "eb6e88f13bc5"
+            },
+            "wp_auth_check_html": {
+                "verdict": "move",
+                "to": "Minn\\Login\\AuthCheck",
+                "gates": [
+                    "globals"
+                ],
+                "why": "decides same-domain from the login URL and the request host, filters it, and renders the session-expired dialog markup",
+                "doubt": "a host with a port never counts as the same domain, since parse_url's host drops the port HTTP_HOST keeps",
+                "body": "6f0e93a20fd7"
+            },
+            "wp_cache_get_last_changed": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_cache_get then wp_cache_set, which a drop-in may provide",
+                "doubt": "a missing value is set directly, so the wp_cache_set_last_changed action never fires as it does when the API calls wp_cache_set_last_changed",
+                "body": "e8807dab4945"
+            },
+            "wp_cache_set_last_changed": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_cache_get, wp_cache_set (a drop-in's or the engine's) and the action around them",
+                "body": "9c9c9782a6f9"
+            },
+            "wp_debug_backtrace_summary": {
+                "verdict": "delegate",
+                "to": "Minn\\Support\\Backtrace::summary",
+                "why": "the engine already summarises the frames; joining them reversed for $pretty is result conversion, and debug_backtrace is taken here so the caller's frames are seen",
+                "body": "9d18f8e47fc3"
+            },
+            "wp_die": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "picks the handler by request kind through public predicates and the per-kind handler filters plugins use to replace it, then calls it",
+                "doubt": "an int $title overrides an int $args, where the API takes $args first and ignores the title",
+                "body": "16dde44b6ae1"
+            },
+            "wp_enqueue_emoji_styles": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "unhooks print_emoji_styles through has_action and remove_action; Minn prints no emoji plumbing",
+                "doubt": "having unhooked print_emoji_styles it enqueues no wp-emoji-styles inline style in its place, as the API does",
+                "body": "cf5cfb7060fc"
+            },
+            "wp_extract_urls": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Url",
+                "why": "a URL-finding regex with entity decoding and de-duplication is parsing Support\\Url should own",
+                "body": "86df4e9bf037"
+            },
+            "wp_find_hierarchy_loop": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Hierarchy",
+                "why": "finds a loop member then walks the loop from it, with the start's parent overridden; the whole loop finder belongs in Support\\Hierarchy",
+                "body": "cfe135359f7e"
+            },
+            "wp_find_hierarchy_loop_tortoise_hare": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "turns the callback and overrides into the engine's parent lookup, picks Hierarchy::walked or meeting by the flag, and returns false for none",
+                "body": "b87401f7af95"
+            },
+            "wp_generate_uuid4": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Uuid",
+                "why": "the version 4 UUID recipe, byte for byte the private Auth\\ApplicationPasswords::uuid; one public engine method should serve both",
+                "body": "ad16c08384cf"
+            },
+            "wp_get_admin_notice": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\AdminNotice",
+                "why": "builds the notice div's classes and attributes from the arguments by rule, with its filters; markup the engine should render",
+                "doubt": "an attribute set to false prints name=\"\" and a numeric key prints 0=\"x\", where the API drops false and prints a bare value for a numeric key; the type is not trimmed",
+                "body": "4d029eabf6e5"
+            },
+            "wp_get_default_extension_for_mime_type": {
+                "verdict": "move",
+                "to": "Minn\\Media\\FileTypes",
+                "why": "finds a type's first extension in the MIME table; a FileTypes lookup",
+                "body": "db148460908e"
+            },
+            "wp_get_direct_php_update_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\VersionCheck",
+                "why": "the host's direct PHP update address from the environment, filtered; beside VersionCheck::updatePhpUrl",
+                "body": "a23a19f91a48"
+            },
+            "wp_get_direct_update_https_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\VersionCheck",
+                "why": "the host's one-step HTTPS address from the environment, filtered; beside the PHP update addresses in VersionCheck",
+                "body": "2ddde1587fed"
+            },
+            "wp_get_font_dir": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "rebuilds what _wp_filter_font_directory makes; it should be wp_font_dir(false), so the upload_dir filters run around the font folder as the API runs them",
+                "doubt": "upload_dir filters never hear the font folder, which they do through wp_font_dir",
+                "body": "71e5ab1a502a"
+            },
+            "wp_get_http_headers": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_safe_remote_head then wp_remote_retrieve_headers, false on an error",
+                "body": "680e614a15f1"
+            },
+            "wp_get_referer": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_raw_referer compared with the request, then wp_validate_redirect, which is pluggable; the $request line is unused",
+                "body": "66a6dab303f0"
+            },
+            "wp_get_update_https_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\VersionCheck",
+                "why": "the HTTPS help address: environment over default, filtered, default when emptied; the rule VersionCheck::updatePhpUrl applies",
+                "body": "29add9cf3cc6"
+            },
+            "wp_get_update_php_annotation": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\VersionCheck",
+                "why": "compares the update address with the default and words the host annotation; built on VersionCheck's two addresses",
+                "body": "54bcbcb1189a"
+            },
+            "wp_get_webp_info": {
+                "verdict": "move",
+                "to": "Minn\\Media\\WebpInfo",
+                "why": "the type check and the 40-byte read in front of WebpInfo::read; the parser should take the file",
+                "body": "97e694c05bbf"
+            },
+            "wp_guess_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\SiteUrls",
+                "gates": [
+                    "globals"
+                ],
+                "why": "guesses the site address from WP_SITEURL, the scheme, the host and the request path; address building belongs with SiteUrls, the superglobals passed in as the request left them",
+                "body": "33e6fe8ecfbb"
+            },
+            "wp_is_rest_endpoint": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "asks the global $wp_rest_server, which plugins may replace, whether it is dispatching, then filters it with wp_is_serving_rest_request",
+                "body": "35123eda8ffe"
+            },
+            "wp_is_site_protected_by_basic_auth": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads $pagenow and the PHP_AUTH superglobals as plugins left them, then the filter decides",
+                "doubt": "an ajax request counts as admin and the login page is tested last, where the API tests wp-login.php first and asks only is_admin()",
+                "body": "cae3b30fabbd"
+            },
+            "wp_is_stream": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Paths",
+                "why": "parses the scheme off a path and checks it against PHP's registered wrappers; a path rule for Support\\Paths",
+                "body": "9d2026ce61d5"
+            },
+            "wp_is_uuid": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Uuid",
+                "why": "the UUID patterns (any version, or version 4) with the doing-it-wrong for other versions; Rest\\SchemaValues::isUuid is the same test but case-blind, so one owner",
+                "body": "0b8682c656a9"
+            },
+            "wp_max_upload_size": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\FileUpload",
+                "why": "reads both PHP limits, takes the smaller and filters it; the upload limit belongs with the engine's upload handling (Ops\\Diagnostics already parses the same ini sizes)",
+                "body": "f1112f70ecdc"
+            },
+            "wp_maybe_load_widgets": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the load_default_widgets filter, then add_action for the widgets menu",
+                "body": "d2f9ac459bdc"
+            },
+            "wp_nonce_ays": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "words the log-out or expired-link message from public functions (wp_logout_url, wp_get_referer, remove_query_arg) and dies through wp_die and its handler filters",
+                "body": "2e565c6943d9"
+            },
+            "wp_nonce_field": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the hidden input around wp_create_nonce (pluggable) plus wp_referer_field, echoed by the display flag",
+                "body": "fbc07a113f1e"
+            },
+            "wp_ob_end_flush_all": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Runtime",
+                "why": "closing every output buffer is output control the engine owns, since Runtime::capture and Theme\\TemplateBuffer open buffers of their own under the page",
+                "doubt": "it also ends the engine's own capture and template buffers, so a plugin calling it mid-render can push the page out early",
+                "body": "12df553cec8a"
+            },
+            "wp_original_referer_field": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "picks wp_get_original_referer, wp_get_referer or the request URI as plugins left it, in a hidden input echoed by the display flag",
+                "body": "73ab73822140"
+            },
+            "wp_post_preview_js": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads the global $post on a preview and prints the window-naming script through wp_print_inline_script_tag",
+                "body": "cbb8f377967f"
+            },
+            "wp_privacy_delete_old_export_files": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "the expiry filter and deleting each old file finish the job PersonalData::expiredExports starts",
+                "body": "df141d54fda9"
+            },
+            "wp_privacy_personal_data_cleanup_requests": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "finds pending requests older than the key expiry and marks them failed; request lifecycle work for the engine",
+                "doubt": "a failed request keeps its post_password (the confirmation key), which the API clears when it fails one",
+                "body": "06036ea067b4"
+            },
+            "wp_referer_field": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the hidden input around the request URI the engine resolves, echoed by the display flag",
+                "doubt": "a request URI already carrying _wp_http_referer is echoed whole; the API may strip that argument first and escape the value as a URL",
+                "body": "08fc0e3ea9cc"
+            },
+            "wp_remote_fopen": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a URL check, then wp_safe_remote_get and wp_remote_retrieve_body, each running its own HTTP filters",
+                "body": "ee66a36dca36"
+            },
+            "wp_removable_query_args": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\QueryArgs",
+                "why": "the list of one-time admin arguments, filtered, is a query-argument rule beside QueryArgs::remove",
+                "body": "50674435e6ab"
+            },
+            "wp_schedule_delete_old_privacy_export_files": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "schedules the hourly event through wp_next_scheduled and wp_schedule_event",
+                "doubt": "no early return while installing, which the API has",
+                "body": "753464e829b4"
+            },
+            "wp_schedule_personal_data_cleanup_requests": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "schedules the daily event through wp_next_scheduled and wp_schedule_event",
+                "body": "9fe94c42dcdc"
+            },
+            "wp_scheduled_delete": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TrashSweep",
+                "why": "the daily sweep (expired trash times from Meta::objectsBelow, delete what is still trashed, else drop the stale trash meta) is engine work over posts and comments",
+                "body": "03c8d79c2b16"
+            },
+            "wp_send_json": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "headers, wp_json_encode, then wp_die for ajax (so its handler filter applies) or exit; every step is a public function or plain output",
+                "doubt": "no _doing_it_wrong when called while serving a REST request, as the API warns",
+                "body": "bc4a70ae4471"
+            },
+            "wp_send_json_error": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps the value in the failure envelope, a WP_Error turned into its list of code and message pairs",
+                "body": "5db96830e4c0"
+            },
+            "wp_send_json_success": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps the value in the success envelope for wp_send_json",
+                "body": "f2a21c439f53"
+            },
+            "wp_site_admin_email_change_notification": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\ChangeNotices",
+                "why": "the admin address change mail (send filter, template filter, placeholders, wp_mail); ChangeNotices already holds the sibling templates and fill()",
+                "body": "18b233cf59a9"
+            },
+            "wp_suspend_cache_invalidation": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "flips the $_wp_suspend_cache_invalidation global, which plugins and the engine's PostCaches both read",
+                "body": "3a43b482f42d"
+            },
+            "wp_tempnam": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "why": "names and creates a temporary file by its own rules; file creation belongs in Support\\Files",
+                "doubt": "PHP's tempnam names (prefix plus random, no extension) differ from the API's name-XXXXXX.tmp made unique in the folder, and an empty name becomes 'file' where the API uses a unique id",
+                "body": "0d73fb2af52d"
+            },
+            "wp_timezone_override_offset": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\SiteTime",
+                "why": "the named zone's current offset in hours, from the timezone_string option, is site-time behaviour",
+                "body": "ac6d84657369"
+            },
+            "wp_trigger_error": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Notices",
+                "why": "raising the cleaned message is what the private Notices::notify already does; a public raise there leaves only the WP_Exception throw for E_USER_ERROR in the facade",
+                "body": "5c3b05038654"
+            },
+            "wp_unique_prefixed_id": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\RenderState",
+                "why": "a per-prefix counter kept in a function static; RenderState already keeps the request's id counter",
+                "doubt": "the static outlives the request in a long-lived worker, and a non-string prefix is not warned about as the API does",
+                "body": "41ca4413c73c"
+            },
+            "wp_update_php_annotation": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps wp_get_update_php_annotation in before and after, echoed or returned by the display flag",
+                "body": "9d9b6ca4fe03"
+            },
+            "wp_upload_bits": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\FileUpload",
+                "why": "the whole sideload of raw bytes (type check, wp_upload_bits refusal, folder, unique name, write, wp_handle_upload) mirrors FileUpload::handle and belongs beside it",
+                "doubt": "the dirsize cache is never cleared for the new file, and the file gets 0644 where the API derives its permissions from the folder's",
+                "body": "7f58a0a429b2"
+            },
+            "wp_widget_description": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads the global $wp_registered_widgets plugins write to, escaped",
+                "body": "3c8c5fbb1ddb"
+            }
+        },
         "https.php": {
             "wp_get_https_detection_errors": {
                 "verdict": "move",
