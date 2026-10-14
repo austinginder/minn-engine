@@ -2091,6 +2091,164 @@
                 "body": "3c8c5fbb1ddb"
             }
         },
+        "http.php": {
+            "_minn_alias_requests_class": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "aliases a legacy Requests class name to its modern class once, with the one deprecation notice",
+                "body": "656634546386"
+            },
+            "_minn_http_transport_answer": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Transport",
+                "why": "turns a raw response into the response array, streamed to its file, redirects followed",
+                "body": "e68cf102b968"
+            },
+            "_minn_http_transport_args": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Transport",
+                "why": "the transports' request defaults and cookie header",
+                "body": "4959afeb8edd"
+            },
+            "_minn_http_transport_decoded": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Transport",
+                "why": "un-chunks, decompresses and limits a response body",
+                "body": "18bbc3019adc"
+            },
+            "_minn_http_transport_file": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Transport",
+                "why": "opens the streaming target file, or the refusal",
+                "body": "b2f215cde39e"
+            },
+            "_minn_http_transport_headers": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Transport",
+                "why": "request headers as lines from a string or an array",
+                "body": "6ee0c96fc308"
+            },
+            "_minn_load_requests": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "requires the Requests facade files once, the legacy names only when the library is already loaded",
+                "body": "5f232a8a8d5f"
+            },
+            "_wp_http_get_object": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "hands out the API's one WP_Http object for the request",
+                "body": "038b428acf26"
+            },
+            "_wp_translate_php_url_constant_to_key": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Url",
+                "why": "the PHP_URL constant to component name table",
+                "body": "b34539567f19"
+            },
+            "allowed_http_request_hosts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a named filter callback answering through wp_validate_redirect, which is pluggable",
+                "body": "2943ac64360c"
+            },
+            "download_url": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "downloads to a temporary file and cleans up on failure; the WP_Error shapes stay",
+                "body": "ac4220e85f81"
+            },
+            "send_origin_headers": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_http_origin and is_allowed_http_origin by name, then the two headers",
+                "body": "312954d6aaf6"
+            },
+            "wp_http_supports": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "whether the transports can meet the asked capabilities (ssl by the loaded extensions)",
+                "body": "e9ea1ca22326"
+            },
+            "wp_http_validate_url": {
+                "verdict": "delegate",
+                "to": "Minn\\Support\\Url::validateForHttp",
+                "why": "the engine validates the address; the protocol check before it belongs inside validateForHttp, the two filters handed in as now",
+                "body": "5fd093a7400a"
+            },
+            "wp_remote_retrieve_body": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the response array's body, empty for an error",
+                "body": "0a7d0c25845c"
+            },
+            "wp_remote_retrieve_cookie": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "one cookie object of the response by name",
+                "body": "24641e28fff7"
+            },
+            "wp_remote_retrieve_cookie_value": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "one cookie's value of the response by name",
+                "body": "a5065e078e33"
+            },
+            "wp_remote_retrieve_cookies": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the response array's cookies, empty for an error",
+                "body": "ecdd035eb2f1"
+            },
+            "wp_remote_retrieve_header": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "one header of the response array, empty for an error",
+                "body": "a6191dfb5a1c"
+            },
+            "wp_remote_retrieve_headers": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the response array's headers, empty for an error",
+                "body": "7d3490f2b00f"
+            },
+            "wp_remote_retrieve_response_code": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the response array's code, empty for an error",
+                "body": "faf5929d9131"
+            },
+            "wp_remote_retrieve_response_message": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the response array's message, empty for an error",
+                "body": "7d9110fed776"
+            },
+            "wp_safe_remote_get": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "asks the WP_Http object to reject unsafe addresses",
+                "body": "8c3c04a9afeb"
+            },
+            "wp_safe_remote_head": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "asks the WP_Http object to reject unsafe addresses",
+                "body": "bbb2f48ec986"
+            },
+            "wp_safe_remote_post": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "asks the WP_Http object to reject unsafe addresses",
+                "body": "bd9755d85825"
+            },
+            "wp_safe_remote_request": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "asks the WP_Http object to reject unsafe addresses",
+                "body": "9306391ca6bb"
+            }
+        },
         "https.php": {
             "wp_get_https_detection_errors": {
                 "verdict": "move",
@@ -5019,6 +5177,239 @@
                 "reason": "compose",
                 "why": "hooks the named preview callbacks through the hook API when a preview is asked for",
                 "body": "51f3b2c88307"
+            }
+        },
+        "theme.php": {
+            "_add_default_theme_supports": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the engine's block theme defaults, then two filters hooked by name",
+                "body": "fa70db4ea309"
+            },
+            "_custom_logo_header_styles": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CustomLogo",
+                "why": "the style hiding the header text beside a custom logo, by the theme's support and mod",
+                "body": "e29fc2f276a7"
+            },
+            "_delete_attachment_theme_mod": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\ThemeMods",
+                "why": "drops the logo or background mods that name a deleted attachment",
+                "body": "f348a5b7f71e"
+            },
+            "_minn_global_styles": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\GlobalStyles",
+                "why": "resolves the theme's global styles with the user's once per request",
+                "body": "8922ffa694f7"
+            },
+            "_minn_style_node_paths": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\GlobalStyles",
+                "why": "the style node paths of a styles tree, read today through WP_Theme_JSON's private walk",
+                "body": "073e7e88a221"
+            },
+            "_minn_theme_json_object": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "makes the API's WP_Theme_JSON object around engine data without its constructor",
+                "body": "7fd407bf2e5f"
+            },
+            "_minn_theme_styles": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\ThemeStyles",
+                "why": "builds the site's theme styles once per request; a cached forSite",
+                "body": "6f3152382119"
+            },
+            "_minn_user_styles": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\UserStyles",
+                "why": "reads and decodes the theme's saved user styles from the engine's templates",
+                "body": "454e279db6d7"
+            },
+            "add_editor_style": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "adds stylesheets to the global $editor_styles themes and the editor read, with the theme support",
+                "body": "85d4c4722603"
+            },
+            "get_block_theme_folders": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the theme object's own block template folders, or the defaults",
+                "body": "59d0f7d6d916"
+            },
+            "get_current_theme": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the stored or the theme's name",
+                "body": "4d47530870f5"
+            },
+            "get_editor_stylesheets": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\EditorStyles",
+                "gates": [
+                    "globals"
+                ],
+                "why": "resolves the editor stylesheets (remote ones, then the parent's and the theme's files) and filters them",
+                "body": "a6ab5eeb64ae"
+            },
+            "get_locale_stylesheet_uri": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "gates": [
+                    "globals"
+                ],
+                "why": "picks the locale or text-direction stylesheet the theme ships, then its filter",
+                "body": "7d2fbb4a42c0"
+            },
+            "get_theme": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_themes",
+                "body": "f554b1fe0216"
+            },
+            "get_theme_data": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the theme object's headers in the old shape",
+                "body": "7c62698bd7b4"
+            },
+            "get_theme_starter_content": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the theme support's config, then its filter",
+                "body": "af5687768a3d"
+            },
+            "get_theme_updates": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "pairs the update_themes transient's offers with wp_get_theme objects",
+                "body": "866b0462a799"
+            },
+            "get_themes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_get_themes keyed by name",
+                "body": "805cc8d3dde8"
+            },
+            "has_nav_menu": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_registered_nav_menus and get_nav_menu_locations by name, then its filter",
+                "body": "79f182ea4821"
+            },
+            "register_nav_menus": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "why": "adds menu locations to the request's registry the engine holds",
+                "body": "aff2b7aeda54"
+            },
+            "remove_editor_styles": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "drops the support and, in the admin, empties the global $editor_styles",
+                "body": "56c80ee14188"
+            },
+            "remove_theme_support": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\ThemeSupports::remove",
+                "why": "the engine removes the support; the features the public function may not remove belong inside remove",
+                "body": "1483d40fa1d9"
+            },
+            "require_if_theme_supports": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "requires the file into the facade's scope when the theme supports the feature",
+                "body": "7d71d403e8f1"
+            },
+            "search_theme_directories": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Themes",
+                "gates": [
+                    "globals"
+                ],
+                "why": "scans the theme roots for themes once per request unless forced; the engine's theme discovery",
+                "body": "45036846a023"
+            },
+            "unregister_nav_menu": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "why": "takes a menu location out of the registry the engine holds",
+                "body": "ab947385e3ce"
+            },
+            "validate_current_theme": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Themes",
+                "why": "decides whether the active theme is whole and switches to the default theme when it is not",
+                "body": "3c8bde46411d"
+            },
+            "validate_theme_requirements": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Themes",
+                "why": "the WordPress and PHP requirement checks and which refusal applies, then its filter; the WP_Error shapes stay",
+                "body": "68236134e34b"
+            },
+            "wp_clean_theme_json_cache": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\GlobalStyles",
+                "why": "drops the engine's cached theme and global styles; the resolver's own clean stays as the wrapper",
+                "body": "9b5794276525"
+            },
+            "wp_get_global_settings": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\StyleSettings",
+                "why": "the origin choice and the settings path walk, a block's settings under blocks.{name}",
+                "body": "190efe788fc5"
+            },
+            "wp_get_global_styles": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\GlobalStyles",
+                "why": "walks a path into the resolved global styles, the whole set when it is not there",
+                "body": "ec3889b934b2"
+            },
+            "wp_get_global_stylesheet": {
+                "verdict": "delegate",
+                "to": "Minn\\Theme\\GlobalStyles::stylesheet",
+                "why": "the engine builds the stylesheet; the body only defaults the types and wires the theme and its templates",
+                "body": "a07fc41bcd11"
+            },
+            "wp_get_nav_menu_name": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_nav_menu_locations and wp_get_nav_menu_object by name, then its filter",
+                "body": "08ad57073ee4"
+            },
+            "wp_get_theme_data_custom_templates": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "the custom templates theme.json declares, shaped by name",
+                "body": "952569ea07d3"
+            },
+            "wp_get_theme_data_template_parts": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "the template parts theme.json declares, shaped by name",
+                "body": "fdebf563dc76"
+            },
+            "wp_get_typography_font_size_value": {
+                "verdict": "delegate",
+                "to": "Minn\\Theme\\Typography::fontSize",
+                "why": "the engine computes the size; the deprecated boolean and the settings merge are argument conversion",
+                "body": "d4f8a81593d2"
+            },
+            "wp_get_typography_value_and_unit": {
+                "verdict": "delegate",
+                "to": "Minn\\Theme\\Typography::valueAndUnit",
+                "why": "the engine parses the value; the type refusal belongs inside it",
+                "body": "3e4881399d09"
+            },
+            "wp_is_theme_directory_ignored": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "the folders a theme scan skips",
+                "body": "fce080cde9da"
             }
         },
         "upgrade.php": {
