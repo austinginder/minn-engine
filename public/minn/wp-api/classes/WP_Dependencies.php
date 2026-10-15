@@ -23,68 +23,27 @@ class WP_Dependencies
     public $groups = [];
     public $group = 0;
     protected $assets;
-    /** @var array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed}> each handle as the view last showed it */
-    private $synced = [];
-    /** @var array{0: array, 1: array} the queue and the done list as the view last showed them */
-    private $synced_lists = [[], []];
-    private $reconciling = false;
+    /** @var Minn\Runtime\AssetView the public arrays above, kept current from the registry */
+    private $view;
     /** @var array<string, true> handles already reported for unregistered dependencies */
     private $warned = [];
 
     public function __construct(?Assets $assets = null)
     {
         $this->assets = $assets ?? new Assets('dependency');
-        $this->assets->watch(function (): void {
-            $this->sync();
-        }, function (): void {
-            $this->push();
-        });
+        $this->view = new Minn\Runtime\AssetView($this->assets, $this);
     }
 
-    /** Refreshes the public arrays from the registry (after handing back what a plugin edited in them); the registry calls this after every change. */
+    /** Rebuilds the public arrays from the registry, after handing back what a plugin edited in them (Runtime\AssetView). */
     public function sync(): void
     {
-        $this->push();
-        $this->registered = [];
-        foreach ($this->assets->items() as $handle => $item) {
-            $dep = new _WP_Dependency($handle, $item['src'], $item['deps'], $item['ver'], $item['extra']);
-            $dep->extra = ['before' => $item['inline']['before'], 'after' => $item['inline']['after']] + $item['data'];
-            if (isset($item['translations'])) {
-                $dep->set_translations($item['translations']['domain'], $item['translations']['path']);
-            }
-            $this->registered[$handle] = $dep;
-        }
-        $this->queue = $this->assets->queue();
-        $this->done = $this->assets->doneList();
-        $this->synced_lists = [$this->queue, $this->done];
-        $this->synced = array_map(static fn (_WP_Dependency $dep): array => [$dep->src, array_values((array) $dep->deps), $dep->ver, $dep->args, $dep->extra['data'] ?? null], $this->registered);
+        $this->view->sync();
     }
 
-    /** What a plugin did to $registered directly, handed to the registry (Runtime\AssetEdits). */
-    private function reconcile(): void
-    {
-        if ($this->reconciling) {
-            return;
-        }
-        $this->reconciling = true;
-        try {
-            Minn\Runtime\AssetEdits::apply($this->assets, $this->registered, $this->synced);
-        } finally {
-            $this->reconciling = false;
-        }
-    }
-
-    /** Hands back what a plugin edited in place (handles, the queue, the done list) before the view is refreshed or printed from. */
+    /** Hands back what a plugin edited in place (handles, the queue, the done list) before the view is refreshed or printed from (Runtime\AssetView). */
     public function push(): void
     {
-        $this->reconcile();
-        if ($this->queue !== $this->synced_lists[0]) {
-            $this->assets->setQueue((array) $this->queue);
-        }
-        if ($this->done !== $this->synced_lists[1]) {
-            $this->assets->setDone((array) $this->done);
-        }
-        $this->synced_lists = [(array) $this->queue, (array) $this->done];
+        $this->view->push();
     }
 
     public function do_items($handles = false, $group = false)

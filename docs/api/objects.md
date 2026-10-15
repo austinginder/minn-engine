@@ -79,7 +79,7 @@ A registered script or style as the WordPress layer hands it to plugins
 data. The engine knows these objects by this mark, so it never names the
 WordPress layer's class.
 
-Used by: `Minn\Runtime\AssetEdits`
+Used by: `Minn\Runtime\AssetEdits`, `Minn\Runtime\Handoff`
 
 
 ## Environment

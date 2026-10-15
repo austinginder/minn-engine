@@ -21,6 +21,9 @@ use Minn\Support\Text;
  */
 final class AttachmentModel
 {
+    /** The model's first fields, in the order the reference sends them. */
+    private const FIELDS = ['id', 'title', 'filename', 'url', 'link', 'alt', 'author', 'description', 'caption', 'name', 'status', 'uploadedTo', 'date', 'modified', 'menuOrder', 'mime', 'type', 'subtype', 'icon', 'dateFormatted', 'nonces', 'editLink', 'meta'];
+
     /** The model, or null for anything that is not an attachment. */
     public static function forJs(mixed $attachment): mixed
     {
@@ -35,35 +38,40 @@ final class AttachmentModel
         $url = (string) Attachments::url($id);
         $file = (string) Attachments::file($id);
         $canEdit = (bool) Can::current('edit_post', $id);
-        $response = [
-            'id' => $id,
-            'title' => $post->post_title,
-            'filename' => Text::basename($file),
-            'url' => $url,
-            'link' => PostLinks::attachmentLink($id),
-            'alt' => MetaData::get('post', $id, '_wp_attachment_image_alt', true),
-            'author' => $post->post_author,
-            'description' => $post->post_content,
-            'caption' => $post->post_excerpt,
+        $stamp = static fn (mixed $gmt): int => (int) strtotime((string) $gmt) * 1000;
+        $values = [
+            // The post's own columns.
             'name' => $post->post_name,
+            'title' => $post->post_title,
+            'caption' => $post->post_excerpt,
+            'description' => $post->post_content,
             'status' => $post->post_status,
+            'author' => $post->post_author,
             'uploadedTo' => $post->post_parent,
-            'date' => strtotime($post->post_date_gmt) * 1000,
-            'modified' => strtotime($post->post_modified_gmt) * 1000,
             'menuOrder' => $post->menu_order,
+            'modified' => $stamp($post->post_modified_gmt),
+            'date' => $stamp($post->post_date_gmt),
+            'dateFormatted' => SiteTime::fromStored(Runtime::options()->filtered('date_format'), $post->post_date),
+            // Its file and where it is seen.
+            'id' => $id,
             'mime' => $mime,
             'type' => $type,
             'subtype' => $subtype,
+            'url' => $url,
+            'filename' => Text::basename($file),
             'icon' => Icons::forType($id, '.svg'),
-            'dateFormatted' => SiteTime::fromStored(Runtime::options()->filtered('date_format'), $post->post_date),
+            'link' => PostLinks::attachmentLink($id),
+            'alt' => MetaData::get('post', $id, '_wp_attachment_image_alt', true),
+            // What the visitor may do with it.
+            'editLink' => $canEdit ? EditLinks::post($id, 'raw') : false,
             'nonces' => [
                 'update' => $canEdit ? Handoff::createNonce('update-post_' . $id) : false,
                 'delete' => Can::current('delete_post', $id) ? Handoff::createNonce('delete-post_' . $id) : false,
                 'edit' => $canEdit ? Handoff::createNonce('image_editor-' . $id) : false,
             ],
-            'editLink' => $canEdit ? EditLinks::post($id, 'raw') : false,
             'meta' => false,
         ];
+        $response = array_replace(array_fill_keys(self::FIELDS, null), $values);
         $response += self::people($post);
         $response['filesizeInBytes'] = is_array($meta) && isset($meta['filesize']) ? $meta['filesize'] : (is_file($file) ? filesize($file) : 0);
         $response['filesizeHumanReadable'] = ByteSize::format($response['filesizeInBytes']);

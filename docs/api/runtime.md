@@ -14,11 +14,12 @@ the WordPress runtime plugins load against
 | [`ApplicationPasswordRecords`](#applicationpasswordrecords) | final class | 102 | A user's application passwords as WordPress's API keeps them |
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 85 | wp_authenticate_application_password as the reference answers it (probe |
 | [`ArchiveLinks`](#archivelinks) | final class | 41 | A post type's archive address and its feed, as the reference gives them |
-| [`AssetEdits`](#assetedits) | final class | 33 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
+| [`AssetEdits`](#assetedits) | final class | 42 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
 | [`AssetQueue`](#assetqueue) | final class | 79 | The scripts and styles a request queues, as WordPress's asset functions |
-| [`Assets`](#assets) | final class | 432 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`AssetView`](#assetview) | final class | 101 | A registry's view in the shape plugins read and edit it: the public |
+| [`Assets`](#assets) | final class | 446 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`AttachmentImages`](#attachmentimages) | final class | 422 | An attachment's image as WordPress's media functions make it: the |
-| [`AttachmentModel`](#attachmentmodel) | final class | 88 | An attachment as the media modal's scripts read it |
+| [`AttachmentModel`](#attachmentmodel) | final class | 96 | An attachment as the media modal's scripts read it |
 | [`Attachments`](#attachments) | final class | 266 | Attachments as WordPress's media functions keep them: the uploads folder |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 127 | The block-level filters plugin code hooks (pre_render_block, |
@@ -56,7 +57,7 @@ the WordPress runtime plugins load against
 | [`FileNames`](#filenames) | final class | 119 | Files as WordPress's file functions name and remove them: a name made |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 484 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 490 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 403 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
@@ -605,10 +606,13 @@ source swapped, an entry unset or added), handed to the registry: each
 handle as the view showed it last against the view as the plugin left
 it.
 
-### static `apply(Minn\Runtime\Assets $assets, array $edited, array $synced): void`
+Used by: `Minn\Runtime\AssetView`
 
-The edits applied. The view is rebuilt by every change the registry
-takes, so the edited view is read from the copy handed in.
+### static `apply(Minn\Runtime\Assets $assets, array $edited, array $synced, ?string $only = NULL): void`
+
+The edits applied, for every handle or only the one named. The view
+changes with each edit the registry takes, so the edited view is read
+from the copy handed in.
 
 - `@param array<string, mixed> $edited the view as the plugin left it`
 - `@param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed, 4: mixed}> $synced each handle as the view last showed it (source, dependencies, version, args, data)`
@@ -661,6 +665,34 @@ A script file's element (wp_get_script_tag), its attributes through wp_script_at
 Inline code's element (wp_get_inline_script_tag): the code trimmed between newlines, wp_inline_script_attributes asked.
 
 
+## AssetView
+
+`final class Minn\Runtime\AssetView` · `public/minn/src/Minn/Runtime/AssetView.php`
+
+A registry's view in the shape plugins read and edit it: the public
+arrays of WordPress's dependency classes ($wp_scripts->registered, ->queue,
+->done), kept current from Runtime\Assets one handle at a time. What a
+plugin edits in the view is handed back (Runtime\AssetEdits) before the
+registry changes or reads that handle, and for every handle before the
+view is rebuilt or printed from. Rebuilding the whole view at each change
+cost a page that registers hundreds of handles tens of milliseconds.
+
+```php
+__construct(Minn\Runtime\Assets $assets, object $owner)
+```
+
+
+### `sync(): void`
+
+Rebuilds the whole view from the registry, after handing back what a plugin edited in it.
+
+### `push(): void`
+
+Hands back what a plugin edited in place (every handle, the queue, the printed list).
+
+Internals: `refresh()` (private, line 54), `show()` (private, line 64), `showLists()` (private, line 81), `handBack()` (private, line 89), `reconcile()` (private, line 104)
+
+
 ## Assets
 
 `final class Minn\Runtime\Assets` · `public/minn/src/Minn/Runtime/Assets.php`
@@ -670,7 +702,7 @@ handles, sources, dependencies, versions, inline additions, localized
 data, and the head/footer split. Printing follows the reference's tag
 shapes as far as captured; see contracts/runtime.md.
 
-Used by: `Minn\Media\MediaModal`, `Minn\Runtime\AssetEdits`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\ScriptLoading`
+Used by: `Minn\Media\MediaModal`, `Minn\Runtime\AssetEdits`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\AssetView`, `Minn\Runtime\ScriptLoading`
 
 ```php
 __construct(string $kind)
@@ -679,9 +711,11 @@ __construct(string $kind)
 
 ### `watch(Closure $listener, ?Closure $before = NULL): void`
 
-A listener called after every change, so a plugin-facing view can stay
-current; and one called before a script's data changes, so what a
-plugin set in that view lands first.
+A listener told after every change which handle changed (null when
+only the queue or the printed list did), so a plugin-facing view keeps
+that handle current without rebuilding the rest; and one told before a
+handle is changed or read, so what a plugin edited in that view for it
+lands first.
 
 ### `setQueue(array $queue): void`
 
@@ -823,7 +857,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `settle()` (private, line 53), `changed()` (private, line 60), `defaults()` (private, line 202), `held()` (private, line 252), `ordered()` (private, line 348)
+Internals: `settle()` (private, line 54), `changed()` (private, line 61), `defaults()` (private, line 209), `held()` (private, line 260), `ordered()` (private, line 359)
 
 
 ## AttachmentImages
@@ -961,11 +995,13 @@ edits with, the links to edit the attachment and its author, and the post
 it was uploaded to are there only for a visitor allowed each, as the
 reference gives them. The model passes through wp_prepare_attachment_for_js.
 
+- const `FIELDS` = `array (   0 => 'id',   1 => 'title',   2 => 'filename',   3 => 'url',   4 => 'link',   5 => 'alt',   6 => 'author',   7 => 'description',   8 => 'caption',   9 => 'name',   10 => 'status',   11 => 'uploadedTo',   12 => 'date',   13 => 'modified',   14 => 'menuOrder',   15 => 'mime',   16 => 'type',   17 => 'subtype',   18 => 'icon',   19 => 'dateFormatted',   20 => 'nonces',   21 => 'editLink',   22 => 'meta', )` — The model's first fields, in the order the reference sends them.
+
 ### static `forJs(mixed $attachment): mixed`
 
 The model, or null for anything that is not an attachment.
 
-Internals: `people()` (private, line 96)
+Internals: `people()` (private, line 104)
 
 
 ## Attachments
@@ -2598,7 +2634,7 @@ plugins have had their chance), so a plugin's version answers the engine
 as it answers WordPress. Arguments pass as given, so each answer's own
 defaults hold.
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Can`, `Minn\Auth\SignIn`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\MediaModal`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteSchema`, `Minn\Rest\TemplatesController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\BlockQueries`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\EditLinks`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\Runtime`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Themes`, `Minn\Runtime\Translations`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`, `Minn\Runtime\WidgetAreas`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\PageRenderer`, `Minn\Theme\ThemeJsonData`
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Can`, `Minn\Auth\SignIn`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\MediaModal`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteSchema`, `Minn\Rest\TemplatesController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\AssetView`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\BlockQueries`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\EditLinks`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\Runtime`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Themes`, `Minn\Runtime\Translations`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`, `Minn\Runtime\WidgetAreas`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\PageRenderer`, `Minn\Theme\ThemeJsonData`
 
 
 ### static `bind(array $answers): void`
@@ -2607,7 +2643,7 @@ Binds answers by name: currentUser, signedIn, user, userBy,
 becomeUser, cacheUsers, authenticate, setPassword, password, hashPassword, hash,
 createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
 factories newError, newPost, postInstance, newTerm, newComment,
-commentInstance, newUser, and the query factories newQuery,
+commentInstance, newUser, newDependency, and the query factories newQuery,
 newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
 and the REST ones newRestRequest, restRequestFromUrl, newRestResponse,
 restController, newTheme, and the empty registered-type objects
@@ -2719,6 +2755,10 @@ A post object made from a row or another post (new WP_Post).
 ### static `postInstance(mixed $id): mixed`
 
 The post object for an id, or false (WP_Post::get_instance).
+
+### static `newDependency(mixed ...$args): Minn\Objects\Dependency`
+
+A registered script or style as plugins see it in a registry's view (new _WP_Dependency).
 
 ### static `newTerm(mixed $term): Minn\Objects\Term`
 
@@ -2918,7 +2958,7 @@ ignored list filled in.
 
 A theme by its folder and root (new WP_Theme).
 
-Internals: `answer()` (private, line 521)
+Internals: `answer()` (private, line 528)
 
 
 ## Heartbeat

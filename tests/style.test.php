@@ -179,8 +179,8 @@ $check("facade map: leaf functions over fifteen lines stay at or under {$leafCei
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-logic.php') . ' --check', $ignored, $facadeLogicStale);
 $check('facade logic: contracts/api/facade-logic.json is current', $facadeLogicStale === 0, 'run php tests/tools/facade-logic.php');
 $facadeLogic = (array) ((json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/facade-logic.json'), true) ?: [])['summary'] ?? []);
-$facadeLogicCeiling = 3863;
-$facadeLogicLinesCeiling = 30348;
+$facadeLogicCeiling = 3860;
+$facadeLogicLinesCeiling = 30313;
 $facadeLogicCount = (int) ($facadeLogic['logicFunctions'] ?? PHP_INT_MAX) + (int) ($facadeLogic['logicMethods'] ?? 0);
 $check("facade logic: functions and methods holding logic stay at or under {$facadeLogicCeiling}", $facadeLogicCount <= $facadeLogicCeiling, (string) $facadeLogicCount);
 $check("facade logic: their body lines stay at or under {$facadeLogicLinesCeiling}", (int) ($facadeLogic['logicLines'] ?? PHP_INT_MAX) <= $facadeLogicLinesCeiling, (string) ($facadeLogic['logicLines'] ?? '?'));
@@ -197,7 +197,7 @@ $check('facade delegates: every delegate is recorded in contracts/api/facade-del
 // review only falls.
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-review.php') . ' --check', $facadeReviewOut, $facadeReviewBad);
 $facadeReview = json_decode(implode("\n", $facadeReviewOut), true);
-$facadeUnreviewedCeiling = 642;
+$facadeUnreviewedCeiling = 639;
 $check('facade review: every verdict is current and well formed', $facadeReviewBad === 0, implode(' ', array_slice((array) ($facadeReview['problems'] ?? []), 0, 3)));
 $check("facade review: unreviewed definitions stay at or under {$facadeUnreviewedCeiling}", (int) ($facadeReview['unreviewed'] ?? PHP_INT_MAX) <= $facadeUnreviewedCeiling, (string) ($facadeReview['unreviewed'] ?? '?'));
 

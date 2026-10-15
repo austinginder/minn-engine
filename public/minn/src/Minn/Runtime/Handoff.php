@@ -8,6 +8,7 @@ use Closure;
 use LogicException;
 use Minn\Objects\Comment;
 use Minn\Objects\CommentsQuery;
+use Minn\Objects\Dependency;
 use Minn\Objects\Errors;
 use Minn\Objects\Post;
 use Minn\Objects\PostType;
@@ -50,7 +51,7 @@ final class Handoff
      * becomeUser, cacheUsers, authenticate, setPassword, password, hashPassword, hash,
      * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
      * factories newError, newPost, postInstance, newTerm, newComment,
-     * commentInstance, newUser, and the query factories newQuery,
+     * commentInstance, newUser, newDependency, and the query factories newQuery,
      * newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
      * and the REST ones newRestRequest, restRequestFromUrl, newRestResponse,
      * restController, newTheme, and the empty registered-type objects
@@ -217,6 +218,12 @@ final class Handoff
     public static function postInstance(mixed $id): mixed
     {
         return self::answer('postInstance', $id);
+    }
+
+    /** A registered script or style as plugins see it in a registry's view (new _WP_Dependency). */
+    public static function newDependency(mixed ...$args): Dependency
+    {
+        return self::answer('newDependency', ...$args);
     }
 
     /** A term object made from a row (new WP_Term). */

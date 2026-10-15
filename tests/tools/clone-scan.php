@@ -49,6 +49,7 @@ const DATA_STRING = 40;
  */
 const SEQUENCES = [
     'public/minn/src/Minn/Content/Slug.php' => ['SAVE_DROPPED' => 'replaced one after another, so a removal can make the next match'],
+    'public/minn/src/Minn/Runtime/AttachmentModel.php' => ['FIELDS' => 'the order of the attachment fields the media modal is sent'],
     'public/minn/src/Minn/Http/StatusText.php' => ['PHRASES' => 'the IANA status code registry'],
     'public/minn/src/Minn/Rest/CommentListArgs.php' => ['MAPPINGS' => 'the order of the query arguments plugins receive'],
     'public/minn/src/Minn/Rest/PostListArgs.php' => ['MAPPINGS' => 'the order of the query arguments plugins receive'],

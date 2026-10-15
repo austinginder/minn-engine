@@ -16687,6 +16687,26 @@ selected, with its details, Edit Image and Delete permanently). Owed: the classi
 (`wp_editor()`, `_WP_Editors`) for text widgets; the media library's admin-ajax actions (the
 library grid stays empty but for what was uploaded) and the compat form.
 
+## The registry's view, one handle at a time (2026-10-15)
+
+`$wp_scripts->registered`, `->queue` and `->done` (and `$wp_styles`') are a view of
+`Runtime\Assets` that plugins read and edit in place. The view was rebuilt whole after every
+change the registry took, one `_WP_Dependency` per handle, and every handle was checked for a
+plugin's edits first: registering n handles cost about n²/2 objects. The Minn Legacy Pack's
+472 handles took 30 to 40 ms per registry on each page (WordPress: 0.07 ms), and every other
+registration, enqueue and printed handle paid the same. `Runtime\AssetView` now keeps the view:
+a change shows only the handle it touched (and the lists), and what a plugin edited is handed
+back for that handle before the registry changes or reads it (`register`, `enqueue`,
+`addData`, `registered`, `item`, `data`, `dependencies`, `done`; a dependency walk does it for
+each handle it visits), and for every handle where the view is pushed whole (before printing,
+after `wp_default_scripts`, at `sync`). A handle nobody edited is passed over without building
+anything. Pages on the dogfood sites, medians of nine: a block-theme archive with Elementor and
+the pack 424 to 249 ms, a WooCommerce home 304 to 235 ms and shop 317 to 250 ms, a small
+WooCommerce site 100 to 77 ms; the test site, with few handles, 78 ms either way. Also fixed:
+a handle a plugin unset from the view and registered again was deregistered (the rebuild after
+the registration saw it missing from the view); it is now registered anew. Unit asset-view
+pins the per-handle building (300 handles with data: 600 objects) and the hand-backs.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

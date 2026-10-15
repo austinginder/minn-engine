@@ -16,18 +16,27 @@ use Minn\Objects\Dependency;
 final class AssetEdits
 {
     /**
-     * The edits applied. The view is rebuilt by every change the registry
-     * takes, so the edited view is read from the copy handed in.
+     * The edits applied, for every handle or only the one named. The view
+     * changes with each edit the registry takes, so the edited view is read
+     * from the copy handed in.
      *
      * @param array<string, mixed> $edited the view as the plugin left it
      * @param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed, 4: mixed}> $synced each handle as the view last showed it (source, dependencies, version, args, data)
      */
-    public static function apply(Assets $assets, array $edited, array $synced): void
+    public static function apply(Assets $assets, array $edited, array $synced, ?string $only = null): void
     {
+        if ($only !== null) {
+            $synced = array_key_exists($only, $synced) ? [$only => $synced[$only]] : [];
+            $edited = array_key_exists($only, $edited) ? [$only => $edited[$only]] : [];
+        }
         foreach ($synced as $handle => $was) {
             $dep = $edited[$handle] ?? null;
             if (!$dep instanceof Dependency) {
                 $assets->deregister((string) $handle);
+                continue;
+            }
+            // Most handles are as the view showed them.
+            if ($dep->src === $was[0] && $dep->deps === $was[1] && $dep->ver === $was[2] && $dep->args === $was[3] && ($dep->extra['data'] ?? null) === $was[4]) {
                 continue;
             }
             $now = [$dep->src, array_values((array) $dep->deps), $dep->ver, $dep->args];

@@ -33,15 +33,16 @@ final class Assets
     }
 
     /**
-     * A listener called after every change, so a plugin-facing view can stay
-     * current; and one called before a script's data changes, so what a
-     * plugin set in that view lands first.
+     * A listener told after every change which handle changed (null when
+     * only the queue or the printed list did), so a plugin-facing view keeps
+     * that handle current without rebuilding the rest; and one told before a
+     * handle is changed or read, so what a plugin edited in that view for it
+     * lands first.
      */
     public function watch(\Closure $listener, ?\Closure $before = null): void
     {
         $this->onChange = $listener;
         $this->beforeChange = $before;
-        $listener();
     }
 
     /** The queue as a plugin left it after editing the view directly. */
@@ -50,25 +51,26 @@ final class Assets
         $this->queue = array_values(array_map('strval', $queue));
     }
 
-    private function settle(): void
+    private function settle(string $handle): void
     {
         if ($this->beforeChange !== null) {
-            ($this->beforeChange)();
+            ($this->beforeChange)($handle);
         }
     }
 
-    private function changed(): void
+    private function changed(?string $handle = null): void
     {
         if ($this->onChange !== null) {
-            ($this->onChange)();
+            ($this->onChange)($handle);
         }
     }
 
     /** Registers an asset under a handle. */
     public function register(string $handle, string|false $src, array $deps, string|bool|null $ver, mixed $extra): bool
     {
+        $this->settle($handle);
         if (isset($this->items[$handle])) {
-            $this->changed();
+            $this->changed($handle);
             return false;
         }
         $this->items[$handle] = ['src' => $src, 'deps' => array_values(array_map('strval', $deps)), 'ver' => $ver, 'extra' => $extra, 'inline' => ['before' => [], 'after' => []], 'data' => [], 'args' => []];
@@ -76,7 +78,7 @@ final class Assets
             $this->waiting = array_values(array_diff($this->waiting, [$handle]));
             $this->queue[] = $handle;
         }
-        $this->changed();
+        $this->changed($handle);
         return true;
     }
 
@@ -87,7 +89,7 @@ final class Assets
             return false;
         }
         $this->items[$handle] = ['src' => $src, 'deps' => array_values(array_map('strval', $deps)), 'ver' => $ver, 'extra' => $extra] + $this->items[$handle];
-        $this->changed();
+        $this->changed($handle);
         return true;
     }
 
@@ -122,9 +124,10 @@ final class Assets
     /** Forgets an asset. */
     public function deregister(string $handle): void
     {
+        $this->settle($handle);
         unset($this->items[$handle]);
         $this->queue = array_values(array_diff($this->queue, [$handle]));
-        $this->changed();
+        $this->changed($handle);
     }
 
     /**
@@ -135,6 +138,7 @@ final class Assets
      */
     public function enqueue(string $handle): void
     {
+        $this->settle($handle);
         if (!$this->registered($handle)) {
             $this->waiting = array_values(array_unique([...$this->waiting, $handle]));
         } elseif (!in_array($handle, $this->queue, true)) {
@@ -146,6 +150,7 @@ final class Assets
     /** Removes an asset from the queue, or from the handles waiting for registration. */
     public function dequeue(string $handle): void
     {
+        $this->settle($handle);
         $this->queue = array_values(array_diff($this->queue, [$handle]));
         $this->waiting = array_values(array_diff($this->waiting, [$handle]));
         $this->changed();
@@ -154,12 +159,14 @@ final class Assets
     /** Whether a handle is registered, by the site or as one the reference registers itself (data/default-assets.json). */
     public function registered(string $handle): bool
     {
+        $this->settle($handle);
         return isset($this->items[$handle]) || isset(self::defaults()[$this->kind][$handle]);
     }
 
     /** A handle's dependencies: as registered, or as the reference registers it. @return list<string> */
     public function dependencies(string $handle): array
     {
+        $this->settle($handle);
         return array_values(array_map('strval', isset($this->items[$handle]) ? (array) $this->items[$handle]['deps'] : (self::defaults()[$this->kind][$handle] ?? [])));
     }
 
@@ -227,18 +234,19 @@ final class Assets
      */
     public function doneList(): array
     {
-        return array_values(array_unique($this->done));
+        return $this->done;
     }
 
     /** The printed handles as a plugin left them after editing the view directly. */
     public function setDone(array $done): void
     {
-        $this->done = array_values(array_map('strval', $done));
+        $this->done = array_values(array_unique(array_map('strval', $done)));
     }
 
     /** Whether a handle has been printed. */
     public function done(string $handle): bool
     {
+        $this->settle($handle);
         return in_array($handle, $this->done, true);
     }
 
@@ -261,8 +269,9 @@ final class Assets
     /** Attaches inline code to an asset. */
     public function addInline(string $handle, string $code, string $position): bool
     {
+        $this->settle($handle);
         if (!$this->held($handle)) {
-            $this->changed();
+            $this->changed($handle);
             return false;
         }
         $at = $position === 'before' ? 'before' : 'after';
@@ -271,16 +280,16 @@ final class Assets
         // (the data it found, cast to a list), a style's starts the list (probe block-supports).
         $found = $this->items[$handle]['data'][$at] ?? false;
         $this->items[$handle]['data'][$at] = [...($this->kind === 'style' ? ($found ?: []) : (array) $found), $code];
-        $this->changed();
+        $this->changed($handle);
         return true;
     }
 
     /** Attaches a data key to an asset. */
     public function addData(string $handle, string $key, mixed $value): bool
     {
-        $this->settle();
+        $this->settle($handle);
         if (!$this->held($handle)) {
-            $this->changed();
+            $this->changed($handle);
             return false;
         }
         $this->items[$handle]['data'][$key] = $value;
@@ -288,13 +297,14 @@ final class Assets
         if ($key === 'before' || $key === 'after') {
             $this->items[$handle]['inline'][$key] = array_values(array_map('strval', array_filter((array) $value, 'is_scalar')));
         }
-        $this->changed();
+        $this->changed($handle);
         return true;
     }
 
     /** Names the text domain and folder a script's translations come from, and makes the script depend on wp-i18n. */
     public function setTranslations(string $handle, string $domain, string $path): bool
     {
+        $this->settle($handle);
         if (!isset($this->items[$handle])) {
             return false;
         }
@@ -302,22 +312,23 @@ final class Assets
             $this->items[$handle]['deps'][] = 'wp-i18n';
         }
         $this->items[$handle]['translations'] = ['domain' => $domain, 'path' => $path];
-        $this->changed();
+        $this->changed($handle);
         return true;
     }
 
     /** A data key of an asset, or false. */
     public function data(string $handle, string $key): mixed
     {
+        $this->settle($handle);
         return $this->items[$handle]['data'][$key] ?? false;
     }
 
     /** Attaches a localized object to a script. */
     public function localize(string $handle, string $name, array $data): bool
     {
-        $this->settle();
+        $this->settle($handle);
         if (!isset($this->items[$handle])) {
-            $this->changed();
+            $this->changed($handle);
             return false;
         }
         foreach ($data as $k => $v) {
@@ -331,7 +342,7 @@ final class Assets
         $script = 'var ' . $name . ' = ' . Json::encode($data, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) . ';';
         $held = $this->items[$handle]['data']['data'] ?? '';
         $this->items[$handle]['data']['data'] = is_string($held) && $held !== '' ? $held . "\n" . $script : $script;
-        $this->changed();
+        $this->changed($handle);
         return true;
     }
 
@@ -401,20 +412,23 @@ final class Assets
     {
         if (isset($this->items[$handle])) {
             $this->items[$handle]['src'] = false;
-            $this->changed();
+            $this->changed($handle);
         }
     }
 
     /** Records a handle as printed. */
     public function markDone(string $handle): void
     {
-        $this->done[] = $handle;
+        if (!in_array($handle, $this->done, true)) {
+            $this->done[] = $handle;
+        }
         $this->changed();
     }
 
     /** One registered asset, or null. */
     public function item(string $handle): ?array
     {
+        $this->settle($handle);
         return $this->items[$handle] ?? null;
     }
 

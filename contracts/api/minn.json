@@ -84066,7 +84066,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Runtime\\AssetEdits"
+                "Minn\\Runtime\\AssetEdits",
+                "Minn\\Runtime\\Handoff"
             ],
             "constructor": null,
             "cases": [],
@@ -119575,7 +119576,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AssetEdits.php",
-            "lines": 33,
+            "lines": 42,
             "doc": "What a plugin did to $wp_scripts->registered or $wp_styles->registered\ndirectly, as wp_default_scripts callbacks do (a dependency dropped, a\nsource swapped, an entry unset or added), handed to the registry: each\nhandle as the view showed it last against the view as the plugin left\nit.",
             "implements": [],
             "extends": null,
@@ -119583,7 +119584,9 @@
                 "Minn\\Objects\\Dependency",
                 "Minn\\Runtime\\Assets"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\AssetView"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -119594,8 +119597,8 @@
                     "name": "apply",
                     "static": true,
                     "visibility": "public",
-                    "signature": "apply(Minn\\Runtime\\Assets $assets, array $edited, array $synced): void",
-                    "doc": "The edits applied. The view is rebuilt by every change the registry\ntakes, so the edited view is read from the copy handed in.",
+                    "signature": "apply(Minn\\Runtime\\Assets $assets, array $edited, array $synced, ?string $only = NULL): void",
+                    "doc": "The edits applied, for every handle or only the one named. The view\nchanges with each edit the registry takes, so the edited view is read\nfrom the copy handed in.",
                     "shapes": [
                         "@param array<string, mixed> $edited the view as the plugin left it",
                         "@param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed, 4: mixed}> $synced each handle as the view last showed it (source, dependencies, version, args, data)"
@@ -119621,10 +119624,17 @@
                             "shape": "array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed, 4: mixed}>",
                             "default": null,
                             "doc": "each handle as the view last showed it (source, dependencies, version, args, data)"
+                        },
+                        {
+                            "name": "only",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 47
+                    "line": 26,
+                    "end": 56
                 }
             ]
         },
@@ -119819,12 +119829,220 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\AssetView",
+            "short": "AssetView",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/AssetView.php",
+            "lines": 101,
+            "doc": "A registry's view in the shape plugins read and edit it: the public\narrays of WordPress's dependency classes ($wp_scripts->registered, ->queue,\n->done), kept current from Runtime\\Assets one handle at a time. What a\nplugin edits in the view is handed back (Runtime\\AssetEdits) before the\nregistry changes or reads that handle, and for every handle before the\nview is rebuilt or printed from. Rebuilding the whole view at each change\ncost a page that registers hundreds of handles tens of milliseconds.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\AssetEdits",
+                "Minn\\Runtime\\Assets",
+                "Minn\\Runtime\\Handoff"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(Minn\\Runtime\\Assets $assets, object $owner)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "assets",
+                        "type": "Minn\\Runtime\\Assets",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "owner",
+                        "type": "object",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 24,
+                "end": 32
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "synced",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "syncedLists",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "reconciling",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "assets",
+                    "type": "Minn\\Runtime\\Assets",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "owner",
+                    "type": "object",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "sync",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sync(): void",
+                    "doc": "Rebuilds the whole view from the registry, after handing back what a plugin edited in it.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 35,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "push",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "push(): void",
+                    "doc": "Hands back what a plugin edited in place (every handle, the queue, the printed list).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 47,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "refresh",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "refresh(?string $handle): void",
+                    "doc": "One handle of the view (none: null), the queue and the printed list, kept current after the registry changed them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "show",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "show(string $handle): void",
+                    "doc": "A handle as the registry holds it, in the view and remembered as shown; gone from both when the registry has none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "showLists",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "showLists(): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 81,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "handBack",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "handBack(?string $handle): void",
+                    "doc": "Hands back what a plugin edited in place for one handle (none: null), and in the queue and the printed list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "reconcile",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "reconcile(?string $handle): void",
+                    "doc": "What a plugin did to the view's handles directly, for one handle or (null) every one, handed to the registry.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 115
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Assets",
             "short": "Assets",
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Assets.php",
-            "lines": 432,
+            "lines": 446,
             "doc": "The registry behind wp_register_/wp_enqueue_ for scripts and styles:\nhandles, sources, dependencies, versions, inline additions, localized\ndata, and the head/footer split. Printing follows the reference's tag\nshapes as far as captured; see contracts/runtime.md.",
             "implements": [],
             "extends": null,
@@ -119835,6 +120053,7 @@
                 "Minn\\Media\\MediaModal",
                 "Minn\\Runtime\\AssetEdits",
                 "Minn\\Runtime\\AssetQueue",
+                "Minn\\Runtime\\AssetView",
                 "Minn\\Runtime\\ScriptLoading"
             ],
             "constructor": {
@@ -119937,7 +120156,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "watch(Closure $listener, ?Closure $before = NULL): void",
-                    "doc": "A listener called after every change, so a plugin-facing view can stay\ncurrent; and one called before a script's data changes, so what a\nplugin set in that view lands first.",
+                    "doc": "A listener told after every change which handle changed (null when\nonly the queue or the printed list did), so a plugin-facing view keeps\nthat handle current without rebuilding the rest; and one told before a\nhandle is changed or read, so what a plugin edited in that view for it\nlands first.",
                     "shapes": [],
                     "params": [
                         {
@@ -119955,8 +120174,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 45
+                    "line": 42,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -119975,8 +120194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 51
+                    "line": 49,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -120023,8 +120242,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 81
+                    "line": 69,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -120071,8 +120290,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 92
+                    "line": 86,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -120093,8 +120312,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 120
+                    "line": 101,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -120113,8 +120332,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 128
+                    "line": 125,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -120133,8 +120352,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 144
+                    "line": 139,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -120153,8 +120372,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 152
+                    "line": 151,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -120173,8 +120392,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 158
+                    "line": 160,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -120195,8 +120414,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 164
+                    "line": 167,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -120217,8 +120436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 170
+                    "line": 174,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -120246,8 +120465,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 199
+                    "line": 185,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -120266,8 +120485,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 221
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -120280,8 +120499,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 228,
-                    "end": 231
+                    "line": 235,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -120300,8 +120519,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 237
+                    "line": 241,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -120320,8 +120539,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 243
+                    "line": 247,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -120354,8 +120573,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 276
+                    "line": 270,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -120388,8 +120607,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 293
+                    "line": 288,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -120422,8 +120641,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 307
+                    "line": 305,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -120449,8 +120668,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 313
+                    "line": 320,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -120483,8 +120702,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 336
+                    "line": 327,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -120497,8 +120716,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 339,
-                    "end": 342
+                    "line": 350,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -120511,8 +120730,8 @@
                         "@return array<string, string> handle => path"
                     ],
                     "params": [],
-                    "line": 387,
-                    "end": 397
+                    "line": 398,
+                    "end": 408
                 },
                 {
                     "routes": [],
@@ -120531,8 +120750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 400,
-                    "end": 406
+                    "line": 411,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -120551,8 +120770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 409,
-                    "end": 413
+                    "line": 420,
+                    "end": 426
                 },
                 {
                     "routes": [],
@@ -120571,8 +120790,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 416,
-                    "end": 419
+                    "line": 429,
+                    "end": 433
                 },
                 {
                     "routes": [],
@@ -120585,8 +120804,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 426,
-                    "end": 429
+                    "line": 440,
+                    "end": 443
                 },
                 {
                     "routes": [],
@@ -120599,8 +120818,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 436,
-                    "end": 439
+                    "line": 450,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -120611,32 +120830,48 @@
                     "doc": "Whether these are scripts or styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 442,
-                    "end": 445
+                    "line": 456,
+                    "end": 459
                 },
                 {
                     "routes": [],
                     "name": "settle",
                     "static": false,
                     "visibility": "private",
-                    "signature": "settle(): void",
+                    "signature": "settle(string $handle): void",
                     "doc": "",
                     "shapes": [],
-                    "params": [],
-                    "line": 53,
-                    "end": 58
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 59
                 },
                 {
                     "routes": [],
                     "name": "changed",
                     "static": false,
                     "visibility": "private",
-                    "signature": "changed(): void",
+                    "signature": "changed(?string $handle = NULL): void",
                     "doc": "",
                     "shapes": [],
-                    "params": [],
-                    "line": 60,
-                    "end": 65
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -120649,8 +120884,8 @@
                         "@return array<string, array<string, list<string>>>"
                     ],
                     "params": [],
-                    "line": 202,
-                    "end": 209
+                    "line": 209,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -120669,8 +120904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 259
+                    "line": 260,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -120692,8 +120927,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 378
+                    "line": 359,
+                    "end": 389
                 }
             ]
         },
@@ -121476,7 +121711,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AttachmentModel.php",
-            "lines": 88,
+            "lines": 96,
             "doc": "An attachment as the media modal's scripts read it\n(wp_prepare_attachment_for_js): its fields, its file and its sizes, and\nwhat the visitor may do with it. The nonces the modal saves, deletes and\nedits with, the links to edit the attachment and its author, and the post\nit was uploaded to are there only for a visitor allowed each, as the\nreference gives them. The model passes through wp_prepare_attachment_for_js.",
             "implements": [],
             "extends": null,
@@ -121500,7 +121735,14 @@
             "usedBy": [],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "FIELDS",
+                    "value": "array (   0 => 'id',   1 => 'title',   2 => 'filename',   3 => 'url',   4 => 'link',   5 => 'alt',   6 => 'author',   7 => 'description',   8 => 'caption',   9 => 'name',   10 => 'status',   11 => 'uploadedTo',   12 => 'date',   13 => 'modified',   14 => 'menuOrder',   15 => 'mime',   16 => 'type',   17 => 'subtype',   18 => 'icon',   19 => 'dateFormatted',   20 => 'nonces',   21 => 'editLink',   22 => 'meta', )",
+                    "doc": "The model's first fields, in the order the reference sends them.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [],
             "methods": [
                 {
@@ -121520,8 +121762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 87
+                    "line": 28,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -121542,8 +121784,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 108
+                    "line": 104,
+                    "end": 116
                 }
             ]
         },
@@ -129067,7 +129309,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 484,
+            "lines": 490,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -129075,6 +129317,7 @@
                 "Minn\\Objects\\BlockType",
                 "Minn\\Objects\\Comment",
                 "Minn\\Objects\\CommentsQuery",
+                "Minn\\Objects\\Dependency",
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\PostType",
@@ -129144,6 +129387,7 @@
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
+                "Minn\\Runtime\\AssetView",
                 "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
@@ -129232,7 +129476,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "bind(array $answers): void",
-                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hashPassword, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,\nand the REST ones newRestRequest, restRequestFromUrl, newRestResponse,\nrestController, newTheme, and the empty registered-type objects\nblankPostType and blankTaxonomy, a user's sessionTokens, the locale's\nnewLocale and newTextdomainRegistry, newUpgrader and newUpgraderSkin, the\nblocks' newBlock, newBlockList, newBlockTemplate, newTagProcessor and\nnewThemeJsonData, newSitemapStylesheet, and the registries blockTypes,\nblockPatterns, blockStyles, blockBindings, abilities and\nabilityCategories.",
+                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hashPassword, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, newDependency, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,\nand the REST ones newRestRequest, restRequestFromUrl, newRestResponse,\nrestController, newTheme, and the empty registered-type objects\nblankPostType and blankTaxonomy, a user's sessionTokens, the locale's\nnewLocale and newTextdomainRegistry, newUpgrader and newUpgraderSkin, the\nblocks' newBlock, newBlockList, newBlockTemplate, newTagProcessor and\nnewThemeJsonData, newSitemapStylesheet, and the registries blockTypes,\nblockPatterns, blockStyles, blockBindings, abilities and\nabilityCategories.",
                     "shapes": [
                         "@param array<string, Closure> $answers"
                     ],
@@ -129245,8 +129489,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 69
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -129257,8 +129501,8 @@
                     "doc": "The user the request is (wp_get_current_user).",
                     "shapes": [],
                     "params": [],
-                    "line": 72,
-                    "end": 75
+                    "line": 73,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -129269,8 +129513,8 @@
                     "doc": "Whether someone is signed in (is_user_logged_in).",
                     "shapes": [],
                     "params": [],
-                    "line": 78,
-                    "end": 81
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -129289,8 +129533,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -129316,8 +129560,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -129336,8 +129580,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 99
+                    "line": 97,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -129356,8 +129600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 105
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -129383,8 +129627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 111
+                    "line": 109,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -129410,8 +129654,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 117
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -129430,8 +129674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 123
+                    "line": 121,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -129450,8 +129694,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 129
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -129470,8 +129714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 135
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -129490,8 +129734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 141
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -129510,8 +129754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 147
+                    "line": 145,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -129530,8 +129774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 153
+                    "line": 151,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -129550,8 +129794,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 159
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -129570,8 +129814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 165
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -129590,8 +129834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 171
+                    "line": 169,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -129610,8 +129854,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 177
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -129651,8 +129895,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 184
+                    "line": 181,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -129671,8 +129915,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 190
+                    "line": 188,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -129691,8 +129935,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 196
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -129711,8 +129955,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 202
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -129731,8 +129975,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 208
+                    "line": 206,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -129751,8 +129995,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 214
+                    "line": 212,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -129771,8 +130015,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 220
+                    "line": 218,
+                    "end": 221
+                },
+                {
+                    "routes": [],
+                    "name": "newDependency",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newDependency(mixed ...$args): Minn\\Objects\\Dependency",
+                    "doc": "A registered script or style as plugins see it in a registry's view (new _WP_Dependency).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -129791,8 +130055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 226
+                    "line": 230,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -129811,8 +130075,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 232
+                    "line": 236,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -129831,8 +130095,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 238
+                    "line": 242,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -129851,8 +130115,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 244
+                    "line": 248,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -129871,8 +130135,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 250
+                    "line": 254,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -129891,8 +130155,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 256
+                    "line": 260,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -129911,8 +130175,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 262
+                    "line": 266,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -129931,8 +130195,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 268
+                    "line": 272,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -129951,8 +130215,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 274
+                    "line": 278,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -129971,8 +130235,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 280
+                    "line": 284,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -129991,8 +130255,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 286
+                    "line": 290,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -130011,8 +130275,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 292
+                    "line": 296,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -130031,8 +130295,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 298
+                    "line": 302,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -130058,8 +130322,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 304
+                    "line": 308,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -130070,8 +130334,8 @@
                     "doc": "A post type's object with nothing set yet, for the registry to fill (WP_Post_Type, built without its constructor).",
                     "shapes": [],
                     "params": [],
-                    "line": 307,
-                    "end": 310
+                    "line": 314,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -130082,8 +130346,8 @@
                     "doc": "A taxonomy's object with nothing set yet, for the registry to fill (WP_Taxonomy, built without its constructor).",
                     "shapes": [],
                     "params": [],
-                    "line": 313,
-                    "end": 316
+                    "line": 320,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -130102,8 +130366,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 319,
-                    "end": 322
+                    "line": 326,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -130114,8 +130378,8 @@
                     "doc": "The site's locale: its names, number format and direction (new WP_Locale).",
                     "shapes": [],
                     "params": [],
-                    "line": 325,
-                    "end": 328
+                    "line": 332,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -130126,8 +130390,8 @@
                     "doc": "Where each text domain's translations are found (new WP_Textdomain_Registry).",
                     "shapes": [],
                     "params": [],
-                    "line": 331,
-                    "end": 334
+                    "line": 338,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -130153,8 +130417,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 340
+                    "line": 344,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -130173,8 +130437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 346
+                    "line": 350,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -130193,8 +130457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 352
+                    "line": 356,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -130213,8 +130477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 355,
-                    "end": 358
+                    "line": 362,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -130233,8 +130497,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 364
+                    "line": 368,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -130253,8 +130517,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 367,
-                    "end": 370
+                    "line": 374,
+                    "end": 377
                 },
                 {
                     "routes": [],
@@ -130273,8 +130537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 373,
-                    "end": 376
+                    "line": 380,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -130293,8 +130557,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 382
+                    "line": 386,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -130313,8 +130577,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 385,
-                    "end": 388
+                    "line": 392,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -130333,8 +130597,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 391,
-                    "end": 394
+                    "line": 398,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -130353,8 +130617,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 400
+                    "line": 404,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -130373,8 +130637,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 403,
-                    "end": 406
+                    "line": 410,
+                    "end": 413
                 },
                 {
                     "routes": [],
@@ -130393,8 +130657,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 409,
-                    "end": 412
+                    "line": 416,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -130413,8 +130677,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 418
+                    "line": 422,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -130433,8 +130697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 424
+                    "line": 428,
+                    "end": 431
                 },
                 {
                     "routes": [],
@@ -130445,8 +130709,8 @@
                     "doc": "The site's roles object (wp_roles), made the first time it is asked for.",
                     "shapes": [],
                     "params": [],
-                    "line": 427,
-                    "end": 430
+                    "line": 434,
+                    "end": 437
                 },
                 {
                     "routes": [],
@@ -130457,8 +130721,8 @@
                     "doc": "The content filters set again for the current user (kses_remove_filters, then kses_init_filters), by the names plugins remove them by.",
                     "shapes": [],
                     "params": [],
-                    "line": 433,
-                    "end": 436
+                    "line": 440,
+                    "end": 443
                 },
                 {
                     "routes": [],
@@ -130477,8 +130741,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 442
+                    "line": 446,
+                    "end": 449
                 },
                 {
                     "routes": [],
@@ -130489,8 +130753,8 @@
                     "doc": "The object that loads translation files and looks translations up (WP_Translation_Controller::get_instance).",
                     "shapes": [],
                     "params": [],
-                    "line": 445,
-                    "end": 448
+                    "line": 452,
+                    "end": 455
                 },
                 {
                     "routes": [],
@@ -130501,8 +130765,8 @@
                     "doc": "The rewrite object ($wp_rewrite), with the request's environment ($wp), made the first time they are asked for.",
                     "shapes": [],
                     "params": [],
-                    "line": 451,
-                    "end": 454
+                    "line": 458,
+                    "end": 461
                 },
                 {
                     "routes": [],
@@ -130513,8 +130777,8 @@
                     "doc": "The widget factory ($wp_widget_factory) the registered widgets live in.",
                     "shapes": [],
                     "params": [],
-                    "line": 457,
-                    "end": 460
+                    "line": 464,
+                    "end": 467
                 },
                 {
                     "routes": [],
@@ -130525,8 +130789,8 @@
                     "doc": "The sitemap server, started the first time it is asked for (wp_sitemaps_get_server).",
                     "shapes": [],
                     "params": [],
-                    "line": 463,
-                    "end": 466
+                    "line": 470,
+                    "end": 473
                 },
                 {
                     "routes": [],
@@ -130537,8 +130801,8 @@
                     "doc": "The walker a menu is printed with when its arguments name none (new Walker_Nav_Menu).",
                     "shapes": [],
                     "params": [],
-                    "line": 469,
-                    "end": 472
+                    "line": 476,
+                    "end": 479
                 },
                 {
                     "routes": [],
@@ -130564,8 +130828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 475,
-                    "end": 478
+                    "line": 482,
+                    "end": 485
                 },
                 {
                     "routes": [],
@@ -130576,8 +130840,8 @@
                     "doc": "The meta core and Minn Admin register on init, registered by the layer that holds their callbacks by name.",
                     "shapes": [],
                     "params": [],
-                    "line": 481,
-                    "end": 484
+                    "line": 488,
+                    "end": 491
                 },
                 {
                     "routes": [],
@@ -130596,8 +130860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 487,
-                    "end": 490
+                    "line": 494,
+                    "end": 497
                 },
                 {
                     "routes": [],
@@ -130616,8 +130880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 493,
-                    "end": 496
+                    "line": 500,
+                    "end": 503
                 },
                 {
                     "routes": [],
@@ -130636,8 +130900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 499,
-                    "end": 502
+                    "line": 506,
+                    "end": 509
                 },
                 {
                     "routes": [],
@@ -130677,8 +130941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 509,
-                    "end": 513
+                    "line": 516,
+                    "end": 520
                 },
                 {
                     "routes": [],
@@ -130697,8 +130961,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 516,
-                    "end": 519
+                    "line": 523,
+                    "end": 526
                 },
                 {
                     "routes": [],
@@ -130724,8 +130988,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 521,
-                    "end": 525
+                    "line": 528,
+                    "end": 532
                 }
             ]
         },

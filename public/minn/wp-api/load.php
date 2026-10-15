@@ -739,6 +739,7 @@ Minn\Runtime\Handoff::bind([
     'newComment' => static fn ($comment) => new WP_Comment($comment),
     'commentInstance' => static fn ($id) => WP_Comment::get_instance($id),
     'newUser' => static fn (...$args) => new WP_User(...$args),
+    'newDependency' => static fn (...$args) => new _WP_Dependency(...$args),
 ]);
 
 // The queries, made through Minn\Runtime\Handoff like the records.

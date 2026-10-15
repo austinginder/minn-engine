@@ -2,11 +2,11 @@
     "method": "tests/tools/facade-logic.php: functions and methods in public/minn/wp-api (generated dead ends and placeholders apart) whose body holds more than one statement or a control structure, by tokens; lines are the body's non-blank, non-comment lines; a docblock tag @minn-facade-logic <reason> keeps one out of the count and lists it under \"kept\"",
     "summary": {
         "functions": 3491,
-        "methods": 3804,
-        "delegates": 3432,
+        "methods": 3803,
+        "delegates": 3434,
         "logicFunctions": 1830,
-        "logicMethods": 2033,
-        "logicLines": 30348,
+        "logicMethods": 2030,
+        "logicLines": 30313,
         "kept": 0
     },
     "byFile": {
@@ -302,10 +302,6 @@
             "logic": 17,
             "lines": 115
         },
-        "classes/WP_Dependencies.php": {
-            "logic": 16,
-            "lines": 113
-        },
         "classes/POMO.php": {
             "logic": 22,
             "lines": 112
@@ -385,6 +381,10 @@
         "mail.php": {
             "logic": 7,
             "lines": 79
+        },
+        "classes/WP_Dependencies.php": {
+            "logic": 13,
+            "lines": 78
         },
         "ai-client/Prompt.php": {
             "logic": 9,
@@ -4340,81 +4340,63 @@
         },
         "WP_Dependencies::__construct": {
             "file": "classes/WP_Dependencies.php",
-            "line": 34,
+            "line": 31,
             "statements": 2,
-            "lines": 6
+            "lines": 2
         },
         "WP_Dependencies::all_deps": {
             "file": "classes/WP_Dependencies.php",
-            "line": 108,
+            "line": 67,
             "statements": 3,
             "lines": 9
         },
         "WP_Dependencies::dequeue": {
             "file": "classes/WP_Dependencies.php",
-            "line": 150,
+            "line": 109,
             "statements": 1,
             "lines": 3
         },
         "WP_Dependencies::do_items": {
             "file": "classes/WP_Dependencies.php",
-            "line": 90,
+            "line": 49,
             "statements": 4,
             "lines": 9
         },
         "WP_Dependencies::enqueue": {
             "file": "classes/WP_Dependencies.php",
-            "line": 143,
+            "line": 102,
             "statements": 1,
             "lines": 3
         },
         "WP_Dependencies::get_etag": {
             "file": "classes/WP_Dependencies.php",
-            "line": 183,
+            "line": 142,
             "statements": 3,
             "lines": 8
         },
         "WP_Dependencies::line_up": {
             "file": "classes/WP_Dependencies.php",
-            "line": 205,
+            "line": 164,
             "statements": 6,
             "lines": 13
         },
         "WP_Dependencies::loadable": {
             "file": "classes/WP_Dependencies.php",
-            "line": 223,
+            "line": 182,
             "statements": 5,
             "lines": 10
         },
-        "WP_Dependencies::push": {
-            "file": "classes/WP_Dependencies.php",
-            "line": 78,
-            "statements": 4,
-            "lines": 8
-        },
-        "WP_Dependencies::reconcile": {
-            "file": "classes/WP_Dependencies.php",
-            "line": 64,
-            "statements": 3,
-            "lines": 9
-        },
         "WP_Dependencies::remove": {
             "file": "classes/WP_Dependencies.php",
-            "line": 136,
+            "line": 95,
             "statements": 1,
             "lines": 3
         },
         "WP_Dependencies::set_group": {
             "file": "classes/WP_Dependencies.php",
-            "line": 172,
+            "line": 131,
             "statements": 4,
             "lines": 6
-        },
-        "WP_Dependencies::sync": {
-            "file": "classes/WP_Dependencies.php",
-            "line": 45,
-            "statements": 7,
-            "lines": 14
         },
         "WP_Duotone::get_filter_css_property_value_from_preset": {
             "file": "classes/WP_Duotone.php",
@@ -12938,19 +12920,19 @@
         },
         "_WP_Dependency::__construct": {
             "file": "classes/WP_Dependencies.php",
-            "line": 250,
+            "line": 209,
             "statements": 2,
             "lines": 4
         },
         "_WP_Dependency::add_data": {
             "file": "classes/WP_Dependencies.php",
-            "line": 258,
+            "line": 217,
             "statements": 3,
             "lines": 5
         },
         "_WP_Dependency::set_translations": {
             "file": "classes/WP_Dependencies.php",
-            "line": 267,
+            "line": 226,
             "statements": 3,
             "lines": 3
         },
