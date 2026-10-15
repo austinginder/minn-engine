@@ -407,7 +407,8 @@
         "probe:reset-key-changes",
         "probe:builtin-type-caps",
         "probe:sweep-rules",
-        "probe:attachment-model"
+        "probe:attachment-model",
+        "probe:shortcode-callbacks"
     ],
     "hooks": {
         "_get_page_link": {
@@ -810,6 +811,7 @@
             "probe:rest-schema-choices": "not fired",
             "probe:rewrite-family": "not fired",
             "probe:role-caps": "not fired",
+            "probe:shortcode-callbacks": "not fired",
             "probe:shortcode-run": "not fired",
             "probe:slugs": "not fired",
             "probe:style-engine": "not fired",
@@ -7584,6 +7586,7 @@
             "probe:rest-schema-choices": "not fired",
             "probe:rewrite-family": "not fired",
             "probe:role-caps": "not fired",
+            "probe:shortcode-callbacks": "not fired",
             "probe:shortcode-run": "not fired",
             "probe:slugs": "not fired",
             "probe:style-engine": "not fired",
@@ -12647,6 +12650,7 @@
             "probe:rest-schema-choices": "not fired",
             "probe:rewrite-family": "not fired",
             "probe:role-caps": "not fired",
+            "probe:shortcode-callbacks": "not fired",
             "probe:shortcode-run": "not fired",
             "probe:slugs": "not fired",
             "probe:style-engine": "not fired",
@@ -12710,6 +12714,7 @@
             "probe:rest-schema-choices": "not fired",
             "probe:rewrite-family": "not fired",
             "probe:role-caps": "not fired",
+            "probe:shortcode-callbacks": "not fired",
             "probe:shortcode-run": "not fired",
             "probe:slugs": "not fired",
             "probe:style-engine": "not fired",
@@ -13193,6 +13198,7 @@
             "probe:rest-schema-choices": "not fired",
             "probe:rewrite-family": "not fired",
             "probe:role-caps": "not fired",
+            "probe:shortcode-callbacks": "not fired",
             "probe:shortcode-run": "not fired",
             "probe:slugs": "not fired",
             "probe:style-engine": "not fired",
@@ -19838,6 +19844,7 @@
             "probe:script-modules": "not fired",
             "probe:script-tags": "not fired",
             "probe:security-parity": "not fired",
+            "probe:shortcode-callbacks": "not fired",
             "probe:site-options": "not fired",
             "probe:sitemap-classes": "not fired",
             "probe:small-classes": "not fired",

@@ -36,9 +36,8 @@ final class ClassicContent
             // The form takes the content's place and runs the content filters, paragraphs first, as the reference's the_content does.
             return Runtime::contentFilter(Autop::apply(PasswordGate::formForReader($post, $permalinks->url(''), $link())));
         }
-        if (trim($raw) === '') {
-            return '';
-        }
+        // Nothing written still goes through the_content, as on the reference: a page builder answers an
+        // empty post (Elementor's editor preview, Brizy's editor frame under a classic theme).
         $more = strpos($raw, '<!--more-->');
         // The teaser stops at the more tag unless the whole text is wanted: a single post or page, or a feed ($more, as setup_postdata leaves it).
         if (!MainQuery::current()->is_singular() && empty($GLOBALS['more']) && $more !== false) {

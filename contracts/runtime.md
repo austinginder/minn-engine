@@ -16725,6 +16725,29 @@ the service recorded, unpacks it as any plugin and activates it; a site that has
 activates it. Suite ajax covers the offer's redirect, the payload, activation and the capability;
 Minn Admin's engine-bailouts covers the offer at the row menu.
 
+## Found by the page builder audit on an engine copy of the builders lab (2026-10-15)
+
+- **A shortcode whose callback is not callable yet** (a plugin naming a class it declares further
+  down its file: Header Footer Code Manager's `[hfcm]`) was refused by a callable-typed registry, the
+  plugin failed while loading, and its `wp_head` callback later failed the whole page. The registry
+  now keeps any callback as given and asks only when the shortcode runs: still not callable, the
+  shortcode stays as written with the reference's notice (`do_shortcode_tag`, "Attempting to parse
+  a shortcode without a valid callback", 4.3.0). Probe shortcode-callbacks.
+- **An empty post under a classic theme** skipped the_content's filters (the classic content path
+  returned early for nothing written), so a page builder that answers an empty post through
+  the_content had nothing to answer with: Elementor's editor preview could not find `.elementor-N`
+  and Brizy's editor said the theme does not use the_content, both under Bricks. The classic path
+  now runs the whole pipeline for empty content, as the block-theme post-content block does since
+  af504cae. Suites classic and attachment-pages unchanged.
+
+Seen there and owed (each with its evidence in the audit): `advanced-cache.php` runs with the hook
+API alone where the reference has 114 functions loaded (is_admin, is_ssl, wp_doing_ajax, absint and
+the rest of load.php), so WP Rocket's drop-in fatals the site; a REST list argument sent as a JSON
+array string (`status=["draft","publish"]`, Etch's editor) is refused where the reference decodes
+it; Oxygen 4's builder (template_include to its own template) renders the page instead; Divi 5's
+builder loads every script with the pack and no error but stops at its spinner; the wp-admin doorway
+only knows `action`, so WPBakery's front-end editor (`vc_action=vc_inline`) lands in Minn Admin.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

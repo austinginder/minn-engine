@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\I18n\Gettext;
+
 /**
  * The shortcode registry plugin code fills with add_shortcode, and the
  * expansion do_shortcode performs: [tag attrs], [tag attrs/], [tag]…[/tag]
@@ -32,22 +34,27 @@ final class Shortcodes
         return $out;
     }
 
-    /** @var array<string, callable> */
+    /** @var array<string, mixed> each tag's callback as a plugin gave it, which may only become callable later */
     private array $tags = [];
 
     /**
      * The registry itself, by reference, so the $shortcode_tags global plugin
      * code reads and copies is this array and not a snapshot of it.
      *
-     * @return array<string, callable>
+     * @return array<string, mixed>
      */
     public function &tags(): array
     {
         return $this->tags;
     }
 
-    /** Registers a shortcode. */
-    public function add(string $tag, callable $callback): void
+    /**
+     * Registers a shortcode. Its callback is kept as given, callable or not
+     * yet: a plugin may name a class it declares further down its file, and
+     * the reference only asks whether the callback can be called when the
+     * shortcode runs.
+     */
+    public function add(string $tag, mixed $callback): void
     {
         $this->tags[$tag] = $callback;
     }
@@ -73,7 +80,7 @@ final class Shortcodes
     /**
      * Every shortcode with its callback.
      *
-     * @return array<string, callable> every registered tag and its handler, to restore after a narrowed run
+     * @return array<string, mixed> every registered tag and its handler, to restore after a narrowed run
      */
     public function all(): array
     {
@@ -83,7 +90,7 @@ final class Shortcodes
     /**
      * Replaces the registry, after a save-and-restore.
      *
-     * @param array<string, callable> $tags
+     * @param array<string, mixed> $tags
      */
     public function restore(array $tags): void
     {
@@ -160,6 +167,11 @@ final class Shortcodes
         $early = $hooks->filter('pre_do_shortcode_tag', [false, $tag, $attributes, $m]);
         if ($early !== false) {
             return $early;
+        }
+        // A callback that still cannot be called is the plugin's mistake: the shortcode stays as written.
+        if (!is_callable($this->tags[$tag])) {
+            Notices::doingItWrong('do_shortcode_tag', sprintf(Gettext::text('Attempting to parse a shortcode without a valid callback: %s'), $tag), '4.3.0');
+            return $m[0];
         }
         $output = $m[1] . PluginCall::run($this->tags[$tag], [$attributes, $m[5] ?? null, $tag]) . ($m[6] ?? '');
         return $hooks->filter('do_shortcode_tag', [$output, $tag, $attributes, $m]);

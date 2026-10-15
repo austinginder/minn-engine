@@ -1,0 +1,43 @@
+[
+    [
+        "a callback not callable yet is kept",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "run before it can be called: left as written, with a notice",
+        [
+            "a [minn_probe_later x=\"1\"]in[/minn_probe_later] b",
+            [
+                [
+                    "do_shortcode_tag",
+                    "Attempting to parse a shortcode without a valid callback: minn_probe_later",
+                    "4.3.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "once the class is declared it runs",
+        [
+            "a later:1:in b",
+            []
+        ]
+    ],
+    [
+        "a function that never exists",
+        [
+            true,
+            "[minn_probe_never]",
+            [
+                [
+                    "do_shortcode_tag",
+                    "Attempting to parse a shortcode without a valid callback: minn_probe_never",
+                    "4.3.0"
+                ]
+            ]
+        ]
+    ]
+]

@@ -124,7 +124,7 @@ the WordPress runtime plugins load against
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 303 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
-| [`Shortcodes`](#shortcodes) | final class | 294 | The shortcode registry plugin code fills with add_shortcode, and the |
+| [`Shortcodes`](#shortcodes) | final class | 304 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`SiteInfo`](#siteinfo) | final class | 63 | What WordPress tells about the site (get_bloginfo): its name and tagline, |
 | [`SiteOptions`](#siteoptions) | final class | 76 | The network's options, as a single site keeps them: options stored not |
 | [`SiteTime`](#sitetime) | final class | 90 | Time as the site keeps it: its timezone (the named one, else the UTC |
@@ -3879,7 +3879,7 @@ silence it, its wording with an alternative and without one, and
 whether a closing note follows the wording (and is heard after the
 version).
 
-Used by: `Minn\Query\DateSql`, `Minn\Runtime\Abilities`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Hooks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostQuery`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserQueryRunner`
+Used by: `Minn\Query\DateSql`, `Minn\Runtime\Abilities`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Hooks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostQuery`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserQueryRunner`
 
 ### static `wanted(string $filter, mixed ...$args): bool`
 
@@ -6988,11 +6988,14 @@ shortcode_atts_{shortcode} when the shortcode is named.
 The registry itself, by reference, so the $shortcode_tags global plugin
 code reads and copies is this array and not a snapshot of it.
 
-- `@return array<string, callable>`
+- `@return array<string, mixed>`
 
-### `add(string $tag, callable $callback): void`
+### `add(string $tag, mixed $callback): void`
 
-Registers a shortcode.
+Registers a shortcode. Its callback is kept as given, callable or not
+yet: a plugin may name a class it declares further down its file, and
+the reference only asks whether the callback can be called when the
+shortcode runs.
 
 ### `remove(string $tag): void`
 
@@ -7010,13 +7013,13 @@ Whether a shortcode is registered.
 
 Every shortcode with its callback.
 
-- `@return array<string, callable> every registered tag and its handler, to restore after a narrowed run`
+- `@return array<string, mixed> every registered tag and its handler, to restore after a narrowed run`
 
 ### `restore(array $tags): void`
 
 Replaces the registry, after a save-and-restore.
 
-- `@param array<string, callable> $tags`
+- `@param array<string, mixed> $tags`
 
 ### `names(): array`
 
@@ -7080,7 +7083,7 @@ whole tags becomes "".
 
 - `@return array<int|string, string>`
 
-Internals: `present()` (private, line 270), `attributesRun()` (private, line 284)
+Internals: `present()` (private, line 282), `attributesRun()` (private, line 296)
 
 
 ## SiteInfo
