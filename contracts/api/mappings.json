@@ -2,14 +2,14 @@
     "generated": "2026-10-15",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 686,
-        "composes": 2147,
+        "minn": 685,
+        "composes": 2145,
         "leaf": 1009,
-        "noop": 3137,
+        "noop": 3139,
         "placeholder": 0,
         "deadend": 1770,
-        "functions": 8671,
-        "minnMethods": 1389,
+        "functions": 8670,
+        "minnMethods": 1390,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -35710,21 +35710,6 @@
             ],
             "composes": []
         },
-        "_minn_attachment_js_fields": {
-            "file": "media.php",
-            "lines": 25,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_attached_file",
-                "get_attachment_link",
-                "get_option",
-                "get_post_meta",
-                "mysql2date",
-                "wp_basename",
-                "wp_mime_type_icon"
-            ]
-        },
         "_minn_attachment_sizes_as_asked": {
             "file": "media.php",
             "lines": 12,
@@ -60507,12 +60492,12 @@
         },
         "size_format": {
             "file": "formatting.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "number_format_i18n"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\ByteSize::format"
+            ],
+            "composes": []
         },
         "skip": {
             "file": "avif-info.php",
@@ -72601,23 +72586,12 @@
         },
         "wp_prepare_attachment_for_js": {
             "file": "media.php",
-            "lines": 25,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Media\\Sizing::editorSizes"
+                "Minn\\Runtime\\AttachmentModel::forJs"
             ],
-            "composes": [
-                "_minn_attachment_js_fields",
-                "apply_filters",
-                "get_attached_file",
-                "get_post",
-                "get_userdata",
-                "image_downsize",
-                "size_format",
-                "wp_basename",
-                "wp_get_attachment_metadata",
-                "wp_get_attachment_url"
-            ]
+            "composes": []
         },
         "wp_prepare_json_schema_for_client": {
             "file": "rest-api.php",

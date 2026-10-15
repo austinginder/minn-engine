@@ -6,6 +6,7 @@ escaping, serialized readers, small helpers
 |---|---|---|---|
 | [`Accents`](#accents) | final class | 35 | Accented and special characters to their plain spelling, from the |
 | [`Backtrace`](#backtrace) | final class | 32 | A call stack named as wp_debug_backtrace_summary names it (probe |
+| [`ByteSize`](#bytesize) | final class | 18 | A count of bytes as a person reads it (size_format): in the largest unit |
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
 | [`Entities`](#entities) | final class | 89 | HTML special-character encoding with the reference's quote styles and its |
@@ -80,6 +81,23 @@ The frames' names, after the first $skip.
 - `@param list<array<string, mixed>> $frames debug_backtrace()'s frames, innermost first`
 - `@param list<string> $truncate path prefixes taken off an included file`
 - `@return list<string>`
+
+
+## ByteSize
+
+`final class Minn\Support\ByteSize` · `public/minn/src/Minn/Support/ByteSize.php`
+
+A count of bytes as a person reads it (size_format): in the largest unit
+it reaches, from bytes to exabytes in steps of 1024, the number written
+for the site's locale.
+
+- const `UNITS` = `array (   'EB' => 1152921504606846976,   'PB' => 1125899906842624,   'TB' => 1099511627776,   'GB' => 1073741824,   'MB' => 1048576,   'KB' => 1024,   'B' => 1, )`
+
+Used by: `Minn\Runtime\AttachmentModel`
+
+### static `format(mixed $bytes, mixed $decimals = 0): mixed`
+
+The size with the decimals asked for; false for less than a byte.
 
 
 ## DirectoryListing
@@ -1107,7 +1125,7 @@ a number of words or characters, named references written as numeric
 ones, stray ampersands encoded, whitespace normalized, a path's last part,
 and a callback run over every value of a nested structure.
 
-Used by: `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\QueryArgs`
+Used by: `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\QueryArgs`
 
 ### static `trimWords(mixed $text, mixed $count = 55, mixed $more = NULL): string`
 

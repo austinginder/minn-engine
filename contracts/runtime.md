@@ -16642,19 +16642,50 @@ to wp-plupload's data, `wp_print_media_templates` on the three footers (the pack
 function, printing WordPress's templates, then `print_media_templates`), and
 `wp_enqueue_media` once. On Elementor's editor the settings equal the reference's for the
 same user, apart from the server's upload limit and the tab and word NextGEN adds in an admin
-request. Owed: the modal's admin-ajax actions (query, get, save, send to editor) and
-`/wp-admin/async-upload.php`, which want `wp_prepare_attachment_for_js` and
-`media_handle_upload` moved into the engine (the facade review's verdicts) first.
+request.
+
+**The upload (2026-10-15).** The modal's uploader posts to `/wp-admin/async-upload.php` with
+the action `upload-attachment`, which the reference answers as an ajax request: `DOING_AJAX`
+is declared before anything loads (`AjaxController::doing`, `AdminActionController::uploads`),
+the admin cookie is asked for as on any wp-admin page (signed out: to wp-login.php with
+`reauth=1`, now with the no-cache headers the reference sends), admin_init fires, then
+`admin_action_upload-attachment` (the reference fires it too, observed), and the answer is
+plain text, nosniff, never cached. The upload itself is WordPress's admin code
+(`wp_ajax_upload_attachment` is a dead end): the engine runs the handlers registered for the
+`upload-attachment` ajax action, as admin-ajax.php would, and the pack registers WordPress's
+answer there (the nonce, `upload_files`, `edit_post` on the post it is attached to, the
+`X-WP-Upload-Attachment-ID` header, `media_handle_upload`, the attachment's model or the
+refusal with the file's name). With no handler the answer is admin-ajax.php's "0" (400).
+Suite ajax compares the refusals with the reference and checks the rest with a stand-in
+pack; on a site with the real pack the answers equal the reference's for a photo, a text
+file, an upload to a post, through admin-ajax.php, and the refusals (nonce, file type,
+`upload_files`, a post the author may not edit), apart from `compat` (below). Kept on purpose:
+an upload with no file field at all says "No file was uploaded." where the reference says
+"Specified file failed upload test." after a PHP warning; the uploader without an action
+(the old browser uploader of media-upload.php) lands in Minn Admin.
+
+**The attachment model.** `wp_prepare_attachment_for_js` moved to `Runtime\AttachmentModel`
+(and `size_format` to `Support\ByteSize`), the facade review's verdicts, and now gives what
+the reference gives a signed-in visitor (probe attachment-model, as nobody, the admin, an
+editor and an author): the update and image-editor nonces and the edit link with `edit_post`,
+the delete nonce with `delete_post`, `authorLink` (empty when the visitor may not edit the
+author, left out for an author who is no longer a user), `uploadedToTitle` (or "(no title)")
+and `uploadedToLink` (null without `edit_post`) for a visitor who may read the parent, the SVG
+icon, and `context` from `_wp_attachment_context`. Owed: `compat`, the form of extra fields
+plugins add through `attachment_fields_to_edit` (FileBird's folder, FooGallery's link): the
+reference builds it in an admin request (wp-admin's media include), the engine leaves it
+empty, and its `get_compat_media_markup` renders only the rows that carry their own `tr`.
+Owed too: the audio and video fields of the model, and the modal's other admin-ajax actions
+(query-attachments, get-attachment, save-attachment, save-attachment-compat,
+send-attachment-to-editor), which go to the pack as the upload did.
 
 Where it stands: with the pack active, Elementor's editor runs on the engine: its panel and
 preview load, a container and a heading added through its command API save (`save_builder`,
 `_elementor_data`), revisions and the post lock answer, and the saved draft renders the same
-on both stacks. Owed: `wp_enqueue_media()` and
-`wp_print_media_templates()` are still dead ends (the media library: the engine to queue and
-configure it, the pack to supply WordPress's templates and strings through
-`print_media_templates` and `media_view_strings`); the classic editor (`wp_editor()`,
-`_WP_Editors`) for text widgets; the preview frame's `.elementor-N` wrapper; the media
-library's admin-ajax actions and `async-upload.php`.
+on both stacks, and WordPress's media window opens in it and uploads (the file arrives
+selected, with its details, Edit Image and Delete permanently). Owed: the classic editor
+(`wp_editor()`, `_WP_Editors`) for text widgets; the media library's admin-ajax actions (the
+library grid stays empty but for what was uploaded) and the compat form.
 
 ## Open items register (2026-10-12)
 

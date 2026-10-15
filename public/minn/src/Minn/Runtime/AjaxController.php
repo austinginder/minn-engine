@@ -45,6 +45,12 @@ final readonly class AjaxController
         return $request->path === self::PATH;
     }
 
+    /** Whether the reference answers a request as an ajax one (DOING_AJAX): this endpoint, and the media modal's uploads. */
+    public static function doing(Request $request): bool
+    {
+        return self::claims($request) || AdminActionController::uploads($request);
+    }
+
     /** Runs the handlers registered for the action the request names. */
     #[Route(Method::Any, self::PATH, policy: new Policy(Access::Public))]
     public function dispatch(Request $request): Response

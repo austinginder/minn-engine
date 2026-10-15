@@ -176,3 +176,12 @@ add_action('admin_action_minn_door', static function (): void {
     echo 'door ' . (is_admin() ? 'admin' : 'front') . ' ' . ($GLOBALS['pagenow'] ?? '') . ' user ' . get_current_user_id() . ' admin_init ' . did_action('admin_init');
     exit;
 });
+
+// The media modal's upload (async-upload.php, action upload-attachment): the page's action fires
+// first, saying how the request was booted; WordPress's own upload, or the pack's, answers after it.
+add_action('admin_action_upload-attachment', static function (): void {
+    header('X-Minn-Test: upload ' . (wp_doing_ajax() ? 'ajax' : 'page') . ' ' . (is_admin() ? 'admin' : 'front') . ' ' . ($GLOBALS['pagenow'] ?? '') . ' user ' . get_current_user_id() . ' admin_init ' . did_action('admin_init'));
+});
+add_action('wp_ajax_minn_mint_upload', static function (): void {
+    echo wp_create_nonce('media-form');
+});

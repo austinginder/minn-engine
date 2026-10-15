@@ -1,0 +1,1284 @@
+[
+    [
+        "as nobody: image by the author, on the admin's post",
+        {
+            "id": "{image by the author, on the admin's post}",
+            "title": "Probe model probe-model-photo",
+            "filename": "probe-model-photo.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-photo.jpg",
+            "link": "{home}/?attachment_id={image by the author, on the admin's post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-photo",
+            "status": "inherit",
+            "uploadedTo": "{parent}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": false,
+                "delete": false,
+                "edit": false
+            },
+            "editLink": false,
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photox150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photox188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photo.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as nobody: text by the admin, unattached",
+        {
+            "id": "{text by the admin, unattached}",
+            "title": "Probe model probe-model-note",
+            "filename": "probe-model-note.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-note.txt",
+            "link": "{home}/probe-model-probe-model-note/",
+            "alt": "",
+            "author": "1",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-note",
+            "status": "inherit",
+            "uploadedTo": 0,
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": false,
+                "delete": false,
+                "edit": false
+            },
+            "editLink": false,
+            "meta": false,
+            "authorName": "admin",
+            "authorLink": "",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as nobody: image by the author, on an untitled post",
+        {
+            "id": "{image by the author, on an untitled post}",
+            "title": "Probe model probe-model-untitled",
+            "filename": "probe-model-untitled.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-untitled.jpg",
+            "link": "{home}/?attachment_id={image by the author, on an untitled post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-untitled",
+            "status": "inherit",
+            "uploadedTo": "{untitled}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": false,
+                "delete": false,
+                "edit": false
+            },
+            "editLink": false,
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitledx150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitledx188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitled.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as nobody: text by the author, on the editor's post",
+        {
+            "id": "{text by the author, on the editor's post}",
+            "title": "Probe model probe-model-editor",
+            "filename": "probe-model-editor.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-editor.txt",
+            "link": "{home}/?attachment_id={text by the author, on the editor's post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-editor",
+            "status": "inherit",
+            "uploadedTo": "{editors}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": false,
+                "delete": false,
+                "edit": false
+            },
+            "editLink": false,
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as nobody: image by the author, on a published page",
+        {
+            "id": "{image by the author, on a published page}",
+            "title": "Probe model probe-model-page",
+            "filename": "probe-model-page.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-page.jpg",
+            "link": "{home}/probe-model-published-page/probe-model-probe-model-page/",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-page",
+            "status": "inherit",
+            "uploadedTo": "{page}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": false,
+                "delete": false,
+                "edit": false
+            },
+            "editLink": false,
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-pagex150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-pagex188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-page.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as nobody: text by someone no longer a user, made for a header",
+        {
+            "id": "{text by someone no longer a user, made for a header}",
+            "title": "Probe model probe-model-gone",
+            "filename": "probe-model-gone.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-gone.txt",
+            "link": "{home}/probe-model-probe-model-gone/",
+            "alt": "",
+            "author": "987654321",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-gone",
+            "status": "inherit",
+            "uploadedTo": 0,
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": false,
+                "delete": false,
+                "edit": false
+            },
+            "editLink": false,
+            "meta": false,
+            "authorName": "(no author)",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "custom-header",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the admin: image by the author, on the admin's post",
+        {
+            "id": "{image by the author, on the admin's post}",
+            "title": "Probe model probe-model-photo",
+            "filename": "probe-model-photo.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-photo.jpg",
+            "link": "{home}/?attachment_id={image by the author, on the admin's post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-photo",
+            "status": "inherit",
+            "uploadedTo": "{parent}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={image by the author, on the admin's post}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "{home}/wp-admin/user-edit.php?user_id=3",
+            "uploadedToTitle": "Probe model parent \"quoted\" & <b>bold</b>",
+            "uploadedToLink": "{home}/wp-admin/post.php?post={parent}&action=edit",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photox150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photox188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photo.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the admin: text by the admin, unattached",
+        {
+            "id": "{text by the admin, unattached}",
+            "title": "Probe model probe-model-note",
+            "filename": "probe-model-note.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-note.txt",
+            "link": "{home}/probe-model-probe-model-note/",
+            "alt": "",
+            "author": "1",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-note",
+            "status": "inherit",
+            "uploadedTo": 0,
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={text by the admin, unattached}&action=edit",
+            "meta": false,
+            "authorName": "admin",
+            "authorLink": "{home}/wp-admin/profile.php",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the admin: image by the author, on an untitled post",
+        {
+            "id": "{image by the author, on an untitled post}",
+            "title": "Probe model probe-model-untitled",
+            "filename": "probe-model-untitled.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-untitled.jpg",
+            "link": "{home}/?attachment_id={image by the author, on an untitled post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-untitled",
+            "status": "inherit",
+            "uploadedTo": "{untitled}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={image by the author, on an untitled post}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "{home}/wp-admin/user-edit.php?user_id=3",
+            "uploadedToTitle": "(no title)",
+            "uploadedToLink": "{home}/wp-admin/post.php?post={untitled}&action=edit",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitledx150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitledx188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitled.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the admin: text by the author, on the editor's post",
+        {
+            "id": "{text by the author, on the editor's post}",
+            "title": "Probe model probe-model-editor",
+            "filename": "probe-model-editor.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-editor.txt",
+            "link": "{home}/?attachment_id={text by the author, on the editor's post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-editor",
+            "status": "inherit",
+            "uploadedTo": "{editors}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={text by the author, on the editor's post}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "{home}/wp-admin/user-edit.php?user_id=3",
+            "uploadedToTitle": "Probe model parent of the editor",
+            "uploadedToLink": "{home}/wp-admin/post.php?post={editors}&action=edit",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the admin: image by the author, on a published page",
+        {
+            "id": "{image by the author, on a published page}",
+            "title": "Probe model probe-model-page",
+            "filename": "probe-model-page.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-page.jpg",
+            "link": "{home}/probe-model-published-page/probe-model-probe-model-page/",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-page",
+            "status": "inherit",
+            "uploadedTo": "{page}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={image by the author, on a published page}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "{home}/wp-admin/user-edit.php?user_id=3",
+            "uploadedToTitle": "Probe model published page",
+            "uploadedToLink": "{home}/wp-admin/post.php?post={page}&action=edit",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-pagex150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-pagex188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-page.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the admin: text by someone no longer a user, made for a header",
+        {
+            "id": "{text by someone no longer a user, made for a header}",
+            "title": "Probe model probe-model-gone",
+            "filename": "probe-model-gone.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-gone.txt",
+            "link": "{home}/probe-model-probe-model-gone/",
+            "alt": "",
+            "author": "987654321",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-gone",
+            "status": "inherit",
+            "uploadedTo": 0,
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={text by someone no longer a user, made for a header}&action=edit",
+            "meta": false,
+            "authorName": "(no author)",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "custom-header",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the editor: image by the author, on the admin's post",
+        {
+            "id": "{image by the author, on the admin's post}",
+            "title": "Probe model probe-model-photo",
+            "filename": "probe-model-photo.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-photo.jpg",
+            "link": "{home}/?attachment_id={image by the author, on the admin's post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-photo",
+            "status": "inherit",
+            "uploadedTo": "{parent}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={image by the author, on the admin's post}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "",
+            "uploadedToTitle": "Probe model parent \"quoted\" & <b>bold</b>",
+            "uploadedToLink": "{home}/wp-admin/post.php?post={parent}&action=edit",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photox150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photox188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photo.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the editor: text by the admin, unattached",
+        {
+            "id": "{text by the admin, unattached}",
+            "title": "Probe model probe-model-note",
+            "filename": "probe-model-note.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-note.txt",
+            "link": "{home}/probe-model-probe-model-note/",
+            "alt": "",
+            "author": "1",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-note",
+            "status": "inherit",
+            "uploadedTo": 0,
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={text by the admin, unattached}&action=edit",
+            "meta": false,
+            "authorName": "admin",
+            "authorLink": "",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the editor: image by the author, on an untitled post",
+        {
+            "id": "{image by the author, on an untitled post}",
+            "title": "Probe model probe-model-untitled",
+            "filename": "probe-model-untitled.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-untitled.jpg",
+            "link": "{home}/?attachment_id={image by the author, on an untitled post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-untitled",
+            "status": "inherit",
+            "uploadedTo": "{untitled}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={image by the author, on an untitled post}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "",
+            "uploadedToTitle": "(no title)",
+            "uploadedToLink": "{home}/wp-admin/post.php?post={untitled}&action=edit",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitledx150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitledx188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitled.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the editor: text by the author, on the editor's post",
+        {
+            "id": "{text by the author, on the editor's post}",
+            "title": "Probe model probe-model-editor",
+            "filename": "probe-model-editor.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-editor.txt",
+            "link": "{home}/?attachment_id={text by the author, on the editor's post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-editor",
+            "status": "inherit",
+            "uploadedTo": "{editors}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={text by the author, on the editor's post}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "",
+            "uploadedToTitle": "Probe model parent of the editor",
+            "uploadedToLink": "{home}/wp-admin/post.php?post={editors}&action=edit",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the editor: image by the author, on a published page",
+        {
+            "id": "{image by the author, on a published page}",
+            "title": "Probe model probe-model-page",
+            "filename": "probe-model-page.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-page.jpg",
+            "link": "{home}/probe-model-published-page/probe-model-probe-model-page/",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-page",
+            "status": "inherit",
+            "uploadedTo": "{page}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={image by the author, on a published page}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "",
+            "uploadedToTitle": "Probe model published page",
+            "uploadedToLink": "{home}/wp-admin/post.php?post={page}&action=edit",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-pagex150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-pagex188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-page.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the editor: text by someone no longer a user, made for a header",
+        {
+            "id": "{text by someone no longer a user, made for a header}",
+            "title": "Probe model probe-model-gone",
+            "filename": "probe-model-gone.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-gone.txt",
+            "link": "{home}/probe-model-probe-model-gone/",
+            "alt": "",
+            "author": "987654321",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-gone",
+            "status": "inherit",
+            "uploadedTo": 0,
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={text by someone no longer a user, made for a header}&action=edit",
+            "meta": false,
+            "authorName": "(no author)",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "custom-header",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the author: image by the author, on the admin's post",
+        {
+            "id": "{image by the author, on the admin's post}",
+            "title": "Probe model probe-model-photo",
+            "filename": "probe-model-photo.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-photo.jpg",
+            "link": "{home}/?attachment_id={image by the author, on the admin's post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-photo",
+            "status": "inherit",
+            "uploadedTo": "{parent}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={image by the author, on the admin's post}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "{home}/wp-admin/profile.php",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photox150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photox188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-photo.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the author: text by the admin, unattached",
+        {
+            "id": "{text by the admin, unattached}",
+            "title": "Probe model probe-model-note",
+            "filename": "probe-model-note.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-note.txt",
+            "link": "{home}/probe-model-probe-model-note/",
+            "alt": "",
+            "author": "1",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-note",
+            "status": "inherit",
+            "uploadedTo": 0,
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": false,
+                "delete": false,
+                "edit": false
+            },
+            "editLink": false,
+            "meta": false,
+            "authorName": "admin",
+            "authorLink": "",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the author: image by the author, on an untitled post",
+        {
+            "id": "{image by the author, on an untitled post}",
+            "title": "Probe model probe-model-untitled",
+            "filename": "probe-model-untitled.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-untitled.jpg",
+            "link": "{home}/?attachment_id={image by the author, on an untitled post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-untitled",
+            "status": "inherit",
+            "uploadedTo": "{untitled}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={image by the author, on an untitled post}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "{home}/wp-admin/profile.php",
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitledx150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitledx188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-untitled.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the author: text by the author, on the editor's post",
+        {
+            "id": "{text by the author, on the editor's post}",
+            "title": "Probe model probe-model-editor",
+            "filename": "probe-model-editor.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-editor.txt",
+            "link": "{home}/?attachment_id={text by the author, on the editor's post}",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-editor",
+            "status": "inherit",
+            "uploadedTo": "{editors}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={text by the author, on the editor's post}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "{home}/wp-admin/profile.php",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the author: image by the author, on a published page",
+        {
+            "id": "{image by the author, on a published page}",
+            "title": "Probe model probe-model-page",
+            "filename": "probe-model-page.jpg",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-page.jpg",
+            "link": "{home}/probe-model-published-page/probe-model-probe-model-page/",
+            "alt": "",
+            "author": "3",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-page",
+            "status": "inherit",
+            "uploadedTo": "{page}",
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "image/jpeg",
+            "type": "image",
+            "subtype": "jpeg",
+            "icon": "http://minn.localhost/wp-includes/images/media/default.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": "{nonce update-post_{id}}",
+                "delete": "{nonce delete-post_{id}}",
+                "edit": "{nonce image_editor-{id}}"
+            },
+            "editLink": "{home}/wp-admin/post.php?post={image by the author, on a published page}&action=edit",
+            "meta": false,
+            "authorName": "scribe",
+            "authorLink": "{home}/wp-admin/profile.php",
+            "uploadedToTitle": "Probe model published page",
+            "uploadedToLink": null,
+            "filesizeInBytes": 1730,
+            "filesizeHumanReadable": "2 KB",
+            "context": "",
+            "height": 200,
+            "width": 320,
+            "orientation": "landscape",
+            "sizes": {
+                "thumbnail": {
+                    "height": 150,
+                    "width": 150,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-pagex150.jpg",
+                    "orientation": "landscape"
+                },
+                "medium": {
+                    "height": 188,
+                    "width": 300,
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-pagex188.jpg",
+                    "orientation": "landscape"
+                },
+                "full": {
+                    "url": "{home}/wp-content/uploads/{month}/probe-model-page.jpg",
+                    "height": 200,
+                    "width": 320,
+                    "orientation": "landscape"
+                }
+            },
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "as the author: text by someone no longer a user, made for a header",
+        {
+            "id": "{text by someone no longer a user, made for a header}",
+            "title": "Probe model probe-model-gone",
+            "filename": "probe-model-gone.txt",
+            "url": "{home}/wp-content/uploads/{month}/probe-model-gone.txt",
+            "link": "{home}/probe-model-probe-model-gone/",
+            "alt": "",
+            "author": "987654321",
+            "description": "",
+            "caption": "",
+            "name": "probe-model-probe-model-gone",
+            "status": "inherit",
+            "uploadedTo": 0,
+            "date": "{now}",
+            "modified": "{now}",
+            "menuOrder": 0,
+            "mime": "text/plain",
+            "type": "text",
+            "subtype": "plain",
+            "icon": "http://minn.localhost/wp-includes/images/media/text.svg",
+            "dateFormatted": "{date}",
+            "nonces": {
+                "update": false,
+                "delete": false,
+                "edit": false
+            },
+            "editLink": false,
+            "meta": false,
+            "authorName": "(no author)",
+            "filesizeInBytes": 6,
+            "filesizeHumanReadable": "6 B",
+            "context": "custom-header",
+            "compat": {
+                "item": "",
+                "meta": ""
+            }
+        }
+    ],
+    [
+        "a post that is no attachment",
+        null
+    ],
+    [
+        "nothing at all",
+        null
+    ]
+]

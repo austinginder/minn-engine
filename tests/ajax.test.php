@@ -254,6 +254,43 @@ if (!is_array($doorMint) || empty($doorMint['admin_cookie'])) {
     shell_exec("{$WP} plugin deactivate minn-legacy-pack >/dev/null 2>&1");
     $check('without the pack the app is told of no wp-admin page to open', $off === [], json_encode($off));
     $check('with the pack it is told the actions plugins answer', is_array($on) && in_array('minn_door', $on, true), json_encode($on));
+
+    // The media modal's upload: async-upload.php boots as an ajax request on both stacks, asks for the
+    // admin cookie, fires the page's action and checks the media-form nonce before anything is stored.
+    // Past the nonce, WordPress's own upload answers on the reference and the pack's on the engine.
+    $upload = static function (string $base, array $fields, array $headers) use ($ENGINE, $REF): array {
+        $ch = curl_init($base . '/wp-admin/async-upload.php');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 30, CURLOPT_HTTPHEADER => $headers, CURLOPT_POSTFIELDS => $fields]);
+        $raw = (string) curl_exec($ch);
+        $size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $head = substr($raw, 0, $size);
+        $header = static fn (string $name): string => preg_match('/^' . $name . ':\s*(.*)$/mi', $head, $m) === 1 ? trim($m[1]) : '';
+        return [
+            'status' => curl_getinfo($ch, CURLINFO_RESPONSE_CODE),
+            'location' => str_replace([$ENGINE, $REF, rawurlencode($ENGINE), rawurlencode($REF)], '{site}', $header('location')),
+            'type' => $header('content-type'),
+            'cache' => $header('cache-control'),
+            'upload' => $header('x-minn-test'),
+            'body' => trim(substr($raw, $size)),
+        ];
+    };
+    shell_exec("{$WP} plugin activate minn-legacy-pack >/dev/null 2>&1");
+    $media = substr(trim($ask($REF, 'GET', 'action=minn_mint_upload', null, [$signIn])['body']), 0, -1);
+    $check('the reference mints an upload nonce for the session', preg_match('/^[0-9a-f]{10}$/', $media) === 1, $media);
+    $refused = ['action' => 'upload-attachment', '_wpnonce' => 'nope', 'name' => 'probe.png'];
+    foreach (['signed out' => [], 'the sign-in cookie alone' => [$signIn], 'signed in, with a nonce that is not the upload\'s' => [$admin]] as $label => $headers) {
+        $e = $upload($ENGINE, $refused, $headers);
+        $r = $upload($REF, $refused, $headers);
+        $check("async-upload.php, {$label}: the same answer", $e === $r, json_encode(['engine' => $e, 'reference' => $r], JSON_UNESCAPED_SLASHES));
+    }
+    $e = $upload($ENGINE, $refused, [$admin]);
+    $check('the upload boots as an ajax request, after admin_init, for the signed-in user', $e['upload'] === 'upload ajax admin async-upload.php user 2 admin_init 1', $e['upload']);
+    $allowed = ['action' => 'upload-attachment', '_wpnonce' => $media, 'name' => 'probe.png'];
+    $e = $upload($ENGINE, $allowed, [$admin]);
+    $check('with its nonce the upload reaches the handler the pack registers', $e['status'] === 200 && $e['body'] === 'stand-in upload', json_encode($e));
+    shell_exec("{$WP} plugin deactivate minn-legacy-pack >/dev/null 2>&1");
+    $e = $upload($ENGINE, $allowed, [$admin]);
+    $check('without the pack nothing answers the upload: "0", as admin-ajax.php answers an action nobody handles', $e['status'] === 400 && $e['body'] === '0', json_encode($e));
 }
 
 echo "\n{$pass} passed, {$fail} failed\n";

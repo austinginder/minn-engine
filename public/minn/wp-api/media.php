@@ -1140,63 +1140,10 @@ function delete_post_thumbnail($post)
     return $post ? delete_post_meta($post->ID, '_thumbnail_id') : false;
 }
 
+/** The media modal's attachment model, with what the visitor may do with it (Runtime\AttachmentModel). */
 function wp_prepare_attachment_for_js($attachment)
 {
-    $attachment = get_post($attachment);
-    if ($attachment === null || $attachment->post_type !== 'attachment') {
-        return null;
-    }
-    $meta = wp_get_attachment_metadata($attachment->ID);
-    [$type, $subtype] = str_contains($attachment->post_mime_type, '/') ? explode('/', $attachment->post_mime_type, 2) : [$attachment->post_mime_type, ''];
-    $attachment_url = (string) wp_get_attachment_url($attachment->ID);
-    $response = _minn_attachment_js_fields($attachment, $type, $subtype, $attachment_url);
-    $author = get_userdata((int) $attachment->post_author);
-    $response['authorName'] = $author ? $author->display_name : '(no author)';
-    $file = get_attached_file($attachment->ID);
-    $response['filesizeInBytes'] = is_array($meta) && isset($meta['filesize']) ? $meta['filesize'] : (is_file($file) ? filesize($file) : 0);
-    $response['filesizeHumanReadable'] = size_format($response['filesizeInBytes']);
-    $response['context'] = '';
-    if (is_array($meta) && isset($meta['width'], $meta['height'])) {
-        $response['height'] = $meta['height'];
-        $response['width'] = $meta['width'];
-        $response['orientation'] = $meta['height'] > $meta['width'] ? 'portrait' : 'landscape';
-    }
-    if ($type === 'image') {
-        $names = apply_filters('image_size_names_choose', ['thumbnail' => 'Thumbnail', 'medium' => 'Medium', 'large' => 'Large', 'full' => 'Full Size']);
-        $response['sizes'] = Sizing::editorSizes(is_array($meta) ? $meta : [], str_replace(wp_basename($attachment_url), '', $attachment_url), $attachment_url, $names, static fn (string $size) => image_downsize($attachment->ID, $size));
-    }
-    $response['compat'] = ['item' => '', 'meta' => ''];
-    return apply_filters('wp_prepare_attachment_for_js', $response, $attachment, $meta);
-}
-
-/** @internal the plain fields of the media modal's attachment model */
-function _minn_attachment_js_fields(WP_Post $attachment, string $type, string $subtype, string $url): array
-{
-    return [
-        'id' => $attachment->ID,
-        'title' => $attachment->post_title,
-        'filename' => wp_basename((string) get_attached_file($attachment->ID)),
-        'url' => $url,
-        'link' => get_attachment_link($attachment->ID),
-        'alt' => get_post_meta($attachment->ID, '_wp_attachment_image_alt', true),
-        'author' => $attachment->post_author,
-        'description' => $attachment->post_content,
-        'caption' => $attachment->post_excerpt,
-        'name' => $attachment->post_name,
-        'status' => $attachment->post_status,
-        'uploadedTo' => $attachment->post_parent,
-        'date' => strtotime($attachment->post_date_gmt) * 1000,
-        'modified' => strtotime($attachment->post_modified_gmt) * 1000,
-        'menuOrder' => $attachment->menu_order,
-        'mime' => $attachment->post_mime_type,
-        'type' => $type,
-        'subtype' => $subtype,
-        'icon' => wp_mime_type_icon($attachment->ID),
-        'dateFormatted' => mysql2date(get_option('date_format'), $attachment->post_date),
-        'nonces' => ['update' => false, 'delete' => false, 'edit' => false],
-        'editLink' => false,
-        'meta' => false,
-    ];
+    return Minn\Runtime\AttachmentModel::forJs($attachment);
 }
 
 /** A form's uploaded file, taken as the reference takes one (Minn\Runtime\FileUpload): the stored file, url and type, or an error. */

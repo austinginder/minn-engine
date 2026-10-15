@@ -87,8 +87,8 @@ final readonly class Engine
     public function serve(): void
     {
         $request = Request::fromGlobals();
-        // admin-ajax.php declares DOING_AJAX before the reference's boot reads the debug constants.
-        Failure::install(DebugMode::defined() + (AjaxController::claims($request) ? ['DOING_AJAX' => true] : []), ['HTTP_ACCEPT' => $request->header('accept'), 'CONTENT_TYPE' => $request->header('content-type')]);
+        // admin-ajax.php (and an upload) declares DOING_AJAX before the reference's boot reads the debug constants.
+        Failure::install(DebugMode::defined() + (AjaxController::doing($request) ? ['DOING_AJAX' => true] : []), ['HTTP_ACCEPT' => $request->header('accept'), 'CONTENT_TYPE' => $request->header('content-type')]);
         $this->answer($request)->send();
     }
 

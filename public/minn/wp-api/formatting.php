@@ -298,18 +298,10 @@ function wp_basename($path, $suffix = '')
     return Text::basename($path, (string) $suffix);
 }
 
+/** A count of bytes as a person reads it (Support\ByteSize). */
 function size_format($bytes, $decimals = 0)
 {
-    $units = ['EB' => EB_IN_BYTES, 'PB' => PB_IN_BYTES, 'TB' => TB_IN_BYTES, 'GB' => GB_IN_BYTES, 'MB' => MB_IN_BYTES, 'KB' => KB_IN_BYTES, 'B' => 1];
-    if ($bytes === 0 || $bytes === '0' || $bytes === 0.0) {
-        return number_format_i18n(0, $decimals) . ' B';
-    }
-    foreach ($units as $unit => $mag) {
-        if ((float) $bytes >= $mag) {
-            return number_format_i18n($bytes / $mag, $decimals) . ' ' . $unit;
-        }
-    }
-    return false;
+    return Minn\Support\ByteSize::format($bytes, $decimals);
 }
 
 function wp_html_excerpt($str, $count, $more = null)

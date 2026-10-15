@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1599
+        "delegates": 1600
     },
     "functions": {
         "__": {
@@ -219,10 +219,6 @@
         "_minn_assets": {
             "file": "script-loader.php",
             "statement": "return Minn\\Runtime\\AssetQueue::follow($kind, $GLOBALS[['script' => 'wp_scripts', 'style' => 'wp_styles'][$kind] ?? ''] ?? null);"
-        },
-        "_minn_attachment_js_fields": {
-            "file": "media.php",
-            "statement": "return [\n        'id' => $attachment->ID,\n        'title' => $attachment->post_title,\n        'filename' => wp_basename((string) get_attached_file($attachment->ID)),\n        'url' => $url,\n        'link' => get_attachment_link($attachment->ID),\n        'alt' => get_post_meta($attachment->ID, '_wp_attachment_image_alt', true),\n        'author' => $attachment->post_author,\n        'description' => $attachment->post_content,\n        'caption' => $attachment->post_excerpt,\n        'name' => $attachment->post_name,\n        'status' => $attachment->post_status,\n        'uploadedTo' => $attachment->post_parent,\n        'date' => strtotime($attachment->post_date_gmt) * 1000,\n        'modified' => strtotime($attachment->post_modified_gmt) * 1000,\n        'menuOrder' => $attachment->menu_order,\n        'mime' => $attachment->post_mime_type,\n        'type' => $type,\n        'subtype' => $subtype,\n        'icon' => wp_mime_type_icon($attachment->ID),\n        'dateFormatted' => mysql2date(get_option('date_format'), $attachment->post_date),\n        'nonces' => ['update' => false, 'delete' => false, 'edit' => false],\n        'editLink' => false,\n        'meta' => false,\n    ];"
         },
         "_minn_block_bindings_post_readable": {
             "file": "blocks.php",
@@ -4184,6 +4180,10 @@
             "file": "link-template.php",
             "statement": "return SiteUrls::site($path, $scheme);"
         },
+        "size_format": {
+            "file": "formatting.php",
+            "statement": "return Minn\\Support\\ByteSize::format($bytes, $decimals);"
+        },
         "skip": {
             "file": "avif-info.php",
             "statement": "return fseek($handle, $num_bytes, SEEK_CUR) === 0;"
@@ -5799,6 +5799,10 @@
         "wp_pre_kses_less_than_callback": {
             "file": "formatting.php",
             "statement": "return str_contains((string) $matches[0], '>') ? $matches[0] : esc_html($matches[0]);"
+        },
+        "wp_prepare_attachment_for_js": {
+            "file": "media.php",
+            "statement": "return Minn\\Runtime\\AttachmentModel::forJs($attachment);"
         },
         "wp_prepare_json_schema_for_client": {
             "file": "rest-api.php",

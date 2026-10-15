@@ -58,10 +58,11 @@ final class Constants
         if ($runtime->request?->path === '/wp-cron.php') {
             $computed['DOING_CRON'] = true;
         }
-        // admin-ajax.php declares DOING_AJAX before anything loads, so plugins
-        // know it is no page view; the runtime is booted as an admin request
-        // for it, which WP_ADMIN above already says.
-        if ($runtime->request !== null && AjaxController::claims($runtime->request)) {
+        // admin-ajax.php (and async-upload.php's upload) declares DOING_AJAX
+        // before anything loads, so plugins know it is no page view; the
+        // runtime is booted as an admin request for it, which WP_ADMIN above
+        // already says.
+        if ($runtime->request !== null && AjaxController::doing($runtime->request)) {
             $computed['DOING_AJAX'] = true;
         }
         foreach ($fixed + $computed as $name => $value) {

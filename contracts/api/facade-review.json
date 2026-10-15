@@ -15158,13 +15158,6 @@
                 "doubt": "WordPress allows wp_spaces_regexp() spaces (a no-break space, &nbsp;) between the paragraph and the shortcode; \\s here does not match them",
                 "body": "b2a7ae39553a"
             },
-            "size_format": {
-                "verdict": "move",
-                "to": "Minn\\Support\\ByteSize",
-                "why": "the unit table and the largest-unit pick over number_format_i18n are byte size rules; Admin\\Format::size is a fixed one-decimal twin and F7 put wp_convert_bytes_to_hr in the same class",
-                "doubt": "WordPress 6.0 and later also has ZB and YB (and their constants), so a size past 1024 EB still reads in EB here; the unit symbols are not translated",
-                "body": "960a6ecac73b"
-            },
             "smilies_init": {
                 "verdict": "move",
                 "to": "Minn\\Content\\TextFilters",
@@ -17699,13 +17692,6 @@
                 ],
                 "why": "the [playlist] shortcode: ids, override filter, attributes, feed output, size from $content_width and the track data; beside [video] and [audio]",
                 "body": "422500dcb0f2"
-            },
-            "wp_prepare_attachment_for_js": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\AttachmentModel",
-                "why": "assembles the media modal's attachment model (author, file size, orientation, sizes) with its filters; data built by rules",
-                "doubt": "nonces and editLink are always false where WordPress fills them for a user who can edit, and uploadedToLink, uploadedToTitle and the audio and video length fields are absent",
-                "body": "8cbf65523fd2"
             },
             "wp_register_media_personal_data_exporter": {
                 "verdict": "keep",

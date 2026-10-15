@@ -28,10 +28,19 @@ use Minn\Http\Route;
  * visitor signs in and comes back. admin_init fires, then the action's
  * handlers. When no plugin handles the action, or its handlers return, the
  * request lands in Minn Admin, where every other wp-admin address goes.
+ *
+ * One page is an endpoint instead: the media modal's uploader posts its files
+ * to async-upload.php (action upload-attachment), which the reference answers
+ * as an ajax request, in plain text. After the page's action the upload runs
+ * the handlers registered for the upload-attachment ajax action, as
+ * admin-ajax.php would: WordPress's own answer comes with the Minn Legacy Pack,
+ * the plugin that brings the modal.
  */
 final readonly class AdminActionController
 {
     private const PAGE = '#^/wp-admin/[a-z0-9-]+\.php$#';
+
+    private const UPLOAD = '/wp-admin/async-upload.php';
 
     public function __construct(
         private Cookie $cookie,
@@ -43,6 +52,12 @@ final readonly class AdminActionController
     public static function claims(Request $request): bool
     {
         return $request->path !== AjaxController::PATH && preg_match(self::PAGE, $request->path) === 1 && self::action($request) !== null;
+    }
+
+    /** Whether a request is the media modal's upload, which the reference answers as an ajax request (DOING_AJAX). */
+    public static function uploads(Request $request): bool
+    {
+        return $request->path === self::UPLOAD && self::action($request) === 'upload-attachment';
     }
 
     /** Runs the handlers a plugin hooked for the action, or sends the visitor on. */
@@ -57,12 +72,15 @@ final readonly class AdminActionController
         $session = $this->cookie->admin($request->cookies, $request->secure);
         if ($session === null || $session->id() !== Reader::current()->userId) {
             $back = $this->permalinks->url($request->path) . $request->queryStringWithout();
-            return Response::redirect($this->permalinks->url('/wp-login.php') . '?' . http_build_query(['redirect_to' => $back, 'reauth' => '1']), 302);
+            return new Response(302, ['Location' => $this->permalinks->url('/wp-login.php') . '?' . http_build_query(['redirect_to' => $back, 'reauth' => '1'])] + NoCache::headers());
         }
         // What admin_init prints stays held with the page: a handler that ends
         // the request sends both, one that returns sends neither.
         ob_start();
         Runtime::hooks()->action('admin_init', []);
+        if (self::uploads($request)) {
+            return $this->upload($action);
+        }
         $hook = "admin_action_{$action}";
         if (!Runtime::hooks()->has($hook)) {
             ob_end_clean();
@@ -80,6 +98,24 @@ final readonly class AdminActionController
         // which on Minn is Minn Admin.
         ob_end_clean();
         return $admin;
+    }
+
+    /**
+     * The upload, answered in plain text from the first byte a handler prints.
+     * A handler ends the request with its answer; when none does, the answer
+     * is admin-ajax.php's for an action nobody handles.
+     */
+    private function upload(string $action): Response
+    {
+        (new Response(200, [
+            'Content-Type' => 'text/plain; charset=' . Runtime::options()->filtered('blog_charset'),
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'X-Content-Type-Options' => 'nosniff',
+        ] + NoCache::headers()))->sendHead();
+        Runtime::hooks()->action("admin_action_{$action}", []);
+        $handled = Runtime::hooks()->has("wp_ajax_{$action}");
+        Runtime::hooks()->action("wp_ajax_{$action}", []);
+        return new Response($handled ? 200 : 400, [], (string) ob_get_clean() . '0');
     }
 
     /** The action the request names, the posted field over the query's, or null when there is none. */

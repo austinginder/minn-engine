@@ -8745,6 +8745,7 @@
                 "Minn\\Media\\FileTypes",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\RestMeta",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\EditLinks",
@@ -70881,6 +70882,7 @@
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\MenuEvents",
@@ -71822,7 +71824,8 @@
             "usedBy": [
                 "Minn\\Front\\EmbedCard",
                 "Minn\\Front\\ToolbarMenus",
-                "Minn\\Rest\\SiteSchema"
+                "Minn\\Rest\\SiteSchema",
+                "Minn\\Support\\ByteSize"
             ],
             "constructor": null,
             "cases": [],
@@ -82051,7 +82054,8 @@
                 "Minn\\Runtime\\SiteUrls"
             ],
             "usedBy": [
-                "Minn\\Runtime\\AttachmentImages"
+                "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\AttachmentModel"
             ],
             "constructor": null,
             "cases": [],
@@ -82901,7 +82905,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Runtime\\AttachmentImages"
+                "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\AttachmentModel"
             ],
             "constructor": null,
             "cases": [],
@@ -118548,8 +118553,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/AdminActionController.php",
-            "lines": 60,
-            "doc": "The wp-admin pages a plugin answers itself. The admin is Minn Admin, so\nthe engine draws no wp-admin screen, but a page builder opens its editor\nfrom one: Elementor's \"Edit with Elementor\" is post.php?post=N&action=elementor,\nwhose handler (admin_action_elementor) prints a whole page of its own and\nends the request before any screen is drawn.\n\nA request to a wp-admin page that names an action boots as an admin\nrequest, as the reference's does. The admin cookie (scoped to /wp-admin)\nis asked for, for the user the request is read as; without it the\nvisitor signs in and comes back. admin_init fires, then the action's\nhandlers. When no plugin handles the action, or its handlers return, the\nrequest lands in Minn Admin, where every other wp-admin address goes.",
+            "lines": 89,
+            "doc": "The wp-admin pages a plugin answers itself. The admin is Minn Admin, so\nthe engine draws no wp-admin screen, but a page builder opens its editor\nfrom one: Elementor's \"Edit with Elementor\" is post.php?post=N&action=elementor,\nwhose handler (admin_action_elementor) prints a whole page of its own and\nends the request before any screen is drawn.\n\nA request to a wp-admin page that names an action boots as an admin\nrequest, as the reference's does. The admin cookie (scoped to /wp-admin)\nis asked for, for the user the request is read as; without it the\nvisitor signs in and comes back. admin_init fires, then the action's\nhandlers. When no plugin handles the action, or its handlers return, the\nrequest lands in Minn Admin, where every other wp-admin address goes.\n\nOne page is an endpoint instead: the media modal's uploader posts its files\nto async-upload.php (action upload-attachment), which the reference answers\nas an ajax request, in plain text. After the page's action the upload runs\nthe handlers registered for the upload-attachment ajax action, as\nadmin-ajax.php would: WordPress's own answer comes with the Minn Legacy Pack,\nthe plugin that brings the modal.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -118567,7 +118572,8 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
-                "Minn\\Engine"
+                "Minn\\Engine",
+                "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Auth\\Cookie $cookie, Minn\\Front\\Permalinks $permalinks)",
@@ -118590,14 +118596,20 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 36,
-                "end": 40
+                "line": 45,
+                "end": 49
             },
             "cases": [],
             "constants": [
                 {
                     "name": "PAGE",
                     "value": "'#^/wp-admin/[a-z0-9-]+\\\\.php$#'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "UPLOAD",
+                    "value": "'/wp-admin/async-upload.php'",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -118640,8 +118652,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 46
+                    "line": 52,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "uploads",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uploads(Minn\\Http\\Request $request): bool",
+                    "doc": "Whether a request is the media modal's upload, which the reference answers as an ajax request (DOING_AJAX).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 61
                 },
                 {
                     "routes": [
@@ -118662,8 +118694,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 83
+                    "line": 65,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "upload",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "upload(string $action): Minn\\Http\\Response",
+                    "doc": "The upload, answered in plain text from the first byte a handler prints.\nA handler ends the request with its answer; when none does, the answer\nis admin-ajax.php's for an action nobody handles.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -118682,8 +118734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 90
+                    "line": 122,
+                    "end": 126
                 }
             ]
         },
@@ -118693,7 +118745,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/AjaxController.php",
-            "lines": 80,
+            "lines": 86,
             "doc": "admin-ajax.php, the endpoint plugins post their front-end work to: a form\nsubmitted without a reload, a spam check, a background job. The action a\nrequest names runs the handlers registered as wp_ajax_{action} for a\nsigned-in visitor and wp_ajax_nopriv_{action} for anyone else, answered as\nthe reference answers them (contracts/runtime.md \"admin-ajax.php\").\n\nIt is an admin request: is_admin() is true while the plugins load and\nadmin_init fires before the handler. A handler usually ends the request\nitself (wp_send_json, wp_die, exit), so the endpoint's headers go out\nbefore it runs; one that returns is followed by the reference's \"0\".",
             "implements": [],
             "extends": null,
@@ -118705,6 +118757,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\RequestHeaders",
@@ -118760,6 +118813,26 @@
                     "end": 46
                 },
                 {
+                    "routes": [],
+                    "name": "doing",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "doing(Minn\\Http\\Request $request): bool",
+                    "doc": "Whether the reference answers a request as an ajax one (DOING_AJAX): this endpoint, and the media modal's uploads.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 52
+                },
+                {
                     "routes": [
                         "* /wp-admin/admin-ajax.php (public)"
                     ],
@@ -118778,8 +118851,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 80
+                    "line": 56,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -118798,8 +118871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 87
+                    "line": 89,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -118810,8 +118883,8 @@
                     "doc": "The two cross-origin headers, for an Origin that is this site's own address; empty for any other.",
                     "shapes": [],
                     "params": [],
-                    "line": 90,
-                    "end": 97
+                    "line": 96,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -118830,8 +118903,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 105
+                    "line": 106,
+                    "end": 111
                 }
             ]
         },
@@ -120654,7 +120727,8 @@
                 "Minn\\Front\\EmbedCard",
                 "Minn\\Front\\FeedTags",
                 "Minn\\Front\\PostEmbed",
-                "Minn\\Front\\ToolbarMenus"
+                "Minn\\Front\\ToolbarMenus",
+                "Minn\\Runtime\\AttachmentModel"
             ],
             "constructor": null,
             "cases": [],
@@ -121397,6 +121471,83 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\AttachmentModel",
+            "short": "AttachmentModel",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/AttachmentModel.php",
+            "lines": 88,
+            "doc": "An attachment as the media modal's scripts read it\n(wp_prepare_attachment_for_js): its fields, its file and its sizes, and\nwhat the visitor may do with it. The nonces the modal saves, deletes and\nedits with, the links to edit the attachment and its author, and the post\nit was uploaded to are there only for a visitor allowed each, as the\nreference gives them. The model passes through wp_prepare_attachment_for_js.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\Can",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Media\\Icons",
+                "Minn\\Media\\Sizing",
+                "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\Attachments",
+                "Minn\\Runtime\\EditLinks",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime",
+                "Minn\\Support\\ByteSize",
+                "Minn\\Support\\Text"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forJs",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forJs(mixed $attachment): mixed",
+                    "doc": "The model, or null for anything that is not an attachment.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachment",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "people",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "people(object $post): array",
+                    "doc": "Who uploaded the attachment and to which post: the author's name, and\na link to edit them where one may (none for an author no longer a\nuser); the post's title and edit link for a visitor who may read it.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 108
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Attachments",
             "short": "Attachments",
             "namespace": "Minn\\Runtime",
@@ -121438,6 +121589,7 @@
                 "Minn\\Media\\MediaModal",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\FileNames",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\PostEvents",
@@ -126377,7 +126529,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Constants.php",
-            "lines": 91,
+            "lines": 92,
             "doc": "The constants plugin code expects: the fixed set from data/constants.json\n(captured from the reference) and the per-site ones computed here. Nothing\nalready defined is touched, so wp-config.php keeps the last word.",
             "implements": [],
             "extends": null,
@@ -126412,7 +126564,7 @@
                         }
                     ],
                     "line": 17,
-                    "end": 86
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -126423,8 +126575,8 @@
                     "doc": "256M, unless PHP starts with no limit or a higher one, which is then\nkept as written (probe: the reference started at 128M, 300M, 1G, -1).",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 103
+                    "line": 93,
+                    "end": 104
                 }
             ]
         },
@@ -128155,7 +128307,8 @@
                 "Minn\\Runtime\\SiteUrls"
             ],
             "usedBy": [
-                "Minn\\Front\\ToolbarMenus"
+                "Minn\\Front\\ToolbarMenus",
+                "Minn\\Runtime\\AttachmentModel"
             ],
             "constructor": null,
             "cases": [],
@@ -128991,6 +129144,7 @@
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\BlockQueries",
@@ -133891,6 +134045,7 @@
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\MenuEvents",
@@ -140789,6 +140944,7 @@
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Runtime\\ArchiveLinks",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostData",
@@ -146599,6 +146755,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\AbilityRun",
                 "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
@@ -149818,6 +149975,7 @@
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
@@ -152545,6 +152703,7 @@
             "usedBy": [
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Query\\DateSql",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
@@ -163660,6 +163819,63 @@
             ]
         },
         {
+            "name": "Minn\\Support\\ByteSize",
+            "short": "ByteSize",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/ByteSize.php",
+            "lines": 18,
+            "doc": "A count of bytes as a person reads it (size_format): in the largest unit\nit reaches, from bytes to exabytes in steps of 1024, the number written\nfor the site's locale.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Numbers"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\AttachmentModel"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "UNITS",
+                    "value": "array (   'EB' => 1152921504606846976,   'PB' => 1125899906842624,   'TB' => 1099511627776,   'GB' => 1073741824,   'MB' => 1048576,   'KB' => 1024,   'B' => 1, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "format",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "format(mixed $bytes, mixed $decimals = 0): mixed",
+                    "doc": "The size with the decimals asked for; false for less than a byte.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "decimals",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 30
+                }
+            ]
+        },
+        {
             "name": "Minn\\Support\\DirectoryListing",
             "short": "DirectoryListing",
             "namespace": "Minn\\Support",
@@ -168359,6 +168575,7 @@
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Rest\\Api",
                 "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostQueryTax",
                 "Minn\\Runtime\\PostQueryWhere",
