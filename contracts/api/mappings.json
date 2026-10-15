@@ -5,11 +5,11 @@
         "minn": 686,
         "composes": 2147,
         "leaf": 1009,
-        "noop": 3135,
+        "noop": 3137,
         "placeholder": 0,
-        "deadend": 1772,
+        "deadend": 1770,
         "functions": 8671,
-        "minnMethods": 1387,
+        "minnMethods": 1389,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -67208,11 +67208,15 @@
             ]
         },
         "wp_enqueue_media": {
-            "file": "deadends.php",
-            "lines": 2,
-            "kind": "deadend",
-            "minn": [],
-            "composes": [],
+            "file": "media.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Media\\MediaModal::enqueue"
+            ],
+            "composes": [
+                "_minn_assets"
+            ],
             "deadend": "editor"
         },
         "wp_enqueue_registered_block_scripts_and_styles": {
@@ -72457,11 +72461,15 @@
             "deadend": "admin"
         },
         "wp_plupload_default_settings": {
-            "file": "deadends.php",
-            "lines": 2,
-            "kind": "deadend",
-            "minn": [],
-            "composes": [],
+            "file": "media.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Media\\MediaModal::uploadSettings"
+            ],
+            "composes": [
+                "_minn_assets"
+            ],
             "deadend": "editor"
         },
         "wp_popular_terms_checklist": {

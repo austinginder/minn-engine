@@ -2018,3 +2018,15 @@ function wp_media_personal_data_exporter($email_address, $page = 1)
     $items = array_map(static fn (WP_Post $upload): array => Minn\Content\PersonalData::item('media', __('Media'), __('User&#8217;s media data.'), 'post-' . $upload->ID, [__('URL') => wp_get_attachment_url($upload->ID)]), $uploads);
     return ['data' => $items, 'done' => count($uploads) < $number];
 }
+
+/** WordPress's media modal queued for the page and told about the site (Minn\Media\MediaModal); its files come with the Minn Legacy Pack. */
+function wp_enqueue_media($args = [])
+{
+    Minn\Media\MediaModal::enqueue((array) $args, _minn_assets('script'), _minn_assets('style'));
+}
+
+/** The media uploader's settings, added to its script's data (Minn\Media\MediaModal). */
+function wp_plupload_default_settings()
+{
+    Minn\Media\MediaModal::uploadSettings(_minn_assets('script'));
+}

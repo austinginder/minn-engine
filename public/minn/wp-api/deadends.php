@@ -3439,12 +3439,6 @@ function wp_enqueue_editor_format_library_assets()
     return null;
 }
 
-function wp_enqueue_media($args = [])
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_enqueue_media');
-    return null;
-}
-
 function wp_enqueue_view_transitions_admin_css()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_enqueue_view_transitions_admin_css');
@@ -3926,12 +3920,6 @@ function wp_plugin_update_row($file, $plugin_data)
 function wp_plugin_update_rows()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_plugin_update_rows');
-    return null;
-}
-
-function wp_plupload_default_settings()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_plupload_default_settings');
     return null;
 }
 

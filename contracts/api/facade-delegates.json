@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1597
+        "delegates": 1599
     },
     "functions": {
         "__": {
@@ -5016,6 +5016,10 @@
             "file": "blocks.php",
             "statement": "add_action(wp_is_block_theme() ? 'wp_head' : 'wp_footer', static function () use ($style): void {\n        echo \"<style>{$style}</style>\\n\";\n    }, $priority);"
         },
+        "wp_enqueue_media": {
+            "file": "media.php",
+            "statement": "Minn\\Media\\MediaModal::enqueue((array) $args, _minn_assets('script'), _minn_assets('style'));"
+        },
         "wp_enqueue_script_module": {
             "file": "script-loader.php",
             "statement": "wp_script_modules()->enqueue((string) $id, (string) $src, (array) $deps, $version, (array) $args);"
@@ -5775,6 +5779,10 @@
         "wp_parse_widget_id": {
             "file": "widgets.php",
             "statement": "return WidgetAreas::parse((string) $id);"
+        },
+        "wp_plupload_default_settings": {
+            "file": "media.php",
+            "statement": "Minn\\Media\\MediaModal::uploadSettings(_minn_assets('script'));"
         },
         "wp_post_mime_type_where": {
             "file": "post.php",

@@ -811,7 +811,7 @@ without this class changing.
 - const `WORD_COUNT_TYPE` = `'words'`
 - const `TEXT_DIRECTION` = `'ltr'`
 
-Used by: `Minn\I18n\LocalDates`
+Used by: `Minn\I18n\LocalDates`, `Minn\Media\MediaModal`
 
 ### static `weekdayInitial(string $day): string`
 

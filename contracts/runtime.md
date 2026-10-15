@@ -16631,6 +16631,21 @@ without it; the app keeps a link whose page and action are on that list ("Edit i
 on a builder's page and in the content list's row menu). Suite ajax checks both states with a
 stand-in pack.
 
+**The media modal.** `wp_enqueue_media()` and `wp_plupload_default_settings()` were dead
+ends; they are now delegates to `Media\MediaModal`, which does nothing without the pack's
+`media-views` and otherwise queues the modal as the reference does: media-editor and
+media-audiovideo, the media-views and imgareaselect styles, the settings (tabs, file types,
+nonces, the post, default props, playlist counts, oEmbed proxy, embed types, content width,
+months, trash, infinite scrolling) through the same filters, the words through
+`media_view_strings` (the pack hooks it at 0 with WordPress's), the uploader's settings added
+to wp-plupload's data, `wp_print_media_templates` on the three footers (the pack defines the
+function, printing WordPress's templates, then `print_media_templates`), and
+`wp_enqueue_media` once. On Elementor's editor the settings equal the reference's for the
+same user, apart from the server's upload limit and the tab and word NextGEN adds in an admin
+request. Owed: the modal's admin-ajax actions (query, get, save, send to editor) and
+`/wp-admin/async-upload.php`, which want `wp_prepare_attachment_for_js` and
+`media_handle_upload` moved into the engine (the facade review's verdicts) first.
+
 Where it stands: with the pack active, Elementor's editor runs on the engine: its panel and
 preview load, a container and a heading added through its command API save (`save_builder`,
 `_elementor_data`), revisions and the post lock answer, and the saved draft renders the same

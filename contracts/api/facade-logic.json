@@ -1,9 +1,9 @@
 {
     "method": "tests/tools/facade-logic.php: functions and methods in public/minn/wp-api (generated dead ends and placeholders apart) whose body holds more than one statement or a control structure, by tokens; lines are the body's non-blank, non-comment lines; a docblock tag @minn-facade-logic <reason> keeps one out of the count and lists it under \"kept\"",
     "summary": {
-        "functions": 3490,
+        "functions": 3492,
         "methods": 3804,
-        "delegates": 3429,
+        "delegates": 3431,
         "logicFunctions": 1832,
         "logicMethods": 2033,
         "logicLines": 30383,

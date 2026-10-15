@@ -11,6 +11,7 @@ uploads, image sizes and attachment metadata
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
 | [`ImageMime`](#imagemime) | final class | 34 | An image file's real type from its first bytes, as the reference sniffs |
 | [`Kind`](#kind) | final class | 79 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
+| [`MediaModal`](#mediamodal) | final class | 219 | WordPress's media modal, set up for a page that opens it (wp_enqueue_media): |
 | [`Metadata`](#metadata) | final class | 112 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
 | [`Sizing`](#sizing) | final class | 263 | The image size arithmetic the media functions share: the crop or scale a |
@@ -122,7 +123,7 @@ MIME type, the ones a user may upload, the kind each extension is (image,
 audio, document...), and the type a file name's extension says, each
 list through the filter plugins hook.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Media\Icons`, `Minn\Rest\PostCollectionParams`, `Minn\Runtime\Attachments`, `Minn\Runtime\FileNames`, `Minn\Runtime\FileTypeCheck`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Media\Icons`, `Minn\Media\MediaModal`, `Minn\Rest\PostCollectionParams`, `Minn\Runtime\Attachments`, `Minn\Runtime\FileNames`, `Minn\Runtime\FileTypeCheck`
 
 
 ### static `table(): array`
@@ -246,7 +247,7 @@ Whether an attachment is an image, audio, video, or a given extension, judged by
 a comma list of full types) => its plural label, its manage label, and
 the singular and plural count labels.
 
-Used by: `Minn\Runtime\Attachments`
+Used by: `Minn\Media\MediaModal`, `Minn\Runtime\Attachments`
 
 ### static `matchWildcards(array $patterns, array $reals): array`
 
@@ -261,6 +262,34 @@ no matches is omitted (probe post-remaining).
 ### static `matches(string $type, string $mime, string $extension, array $audioExtensions, array $videoExtensions): bool`
 
 Whether a file is of a media type, by mime prefix or by extension list.
+
+
+## MediaModal
+
+`final class Minn\Media\MediaModal` · `public/minn/src/Minn/Media/MediaModal.php`
+
+WordPress's media modal, set up for a page that opens it (wp_enqueue_media):
+a page builder's editor picks and uploads images through it. Its scripts,
+styles, words and templates are WordPress's and come with the Minn Legacy
+Pack. The engine queues them and tells them about the site, as the
+reference does and through the same filters: the post being edited, the
+file types and the months the library holds, the nonces, the upload
+settings, and the templates printed in the footer. Without the pack's
+scripts there is no modal to set up and nothing happens.
+
+### static `enqueue(array $args, Minn\Runtime\Assets $scripts, Minn\Runtime\Assets $styles): void`
+
+Queues the modal for the page, once a request.
+
+- `@param array<string, mixed> $args 'post': the post being edited, an ID or a post object`
+
+### static `uploadSettings(Minn\Runtime\Assets $scripts): void`
+
+The upload settings the modal's uploader reads (wp_plupload_default_settings):
+where files go, how large, which types, with which nonce, added to the
+data the uploader's script already carries.
+
+Internals: `postId()` (private, line 127), `tabs()` (private, line 136), `mimeTypes()` (private, line 149), `shows()` (private, line 163), `months()` (private, line 173), `embeds()` (private, line 190), `maxUploadSize()` (private, line 211), `bytes()` (private, line 218), `canUpload()` (private, line 233)
 
 
 ## Metadata

@@ -67800,6 +67800,7 @@
                 "Minn\\Http\\Refusal",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
+                "Minn\\Media\\MediaModal",
                 "Minn\\Media\\Upload",
                 "Minn\\Ops\\Diagnostics",
                 "Minn\\Rest\\Api",
@@ -70871,6 +70872,7 @@
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\I18n\\LocalDates",
                 "Minn\\Login\\LoginHooks",
+                "Minn\\Media\\MediaModal",
                 "Minn\\Query\\DateSql",
                 "Minn\\Query\\TaxSql",
                 "Minn\\Rest\\RestMeta",
@@ -73243,6 +73245,7 @@
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Mail\\MailerStrings",
                 "Minn\\Media\\FileTypes",
+                "Minn\\Media\\MediaModal",
                 "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Releases",
@@ -81692,6 +81695,7 @@
                 "Minn\\Content\\MediaShortcodes",
                 "Minn\\Front\\FeedTags",
                 "Minn\\Media\\Icons",
+                "Minn\\Media\\MediaModal",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\FileNames",
@@ -82208,6 +82212,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Media\\MediaModal",
                 "Minn\\Runtime\\Attachments"
             ],
             "constructor": null,
@@ -82306,6 +82311,241 @@
                     ],
                     "line": 70,
                     "end": 85
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Media\\MediaModal",
+            "short": "MediaModal",
+            "namespace": "Minn\\Media",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/MediaModal.php",
+            "lines": 219,
+            "doc": "WordPress's media modal, set up for a page that opens it (wp_enqueue_media):\na page builder's editor picks and uploads images through it. Its scripts,\nstyles, words and templates are WordPress's and come with the Minn Legacy\nPack. The engine queues them and tells them about the site, as the\nreference does and through the same filters: the post being edited, the\nfile types and the months the library holds, the nonces, the upload\nsettings, and the templates printed in the footer. Without the pack's\nscripts there is no modal to set up and nothing happens.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Request",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Json",
+                "Minn\\Media\\FileTypes",
+                "Minn\\Media\\Kind",
+                "Minn\\Runtime\\Assets",
+                "Minn\\Runtime\\Attachments",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\RequestHeaders",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteUrls",
+                "Minn\\Support\\Locale"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "enqueue",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "enqueue(array $args, Minn\\Runtime\\Assets $scripts, Minn\\Runtime\\Assets $styles): void",
+                    "doc": "Queues the modal for the page, once a request.",
+                    "shapes": [
+                        "@param array<string, mixed> $args 'post': the post being edited, an ID or a post object"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "'post': the post being edited, an ID or a post object"
+                        },
+                        {
+                            "name": "scripts",
+                            "type": "Minn\\Runtime\\Assets",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "styles",
+                            "type": "Minn\\Runtime\\Assets",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "uploadSettings",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uploadSettings(Minn\\Runtime\\Assets $scripts): void",
+                    "doc": "The upload settings the modal's uploader reads (wp_plupload_default_settings):\nwhere files go, how large, which types, with which nonce, added to the\ndata the uploader's script already carries.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "scripts",
+                            "type": "Minn\\Runtime\\Assets",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 125
+                },
+                {
+                    "routes": [],
+                    "name": "postId",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "postId(mixed $post): int",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 133
+                },
+                {
+                    "routes": [],
+                    "name": "tabs",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "tabs(): array",
+                    "doc": "The upload tabs plugins add; WordPress's own four are the modal's views, not tabs. @return array<string, string>",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [],
+                    "line": 136,
+                    "end": 146
+                },
+                {
+                    "routes": [],
+                    "name": "mimeTypes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "mimeTypes(): array",
+                    "doc": "The library's file-type filter: each kind's label, by its MIME pattern (get_post_mime_types). @return array<string, string>",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [],
+                    "line": 149,
+                    "end": 160
+                },
+                {
+                    "routes": [],
+                    "name": "shows",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "shows(mixed $answer, string $kind): bool",
+                    "doc": "Whether the library offers audio or video playlists: a plugin's answer, or whether it holds any such file.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "answer",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 163,
+                    "end": 170
+                },
+                {
+                    "routes": [],
+                    "name": "months",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "months(): array",
+                    "doc": "The months the library has files from, newest first, as the modal's date filter lists them. @return list<array{year: string, month: string, text: string}>",
+                    "shapes": [
+                        "@return list<array{year: string, month: string, text: string}>"
+                    ],
+                    "params": [],
+                    "line": 173,
+                    "end": 187
+                },
+                {
+                    "routes": [],
+                    "name": "embeds",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "embeds(): array",
+                    "doc": "The audio and video extensions the modal embeds, and the MIME type of each. @return array{list<string>, array<string, string>}",
+                    "shapes": [
+                        "@return array{list<string>, array<string, string>}"
+                    ],
+                    "params": [],
+                    "line": 190,
+                    "end": 208
+                },
+                {
+                    "routes": [],
+                    "name": "maxUploadSize",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "maxUploadSize(): int",
+                    "doc": "The largest upload the server takes, the smaller of PHP's two limits, as plugins leave it (upload_size_limit).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 211,
+                    "end": 216
+                },
+                {
+                    "routes": [],
+                    "name": "bytes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "bytes(string $value): int",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 218,
+                    "end": 230
+                },
+                {
+                    "routes": [],
+                    "name": "canUpload",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "canUpload(): bool",
+                    "doc": "Whether the browser can upload: every desktop, and iOS from 6.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 233,
+                    "end": 243
                 }
             ]
         },
@@ -119519,6 +119759,7 @@
                 "Minn\\Json"
             ],
             "usedBy": [
+                "Minn\\Media\\MediaModal",
                 "Minn\\Runtime\\AssetEdits",
                 "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\ScriptLoading"
@@ -121194,6 +121435,7 @@
                 "Minn\\Front\\EmbedCard",
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Media\\Icons",
+                "Minn\\Media\\MediaModal",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\FileNames",
@@ -128718,6 +128960,7 @@
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Login\\LoginNotices",
                 "Minn\\Mail\\Mailer",
+                "Minn\\Media\\MediaModal",
                 "Minn\\Ops\\DirectoryApi",
                 "Minn\\Ops\\UpgraderRun",
                 "Minn\\Rest\\BatchController",
@@ -148721,6 +148964,7 @@
             "usedBy": [
                 "Minn\\Front\\SitemapRequest",
                 "Minn\\Front\\ToolbarMarkup",
+                "Minn\\Media\\MediaModal",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Theme\\FrontLifecycle"
@@ -149522,6 +149766,7 @@
                 "Minn\\Mail\\Mailer",
                 "Minn\\Media\\FileTypes",
                 "Minn\\Media\\Icons",
+                "Minn\\Media\\MediaModal",
                 "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Updates",
                 "Minn\\Ops\\UpgraderRun",
@@ -152517,6 +152762,7 @@
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Login\\LoginController",
                 "Minn\\Media\\Icons",
+                "Minn\\Media\\MediaModal",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\CommentPages",
@@ -166506,7 +166752,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\I18n\\LocalDates"
+                "Minn\\I18n\\LocalDates",
+                "Minn\\Media\\MediaModal"
             ],
             "constructor": null,
             "cases": [],
