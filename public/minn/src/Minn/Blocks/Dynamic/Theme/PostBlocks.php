@@ -77,8 +77,10 @@ final readonly class PostBlocks
         if (PasswordGate::is($post)) {
             $raw = PasswordGate::formForReader($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
         }
-        // An attachment's page shows the attachment even with nothing written (prepend_attachment, through the_content).
-        if (trim($raw) === '' && !($post->type === 'attachment' && Runtime::booted())) {
+        // Nothing written still goes through the_content, as on the reference, which leaves the block
+        // out only when nothing comes back: an attachment's page shows the attachment
+        // (prepend_attachment), a page builder answers an empty post (Elementor's editor preview).
+        if (trim($raw) === '' && !Runtime::booted()) {
             return '';
         }
         $more = strpos($raw, '<!--more-->');
@@ -97,6 +99,9 @@ final readonly class PostBlocks
         if (Runtime::booted()) {
             $content = Runtime::shortcodes()->apply($content);
             $content = Runtime::contentFilter($content);
+        }
+        if ($content === '' || $content === '0') {
+            return '';
         }
         $align = Styles::align($block->attrs);
         return Wrapper::open(

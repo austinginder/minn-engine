@@ -16592,7 +16592,7 @@ any plugin loads (about 15 ms a file). The engine's own files at those addresses
 its embed scripts) are not in the pack and keep coming from the engine. The same model as the
 site's script pack (`ScriptPack`), larger and installed as a plugin.
 
-**Three engine bugs the editor found, all general:**
+**Four engine bugs the editor found, all general:**
 
 - *A registry a plugin puts in the global.* Elementor's editor starts from a new `WP_Scripts`
   and `WP_Styles` (`$wp_scripts = new WP_Scripts()`), leaving every other plugin's assets out.
@@ -16618,9 +16618,16 @@ fetchpriority logic off and adds `fetchpriority="high"` itself through `wp_conte
 the reference's first featured image on a block-theme archive gets it and the engine's does
 not (dogfood /news/).
 
-Where it stands: with the pack active, Elementor's editor loads on the engine (its app
-starts, its preview frame loads, its heartbeat answers through admin-ajax); saving is not yet
-tried. Owed: `wp_enqueue_media()` and
+- *An empty post's content block left out before the_content ran.* The reference runs
+  the_content on a post with nothing written and leaves the post-content block out only when
+  nothing comes back; the engine left it out first (an attachment's page was the one
+  exception). Elementor's editor preview answers an empty draft with its wrapper
+  (`.elementor-N`), and without it the editor stopped at "the content area was not found".
+
+Where it stands: with the pack active, Elementor's editor runs on the engine: its panel and
+preview load, a container and a heading added through its command API save (`save_builder`,
+`_elementor_data`), revisions and the post lock answer, and the saved draft renders the same
+on both stacks. Owed: `wp_enqueue_media()` and
 `wp_print_media_templates()` are still dead ends (the media library: the engine to queue and
 configure it, the pack to supply WordPress's templates and strings through
 `print_media_templates` and `media_view_strings`); the classic editor (`wp_editor()`,
