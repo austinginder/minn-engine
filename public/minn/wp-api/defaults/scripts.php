@@ -8,8 +8,8 @@
 add_action('wp_default_scripts', 'wp_default_scripts');
 
 // The $wp_scripts and $wp_styles globals plugins read directly exist from the start. apiFetch is told
-// where the REST API is, with a nonce, on the registry's first real use (_minn_tell_api_fetch), as the
-// reference tells it when its registry is first made: a request that never touches scripts makes no nonce.
+// where the REST API is, with a nonce, on each registry's first real use (_minn_tell_api_fetch), as the
+// reference tells a registry as it is made: a request that never touches scripts makes no nonce.
 if (Minn\Runtime\Runtime::booted()) {
     wp_scripts();
     wp_styles();

@@ -275,6 +275,14 @@ final readonly class Engine
 
     private function handle(Db $db, Request $request): Response
     {
+        // WordPress's own browser files, from the Minn Legacy Pack while it is active, before any plugin loads.
+        if (\Minn\Runtime\LegacyPack::claims($request->path)) {
+            $active = Runtime::options()->get('active_plugins');
+            $file = \Minn\Runtime\LegacyPack::file(ABSPATH . 'wp-content', $request->path, is_array($active) ? array_values($active) : []);
+            if ($file !== null) {
+                return \Minn\Runtime\LegacyPack::response($file);
+            }
+        }
         self::armRecoveryPause($db, $request);
 
         self::markThemedRequest($request);
@@ -314,7 +322,7 @@ final readonly class Engine
         $theme = Theme::active($site, $permalinks, $context->themesDir());
         // The WordPress runtime: the site's plugins load as code, then the
         // lifecycle actions fire, before the engine's own extensions register.
-        $runtime = Runtime::boot(new Runtime($context, isAdmin: \Minn\Runtime\AjaxController::claims($request)));
+        $runtime = Runtime::boot(new Runtime($context, isAdmin: \Minn\Runtime\AjaxController::claims($request) || \Minn\Runtime\AdminActionController::claims($request)));
         // Minn Admin's plugin copy is laid once per engine version, before plugins load.
         AdminPlugin::settle($this->engineDir, ABSPATH . 'wp-content', Runtime::options());
         $runtime->set('block_theme', $theme !== null);
@@ -396,6 +404,7 @@ final readonly class Engine
             new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn(new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users)),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), $siteIcon = new SiteIcon($site, $posts, $permalinks), $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $siteIcon, $adminOff),
             new \Minn\Runtime\AjaxController(),
+            new \Minn\Runtime\AdminActionController($cookie, $permalinks),
             new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron, $bridge),
             $sitemapController,
             new CommentPostController(),

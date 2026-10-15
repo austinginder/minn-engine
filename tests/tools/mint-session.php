@@ -7,7 +7,8 @@
  *
  * Prints JSON: the session token, the logged_in auth cookie value, a
  * wp_rest nonce bound to that token (under the nonce lifetime given, when
- * one is), and the CLI-computed cookie name.
+ * one is), the CLI-computed cookie name, and the secure_auth cookie the
+ * wp-admin pages ask for, with its name.
  */
 
 $uid     = isset( $args[0] ) ? (int) $args[0] : 1;
@@ -31,5 +32,8 @@ echo json_encode(
 		'nonce'       => $nonce,
 		'cookie_name' => LOGGED_IN_COOKIE,
 		'expiration'  => $exp,
+		// The admin cookie wp-admin pages ask for, scoped to /wp-admin, secure as the site is served over HTTPS.
+		'admin_cookie_name' => SECURE_AUTH_COOKIE,
+		'admin_cookie'      => wp_generate_auth_cookie( $uid, $exp, 'secure_auth', $token ),
 	)
 );

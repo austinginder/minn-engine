@@ -218,7 +218,7 @@
         },
         "_minn_assets": {
             "file": "script-loader.php",
-            "statement": "return Minn\\Runtime\\AssetQueue::assets($kind);"
+            "statement": "return Minn\\Runtime\\AssetQueue::follow($kind, $GLOBALS[['script' => 'wp_scripts', 'style' => 'wp_styles'][$kind] ?? ''] ?? null);"
         },
         "_minn_attachment_js_fields": {
             "file": "media.php",

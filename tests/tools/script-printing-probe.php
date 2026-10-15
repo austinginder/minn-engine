@@ -243,4 +243,29 @@ $say('enqueue scripts fired', (static function () {
     return $heard;
 })());
 
+// A plugin that puts registries of its own in the globals (Elementor's editor does, to leave every
+// other plugin's assets out): the functions work on the new ones, told the defaults as they are made,
+// and on the old ones again once they are put back.
+$say('a registry put in the global', (static function () {
+    [$scripts, $styles] = [$GLOBALS['wp_scripts'], $GLOBALS['wp_styles']];
+    $GLOBALS['wp_scripts'] = new WP_Scripts();
+    $GLOBALS['wp_styles'] = new WP_Styles();
+    wp_register_script('zz-swap', '/zz-swap.js', [], '1');
+    wp_enqueue_script('zz-swap');
+    wp_register_style('zz-swap', '/zz-swap.css', [], '1');
+    wp_enqueue_style('zz-swap');
+    $out = [
+        'queued' => [wp_scripts()->queue, wp_styles()->queue],
+        'the old registries untouched' => [isset($scripts->registered['zz-swap']), isset($styles->registered['zz-swap'])],
+        'defaults told' => isset(wp_scripts()->registered['jquery']),
+    ];
+    ob_start();
+    wp_print_scripts(['zz-swap']);
+    wp_print_styles(['zz-swap']);
+    $out['printed'] = (string) preg_replace('#https?://' . preg_quote((string) parse_url(home_url(), PHP_URL_HOST), '#') . '#', '{site}', (string) ob_get_clean());
+    [$GLOBALS['wp_scripts'], $GLOBALS['wp_styles']] = [$scripts, $styles];
+    $out['put back'] = [wp_script_is('zz-swap', 'registered'), wp_style_is('zz-swap', 'registered')];
+    return $out;
+})());
+
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

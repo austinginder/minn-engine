@@ -15,6 +15,25 @@ use Minn\Support\ScriptTag;
  */
 final class AssetQueue
 {
+    /**
+     * The registry the page's functions work on: the one held by the object
+     * in the global a plugin may replace ($wp_scripts, $wp_styles), as the
+     * reference's functions follow that global. Elementor's editor starts
+     * from a new registry of each kind, leaving every other plugin's assets
+     * out; from then on that one is the page's, the engine's own printing
+     * included. Without such an object, the request's own.
+     */
+    public static function follow(string $kind, mixed $global): Assets
+    {
+        $assets = self::assets($kind);
+        $own = is_object($global) ? (fn (): mixed => $this->assets ?? null)->call($global) : null;
+        if (!$own instanceof Assets || $own->kind() !== $kind || $own === $assets) {
+            return $assets;
+        }
+        Runtime::current()->set('assets_' . $kind, $own);
+        return $own;
+    }
+
     /** The request's registry of one kind of asset, script or style, made the first time it is asked for. */
     public static function assets(string $kind): Assets
     {

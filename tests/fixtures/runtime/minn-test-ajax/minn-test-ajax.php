@@ -168,3 +168,11 @@ add_filter('wp_refresh_nonces', static function ($response, $data, $screen) {
     $response['minn_refresh'] = [$screen, array_keys($response), isset($data['minn_test'])];
     return $response;
 }, 10, 3);
+
+// A wp-admin page a plugin answers itself, as a page builder opens its editor
+// (post.php?post=N&action=elementor): the handler prints a page and ends the request.
+add_action('admin_action_minn_door', static function (): void {
+    header('X-Minn-Test: door');
+    echo 'door ' . (is_admin() ? 'admin' : 'front') . ' ' . ($GLOBALS['pagenow'] ?? '') . ' user ' . get_current_user_id() . ' admin_init ' . did_action('admin_init');
+    exit;
+});

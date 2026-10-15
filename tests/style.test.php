@@ -50,7 +50,9 @@ foreach ($files as $path) {
     $source = file_get_contents($path);
     $isEdge = in_array($relative, $edge, true);
 
-    $check("{$relative}: strict_types first", preg_match('/^<\?php\s+declare\(strict_types=1\);/', $source) === 1);
+    // Minn/Runtime/PluginCall.php is the one exception: calls into plugin code are made from a file
+    // without strict types, so PHP converts their arguments as WordPress's files let it.
+    $check("{$relative}: strict_types first", $relative === 'Minn/Runtime/PluginCall.php' ? !str_contains($source, 'strict_types=1') : preg_match('/^<\?php\s+declare\(strict_types=1\);/', $source) === 1);
 
     $expectedNamespace = str_replace('/', '\\', dirname($relative));
     $check(

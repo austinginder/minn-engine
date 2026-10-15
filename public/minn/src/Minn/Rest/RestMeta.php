@@ -140,7 +140,7 @@ final class RestMeta
     public static function prepare(mixed $value, array $field, RestRequest $request): mixed
     {
         if (is_callable($field['prepare_callback'] ?? null)) {
-            return call_user_func($field['prepare_callback'], $value, $request, $field);
+            return \Minn\Runtime\PluginCall::run($field['prepare_callback'], [$value, $request, $field]);
         }
         $schema = $field['single'] ? $field['schema'] : $field['schema']['items'];
         if ($value === '' && in_array($schema['type'] ?? null, ['boolean', 'integer', 'number'], true)) {

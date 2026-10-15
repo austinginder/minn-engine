@@ -191,5 +191,40 @@ foreach ($attempts as [$label, $form, $words]) {
     }
 }
 
+echo "wp-admin pages a plugin answers\n";
+// A page builder opens its editor from a wp-admin page whose action it answers itself
+// (post.php?action=elementor). Both stacks ask for the admin cookie, run admin_init, then the action.
+$door = static function (string $base, string $query, array $headers) use ($ENGINE, $REF): array {
+    $ch = curl_init($base . '/wp-admin/post.php?' . $query);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 30, CURLOPT_HTTPHEADER => $headers]);
+    $raw = (string) curl_exec($ch);
+    $size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    $head = substr($raw, 0, $size);
+    $masked = static fn (string $v): string => str_replace([$ENGINE, $REF, rawurlencode($ENGINE), rawurlencode($REF)], '{site}', $v);
+    return [
+        'status' => curl_getinfo($ch, CURLINFO_RESPONSE_CODE),
+        'location' => preg_match('/^location:\s*(.*)$/mi', $head, $m) === 1 ? $masked(trim($m[1])) : '',
+        'door' => preg_match('/^x-minn-test:\s*(.*)$/mi', $head, $m) === 1 ? trim($m[1]) : '',
+        'body' => $masked(trim(substr($raw, $size))),
+    ];
+};
+$doorMint = json_decode((string) shell_exec("{$WP} eval-file " . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 2 2>/dev/null'), true);
+if (!is_array($doorMint) || empty($doorMint['admin_cookie'])) {
+    $check('an admin session mints on the reference', false);
+} else {
+    $signIn = 'Cookie: wordpress_logged_in_' . md5($ENGINE) . '=' . rawurlencode($doorMint['cookie']) . '; ' . $doorMint['cookie_name'] . '=' . rawurlencode($doorMint['cookie']);
+    $admin = $signIn . '; ' . $doorMint['admin_cookie_name'] . '=' . rawurlencode($doorMint['admin_cookie']);
+    foreach (['signed out' => [], 'the sign-in cookie alone' => [$signIn], 'signed in, with the admin cookie' => [$admin]] as $label => $headers) {
+        $e = $door($ENGINE, 'action=minn_door', $headers);
+        $r = $door($REF, 'action=minn_door', $headers);
+        $check("post.php?action=minn_door, {$label}: the same answer", $e === $r, json_encode(['engine' => $e, 'reference' => $r], JSON_UNESCAPED_SLASHES));
+    }
+    $e = $door($ENGINE, 'action=minn_door', [$admin]);
+    $check('the handler ran as an admin request, after admin_init, for the signed-in user', $e['body'] === 'door admin post.php user 2 admin_init 1' && $e['door'] === 'door', $e['body']);
+    // Where no plugin answers, the engine's admin is Minn Admin; the reference would draw its own screen.
+    $e = $door($ENGINE, 'action=minn_nobody', [$admin]);
+    $check('an action no plugin answers lands in Minn Admin', $e['status'] === 302 && $e['location'] === '{site}/minn-admin/', json_encode($e));
+}
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

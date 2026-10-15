@@ -114,7 +114,7 @@ final class RuntimeRoutes
     {
         $allowed = [];
         foreach ((array) (self::server()->get_routes()[$route] ?? []) as $handler) {
-            $permitted = empty($handler['permission_callback']) || call_user_func($handler['permission_callback'], $wpRequest) === true;
+            $permitted = empty($handler['permission_callback']) || \Minn\Runtime\PluginCall::run($handler['permission_callback'], [$wpRequest]) === true;
             foreach (array_keys((array) ($handler['methods'] ?? [])) as $method) {
                 $allowed[strtoupper((string) $method)] = $permitted;
             }

@@ -232,7 +232,7 @@ final class ThemeSupports
         $rest = (array) ($config['show_in_rest'] ?? []);
         $support = self::unwrapped($support, $config);
         if (is_callable($rest['prepare_callback'] ?? null)) {
-            return call_user_func($rest['prepare_callback'], $support, $config, $feature, $request);
+            return PluginCall::run($rest['prepare_callback'], [$support, $config, $feature, $request]);
         }
         return SiteSchema::sanitize($support, (array) ($rest['schema'] ?? []), (string) ($rest['name'] ?? $feature));
     }

@@ -159,7 +159,7 @@ final class WidgetAreas
         $params[0]['before_widget'] = sprintf((string) $params[0]['before_widget'], $widgetId, $classname);
         $params = Runtime::hooks()->filter('dynamic_sidebar_params', [$params]);
         ob_start();
-        call_user_func_array($widget['callback'], $params);
+        PluginCall::run($widget['callback'], array_values($params));
         return (string) ob_get_clean();
     }
 
@@ -171,7 +171,7 @@ final class WidgetAreas
             return null;
         }
         ob_start();
-        call_user_func_array($control['callback'], (array) $control['params']);
+        PluginCall::run($control['callback'], array_values((array) $control['params']));
         return (string) ob_get_clean();
     }
 

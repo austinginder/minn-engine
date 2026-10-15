@@ -471,7 +471,7 @@ final readonly class Api
                 continue;
             }
             if (is_array($handlers) && isset($handlers['schema']) && is_callable($handlers['schema'])) {
-                $entry['schema'] = call_user_func($handlers['schema']);
+                $entry['schema'] = \Minn\Runtime\PluginCall::run($handlers['schema']);
                 if (!str_contains((string) $route, '(?P<')) {
                     $entry['_links'] = ['self' => [Links::item('self', $this->services->url()->to((string) $route), [])]];
                 }

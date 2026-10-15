@@ -9378,7 +9378,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Cookie.php",
-            "lines": 92,
+            "lines": 117,
             "doc": "The sign-in cookies: username|expiration|token|hmac, with\nkey  = HMAC-md5(username|fragment|expiration|token, the scheme's salt)\nhmac = HMAC-sha256(username|expiration|token, key)\nand the session live in the user's session_tokens store. The engine's own\nsign-in reads the logged_in one; check() judges any scheme's the way\nwp_validate_auth_cookie reports it (probe auth-cookies).",
             "implements": [],
             "extends": null,
@@ -9394,7 +9394,8 @@
             "usedBy": [
                 "Minn\\Auth\\AuthCookies",
                 "Minn\\Auth\\Authenticator",
-                "Minn\\Engine"
+                "Minn\\Engine",
+                "Minn\\Runtime\\AdminActionController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Users $users, Minn\\Auth\\Sessions $sessions)",
@@ -9502,8 +9503,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 40
+                    "line": 41,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -9522,8 +9523,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 51
+                    "line": 49,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "admin",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "admin(array $cookies, bool $secure): ?Minn\\Auth\\Authenticated",
+                    "doc": "The session the admin cookie in a jar proves: the one WordPress asks of\nits admin pages, scoped to /wp-admin and signed under secure_auth over\nHTTPS or auth otherwise, as the sign-in set it. Null when it is missing\nor fails.",
+                    "shapes": [
+                        "@param array<string, string> $cookies"
+                    ],
+                    "params": [
+                        {
+                            "name": "cookies",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "secure",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -9579,8 +9609,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 78
+                    "line": 86,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -9601,8 +9631,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 99
+                    "line": 112,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -9649,8 +9679,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 109
+                    "line": 127,
+                    "end": 134
+                },
+                {
+                    "routes": [],
+                    "name": "hash",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "hash(): string",
+                    "doc": "The site's cookie hash, which every one of its sign-in cookie names ends in.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 35,
+                    "end": 38
                 }
             ]
         },
@@ -35419,6 +35461,7 @@
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\Resolver",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer",
@@ -41094,7 +41137,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 338,
+            "lines": 347,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -41155,10 +41198,12 @@
                 "Minn\\Rest\\Responses",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\Types",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\DebugMode",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Recovery",
@@ -41460,7 +41505,7 @@
                         }
                     ],
                     "line": 276,
-                    "end": 337
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -41556,8 +41601,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 406
+                    "line": 348,
+                    "end": 415
                 }
             ]
         },
@@ -48641,6 +48686,7 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\UserObject",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\HeadLinks",
@@ -63605,6 +63651,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": null,
@@ -66429,6 +66476,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Theme\\MainQueryBridge"
             ],
@@ -66547,6 +66595,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\RequestHeaders",
                 "Minn\\Theme\\FrontLifecycle"
@@ -66950,6 +66999,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
@@ -67788,6 +67838,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
@@ -68486,8 +68537,10 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\DocumentTitle",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\RequestHeaders",
                 "Minn\\Theme\\EmbedRenderer",
@@ -68975,6 +69028,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
@@ -93042,6 +93096,7 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetObject",
                 "Minn\\Rest\\WidgetsController",
+                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Text",
@@ -105244,6 +105299,7 @@
                 "Minn\\RestError",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\Responses",
+                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Support\\Lists"
             ],
@@ -106418,6 +106474,7 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\MetaKeys",
+                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Slashes"
@@ -108093,7 +108150,9 @@
             "doc": "The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Runtime\\PluginCall"
+            ],
             "usedBy": [],
             "constructor": null,
             "cases": [],
@@ -108953,6 +109012,7 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\Responses",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -118242,6 +118302,151 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\AdminActionController",
+            "short": "AdminActionController",
+            "namespace": "Minn\\Runtime",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Runtime/AdminActionController.php",
+            "lines": 60,
+            "doc": "The wp-admin pages a plugin answers itself. The admin is Minn Admin, so\nthe engine draws no wp-admin screen, but a page builder opens its editor\nfrom one: Elementor's \"Edit with Elementor\" is post.php?post=N&action=elementor,\nwhose handler (admin_action_elementor) prints a whole page of its own and\nends the request before any screen is drawn.\n\nA request to a wp-admin page that names an action boots as an admin\nrequest, as the reference's does. The admin cookie (scoped to /wp-admin)\nis asked for, for the user the request is read as; without it the\nvisitor signs in and comes back. admin_init fires, then the action's\nhandlers. When no plugin handles the action, or its handlers return, the\nrequest lands in Minn Admin, where every other wp-admin address goes.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\Cookie",
+                "Minn\\Content\\Reader",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\NoCache",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Engine"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Auth\\Cookie $cookie, Minn\\Front\\Permalinks $permalinks)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "cookie",
+                        "type": "Minn\\Auth\\Cookie",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 36,
+                "end": 40
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PAGE",
+                    "value": "'#^/wp-admin/[a-z0-9-]+\\\\.php$#'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "cookie",
+                    "type": "Minn\\Auth\\Cookie",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "claims",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "claims(Minn\\Http\\Request $request): bool",
+                    "doc": "Whether a request is for a wp-admin page with an action to run, which the runtime boots as an admin request.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 46
+                },
+                {
+                    "routes": [
+                        "* /wp-admin/{page:[a-z0-9-]+\\.php} (public)"
+                    ],
+                    "name": "dispatch",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "dispatch(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Runs the handlers a plugin hooked for the action, or sends the visitor on.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "action",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "action(Minn\\Http\\Request $request): ?string",
+                    "doc": "The action the request names, the posted field over the query's, or null when there is none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 90
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\AjaxController",
             "short": "AjaxController",
             "namespace": "Minn\\Runtime",
@@ -118266,6 +118471,7 @@
             ],
             "usedBy": [
                 "Minn\\Engine",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\Constants"
             ],
             "constructor": null,
@@ -119114,7 +119320,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AssetQueue.php",
-            "lines": 60,
+            "lines": 79,
             "doc": "The scripts and styles a request queues, as WordPress's asset functions\nqueue them: each kind's registry kept for the request, a handle queued\n(with the notice for one queued before init), and a script's element,\nfrom a file or inline, through the attribute filters.",
             "implements": [],
             "extends": null,
@@ -119137,6 +119343,33 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "follow",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "follow(string $kind, mixed $global): Minn\\Runtime\\Assets",
+                    "doc": "The registry the page's functions work on: the one held by the object\nin the global a plugin may replace ($wp_scripts, $wp_styles), as the\nreference's functions follow that global. Elementor's editor starts\nfrom a new registry of each kind, leaving every other plugin's assets\nout; from then on that one is the page's, the engine's own printing\nincluded. Without such an object, the request's own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "global",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 35
+                },
+                {
+                    "routes": [],
                     "name": "assets",
                     "static": true,
                     "visibility": "public",
@@ -119152,8 +119385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 19,
-                    "end": 28
+                    "line": 38,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -119179,8 +119412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 46
+                    "line": 54,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -119199,8 +119432,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 53
+                    "line": 68,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -119219,8 +119452,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 60
+                    "line": 75,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -119239,8 +119472,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 82,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -119266,8 +119499,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 74
+                    "line": 88,
+                    "end": 93
                 }
             ]
         },
@@ -127953,6 +128186,7 @@
                 "Minn\\Media\\FileTypes",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\FileTypeCheck",
+                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Accents",
                 "Minn\\Support\\Paths"
@@ -130154,7 +130388,8 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Runtime\\Notices"
+                "Minn\\Runtime\\Notices",
+                "Minn\\Runtime\\PluginCall"
             ],
             "usedBy": [
                 "Minn\\Runtime\\PluginActivation",
@@ -131880,6 +132115,125 @@
                     ],
                     "line": 97,
                     "end": 112
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\LegacyPack",
+            "short": "LegacyPack",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/LegacyPack.php",
+            "lines": 61,
+            "doc": "WordPress's own browser files, for the plugins whose screens are built on\nthem: a page builder's editor loads WordPress's media library, its classic\neditor and the libraries under them, by the addresses WordPress serves\nthem from (/wp-includes/js/..., /wp-admin/css/...), and some of that code\nnames those addresses itself.\n\nThe engine carries none of them. They are GPL, and they come with the\nMinn Legacy Pack, a plugin the site installs like any other (the way a\nsite installs the script pack, ScriptPack), which keeps them under the\nsame paths and registers their handles. While the pack is active the\nengine answers those addresses from it, ahead of loading any plugin, so a\npage that loads a hundred of them stays fast. A file the engine serves\nitself (its jQuery, its embed scripts) is not in the pack and still comes\nfrom the engine.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Response",
+                "Minn\\Runtime\\ScriptPack"
+            ],
+            "usedBy": [
+                "Minn\\Engine"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PLUGIN",
+                    "value": "'minn-legacy-pack/minn-legacy-pack.php'",
+                    "doc": "The pack, as the active plugins list names it.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "PATH",
+                    "value": "'#^/(?:wp-includes/(?:js|css|images|fonts)|wp-admin/(?:js|css|images))/[A-Za-z0-9._/-]+$#'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "TYPES",
+                    "value": "array (   'js' => 'application/javascript',   'css' => 'text/css',   'png' => 'image/png',   'gif' => 'image/gif',   'jpg' => 'image/jpeg',   'jpeg' => 'image/jpeg',   'svg' => 'image/svg+xml',   'webp' => 'image/webp',   'ico' => 'image/x-icon',   'woff' => 'font/woff',   'woff2' => 'font/woff2',   'ttf' => 'font/ttf',   'eot' => 'application/vnd.ms-fontobject',   'json' => 'application/json',   'html' => 'text/html; charset=UTF-8',   'txt' => 'text/plain; charset=UTF-8', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "claims",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "claims(string $path): bool",
+                    "doc": "Whether a path is one of the addresses WordPress serves its browser files from.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "file",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "file(string $contentDir, string $path, array $activePlugins): ?string",
+                    "doc": "The file in the active pack a path names, or null: the pack is not\nactive, the file is not in it, or its type is not one a browser loads.",
+                    "shapes": [
+                        "@param list<mixed> $activePlugins the active_plugins option"
+                    ],
+                    "params": [
+                        {
+                            "name": "contentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "activePlugins",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": "the active_plugins option"
+                        }
+                    ],
+                    "line": 63,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "response",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "response(string $file): Minn\\Http\\Response",
+                    "doc": "The file as the answer to the request for it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 84
                 }
             ]
         },
@@ -137911,6 +138265,66 @@
                     "params": [],
                     "line": 87,
                     "end": 91
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\PluginCall",
+            "short": "PluginCall",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PluginCall.php",
+            "lines": 12,
+            "doc": "Calls code a plugin, theme or drop-in registered (a hook callback, a\nshortcode, a widget, a REST permission or field callback), as WordPress\ncalls it. PHP judges a call's argument types by the file the call is made\nfrom: the engine's own files declare strict types, so a callback typed\n`int $post_id` handed the string \"3494\" would throw a TypeError there,\nwhere WordPress's untyped files let PHP convert it (Elementor's heartbeat\npasses the post ID it was posted, a string, to just such a callback).\nEvery call into extension code is made from here, the one engine file\nthat leaves strict types off.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\RestMeta",
+                "Minn\\Rest\\RouteIndex",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\FileNames",
+                "Minn\\Runtime\\Hooks",
+                "Minn\\Runtime\\Shortcodes",
+                "Minn\\Runtime\\TermWrites",
+                "Minn\\Runtime\\ThemeSupports",
+                "Minn\\Runtime\\WidgetAreas"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "run(callable $callback, array $args = array ( )): mixed",
+                    "doc": "Runs a callback extension code registered, with the arguments given.",
+                    "shapes": [
+                        "@param list<mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "callback",
+                            "type": "callable",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 28
                 }
             ]
         },
@@ -149114,6 +149528,7 @@
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\ApplicationPasswordEvents",
                 "Minn\\Runtime\\ApplicationPasswordRecords",
@@ -150928,7 +151343,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Cli\\MinnCommand"
+                "Minn\\Cli\\MinnCommand",
+                "Minn\\Runtime\\LegacyPack"
             ],
             "constructor": null,
             "cases": [],
@@ -151100,6 +151516,7 @@
             "uses": [
                 "Minn\\Html",
                 "Minn\\Runtime\\KsesRules",
+                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\KsesAttributes"
             ],
@@ -157441,6 +157858,7 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Meta",
                 "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
@@ -158037,6 +158455,7 @@
                 "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Notices",
+                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -162353,6 +162772,7 @@
                 "Minn\\Objects\\Widget",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Lists"
             ],

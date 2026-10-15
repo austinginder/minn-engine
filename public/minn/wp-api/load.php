@@ -533,8 +533,9 @@ function _minn_start_object_cache(): void
 
 /**
  * @internal The script the reference's web server would have run for a
- * request, where plugins look for it: $pagenow, and for admin-ajax.php the
- * server's script variables, which the engine's own index.php would
+ * request, where plugins look for it: $pagenow, and for admin-ajax.php and
+ * the other wp-admin pages (post.php, whose actions a page builder answers)
+ * the server's script variables, which the engine's own index.php would
  * otherwise fill (WooCommerce exempts the endpoint from its admin guard by
  * SCRIPT_FILENAME). wp-login.php and wp-cron.php are left unnamed for now:
  * hide-login plugins and the CaptainCore helper take over a sign-in when
@@ -546,14 +547,14 @@ function _minn_script_globals(string $path): void
     if ($path === '/wp-login.php' || $path === '/wp-cron.php') {
         return;
     }
-    if ($path !== '/wp-admin/admin-ajax.php') {
+    if (preg_match('#^/wp-admin/([a-z0-9-]+\.php)$#', $path, $page) !== 1) {
         $GLOBALS['pagenow'] ??= 'index.php';
         return;
     }
-    $GLOBALS['pagenow'] ??= 'admin-ajax.php';
-    $_SERVER['SCRIPT_FILENAME'] = ABSPATH . 'wp-admin/admin-ajax.php';
-    $_SERVER['SCRIPT_NAME'] = '/wp-admin/admin-ajax.php';
-    $_SERVER['PHP_SELF'] = '/wp-admin/admin-ajax.php';
+    $GLOBALS['pagenow'] ??= $page[1];
+    $_SERVER['SCRIPT_FILENAME'] = ABSPATH . 'wp-admin/' . $page[1];
+    $_SERVER['SCRIPT_NAME'] = '/wp-admin/' . $page[1];
+    $_SERVER['PHP_SELF'] = '/wp-admin/' . $page[1];
 }
 
 /**

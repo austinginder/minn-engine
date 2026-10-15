@@ -345,7 +345,7 @@ final class Hooks
                     $args[0] = $value;
                 }
                 $passed = $accepted <= 0 ? [] : array_slice($args, 0, $accepted);
-                $result = $callback(...$passed);
+                $result = PluginCall::run($callback, $passed);
                 if ($isFilter) {
                     $value = $result;
                 }

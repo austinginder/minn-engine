@@ -40,7 +40,7 @@ final class RegisteredFields
             if (empty($options['get_callback']) || !self::inContext($options, $context) || ($wanted !== null && !Responses::fieldIncluded((string) $name, $wanted))) {
                 continue;
             }
-            $value = call_user_func($options['get_callback'], $handed, $name, $request, $type);
+            $value = \Minn\Runtime\PluginCall::run($options['get_callback'], [$handed, $name, $request, $type]);
             $item[$name] = $value;
             $handed[$name] = $value;
         }
@@ -57,7 +57,7 @@ final class RegisteredFields
             if (empty($options['update_callback']) || !isset($request[$name])) {
                 continue;
             }
-            $result = call_user_func($options['update_callback'], $request[$name], $object, $name, $request, $type);
+            $result = \Minn\Runtime\PluginCall::run($options['update_callback'], [$request[$name], $object, $name, $request, $type]);
             if ($result instanceof Errors) {
                 throw self::refusal($result);
             }

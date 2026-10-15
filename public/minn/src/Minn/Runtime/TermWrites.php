@@ -137,7 +137,7 @@ final class TermWrites
         }
         $callback = $tax->update_count_callback ?? '';
         if (is_callable($callback)) {
-            $callback($terms, $tax);
+            PluginCall::run($callback, [$terms, $tax]);
         } elseif (array_filter((array) $tax->object_type, static fn (mixed $type): bool => Registered::postTypeExists(explode(':', (string) $type)[0])) !== []) {
             self::countPublished($terms, $tax);
         } else {

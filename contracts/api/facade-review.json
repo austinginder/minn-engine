@@ -16697,8 +16697,8 @@
             "_minn_script_globals": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "sets $pagenow and the script server variables plugins read for the request's script",
-                "body": "7d3d0800c2e7"
+                "why": "sets $pagenow and the script server variables plugins read for the request's script, admin-ajax.php and the other wp-admin pages included",
+                "body": "75f5002a2f50"
             },
             "_minn_start_object_cache": {
                 "verdict": "keep",
@@ -20252,8 +20252,8 @@
             "wp_scripts": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "makes the global $wp_scripts once, wiring its defaults on init, and tells api-fetch once",
-                "body": "c3fe368a464d"
+                "why": "makes the global $wp_scripts once, wiring its defaults on init, and tells api-fetch once for each registry the global holds",
+                "body": "8537ca81d6fe"
             },
             "wp_style_is": {
                 "verdict": "move",

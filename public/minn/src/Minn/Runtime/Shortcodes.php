@@ -161,7 +161,7 @@ final class Shortcodes
         if ($early !== false) {
             return $early;
         }
-        $output = $m[1] . ($this->tags[$tag])($attributes, $m[5] ?? null, $tag) . ($m[6] ?? '');
+        $output = $m[1] . PluginCall::run($this->tags[$tag], [$attributes, $m[5] ?? null, $tag]) . ($m[6] ?? '');
         return $hooks->filter('do_shortcode_tag', [$output, $tag, $attributes, $m]);
     }
 

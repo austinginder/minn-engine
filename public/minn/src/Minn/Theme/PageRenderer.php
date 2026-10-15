@@ -154,13 +154,16 @@ final readonly class PageRenderer
             RenderState::current()->leave('template');
         }
         [$body, $skipTarget] = self::skipLinkTarget($body);
-        $bodyClass = implode(' ', $this->bodyClasses($resolution, $coreClasses));
         // The stylesheet comes after the body: it lists the containers and
         // variations that rendering discovered.
         $styles = new GlobalStyles($this->theme, $this->templates->userStyles());
         $bar = $resolution->preview ? null : $this->bar;
+        $head = $this->head($resolution, $styles, $bar);
+        // The body classes are asked for after wp_head, as the reference's canvas asks for them:
+        // a plugin may add one from a head hook (Elementor adds its kit's).
+        $bodyClass = implode(' ', $this->bodyClasses($resolution, $coreClasses));
         $document = '<!DOCTYPE html>' . "\n" . '<html ' . SiteLanguage::attributes() . '>' . "\n"
-            . $this->head($resolution, $styles, $bar)
+            . $head
             . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
             . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#' . Html::attr($skipTarget) . '">' . Html::esc(\Minn\I18n\Gettext::text('Skip to content')) . '</a>'
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"

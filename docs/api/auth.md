@@ -11,7 +11,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
 | [`Can`](#can) | final class | 51 | Whether a user may do something, as WordPress decides it: the capability |
 | [`Capabilities`](#capabilities) | final readonly class | 277 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
-| [`Cookie`](#cookie) | final readonly class | 92 | The sign-in cookies: username\|expiration\|token\|hmac, with |
+| [`Cookie`](#cookie) | final readonly class | 117 | The sign-in cookies: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 82 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 46 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
@@ -384,7 +384,7 @@ and the session live in the user's session_tokens store. The engine's own
 sign-in reads the logged_in one; check() judges any scheme's the way
 wp_validate_auth_cookie reports it (probe auth-cookies).
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Engine`
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Engine`, `Minn\Runtime\AdminActionController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Sessions $sessions)
@@ -402,6 +402,15 @@ A sign-in cookie value for a user, expiry, and session token.
 ### `validate(string $value): ?Minn\Auth\Authenticated`
 
 The session a logged_in cookie value proves, or null when any part fails.
+
+### `admin(array $cookies, bool $secure): ?Minn\Auth\Authenticated`
+
+The session the admin cookie in a jar proves: the one WordPress asks of
+its admin pages, scoped to /wp-admin and signed under secure_auth over
+HTTPS or auth otherwise, as the sign-in set it. Null when it is missing
+or fails.
+
+- `@param array<string, string> $cookies`
 
 ### `check(string $username, string $expiration, string $token, string $hmac, string $scheme, int $grace = 0): array`
 
@@ -423,6 +432,8 @@ derived from a different host.
 ### static `signature(string $username, string $fragment, int $expiration, string $token, string $scheme = 'logged_in'): ?string`
 
 A cookie's hmac under a scheme's salt, or null for a scheme with none.
+
+Internals: `hash()` (private, line 35)
 
 
 ## FastHash

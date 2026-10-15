@@ -28,7 +28,13 @@ final readonly class Cookie
     /** The cookie name this site uses: a hash of the siteurl option. */
     public function name(): string
     {
-        return 'wordpress_logged_in_' . md5($this->db->option('siteurl') ?? '');
+        return 'wordpress_logged_in_' . $this->hash();
+    }
+
+    /** The site's cookie hash, which every one of its sign-in cookie names ends in. */
+    private function hash(): string
+    {
+        return md5($this->db->option('siteurl') ?? '');
     }
 
     /** A sign-in cookie value for a user, expiry, and session token. */
@@ -47,6 +53,25 @@ final readonly class Cookie
             return null;
         }
         [$verdict, $user] = $this->check($parts[0], $parts[1], $parts[2], $parts[3], 'logged_in');
+        return $verdict === 'valid' && $user !== null ? new Authenticated($user, $parts[2]) : null;
+    }
+
+    /**
+     * The session the admin cookie in a jar proves: the one WordPress asks of
+     * its admin pages, scoped to /wp-admin and signed under secure_auth over
+     * HTTPS or auth otherwise, as the sign-in set it. Null when it is missing
+     * or fails.
+     *
+     * @param array<string, string> $cookies
+     */
+    public function admin(array $cookies, bool $secure): ?Authenticated
+    {
+        $value = $cookies[($secure ? 'wordpress_sec_' : 'wordpress_') . $this->hash()] ?? null;
+        $parts = is_string($value) ? explode('|', $value) : [];
+        if (count($parts) !== 4) {
+            return null;
+        }
+        [$verdict, $user] = $this->check($parts[0], $parts[1], $parts[2], $parts[3], $secure ? 'secure_auth' : 'auth');
         return $verdict === 'valid' && $user !== null ? new Authenticated($user, $parts[2]) : null;
     }
 

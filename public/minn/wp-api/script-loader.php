@@ -5,10 +5,10 @@ use Minn\I18n\ScriptTranslations;
 use Minn\Runtime\Assets;
 use Minn\Runtime\Runtime;
 
-/** @internal */
+/** @internal The page's registry of a kind, the one in the global a plugin may have replaced (Minn\Runtime\AssetQueue::follow). */
 function _minn_assets(string $kind): Assets
 {
-    return Minn\Runtime\AssetQueue::assets($kind);
+    return Minn\Runtime\AssetQueue::follow($kind, $GLOBALS[['script' => 'wp_scripts', 'style' => 'wp_styles'][$kind] ?? ''] ?? null);
 }
 
 /** @internal a registered src as the URL the tag prints */
@@ -397,7 +397,7 @@ function wp_default_styles($styles)
 {
 }
 
-/** The scripts registry; made, it tells wp_default_scripts (again on init, as the reference's constructor does). */
+/** The scripts registry; made, it tells wp_default_scripts (again on init, as the reference's constructor does), and apiFetch is told once per registry (a plugin may make a new one). */
 function wp_scripts()
 {
     if (!isset($GLOBALS['wp_scripts']) || !$GLOBALS['wp_scripts'] instanceof WP_Scripts) {
@@ -405,8 +405,8 @@ function wp_scripts()
         $GLOBALS['wp_scripts'] = new WP_Scripts(_minn_assets('script'));
         _minn_default_dependencies('wp_default_scripts', $GLOBALS['wp_scripts']);
     }
-    if (Runtime::booted() && Runtime::current()->get('api_fetch_told') === false) {
-        Runtime::current()->set('api_fetch_told', true);
+    if (Runtime::booted() && ($told = Runtime::current()->get('api_fetch_told')) !== null && !in_array(spl_object_id($GLOBALS['wp_scripts']), (array) $told, true)) {
+        Runtime::current()->set('api_fetch_told', [...(array) $told, spl_object_id($GLOBALS['wp_scripts'])]);
         _minn_tell_api_fetch();
     }
     return $GLOBALS['wp_scripts'];

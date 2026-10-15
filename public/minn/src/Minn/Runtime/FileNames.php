@@ -86,7 +86,7 @@ final class FileNames
         $listed = $dir === $uploads ? $hooks->filter('pre_wp_unique_filename_file_list', [null, $dir, $filename]) : null;
         $taken = is_array($listed) ? static fn (string $candidate): bool => in_array($candidate, $listed, true) : static fn (string $candidate): bool => file_exists($dir . '/' . $candidate);
         if ($callback !== null && is_callable($callback)) {
-            $candidate = (string) $callback($dir, $filename, $ext);
+            $candidate = (string) PluginCall::run($callback, [$dir, $filename, $ext]);
         } else {
             $number = preg_match('/-(?:\d+x\d+|scaled|rotated)$/', $name) === 1 ? 1 : '';
             $candidate = $name . ($number === '' ? '' : '-' . $number) . strtolower($ext);

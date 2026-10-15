@@ -16563,6 +16563,70 @@ the imports that name no class, a folder's own copy); unit `releases` (a
 copy read for another version is read again); suite `admin-surfaces`
 (the changelog is the bundled one); suite `hook-parity` (both scenarios).
 
+## Page builders' editors: the wp-admin doorway and the Legacy Pack (2026-10-14)
+
+Austin, 2026-10-14: page builders (Elementor first) work on Minn without WordPress. "Edit with
+Elementor" is `wp-admin/post.php?post=N&action=elementor`, which the engine sent to Minn Admin.
+
+**The doorway (`Runtime\AdminActionController`).** A request to a wp-admin page that names an
+`action` boots as an admin request, as admin-ajax.php does (`isAdmin`, `$pagenow` names the page,
+the server's script variables follow). It asks for the admin cookie (`Auth\Cookie::admin`, the
+secure_auth one scoped to /wp-admin) for the user the request is read as; without it the
+visitor goes to sign in with `redirect_to` back, as the reference's auth_redirect sends them.
+admin_init fires, then `admin_action_{action}`. Elementor's handler prints a whole page of its
+own (its `wp_head`/`wp_footer` emptied and refilled with the front's printers) and ends the
+request, so no wp-admin screen is drawn. An action no plugin answers, or handlers that return,
+land in Minn Admin as every other wp-admin address does. Suite ajax compares the three cases
+with the reference (signed out, the logged-in cookie alone, signed in).
+
+**WordPress's browser files: the Minn Legacy Pack.** An editor like Elementor's loads
+WordPress's media library, its classic editor and the libraries under them. They are GPL and
+the engine carries none of them. The Minn Legacy Pack is a separate GPL plugin (its own
+repository) holding WordPress's js/css/images/fonts under the paths WordPress serves them from
+and a manifest of every handle WordPress registers for them (captured from the release with
+`bin/capture.php`). The plugin registers its handles on `wp_default_scripts` and
+`wp_default_styles`, leaving any handle the engine registers to the engine. While it is active,
+`Runtime\LegacyPack` answers `/wp-includes/{js,css,images,fonts}/...` and
+`/wp-admin/{js,css,images}/...` from the pack's folder at the top of `Engine::handle`, before
+any plugin loads (about 15 ms a file). The engine's own files at those addresses (its jQuery,
+its embed scripts) are not in the pack and keep coming from the engine. The same model as the
+site's script pack (`ScriptPack`), larger and installed as a plugin.
+
+**Three engine bugs the editor found, all general:**
+
+- *A registry a plugin puts in the global.* Elementor's editor starts from a new `WP_Scripts`
+  and `WP_Styles` (`$wp_scripts = new WP_Scripts()`), leaving every other plugin's assets out.
+  The facade's asset functions kept working on the request's first registry, so nothing the
+  editor queued was printed. They now follow the object in `$wp_scripts` / `$wp_styles`
+  (`AssetQueue::follow`), and apiFetch is told where the REST API is once for each registry
+  the global holds (without it, Elementor's requests lost `/wp-json`). Probe script-printing.
+- *Strict types in calls to plugin code.* PHP judges a call's argument types by the file the
+  call is made from. The engine's files are strict, so a hook callback typed `int $post_id`
+  handed "3494" threw a TypeError where WordPress's untyped files let PHP convert it
+  (Elementor's heartbeat hands the posted post ID to such a callback; admin-ajax answered
+  500). Every call into extension code (hook callbacks, shortcodes, widgets, REST permission,
+  schema and field callbacks, meta and theme-support prepare callbacks, term count callbacks,
+  unique-filename callbacks) goes through `Runtime\PluginCall`, the one engine file without
+  strict types (style names it). Unit plugin-call.
+- *Body classes asked for before wp_head.* A block theme's page asked for its body classes
+  before running wp_head; the reference's canvas runs wp_head first. Elementor adds its kit's
+  class (`elementor-kit-N`) from a wp_head callback, so it was missing on every page once a
+  kit existed. Suite dogfood.
+
+Open from the same site: with Elementor active, its image-loading module turns the core
+fetchpriority logic off and adds `fetchpriority="high"` itself through `wp_content_img_tag`;
+the reference's first featured image on a block-theme archive gets it and the engine's does
+not (dogfood /news/).
+
+Where it stands: with the pack active, Elementor's editor loads on the engine (its app
+starts, its preview frame loads, its heartbeat answers through admin-ajax); saving is not yet
+tried. Owed: `wp_enqueue_media()` and
+`wp_print_media_templates()` are still dead ends (the media library: the engine to queue and
+configure it, the pack to supply WordPress's templates and strings through
+`print_media_templates` and `media_view_strings`); the classic editor (`wp_editor()`,
+`_WP_Editors`) for text widgets; the preview frame's `.elementor-N` wrapper; the media
+library's admin-ajax actions and `async-upload.php`.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

@@ -21,7 +21,7 @@ final class RouteIndex
     {
         $data = ['namespace' => (string) ($options['namespace'] ?? ''), 'methods' => [], 'endpoints' => []];
         if (isset($options['schema']) && $context === 'help') {
-            $data['schema'] = call_user_func($options['schema']);
+            $data['schema'] = \Minn\Runtime\PluginCall::run($options['schema']);
         }
         foreach ($callbacks as $callback) {
             if (empty($callback['show_in_index'])) {
