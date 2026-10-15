@@ -406,7 +406,8 @@
         "probe:rest-protected-comments",
         "probe:reset-key-changes",
         "probe:builtin-type-caps",
-        "probe:sweep-rules"
+        "probe:sweep-rules",
+        "probe:attachment-model"
     ],
     "hooks": {
         "_get_page_link": {
@@ -458,6 +459,7 @@
         },
         "add_trashed_suffix_to_trashed_posts": {
             "probe:admin-bar-remaining": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-renderers": "not fired",
             "probe:block-renderers-rendered": "not fired",
@@ -840,6 +842,7 @@
             "probe:user-more": "not fired"
         },
         "attachment_fields_to_edit": {
+            "probe:attachment-model": "not fired",
             "probe:media": "not fired"
         },
         "attribute_escape": {
@@ -1045,6 +1048,7 @@
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:auth-cookies": "not fired",
             "probe:block-renderers": "not fired",
             "probe:block-supports": "not fired",
@@ -1474,6 +1478,7 @@
         "clean_object_term_cache": {
             "probe:admin-bar-remaining": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -1642,6 +1647,7 @@
         },
         "clean_url": {
             "probe:account-flows": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-hooks": "not fired",
             "probe:builtin-type-caps": "not fired",
             "probe:category-menu-helpers": "not fired",
@@ -2988,6 +2994,7 @@
             "probe:wp-theme": "not fired"
         },
         "display_media_states": {
+            "probe:attachment-model": "not fired",
             "probe:media": "not fired"
         },
         "display_post_states": {
@@ -3363,6 +3370,7 @@
             "http:sitemap-posts": "not fired"
         },
         "file_is_displayable_image": {
+            "probe:attachment-model": "not fired",
             "probe:image-pipeline": "not fired",
             "probe:media": "not fired",
             "probe:rest-attachments-controller": "not fired",
@@ -3887,6 +3895,7 @@
             "probe:functions-remaining": "not fired"
         },
         "get_header_image": {
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-renderers": "not fired",
             "probe:block-renderers-rendered": "not fired",
@@ -3922,6 +3931,7 @@
             "probe:widget-classes": "not fired"
         },
         "get_media_item_args": {
+            "probe:attachment-model": "not fired",
             "probe:media": "not fired"
         },
         "get_meta_sql": {
@@ -4114,6 +4124,7 @@
             "http:sitemap-posts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:archive-links": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-hooks": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -5522,6 +5533,9 @@
             "probe:functions-remaining": "not fired",
             "probe:upload-filters": "not fired"
         },
+        "image_get_intermediate_size": {
+            "probe:attachment-model": "fired here only"
+        },
         "image_memory_limit": {
             "probe:plugin-queue3": "fired here only"
         },
@@ -5747,6 +5761,7 @@
             "http:sitemap-posts": "not fired",
             "probe:admin-bar-remaining": "not fired",
             "probe:archive-links": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-hooks": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -5928,6 +5943,7 @@
             "probe:abilities-registry": "not fired",
             "probe:abilities-rest-controllers": "not fired",
             "probe:archive-links": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:breadcrumbs": "not fired",
             "probe:canonical-helpers": "not fired",
             "probe:comment-remaining": "not fired",
@@ -6633,6 +6649,7 @@
             "probe:tail-helpers": "not fired"
         },
         "media_meta": {
+            "probe:attachment-model": "not fired",
             "probe:media": "not fired"
         },
         "mejs_settings": {
@@ -6743,6 +6760,7 @@
             "probe:widgets-more": "not fired"
         },
         "meta_query_find_compatible_table_alias": {
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -7408,6 +7426,7 @@
             "http:rest-posts": "not fired",
             "probe:admin-bar": "fired here only",
             "probe:admin-bar-remaining": "fired here only",
+            "probe:attachment-model": "fired here only",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks": "not fired",
@@ -7911,6 +7930,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -8053,6 +8073,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -8373,6 +8394,7 @@
             "http:front-single": "not fired",
             "probe:admin-bar-remaining": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -8502,6 +8524,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -8644,6 +8667,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -8786,6 +8810,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -8928,6 +8953,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -9070,6 +9096,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -9212,6 +9239,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -9354,6 +9382,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -9496,6 +9525,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -9638,6 +9668,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -9780,6 +9811,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -9922,6 +9954,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -10064,6 +10097,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -10206,6 +10240,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -10405,6 +10440,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -10549,6 +10585,7 @@
             "http:front-page": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -10687,6 +10724,7 @@
         "posts_results": {
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -10833,6 +10871,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -11036,6 +11075,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -11178,6 +11218,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -11320,6 +11361,7 @@
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -11488,6 +11530,7 @@
             "probe:admin-bar-remaining": "fired here only",
             "probe:admin-terms": "fired here only",
             "probe:application-passwords-api": "fired here only",
+            "probe:attachment-model": "fired here only",
             "probe:auth-cookies": "fired here only",
             "probe:av-shortcodes": "not fired",
             "probe:block-helpers-remaining": "not fired",
@@ -11735,6 +11778,7 @@
         "pre_get_blogs_of_user": {
             "http:admin-front-single": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:link-template-remaining": "not fired",
             "probe:symbols": "not fired"
         },
@@ -11744,6 +11788,7 @@
             "probe:admin-bar-remaining": "not fired",
             "probe:admin-terms": "not fired",
             "probe:application-passwords-api": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:auth-cookies": "not fired",
             "probe:avif-connectors-helpers": "not fired",
@@ -12229,6 +12274,7 @@
             "probe:admin-bar-remaining": "not fired",
             "probe:admin-terms": "not fired",
             "probe:application-passwords-api": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:auth-cookies": "not fired",
             "probe:avif-connectors-helpers": "not fired",
@@ -14529,6 +14575,7 @@
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:auth-cookies": "not fired",
             "probe:av-shortcodes": "not fired",
@@ -14877,6 +14924,7 @@
         "sanitize_trackback_urls": {
             "probe:admin-bar-remaining": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -15396,6 +15444,7 @@
         "split_the_query": {
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-renderers": "not fired",
             "probe:block-supports": "not fired",
@@ -15555,6 +15604,7 @@
         },
         "stylesheet": {
             "probe:admin-bar-remaining": "not fired",
+            "probe:attachment-model": "fired here only",
             "probe:audit-lows": "fired here only",
             "probe:block-renderers": "fired here only",
             "probe:breadcrumbs": "not fired",
@@ -16106,6 +16156,7 @@
         "the_posts": {
             "http:rest-search": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
             "probe:block-renderers": "not fired",
@@ -16618,6 +16669,7 @@
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
             "probe:application-passwords-api": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:auth-cookies": "not fired",
             "probe:block-bindings": "not fired",
@@ -17124,6 +17176,7 @@
             "http:sitemap-posts": "not fired"
         },
         "wp_audio_extensions": {
+            "probe:attachment-model": "fired here only",
             "probe:audit-lows": "fired here only",
             "probe:block-renderers": "fired here only",
             "probe:block-renderers-rendered": "fired here only",
@@ -17449,6 +17502,7 @@
             "http:sitemap-posts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:application-passwords-api": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -17647,6 +17701,7 @@
         "wp_checkdate": {
             "probe:admin-bar-remaining": "not fired",
             "probe:admin-terms": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -18058,6 +18113,7 @@
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
@@ -18691,6 +18747,7 @@
             "probe:admin": "not fired",
             "probe:admin-bar": "fired here only",
             "probe:admin-bar-remaining": "fired here only",
+            "probe:attachment-model": "fired here only",
             "probe:audit-lows": "fired here only",
             "probe:auth-cookies": "fired here only",
             "probe:block-template-helpers": "fired here only",
@@ -19347,6 +19404,7 @@
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
             "probe:archive-links": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
@@ -19623,6 +19681,7 @@
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-helpers-remaining": "not fired",
             "probe:block-hooks-rest": "not fired",
@@ -20319,6 +20378,7 @@
             "http:sitemap-posts": "not fired"
         },
         "wp_video_extensions": {
+            "probe:attachment-model": "fired here only",
             "probe:audit-lows": "fired here only",
             "probe:block-renderers": "fired here only",
             "probe:block-renderers-rendered": "fired here only",
