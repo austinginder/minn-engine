@@ -56,11 +56,27 @@ final class Installer
     }
 
     /**
-     * The bin entry: runs one command against a webroot and returns the exit code.
+     * The bin entry: runs one command against a webroot, prints its report
+     * and returns the exit code.
      *
      * @param list<string> $argv
      */
     public static function main(array $argv, string $engineDir): int
+    {
+        ['code' => $code, 'lines' => $lines] = self::run($argv, $engineDir);
+        fwrite(STDOUT, implode("\n", $lines) . "\n");
+        return $code;
+    }
+
+    /**
+     * Runs one command against a webroot and hands back its exit code and
+     * report, printing nothing: how Minn Admin switches a WordPress site
+     * from a web request, where there is no STDOUT.
+     *
+     * @param list<string> $argv
+     * @return array{code: int, lines: list<string>}
+     */
+    public static function run(array $argv, string $engineDir): array
     {
         $command = $argv[0] ?? 'help';
         $root = isset($argv[1]) && !str_starts_with($argv[1], '--') ? rtrim($argv[1], '/') : getcwd();
@@ -84,8 +100,7 @@ final class Installer
             $self->say('Error: ' . $e->getMessage());
             $code = 1;
         }
-        fwrite(STDOUT, implode("\n", $self->lines) . "\n");
-        return $code;
+        return ['code' => $code, 'lines' => $self->lines];
     }
 
     /** What the site will and will not get; the worst light decides install. The report lands in the output. */

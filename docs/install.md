@@ -31,6 +31,25 @@ The four verbs also run through WP-CLI once `minn/cli.php` is loaded: on a
 WordPress site `wp --require=/path/to/minn/cli.php minn preflight`; on an
 engine site simply `wp minn status`.
 
+## From Minn Admin on WordPress
+
+With Minn Admin active on a WordPress site, WP-CLI has the switch built in:
+
+```
+wp minn preflight   # what the site will and will not get, changing nothing
+wp minn install     # switch the site to Minn (asks first; --yes skips the question)
+```
+
+Minn Admin takes Minn's latest release from the Minn update service and
+nowhere else, checks it against the sha256 its release records and the
+Ed25519 signature the engine checks for its own updates
+(`Ops\EngineUpdate::KEYS`), unpacks it into `wp-content/upgrade`, and hands
+the site to the engine's installer in the release (`Installer::run()`, the
+verbs above). `--park=DIR` and `--force` pass through, and `--zip=FILE`
+installs a signed `minn.zip` in hand (its `minn.zip.sig` beside it) while no
+release is published. Once Minn runs the site, `wp minn` is the engine's own,
+and `wp minn eject` puts WordPress back.
+
 ## Preflight
 
 Reads `wp-config.php` as text (nothing in it runs), connects to the database, and

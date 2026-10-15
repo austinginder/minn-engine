@@ -23542,7 +23542,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 326,
+            "lines": 341,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -23647,7 +23647,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "main(array $argv, string $engineDir): int",
-                    "doc": "The bin entry: runs one command against a webroot and returns the exit code.",
+                    "doc": "The bin entry: runs one command against a webroot, prints its report\nand returns the exit code.",
                     "shapes": [
                         "@param list<string> $argv"
                     ],
@@ -23667,8 +23667,38 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 89
+                    "line": 64,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "run(array $argv, string $engineDir): array",
+                    "doc": "Runs one command against a webroot and hands back its exit code and\nreport, printing nothing: how Minn Admin switches a WordPress site\nfrom a web request, where there is no STDOUT.",
+                    "shapes": [
+                        "@param list<string> $argv",
+                        "@return array{code: int, lines: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "argv",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -23687,8 +23717,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 100
+                    "line": 107,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -23707,8 +23737,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 134
+                    "line": 125,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -23727,8 +23757,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 146
+                    "line": 152,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -23756,8 +23786,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 205
+                    "line": 169,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -23776,8 +23806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 255
+                    "line": 223,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -23796,8 +23826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 267
+                    "line": 273,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -23818,8 +23848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 287
+                    "line": 292,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -23830,8 +23860,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 102,
-                    "end": 107
+                    "line": 117,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -23850,8 +23880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 301
+                    "line": 310,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -23877,8 +23907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 318
+                    "line": 319,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -23904,8 +23934,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 337
+                    "line": 335,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -23916,8 +23946,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 339,
-                    "end": 342
+                    "line": 354,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -23936,8 +23966,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 347
+                    "line": 359,
+                    "end": 362
                 }
             ]
         },

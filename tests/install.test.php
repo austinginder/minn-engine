@@ -89,6 +89,13 @@ $configBefore = md5_file("$WEBROOT/wp-config.php");
 
 [$out, $code] = $minn('status ' . escapeshellarg($WEBROOT));
 $check('status reads a WordPress webroot', $code === 0 && str_contains($out, ': wordpress'), $out);
+
+// Minn Admin switches a WordPress site from a web request, where there is no STDOUT: the installer's
+// run() hands back the exit code and the report and prints nothing, as bin/minn would have printed it.
+$runner = 'require ' . var_export("$ENGINE_DIR/src/Minn/Autoloader.php", true) . '; Minn\\Autoloader::register(); ob_start(); $r = Minn\\Cli\\Installer::run(["status", ' . var_export($WEBROOT, true) . '], ' . var_export($ENGINE_DIR, true) . '); $printed = ob_get_clean(); echo json_encode([$r, $printed]);';
+exec('php -r ' . escapeshellarg($runner) . ' 2>&1', $runOut, $runCode);
+[$ran, $printed] = json_decode(implode("\n", $runOut), true) ?: [null, null];
+$check('the installer hands its report to a caller in the same process, printing nothing', $runCode === 0 && $printed === '' && ($ran['code'] ?? null) === 0 && implode("\n", $ran['lines'] ?? []) === trim($out), implode("\n", $runOut));
 [$out, $code] = $minn('preflight ' . escapeshellarg($WEBROOT));
 $check('preflight passes a block-theme site (GREEN or AMBER)', $code === 0 && preg_match('/Result: (GREEN|AMBER)/', $out) === 1 && str_contains($out, 'is a block theme'), $out);
 $check('preflight no longer treats classic themes as unrenderable', !str_contains($out, 'renders block themes only'), $out);

@@ -10,7 +10,7 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 326 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 341 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
@@ -289,9 +289,19 @@ Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\Preflight`
 
 ### static `main(array $argv, string $engineDir): int`
 
-The bin entry: runs one command against a webroot and returns the exit code.
+The bin entry: runs one command against a webroot, prints its report
+and returns the exit code.
 
 - `@param list<string> $argv`
+
+### static `run(array $argv, string $engineDir): array`
+
+Runs one command against a webroot and hands back its exit code and
+report, printing nothing: how Minn Admin switches a WordPress site
+from a web request, where there is no STDOUT.
+
+- `@param list<string> $argv`
+- `@return array{code: int, lines: list<string>}`
 
 ### `preflight(string $root): string`
 
@@ -328,7 +338,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 102), `inside()` (private, line 295), `move()` (private, line 304), `copyTree()` (private, line 320), `version()` (private, line 339), `say()` (private, line 344)
+Internals: `help()` (private, line 117), `inside()` (private, line 310), `move()` (private, line 319), `copyTree()` (private, line 335), `version()` (private, line 354), `say()` (private, line 359)
 
 
 ## MaintenanceCommand
