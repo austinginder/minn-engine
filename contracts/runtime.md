@@ -16740,13 +16740,33 @@ Minn Admin's engine-bailouts covers the offer at the row menu.
   now runs the whole pipeline for empty content, as the block-theme post-content block does since
   af504cae. Suites classic and attachment-pages unchanged.
 
-Seen there and owed (each with its evidence in the audit): `advanced-cache.php` runs with the hook
-API alone where the reference has 114 functions loaded (is_admin, is_ssl, wp_doing_ajax, absint and
-the rest of load.php), so WP Rocket's drop-in fatals the site; a REST list argument sent as a JSON
+Seen there and owed (each with its evidence in the audit): a REST list argument sent as a JSON
 array string (`status=["draft","publish"]`, Etch's editor) is refused where the reference decodes
 it; Oxygen 4's builder (template_include to its own template) renders the page instead; Divi 5's
 builder loads every script with the pack and no error but stops at its spinner; the wp-admin doorway
 only knows `action`, so WPBakery's front-end editor (`vc_action=vc_inline`) lands in Minn Admin.
+
+## A page cache's early file gets the reference's early API (2026-10-15)
+
+`advanced-cache.php` ran with the hook API alone, where the reference has 114 functions and 46
+constants defined by then (measured with the dropins fixture on both stacks), so WP Rocket's drop-in,
+which asks `is_admin()` and `is_ssl()`, fatally failed every page of the builders lab. Before the file runs,
+bootstrap.php now sets up what the reference has at that point:
+
+- The constants' first pass (`Constants::initial`): the fixed ones, plus the defaults computed from
+  ABSPATH (WP_CONTENT_DIR, WP_PLUGIN_DIR and the rest). `define()` runs it first, so the two passes are
+  one list.
+- The request's kind, as the reference's entry files declare it before anything loads
+  (`Runtime\EarlyRequest::declare`): WP_USE_THEMES (moved here from Engine), WP_ADMIN, DOING_AJAX
+  and DOING_CRON, from the same rules the engine boots by.
+- The facade files the reference has loaded by then: hooks, load, plugin, misc, compat, functions and
+  formatting.
+
+`is_admin`, `is_ssl` and `wp_installing` answer from EarlyRequest until the runtime is up. The object
+cache drop-in and the rest of the facade still load at boot. Of the reference's early set, only
+`wp_register_fatal_error_handler` is missing, and it is a dead end. The dropins suite compares the
+early functions, constants and answers with the reference's. WP Rocket's drop-in now serves the builders lab (200, was
+500).
 
 ## Open items register (2026-10-12)
 

@@ -4,12 +4,12 @@
     "summary": {
         "minn": 684,
         "composes": 2145,
-        "leaf": 1007,
-        "noop": 3141,
+        "leaf": 1006,
+        "noop": 3142,
         "placeholder": 0,
         "deadend": 1770,
         "functions": 8669,
-        "minnMethods": 1390,
+        "minnMethods": 1395,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -52979,6 +52979,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
+                "Minn\\Runtime\\EarlyRequest::isAdmin",
+                "Minn\\Runtime\\Runtime::booted",
+                "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::isAdmin"
             ],
             "composes": []
@@ -53759,7 +53762,11 @@
             "file": "load.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\EarlyRequest::secure",
+                "Minn\\Runtime\\Runtime::booted",
+                "Minn\\Runtime\\SiteUrls::secure"
+            ],
             "composes": []
         },
         "is_sticky": {
@@ -70188,9 +70195,14 @@
         },
         "wp_installing": {
             "file": "load.php",
-            "lines": 6,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\EarlyRequest::installing",
+                "Minn\\Runtime\\Runtime::booted",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::installingFlag"
+            ],
             "composes": []
         },
         "wp_interactivity": {

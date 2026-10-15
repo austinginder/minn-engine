@@ -41253,7 +41253,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 347,
+            "lines": 334,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -41318,6 +41318,7 @@
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\DebugMode",
+                "Minn\\Runtime\\EarlyRequest",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\Options",
@@ -41531,26 +41532,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "markThemedRequest",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "markThemedRequest(Minn\\Http\\Request $request): void",
-                    "doc": "WordPress's index.php says its requests use themes before any plugin\nloads; its own scripts (sign-in, the admin, cron, XML-RPC) do not, and\nneither does Minn Admin (probe load-remaining).",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 228,
-                    "end": 234
-                },
-                {
-                    "routes": [],
                     "name": "armRecoveryPause",
                     "static": true,
                     "visibility": "private",
@@ -41573,8 +41554,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 267
+                    "line": 232,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -41593,8 +41574,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 274
+                    "line": 257,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -41620,8 +41601,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 345
+                    "line": 263,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -41717,8 +41698,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 415
+                    "line": 335,
+                    "end": 402
                 }
             ]
         },
@@ -67964,6 +67945,7 @@
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\EarlyRequest",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostSave",
@@ -71018,6 +71000,7 @@
                 "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registry",
+                "Minn\\Runtime\\Shortcodes",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\UpdateCounts",
@@ -118701,7 +118684,8 @@
             ],
             "usedBy": [
                 "Minn\\Engine",
-                "Minn\\Runtime\\AjaxController"
+                "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\EarlyRequest"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Auth\\Cookie $cookie, Minn\\Front\\Permalinks $permalinks)",
@@ -118894,7 +118878,8 @@
             "usedBy": [
                 "Minn\\Engine",
                 "Minn\\Runtime\\AdminActionController",
-                "Minn\\Runtime\\Constants"
+                "Minn\\Runtime\\Constants",
+                "Minn\\Runtime\\EarlyRequest"
             ],
             "constructor": null,
             "cases": [],
@@ -126898,7 +126883,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Constants.php",
-            "lines": 92,
+            "lines": 115,
             "doc": "The constants plugin code expects: the fixed set from data/constants.json\n(captured from the reference) and the per-site ones computed here. Nothing\nalready defined is touched, so wp-config.php keeps the last word.",
             "implements": [],
             "extends": null,
@@ -126912,9 +126897,43 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "INITIAL",
+                    "value": "array (   0 => 'WPINC',   1 => 'KB_IN_BYTES',   2 => 'MB_IN_BYTES',   3 => 'GB_IN_BYTES',   4 => 'TB_IN_BYTES',   5 => 'PB_IN_BYTES',   6 => 'EB_IN_BYTES',   7 => 'ZB_IN_BYTES',   8 => 'YB_IN_BYTES',   9 => 'MEDIA_TRASH',   10 => 'WP_FEATURE_BETTER_PASSWORDS',   11 => 'MINUTE_IN_SECONDS',   12 => 'HOUR_IN_SECONDS',   13 => 'DAY_IN_SECONDS',   14 => 'WEEK_IN_SECONDS',   15 => 'MONTH_IN_SECONDS',   16 => 'YEAR_IN_SECONDS', )",
+                    "doc": "The fixed constants the reference has defined before a page cache's advanced-cache.php runs.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "initial",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "initial(string $absPath, string $engineDir): void",
+                    "doc": "The constants the reference defines first (wp_initial_constants), before\na page cache's advanced-cache.php runs: the units, the content folder,\nthe memory limits and the debug and cache switches, wherever\nwp-config.php left one undefined.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "absPath",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 47
+                },
                 {
                     "routes": [],
                     "name": "define",
@@ -126932,8 +126951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 17,
-                    "end": 87
+                    "line": 50,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -126944,8 +126963,8 @@
                     "doc": "256M, unless PHP starts with no limit or a higher one, which is then\nkept as written (probe: the reference started at 128M, 300M, 1G, -1).",
                     "shapes": [],
                     "params": [],
-                    "line": 93,
-                    "end": 104
+                    "line": 116,
+                    "end": 127
                 }
             ]
         },
@@ -128651,6 +128670,107 @@
                     ],
                     "line": 16,
                     "end": 31
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\EarlyRequest",
+            "short": "EarlyRequest",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/EarlyRequest.php",
+            "lines": 50,
+            "doc": "The request as WordPress's earliest functions see it, before the runtime\nis up: a page cache's advanced-cache.php runs then, as the reference runs\nit, ahead of the database, the options and the plugins. What the\nreference knows at that point comes from the request and from the\nconstants its entry files define first (WP_ADMIN for an admin page,\nDOING_AJAX for admin-ajax.php, DOING_CRON for wp-cron.php), which the\nengine defines from the same rules it boots by (declare()).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Request",
+                "Minn\\Runtime\\AdminActionController",
+                "Minn\\Runtime\\AjaxController"
+            ],
+            "usedBy": [
+                "Minn\\Engine"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "declare",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "declare(Minn\\Http\\Request $request): void",
+                    "doc": "Defines the request's kind as the reference's entry file would have before anything loaded.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "markThemed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "markThemed(Minn\\Http\\Request $request): void",
+                    "doc": "WordPress's index.php says its requests use themes before any plugin\nloads; its own scripts (sign-in, the admin, cron, XML-RPC) do not, and\nneither does Minn Admin (probe load-remaining).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "isAdmin",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isAdmin(): bool",
+                    "doc": "Whether this is an admin request (is_admin): what the entry file said.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 50,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "secure",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "secure(): bool",
+                    "doc": "Whether the request came over HTTPS (is_ssl), as the server reports it.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 56,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "installing",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "installing(): bool",
+                    "doc": "Whether WordPress is installing (wp_installing): what WP_INSTALLING says.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 63,
+                    "end": 66
                 }
             ]
         },
@@ -136150,6 +136270,7 @@
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\RegisteredSettings",
+                "Minn\\Runtime\\Shortcodes",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\UserQueryRunner"
             ],
@@ -150264,7 +150385,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 416,
+            "lines": 426,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -151006,6 +151127,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "installingFlag",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "installingFlag(mixed $isInstalling = NULL): bool",
+                    "doc": "Whether this request is installing (wp_installing); given a value, it sets the flag and answers what it was.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "isInstalling",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 213,
+                    "end": 220
+                },
+                {
+                    "routes": [],
                     "name": "optionWritten",
                     "static": true,
                     "visibility": "public",
@@ -151021,8 +151162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 216
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -151048,8 +151189,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 242
+                    "line": 237,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -151068,8 +151209,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 266
+                    "line": 273,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -151080,8 +151221,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 269,
-                    "end": 272
+                    "line": 279,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -151092,8 +151233,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 275,
-                    "end": 278
+                    "line": 285,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -151104,8 +151245,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 281,
-                    "end": 284
+                    "line": 291,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -151116,8 +151257,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 287,
-                    "end": 290
+                    "line": 297,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -151128,8 +151269,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 293,
-                    "end": 299
+                    "line": 303,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -151140,8 +151281,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 302,
-                    "end": 305
+                    "line": 312,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -151152,8 +151293,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 308,
-                    "end": 311
+                    "line": 318,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -151164,8 +151305,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 314,
-                    "end": 317
+                    "line": 324,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -151176,8 +151317,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 320,
-                    "end": 323
+                    "line": 330,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -151203,8 +151344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 329
+                    "line": 336,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -151230,8 +151371,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 335
+                    "line": 342,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -151242,8 +151383,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 338,
-                    "end": 341
+                    "line": 348,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -151254,8 +151395,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 344,
-                    "end": 347
+                    "line": 354,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -151266,8 +151407,8 @@
                     "doc": "Whether the facade's functions and classes are defined yet.",
                     "shapes": [],
                     "params": [],
-                    "line": 350,
-                    "end": 353
+                    "line": 360,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -151286,8 +151427,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 383
+                    "line": 366,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -151298,8 +151439,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 415,
-                    "end": 418
+                    "line": 425,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -151310,8 +151451,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 421,
-                    "end": 438
+                    "line": 431,
+                    "end": 448
                 },
                 {
                     "routes": [],
@@ -151330,8 +151471,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 407
+                    "line": 403,
+                    "end": 417
                 }
             ]
         },
@@ -152393,13 +152534,15 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Shortcodes.php",
-            "lines": 294,
+            "lines": 304,
             "doc": "The shortcode registry plugin code fills with add_shortcode, and the\nexpansion do_shortcode performs: [tag attrs], [tag attrs/], [tag]…[/tag]\n(the first closing tag wins; content is not expanded again), [[tag]] as\nthe literal, unregistered tags left as written.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Html",
+                "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\KsesRules",
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\KsesAttributes"
@@ -152475,8 +152618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 22,
-                    "end": 33
+                    "line": 24,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -152486,19 +152629,19 @@
                     "signature": "tags(): array",
                     "doc": "The registry itself, by reference, so the $shortcode_tags global plugin\ncode reads and copies is this array and not a snapshot of it.",
                     "shapes": [
-                        "@return array<string, callable>"
+                        "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 44,
-                    "end": 47
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [],
                     "name": "add",
                     "static": false,
                     "visibility": "public",
-                    "signature": "add(string $tag, callable $callback): void",
-                    "doc": "Registers a shortcode.",
+                    "signature": "add(string $tag, mixed $callback): void",
+                    "doc": "Registers a shortcode. Its callback is kept as given, callable or not\nyet: a plugin may name a class it declares further down its file, and\nthe reference only asks whether the callback can be called when the\nshortcode runs.",
                     "shapes": [],
                     "params": [
                         {
@@ -152510,14 +152653,14 @@
                         },
                         {
                             "name": "callback",
-                            "type": "callable",
+                            "type": "mixed",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 53
+                    "line": 57,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -152536,8 +152679,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 59
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -152548,8 +152691,8 @@
                     "doc": "Forgets every shortcode.",
                     "shapes": [],
                     "params": [],
-                    "line": 62,
-                    "end": 65
+                    "line": 69,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -152568,8 +152711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 71
+                    "line": 75,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -152579,11 +152722,11 @@
                     "signature": "all(): array",
                     "doc": "Every shortcode with its callback.",
                     "shapes": [
-                        "@return array<string, callable> every registered tag and its handler, to restore after a narrowed run"
+                        "@return array<string, mixed> every registered tag and its handler, to restore after a narrowed run"
                     ],
                     "params": [],
-                    "line": 78,
-                    "end": 81
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -152593,19 +152736,19 @@
                     "signature": "restore(array $tags): void",
                     "doc": "Replaces the registry, after a save-and-restore.",
                     "shapes": [
-                        "@param array<string, callable> $tags"
+                        "@param array<string, mixed> $tags"
                     ],
                     "params": [
                         {
                             "name": "tags",
                             "type": "array",
-                            "shape": "array<string, callable>",
+                            "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 91
+                    "line": 95,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -152618,8 +152761,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 98,
-                    "end": 101
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -152638,8 +152781,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 112
+                    "line": 111,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -152665,8 +152808,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 139
+                    "line": 129,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -152687,8 +152830,8 @@
                             "doc": "the pattern's match"
                         }
                     ],
-                    "line": 149,
-                    "end": 166
+                    "line": 156,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -152723,8 +152866,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 204
+                    "line": 191,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -152743,8 +152886,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 220
+                    "line": 223,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -152765,8 +152908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 226
+                    "line": 235,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -152787,8 +152930,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 256
+                    "line": 249,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -152817,8 +152960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 277
+                    "line": 282,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -152846,8 +152989,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 305
+                    "line": 296,
+                    "end": 317
                 }
             ]
         },
@@ -170592,7 +170735,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/ClassicContent.php",
-            "lines": 40,
+            "lines": 39,
             "doc": "What a classic theme's the_content() prints: the engine's block pipeline\n(render, password gate, the more-tag teaser in listings), the cached\nembeds, then the runtime's shortcodes and the_content filters so plugin\ncode sees the same hook order the reference runs.",
             "implements": [],
             "extends": null,
@@ -170642,7 +170785,7 @@
                         }
                     ],
                     "line": 27,
-                    "end": 62
+                    "end": 61
                 }
             ]
         },

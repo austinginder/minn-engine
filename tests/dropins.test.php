@@ -88,7 +88,8 @@ $unstage();
 $check('without WP_CACHE advanced-cache.php is not loaded', $plain['engine'] === $plain['reference'] && $plain['reference'] === '"not loaded"', json_encode($plain));
 
 // 2b. With WP_CACHE on for a page request, the page cache's early file loads
-// at global scope, after the hook API and before the database and object cache.
+// at global scope, after the reference's earliest functions and constants and
+// before the database and object cache.
 foreach ($stacks as $dir) {
     $stage("{$fixtures}/advanced-cache-early.php", "{$dir}/wp-content/advanced-cache.php");
 }

@@ -16807,12 +16807,6 @@
                 "why": "words an extension's error from its type name, line, file and message",
                 "body": "4718a713f56c"
             },
-            "wp_installing": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\Runtime",
-                "why": "reads and sets the installing state the engine holds for the request",
-                "body": "bc3081cffd3e"
-            },
             "wp_is_development_mode": {
                 "verdict": "keep",
                 "reason": "compose",

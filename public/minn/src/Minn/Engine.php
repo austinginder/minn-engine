@@ -221,19 +221,6 @@ final readonly class Engine
 
     /** The response the request's own surface produces: REST, then the admin, the login endpoint, and the public site. */
     /**
-     * WordPress's index.php says its requests use themes before any plugin
-     * loads; its own scripts (sign-in, the admin, cron, XML-RPC) do not, and
-     * neither does Minn Admin (probe load-remaining).
-     */
-    private static function markThemedRequest(Request $request): void
-    {
-        if (\defined('WP_USE_THEMES') || preg_match('#^/(?:wp-admin(?:/|$)|minn-admin(?:/|$)|wp-(?:login|cron|signup|activate|trackback|comments-post|mail|links-opml)\.php|xmlrpc\.php)#', $request->path) === 1) {
-            return;
-        }
-        \define('WP_USE_THEMES', true);
-    }
-
-    /**
      * With the database in hand, a fatal during boot can be blamed on the
      * extension it came from; the second inside ten minutes pauses it, so
      * the next request comes back without it. The window in which this
@@ -285,7 +272,7 @@ final readonly class Engine
         }
         self::armRecoveryPause($db, $request);
 
-        self::markThemedRequest($request);
+        \Minn\Runtime\EarlyRequest::markThemed($request);
 
         // One context for the request, whichever surface answers it; each
         // surface resolves its own reader and asks for a context carrying it.

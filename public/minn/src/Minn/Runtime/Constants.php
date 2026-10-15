@@ -13,21 +13,21 @@ use Minn\Json;
  */
 final class Constants
 {
-    /** Defines the constants the reference defines at boot. */
-    public static function define(Runtime $runtime): void
+    /** The fixed constants the reference has defined before a page cache's advanced-cache.php runs. */
+    private const INITIAL = ['WPINC', 'KB_IN_BYTES', 'MB_IN_BYTES', 'GB_IN_BYTES', 'TB_IN_BYTES', 'PB_IN_BYTES', 'EB_IN_BYTES', 'ZB_IN_BYTES', 'YB_IN_BYTES', 'MEDIA_TRASH', 'WP_FEATURE_BETTER_PASSWORDS', 'MINUTE_IN_SECONDS', 'HOUR_IN_SECONDS', 'DAY_IN_SECONDS', 'WEEK_IN_SECONDS', 'MONTH_IN_SECONDS', 'YEAR_IN_SECONDS'];
+
+    /**
+     * The constants the reference defines first (wp_initial_constants), before
+     * a page cache's advanced-cache.php runs: the units, the content folder,
+     * the memory limits and the debug and cache switches, wherever
+     * wp-config.php left one undefined.
+     */
+    public static function initial(string $absPath, string $engineDir): void
     {
-        $abs = rtrim($runtime->absPath, '/') . '/';
-        $siteUrl = rtrim((string) ($runtime->site->option('siteurl') ?? ''), '/');
-        $fixed = Json::file($runtime->engineDir . '/data/constants.json') ?: [];
+        $abs = rtrim($absPath, '/') . '/';
+        $fixed = array_intersect_key(Json::file($engineDir . '/data/constants.json') ?: [], array_flip(self::INITIAL));
         $computed = [
             'WP_CONTENT_DIR' => $abs . 'wp-content',
-            'WP_CONTENT_URL' => $siteUrl . '/wp-content',
-            'WP_PLUGIN_DIR' => $abs . 'wp-content/plugins',
-            'WP_PLUGIN_URL' => $siteUrl . '/wp-content/plugins',
-            'WPMU_PLUGIN_DIR' => $abs . 'wp-content/mu-plugins',
-            'WPMU_PLUGIN_URL' => $siteUrl . '/wp-content/mu-plugins',
-            'WP_LANG_DIR' => $abs . 'wp-content/languages',
-            'FORCE_SSL_ADMIN' => str_starts_with($siteUrl, 'https://'),
             'WP_START_TIMESTAMP' => microtime(true),
             'WP_DEBUG' => false,
             'WP_DEBUG_LOG' => false,
@@ -36,9 +36,32 @@ final class Constants
             'SCRIPT_DEBUG' => false,
             'SHORTINIT' => false,
             'WP_DEVELOPMENT_MODE' => '',
-            'WP_DEFAULT_THEME' => 'twentytwentyfive',
             'WP_MEMORY_LIMIT' => '40M',
             'WP_MAX_MEMORY_LIMIT' => self::maxMemoryLimit(),
+        ];
+        foreach ($fixed + $computed as $name => $value) {
+            if (!defined($name)) {
+                define($name, $value);
+            }
+        }
+    }
+
+    /** Defines the constants the reference defines at boot. */
+    public static function define(Runtime $runtime): void
+    {
+        self::initial($runtime->absPath, $runtime->engineDir);
+        $abs = rtrim($runtime->absPath, '/') . '/';
+        $siteUrl = rtrim((string) ($runtime->site->option('siteurl') ?? ''), '/');
+        $fixed = Json::file($runtime->engineDir . '/data/constants.json') ?: [];
+        $computed = [
+            'WP_CONTENT_URL' => $siteUrl . '/wp-content',
+            'WP_PLUGIN_DIR' => $abs . 'wp-content/plugins',
+            'WP_PLUGIN_URL' => $siteUrl . '/wp-content/plugins',
+            'WPMU_PLUGIN_DIR' => $abs . 'wp-content/mu-plugins',
+            'WPMU_PLUGIN_URL' => $siteUrl . '/wp-content/mu-plugins',
+            'WP_LANG_DIR' => $abs . 'wp-content/languages',
+            'FORCE_SSL_ADMIN' => str_starts_with($siteUrl, 'https://'),
+            'WP_DEFAULT_THEME' => 'twentytwentyfive',
             'COOKIEHASH' => md5($siteUrl),
             'COOKIEPATH' => rtrim((string) (parse_url((string) ($runtime->site->option('home') ?? ''), PHP_URL_PATH) ?: ''), '/') . '/',
             'SITECOOKIEPATH' => rtrim((string) (parse_url($siteUrl, PHP_URL_PATH) ?: ''), '/') . '/',

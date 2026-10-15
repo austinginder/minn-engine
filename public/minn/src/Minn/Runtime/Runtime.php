@@ -209,6 +209,16 @@ final class Runtime
         return (bool) self::$current?->get('installing', false);
     }
 
+    /** Whether this request is installing (wp_installing); given a value, it sets the flag and answers what it was. */
+    public function installingFlag(mixed $isInstalling = null): bool
+    {
+        $current = (bool) $this->get('installing', false);
+        if ($isInstalling !== null) {
+            $this->set('installing', (bool) $isInstalling);
+        }
+        return $current;
+    }
+
     /** Tells the option store about a row the engine wrote behind it; nothing to do when no store was made. */
     public static function optionWritten(string $name): void
     {

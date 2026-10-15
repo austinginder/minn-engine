@@ -43,7 +43,7 @@ the WordPress runtime plugins load against
 | [`CommentThreads`](#commentthreads) | final class | 68 | A threaded or flat comment query's descendants as the reference fills |
 | [`CommentWrites`](#commentwrites) | final class | 312 | Comments written as WordPress's comment functions write them: a comment |
 | [`Connectors`](#connectors) | final class | 221 | The connectors registry: the external services a site talks to (AI |
-| [`Constants`](#constants) | final class | 92 | The constants plugin code expects: the fixed set from data/constants.json |
+| [`Constants`](#constants) | final class | 115 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronEvents`](#cronevents) | final class | 297 | Scheduled events as WordPress keeps them in the cron option: the list |
 | [`CronTable`](#crontable) | final class | 133 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`CurrentUser`](#currentuser) | final class | 19 | Who the request is, as the reference settles it before init: the user |
@@ -52,6 +52,7 @@ the WordPress runtime plugins load against
 | [`Deferrals`](#deferrals) | final class | 66 | The switches an importer flips for the length of a request (probe |
 | [`DocumentTitle`](#documenttitle) | final class | 95 | The page's title as WordPress's title functions make it from the main |
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
+| [`EarlyRequest`](#earlyrequest) | final class | 50 | The request as WordPress's earliest functions see it, before the runtime |
 | [`EditLinks`](#editlinks) | final class | 99 | The admin addresses WordPress's link functions give for editing: a |
 | [`FileHeaders`](#fileheaders) | final class | 30 | The headers at the top of a theme, plugin or translation file, as |
 | [`FileNames`](#filenames) | final class | 119 | Files as WordPress's file functions name and remove them: a name made |
@@ -120,7 +121,7 @@ the WordPress runtime plugins load against
 | [`Registry`](#registry) | final class | 512 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RequestHeaders`](#requestheaders) | final class | 82 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 374 | The rewrite rules WordPress makes from its structures, as the reference |
-| [`Runtime`](#runtime) | final class | 416 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 426 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 303 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
@@ -374,7 +375,7 @@ the plugin that brings the modal.
 - const `PAGE` = `'#^/wp-admin/[a-z0-9-]+\\.php$#'`
 - const `UPLOAD` = `'/wp-admin/async-upload.php'`
 
-Used by: `Minn\Engine`, `Minn\Runtime\AjaxController`
+Used by: `Minn\Engine`, `Minn\Runtime\AjaxController`, `Minn\Runtime\EarlyRequest`
 
 ```php
 __construct(Minn\Auth\Cookie $cookie, Minn\Front\Permalinks $permalinks)
@@ -417,7 +418,7 @@ before it runs; one that returns is followed by the reference's "0".
 - const `CORE` = `array (   'wp_ajax_nopriv_' =>    array (     'heartbeat' => 'wp_ajax_nopriv_heartbeat',   ),   'wp_ajax_' =>    array (     'rest-nonce' => 'wp_ajax_rest_nonce',     'heartbeat' => 'wp_ajax_heartbeat',   ), )` — The core actions the endpoint answers itself, under the prefix for who is asking: the action => the handler.
 - const `ADMIN_FILTERS` = `array (   0 =>    array (     0 => 'wp_refresh_nonces',     1 => 'wp_refresh_heartbeat_nonces',   ), )` — The filters the reference's admin includes add once plugins have loaded: the hook, the callback.
 
-Used by: `Minn\Engine`, `Minn\Runtime\AdminActionController`, `Minn\Runtime\Constants`
+Used by: `Minn\Engine`, `Minn\Runtime\AdminActionController`, `Minn\Runtime\Constants`, `Minn\Runtime\EarlyRequest`
 
 ### static `claims(Minn\Http\Request $request): bool`
 
@@ -2076,13 +2077,22 @@ The constants plugin code expects: the fixed set from data/constants.json
 (captured from the reference) and the per-site ones computed here. Nothing
 already defined is touched, so wp-config.php keeps the last word.
 
+- const `INITIAL` = `array (   0 => 'WPINC',   1 => 'KB_IN_BYTES',   2 => 'MB_IN_BYTES',   3 => 'GB_IN_BYTES',   4 => 'TB_IN_BYTES',   5 => 'PB_IN_BYTES',   6 => 'EB_IN_BYTES',   7 => 'ZB_IN_BYTES',   8 => 'YB_IN_BYTES',   9 => 'MEDIA_TRASH',   10 => 'WP_FEATURE_BETTER_PASSWORDS',   11 => 'MINUTE_IN_SECONDS',   12 => 'HOUR_IN_SECONDS',   13 => 'DAY_IN_SECONDS',   14 => 'WEEK_IN_SECONDS',   15 => 'MONTH_IN_SECONDS',   16 => 'YEAR_IN_SECONDS', )` — The fixed constants the reference has defined before a page cache's advanced-cache.php runs.
+
 Used by: `Minn\Runtime\Runtime`
+
+### static `initial(string $absPath, string $engineDir): void`
+
+The constants the reference defines first (wp_initial_constants), before
+a page cache's advanced-cache.php runs: the units, the content folder,
+the memory limits and the debug and cache switches, wherever
+wp-config.php left one undefined.
 
 ### static `define(Minn\Runtime\Runtime $runtime): void`
 
 Defines the constants the reference defines at boot.
 
-Internals: `maxMemoryLimit()` (private, line 93)
+Internals: `maxMemoryLimit()` (private, line 116)
 
 
 ## CronEvents
@@ -2452,6 +2462,43 @@ Used by: `Minn\Front\Maintenance`, `Minn\Runtime\Runtime`
 ### static `apply(string $tag, mixed $value, mixed ...$args): mixed`
 
 The value through every early callback on the tag, lowest priority first; as given when there are none.
+
+
+## EarlyRequest
+
+`final class Minn\Runtime\EarlyRequest` · `public/minn/src/Minn/Runtime/EarlyRequest.php`
+
+The request as WordPress's earliest functions see it, before the runtime
+is up: a page cache's advanced-cache.php runs then, as the reference runs
+it, ahead of the database, the options and the plugins. What the
+reference knows at that point comes from the request and from the
+constants its entry files define first (WP_ADMIN for an admin page,
+DOING_AJAX for admin-ajax.php, DOING_CRON for wp-cron.php), which the
+engine defines from the same rules it boots by (declare()).
+
+Used by: `Minn\Engine`
+
+### static `declare(Minn\Http\Request $request): void`
+
+Defines the request's kind as the reference's entry file would have before anything loaded.
+
+### static `markThemed(Minn\Http\Request $request): void`
+
+WordPress's index.php says its requests use themes before any plugin
+loads; its own scripts (sign-in, the admin, cron, XML-RPC) do not, and
+neither does Minn Admin (probe load-remaining).
+
+### static `isAdmin(): bool`
+
+Whether this is an admin request (is_admin): what the entry file said.
+
+### static `secure(): bool`
+
+Whether the request came over HTTPS (is_ssl), as the server reports it.
+
+### static `installing(): bool`
+
+Whether WordPress is installing (wp_installing): what WP_INSTALLING says.
 
 
 ## EditLinks
@@ -6669,6 +6716,10 @@ and Db::option() reads through it from then on.
 
 Whether this request is installing (wp_installing()); false before a runtime boots.
 
+### `installingFlag(mixed $isInstalling = NULL): bool`
+
+Whether this request is installing (wp_installing); given a value, it sets the flag and answers what it was.
+
 ### static `optionWritten(string $name): void`
 
 Tells the option store about a row the engine wrote behind it; nothing to do when no store was made.
@@ -6757,7 +6808,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 393)
+Internals: `loadObjectCacheDropin()` (private, line 403)
 
 
 ## ScriptLoading

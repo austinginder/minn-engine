@@ -9,7 +9,7 @@ use Minn\Runtime\{DebugMode, Runtime, SiteUrls};
 
 function is_admin()
 {
-    return Runtime::current()->isAdmin;
+    return Minn\Runtime\Runtime::booted() ? Minn\Runtime\Runtime::current()->isAdmin : Minn\Runtime\EarlyRequest::isAdmin();
 }
 
 function is_network_admin()
@@ -64,12 +64,7 @@ function get_current_network_id()
 
 function wp_installing($is_installing = null)
 {
-    $runtime = Runtime::current();
-    $current = (bool) $runtime->get('installing', false);
-    if ($is_installing !== null) {
-        $runtime->set('installing', (bool) $is_installing);
-    }
-    return $current;
+    return Minn\Runtime\Runtime::booted() ? Minn\Runtime\Runtime::current()->installingFlag($is_installing) : Minn\Runtime\EarlyRequest::installing();
 }
 
 function wp_doing_ajax()
@@ -108,7 +103,7 @@ function wp_is_xml_request()
 /** Whether the request came over HTTPS; with no request (the command line), what $_SERVER says, as WP-CLI sets it for an https site. */
 function is_ssl()
 {
-    return SiteUrls::secure();
+    return Minn\Runtime\Runtime::booted() ? Minn\Runtime\SiteUrls::secure() : Minn\Runtime\EarlyRequest::secure();
 }
 
 /** Whether the site's locale writes right to left. */

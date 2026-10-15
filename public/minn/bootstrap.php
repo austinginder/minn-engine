@@ -46,10 +46,17 @@ if ($minn_maintenance !== null) {
     return;
 }
 
-// A page cache's early file, in the global scope it expects, when WP_CACHE asks for it.
-// The hook API comes first, as the reference's does: page caches register callbacks from that file.
+// A page cache's early file, in the global scope it expects, when WP_CACHE asks for it. What the
+// reference has loaded by then comes first: the request's kind, as its entry file declares it, and
+// its earliest functions (the hook API, load.php, plugin.php, the constants' setup and the
+// compatibility shims), which page caches call from that file (WP Rocket asks is_admin() and is_ssl()).
+// The rest of the facade, the object cache drop-in among it, still loads at boot.
 if (defined('WP_CACHE') && WP_CACHE && Minn\Runtime\EarlyFilters::apply('enable_loading_advanced_cache_dropin', true) && is_file($minn_content_dir . '/advanced-cache.php')) {
-    require_once __DIR__ . '/wp-api/hooks.php';
+    Minn\Runtime\Constants::initial(ABSPATH, __DIR__);
+    Minn\Runtime\EarlyRequest::declare(Minn\Http\Request::fromGlobals());
+    foreach (['hooks', 'load', 'plugin', 'misc', 'compat', 'functions', 'formatting'] as $minn_early) {
+        require_once __DIR__ . '/wp-api/' . $minn_early . '.php';
+    }
     include $minn_content_dir . '/advanced-cache.php';
 }
 

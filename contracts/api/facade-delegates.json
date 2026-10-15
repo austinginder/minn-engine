@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1600
+        "delegates": 1601
     },
     "functions": {
         "__": {
@@ -2550,7 +2550,7 @@
         },
         "is_admin": {
             "file": "load.php",
-            "statement": "return Runtime::current()->isAdmin;"
+            "statement": "return Minn\\Runtime\\Runtime::booted() ? Minn\\Runtime\\Runtime::current()->isAdmin : Minn\\Runtime\\EarlyRequest::isAdmin();"
         },
         "is_allowed_http_origin": {
             "file": "http.php",
@@ -2778,7 +2778,7 @@
         },
         "is_ssl": {
             "file": "load.php",
-            "statement": "return SiteUrls::secure();"
+            "statement": "return Minn\\Runtime\\Runtime::booted() ? Minn\\Runtime\\SiteUrls::secure() : Minn\\Runtime\\EarlyRequest::secure();"
         },
         "is_tag": {
             "file": "query.php",
@@ -5455,6 +5455,10 @@
         "wp_insert_user": {
             "file": "misc.php",
             "statement": "return Minn\\Runtime\\UserWrites::insert($userdata);"
+        },
+        "wp_installing": {
+            "file": "load.php",
+            "statement": "return Minn\\Runtime\\Runtime::booted() ? Minn\\Runtime\\Runtime::current()->installingFlag($is_installing) : Minn\\Runtime\\EarlyRequest::installing();"
         },
         "wp_interactivity": {
             "file": "blocks.php",
