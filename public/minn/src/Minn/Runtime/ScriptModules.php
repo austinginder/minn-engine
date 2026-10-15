@@ -159,6 +159,47 @@ final class ScriptModules
         return $item;
     }
 
+    /**
+     * The queued modules that are registered, in queue order, each as
+     * registered(): what the reference's get_marked_for_enqueue() answers,
+     * a module whose dependency is missing included.
+     *
+     * @return array<string, array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}>
+     */
+    public function markedForEnqueue(): array
+    {
+        $marked = [];
+        foreach ($this->queue as $id) {
+            if (isset($this->registered[$id])) {
+                $marked[$id] = $this->registered($id);
+            }
+        }
+        return $marked;
+    }
+
+    /**
+     * The registered dependencies of some modules, following the given
+     * import types, each as registered() (get_dependencies()).
+     *
+     * @param list<string> $ids
+     * @param list<string> $types
+     * @return array<string, array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}>
+     */
+    public function dependencyRecords(array $ids, array $types): array
+    {
+        $records = [];
+        foreach ($this->dependencies($ids, $types) as $id) {
+            $records[$id] = $this->registered($id);
+        }
+        return $records;
+    }
+
+    /** A registered module's address as the page loads it (get_src()); '' for one not registered. */
+    public function source(string $id): string
+    {
+        return isset($this->registered[$id]) ? $this->urlOf($id) : '';
+    }
+
     /** The import map script tag. */
     public function printImportMap(): string
     {
@@ -275,8 +316,9 @@ final class ScriptModules
     }
 
     /**
-     * Every registered dependency of the given modules, depth first in
-     * declaration order, following only the given import types.
+     * Every registered dependency of the given modules, following only the
+     * given import types: the modules' own dependencies in declaration
+     * order, then theirs, a level at a time (probe script-modules-private).
      *
      * @param list<string> $ids
      * @param list<string> $types
@@ -285,17 +327,19 @@ final class ScriptModules
     private function dependencies(array $ids, array $types): array
     {
         $found = [];
-        $visit = function (string $id) use (&$found, &$visit, $types): void {
-            foreach ($this->registered[$id]['dependencies'] ?? [] as $dep) {
-                if (!in_array($dep['import'], $types, true) || !isset($this->registered[$dep['id']]) || in_array($dep['id'], $found, true)) {
-                    continue;
+        $level = $ids;
+        while ($level !== []) {
+            $next = [];
+            foreach ($level as $id) {
+                foreach ($this->registered[$id]['dependencies'] ?? [] as $dep) {
+                    if (!in_array($dep['import'], $types, true) || !isset($this->registered[$dep['id']]) || in_array($dep['id'], $found, true)) {
+                        continue;
+                    }
+                    $found[] = $dep['id'];
+                    $next[] = $dep['id'];
                 }
-                $found[] = $dep['id'];
-                $visit($dep['id']);
             }
-        };
-        foreach ($ids as $id) {
-            $visit($id);
+            $level = $next;
         }
         return $found;
     }

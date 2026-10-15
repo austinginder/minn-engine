@@ -123,7 +123,7 @@ the WordPress runtime plugins load against
 | [`RewriteRules`](#rewriterules) | final class | 374 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`Runtime`](#runtime) | final class | 426 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
-| [`ScriptModules`](#scriptmodules) | final class | 303 | The script modules registry: registrations with typed dependencies, the |
+| [`ScriptModules`](#scriptmodules) | final class | 347 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 304 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`SiteInfo`](#siteinfo) | final class | 63 | What WordPress tells about the site (get_bloginfo): its name and tagline, |
@@ -6974,6 +6974,27 @@ One registered module, or null.
 
 - `@return array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}|null`
 
+### `markedForEnqueue(): array`
+
+The queued modules that are registered, in queue order, each as
+registered(): what the reference's get_marked_for_enqueue() answers,
+a module whose dependency is missing included.
+
+- `@return array<string, array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}>`
+
+### `dependencyRecords(array $ids, array $types): array`
+
+The registered dependencies of some modules, following the given
+import types, each as registered() (get_dependencies()).
+
+- `@param list<string> $ids`
+- `@param list<string> $types`
+- `@return array<string, array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}>`
+
+### `source(string $id): string`
+
+A registered module's address as the page loads it (get_src()); '' for one not registered.
+
 ### `printImportMap(): string`
 
 The import map script tag.
@@ -6998,7 +7019,7 @@ The script-module-data tags.
 
 The a11y module's tag, once.
 
-Internals: `placeIn()` (private, line 128), `printTags()` (private, line 227), `marked()` (private, line 251), `complete()` (private, line 263), `dependencies()` (private, line 285), `urlOf()` (private, line 304), `attr()` (private, line 309), `wrong()` (private, line 314)
+Internals: `placeIn()` (private, line 128), `printTags()` (private, line 268), `marked()` (private, line 292), `complete()` (private, line 304), `dependencies()` (private, line 327), `urlOf()` (private, line 348), `attr()` (private, line 353), `wrong()` (private, line 358)
 
 
 ## ScriptPack

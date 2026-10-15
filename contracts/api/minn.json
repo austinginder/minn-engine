@@ -151996,7 +151996,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ScriptModules.php",
-            "lines": 303,
+            "lines": 347,
             "doc": "The script modules registry: registrations with typed dependencies, the\nqueue, and the four things a page prints from it (the import map, module\npreloads, the module tags split head/footer, and per-module JSON data).\nBehaviour pinned by the script-modules probe fixture.",
             "implements": [],
             "extends": null,
@@ -152353,6 +152353,71 @@
                 },
                 {
                     "routes": [],
+                    "name": "markedForEnqueue",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "markedForEnqueue(): array",
+                    "doc": "The queued modules that are registered, in queue order, each as\nregistered(): what the reference's get_marked_for_enqueue() answers,\na module whose dependency is missing included.",
+                    "shapes": [
+                        "@return array<string, array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}>"
+                    ],
+                    "params": [],
+                    "line": 169,
+                    "end": 178
+                },
+                {
+                    "routes": [],
+                    "name": "dependencyRecords",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "dependencyRecords(array $ids, array $types): array",
+                    "doc": "The registered dependencies of some modules, following the given\nimport types, each as registered() (get_dependencies()).",
+                    "shapes": [
+                        "@param list<string> $ids",
+                        "@param list<string> $types",
+                        "@return array<string, array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "ids",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 195
+                },
+                {
+                    "routes": [],
+                    "name": "source",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "source(string $id): string",
+                    "doc": "A registered module's address as the page loads it (get_src()); '' for one not registered.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 198,
+                    "end": 201
+                },
+                {
+                    "routes": [],
                     "name": "printImportMap",
                     "static": false,
                     "visibility": "public",
@@ -152360,8 +152425,8 @@
                     "doc": "The import map script tag.",
                     "shapes": [],
                     "params": [],
-                    "line": 163,
-                    "end": 173
+                    "line": 204,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -152372,8 +152437,8 @@
                     "doc": "The modulepreload links.",
                     "shapes": [],
                     "params": [],
-                    "line": 176,
-                    "end": 187
+                    "line": 217,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -152384,8 +152449,8 @@
                     "doc": "The head's module tags.",
                     "shapes": [],
                     "params": [],
-                    "line": 190,
-                    "end": 193
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -152396,8 +152461,8 @@
                     "doc": "The footer's module tags.",
                     "shapes": [],
                     "params": [],
-                    "line": 196,
-                    "end": 199
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -152408,8 +152473,8 @@
                     "doc": "The script-module-data tags.",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 215
+                    "line": 243,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -152420,8 +152485,8 @@
                     "doc": "The a11y module's tag, once.",
                     "shapes": [],
                     "params": [],
-                    "line": 218,
-                    "end": 225
+                    "line": 259,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -152467,8 +152532,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 248
+                    "line": 268,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -152479,8 +152544,8 @@
                     "doc": "Queued modules that are registered with every dependency registered, in queue order.",
                     "shapes": [],
                     "params": [],
-                    "line": 251,
-                    "end": 260
+                    "line": 292,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -152508,8 +152573,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 275
+                    "line": 304,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -152517,7 +152582,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "dependencies(array $ids, array $types): array",
-                    "doc": "Every registered dependency of the given modules, depth first in\ndeclaration order, following only the given import types.",
+                    "doc": "Every registered dependency of the given modules, following only the\ngiven import types: the modules' own dependencies in declaration\norder, then theirs, a level at a time (probe script-modules-private).",
                     "shapes": [
                         "@param list<string> $ids",
                         "@param list<string> $types",
@@ -152539,8 +152604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 301
+                    "line": 327,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -152559,8 +152624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 307
+                    "line": 348,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -152579,8 +152644,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 312
+                    "line": 353,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -152613,8 +152678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 317
+                    "line": 358,
+                    "end": 361
                 }
             ]
         },

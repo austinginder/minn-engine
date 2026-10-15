@@ -16809,6 +16809,33 @@ page and named in the payload, and nothing is noted with the pack active (102 ch
 probes (default-scripts, dependencies-classes, script-loader-helpers, script-l10n, script-tags,
 script-printing) match their fixtures unchanged.
 
+## Query Monitor's reflection on WP_Script_Modules (2026-10-15)
+
+Installing the 0.1.0 candidate on a fresh SandyWP sandbox, where Query Monitor is active, found every signed-in
+REST request answering 500: Query Monitor's assets collector reaches three private methods of
+WP_Script_Modules through reflection (`get_marked_for_enqueue()`, `get_dependencies()`, `get_src()`), the
+engine's class had none of them, and the ReflectionException failed the request, so every Minn Admin screen
+said "Something went wrong". The class now has them, private as in the reference, over `Runtime\ScriptModules`:
+
+- `get_marked_for_enqueue()`: every queued module that is registered, in queue order, keyed by id with its
+  record (src, version, dependencies, in_footer, fetchpriority), one whose dependency is missing included.
+- `get_dependencies($ids, $import_types = ['static', 'dynamic'])`: the registered dependencies of the given
+  types, keyed the same way: the modules' own, in declaration order, then theirs, a level at a time. The
+  engine walked them depth first, so its import map listed nested dependencies in another order than the
+  reference's; the registry now walks them as the reference does, and the import map matches.
+- `get_src($id)`: the address with its version (false is the WordPress version, null none) through
+  `script_module_loader_src`; '' for a module never registered.
+
+Probe script-modules-private (13 cases, its signatures included; hook-parity battery captured). The
+script-modules, module-tags and interactivity probes are unchanged.
+
+Owed: three differences in how the engine prints script modules, found by the same investigation and left
+for their own batch: the notice for a module whose dependency is missing comes when it is registered, where
+the reference gives it once, the first time head tags, footer tags or preloads print; preloads print
+depth first with each module's own fetchpriority, where the reference prints dependencies before their
+dependents and gives each the highest fetchpriority of the queued modules that pull it in; and every
+`new WP_Script_Modules()` shares the page's registry, where each is its own in the reference.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -16871,3 +16898,6 @@ rows that are `open` or `austin`.
 | 14984 | An outside audit (10-11) | release key revocation and freshness (the recovery key is built in: "Minn Admin lives in wp-content/plugins; a recovery release key"); the review's B items | austin | they change the update service's protocol, or wait on the agent-first decision |
 | 15221 | Security fixes (10-12) | a post type under a namespace of its own gets no route | done | 2026-10-12: routes, list and writes (probe `namespaced-type`) |
 | 15221 | Security fixes (10-12) | the audit's Lows | done | each verified and fixed or accepted with its reason ("The audit's Lows, route schemas, namespaced types and the block head") |
+| 16832 | Query Monitor's reflection (10-15) | the missing-dependency notice comes at registration, not once at the first tags or preloads | open | engine work owed (scratch rules in the section) |
+| 16832 | Query Monitor's reflection (10-15) | preload order and fetchpriority (dependencies first; the highest priority of the queued modules that pull it in) | open | engine work owed |
+| 16832 | Query Monitor's reflection (10-15) | `new WP_Script_Modules()` shares the page's registry | open | engine work owed |

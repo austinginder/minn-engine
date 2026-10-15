@@ -5,10 +5,10 @@
         "minn": 685,
         "composes": 2144,
         "leaf": 1006,
-        "noop": 3142,
+        "noop": 3145,
         "placeholder": 0,
         "deadend": 1770,
-        "functions": 8669,
+        "functions": 8672,
         "minnMethods": 1396,
         "leafLinesOver15": 12
     },
@@ -26511,6 +26511,24 @@
             ],
             "composes": []
         },
+        "WP_Script_Modules::get_dependencies": {
+            "file": "classes/WP_Script_Modules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::scriptModules"
+            ],
+            "composes": []
+        },
+        "WP_Script_Modules::get_marked_for_enqueue": {
+            "file": "classes/WP_Script_Modules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::scriptModules"
+            ],
+            "composes": []
+        },
         "WP_Script_Modules::get_queue": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
@@ -26521,6 +26539,15 @@
             "composes": []
         },
         "WP_Script_Modules::get_registered": {
+            "file": "classes/WP_Script_Modules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::scriptModules"
+            ],
+            "composes": []
+        },
+        "WP_Script_Modules::get_src": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",

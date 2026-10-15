@@ -1,0 +1,256 @@
+[
+    [
+        "signatures",
+        {
+            "get_marked_for_enqueue": {
+                "private": true,
+                "static": false,
+                "parameters": [],
+                "returns": "array"
+            },
+            "get_dependencies": {
+                "private": true,
+                "static": false,
+                "parameters": [
+                    {
+                        "name": "ids",
+                        "type": "array",
+                        "optional": false,
+                        "default": null
+                    },
+                    {
+                        "name": "import_types",
+                        "type": "array",
+                        "optional": true,
+                        "default": [
+                            "static",
+                            "dynamic"
+                        ]
+                    }
+                ],
+                "returns": "array"
+            },
+            "get_src": {
+                "private": true,
+                "static": false,
+                "parameters": [
+                    {
+                        "name": "id",
+                        "type": "string",
+                        "optional": false,
+                        "default": null
+                    }
+                ],
+                "returns": "string"
+            }
+        }
+    ],
+    [
+        "nothing queued yet: marked",
+        []
+    ],
+    [
+        "marked for enqueue: queued, registered and every dependency registered",
+        {
+            "minn-probe/main": {
+                "src": "/wp-content/plugins/minn-probe/main.js",
+                "version": "2.0",
+                "dependencies": [
+                    {
+                        "id": "minn-probe/deep",
+                        "import": "static"
+                    },
+                    {
+                        "id": "minn-probe/lazy",
+                        "import": "dynamic"
+                    },
+                    {
+                        "id": "minn-probe/shared",
+                        "import": "static"
+                    }
+                ],
+                "in_footer": true,
+                "fetchpriority": "low"
+            },
+            "minn-probe/broken": {
+                "src": "/wp-content/plugins/minn-probe/broken.js",
+                "version": "1.0",
+                "dependencies": [
+                    {
+                        "id": "minn-probe/nowhere",
+                        "import": "static"
+                    }
+                ],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            }
+        }
+    ],
+    [
+        "dependencies, default import types",
+        {
+            "minn-probe/deep": {
+                "src": "/wp-content/plugins/minn-probe/deep.js",
+                "version": false,
+                "dependencies": [
+                    {
+                        "id": "minn-probe/base",
+                        "import": "static"
+                    }
+                ],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            },
+            "minn-probe/lazy": {
+                "src": "/wp-content/plugins/minn-probe/lazy.js",
+                "version": false,
+                "dependencies": [],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            },
+            "minn-probe/shared": {
+                "src": "{home}/shared.js",
+                "version": null,
+                "dependencies": [],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            },
+            "minn-probe/base": {
+                "src": "/wp-content/plugins/minn-probe/base.js",
+                "version": "1.0",
+                "dependencies": [],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            }
+        }
+    ],
+    [
+        "dependencies, static only",
+        {
+            "minn-probe/deep": {
+                "src": "/wp-content/plugins/minn-probe/deep.js",
+                "version": false,
+                "dependencies": [
+                    {
+                        "id": "minn-probe/base",
+                        "import": "static"
+                    }
+                ],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            },
+            "minn-probe/shared": {
+                "src": "{home}/shared.js",
+                "version": null,
+                "dependencies": [],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            },
+            "minn-probe/base": {
+                "src": "/wp-content/plugins/minn-probe/base.js",
+                "version": "1.0",
+                "dependencies": [],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            }
+        }
+    ],
+    [
+        "dependencies, dynamic only",
+        {
+            "minn-probe/lazy": {
+                "src": "/wp-content/plugins/minn-probe/lazy.js",
+                "version": false,
+                "dependencies": [],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            }
+        }
+    ],
+    [
+        "dependencies of several, one unknown and one broken",
+        {
+            "minn-probe/base": {
+                "src": "/wp-content/plugins/minn-probe/base.js",
+                "version": "1.0",
+                "dependencies": [],
+                "in_footer": false,
+                "fetchpriority": "auto"
+            }
+        }
+    ],
+    [
+        "dependencies of none",
+        []
+    ],
+    [
+        "src: version string, false, null, a full URL",
+        [
+            "/wp-content/plugins/minn-probe/base.js?ver=1.0",
+            "/wp-content/plugins/minn-probe/lazy.js?ver=7.1.3",
+            "{home}/shared.js",
+            "/wp-content/plugins/minn-probe/main.js?ver=2.0"
+        ]
+    ],
+    [
+        "src of an id never registered",
+        ""
+    ],
+    [
+        "src through script_module_loader_src",
+        "/wp-content/plugins/minn-probe/base.js?ver=1.0&filtered=1"
+    ],
+    [
+        "as Query Monitor reads them",
+        [
+            {
+                "id": "minn-probe/main",
+                "src": "/wp-content/plugins/minn-probe/main.js?ver=2.0",
+                "version": "2.0",
+                "dependencies": [
+                    "minn-probe/deep",
+                    "minn-probe/lazy",
+                    "minn-probe/shared"
+                ]
+            },
+            {
+                "id": "minn-probe/broken",
+                "src": "/wp-content/plugins/minn-probe/broken.js?ver=1.0",
+                "version": "1.0",
+                "dependencies": [
+                    "minn-probe/nowhere"
+                ]
+            },
+            {
+                "id": "minn-probe/deep",
+                "src": "/wp-content/plugins/minn-probe/deep.js?ver=7.1.3",
+                "version": false,
+                "dependencies": [
+                    "minn-probe/base"
+                ]
+            },
+            {
+                "id": "minn-probe/lazy",
+                "src": "/wp-content/plugins/minn-probe/lazy.js?ver=7.1.3",
+                "version": false,
+                "dependencies": []
+            },
+            {
+                "id": "minn-probe/shared",
+                "src": "{home}/shared.js",
+                "version": "",
+                "dependencies": []
+            },
+            {
+                "id": "minn-probe/base",
+                "src": "/wp-content/plugins/minn-probe/base.js?ver=1.0",
+                "version": "1.0",
+                "dependencies": []
+            }
+        ]
+    ],
+    [
+        "import map for those modules",
+        "<script id=\"wp-importmap\" type=\"importmap\">\n{\"imports\":{\"minn-probe/deep\":\"/wp-content/plugins/minn-probe/deep.js?ver=7.1.3\",\"minn-probe/lazy\":\"/wp-content/plugins/minn-probe/lazy.js?ver=7.1.3\",\"minn-probe/shared\":\"{home}/shared.js\",\"minn-probe/base\":\"/wp-content/plugins/minn-probe/base.js?ver=1.0\"}}\n</script>\n"
+    ]
+]

@@ -115,4 +115,20 @@ class WP_Script_Modules
     {
         echo Runtime::scriptModules()->printA11y();
     }
+
+    // Private in the reference too; plugins call them through reflection (Query Monitor's assets panel).
+    private function get_marked_for_enqueue(): array
+    {
+        return Runtime::scriptModules()->markedForEnqueue();
+    }
+
+    private function get_dependencies(array $ids, array $import_types = ['static', 'dynamic']): array
+    {
+        return Runtime::scriptModules()->dependencyRecords($ids, $import_types);
+    }
+
+    private function get_src(string $id): string
+    {
+        return Runtime::scriptModules()->source($id);
+    }
 }
