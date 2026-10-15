@@ -153,7 +153,7 @@ class WP_Scripts extends WP_Dependencies
     {
         $result = parent::all_deps($handles, $recursion, $group);
         if (!$recursion) {
-            $this->to_do = apply_filters('print_scripts_array', $this->to_do);
+            $this->to_do = Minn\Runtime\AssetQueue::linedUp($this->assets, $this->to_do);
         }
         return $result;
     }

@@ -16787,6 +16787,28 @@ matches a wp-admin link by its action. Held back until they work with the pack: 
 Suite ajax covers the front offer, a visitor, another value and the pack active (99 checks). Minn Admin's
 engine-bailouts follows a Bricks row link to the offer on the builders lab copy.
 
+## Public pages that need the pack are noticed, and Minn Admin offers it (2026-10-15)
+
+A store breaks for visitors without the pack, where no editor is involved: WooCommerce's variation
+form needs wp-util ("wp is not defined", Add to cart stays disabled), its block cart and checkout the
+React stack (wp-element, wp-data and the rest). Austin wants WooCommerce handled without the engine
+carrying those scripts, so the engine notices instead. When the scripts lined up for printing on a
+public page (the facade's `print_scripts_array` line, now `AssetQueue::linedUp`) include one of
+WordPress's own handles the engine has no file for (`Assets::unshipped`) and the pack does, the
+active plugin or theme whose lined-up script names it is kept in `minn_legacy_pack_wanted` (autoload
+off) with the handles and a page that showed it, refreshed at most once a day. Nothing is noted on
+the command line, in an admin request, or while the pack is active. `LegacyPack::status()['wanted']`
+gives the app the plugins and theme still active and seen in the last thirty days, by their header
+names. Minn Admin's Overview then says "WooCommerce needs the Minn Legacy Pack", with a page as the
+example and Install; the Plugins tab says it beside the editors.
+
+On minnwoo, one anonymous visit to a variable product recorded WooCommerce with 19 handles. Prototype,
+scriptaculous and wp-tinymce are carried by neither the engine nor the pack, so a page needing only
+those is not offered it (`NOT_CARRIED`). Suite ajax: a fixture script needing wp-util is noted with the
+page and named in the payload, and nothing is noted with the pack active (102 checks). The script
+probes (default-scripts, dependencies-classes, script-loader-helpers, script-l10n, script-tags,
+script-printing) match their fixtures unchanged.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

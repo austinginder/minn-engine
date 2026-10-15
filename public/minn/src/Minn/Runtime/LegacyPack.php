@@ -8,6 +8,7 @@ use Minn\Front\Permalinks;
 use Minn\Http\NoCache;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Support\FileHeaders;
 
 /**
  * WordPress's own browser files, for the plugins whose screens are built on
@@ -55,6 +56,15 @@ final class LegacyPack
         'bricks' => ['name' => 'Bricks', 'query' => 'bricks=run', 'theme' => true],
     ];
 
+    /** Where noteScripts keeps the plugins and themes whose public pages need the pack. */
+    private const WANTED = 'minn_legacy_pack_wanted';
+
+    /** How long a plugin noteScripts saw needing the pack is still offered it without being seen again. */
+    private const KEPT_FOR = 30 * 86400;
+
+    /** WordPress's own scripts the pack does not carry either (nor does the engine): a page needing them is not helped by it. */
+    private const NOT_CARRIED = '#^(?:prototype|scriptaculous(?:-[a-z]+)?|wp-tinymce(?:-[a-z]+)?)$#';
+
     private const PATH = '#^/(?:wp-includes/(?:js|css|images|fonts)|wp-admin/(?:js|css|images))/[A-Za-z0-9._/-]+$#';
 
     private const TYPES = [
@@ -84,13 +94,104 @@ final class LegacyPack
     }
 
     /**
-     * The pack's state for the app: whether it is installed and active, and
-     * the editors of the active plugins and theme that need it, each with
-     * the action or query that opens it ('' for the one it has not).
+     * The pack's state for the app: whether it is installed and active; the
+     * editors of the active plugins and theme that need it, each with the
+     * action or query that opens it ('' for the one it has not); and the
+     * active plugins and theme whose scripts were seen needing it on the
+     * public site (noteScripts), with the scripts they needed and a page
+     * that showed it.
      *
-     * @return array{installed: bool, active: bool, editors: list<array{plugin: string, theme: string, name: string, action: string, query: string}>}
+     * @return array{installed: bool, active: bool, editors: list<array{plugin: string, theme: string, name: string, action: string, query: string}>, wanted: list<array{plugin: string, theme: string, name: string, handles: list<string>, page: string, seen: int}>}
      */
     public static function status(): array
+    {
+        return [
+            'installed' => is_file(WP_PLUGIN_DIR . '/' . self::PLUGIN),
+            'active' => self::active(),
+            'editors' => self::editors(),
+            'wanted' => self::seenWanting(),
+        ];
+    }
+
+    /**
+     * Notes, on a public page while the pack is not active, the plugins and
+     * the theme whose scripts lined up for printing need one of WordPress's
+     * own scripts that the engine carries no file for and the pack does
+     * (WooCommerce's variation form needs wp-util, its block cart
+     * wp-element and the rest). Such a script prints and fails in the
+     * visitor's browser. Each is kept with the scripts it needed and a page
+     * that showed it, at most once a day, for Minn Admin to offer the pack.
+     *
+     * @param list<string> $lined the handles lined up for printing
+     */
+    public static function noteScripts(Assets $scripts, array $lined): void
+    {
+        if (PHP_SAPI === 'cli' || Runtime::current()->isAdmin || $scripts->kind() !== 'script' || self::active()) {
+            return;
+        }
+        $found = [];
+        foreach ($lined as $handle) {
+            if (!is_string($handle) || !$scripts->unshipped($handle) || preg_match(self::NOT_CARRIED, $handle) === 1) {
+                continue;
+            }
+            foreach (array_intersect($scripts->dependents($handle), $lined) as $dependent) {
+                $owner = self::owner((string) ($scripts->item($dependent)['src'] ?? ''));
+                if ($owner !== null) {
+                    $found[$owner[0]]['theme'] = $owner[1];
+                    $found[$owner[0]]['handles'][] = $handle;
+                }
+            }
+        }
+        if ($found === []) {
+            return;
+        }
+        $options = Runtime::options();
+        $kept = $options->get(self::WANTED);
+        $kept = is_array($kept) ? $kept : [];
+        $now = time();
+        $changed = false;
+        foreach ($found as $key => $seen) {
+            $row = is_array($kept[$key] ?? null) ? $kept[$key] : [];
+            $had = array_values(array_filter((array) ($row['handles'] ?? []), is_string(...)));
+            $handles = array_values(array_unique([...$had, ...$seen['handles']]));
+            sort($handles);
+            if ($handles === $had && (int) ($row['seen'] ?? 0) > $now - 86400) {
+                continue;
+            }
+            $kept[$key] = ['theme' => $seen['theme'], 'handles' => $handles, 'page' => Runtime::current()->request->path, 'seen' => $now];
+            $changed = true;
+        }
+        if ($changed) {
+            $options->update(self::WANTED, $kept, 'off');
+        }
+    }
+
+    /**
+     * The active plugin (its file) or theme (its folder, true) a script's
+     * address is under, or null.
+     *
+     * @return array{0: string, 1: bool}|null
+     */
+    private static function owner(string $src): ?array
+    {
+        $path = (string) parse_url($src, PHP_URL_PATH);
+        $options = Runtime::options();
+        if (preg_match('#/plugins/([^/]+)/#', $path, $match) === 1) {
+            foreach ((array) $options->get('active_plugins') as $plugin) {
+                if (is_string($plugin) && str_starts_with($plugin, $match[1] . '/')) {
+                    return [$plugin, false];
+                }
+            }
+            return null;
+        }
+        if (preg_match('#/themes/([^/]+)/#', $path, $match) === 1 && in_array($match[1], [(string) $options->get('template'), (string) $options->get('stylesheet')], true)) {
+            return [$match[1], true];
+        }
+        return null;
+    }
+
+    /** @return list<array{plugin: string, theme: string, name: string, action: string, query: string}> */
+    private static function editors(): array
     {
         $options = Runtime::options();
         $active = $options->get('active_plugins');
@@ -109,17 +210,53 @@ final class LegacyPack
             }
             $editors[] = ['plugin' => $theme ? '' : $key, 'theme' => $theme ? $key : '', 'name' => $editor['name'], 'action' => $action, 'query' => $query];
         }
-        return [
-            'installed' => is_file(WP_PLUGIN_DIR . '/' . self::PLUGIN),
-            'active' => in_array(self::PLUGIN, $active, true),
-            'editors' => $editors,
-        ];
+        return $editors;
+    }
+
+    /**
+     * What noteScripts kept, for the plugins and theme still active, seen in
+     * the last thirty days, each named by its header.
+     *
+     * @return list<array{plugin: string, theme: string, name: string, handles: list<string>, page: string, seen: int}>
+     */
+    private static function seenWanting(): array
+    {
+        $options = Runtime::options();
+        $kept = $options->get(self::WANTED);
+        if (!is_array($kept) || $kept === []) {
+            return [];
+        }
+        $active = $options->get('active_plugins');
+        $active = is_array($active) ? $active : [];
+        $themes = [(string) $options->get('template'), (string) $options->get('stylesheet')];
+        $wanted = [];
+        foreach ($kept as $key => $row) {
+            if (!is_string($key) || !is_array($row) || (int) ($row['seen'] ?? 0) < time() - self::KEPT_FOR) {
+                continue;
+            }
+            $theme = ($row['theme'] ?? false) === true;
+            if (!in_array($key, $theme ? $themes : $active, true)) {
+                continue;
+            }
+            $name = $theme
+                ? FileHeaders::values(WP_CONTENT_DIR . '/themes/' . $key . '/style.css', ['Theme Name'])['Theme Name']
+                : FileHeaders::values(WP_PLUGIN_DIR . '/' . $key, ['Plugin Name'])['Plugin Name'];
+            $wanted[] = [
+                'plugin' => $theme ? '' : $key,
+                'theme' => $theme ? $key : '',
+                'name' => $name !== '' ? $name : ($theme ? $key : dirname($key)),
+                'handles' => array_values(array_filter((array) ($row['handles'] ?? []), is_string(...))),
+                'page' => (string) ($row['page'] ?? ''),
+                'seen' => (int) $row['seen'],
+            ];
+        }
+        return $wanted;
     }
 
     /** The editor a wp-admin action opens that needs the pack while it is not active, or null. @return array{plugin: string, theme: string, name: string, action: string, query: string}|null */
     public static function wantedFor(string $action): ?array
     {
-        return self::wanted(static fn (array $editor): bool => $editor['action'] !== '' && $editor['action'] === $action);
+        return self::wantedWhere(static fn (array $editor): bool => $editor['action'] !== '' && $editor['action'] === $action);
     }
 
     /**
@@ -134,7 +271,7 @@ final class LegacyPack
         if ($query === []) {
             return null;
         }
-        return self::wanted(static function (array $editor) use ($query): bool {
+        return self::wantedWhere(static function (array $editor) use ($query): bool {
             if ($editor['query'] === '') {
                 return false;
             }
@@ -156,13 +293,12 @@ final class LegacyPack
     }
 
     /** @param \Closure(array{plugin: string, theme: string, name: string, action: string, query: string}): bool $opens */
-    private static function wanted(\Closure $opens): ?array
+    private static function wantedWhere(\Closure $opens): ?array
     {
-        $status = self::status();
-        if ($status['active']) {
+        if (self::active()) {
             return null;
         }
-        foreach ($status['editors'] as $editor) {
+        foreach (self::editors() as $editor) {
             if ($opens($editor)) {
                 return $editor;
             }

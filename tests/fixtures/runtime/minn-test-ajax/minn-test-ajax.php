@@ -194,6 +194,13 @@ add_filter('minn_legacy_pack_editors', static function ($editors) {
     $editors['twentytwentyfive'] = ['name' => 'Test Front', 'query' => 'minn_front_pack=on', 'theme' => true];
     return $editors;
 });
+// A plugin script that needs one of WordPress's own scripts the engine carries no file for (wp-util), on a page
+// that asks for it: while the Minn Legacy Pack is not active, the engine notes the plugin for Minn Admin's offer.
+add_action('wp_enqueue_scripts', static function (): void {
+    if (isset($_GET['minn-test-wants-pack'])) {
+        wp_enqueue_script('minn-test-wants-pack', content_url('/plugins/minn-test-ajax/wants-pack.js'), ['wp-util'], '1.0.0');
+    }
+});
 add_action('admin_action_minn_door_pack', static function (): void {
     header('X-Minn-Test: door-pack');
     echo 'door-pack opened';

@@ -119780,13 +119780,14 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AssetQueue.php",
-            "lines": 79,
+            "lines": 95,
             "doc": "The scripts and styles a request queues, as WordPress's asset functions\nqueue them: each kind's registry kept for the request, a handle queued\n(with the notice for one queued before init), and a script's element,\nfrom a file or inline, through the attribute filters.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Assets",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\ScriptTag"
@@ -119877,6 +119878,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "linedUp",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "linedUp(Minn\\Runtime\\Assets $scripts, array $toDo): mixed",
+                    "doc": "The scripts lined up for printing, as print_scripts_array leaves them.\nWordPress's own scripts among them that the engine has no file for are\nnoted for the Minn Legacy Pack (LegacyPack::noteScripts).",
+                    "shapes": [
+                        "@param list<string> $toDo"
+                    ],
+                    "params": [
+                        {
+                            "name": "scripts",
+                            "type": "Minn\\Runtime\\Assets",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "toDo",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 81
+                },
+                {
+                    "routes": [],
                     "name": "enqueueScript",
                     "static": true,
                     "visibility": "public",
@@ -119892,8 +119922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 72
+                    "line": 84,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -119912,8 +119942,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 79
+                    "line": 91,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -119932,8 +119962,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 85
+                    "line": 98,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -119959,8 +119989,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 93
+                    "line": 104,
+                    "end": 109
                 }
             ]
         },
@@ -120178,7 +120208,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Assets.php",
-            "lines": 446,
+            "lines": 453,
             "doc": "The registry behind wp_register_/wp_enqueue_ for scripts and styles:\nhandles, sources, dependencies, versions, inline additions, localized\ndata, and the head/footer split. Printing follows the reference's tag\nshapes as far as captured; see contracts/runtime.md.",
             "implements": [],
             "extends": null,
@@ -120190,6 +120220,7 @@
                 "Minn\\Runtime\\AssetEdits",
                 "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\AssetView",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\ScriptLoading"
             ],
             "constructor": {
@@ -120533,6 +120564,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "unshipped",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "unshipped(string $handle): bool",
+                    "doc": "Whether a handle is one the reference registers itself that nothing here registered: the engine carries no file for it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 167,
+                    "end": 171
+                },
+                {
+                    "routes": [],
                     "name": "dependencies",
                     "static": false,
                     "visibility": "public",
@@ -120550,8 +120601,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 171
+                    "line": 174,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -120572,8 +120623,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 177
+                    "line": 181,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -120601,8 +120652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 206
+                    "line": 192,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -120621,8 +120672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 228
+                    "line": 232,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -120635,8 +120686,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 235,
-                    "end": 238
+                    "line": 242,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -120655,8 +120706,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 244
+                    "line": 248,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -120675,8 +120726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 251
+                    "line": 254,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -120709,8 +120760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 285
+                    "line": 277,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -120743,8 +120794,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 302
+                    "line": 295,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -120777,8 +120828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 317
+                    "line": 312,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -120804,8 +120855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 324
+                    "line": 327,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -120838,8 +120889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 347
+                    "line": 334,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -120852,8 +120903,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 350,
-                    "end": 353
+                    "line": 357,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -120866,8 +120917,8 @@
                         "@return array<string, string> handle => path"
                     ],
                     "params": [],
-                    "line": 398,
-                    "end": 408
+                    "line": 405,
+                    "end": 415
                 },
                 {
                     "routes": [],
@@ -120886,8 +120937,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 417
+                    "line": 418,
+                    "end": 424
                 },
                 {
                     "routes": [],
@@ -120906,8 +120957,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 420,
-                    "end": 426
+                    "line": 427,
+                    "end": 433
                 },
                 {
                     "routes": [],
@@ -120926,8 +120977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 429,
-                    "end": 433
+                    "line": 436,
+                    "end": 440
                 },
                 {
                     "routes": [],
@@ -120940,8 +120991,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 440,
-                    "end": 443
+                    "line": 447,
+                    "end": 450
                 },
                 {
                     "routes": [],
@@ -120954,8 +121005,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 450,
-                    "end": 453
+                    "line": 457,
+                    "end": 460
                 },
                 {
                     "routes": [],
@@ -120966,8 +121017,8 @@
                     "doc": "Whether these are scripts or styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 456,
-                    "end": 459
+                    "line": 463,
+                    "end": 466
                 },
                 {
                     "routes": [],
@@ -121020,8 +121071,8 @@
                         "@return array<string, array<string, list<string>>>"
                     ],
                     "params": [],
-                    "line": 209,
-                    "end": 216
+                    "line": 216,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -121040,8 +121091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 267
+                    "line": 267,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -121063,8 +121114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 359,
-                    "end": 389
+                    "line": 366,
+                    "end": 396
                 }
             ]
         },
@@ -129032,6 +129083,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\Plugins",
@@ -133079,7 +133131,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/LegacyPack.php",
-            "lines": 173,
+            "lines": 308,
             "doc": "WordPress's own browser files, for the plugins whose screens are built on\nthem: a page builder's editor loads WordPress's media library, its classic\neditor and the libraries under them, by the addresses WordPress serves\nthem from (/wp-includes/js/..., /wp-admin/css/...), and some of that code\nnames those addresses itself.\n\nThe engine carries none of them. They are GPL, and they come with the\nMinn Legacy Pack, a plugin the site installs like any other (the way a\nsite installs the script pack, ScriptPack), which keeps them under the\nsame paths and registers their handles. While the pack is active the\nengine answers those addresses from it, ahead of loading any plugin, so a\npage that loads a hundred of them stays fast. A file the engine serves\nitself (its jQuery, its embed scripts) is not in the pack and still comes\nfrom the engine.\n\nThe pack is published on GitHub and delivered through the Minn update\nservice like any plugin that publishes its own releases. Where a site runs\na plugin whose editor is known to need it (EDITORS, and what plugins add\nthrough minn_legacy_pack_editors) and the pack is not active, Minn Admin\noffers to install it, and the wp-admin doorway sends a click on that\neditor to the offer rather than to an editor that cannot load.",
             "implements": [],
             "extends": null,
@@ -133088,15 +133140,19 @@
                 "Minn\\Http\\NoCache",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
+                "Minn\\Runtime\\Assets",
+                "Minn\\Runtime\\FileHeaders",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Runtime\\ScriptPack"
+                "Minn\\Runtime\\ScriptPack",
+                "Minn\\Support\\FileHeaders"
             ],
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\LegacyPackController",
                 "Minn\\Engine",
                 "Minn\\Front\\FrontController",
-                "Minn\\Runtime\\AdminActionController"
+                "Minn\\Runtime\\AdminActionController",
+                "Minn\\Runtime\\AssetQueue"
             ],
             "constructor": null,
             "cases": [],
@@ -133117,6 +133173,24 @@
                     "name": "EDITORS",
                     "value": "array (   'elementor/elementor.php' =>    array (     'name' => 'Elementor',     'action' => 'elementor',   ),   'brizy/brizy.php' =>    array (     'name' => 'Brizy',     'action' => 'in-front-editor',   ),   'bb-plugin/fl-builder.php' =>    array (     'name' => 'Beaver Builder',     'query' => 'fl_builder',   ),   'beaver-builder-lite-version/fl-builder.php' =>    array (     'name' => 'Beaver Builder',     'query' => 'fl_builder',   ),   'bricks' =>    array (     'name' => 'Bricks',     'query' => 'bricks=run',     'theme' => true,   ), )",
                     "doc": "The editors proven to open on Minn with the pack and not without it,\nby the plugin (its file) or theme (its folder, with `theme`) that\nbrings them: the editor's name, and what opens it, a wp-admin action\nor a query on the page it edits (`name`, or `name=value` for that\nvalue only).",
+                    "visibility": "private"
+                },
+                {
+                    "name": "WANTED",
+                    "value": "'minn_legacy_pack_wanted'",
+                    "doc": "Where noteScripts keeps the plugins and themes whose public pages need the pack.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "KEPT_FOR",
+                    "value": "2592000",
+                    "doc": "How long a plugin noteScripts saw needing the pack is still offered it without being seen again.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "NOT_CARRIED",
+                    "value": "'#^(?:prototype|scriptaculous(?:-[a-z]+)?|wp-tinymce(?:-[a-z]+)?)$#'",
+                    "doc": "WordPress's own scripts the pack does not carry either (nor does the engine): a page needing them is not helped by it.",
                     "visibility": "private"
                 },
                 {
@@ -133143,8 +133217,8 @@
                     "doc": "Whether the pack is active on the site the runtime serves.",
                     "shapes": [],
                     "params": [],
-                    "line": 80,
-                    "end": 84
+                    "line": 90,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -133152,13 +133226,42 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "status(): array",
-                    "doc": "The pack's state for the app: whether it is installed and active, and\nthe editors of the active plugins and theme that need it, each with\nthe action or query that opens it ('' for the one it has not).",
+                    "doc": "The pack's state for the app: whether it is installed and active; the\neditors of the active plugins and theme that need it, each with the\naction or query that opens it ('' for the one it has not); and the\nactive plugins and theme whose scripts were seen needing it on the\npublic site (noteScripts), with the scripts they needed and a page\nthat showed it.",
                     "shapes": [
-                        "@return array{installed: bool, active: bool, editors: list<array{plugin: string, theme: string, name: string, action: string, query: string}>}"
+                        "@return array{installed: bool, active: bool, editors: list<array{plugin: string, theme: string, name: string, action: string, query: string}>, wanted: list<array{plugin: string, theme: string, name: string, handles: list<string>, page: string, seen: int}>}"
                     ],
                     "params": [],
-                    "line": 93,
-                    "end": 117
+                    "line": 106,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "noteScripts",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "noteScripts(Minn\\Runtime\\Assets $scripts, array $lined): void",
+                    "doc": "Notes, on a public page while the pack is not active, the plugins and\nthe theme whose scripts lined up for printing need one of WordPress's\nown scripts that the engine carries no file for and the pack does\n(WooCommerce's variation form needs wp-util, its block cart\nwp-element and the rest). Such a script prints and fails in the\nvisitor's browser. Each is kept with the scripts it needed and a page\nthat showed it, at most once a day, for Minn Admin to offer the pack.",
+                    "shapes": [
+                        "@param list<string> $lined the handles lined up for printing"
+                    ],
+                    "params": [
+                        {
+                            "name": "scripts",
+                            "type": "Minn\\Runtime\\Assets",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "lined",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "the handles lined up for printing"
+                        }
+                    ],
+                    "line": 127,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -133179,8 +133282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 123
+                    "line": 257,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -133202,8 +133305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 144
+                    "line": 269,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -133238,8 +133341,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 156
+                    "line": 289,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -133258,8 +133361,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 177
+                    "line": 310,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -133294,8 +133397,8 @@
                             "doc": "the active_plugins option"
                         }
                     ],
-                    "line": 185,
-                    "end": 196
+                    "line": 321,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -133314,15 +133417,65 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 206
+                    "line": 335,
+                    "end": 342
                 },
                 {
                     "routes": [],
-                    "name": "wanted",
+                    "name": "owner",
                     "static": true,
                     "visibility": "private",
-                    "signature": "wanted(Closure $opens): ?array",
+                    "signature": "owner(string $src): ?array",
+                    "doc": "The active plugin (its file) or theme (its folder, true) a script's\naddress is under, or null.",
+                    "shapes": [
+                        "@return array{0: string, 1: bool}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "src",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 175,
+                    "end": 191
+                },
+                {
+                    "routes": [],
+                    "name": "editors",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "editors(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<array{plugin: string, theme: string, name: string, action: string, query: string}>"
+                    ],
+                    "params": [],
+                    "line": 194,
+                    "end": 214
+                },
+                {
+                    "routes": [],
+                    "name": "seenWanting",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "seenWanting(): array",
+                    "doc": "What noteScripts kept, for the plugins and theme still active, seen in\nthe last thirty days, each named by its header.",
+                    "shapes": [
+                        "@return list<array{plugin: string, theme: string, name: string, handles: list<string>, page: string, seen: int}>"
+                    ],
+                    "params": [],
+                    "line": 222,
+                    "end": 254
+                },
+                {
+                    "routes": [],
+                    "name": "wantedWhere",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "wantedWhere(Closure $opens): ?array",
                     "doc": "",
                     "shapes": [
                         "@param \\Closure(array{plugin: string, theme: string, name: string, action: string, query: string}): bool $opens"
@@ -133336,8 +133489,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 171
+                    "line": 296,
+                    "end": 307
                 }
             ]
         },
@@ -165166,6 +165319,7 @@
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Theme\\Folder"

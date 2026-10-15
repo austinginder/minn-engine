@@ -285,6 +285,19 @@ if (!is_array($doorMint) || empty($doorMint['admin_cookie'])) {
     $check('an editor opened by a query on the page, while the pack is not active, lands on the offer', $f['status'] === 302 && $f['location'] === $frontOffer, json_encode($f));
     $f = [$frontDoor('minn_front_pack=on', []), $frontDoor('minn_front_pack=off', [$signIn])];
     $check('a visitor, or another value of the query, gets the page', $f[0]['status'] === 200 && $f[1]['status'] === 200, json_encode($f));
+    // A public page whose plugin script needs one of WordPress's own scripts the engine has no file for (wp-util):
+    // the engine notes the plugin, with the script and the page, and the app is told, by the plugin's name.
+    $wantedBefore = $option('minn_legacy_pack_wanted');
+    register_shutdown_function(static function () use ($WP, $wantedBefore): void {
+        shell_exec($wantedBefore === '' ? "{$WP} option delete minn_legacy_pack_wanted >/dev/null 2>&1" : "{$WP} option update minn_legacy_pack_wanted " . escapeshellarg($wantedBefore) . ' --format=json >/dev/null 2>&1');
+    });
+    shell_exec("{$WP} option delete minn_legacy_pack_wanted >/dev/null 2>&1");
+    $f = $frontDoor('minn-test-wants-pack=1', []);
+    $kept = json_decode($option('minn_legacy_pack_wanted'), true);
+    $row = $kept['minn-test-ajax/minn-test-ajax.php'] ?? null;
+    $check('a public page whose plugin script needs a WordPress script the engine has no file for notes the plugin', $f['status'] === 200 && is_array($row) && $row['theme'] === false && in_array('wp-util', $row['handles'] ?? [], true) && ($row['page'] ?? '') === '/', json_encode([$f, $kept]));
+    $told = array_values(array_filter((array) ($boot($signIn)['legacyPack']['wanted'] ?? []), static fn ($w): bool => ($w['plugin'] ?? '') === 'minn-test-ajax/minn-test-ajax.php'));
+    $check('the app is told the plugin needs the pack, by name, with the scripts and the page', count($told) === 1 && $told[0]['name'] === 'Minn test ajax' && $told[0]['theme'] === '' && in_array('wp-util', $told[0]['handles'], true) && $told[0]['page'] === '/', json_encode($told));
     $adminMint = json_decode((string) shell_exec("{$WP} eval-file " . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 1 2>/dev/null'), true);
     if (is_array($adminMint) && !empty($adminMint['nonce'])) {
         // The stand-in is installed (its folder is linked in), so the offer only activates it: nothing is downloaded.
@@ -296,6 +309,9 @@ if (!is_array($doorMint) || empty($doorMint['admin_cookie'])) {
         $check('with the pack active the editor opens', $e['status'] === 200 && $e['body'] === 'door-pack opened', json_encode($e));
         $f = $frontDoor('minn_front_pack=on', [$signIn]);
         $check('with the pack active the page an editor opens on is served', $f['status'] === 200, json_encode($f));
+        shell_exec("{$WP} option delete minn_legacy_pack_wanted >/dev/null 2>&1");
+        $frontDoor('minn-test-wants-pack=1', []);
+        $check('with the pack active a page needing WordPress scripts notes nothing', $option('minn_legacy_pack_wanted') === '', $option('minn_legacy_pack_wanted'));
         $ch = curl_init($ENGINE . '/wp-json/minn-admin/v1/legacy-pack/install');
         curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => '{}', CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-WP-Nonce: ' . $doorMint['nonce'], 'Cookie: ' . $doorMint['cookie_name'] . '=' . rawurlencode($doorMint['cookie'])]]);
         curl_exec($ch);

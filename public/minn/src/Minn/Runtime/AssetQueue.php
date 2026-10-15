@@ -64,6 +64,22 @@ final class AssetQueue
         Notices::doingItWrong($function, $message, '3.3.0');
     }
 
+    /**
+     * The scripts lined up for printing, as print_scripts_array leaves them.
+     * WordPress's own scripts among them that the engine has no file for are
+     * noted for the Minn Legacy Pack (LegacyPack::noteScripts).
+     *
+     * @param list<string> $toDo
+     */
+    public static function linedUp(Assets $scripts, array $toDo): mixed
+    {
+        $toDo = Runtime::hooks()->filter('print_scripts_array', [$toDo]);
+        if (is_array($toDo)) {
+            LegacyPack::noteScripts($scripts, array_values($toDo));
+        }
+        return $toDo;
+    }
+
     /** A registered script queued (wp_enqueue_script with a handle alone). */
     public static function enqueueScript(string $handle): void
     {

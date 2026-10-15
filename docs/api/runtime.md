@@ -15,9 +15,9 @@ the WordPress runtime plugins load against
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 85 | wp_authenticate_application_password as the reference answers it (probe |
 | [`ArchiveLinks`](#archivelinks) | final class | 41 | A post type's archive address and its feed, as the reference gives them |
 | [`AssetEdits`](#assetedits) | final class | 42 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
-| [`AssetQueue`](#assetqueue) | final class | 79 | The scripts and styles a request queues, as WordPress's asset functions |
+| [`AssetQueue`](#assetqueue) | final class | 95 | The scripts and styles a request queues, as WordPress's asset functions |
 | [`AssetView`](#assetview) | final class | 101 | A registry's view in the shape plugins read and edit it: the public |
-| [`Assets`](#assets) | final class | 446 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`Assets`](#assets) | final class | 453 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`AttachmentImages`](#attachmentimages) | final class | 422 | An attachment's image as WordPress's media functions make it: the |
 | [`AttachmentModel`](#attachmentmodel) | final class | 96 | An attachment as the media modal's scripts read it |
 | [`Attachments`](#attachments) | final class | 266 | Attachments as WordPress's media functions keep them: the uploads folder |
@@ -63,7 +63,7 @@ the WordPress runtime plugins load against
 | [`Hooks`](#hooks) | final class | 403 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
 | [`KsesRules`](#ksesrules) | final class | 95 | The HTML WordPress's kses functions let through: the elements and |
-| [`LegacyPack`](#legacypack) | final class | 173 | WordPress's own browser files, for the plugins whose screens are built on |
+| [`LegacyPack`](#legacypack) | final class | 308 | WordPress's own browser files, for the plugins whose screens are built on |
 | [`MainQuery`](#mainquery) | final class | 23 | The query the request answers ($wp_query), as WordPress keeps it: the |
 | [`MenuEvents`](#menuevents) | final readonly class | 225 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
@@ -649,6 +649,14 @@ The notice (doing it wrong, 3.3.0) for an asset function run before
 init and before any of the enqueue actions
 (_wp_scripts_maybe_doing_it_wrong), naming the handle when there is one.
 
+### static `linedUp(Minn\Runtime\Assets $scripts, array $toDo): mixed`
+
+The scripts lined up for printing, as print_scripts_array leaves them.
+WordPress's own scripts among them that the engine has no file for are
+noted for the Minn Legacy Pack (LegacyPack::noteScripts).
+
+- `@param list<string> $toDo`
+
 ### static `enqueueScript(string $handle): void`
 
 A registered script queued (wp_enqueue_script with a handle alone).
@@ -703,7 +711,7 @@ handles, sources, dependencies, versions, inline additions, localized
 data, and the head/footer split. Printing follows the reference's tag
 shapes as far as captured; see contracts/runtime.md.
 
-Used by: `Minn\Media\MediaModal`, `Minn\Runtime\AssetEdits`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\AssetView`, `Minn\Runtime\ScriptLoading`
+Used by: `Minn\Media\MediaModal`, `Minn\Runtime\AssetEdits`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\AssetView`, `Minn\Runtime\LegacyPack`, `Minn\Runtime\ScriptLoading`
 
 ```php
 __construct(string $kind)
@@ -754,6 +762,10 @@ Removes an asset from the queue, or from the handles waiting for registration.
 ### `registered(string $handle): bool`
 
 Whether a handle is registered, by the site or as one the reference registers itself (data/default-assets.json).
+
+### `unshipped(string $handle): bool`
+
+Whether a handle is one the reference registers itself that nothing here registered: the engine carries no file for it.
 
 ### `dependencies(string $handle): array`
 
@@ -858,7 +870,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `settle()` (private, line 54), `changed()` (private, line 61), `defaults()` (private, line 209), `held()` (private, line 260), `ordered()` (private, line 359)
+Internals: `settle()` (private, line 54), `changed()` (private, line 61), `defaults()` (private, line 216), `held()` (private, line 267), `ordered()` (private, line 366)
 
 
 ## AttachmentImages
@@ -2549,7 +2561,7 @@ The headers at the top of a theme, plugin or translation file, as
 WordPress's get_file_data reads them: the first eight kilobytes, each
 header by its label (the extra ones extra_{context}_headers adds first).
 
-Used by: `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\Plugins`, `Minn\Runtime\Translations`
+Used by: `Minn\Runtime\LegacyPack`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\Plugins`, `Minn\Runtime\Translations`
 
 ### static `read(mixed $file, mixed $defaultHeaders, mixed $context = ''): array`
 
@@ -3346,10 +3358,13 @@ by the plugin (its file) or theme (its folder, with `theme`) that
 brings them: the editor's name, and what opens it, a wp-admin action
 or a query on the page it edits (`name`, or `name=value` for that
 value only).
+- const `WANTED` = `'minn_legacy_pack_wanted'` — Where noteScripts keeps the plugins and themes whose public pages need the pack.
+- const `KEPT_FOR` = `2592000` — How long a plugin noteScripts saw needing the pack is still offered it without being seen again.
+- const `NOT_CARRIED` = `'#^(?:prototype|scriptaculous(?:-[a-z]+)?|wp-tinymce(?:-[a-z]+)?)$#'` — WordPress's own scripts the pack does not carry either (nor does the engine): a page needing them is not helped by it.
 - const `PATH` = `'#^/(?:wp-includes/(?:js|css|images|fonts)|wp-admin/(?:js|css|images))/[A-Za-z0-9._/-]+$#'`
 - const `TYPES` = `array (   'js' => 'application/javascript',   'css' => 'text/css',   'png' => 'image/png',   'gif' => 'image/gif',   'jpg' => 'image/jpeg',   'jpeg' => 'image/jpeg',   'svg' => 'image/svg+xml',   'webp' => 'image/webp',   'ico' => 'image/x-icon',   'woff' => 'font/woff',   'woff2' => 'font/woff2',   'ttf' => 'font/ttf',   'eot' => 'application/vnd.ms-fontobject',   'json' => 'application/json',   'html' => 'text/html; charset=UTF-8',   'txt' => 'text/plain; charset=UTF-8', )`
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Admin\LegacyPackController`, `Minn\Engine`, `Minn\Front\FrontController`, `Minn\Runtime\AdminActionController`
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\LegacyPackController`, `Minn\Engine`, `Minn\Front\FrontController`, `Minn\Runtime\AdminActionController`, `Minn\Runtime\AssetQueue`
 
 ### static `active(): bool`
 
@@ -3357,11 +3372,26 @@ Whether the pack is active on the site the runtime serves.
 
 ### static `status(): array`
 
-The pack's state for the app: whether it is installed and active, and
-the editors of the active plugins and theme that need it, each with
-the action or query that opens it ('' for the one it has not).
+The pack's state for the app: whether it is installed and active; the
+editors of the active plugins and theme that need it, each with the
+action or query that opens it ('' for the one it has not); and the
+active plugins and theme whose scripts were seen needing it on the
+public site (noteScripts), with the scripts they needed and a page
+that showed it.
 
-- `@return array{installed: bool, active: bool, editors: list<array{plugin: string, theme: string, name: string, action: string, query: string}>}`
+- `@return array{installed: bool, active: bool, editors: list<array{plugin: string, theme: string, name: string, action: string, query: string}>, wanted: list<array{plugin: string, theme: string, name: string, handles: list<string>, page: string, seen: int}>}`
+
+### static `noteScripts(Minn\Runtime\Assets $scripts, array $lined): void`
+
+Notes, on a public page while the pack is not active, the plugins and
+the theme whose scripts lined up for printing need one of WordPress's
+own scripts that the engine carries no file for and the pack does
+(WooCommerce's variation form needs wp-util, its block cart
+wp-element and the rest). Such a script prints and fails in the
+visitor's browser. Each is kept with the scripts it needed and a page
+that showed it, at most once a day, for Minn Admin to offer the pack.
+
+- `@param list<string> $lined the handles lined up for printing`
 
 ### static `wantedFor(string $action): ?array`
 
@@ -3399,7 +3429,7 @@ active, the file is not in it, or its type is not one a browser loads.
 
 The file as the answer to the request for it.
 
-Internals: `wanted()` (private, line 159)
+Internals: `owner()` (private, line 175), `editors()` (private, line 194), `seenWanting()` (private, line 222), `wantedWhere()` (private, line 296)
 
 
 ## MainQuery

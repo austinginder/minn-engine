@@ -163,6 +163,13 @@ final class Assets
         return isset($this->items[$handle]) || isset(self::defaults()[$this->kind][$handle]);
     }
 
+    /** Whether a handle is one the reference registers itself that nothing here registered: the engine carries no file for it. */
+    public function unshipped(string $handle): bool
+    {
+        $this->settle($handle);
+        return !isset($this->items[$handle]) && isset(self::defaults()[$this->kind][$handle]);
+    }
+
     /** A handle's dependencies: as registered, or as the reference registers it. @return list<string> */
     public function dependencies(string $handle): array
     {
