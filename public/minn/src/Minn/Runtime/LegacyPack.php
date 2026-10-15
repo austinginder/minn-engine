@@ -21,11 +21,29 @@ use Minn\Http\Response;
  * page that loads a hundred of them stays fast. A file the engine serves
  * itself (its jQuery, its embed scripts) is not in the pack and still comes
  * from the engine.
+ *
+ * The pack is published on GitHub and delivered through the Minn update
+ * service like any plugin that publishes its own releases. Where a site runs
+ * a plugin whose editor is known to need it (EDITORS, and what plugins add
+ * through minn_legacy_pack_editors) and the pack is not active, Minn Admin
+ * offers to install it, and the wp-admin doorway sends a click on that
+ * editor to the offer rather than to an editor that cannot load.
  */
 final class LegacyPack
 {
     /** The pack, as the active plugins list names it. */
     public const PLUGIN = 'minn-legacy-pack/minn-legacy-pack.php';
+
+    /** Where the pack is published, as its Update URI names it. */
+    public const REPOSITORY = 'austinginder/minn-legacy-pack';
+
+    /**
+     * The editors proven to open on Minn with the pack and not without it:
+     * the plugin, its name, and the wp-admin action that opens its editor.
+     */
+    private const EDITORS = [
+        'elementor/elementor.php' => ['name' => 'Elementor', 'action' => 'elementor'],
+    ];
 
     private const PATH = '#^/(?:wp-includes/(?:js|css|images|fonts)|wp-admin/(?:js|css|images))/[A-Za-z0-9._/-]+$#';
 
@@ -53,6 +71,44 @@ final class LegacyPack
     {
         $active = Runtime::options()->get('active_plugins');
         return is_array($active) && in_array(self::PLUGIN, $active, true);
+    }
+
+    /**
+     * The pack's state for the app: whether it is installed and active, and
+     * the active plugins whose editors need it.
+     *
+     * @return array{installed: bool, active: bool, editors: list<array{plugin: string, name: string, action: string}>}
+     */
+    public static function status(): array
+    {
+        $active = Runtime::options()->get('active_plugins');
+        $active = is_array($active) ? $active : [];
+        $editors = [];
+        foreach ((array) Runtime::hooks()->filter('minn_legacy_pack_editors', [self::EDITORS]) as $plugin => $editor) {
+            if (is_string($plugin) && in_array($plugin, $active, true) && is_array($editor) && is_string($editor['name'] ?? null) && is_string($editor['action'] ?? null)) {
+                $editors[] = ['plugin' => $plugin, 'name' => $editor['name'], 'action' => $editor['action']];
+            }
+        }
+        return [
+            'installed' => is_file(WP_PLUGIN_DIR . '/' . self::PLUGIN),
+            'active' => in_array(self::PLUGIN, $active, true),
+            'editors' => $editors,
+        ];
+    }
+
+    /** The editor a wp-admin action opens that needs the pack while it is not active, or null. @return array{plugin: string, name: string, action: string}|null */
+    public static function wantedFor(string $action): ?array
+    {
+        $status = self::status();
+        if ($status['active']) {
+            return null;
+        }
+        foreach ($status['editors'] as $editor) {
+            if ($editor['action'] === $action) {
+                return $editor;
+            }
+        }
+        return null;
     }
 
     /** Whether a path is one of the addresses WordPress serves its browser files from. */

@@ -16707,6 +16707,24 @@ a handle a plugin unset from the view and registered again was deregistered (the
 the registration saw it missing from the view); it is now registered anew. Unit asset-view
 pins the per-handle building (300 handles with data: 600 objects) and the hand-backs.
 
+## The Minn Legacy Pack, offered where an editor needs it (2026-10-15)
+
+The pack is published (github.com/austinginder/minn-legacy-pack, its own code MIT, WordPress's files
+GPL) and follows the update service's author path: its Update URI names the repository, and
+updates.minn.run offers its releases in the plugin update check and serves its package under
+/v1/download/github/, so the engine needs nothing new to update it. `Runtime\LegacyPack` knows the
+editors proven to need it (Elementor's, `admin_action_elementor`; plugins add theirs through
+`minn_legacy_pack_editors`). The boot payload's `legacyPack` says whether the pack is installed and
+active and which active editors need it. While it is not active, a signed-in visit to such an editor's
+wp-admin page (after the admin cookie is asked for) goes to `/minn-admin/?legacy-pack=<action>&return=<page>`
+instead of loading an editor without WordPress's scripts, and Minn Admin offers the pack there, at the
+editor's links (the content row menu, the editor's banner) and on the Plugins tab.
+`POST /minn-admin/v1/legacy-pack/install` (install_plugins and activate_plugins) asks the service for
+the pack's latest release, fetches the package from the service only, checks it against the sha256
+the service recorded, unpacks it as any plugin and activates it; a site that has the pack only
+activates it. Suite ajax covers the offer's redirect, the payload, activation and the capability;
+Minn Admin's engine-bailouts covers the offer at the row menu.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

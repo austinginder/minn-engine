@@ -11,7 +11,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`App`](#app) | final readonly class | 106 | The Minn Admin app on disk the engine serves the shell and assets from: |
 | [`AppController`](#appcontroller) | final readonly class | 150 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
-| [`BootPayload`](#bootpayload) | final readonly class | 250 | The window.MINN boot payload, assembled from the engine: the keys app.js |
+| [`BootPayload`](#bootpayload) | final readonly class | 253 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 46 | What the app bundle answers for: the user guide it carries, the |
 | [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 45 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
@@ -19,6 +19,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
 | [`LanguageChoices`](#languagechoices) | final class | 42 | The language picker's markup. English always leads the list and carries the |
 | [`LanguageController`](#languagecontroller) | final readonly class | 98 | Languages: what is installed, what a person reads in, what the site defaults to. |
+| [`LegacyPackController`](#legacypackcontroller) | final readonly class | 49 | The Minn Legacy Pack installed for an editor that needs it |
 | [`Notifications`](#notifications) | final readonly class | 191 | The bell feed: pending and recent comments, translation offers and a |
 | [`OverviewController`](#overviewcontroller) | final readonly class | 140 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
 | [`PackagesController`](#packagescontroller) | final readonly class | 113 | Adding and removing themes and extensions from the Extensions view. |
@@ -376,7 +377,7 @@ The site's name, or Site when it has none.
 
 The window.MINN payload the app boots from, for one signed-in session.
 
-Internals: `userSlice()` (private, line 97), `siteSlice()` (private, line 114), `commerce()` (private, line 140), `caps()` (private, line 152), `pluginPayload()` (private, line 211), `standHomeQuery()` (private, line 233), `adapterSlices()` (private, line 251)
+Internals: `userSlice()` (private, line 100), `siteSlice()` (private, line 117), `commerce()` (private, line 143), `caps()` (private, line 155), `pluginPayload()` (private, line 214), `standHomeQuery()` (private, line 236), `adapterSlices()` (private, line 254)
 
 
 ## BundleController
@@ -643,6 +644,33 @@ Route: `POST /minn-admin/v1/site/language (floor edit_posts + manage_options)`
 Sets the site's locale.
 
 Internals: `setUserLocale()` (private, line 91), `ensure()` (private, line 103)
+
+
+## LegacyPackController
+
+`final readonly class Minn\Admin\LegacyPackController` · `public/minn/src/Minn/Admin/LegacyPackController.php`
+
+The Minn Legacy Pack installed for an editor that needs it
+(Runtime\LegacyPack): the latest release the Minn update service follows
+for the pack's repository, its package checked against the sha256 the
+service recorded, unpacked as any plugin is, then activated. A site that
+has the pack only activates it. Minn asks Minn: the package comes from the
+update service, never from GitHub directly.
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Ops\Packages $packages, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
+```
+
+
+### `install(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `POST /minn-admin/v1/legacy-pack/install (floor edit_posts + install_plugins + activate_plugins)`
+
+Installs the pack when the site lacks it, and activates it; the pack's state after.
+
+Internals: `release()` (private, line 63)
 
 
 ## Notifications

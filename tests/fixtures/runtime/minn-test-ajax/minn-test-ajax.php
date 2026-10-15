@@ -185,3 +185,15 @@ add_action('admin_action_upload-attachment', static function (): void {
 add_action('wp_ajax_minn_mint_upload', static function (): void {
     echo wp_create_nonce('media-form');
 });
+
+// An editor that needs the Minn Legacy Pack, as a page builder declares it (minn_legacy_pack_editors):
+// while the pack is not active the engine sends its wp-admin page to Minn Admin's offer; once it is, it opens.
+add_filter('minn_legacy_pack_editors', static function ($editors) {
+    $editors['minn-test-ajax/minn-test-ajax.php'] = ['name' => 'Test Door', 'action' => 'minn_door_pack'];
+    return $editors;
+});
+add_action('admin_action_minn_door_pack', static function (): void {
+    header('X-Minn-Test: door-pack');
+    echo 'door-pack opened';
+    exit;
+});

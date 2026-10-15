@@ -1562,7 +1562,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BootPayload.php",
-            "lines": 250,
+            "lines": 253,
             "doc": "The window.MINN boot payload, assembled from the engine: the keys app.js\nneeds to boot and drive the wp/v2 surface, with capabilities from the\nengine's own model.",
             "implements": [],
             "extends": null,
@@ -1796,7 +1796,7 @@
                         }
                     ],
                     "line": 48,
-                    "end": 94
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -1824,8 +1824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 111
+                    "line": 100,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -1838,8 +1838,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 114,
-                    "end": 132
+                    "line": 117,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -1860,8 +1860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 143
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -1889,8 +1889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 202
+                    "line": 155,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -1901,8 +1901,8 @@
                     "doc": "What Minn Admin's own boot_payload() computes when the plugin runs as\ncode on the runtime, so the app boots with the same keys on both\nstacks (connectors, discussion defaults, roles, post formats, the\nadapter flags). Engine-owned keys win; the withheld ones would send\nthe app to a wp-admin page the engine does not have.",
                     "shapes": [],
                     "params": [],
-                    "line": 211,
-                    "end": 224
+                    "line": 214,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -1913,8 +1913,8 @@
                     "doc": "The reference serves the app shell from the home query, so the global\npost is the newest post while the payload is built; the comments\nfeature check reads it through the comments_open filter (a site that\ncloses comments on old posts reports the feature off when its newest\npost is old).",
                     "shapes": [],
                     "params": [],
-                    "line": 233,
-                    "end": 244
+                    "line": 236,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -1925,8 +1925,8 @@
                     "doc": "What Minn Admin's own adapters contribute when the plugin runs as code\non the runtime: plugin surfaces (Tools), editor panels, design\nsources, editor commands, block forms. Absent, the app's fallbacks apply.",
                     "shapes": [],
                     "params": [],
-                    "line": 251,
-                    "end": 270
+                    "line": 254,
+                    "end": 273
                 }
             ]
         },
@@ -3599,6 +3599,120 @@
                     ],
                     "line": 103,
                     "end": 116
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\LegacyPackController",
+            "short": "LegacyPackController",
+            "namespace": "Minn\\Admin",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Admin/LegacyPackController.php",
+            "lines": 49,
+            "doc": "The Minn Legacy Pack installed for an editor that needs it\n(Runtime\\LegacyPack): the latest release the Minn update service follows\nfor the pack's repository, its package checked against the sha256 the\nservice recorded, unpacked as any plugin is, then activated. A site that\nhas the pack only activates it. Minn asks Minn: the package comes from the\nupdate service, never from GitHub directly.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\Ops\\Directory",
+                "Minn\\Ops\\Packages",
+                "Minn\\RestError",
+                "Minn\\Rest\\Reply",
+                "Minn\\Runtime\\LegacyPack",
+                "Minn\\Runtime\\PluginActivation",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Ops\\Packages $packages, Minn\\Http $http = \\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "packages",
+                        "type": "Minn\\Ops\\Packages",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "http",
+                        "type": "Minn\\Http",
+                        "shape": "",
+                        "default": "\\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, ))",
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 32,
+                "end": 34
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "packages",
+                    "type": "Minn\\Ops\\Packages",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/legacy-pack/install (floor edit_posts + install_plugins + activate_plugins)"
+                    ],
+                    "name": "install",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "install(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Installs the pack when the site lacks it, and activates it; the pack's state after.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "release",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "release(): array",
+                    "doc": "The pack's latest release as the update service describes it: a\npackage it serves and the sha256 it recorded.",
+                    "shapes": [
+                        "@return array{version: string, package: string, sha256: string}"
+                    ],
+                    "params": [],
+                    "line": 63,
+                    "end": 77
                 }
             ]
         },
@@ -62639,6 +62753,7 @@
                 "Minn\\Json"
             ],
             "usedBy": [
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\Translations",
                 "Minn\\Extension\\Seams",
                 "Minn\\Html",
@@ -63608,6 +63723,7 @@
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
@@ -66425,6 +66541,7 @@
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
@@ -66953,6 +67070,7 @@
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
@@ -67767,6 +67885,7 @@
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
@@ -68482,6 +68601,7 @@
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
@@ -68983,6 +69103,7 @@
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
@@ -85937,6 +86058,7 @@
                 "Minn\\RestError"
             ],
             "usedBy": [
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Cli\\PackageInstaller",
                 "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\EngineChecksums",
@@ -87206,6 +87328,7 @@
                 "Minn\\Support\\Files"
             ],
             "usedBy": [
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Cli\\DirectorySearch",
                 "Minn\\Cli\\PackageInstaller",
@@ -92971,6 +93094,7 @@
             "usedBy": [
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
@@ -93262,7 +93386,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 454,
+            "lines": 455,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -93271,6 +93395,7 @@
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
@@ -93387,8 +93512,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 42,
-                "end": 48
+                "line": 43,
+                "end": 49
             },
             "cases": [],
             "constants": [],
@@ -93442,8 +93567,8 @@
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
                     "params": [],
-                    "line": 55,
-                    "end": 58
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -93469,8 +93594,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 68
+                    "line": 62,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -93481,8 +93606,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 134,
-                    "end": 137
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -93524,8 +93649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 158
+                    "line": 148,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -93553,8 +93678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 165
+                    "line": 163,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -93601,8 +93726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 171
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -93613,8 +93738,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 174,
-                    "end": 177
+                    "line": 176,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -93625,8 +93750,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 180,
-                    "end": 183
+                    "line": 182,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -93637,8 +93762,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 186,
-                    "end": 189
+                    "line": 188,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -93649,8 +93774,8 @@
                     "doc": "The wp/v2 menu shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 192,
-                    "end": 196
+                    "line": 194,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -93678,8 +93803,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 204
+                    "line": 201,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -93707,8 +93832,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 211
+                    "line": 209,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -93736,8 +93861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 218
+                    "line": 216,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -93772,8 +93897,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 226
+                    "line": 223,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -93801,8 +93926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 232
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -93830,8 +93955,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 235,
-                    "end": 238
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -93842,8 +93967,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 241,
-                    "end": 244
+                    "line": 243,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -93854,8 +93979,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 247,
-                    "end": 250
+                    "line": 249,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -93881,8 +94006,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 267
+                    "line": 260,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -93901,8 +94026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 297
+                    "line": 272,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -93928,8 +94053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 335
+                    "line": 312,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -93948,8 +94073,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 338,
-                    "end": 342
+                    "line": 340,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -94003,8 +94128,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 367
+                    "line": 352,
+                    "end": 369
                 },
                 {
                     "routes": [],
@@ -94030,8 +94155,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 388
+                    "line": 378,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -94059,8 +94184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 396,
-                    "end": 403
+                    "line": 398,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -94088,8 +94213,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 131
+                    "line": 77,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -94108,8 +94233,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 412
+                    "line": 407,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -94135,8 +94260,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 419,
-                    "end": 441
+                    "line": 421,
+                    "end": 443
                 },
                 {
                     "routes": [],
@@ -94155,8 +94280,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 450,
-                    "end": 457
+                    "line": 452,
+                    "end": 459
                 },
                 {
                     "routes": [],
@@ -94185,8 +94310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 467,
-                    "end": 482
+                    "line": 469,
+                    "end": 484
                 },
                 {
                     "routes": [],
@@ -94212,8 +94337,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 488,
-                    "end": 492
+                    "line": 490,
+                    "end": 494
                 }
             ]
         },
@@ -106306,6 +106431,7 @@
                 "Minn\\Admin\\BundleController",
                 "Minn\\Admin\\EditorController",
                 "Minn\\Admin\\LanguageController",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\OverviewController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\PreferencesController",
@@ -118554,7 +118680,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/AdminActionController.php",
-            "lines": 89,
+            "lines": 97,
             "doc": "The wp-admin pages a plugin answers itself. The admin is Minn Admin, so\nthe engine draws no wp-admin screen, but a page builder opens its editor\nfrom one: Elementor's \"Edit with Elementor\" is post.php?post=N&action=elementor,\nwhose handler (admin_action_elementor) prints a whole page of its own and\nends the request before any screen is drawn.\n\nA request to a wp-admin page that names an action boots as an admin\nrequest, as the reference's does. The admin cookie (scoped to /wp-admin)\nis asked for, for the user the request is read as; without it the\nvisitor signs in and comes back. admin_init fires, then the action's\nhandlers. When no plugin handles the action, or its handlers return, the\nrequest lands in Minn Admin, where every other wp-admin address goes.\n\nOne page is an endpoint instead: the media modal's uploader posts its files\nto async-upload.php (action upload-attachment), which the reference answers\nas an ajax request, in plain text. After the page's action the upload runs\nthe handlers registered for the upload-attachment ajax action, as\nadmin-ajax.php would: WordPress's own answer comes with the Minn Legacy Pack,\nthe plugin that brings the modal.",
             "implements": [],
             "extends": null,
@@ -118570,6 +118696,7 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -118696,7 +118823,7 @@
                         }
                     ],
                     "line": 65,
-                    "end": 101
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -118715,8 +118842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 119
+                    "line": 116,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -118735,8 +118862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 126
+                    "line": 130,
+                    "end": 134
                 }
             ]
         },
@@ -132808,8 +132935,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/LegacyPack.php",
-            "lines": 68,
-            "doc": "WordPress's own browser files, for the plugins whose screens are built on\nthem: a page builder's editor loads WordPress's media library, its classic\neditor and the libraries under them, by the addresses WordPress serves\nthem from (/wp-includes/js/..., /wp-admin/css/...), and some of that code\nnames those addresses itself.\n\nThe engine carries none of them. They are GPL, and they come with the\nMinn Legacy Pack, a plugin the site installs like any other (the way a\nsite installs the script pack, ScriptPack), which keeps them under the\nsame paths and registers their handles. While the pack is active the\nengine answers those addresses from it, ahead of loading any plugin, so a\npage that loads a hundred of them stays fast. A file the engine serves\nitself (its jQuery, its embed scripts) is not in the pack and still comes\nfrom the engine.",
+            "lines": 117,
+            "doc": "WordPress's own browser files, for the plugins whose screens are built on\nthem: a page builder's editor loads WordPress's media library, its classic\neditor and the libraries under them, by the addresses WordPress serves\nthem from (/wp-includes/js/..., /wp-admin/css/...), and some of that code\nnames those addresses itself.\n\nThe engine carries none of them. They are GPL, and they come with the\nMinn Legacy Pack, a plugin the site installs like any other (the way a\nsite installs the script pack, ScriptPack), which keeps them under the\nsame paths and registers their handles. While the pack is active the\nengine answers those addresses from it, ahead of loading any plugin, so a\npage that loads a hundred of them stays fast. A file the engine serves\nitself (its jQuery, its embed scripts) is not in the pack and still comes\nfrom the engine.\n\nThe pack is published on GitHub and delivered through the Minn update\nservice like any plugin that publishes its own releases. Where a site runs\na plugin whose editor is known to need it (EDITORS, and what plugins add\nthrough minn_legacy_pack_editors) and the pack is not active, Minn Admin\noffers to install it, and the wp-admin doorway sends a click on that\neditor to the offer rather than to an editor that cannot load.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -132819,7 +132946,9 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
-                "Minn\\Engine"
+                "Minn\\Admin\\LegacyPackController",
+                "Minn\\Engine",
+                "Minn\\Runtime\\AdminActionController"
             ],
             "constructor": null,
             "cases": [],
@@ -132829,6 +132958,18 @@
                     "value": "'minn-legacy-pack/minn-legacy-pack.php'",
                     "doc": "The pack, as the active plugins list names it.",
                     "visibility": "public"
+                },
+                {
+                    "name": "REPOSITORY",
+                    "value": "'austinginder/minn-legacy-pack'",
+                    "doc": "Where the pack is published, as its Update URI names it.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "EDITORS",
+                    "value": "array (   'elementor/elementor.php' =>    array (     'name' => 'Elementor',     'action' => 'elementor',   ), )",
+                    "doc": "The editors proven to open on Minn with the pack and not without it:\nthe plugin, its name, and the wp-admin action that opens its editor.",
+                    "visibility": "private"
                 },
                 {
                     "name": "PATH",
@@ -132854,8 +132995,44 @@
                     "doc": "Whether the pack is active on the site the runtime serves.",
                     "shapes": [],
                     "params": [],
-                    "line": 52,
-                    "end": 56
+                    "line": 70,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "status",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "status(): array",
+                    "doc": "The pack's state for the app: whether it is installed and active, and\nthe active plugins whose editors need it.",
+                    "shapes": [
+                        "@return array{installed: bool, active: bool, editors: list<array{plugin: string, name: string, action: string}>}"
+                    ],
+                    "params": [],
+                    "line": 82,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "wantedFor",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "wantedFor(string $action): ?array",
+                    "doc": "The editor a wp-admin action opens that needs the pack while it is not active, or null. @return array{plugin: string, name: string, action: string}|null",
+                    "shapes": [
+                        "@return array{plugin: string, name: string, action: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -132874,8 +133051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 62
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -132910,8 +133087,8 @@
                             "doc": "the active_plugins option"
                         }
                     ],
-                    "line": 70,
-                    "end": 81
+                    "line": 126,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -132930,8 +133107,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 91
+                    "line": 140,
+                    "end": 147
                 }
             ]
         },
@@ -138881,6 +139058,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Content\\PluginState"
             ],
             "constructor": null,
@@ -150121,6 +150299,7 @@
             "usedBy": [
                 "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BootPayload",
+                "Minn\\Admin\\LegacyPackController",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Auth\\AuthCookies",

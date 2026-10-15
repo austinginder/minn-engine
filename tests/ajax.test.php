@@ -255,6 +255,39 @@ if (!is_array($doorMint) || empty($doorMint['admin_cookie'])) {
     $check('without the pack the app is told of no wp-admin page to open', $off === [], json_encode($off));
     $check('with the pack it is told the actions plugins answer', is_array($on) && in_array('minn_door', $on, true), json_encode($on));
 
+    // An editor that needs the pack (the fixture declares one through minn_legacy_pack_editors): while the pack
+    // is not active, its page sends the visitor to Minn Admin's offer to install it, with the way back; the app
+    // is told the pack's state and the editors that want it. Once the pack is active the editor opens.
+    $boot = static function (string $cookie) use ($ENGINE): ?array {
+        $ch = curl_init($ENGINE . '/minn-admin/');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 30, CURLOPT_HTTPHEADER => [$cookie]]);
+        $html = (string) curl_exec($ch);
+        return preg_match('/window\.MINN = (\{.*\});\s*$/m', $html, $m) === 1 ? json_decode($m[1], true) : null;
+    };
+    $packDoor = static fn (): array => $door($ENGINE, 'action=minn_door_pack', [$admin]);
+    $e = $packDoor();
+    $offer = '{site}/minn-admin/?' . http_build_query(['legacy-pack' => 'minn_door_pack', 'return' => '{site}/wp-admin/post.php?action=minn_door_pack']);
+    $check('an editor that needs the pack, while it is not active, lands on the offer to install it', $e['status'] === 302 && $e['location'] === str_replace(rawurlencode('{site}'), '{site}', $offer), json_encode($e));
+    $state = $boot($signIn)['legacyPack'] ?? null;
+    $check('the app is told the pack is not active and which editor wants it', is_array($state) && $state['active'] === false && in_array(['plugin' => 'minn-test-ajax/minn-test-ajax.php', 'name' => 'Test Door', 'action' => 'minn_door_pack'], $state['editors'], true), json_encode($state));
+    $adminMint = json_decode((string) shell_exec("{$WP} eval-file " . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 1 2>/dev/null'), true);
+    if (is_array($adminMint) && !empty($adminMint['nonce'])) {
+        // The stand-in is installed (its folder is linked in), so the offer only activates it: nothing is downloaded.
+        $ch = curl_init($ENGINE . '/wp-json/minn-admin/v1/legacy-pack/install');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => '{}', CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-WP-Nonce: ' . $adminMint['nonce'], 'Cookie: ' . $adminMint['cookie_name'] . '=' . rawurlencode($adminMint['cookie'])]]);
+        $answer = json_decode((string) curl_exec($ch), true);
+        $check('installing the pack where it is already on disk activates it, downloading nothing', curl_getinfo($ch, CURLINFO_RESPONSE_CODE) === 200 && is_array($answer) && array_key_exists('installed', $answer) && $answer['installed'] === null && ($answer['legacyPack']['active'] ?? null) === true, json_encode($answer));
+        $e = $packDoor();
+        $check('with the pack active the editor opens', $e['status'] === 200 && $e['body'] === 'door-pack opened', json_encode($e));
+        $ch = curl_init($ENGINE . '/wp-json/minn-admin/v1/legacy-pack/install');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => '{}', CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-WP-Nonce: ' . $doorMint['nonce'], 'Cookie: ' . $doorMint['cookie_name'] . '=' . rawurlencode($doorMint['cookie'])]]);
+        curl_exec($ch);
+        $check('only someone who may install and activate plugins can install it', curl_getinfo($ch, CURLINFO_RESPONSE_CODE) === 403, (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE));
+        shell_exec("{$WP} plugin deactivate minn-legacy-pack >/dev/null 2>&1");
+    } else {
+        $check('an administrator session mints on the reference', false);
+    }
+
     // The media modal's upload: async-upload.php boots as an ajax request on both stacks, asks for the
     // admin cookie, fires the page's action and checks the media-form nonce before anything is stored.
     // Past the nonce, WordPress's own upload answers on the reference and the pack's on the engine.

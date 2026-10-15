@@ -89,6 +89,9 @@ final readonly class BootPayload
             // the WordPress browser files they load. The app keeps links to them; it drops every
             // other wp-admin link.
             'adminActions' => LegacyPack::active() ? Runtime::hooks()->names('admin_action_') : [],
+            // The pack itself: installed, active, and the editors on the site that need it, which the
+            // app offers to install it for.
+            'legacyPack' => LegacyPack::status(),
         ] + ($plugin === null ? $this->adapterSlices() : array_diff_key($plugin, array_flip(self::PLUGIN_KEYS_WITHHELD)));
         return $payload;
     }

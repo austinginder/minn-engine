@@ -74,6 +74,14 @@ final readonly class AdminActionController
             $back = $this->permalinks->url($request->path) . $request->queryStringWithout();
             return new Response(302, ['Location' => $this->permalinks->url('/wp-login.php') . '?' . http_build_query(['redirect_to' => $back, 'reauth' => '1'])] + NoCache::headers());
         }
+        // An editor that needs the Minn Legacy Pack, which is not active, would
+        // open without WordPress's scripts: the app offers the pack instead,
+        // and comes back here once it is installed.
+        $wanted = LegacyPack::wantedFor($action);
+        if ($wanted !== null) {
+            $back = $this->permalinks->url($request->path) . $request->queryStringWithout();
+            return new Response(302, ['Location' => $this->permalinks->url('/minn-admin/') . '?' . http_build_query(['legacy-pack' => $wanted['action'], 'return' => $back])] + NoCache::headers());
+        }
         // What admin_init prints stays held with the page: a handler that ends
         // the request sends both, one that returns sends neither.
         ob_start();

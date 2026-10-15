@@ -1,7 +1,7 @@
 {
     "engine": "0.1.0",
-    "routes": 259,
-    "withPolicy": 253,
+    "routes": 260,
+    "withPolicy": 254,
     "entries": [
         {
             "method": "GET",
@@ -320,6 +320,32 @@
                 "describe": "floor edit_posts + manage_options",
                 "caps": [
                     "manage_options"
+                ],
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/minn-admin/v1/legacy-pack/install",
+            "name": "Minn\\Admin\\LegacyPackController::install",
+            "handler": "Minn\\Admin\\LegacyPackController::install",
+            "summary": "Installs the pack when the site lacks it, and activates it; the pack's state after.",
+            "policy": {
+                "access": "Floor",
+                "describe": "floor edit_posts + install_plugins + activate_plugins",
+                "caps": [
+                    "install_plugins",
+                    "activate_plugins"
                 ],
                 "signIn": {
                     "code": "rest_not_logged_in",
