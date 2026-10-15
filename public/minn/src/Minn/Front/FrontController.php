@@ -13,6 +13,7 @@ use Minn\Http\Route;
 use Minn\Theme\ClassicRenderer;
 use Minn\Theme\PageRenderer;
 use Minn\Cron\Cron;
+use Minn\Runtime\LegacyPack;
 use Minn\Runtime\Runtime;
 use Minn\Theme\EmbedRenderer;
 use Minn\Theme\MainQueryBridge;
@@ -79,6 +80,10 @@ final readonly class FrontController
 
     private function page(Request $request): Response
     {
+        $offer = $this->legacyPackOffer($request);
+        if ($offer !== null) {
+            return $offer;
+        }
         // The front settles former slugs itself; wp_old_slug_redirect only makes the move it found.
         Runtime::current()->set('old_slug_settled', true);
         $resolution = $this->resolver->resolve($request);
@@ -106,6 +111,26 @@ final readonly class FrontController
             $code = http_response_code();
             return new Response(is_int($code) && $code > 0 ? $code : 302, [], '');
         }
+    }
+
+    /**
+     * A page builder's editor opened on the page it edits (Beaver Builder's
+     * ?fl_builder) that needs the Minn Legacy Pack while it is not active:
+     * someone who may edit goes to Minn Admin's offer to install it, and
+     * comes back here once it is. A visitor gets the page as it is.
+     */
+    private function legacyPackOffer(Request $request): ?Response
+    {
+        if ($request->query === [] || !in_array($request->method, [Method::Get, Method::Head], true)) {
+            return null;
+        }
+        $runtime = Runtime::current();
+        $userId = $runtime->reader->userId;
+        if ($userId === 0 || !$runtime->capabilities->can($userId, 'edit_posts')) {
+            return null;
+        }
+        $editor = LegacyPack::wantedOn($request->query);
+        return $editor === null ? null : LegacyPack::offer($editor, $this->resolver->permalinks(), $request);
     }
 
     /** The page for a resolution: an embed, a sitemap's or feed's query form, else the theme's. */

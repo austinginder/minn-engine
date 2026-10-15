@@ -186,10 +186,12 @@ add_action('wp_ajax_minn_mint_upload', static function (): void {
     echo wp_create_nonce('media-form');
 });
 
-// An editor that needs the Minn Legacy Pack, as a page builder declares it (minn_legacy_pack_editors):
-// while the pack is not active the engine sends its wp-admin page to Minn Admin's offer; once it is, it opens.
+// Editors that need the Minn Legacy Pack, as page builders declare them (minn_legacy_pack_editors): one
+// opened by a wp-admin action, and one a theme opens by a query on the page it edits (as Bricks does). While
+// the pack is not active the engine sends either to Minn Admin's offer; once it is, the editor opens.
 add_filter('minn_legacy_pack_editors', static function ($editors) {
     $editors['minn-test-ajax/minn-test-ajax.php'] = ['name' => 'Test Door', 'action' => 'minn_door_pack'];
+    $editors['twentytwentyfive'] = ['name' => 'Test Front', 'query' => 'minn_front_pack=on', 'theme' => true];
     return $editors;
 });
 add_action('admin_action_minn_door_pack', static function (): void {

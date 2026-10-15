@@ -47965,7 +47965,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FrontController.php",
-            "lines": 105,
+            "lines": 129,
             "doc": "The public site. One catch-all route: resolve the URL, then either\nredirect or render, through the active block theme when there is one,\nthe classic PHP template runner when the theme is classic, and the\ninterim template otherwise.",
             "implements": [],
             "extends": null,
@@ -47984,6 +47984,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\EmbedRenderer",
@@ -48064,8 +48065,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 29,
-                "end": 40
+                "line": 30,
+                "end": 41
             },
             "cases": [],
             "constants": [],
@@ -48162,8 +48163,8 @@
                     "doc": "The themed (or interim) 404 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 43,
-                    "end": 46
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -48182,8 +48183,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 62
+                    "line": 54,
+                    "end": 63
                 },
                 {
                     "routes": [
@@ -48204,8 +48205,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 78
+                    "line": 67,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -48224,8 +48225,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 109
+                    "line": 81,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "legacyPackOffer",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "legacyPackOffer(Minn\\Http\\Request $request): ?Minn\\Http\\Response",
+                    "doc": "A page builder's editor opened on the page it edits (Beaver Builder's\n?fl_builder) that needs the Minn Legacy Pack while it is not active:\nsomeone who may edit goes to Minn Admin's offer to install it, and\ncomes back here once it is. A visitor gets the page as it is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -48251,8 +48272,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 130
+                    "line": 137,
+                    "end": 155
                 }
             ]
         },
@@ -48784,6 +48805,7 @@
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Runtime\\AdminActionController",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\HeadLinks",
@@ -66697,6 +66719,7 @@
             "usedBy": [
                 "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\RequestHeaders",
                 "Minn\\Theme\\FrontLifecycle"
             ],
@@ -67946,6 +67969,7 @@
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\EarlyRequest",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostSave",
@@ -118663,7 +118687,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/AdminActionController.php",
-            "lines": 97,
+            "lines": 96,
             "doc": "The wp-admin pages a plugin answers itself. The admin is Minn Admin, so\nthe engine draws no wp-admin screen, but a page builder opens its editor\nfrom one: Elementor's \"Edit with Elementor\" is post.php?post=N&action=elementor,\nwhose handler (admin_action_elementor) prints a whole page of its own and\nends the request before any screen is drawn.\n\nA request to a wp-admin page that names an action boots as an admin\nrequest, as the reference's does. The admin cookie (scoped to /wp-admin)\nis asked for, for the user the request is read as; without it the\nvisitor signs in and comes back. admin_init fires, then the action's\nhandlers. When no plugin handles the action, or its handlers return, the\nrequest lands in Minn Admin, where every other wp-admin address goes.\n\nOne page is an endpoint instead: the media modal's uploader posts its files\nto async-upload.php (action upload-attachment), which the reference answers\nas an ajax request, in plain text. After the page's action the upload runs\nthe handlers registered for the upload-attachment ajax action, as\nadmin-ajax.php would: WordPress's own answer comes with the Minn Legacy Pack,\nthe plugin that brings the modal.",
             "implements": [],
             "extends": null,
@@ -118807,7 +118831,7 @@
                         }
                     ],
                     "line": 65,
-                    "end": 109
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -118826,8 +118850,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 127
+                    "line": 115,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -118846,8 +118870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 134
+                    "line": 129,
+                    "end": 133
                 }
             ]
         },
@@ -133055,11 +133079,14 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/LegacyPack.php",
-            "lines": 117,
+            "lines": 173,
             "doc": "WordPress's own browser files, for the plugins whose screens are built on\nthem: a page builder's editor loads WordPress's media library, its classic\neditor and the libraries under them, by the addresses WordPress serves\nthem from (/wp-includes/js/..., /wp-admin/css/...), and some of that code\nnames those addresses itself.\n\nThe engine carries none of them. They are GPL, and they come with the\nMinn Legacy Pack, a plugin the site installs like any other (the way a\nsite installs the script pack, ScriptPack), which keeps them under the\nsame paths and registers their handles. While the pack is active the\nengine answers those addresses from it, ahead of loading any plugin, so a\npage that loads a hundred of them stays fast. A file the engine serves\nitself (its jQuery, its embed scripts) is not in the pack and still comes\nfrom the engine.\n\nThe pack is published on GitHub and delivered through the Minn update\nservice like any plugin that publishes its own releases. Where a site runs\na plugin whose editor is known to need it (EDITORS, and what plugins add\nthrough minn_legacy_pack_editors) and the pack is not active, Minn Admin\noffers to install it, and the wp-admin doorway sends a click on that\neditor to the offer rather than to an editor that cannot load.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Front\\Permalinks",
+                "Minn\\Http\\NoCache",
+                "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\ScriptPack"
@@ -133068,6 +133095,7 @@
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\LegacyPackController",
                 "Minn\\Engine",
+                "Minn\\Front\\FrontController",
                 "Minn\\Runtime\\AdminActionController"
             ],
             "constructor": null,
@@ -133087,8 +133115,8 @@
                 },
                 {
                     "name": "EDITORS",
-                    "value": "array (   'elementor/elementor.php' =>    array (     'name' => 'Elementor',     'action' => 'elementor',   ), )",
-                    "doc": "The editors proven to open on Minn with the pack and not without it:\nthe plugin, its name, and the wp-admin action that opens its editor.",
+                    "value": "array (   'elementor/elementor.php' =>    array (     'name' => 'Elementor',     'action' => 'elementor',   ),   'brizy/brizy.php' =>    array (     'name' => 'Brizy',     'action' => 'in-front-editor',   ),   'bb-plugin/fl-builder.php' =>    array (     'name' => 'Beaver Builder',     'query' => 'fl_builder',   ),   'beaver-builder-lite-version/fl-builder.php' =>    array (     'name' => 'Beaver Builder',     'query' => 'fl_builder',   ),   'bricks' =>    array (     'name' => 'Bricks',     'query' => 'bricks=run',     'theme' => true,   ), )",
+                    "doc": "The editors proven to open on Minn with the pack and not without it,\nby the plugin (its file) or theme (its folder, with `theme`) that\nbrings them: the editor's name, and what opens it, a wp-admin action\nor a query on the page it edits (`name`, or `name=value` for that\nvalue only).",
                     "visibility": "private"
                 },
                 {
@@ -133115,8 +133143,8 @@
                     "doc": "Whether the pack is active on the site the runtime serves.",
                     "shapes": [],
                     "params": [],
-                    "line": 70,
-                    "end": 74
+                    "line": 80,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -133124,13 +133152,13 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "status(): array",
-                    "doc": "The pack's state for the app: whether it is installed and active, and\nthe active plugins whose editors need it.",
+                    "doc": "The pack's state for the app: whether it is installed and active, and\nthe editors of the active plugins and theme that need it, each with\nthe action or query that opens it ('' for the one it has not).",
                     "shapes": [
-                        "@return array{installed: bool, active: bool, editors: list<array{plugin: string, name: string, action: string}>}"
+                        "@return array{installed: bool, active: bool, editors: list<array{plugin: string, theme: string, name: string, action: string, query: string}>}"
                     ],
                     "params": [],
-                    "line": 82,
-                    "end": 97
+                    "line": 93,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -133138,9 +133166,9 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "wantedFor(string $action): ?array",
-                    "doc": "The editor a wp-admin action opens that needs the pack while it is not active, or null. @return array{plugin: string, name: string, action: string}|null",
+                    "doc": "The editor a wp-admin action opens that needs the pack while it is not active, or null. @return array{plugin: string, theme: string, name: string, action: string, query: string}|null",
                     "shapes": [
-                        "@return array{plugin: string, name: string, action: string}|null"
+                        "@return array{plugin: string, theme: string, name: string, action: string, query: string}|null"
                     ],
                     "params": [
                         {
@@ -133151,8 +133179,67 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 112
+                    "line": 120,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "wantedOn",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "wantedOn(array $query): ?array",
+                    "doc": "The editor a page's query opens that needs the pack while it is not\nactive (Beaver Builder's ?fl_builder, Bricks' ?bricks=run), or null.",
+                    "shapes": [
+                        "@param array<string, mixed> $query",
+                        "@return array{plugin: string, theme: string, name: string, action: string, query: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 132,
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "offer",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "offer(array $editor, Minn\\Front\\Permalinks $permalinks, Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Minn Admin's offer to install the pack for an editor, with the way\nback to the page that opens it: `?legacy-pack=<action or query>&return=<page>`.",
+                    "shapes": [
+                        "@param array{action: string, query: string} $editor"
+                    ],
+                    "params": [
+                        {
+                            "name": "editor",
+                            "type": "array",
+                            "shape": "array{action: string, query: string}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "permalinks",
+                            "type": "Minn\\Front\\Permalinks",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 152,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -133171,8 +133258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 118
+                    "line": 174,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -133207,8 +133294,8 @@
                             "doc": "the active_plugins option"
                         }
                     ],
-                    "line": 126,
-                    "end": 137
+                    "line": 185,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -133227,8 +133314,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 147
+                    "line": 199,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "wanted",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "wanted(Closure $opens): ?array",
+                    "doc": "",
+                    "shapes": [
+                        "@param \\Closure(array{plugin: string, theme: string, name: string, action: string, query: string}): bool $opens"
+                    ],
+                    "params": [
+                        {
+                            "name": "opens",
+                            "type": "Closure",
+                            "shape": "\\Closure(array{plugin: string, theme: string, name: string, action: string, query: string}): bool",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 159,
+                    "end": 171
                 }
             ]
         },

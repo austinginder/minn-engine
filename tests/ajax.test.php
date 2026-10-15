@@ -269,7 +269,22 @@ if (!is_array($doorMint) || empty($doorMint['admin_cookie'])) {
     $offer = '{site}/minn-admin/?' . http_build_query(['legacy-pack' => 'minn_door_pack', 'return' => '{site}/wp-admin/post.php?action=minn_door_pack']);
     $check('an editor that needs the pack, while it is not active, lands on the offer to install it', $e['status'] === 302 && $e['location'] === str_replace(rawurlencode('{site}'), '{site}', $offer), json_encode($e));
     $state = $boot($signIn)['legacyPack'] ?? null;
-    $check('the app is told the pack is not active and which editor wants it', is_array($state) && $state['active'] === false && in_array(['plugin' => 'minn-test-ajax/minn-test-ajax.php', 'name' => 'Test Door', 'action' => 'minn_door_pack'], $state['editors'], true), json_encode($state));
+    $check('the app is told the pack is not active and which editors want it', is_array($state) && $state['active'] === false && in_array(['plugin' => 'minn-test-ajax/minn-test-ajax.php', 'theme' => '', 'name' => 'Test Door', 'action' => 'minn_door_pack', 'query' => ''], $state['editors'], true) && in_array(['plugin' => '', 'theme' => 'twentytwentyfive', 'name' => 'Test Front', 'action' => '', 'query' => 'minn_front_pack=on'], $state['editors'], true), json_encode($state));
+    // An editor the theme opens by a query on the page it edits: someone who may edit lands on the offer, with the
+    // way back; a visitor, or another value of the query, gets the page.
+    $frontDoor = static function (string $query, array $headers) use ($ENGINE): array {
+        $ch = curl_init($ENGINE . '/?' . $query);
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 30, CURLOPT_HTTPHEADER => $headers]);
+        $raw = (string) curl_exec($ch);
+        $head = substr($raw, 0, curl_getinfo($ch, CURLINFO_HEADER_SIZE));
+        $location = preg_match('/^location:\s*(.*)$/mi', $head, $m) === 1 ? str_replace([$ENGINE, rawurlencode($ENGINE)], '{site}', trim($m[1])) : '';
+        return ['status' => curl_getinfo($ch, CURLINFO_RESPONSE_CODE), 'location' => $location];
+    };
+    $frontOffer = str_replace(rawurlencode('{site}'), '{site}', '{site}/minn-admin/?' . http_build_query(['legacy-pack' => 'minn_front_pack=on', 'return' => '{site}/?minn_front_pack=on']));
+    $f = $frontDoor('minn_front_pack=on', [$signIn]);
+    $check('an editor opened by a query on the page, while the pack is not active, lands on the offer', $f['status'] === 302 && $f['location'] === $frontOffer, json_encode($f));
+    $f = [$frontDoor('minn_front_pack=on', []), $frontDoor('minn_front_pack=off', [$signIn])];
+    $check('a visitor, or another value of the query, gets the page', $f[0]['status'] === 200 && $f[1]['status'] === 200, json_encode($f));
     $adminMint = json_decode((string) shell_exec("{$WP} eval-file " . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 1 2>/dev/null'), true);
     if (is_array($adminMint) && !empty($adminMint['nonce'])) {
         // The stand-in is installed (its folder is linked in), so the offer only activates it: nothing is downloaded.
@@ -279,6 +294,8 @@ if (!is_array($doorMint) || empty($doorMint['admin_cookie'])) {
         $check('installing the pack where it is already on disk activates it, downloading nothing', curl_getinfo($ch, CURLINFO_RESPONSE_CODE) === 200 && is_array($answer) && array_key_exists('installed', $answer) && $answer['installed'] === null && ($answer['legacyPack']['active'] ?? null) === true, json_encode($answer));
         $e = $packDoor();
         $check('with the pack active the editor opens', $e['status'] === 200 && $e['body'] === 'door-pack opened', json_encode($e));
+        $f = $frontDoor('minn_front_pack=on', [$signIn]);
+        $check('with the pack active the page an editor opens on is served', $f['status'] === 200, json_encode($f));
         $ch = curl_init($ENGINE . '/wp-json/minn-admin/v1/legacy-pack/install');
         curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => '{}', CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'X-WP-Nonce: ' . $doorMint['nonce'], 'Cookie: ' . $doorMint['cookie_name'] . '=' . rawurlencode($doorMint['cookie'])]]);
         curl_exec($ch);

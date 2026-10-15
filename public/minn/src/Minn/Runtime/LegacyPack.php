@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Front\Permalinks;
+use Minn\Http\NoCache;
+use Minn\Http\Request;
 use Minn\Http\Response;
 
 /**
@@ -38,11 +41,18 @@ final class LegacyPack
     public const REPOSITORY = 'austinginder/minn-legacy-pack';
 
     /**
-     * The editors proven to open on Minn with the pack and not without it:
-     * the plugin, its name, and the wp-admin action that opens its editor.
+     * The editors proven to open on Minn with the pack and not without it,
+     * by the plugin (its file) or theme (its folder, with `theme`) that
+     * brings them: the editor's name, and what opens it, a wp-admin action
+     * or a query on the page it edits (`name`, or `name=value` for that
+     * value only).
      */
     private const EDITORS = [
         'elementor/elementor.php' => ['name' => 'Elementor', 'action' => 'elementor'],
+        'brizy/brizy.php' => ['name' => 'Brizy', 'action' => 'in-front-editor'],
+        'bb-plugin/fl-builder.php' => ['name' => 'Beaver Builder', 'query' => 'fl_builder'],
+        'beaver-builder-lite-version/fl-builder.php' => ['name' => 'Beaver Builder', 'query' => 'fl_builder'],
+        'bricks' => ['name' => 'Bricks', 'query' => 'bricks=run', 'theme' => true],
     ];
 
     private const PATH = '#^/(?:wp-includes/(?:js|css|images|fonts)|wp-admin/(?:js|css|images))/[A-Za-z0-9._/-]+$#';
@@ -75,19 +85,29 @@ final class LegacyPack
 
     /**
      * The pack's state for the app: whether it is installed and active, and
-     * the active plugins whose editors need it.
+     * the editors of the active plugins and theme that need it, each with
+     * the action or query that opens it ('' for the one it has not).
      *
-     * @return array{installed: bool, active: bool, editors: list<array{plugin: string, name: string, action: string}>}
+     * @return array{installed: bool, active: bool, editors: list<array{plugin: string, theme: string, name: string, action: string, query: string}>}
      */
     public static function status(): array
     {
-        $active = Runtime::options()->get('active_plugins');
+        $options = Runtime::options();
+        $active = $options->get('active_plugins');
         $active = is_array($active) ? $active : [];
+        $themes = [(string) $options->get('template'), (string) $options->get('stylesheet')];
         $editors = [];
-        foreach ((array) Runtime::hooks()->filter('minn_legacy_pack_editors', [self::EDITORS]) as $plugin => $editor) {
-            if (is_string($plugin) && in_array($plugin, $active, true) && is_array($editor) && is_string($editor['name'] ?? null) && is_string($editor['action'] ?? null)) {
-                $editors[] = ['plugin' => $plugin, 'name' => $editor['name'], 'action' => $editor['action']];
+        foreach ((array) Runtime::hooks()->filter('minn_legacy_pack_editors', [self::EDITORS]) as $key => $editor) {
+            if (!is_string($key) || !is_array($editor) || !is_string($editor['name'] ?? null)) {
+                continue;
             }
+            $theme = ($editor['theme'] ?? false) === true;
+            $action = is_string($editor['action'] ?? null) ? $editor['action'] : '';
+            $query = is_string($editor['query'] ?? null) ? $editor['query'] : '';
+            if (($action === '' && $query === '') || !in_array($key, $theme ? $themes : $active, true)) {
+                continue;
+            }
+            $editors[] = ['plugin' => $theme ? '' : $key, 'theme' => $theme ? $key : '', 'name' => $editor['name'], 'action' => $action, 'query' => $query];
         }
         return [
             'installed' => is_file(WP_PLUGIN_DIR . '/' . self::PLUGIN),
@@ -96,15 +116,54 @@ final class LegacyPack
         ];
     }
 
-    /** The editor a wp-admin action opens that needs the pack while it is not active, or null. @return array{plugin: string, name: string, action: string}|null */
+    /** The editor a wp-admin action opens that needs the pack while it is not active, or null. @return array{plugin: string, theme: string, name: string, action: string, query: string}|null */
     public static function wantedFor(string $action): ?array
+    {
+        return self::wanted(static fn (array $editor): bool => $editor['action'] !== '' && $editor['action'] === $action);
+    }
+
+    /**
+     * The editor a page's query opens that needs the pack while it is not
+     * active (Beaver Builder's ?fl_builder, Bricks' ?bricks=run), or null.
+     *
+     * @param array<string, mixed> $query
+     * @return array{plugin: string, theme: string, name: string, action: string, query: string}|null
+     */
+    public static function wantedOn(array $query): ?array
+    {
+        if ($query === []) {
+            return null;
+        }
+        return self::wanted(static function (array $editor) use ($query): bool {
+            if ($editor['query'] === '') {
+                return false;
+            }
+            [$name, $value] = array_pad(explode('=', $editor['query'], 2), 2, null);
+            return array_key_exists($name, $query) && ($value === null || $query[$name] === $value);
+        });
+    }
+
+    /**
+     * Minn Admin's offer to install the pack for an editor, with the way
+     * back to the page that opens it: `?legacy-pack=<action or query>&return=<page>`.
+     *
+     * @param array{action: string, query: string} $editor
+     */
+    public static function offer(array $editor, Permalinks $permalinks, Request $request): Response
+    {
+        $back = $permalinks->url($request->path) . $request->queryStringWithout();
+        return new Response(302, ['Location' => $permalinks->url('/minn-admin/') . '?' . http_build_query(['legacy-pack' => $editor['action'] !== '' ? $editor['action'] : $editor['query'], 'return' => $back])] + NoCache::headers());
+    }
+
+    /** @param \Closure(array{plugin: string, theme: string, name: string, action: string, query: string}): bool $opens */
+    private static function wanted(\Closure $opens): ?array
     {
         $status = self::status();
         if ($status['active']) {
             return null;
         }
         foreach ($status['editors'] as $editor) {
-            if ($editor['action'] === $action) {
+            if ($opens($editor)) {
                 return $editor;
             }
         }

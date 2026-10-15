@@ -7,7 +7,7 @@ the WordPress runtime plugins load against
 | [`Abilities`](#abilities) | final class | 226 | The abilities registry behind WP_Abilities_Registry, |
 | [`AbilityRun`](#abilityrun) | final class | 28 | The checks of an ability's run, as the reference makes them (probes |
 | [`AccountFlows`](#accountflows) | final class | 140 | The account functions a sign-in page and plugins call, with the |
-| [`AdminActionController`](#adminactioncontroller) | final readonly class | 97 | The wp-admin pages a plugin answers itself. The admin is Minn Admin, so |
+| [`AdminActionController`](#adminactioncontroller) | final readonly class | 96 | The wp-admin pages a plugin answers itself. The admin is Minn Admin, so |
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 86 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`ApplicationPasswordEvents`](#applicationpasswordevents) | final class | 46 | Application password changes made over REST, as the reference makes them |
@@ -63,7 +63,7 @@ the WordPress runtime plugins load against
 | [`Hooks`](#hooks) | final class | 403 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
 | [`KsesRules`](#ksesrules) | final class | 95 | The HTML WordPress's kses functions let through: the elements and |
-| [`LegacyPack`](#legacypack) | final class | 117 | WordPress's own browser files, for the plugins whose screens are built on |
+| [`LegacyPack`](#legacypack) | final class | 173 | WordPress's own browser files, for the plugins whose screens are built on |
 | [`MainQuery`](#mainquery) | final class | 23 | The query the request answers ($wp_query), as WordPress keeps it: the |
 | [`MenuEvents`](#menuevents) | final readonly class | 225 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
@@ -396,7 +396,7 @@ Route: `* /wp-admin/{page:[a-z0-9-]+\.php} (public)`
 
 Runs the handlers a plugin hooked for the action, or sends the visitor on.
 
-Internals: `upload()` (private, line 116), `action()` (private, line 130)
+Internals: `upload()` (private, line 115), `action()` (private, line 129)
 
 
 ## AjaxController
@@ -3341,12 +3341,15 @@ editor to the offer rather than to an editor that cannot load.
 
 - const `PLUGIN` = `'minn-legacy-pack/minn-legacy-pack.php'` — The pack, as the active plugins list names it.
 - const `REPOSITORY` = `'austinginder/minn-legacy-pack'` — Where the pack is published, as its Update URI names it.
-- const `EDITORS` = `array (   'elementor/elementor.php' =>    array (     'name' => 'Elementor',     'action' => 'elementor',   ), )` — The editors proven to open on Minn with the pack and not without it:
-the plugin, its name, and the wp-admin action that opens its editor.
+- const `EDITORS` = `array (   'elementor/elementor.php' =>    array (     'name' => 'Elementor',     'action' => 'elementor',   ),   'brizy/brizy.php' =>    array (     'name' => 'Brizy',     'action' => 'in-front-editor',   ),   'bb-plugin/fl-builder.php' =>    array (     'name' => 'Beaver Builder',     'query' => 'fl_builder',   ),   'beaver-builder-lite-version/fl-builder.php' =>    array (     'name' => 'Beaver Builder',     'query' => 'fl_builder',   ),   'bricks' =>    array (     'name' => 'Bricks',     'query' => 'bricks=run',     'theme' => true,   ), )` — The editors proven to open on Minn with the pack and not without it,
+by the plugin (its file) or theme (its folder, with `theme`) that
+brings them: the editor's name, and what opens it, a wp-admin action
+or a query on the page it edits (`name`, or `name=value` for that
+value only).
 - const `PATH` = `'#^/(?:wp-includes/(?:js|css|images|fonts)|wp-admin/(?:js|css|images))/[A-Za-z0-9._/-]+$#'`
 - const `TYPES` = `array (   'js' => 'application/javascript',   'css' => 'text/css',   'png' => 'image/png',   'gif' => 'image/gif',   'jpg' => 'image/jpeg',   'jpeg' => 'image/jpeg',   'svg' => 'image/svg+xml',   'webp' => 'image/webp',   'ico' => 'image/x-icon',   'woff' => 'font/woff',   'woff2' => 'font/woff2',   'ttf' => 'font/ttf',   'eot' => 'application/vnd.ms-fontobject',   'json' => 'application/json',   'html' => 'text/html; charset=UTF-8',   'txt' => 'text/plain; charset=UTF-8', )`
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Admin\LegacyPackController`, `Minn\Engine`, `Minn\Runtime\AdminActionController`
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\LegacyPackController`, `Minn\Engine`, `Minn\Front\FrontController`, `Minn\Runtime\AdminActionController`
 
 ### static `active(): bool`
 
@@ -3355,15 +3358,31 @@ Whether the pack is active on the site the runtime serves.
 ### static `status(): array`
 
 The pack's state for the app: whether it is installed and active, and
-the active plugins whose editors need it.
+the editors of the active plugins and theme that need it, each with
+the action or query that opens it ('' for the one it has not).
 
-- `@return array{installed: bool, active: bool, editors: list<array{plugin: string, name: string, action: string}>}`
+- `@return array{installed: bool, active: bool, editors: list<array{plugin: string, theme: string, name: string, action: string, query: string}>}`
 
 ### static `wantedFor(string $action): ?array`
 
-The editor a wp-admin action opens that needs the pack while it is not active, or null. @return array{plugin: string, name: string, action: string}|null
+The editor a wp-admin action opens that needs the pack while it is not active, or null. @return array{plugin: string, theme: string, name: string, action: string, query: string}|null
 
-- `@return array{plugin: string, name: string, action: string}|null`
+- `@return array{plugin: string, theme: string, name: string, action: string, query: string}|null`
+
+### static `wantedOn(array $query): ?array`
+
+The editor a page's query opens that needs the pack while it is not
+active (Beaver Builder's ?fl_builder, Bricks' ?bricks=run), or null.
+
+- `@param array<string, mixed> $query`
+- `@return array{plugin: string, theme: string, name: string, action: string, query: string}|null`
+
+### static `offer(array $editor, Minn\Front\Permalinks $permalinks, Minn\Http\Request $request): Minn\Http\Response`
+
+Minn Admin's offer to install the pack for an editor, with the way
+back to the page that opens it: `?legacy-pack=<action or query>&return=<page>`.
+
+- `@param array{action: string, query: string} $editor`
 
 ### static `claims(string $path): bool`
 
@@ -3379,6 +3398,8 @@ active, the file is not in it, or its type is not one a browser loads.
 ### static `response(string $file): Minn\Http\Response`
 
 The file as the answer to the request for it.
+
+Internals: `wanted()` (private, line 159)
 
 
 ## MainQuery

@@ -16768,6 +16768,25 @@ cache drop-in and the rest of the facade still load at boot. Of the reference's 
 early functions, constants and answers with the reference's. WP Rocket's drop-in now serves the builders lab (200, was
 500).
 
+## The pack offered for Brizy, Beaver Builder and Bricks, and at front-end editors (2026-10-15)
+
+`LegacyPack::EDITORS` now names every editor the builder audit proved to open with the pack and not
+without it: Elementor and Brizy (`admin_action_in-front-editor`), Beaver Builder (`bb-plugin` or the
+lite plugin, `?fl_builder` on the page it edits) and Bricks, a theme (`?bricks=run`). An editor is
+opened by a wp-admin action or by a query on the page (`name`, or `name=value` for that value only),
+and is brought by a plugin (its file) or a theme (its folder, with `theme`, matched against `template`
+and `stylesheet`). `minn_legacy_pack_editors` takes the same shape. The boot payload's editors carry
+`plugin`, `theme`, `name`, `action` and `query`, '' where one does not apply.
+
+A front-end editor opens on the public page, so while the pack is not active the front controller sends
+a GET or HEAD carrying an editor's query from someone who may `edit_posts` to the offer
+(`/minn-admin/?legacy-pack=<action or query>&return=<page>`, built by `LegacyPack::offer` for the doorway
+too). A visitor, or another value of the query, gets the page as before: signed out, Bricks sends
+`?bricks=run` home on both stacks. Minn Admin matches a link to such an editor by its query as it
+matches a wp-admin link by its action. Held back until they work with the pack: Divi, Oxygen 4 and Etch.
+Suite ajax covers the front offer, a visitor, another value and the pack active (99 checks). Minn Admin's
+engine-bailouts follows a Bricks row link to the offer on the builders lab copy.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
