@@ -10,6 +10,7 @@ use Minn\Auth\Nonce;
 use Minn\Content\SiteIcon;
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
+use Minn\Runtime\LegacyPack;
 use Minn\Runtime\Runtime;
 use stdClass;
 
@@ -83,6 +84,11 @@ final readonly class BootPayload
             'comments' => is_bool($plugin['comments'] ?? null) ? $plugin['comments'] : true,
             'hidden' => $this->hidden->listFor($userId),
             'pretty' => $this->permalinks->isPretty(),
+            // The wp-admin pages the engine opens: those whose action a plugin answers itself (a
+            // page builder's editor, post.php?action=elementor), while the Minn Legacy Pack supplies
+            // the WordPress browser files they load. The app keeps links to them; it drops every
+            // other wp-admin link.
+            'adminActions' => LegacyPack::active() ? Runtime::hooks()->names('admin_action_') : [],
         ] + ($plugin === null ? $this->adapterSlices() : array_diff_key($plugin, array_flip(self::PLUGIN_KEYS_WITHHELD)));
         return $payload;
     }

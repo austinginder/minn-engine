@@ -224,6 +224,36 @@ if (!is_array($doorMint) || empty($doorMint['admin_cookie'])) {
     // Where no plugin answers, the engine's admin is Minn Admin; the reference would draw its own screen.
     $e = $door($ENGINE, 'action=minn_nobody', [$admin]);
     $check('an action no plugin answers lands in Minn Admin', $e['status'] === 302 && $e['location'] === '{site}/minn-admin/', json_encode($e));
+
+    // The app is told which of these pages the engine opens, while the Minn Legacy Pack is active
+    // (a stand-in here): it keeps links to them and drops every other wp-admin link.
+    $adminActions = static function () use ($ENGINE, $signIn): ?array {
+        $ch = curl_init($ENGINE . '/minn-admin/');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 30, CURLOPT_HTTPHEADER => [$signIn]]);
+        $html = (string) curl_exec($ch);
+        $boot = preg_match('/window\.MINN = (\{.*\});\s*$/m', $html, $m) === 1 ? json_decode($m[1], true) : null;
+        return is_array($boot) && is_array($boot['adminActions'] ?? null) ? $boot['adminActions'] : null;
+    };
+    $packLinks = [$SITE . '/public/wp-content/plugins/minn-legacy-pack', $SITE . '/wp-reference/wp-content/plugins/minn-legacy-pack'];
+    foreach ($packLinks as $link) {
+        if (!file_exists($link)) {
+            symlink(dirname(__DIR__) . '/tests/fixtures/runtime/minn-legacy-pack', $link);
+        }
+    }
+    register_shutdown_function(static function () use ($WP, $packLinks): void {
+        shell_exec("{$WP} plugin deactivate minn-legacy-pack >/dev/null 2>&1");
+        foreach ($packLinks as $link) {
+            if (is_link($link)) {
+                unlink($link);
+            }
+        }
+    });
+    $off = $adminActions();
+    shell_exec("{$WP} plugin activate minn-legacy-pack >/dev/null 2>&1");
+    $on = $adminActions();
+    shell_exec("{$WP} plugin deactivate minn-legacy-pack >/dev/null 2>&1");
+    $check('without the pack the app is told of no wp-admin page to open', $off === [], json_encode($off));
+    $check('with the pack it is told the actions plugins answer', is_array($on) && in_array('minn_door', $on, true), json_encode($on));
 }
 
 echo "\n{$pass} passed, {$fail} failed\n";

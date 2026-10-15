@@ -16624,6 +16624,13 @@ not (dogfood /news/).
   exception). Elementor's editor preview answers an empty draft with its wrapper
   (`.elementor-N`), and without it the editor stopped at "the content area was not found".
 
+**Minn Admin's links to them.** The app drops every wp-admin link on the engine. The boot
+payload now names the wp-admin pages the engine opens, `adminActions` (the `admin_action_*`
+hooks plugins registered, `Hooks::names`), while the Minn Legacy Pack is active and none
+without it; the app keeps a link whose page and action are on that list ("Edit in Elementor"
+on a builder's page and in the content list's row menu). Suite ajax checks both states with a
+stand-in pack.
+
 Where it stands: with the pack active, Elementor's editor runs on the engine: its panel and
 preview load, a container and a heading added through its command API save (`save_builder`,
 `_elementor_data`), revisions and the post lock answer, and the saved draft renders the same

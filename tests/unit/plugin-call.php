@@ -27,6 +27,16 @@ return [
         $out = $hooks->filter('minn_unit_typed_filter', [42]);
         return $out === '42!' ? true : var_export($out, true);
     },
+    'the hooks with callbacks under a prefix are named without it' => static function (): bool|string {
+        $hooks = new Hooks();
+        $hooks->add('admin_action_elementor', static fn () => null);
+        $hooks->add('admin_action_duplicate', static fn () => null);
+        $hooks->add('admin_init', static fn () => null);
+        $hooks->add('admin_action_gone', $gone = static fn () => null);
+        $hooks->remove('admin_action_gone', $gone);
+        $names = $hooks->names('admin_action_');
+        return $names === ['duplicate', 'elementor'] ? true : json_encode($names);
+    },
     'a call that cannot be converted still fails, as it does on WordPress' => static function (): bool|string {
         try {
             PluginCall::run(static fn (int $id): int => $id, ['not a number']);

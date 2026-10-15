@@ -286,6 +286,24 @@ final class Hooks
     }
 
     /**
+     * The hooks with callbacks whose names start with a prefix, the prefix
+     * left off (the admin actions plugins answer: "admin_action_").
+     *
+     * @return list<string>
+     */
+    public function names(string $prefix): array
+    {
+        $out = [];
+        foreach ($this->hooks as $hook => $byPriority) {
+            if (str_starts_with($hook, $prefix) && $byPriority !== []) {
+                $out[] = substr($hook, strlen($prefix));
+            }
+        }
+        sort($out);
+        return $out;
+    }
+
+    /**
      * Every hook with callbacks, by name.
      *
      * @return array<string, array<int, list<callable>>> a read-only view for diagnostics

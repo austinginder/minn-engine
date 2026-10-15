@@ -48,6 +48,13 @@ final class LegacyPack
         'txt' => 'text/plain; charset=UTF-8',
     ];
 
+    /** Whether the pack is active on the site the runtime serves. */
+    public static function active(): bool
+    {
+        $active = Runtime::options()->get('active_plugins');
+        return is_array($active) && in_array(self::PLUGIN, $active, true);
+    }
+
     /** Whether a path is one of the addresses WordPress serves its browser files from. */
     public static function claims(string $path): bool
     {

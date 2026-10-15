@@ -1562,7 +1562,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BootPayload.php",
-            "lines": 245,
+            "lines": 250,
             "doc": "The window.MINN boot payload, assembled from the engine: the keys app.js\nneeds to boot and drive the wp/v2 surface, with capabilities from the\nengine's own model.",
             "implements": [],
             "extends": null,
@@ -1577,6 +1577,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Content\\SiteIcon",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -1660,8 +1661,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 38
+                "line": 27,
+                "end": 39
             },
             "cases": [],
             "constants": [
@@ -1774,8 +1775,8 @@
                     "doc": "The site's name, or Site when it has none.",
                     "shapes": [],
                     "params": [],
-                    "line": 41,
-                    "end": 44
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -1794,8 +1795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 88
+                    "line": 48,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -1823,8 +1824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 105
+                    "line": 97,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -1837,8 +1838,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 108,
-                    "end": 126
+                    "line": 114,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -1859,8 +1860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 137
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -1888,8 +1889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 196
+                    "line": 152,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -1900,8 +1901,8 @@
                     "doc": "What Minn Admin's own boot_payload() computes when the plugin runs as\ncode on the runtime, so the app boots with the same keys on both\nstacks (connectors, discussion defaults, roles, post formats, the\nadapter flags). Engine-owned keys win; the withheld ones would send\nthe app to a wp-admin page the engine does not have.",
                     "shapes": [],
                     "params": [],
-                    "line": 205,
-                    "end": 218
+                    "line": 211,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -1912,8 +1913,8 @@
                     "doc": "The reference serves the app shell from the home query, so the global\npost is the newest post while the payload is built; the comments\nfeature check reads it through the comments_open filter (a site that\ncloses comments on old posts reports the feature off when its newest\npost is old).",
                     "shapes": [],
                     "params": [],
-                    "line": 227,
-                    "end": 238
+                    "line": 233,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -1924,8 +1925,8 @@
                     "doc": "What Minn Admin's own adapters contribute when the plugin runs as code\non the runtime: plugin surfaces (Tools), editor panels, design\nsources, editor commands, block forms. Absent, the app's fallbacks apply.",
                     "shapes": [],
                     "params": [],
-                    "line": 245,
-                    "end": 264
+                    "line": 251,
+                    "end": 270
                 }
             ]
         },
@@ -15945,7 +15946,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/PostBlocks.php",
-            "lines": 260,
+            "lines": 265,
             "doc": "The post-* blocks: they render the context's current post.",
             "implements": [],
             "extends": null,
@@ -16130,7 +16131,7 @@
                         }
                     ],
                     "line": 69,
-                    "end": 111
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -16156,8 +16157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 125
+                    "line": 118,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -16183,8 +16184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 139
+                    "line": 132,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -16210,8 +16211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 151
+                    "line": 146,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -16237,8 +16238,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 191
+                    "line": 158,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -16264,8 +16265,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 215
+                    "line": 198,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -16291,8 +16292,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 247
+                    "line": 223,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -16318,8 +16319,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 252
+                    "line": 254,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -16345,8 +16346,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 268
+                    "line": 266,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -16365,8 +16366,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 273
+                    "line": 275,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -16413,8 +16414,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 288
+                    "line": 280,
+                    "end": 293
                 }
             ]
         },
@@ -130383,7 +130384,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 385,
+            "lines": 403,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
@@ -131057,6 +131058,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "names",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "names(string $prefix): array",
+                    "doc": "The hooks with callbacks whose names start with a prefix, the prefix\nleft off (the admin actions plugins answer: \"admin_action_\").",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 294,
+                    "end": 304
+                },
+                {
+                    "routes": [],
                     "name": "registered",
                     "static": false,
                     "visibility": "public",
@@ -131066,8 +131089,8 @@
                         "@return array<string, array<int, list<callable>>> a read-only view for diagnostics"
                     ],
                     "params": [],
-                    "line": 293,
-                    "end": 303
+                    "line": 311,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -131088,8 +131111,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 372,
-                    "end": 377
+                    "line": 390,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -131140,8 +131163,8 @@
                             "doc": "what an 'all' callback gets after the hook's name; the arguments when null"
                         }
                     ],
-                    "line": 310,
-                    "end": 357
+                    "line": 328,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -131167,8 +131190,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 359,
-                    "end": 368
+                    "line": 377,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -131194,8 +131217,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 388
+                    "line": 397,
+                    "end": 406
                 },
                 {
                     "routes": [],
@@ -131214,8 +131237,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 391,
-                    "end": 401
+                    "line": 409,
+                    "end": 419
                 }
             ]
         },
@@ -132124,15 +132147,17 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/LegacyPack.php",
-            "lines": 61,
+            "lines": 68,
             "doc": "WordPress's own browser files, for the plugins whose screens are built on\nthem: a page builder's editor loads WordPress's media library, its classic\neditor and the libraries under them, by the addresses WordPress serves\nthem from (/wp-includes/js/..., /wp-admin/css/...), and some of that code\nnames those addresses itself.\n\nThe engine carries none of them. They are GPL, and they come with the\nMinn Legacy Pack, a plugin the site installs like any other (the way a\nsite installs the script pack, ScriptPack), which keeps them under the\nsame paths and registers their handles. While the pack is active the\nengine answers those addresses from it, ahead of loading any plugin, so a\npage that loads a hundred of them stays fast. A file the engine serves\nitself (its jQuery, its embed scripts) is not in the pack and still comes\nfrom the engine.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Response",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\ScriptPack"
             ],
             "usedBy": [
+                "Minn\\Admin\\BootPayload",
                 "Minn\\Engine"
             ],
             "constructor": null,
@@ -132161,6 +132186,18 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "active",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "active(): bool",
+                    "doc": "Whether the pack is active on the site the runtime serves.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 52,
+                    "end": 56
+                },
+                {
+                    "routes": [],
                     "name": "claims",
                     "static": true,
                     "visibility": "public",
@@ -132176,8 +132213,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 55
+                    "line": 59,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -132212,8 +132249,8 @@
                             "doc": "the active_plugins option"
                         }
                     ],
-                    "line": 63,
-                    "end": 74
+                    "line": 70,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -132232,8 +132269,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 84
+                    "line": 84,
+                    "end": 91
                 }
             ]
         },
@@ -149561,6 +149598,7 @@
                 "Minn\\Runtime\\Heartbeat",
                 "Minn\\Runtime\\Interactivity",
                 "Minn\\Runtime\\KsesRules",
+                "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MenuItemMarks",
@@ -172379,7 +172417,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/PageRenderer.php",
-            "lines": 185,
+            "lines": 188,
             "doc": "A whole page from the active block theme: the template the resolution\nmaps to, rendered against the main query, inside the document shell the\nreference emits (skip link, wp-site-blocks, the skip-link target on the\nfirst main element).",
             "implements": [],
             "extends": null,
@@ -172718,7 +172756,7 @@
                         }
                     ],
                     "line": 142,
-                    "end": 172
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -172739,8 +172777,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 186
+                    "line": 183,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -172773,8 +172811,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 218
+                    "line": 198,
+                    "end": 221
                 }
             ]
         },
