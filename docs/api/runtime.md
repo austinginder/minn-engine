@@ -4254,7 +4254,7 @@ migration flag, and the post types and taxonomies Minn Admin keeps
 and registers as it loads): read together as a request begins, as one
 read rather than one each.
 
-Used by: `Minn\Admin\AdminPlugin`, `Minn\Cli\OptionCommand`, `Minn\Engine`, `Minn\Runtime\AjaxController`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Cli\OptionCommand`, `Minn\Engine`, `Minn\Ops\Directory`, `Minn\Runtime\AjaxController`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
 
 ```php
 __construct(Minn\Db $db)

@@ -40712,6 +40712,7 @@
                 "Minn\\Front\\SingleAddresses",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Ops\\Diagnostics",
+                "Minn\\Ops\\Directory",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
@@ -86200,14 +86201,16 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Directory.php",
-            "lines": 35,
-            "doc": "The Minn update service, https://updates.minn.run: the one place the\nengine asks about anything it does not have yet, so a site running Minn\ntalks to Minn and never to wordpress.org. The service speaks\nwordpress.org's own endpoints under /v1/ (plugin and theme update checks,\ndirectory search and information, translations) with every address a site\nwould fetch pointed back at itself: packages under /v1/download/, icons,\nscreenshots and emoji under /v1/assets/. It also serves Minn's own\nreleases and changelogs. Every request names the engine and the WordPress\nversion it is compatible with (which judges a plugin's \"Requires at\nleast\"), never the site's address.",
+            "lines": 74,
+            "doc": "The Minn update service, https://updates.minn.run: the one place the\nengine asks about anything it does not have yet, so a site running Minn\ntalks to Minn and never to wordpress.org. The service speaks\nwordpress.org's own endpoints under /v1/ (plugin and theme update checks,\ndirectory search and information, translations) with every address a site\nwould fetch pointed back at itself: packages under /v1/download/, icons,\nscreenshots and emoji under /v1/assets/. It also serves Minn's own\nreleases and changelogs. Every request names the engine and the WordPress\nversion it is compatible with (which judges a plugin's \"Requires at\nleast\"), never the site's address. A development install says \"(lab)\"\nafter the version, so the service counts it apart from real sites.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Db",
                 "Minn\\Engine",
                 "Minn\\Http",
-                "Minn\\RestError"
+                "Minn\\RestError",
+                "Minn\\Runtime\\Options"
             ],
             "usedBy": [
                 "Minn\\Admin\\LegacyPackController",
@@ -86237,13 +86240,29 @@
                     "visibility": "public"
                 },
                 {
+                    "name": "LAB_HOST",
+                    "value": "'/(^localhost$|\\\\.(localhost|test|local|example|invalid|internal|lan|home\\\\.arpa)$)/'",
+                    "doc": "Host names only a development install answers to.",
+                    "visibility": "private"
+                },
+                {
                     "name": "PACKAGES",
                     "value": "'https://updates.minn.run/v1/download/'",
                     "doc": "Where plugin, theme and translation packages download from.",
                     "visibility": "public"
                 }
             ],
-            "properties": [],
+            "properties": [
+                {
+                    "name": "lab",
+                    "type": "?bool",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
             "methods": [
                 {
                     "routes": [],
@@ -86262,8 +86281,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 35
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -86271,11 +86290,38 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "userAgent(): string",
-                    "doc": "How the engine introduces itself: its version, and nothing about the site.",
+                    "doc": "How the engine introduces itself: its version, \"(lab)\" from a development install, and nothing about the site.",
                     "shapes": [],
                     "params": [],
-                    "line": 38,
-                    "end": 41
+                    "line": 46,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "lab",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "lab(string $home, string $environment = ''): bool",
+                    "doc": "Whether a site is a development install: its environment type is local\nor development, or its address names a development host (localhost, a\n.localhost, .test, .local, .example, .invalid or .internal name, a\nprivate or loopback address). Staging counts as a real site.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "home",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "environment",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -86311,8 +86357,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 56
+                    "line": 91,
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "home",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "home(): string",
+                    "doc": "The site's address (wp-config's WP_HOME, else the home option), through the options store; '' when it cannot be read.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 76,
+                    "end": 83
                 }
             ]
         },
@@ -138036,6 +138094,7 @@
                 "Minn\\Admin\\AdminPlugin",
                 "Minn\\Cli\\OptionCommand",
                 "Minn\\Engine",
+                "Minn\\Ops\\Directory",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\OptionWrites",

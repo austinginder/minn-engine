@@ -9,7 +9,7 @@
 | [`Changelog`](#changelog) | final class | 73 | A changelog read from its repository rather than shipped: a Minn release |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
-| [`Directory`](#directory) | final class | 35 | The Minn update service, https://updates.minn.run: the one place the |
+| [`Directory`](#directory) | final class | 74 | The Minn update service, https://updates.minn.run: the one place the |
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
 | [`EngineUpdate`](#engineupdate) | final readonly class | 160 | Replaces the running engine with a published release. The release's |
@@ -222,13 +222,16 @@ would fetch pointed back at itself: packages under /v1/download/, icons,
 screenshots and emoji under /v1/assets/. It also serves Minn's own
 releases and changelogs. Every request names the engine and the WordPress
 version it is compatible with (which judges a plugin's "Requires at
-least"), never the site's address.
+least"), never the site's address. A development install says "(lab)"
+after the version, so the service counts it apart from real sites.
 
 - const `ORIGIN` = `'https://updates.minn.run/'`
 - const `BASE` = `'https://updates.minn.run/v1/'`
+- const `LAB_HOST` = `'/(^localhost$|\\.(localhost|test|local|example|invalid|internal|lan|home\\.arpa)$)/'` — Host names only a development install answers to.
 - const `PACKAGES` = `'https://updates.minn.run/v1/download/'` — Where plugin, theme and translation packages download from.
 
 Used by: `Minn\Admin\LegacyPackController`, `Minn\Cli\PackageInstaller`, `Minn\Ops\Changelog`, `Minn\Ops\EngineChecksums`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\Release`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`
+
 
 ### static `url(string $path): string`
 
@@ -236,7 +239,14 @@ An address on the service: a path under /v1/, such as "plugins/info/1.2/".
 
 ### static `userAgent(): string`
 
-How the engine introduces itself: its version, and nothing about the site.
+How the engine introduces itself: its version, "(lab)" from a development install, and nothing about the site.
+
+### static `lab(string $home, string $environment = ''): bool`
+
+Whether a site is a development install: its environment type is local
+or development, or its address names a development host (localhost, a
+.localhost, .test, .local, .example, .invalid or .internal name, a
+private or loopback address). Staging counts as a real site.
 
 ### static `post(Minn\Http $http, string $path, array $form): array`
 
@@ -244,6 +254,8 @@ A form POST to the service (the update checks) over the caller's client, its ans
 
 - `@param array<string, string> $form`
 - `@return array<string, mixed>`
+
+Internals: `home()` (private, line 76)
 
 
 ## DirectoryApi

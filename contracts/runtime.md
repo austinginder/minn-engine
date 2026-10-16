@@ -17070,6 +17070,18 @@ names with their values for this. Probe stored-objects (a plain object, a parent
 name, objects in lists and in an untyped property, an option read from the database) matches the reference;
 the unit suite holds the classes the engine still refuses.
 
+## A development install says so to the update service (2026-10-16)
+
+The update service counts downloads, update checks and active sites (updates.minn.run 0.3.0, `/v1/stats/`),
+and nearly all of its traffic so far is Minn's own labs and suites. The engine still sends nothing about the
+site, but a development install now adds one word: `Minn/<version> (lab)`, when the environment type is local
+or development or the site's address is a development host (localhost, a .localhost, .test, .local, .example,
+.invalid or .internal name, a private or loopback address). Staging counts as a real site. The service keeps
+lab traffic apart from every figure. `Directory::lab()` decides it from the address (read once per process
+through the options store, so wp-config's WP_HOME wins) and the environment type; the engine's release check
+now introduces itself with the same User-Agent as every other request to the service (it sent the HTTP
+client's default before). Unit `directory`.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
