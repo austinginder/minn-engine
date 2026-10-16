@@ -18,7 +18,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 110 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
-| [`HeadLinks`](#headlinks) | final readonly class | 51 | The engine's own pieces of a page's head: its block stylesheet link, |
+| [`HeadLinks`](#headlinks) | final readonly class | 44 | The engine's own pieces of a page's head: its block stylesheet link, |
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 136 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
@@ -583,9 +583,9 @@ feed_links_args.
 
 No trailing newline: the reference prints the JSON alternate and the RSD link on the same physical line.
 
-### `jsonAlternate(Minn\Front\Resolution $resolution): string`
+### `jsonAlternate(string $route): string`
 
-The wp/v2 alternate link for the resolution.
+The JSON alternate link for the queried resource's REST route (rest_get_queried_resource_route); none for no route.
 
 
 ## Hierarchy

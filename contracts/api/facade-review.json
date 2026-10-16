@@ -19820,8 +19820,8 @@
             "rest_output_link_wp_head": {
                 "verdict": "keep",
                 "reason": "shape",
-                "why": "echoes the engine's head links for the request, or the plain REST link",
-                "body": "47b6f65afdc7"
+                "why": "echoes the engine's head links for the request with the queried resource's route (rest_get_queried_resource_route), or the plain REST link",
+                "body": "65c065226099"
             },
             "rest_parse_embed_param": {
                 "verdict": "move",

@@ -6,7 +6,7 @@
         "delegates": 3439,
         "logicFunctions": 1828,
         "logicMethods": 2030,
-        "logicLines": 30306,
+        "logicLines": 30305,
         "kept": 0
     },
     "byFile": {
@@ -100,7 +100,7 @@
         },
         "rest-api.php": {
             "logic": 40,
-            "lines": 342
+            "lines": 341
         },
         "classes/WP_REST_Server.php": {
             "logic": 31,
@@ -13886,7 +13886,7 @@
         },
         "_minn_core_rest_controllers": {
             "file": "rest-api.php",
-            "line": 804,
+            "line": 803,
             "statements": 7,
             "lines": 23
         },
@@ -14414,19 +14414,19 @@
         },
         "_minn_rest_search_handlers": {
             "file": "rest-api.php",
-            "line": 838,
+            "line": 837,
             "statements": 3,
             "lines": 5
         },
         "_minn_rest_search_subtypes": {
             "file": "rest-api.php",
-            "line": 867,
+            "line": 866,
             "statements": 2,
             "lines": 2
         },
         "_minn_rest_search_through_handlers": {
             "file": "rest-api.php",
-            "line": 852,
+            "line": 851,
             "statements": 8,
             "lines": 10
         },
@@ -16364,7 +16364,7 @@
         },
         "create_initial_rest_routes": {
             "file": "rest-api.php",
-            "line": 772,
+            "line": 771,
             "statements": 6,
             "lines": 16
         },
@@ -19358,7 +19358,7 @@
         },
         "rest_add_application_passwords_to_index": {
             "file": "rest-api.php",
-            "line": 584,
+            "line": 583,
             "statements": 3,
             "lines": 5
         },
@@ -19382,13 +19382,13 @@
         },
         "rest_application_password_check_errors": {
             "file": "rest-api.php",
-            "line": 745,
+            "line": 744,
             "statements": 4,
             "lines": 9
         },
         "rest_application_password_collect_status": {
             "file": "rest-api.php",
-            "line": 732,
+            "line": 731,
             "statements": 2,
             "lines": 2
         },
@@ -19400,7 +19400,7 @@
         },
         "rest_cookie_collect_status": {
             "file": "rest-api.php",
-            "line": 759,
+            "line": 758,
             "statements": 2,
             "lines": 2
         },
@@ -19418,7 +19418,7 @@
         },
         "rest_format_combining_operation_error": {
             "file": "rest-api.php",
-            "line": 724,
+            "line": 723,
             "statements": 3,
             "lines": 3
         },
@@ -19430,7 +19430,7 @@
         },
         "rest_get_combining_operation_error": {
             "file": "rest-api.php",
-            "line": 628,
+            "line": 627,
             "statements": 2,
             "lines": 2
         },
@@ -19503,12 +19503,12 @@
         "rest_output_link_wp_head": {
             "file": "rest-api.php",
             "line": 572,
-            "statements": 4,
-            "lines": 7
+            "statements": 3,
+            "lines": 6
         },
         "rest_parse_embed_param": {
             "file": "rest-api.php",
-            "line": 635,
+            "line": 634,
             "statements": 3,
             "lines": 5
         },
@@ -19532,7 +19532,7 @@
         },
         "rest_send_allow_header": {
             "file": "rest-api.php",
-            "line": 645,
+            "line": 644,
             "statements": 5,
             "lines": 9
         },

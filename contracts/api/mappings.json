@@ -59269,7 +59269,7 @@
         },
         "rest_output_link_wp_head": {
             "file": "rest-api.php",
-            "lines": 7,
+            "lines": 6,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -59279,7 +59279,8 @@
             ],
             "composes": [
                 "esc_url",
-                "get_rest_url"
+                "get_rest_url",
+                "rest_get_queried_resource_route"
             ]
         },
         "rest_output_rsd": {

@@ -16928,6 +16928,25 @@ Asking `get_the_terms` per item read each term again: the posts' terms were prim
 reference reads the whole terms of a list of posts in one query, and the engine's priming now selects the
 columns `get_term` reads and keeps each row (`TermQuery::keep`), so the home page runs 26 SELECTs (it ran 30).
 
+## A product's head link and its post terms (2026-10-16)
+
+Two smaller differences the hunt found on a WooCommerce product page:
+
+- **The JSON alternate link** in a page's head named its REST route by the engine's own rules (posts, pages,
+  categories, tags, authors), so a product linked `wp/v2/posts/<id>`, a product category none at all. It now
+  takes the route `rest_get_queried_resource_route()` gives, as the reference does: the type's or taxonomy's own
+  route (`wp/v2/product/<id>`, `wp/v2/product_cat/<id>`), none for one not in REST, and the
+  `rest_queried_resource_route` filter heard.
+- **The post terms block's prefix and suffix**, which the engine left out: each prints in a span of its own
+  (`wp-block-post-terms__prefix` before the links, `__suffix` after), their markup as post content may hold it
+  (probed with markup, an ampersand, quotes and a script tag: the tags kses removes go, their text stays).
+
+Two more of the hunt's findings needed nothing new. Wordfence's `wordfence/v1` routes were missing because
+`get_current_user_id()` threw while it loaded ("Plugins that reach for WordPress's pieces early"): with that
+check undone the namespace goes missing again. Inspiro's local Google Fonts are written on both stacks; the file
+is named by a hash of `WP_CONTENT_DIR`, which on the lab's WordPress twin is its own path, so the two stacks name
+the same file differently, a lab artifact.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -16996,4 +17015,4 @@ rows that are `open` or `austin`.
 | 16876 | The loop, as a block template walks it (10-15) | the template-part block's saved-part lookup through WP_Query (`loop_no_results`, `pre_get_posts`) | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | open | engine work owed |
-| 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | open | engine work owed |
+| 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | done | "A product's head link and its post terms (2026-10-16)": the route rest_get_queried_resource_route gives |

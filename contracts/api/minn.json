@@ -16069,7 +16069,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/PostBlocks.php",
-            "lines": 265,
+            "lines": 271,
             "doc": "The post-* blocks: they render the context's current post.",
             "implements": [],
             "extends": null,
@@ -16098,7 +16098,8 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Html",
                 "Minn\\I18n\\Gettext",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Kses"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer"
@@ -16138,8 +16139,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 38
+                "line": 33,
+                "end": 39
             },
             "cases": [],
             "constants": [],
@@ -16199,8 +16200,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 51
+                    "line": 42,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -16226,8 +16227,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 66
+                    "line": 54,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -16253,8 +16254,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 116
+                    "line": 70,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -16280,8 +16281,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 130
+                    "line": 119,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -16307,8 +16308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 144
+                    "line": 133,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -16334,8 +16335,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 156
+                    "line": 147,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -16361,8 +16362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 196
+                    "line": 159,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -16388,8 +16389,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 220
+                    "line": 199,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -16415,8 +16416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 252
+                    "line": 230,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -16442,8 +16443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 257
+                    "line": 261,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -16469,8 +16470,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 273
+                    "line": 273,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -16489,8 +16490,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 278
+                    "line": 282,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -16537,8 +16538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 293
+                    "line": 287,
+                    "end": 300
                 }
             ]
         },
@@ -48363,7 +48364,6 @@
                 "Minn\\Theme\\BodyClasses",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\EmbedRenderer",
-                "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\Templates"
@@ -50880,7 +50880,6 @@
                 "Minn\\Theme\\BodyClasses",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\EmbedRenderer",
-                "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\Templates"
@@ -165970,6 +165969,7 @@
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Content\\Users",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PostsWriteController",
@@ -173293,15 +173293,13 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/HeadLinks.php",
-            "lines": 51,
+            "lines": 44,
             "doc": "The engine's own pieces of a page's head: its block stylesheet link,\nand for rest_output_link_wp_head the REST discovery link and the JSON\nalternate for the queried object; the site's feed links as feed_links\nprints them. Every theme's head prints them from the reference's\nwp_head hooks.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Front\\FeedTags",
-                "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Front\\Resolution",
                 "Minn\\Html",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Runtime",
@@ -173327,8 +173325,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 29
+                "line": 25,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -173353,8 +173351,8 @@
                     "doc": "The link to the engine's own block stylesheet.",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 35
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -173375,8 +173373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 52
+                    "line": 43,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -173387,28 +173385,28 @@
                     "doc": "No trailing newline: the reference prints the JSON alternate and the RSD link on the same physical line.",
                     "shapes": [],
                     "params": [],
-                    "line": 55,
-                    "end": 58
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
                     "name": "jsonAlternate",
                     "static": false,
                     "visibility": "public",
-                    "signature": "jsonAlternate(Minn\\Front\\Resolution $resolution): string",
-                    "doc": "The wp/v2 alternate link for the resolution.",
+                    "signature": "jsonAlternate(string $route): string",
+                    "doc": "The JSON alternate link for the queried resource's REST route (rest_get_queried_resource_route); none for no route.",
                     "shapes": [],
                     "params": [
                         {
-                            "name": "resolution",
-                            "type": "Minn\\Front\\Resolution",
+                            "name": "route",
+                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 74
+                    "line": 59,
+                    "end": 65
                 }
             ]
         },

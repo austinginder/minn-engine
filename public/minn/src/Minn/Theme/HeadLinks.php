@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Front\FeedTags;
-use Minn\Front\Kind;
 use Minn\Front\Permalinks;
-use Minn\Front\Resolution;
 use Minn\Html;
 use Minn\I18n\Gettext;
 use Minn\Runtime\Runtime;
@@ -57,19 +55,12 @@ final readonly class HeadLinks
         return '<link rel="https://api.w.org/" href="' . Html::attr($this->permalinks->url('/wp-json/')) . '" />';
     }
 
-    /** The wp/v2 alternate link for the resolution. */
-    public function jsonAlternate(Resolution $resolution): string
+    /** The JSON alternate link for the queried resource's REST route (rest_get_queried_resource_route); none for no route. */
+    public function jsonAlternate(string $route): string
     {
-        $record = $resolution->record ?? [];
-        $json = match ($resolution->kind) {
-            Kind::Category, Kind::Tag => '/wp/v2/' . ($resolution->kind === Kind::Category ? 'categories' : 'tags') . '/' . (int) $record['term_id'],
-            Kind::Single, Kind::Page => '/wp/v2/' . ($record['post_type'] === 'page' ? 'pages' : 'posts') . '/' . (int) $record['ID'],
-            Kind::Author => $resolution->record === null ? null : '/wp/v2/users/' . $resolution->id(),
-            default => null,
-        };
-        if ($json === null) {
+        if ($route === '') {
             return '';
         }
-        return '<link rel="alternate" title="' . Html::attr(Gettext::inContext('JSON', 'REST API resource link name')) . '" type="application/json" href="' . Html::attr($this->permalinks->url('/wp-json' . $json)) . '" />';
+        return '<link rel="alternate" title="' . Html::attr(Gettext::inContext('JSON', 'REST API resource link name')) . '" type="application/json" href="' . Html::attr($this->permalinks->url('/wp-json' . $route)) . '" />';
     }
 }

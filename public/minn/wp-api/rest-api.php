@@ -572,9 +572,8 @@ function rest_output_link_header()
 function rest_output_link_wp_head()
 {
     $head = Runtime::current()->get('head_links');
-    $resolution = Runtime::current()->get('head_resolution');
-    if ($head instanceof \Minn\Theme\HeadLinks && $resolution instanceof \Minn\Front\Resolution) {
-        echo $head->restLink() . $head->jsonAlternate($resolution);
+    if ($head instanceof \Minn\Theme\HeadLinks) {
+        echo $head->restLink() . $head->jsonAlternate((string) rest_get_queried_resource_route());
         return;
     }
     echo '<link rel="https://api.w.org/" href="' . esc_url(get_rest_url()) . '" />';
