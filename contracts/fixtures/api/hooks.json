@@ -469,5 +469,42 @@
     [
         "x after y",
         "v"
+    ],
+    [
+        "unwrap",
+        [
+            "object"
+        ]
+    ],
+    [
+        "unwrap",
+        [
+            "object",
+            "string"
+        ]
+    ],
+    [
+        "unwrap",
+        [
+            "array(2)"
+        ]
+    ],
+    [
+        "unwrap",
+        [
+            "array(1)"
+        ]
+    ],
+    [
+        "unwrap",
+        [
+            "array(1)"
+        ]
+    ],
+    [
+        "unwrap",
+        [
+            "array(1)"
+        ]
     ]
 ]

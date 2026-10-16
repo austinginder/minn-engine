@@ -93,7 +93,14 @@ $params = static function (array $list) use ($literal): string {
     }
     return implode(', ', $out);
 };
+// Dead ends with no declared return type whose neutral value is not null: what the reference answers without
+// wordpress.org (wp_get_available_translations: an empty list, which TranslatePress counts).
+const NEUTRAL = ['wp_get_available_translations' => 'return [];'];
+
 $body = static function (?string $returns, string $name): string {
+    if (isset(NEUTRAL[$name])) {
+        return NEUTRAL[$name];
+    }
     $type = ltrim((string) $returns, '?');
     if ($returns === 'void' || str_starts_with($name, 'the_') || str_starts_with($name, 'do_') || str_starts_with($name, 'print_') || str_starts_with($name, 'display')) {
         return '';

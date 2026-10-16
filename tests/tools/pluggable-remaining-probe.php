@@ -104,6 +104,14 @@ add_filter('salt', $salted = static fn ($value, $scheme) => $scheme === 'nonce' 
 $salts[] = [wp_salt('nonce'), wp_salt('auth') === AUTH_KEY . AUTH_SALT];
 remove_filter('salt', $salted, 10);
 $say('salts', $salts);
+// A scheme of a plugin's own salted from the site's secret key (The Events Calendar asks for one).
+$secretBefore = get_site_option('secret_key');
+$own = wp_salt('zz-plugin-scheme');
+$secret = (string) get_site_option('secret_key');
+$say('plugin salt', [strlen($own), strlen($secret), $own === $secret . hash_hmac('md5', 'zz-plugin-scheme', $secret), $own === wp_salt('zz-plugin-scheme')]);
+if ($secretBefore === false) {
+    delete_site_option('secret_key');
+}
 
 $expiration = time() + 3600;
 $cookie = wp_generate_auth_cookie($user, $expiration, 'auth', 'zz-token');

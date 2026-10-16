@@ -46,7 +46,7 @@ function apply_filters($hook_name, $value, ...$args)
 
 function do_action($hook_name, ...$arg)
 {
-    Runtime::hooks()->action((string) $hook_name, $arg);
+    Runtime::hooks()->doAction((string) $hook_name, $arg);
 }
 
 function apply_filters_ref_array($hook_name, $args)

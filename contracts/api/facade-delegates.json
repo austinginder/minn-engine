@@ -1402,7 +1402,7 @@
         },
         "do_action": {
             "file": "hooks.php",
-            "statement": "Runtime::hooks()->action((string) $hook_name, $arg);"
+            "statement": "Runtime::hooks()->doAction((string) $hook_name, $arg);"
         },
         "do_action_deprecated": {
             "file": "hooks.php",

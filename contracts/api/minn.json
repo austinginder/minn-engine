@@ -11139,11 +11139,14 @@
             "namespace": "Minn\\Auth",
             "kind": "final class",
             "file": "public/minn/src/Minn/Auth/Salts.php",
-            "lines": 41,
+            "lines": 66,
             "doc": "The site's own secret material, read from the constants wp-config.php\ndefines, so the engine keys off exactly what the install used.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Runtime"
+            ],
             "usedBy": [
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\Nonce",
@@ -11171,8 +11174,8 @@
                     "doc": "True when every key and salt is defined and none is the installer's placeholder.",
                     "shapes": [],
                     "params": [],
-                    "line": 21,
-                    "end": 31
+                    "line": 24,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -11191,8 +11194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 37
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -11200,7 +11203,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "for(string $scheme): string",
-                    "doc": "The key and salt of a scheme joined, as the reference feeds them to its HMACs.",
+                    "doc": "The key and salt of a scheme joined, as the reference feeds them to its HMACs. A scheme of a plugin's own\n(or none) is salted from the site's secret key: the key, then the scheme's HMAC under it.",
                     "shapes": [],
                     "params": [
                         {
@@ -11211,8 +11214,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 44
+                    "line": 46,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -11238,8 +11241,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 75,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "secretKey",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "secretKey(): string",
+                    "doc": "The key other schemes are salted from: SECRET_KEY when wp-config.php defines it, else the secret_key\noption, made the first time it is needed (64 characters, the extra special ones among them), as the\nreference keeps it.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 61,
+                    "end": 72
                 }
             ]
         },
@@ -129871,6 +129886,7 @@
             "usedBy": [
                 "Minn\\Auth\\AuthCookies",
                 "Minn\\Auth\\Can",
+                "Minn\\Auth\\Salts",
                 "Minn\\Auth\\SignIn",
                 "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
@@ -131597,7 +131613,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 403,
+            "lines": 419,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
@@ -131983,6 +131999,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "doAction",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "doAction(string $hook, array $args): void",
+                    "doc": "Runs an action plugin code fires (do_action): a first argument that is a\nlist of one object (PHP 4's array( &$this )) hands its callbacks the\nobject itself, as the reference does (MailPoet fires its automation\nhook so), then as action().",
+                    "shapes": [
+                        "@param list<mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 186,
+                    "end": 192
+                },
+                {
+                    "routes": [],
                     "name": "action",
                     "static": false,
                     "visibility": "public",
@@ -132007,8 +132052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 194
+                    "line": 201,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -132036,8 +132081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 206
+                    "line": 218,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -132065,8 +132110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 219
+                    "line": 231,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -132094,8 +132139,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 231
+                    "line": 243,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -132144,8 +132189,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 247
+                    "line": 256,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -132194,8 +132239,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 262
+                    "line": 271,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -132214,8 +132259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 268
+                    "line": 281,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -132234,8 +132279,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 274
+                    "line": 287,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -132246,8 +132291,8 @@
                     "doc": "The hook running now, or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 277,
-                    "end": 280
+                    "line": 293,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -132266,8 +132311,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 286
+                    "line": 299,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -132288,8 +132333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 304
+                    "line": 310,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -132302,8 +132347,8 @@
                         "@return array<string, array<int, list<callable>>> a read-only view for diagnostics"
                     ],
                     "params": [],
-                    "line": 311,
-                    "end": 321
+                    "line": 327,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -132324,8 +132369,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 390,
-                    "end": 395
+                    "line": 406,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -132376,8 +132421,8 @@
                             "doc": "what an 'all' callback gets after the hook's name; the arguments when null"
                         }
                     ],
-                    "line": 328,
-                    "end": 375
+                    "line": 344,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -132403,8 +132448,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 386
+                    "line": 393,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -132430,8 +132475,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 406
+                    "line": 413,
+                    "end": 422
                 },
                 {
                     "routes": [],
@@ -132450,8 +132495,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 409,
-                    "end": 419
+                    "line": 425,
+                    "end": 435
                 }
             ]
         },
@@ -150945,6 +150990,7 @@
                 "Minn\\Auth\\Nonce",
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\RegisteredCaps",
+                "Minn\\Auth\\Salts",
                 "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",

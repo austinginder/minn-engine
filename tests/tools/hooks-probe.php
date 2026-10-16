@@ -186,4 +186,16 @@ add_filter('probe_y', static function ($v) use ($say) { $say('has x inside y', h
 apply_filters('probe_y', 'v');
 $say('x after y', apply_filters('probe_x', 'v'));
 
+// 18. do_action hands a first argument that is a list of one object over as the object (MailPoet's automation
+// hook passes [ $registry ]); a list of two, a keyed one, one holding no object, and do_action_ref_array do not.
+$kind = static fn ($value) => is_object($value) ? 'object' : (is_array($value) ? 'array(' . count($value) . ')' : gettype($value));
+add_action('probe_unwrap', static function (...$args) use ($say, $kind) { $say('unwrap', array_map($kind, $args)); }, 10, 3);
+$probeObject = new stdClass();
+do_action('probe_unwrap', [$probeObject]);
+do_action('probe_unwrap', [$probeObject], 'second');
+do_action('probe_unwrap', [$probeObject, $probeObject]);
+do_action('probe_unwrap', ['key' => $probeObject]);
+do_action('probe_unwrap', ['text']);
+do_action_ref_array('probe_unwrap', [[$probeObject]]);
+
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), "\n";

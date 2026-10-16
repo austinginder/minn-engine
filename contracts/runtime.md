@@ -16999,6 +16999,26 @@ The dogfood suite passes again (24 of 24), Elementor's own quirks included (a co
 `fetchpriority` twice, as on the reference). Hook parity: `wp_content_img_tag` and `wp_lazy_loading_enabled`
 now agree in 17 more scenarios.
 
+## Three plugins that failed while they booted (2026-10-16)
+
+The hunt's second round (the next 100 plugins and 32 themes) found three plugins the engine paused after they
+failed while booting, each on a different piece of the API:
+
+- **MailPoet** fires its automation hook with `do_action( 'mailpoet/automation/initialize', [ $registry ] )`. Probed
+  on the reference: `do_action` hands a first argument that is a list of exactly one object over as the object
+  (PHP 4's `array( &$this )`), whatever follows it; a list of two, a keyed one, one holding no object, and
+  `do_action_ref_array` pass as given. The engine passed the list, so MailPoet's typed callback failed.
+  `Hooks::doAction` does what `do_action` does; the engine's own actions are unchanged. The hooks probe holds the
+  cases.
+- **TranslatePress** counts what `wp_get_available_translations()` returns. That is an admin dead end, whose
+  stub answered null; without wordpress.org the reference answers an empty list, and so does the stub now
+  (`stub-symbols.php`'s NEUTRAL, for dead ends whose neutral value is not their declared type's).
+- **The Events Calendar** salts with a scheme of its own. The engine knew the four of wp-config.php and failed on
+  any other. Probed on the reference: another scheme is salted from the site's secret key (SECRET_KEY, else the
+  `secret_key` option, made the first time it is needed, 64 characters with the extra special ones), as the key
+  followed by the scheme's HMAC-MD5 under it. A null scheme draws a deprecation from `hash_hmac` there, so the
+  probe leaves it out.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

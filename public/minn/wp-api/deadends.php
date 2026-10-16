@@ -3501,7 +3501,7 @@ function wp_get_auto_update_message()
 function wp_get_available_translations()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_get_available_translations');
-    return null;
+    return [];
 }
 
 function wp_get_font_library_menu_items()

@@ -152,7 +152,7 @@ endif;
 if (!function_exists('wp_salt')) :
 function wp_salt($scheme = 'auth')
 {
-    return apply_filters('salt', Salts::for($scheme), $scheme);
+    return apply_filters('salt', Salts::for((string) $scheme), $scheme);
 }
 endif;
 

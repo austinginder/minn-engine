@@ -54,6 +54,15 @@
         ]
     ],
     [
+        "plugin salt",
+        [
+            96,
+            64,
+            true,
+            true
+        ]
+    ],
+    [
         "auth cookies parsed",
         [
             {

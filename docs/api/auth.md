@@ -20,7 +20,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`PortableHash`](#portablehash) | final class | 86 | The portable phpass hash ("$P$"), from the published algorithm: an |
 | [`RegisteredCaps`](#registeredcaps) | final class | 24 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
-| [`Salts`](#salts) | final class | 41 | The site's own secret material, read from the constants wp-config.php |
+| [`Salts`](#salts) | final class | 66 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 173 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
 | [`SignIn`](#signin) | final readonly class | 65 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
@@ -772,11 +772,14 @@ Whether a scheme has a key and salt of its own (auth, secure_auth, logged_in, no
 
 ### static `for(string $scheme): string`
 
-The key and salt of a scheme joined, as the reference feeds them to its HMACs.
+The key and salt of a scheme joined, as the reference feeds them to its HMACs. A scheme of a plugin's own
+(or none) is salted from the site's secret key: the key, then the scheme's HMAC under it.
 
 ### static `hash(string $data, string $scheme): string`
 
 HMAC-md5 under the scheme's salt: the primitive every cookie and nonce is built from.
+
+Internals: `secretKey()` (private, line 61)
 
 
 ## Sessions

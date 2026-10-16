@@ -176,6 +176,22 @@ final class Hooks
     }
 
     /**
+     * Runs an action plugin code fires (do_action): a first argument that is a
+     * list of one object (PHP 4's array( &$this )) hands its callbacks the
+     * object itself, as the reference does (MailPoet fires its automation
+     * hook so), then as action().
+     *
+     * @param list<mixed> $args
+     */
+    public function doAction(string $hook, array $args): void
+    {
+        if (is_array($args[0] ?? null) && count($args[0]) === 1 && array_key_exists(0, $args[0]) && is_object($args[0][0])) {
+            $args[0] = $args[0][0];
+        }
+        $this->action($hook, $args);
+    }
+
+    /**
      * Runs an action. With no arguments its callbacks still get one, an
      * empty string, as do_action() gives them in the reference (a callback
      * that requires a parameter is not short of one).
