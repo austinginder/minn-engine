@@ -1,15 +1,15 @@
 {
-    "generated": "2026-10-15",
+    "generated": "2026-10-16",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 685,
-        "composes": 2144,
-        "leaf": 1006,
-        "noop": 3145,
+        "minn": 686,
+        "composes": 2143,
+        "leaf": 1005,
+        "noop": 3146,
         "placeholder": 0,
         "deadend": 1770,
         "functions": 8672,
-        "minnMethods": 1396,
+        "minnMethods": 1398,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -18085,11 +18085,12 @@
         },
         "WP_Query::the_post": {
             "file": "classes/WP_Query.php",
-            "lines": 7,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action_ref_array"
+                "do_action_ref_array",
+                "update_post_author_caches"
             ]
         },
         "WP_REST_Abilities_V1_Categories_Controller::get_collection_params": {
@@ -36539,9 +36540,11 @@
         },
         "_minn_comments_flattened": {
             "file": "comment.php",
-            "lines": 8,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentThreads::flatten"
+            ],
             "composes": []
         },
         "_minn_comments_pagination_link": {
@@ -43256,9 +43259,11 @@
         },
         "cache_users": {
             "file": "pluggable.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
+            "lines": 10,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Users::keep"
+            ],
             "composes": [
                 "_get_non_cached_ids",
                 "update_meta_cache",
@@ -62358,9 +62363,11 @@
         },
         "update_post_author_caches": {
             "file": "post.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\PostReads::primeAuthors"
+            ],
             "composes": []
         },
         "update_post_cache": {

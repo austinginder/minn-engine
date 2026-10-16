@@ -23,6 +23,7 @@ use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
 use Minn\I18n\SiteLanguage;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Html;
 
@@ -147,11 +148,22 @@ final readonly class PageRenderer
         // blocks: straight quotes in a theme's own markup curl, content that was
         // texturized on its way in is left alone.
         // Images in the template share the page's budget of eager images (wp_get_loading_optimization_attributes).
+        // A singular page's template renders inside the main query's loop, as the reference's does: loop_start
+        // and the_post before its blocks (WooCommerce sets up its product there), loop_end after, and
+        // in_the_loop() true while they render.
+        $main = MainQuery::current();
+        $looped = $main->is_singular() && $main->post_count > 0 && $main->have_posts();
+        if ($looped) {
+            $main->the_post();
+        }
         RenderState::current()->enter('template');
         try {
             $body = Texturize::html($this->renderer->renderBlocks(Parser::parse($template['markup'])));
         } finally {
             RenderState::current()->leave('template');
+        }
+        if ($looped) {
+            $main->have_posts();
         }
         [$body, $skipTarget] = self::skipLinkTarget($body);
         // The stylesheet comes after the body: it lists the containers and

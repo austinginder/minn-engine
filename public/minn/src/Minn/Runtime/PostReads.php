@@ -238,6 +238,15 @@ final class PostReads
         return AuthorPostsSql::sql($types, Handoff::signedIn() ? (int) CurrentUser::id() : 0, $full ? 'full' : '', $author === null ? null : (int) $author, $publicOnly ? 'public' : '');
     }
 
+    /** The posts' authors read into the caches together (update_post_author_caches), through cache_users, which a plugin may replace. */
+    public static function primeAuthors(mixed $posts): void
+    {
+        $ids = array_values(array_unique(array_filter(array_map(static fn (mixed $post): int => is_object($post) ? (int) ($post->post_author ?? 0) : 0, (array) $posts), static fn (int $id): bool => $id > 0)));
+        if ($ids !== []) {
+            Handoff::cacheUsers($ids);
+        }
+    }
+
     /** Posts read into the caches together (_prime_post_caches): rows, and their meta and terms unless asked not to. */
     public static function prime(mixed $ids, mixed $updateTermCache = true, mixed $updateMetaCache = true): void
     {

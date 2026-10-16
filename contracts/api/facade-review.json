@@ -5325,8 +5325,8 @@
             "WP_Query::the_post": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "loop_start once, $this->next_post and setup_postdata",
-                "body": "ac89c8e24cb0"
+                "why": "the posts' authors primed and loop_start, once, then $this->next_post and setup_postdata",
+                "body": "96f7e7a54ce3"
             }
         },
         "classes/WP_REST_Abilities_V1_Categories_Controller.php": {
@@ -12082,12 +12082,6 @@
                 "doubt": "the inputs are always type email and url with a bare required, where the API uses type text and required=\"required\" for an xhtml form",
                 "body": "5d72d61d8de5"
             },
-            "_minn_comments_flattened": {
-                "verdict": "delegate",
-                "to": "Minn\\Runtime\\CommentThreads::flatten",
-                "why": "each top-level comment then its flat children is exactly CommentThreads::flatten over the top level with format flat and the query's status and orderby; unthreaded passes through",
-                "body": "b850214b5f5f"
-            },
             "_minn_comments_template_args": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentPages",
@@ -18251,8 +18245,8 @@
                     "pluggable",
                     "globals"
                 ],
-                "why": "reads the uncached user rows by SQL through the global $wpdb and primes them with update_user_caches and the meta cache; the row read is the engine's, the cache calls stay by name",
-                "body": "374594c613c3"
+                "why": "reads the uncached user rows by SQL through the global $wpdb and primes them with update_user_caches, the engine's row cache (Users::keep) and the meta cache; the row read is the engine's, the cache calls stay by name",
+                "body": "3131cecb2540"
             },
             "check_admin_referer": {
                 "verdict": "keep",

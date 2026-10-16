@@ -18,8 +18,10 @@ use Minn\Content\Site;
 use Minn\Content\Texturize;
 use Minn\Front\Kind;
 use Minn\Objects\Post;
+use Minn\Objects\Query;
 use Minn\Runtime\BlockQueries;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Front\Permalinks;
 use Minn\Html;
@@ -28,7 +30,7 @@ use Minn\Support\Serialized;
 /** query, post-template, query-title, query-no-results, query-pagination, query-total. */
 final class QueryBlocks
 {
-    /** @var list<array{page: Page, inherit: bool, paged: int, perPage: int}> the loops being rendered, innermost last */
+    /** @var list<array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int}> the loops being rendered, innermost last */
     private array $queries = [];
 
     public function __construct(
@@ -73,33 +75,49 @@ final class QueryBlocks
      * shape it too.
      *
      * @param array<string, mixed> $attrs the block's query
+     * @return array{Page, Query}
      */
-    private static function queried(Block $block, array $attrs, int $page): Page
+    private static function queried(Block $block, array $attrs, int $page): array
     {
         $queryId = $block->attrs['queryId'] ?? null;
         $template = Handoff::newBlock(['blockName' => 'core/post-template', 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []], ['queryId' => $queryId, 'query' => $attrs]);
         $query = Handoff::newQuery(BlockQueries::posts($template, $page));
-        $rows = array_map(static fn ($post) => array_diff_key(get_object_vars($post), ['filter' => true]), array_filter((array) $query->posts, static fn ($post) => $post instanceof Post));
-        return new Page(PostRecord::fromRows(array_values($rows)), (int) $query->found_posts);
+        return [self::page($query), $query];
+    }
+
+    /** A query's posts as a page of records. */
+    private static function page(Query $query): Page
+    {
+        return new Page(array_map(PostRecord::fromPost(...), array_values(array_filter((array) $query->posts, static fn ($post) => $post instanceof Post))), (int) $query->found_posts);
     }
 
     /**
      * A loop as the query block sets it: the main query's page when it
      * inherits, else its own query for the page its query-{id}-page asks for.
+     * An inheriting loop inside the main query's loop (a singular page's
+     * template, a post's content in a listing) asks again with the request the
+     * main query was made from, as the reference does, so it shows the main
+     * query's posts rather than finding that loop already under way.
      *
      * @param array<string, mixed> $attrs the block's query
-     * @return array{page: Page, inherit: bool, paged: int, perPage: int}
+     * @return array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int}
      */
     private function loop(Block $block, array $attrs, Renderer $renderer): array
     {
         $context = $renderer->context();
         $perPage = (int) ($this->site->option('posts_per_page') ?? 10) ?: 10;
         if (!empty($attrs['inherit'])) {
-            return ['page' => new Page($context->posts, $context->total), 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage];
+            $main = MainQuery::current();
+            if ($main->in_the_loop) {
+                $query = Handoff::newQuery($main->query);
+                return ['page' => self::page($query), 'query' => $query, 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage];
+            }
+            return ['page' => new Page($context->posts, $context->total), 'query' => $main, 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage];
         }
         $queryId = $block->attrs['queryId'] ?? null;
         $paged = (int) (Runtime::current()->request?->query[$queryId === null ? 'query-page' : "query-{$queryId}-page"] ?? 0) ?: 1;
-        return ['page' => self::queried($block, $attrs, $paged), 'inherit' => false, 'paged' => $paged, 'perPage' => (int) ($attrs['perPage'] ?? 0) ?: $perPage];
+        [$page, $query] = self::queried($block, $attrs, $paged);
+        return ['page' => $page, 'query' => $query, 'inherit' => false, 'paged' => $paged, 'perPage' => (int) ($attrs['perPage'] ?? 0) ?: $perPage];
     }
 
     /** The innermost loop being rendered; outside one, the loop a block's context provides (a post template called by its render callback). */
@@ -110,7 +128,7 @@ final class QueryBlocks
         }
         $provided = $renderer?->blockContext() ?? [];
         if ($renderer === null || !is_array($provided['query'] ?? null)) {
-            return ['page' => Page::empty(), 'inherit' => false, 'paged' => 1, 'perPage' => 10];
+            return ['page' => Page::empty(), 'query' => null, 'inherit' => false, 'paged' => 1, 'perPage' => 10];
         }
         return $this->loop(new Block('core/query', ['queryId' => $provided['queryId'] ?? null], [], '', []), $provided['query'], $renderer);
     }
@@ -132,17 +150,30 @@ final class QueryBlocks
         return Wrapper::open('div', 'wp-block-query-total', $block) . $text . '</div>';
     }
 
+    /**
+     * The loop's posts, walked as the reference walks them: the loop's query
+     * is asked whether it has posts (an empty one fires loop_no_results),
+     * each post is set up with the_post (loop_start before the first,
+     * loop_end after the last), and the main query's post is set up again
+     * once the loop is done. Plugins see the global post and in_the_loop()
+     * move with the loop.
+     */
     private function postTemplate(Block $block, Renderer $renderer): string
     {
-        $query = $this->current($renderer);
-        if ($query['page']->isEmpty()) {
+        $loop = $this->current($renderer)['query'];
+        if ($loop === null || !$loop->have_posts()) {
             return '';
         }
         $context = $renderer->context();
         $sticky = Serialized::intList($this->site->option('sticky_posts'));
         $onFrontPage = $context->resolution->kind === Kind::Home && $context->resolution->paged === 1;
         $items = '';
-        foreach ($query['page']->posts as $post) {
+        while ($loop->have_posts()) {
+            $loop->the_post();
+            if (!$loop->post instanceof Post) {
+                continue;
+            }
+            $post = PostRecord::fromPost($loop->post);
             $context->pushPost($post);
             $inner = '';
             $index = 0;
@@ -153,6 +184,7 @@ final class QueryBlocks
             $isSticky = $onFrontPage && in_array($post->id, $sticky, true);
             $items .= '<li class="' . implode(' ', $this->postClasses($post, $isSticky)) . '">' . $inner . '</li>';
         }
+        MainQuery::current()->reset_postdata();
         $columns = (int) ($block->attrs['layout']['columnCount'] ?? 0);
         $open = Wrapper::open(
             'ul',

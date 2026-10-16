@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1601
+        "delegates": 1603
     },
     "functions": {
         "__": {
@@ -255,6 +255,10 @@
         "_minn_comments": {
             "file": "comment.php",
             "statement": "return new Comments(Runtime::current()->db);"
+        },
+        "_minn_comments_flattened": {
+            "file": "comment.php",
+            "statement": "return empty($args['hierarchical']) ? $comments : CommentThreads::flatten($comments, ['format' => 'flat', 'status' => $args['status'] ?? 'approve', 'orderby' => $args['orderby'] ?? '']);"
         },
         "_minn_content_img_tag": {
             "file": "media.php",
@@ -4503,6 +4507,10 @@
         "update_option": {
             "file": "option.php",
             "statement": "return OptionWrites::update($option, $value, $autoload);"
+        },
+        "update_post_author_caches": {
+            "file": "post.php",
+            "statement": "Minn\\Runtime\\PostReads::primeAuthors($posts);"
         },
         "update_post_caches": {
             "file": "post.php",

@@ -126,7 +126,7 @@ A post as the WordPress layer hands it to plugins (WP_Post). The engine
 knows these objects by this mark and makes them through Runtime\Handoff,
 so it never names the WordPress layer's class.
 
-Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Media\Icons`, `Minn\Rest\BlockRendererController`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\TermsController`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\Handoff`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`, `Minn\Runtime\RewriteRules`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\QueryClasses`
+Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Content\PostRecord`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Media\Icons`, `Minn\Rest\BlockRendererController`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\TermsController`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\Handoff`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`, `Minn\Runtime\RewriteRules`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\QueryClasses`
 
 
 ## PostType
@@ -150,7 +150,7 @@ variables, flags, posts and loop. The engine knows these objects by this
 mark and makes them through Runtime\Handoff, so it never names the
 WordPress layer's class.
 
-Used by: `Minn\Front\FeedTags`, `Minn\Front\Renderer`, `Minn\Rest\PostsController`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\Handoff`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\QueryClasses`
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Front\FeedTags`, `Minn\Front\Renderer`, `Minn\Rest\PostsController`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\Handoff`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostData`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\QueryClasses`
 
 
 ## RenderedBlock

@@ -321,6 +321,7 @@ function cache_users($user_ids)
     }
     foreach ($wpdb->get_results('SELECT * FROM ' . $wpdb->users . ' WHERE ID IN (' . implode(',', array_map('intval', $ids)) . ')') as $row) {
         update_user_caches($row);
+        Users::keep((array) $row);
     }
     update_meta_cache('user', $ids);
 }

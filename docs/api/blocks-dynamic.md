@@ -7,7 +7,7 @@ dynamic core blocks that render from data
 | [`Archives`](#archives) | final readonly class | 29 | core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts). |
 | [`Dates`](#dates) | final class | 15 | Site-local dates the way the dynamic blocks print them. |
 | [`LatestComments`](#latestcomments) | final readonly class | 71 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
-| [`LatestPosts`](#latestposts) | final readonly class | 34 | core/latest-posts: the newest published posts as a list, optionally dated. |
+| [`LatestPosts`](#latestposts) | final readonly class | 68 | core/latest-posts: the newest published posts as a list, optionally dated. |
 | [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
 | [`SocialLinks`](#sociallinks) | final class | 79 | core/social-links and core/social-link. The list keeps its stored |
 | [`SyncedPattern`](#syncedpattern) | final readonly class | 26 | core/block: a synced pattern, rendered from the wp_block post it references. |
@@ -77,13 +77,19 @@ core/latest-posts: the newest published posts as a list, optionally dated.
 Used by: `Minn\Blocks\Renderer`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 ```
 
 
 ### `render(Minn\Blocks\Block $block): string`
 
-The block's HTML.
+The block's HTML. The posts come from WP_Query with the reference's
+arguments (so pre_get_posts and the posts_* filters shape them), walked
+as the reference walks them: the_post for each (loop_start and loop_end
+around them, loop_no_results when there are none), and the main
+query's post set up again after, found or not.
+
+Internals: `args()` (private, line 65)
 
 
 ## Search

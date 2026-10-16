@@ -21,6 +21,12 @@ final readonly class Users
         return $row === null ? null : UserRecord::fromRow($row);
     }
 
+    /** A user's row read elsewhere (cache_users), kept so find() answers from it. @param array<string, mixed> $row */
+    public static function keep(array $row): void
+    {
+        RowCache::put('users', (int) ($row['ID'] ?? 0), self::record($row));
+    }
+
     /** The user with this id, or null. */
     public function find(int $id): ?UserRecord
     {

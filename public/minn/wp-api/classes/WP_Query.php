@@ -263,6 +263,7 @@ class WP_Query implements \Minn\Objects\Query
         $this->in_the_loop = true;
         $this->before_loop = false;
         if ($this->current_post === -1) {
+            update_post_author_caches($this->posts);
             do_action_ref_array('loop_start', [&$this]);
         }
         $post = $this->next_post();

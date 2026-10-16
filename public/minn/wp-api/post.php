@@ -2074,9 +2074,9 @@ function wp_resolve_post_date($post_date = '', $post_date_gmt = '')
     return $valid ? $post_date : false;
 }
 
-/** Posts' authors keep no cache here to fill. */
 function update_post_author_caches($posts)
 {
+    Minn\Runtime\PostReads::primeAuthors($posts);
 }
 
 /** The posts' last-changed time moved on. */

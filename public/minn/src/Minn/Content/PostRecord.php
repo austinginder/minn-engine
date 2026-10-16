@@ -6,6 +6,7 @@ namespace Minn\Content;
 
 use ArrayAccess;
 use LogicException;
+use Minn\Objects\Post;
 
 /**
  * One row of the posts table, read by name. The columns keep their
@@ -78,6 +79,12 @@ final readonly class PostRecord implements ArrayAccess
             commentCount: (int) ($row['comment_count'] ?? 0),
             row: $row,
         );
+    }
+
+    /** A record from a post object a query handed back (WP_Post). */
+    public static function fromPost(Post $post): self
+    {
+        return self::fromRow(array_diff_key(get_object_vars($post), ['filter' => true]));
     }
 
     /**

@@ -27,7 +27,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Playlist`](#playlist) | final class | 25 | The [playlist] shortcode's markup as the reference prints it (probe |
 | [`PluginState`](#pluginstate) | final readonly class | 72 | Switching plugins on and off: a WordPress plugin file goes through the |
 | [`PostClasses`](#postclasses) | final class | 52 | The class list a post carries on its article element, in the reference's |
-| [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
+| [`PostRecord`](#postrecord) | final readonly class | 162 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 503 | Every write to the posts table and its satellites: rows, meta, term |
@@ -45,7 +45,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 286 |  |
+| [`Users`](#users) | final readonly class | 292 |  |
 
 ## Autop
 
@@ -1075,6 +1075,10 @@ Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\
 A record from a posts row; a missing column reads as empty.
 
 - `@param array<string, mixed> $row a posts-table row, joined columns welcome`
+
+### static `fromPost(Minn\Objects\Post $post): self`
+
+A record from a post object a query handed back (WP_Post).
 
 ### static `fromRows(array $rows): array`
 
@@ -2308,6 +2312,12 @@ __construct(Minn\Db $db)
 ```
 
 
+### static `keep(array $row): void`
+
+A user's row read elsewhere (cache_users), kept so find() answers from it. @param array<string, mixed> $row
+
+- `@param array<string, mixed> $row`
+
 ### `find(int $id): ?Minn\Content\UserRecord`
 
 The user with this id, or null.
@@ -2440,5 +2450,5 @@ Replaces one usermeta row. The (user_id, meta_key) pair carries no
 unique index on the stock schema, so this is a delete plus insert
 rather than an upsert.
 
-Internals: `record()` (private, line 19), `refreshCount()` (private, line 101), `writeAccount()` (private, line 113)
+Internals: `record()` (private, line 19), `refreshCount()` (private, line 107), `writeAccount()` (private, line 119)
 

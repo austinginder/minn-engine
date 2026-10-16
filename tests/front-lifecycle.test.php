@@ -7,7 +7,14 @@
  * parse_query, pre_get_posts and posts_selection, set_404, send_headers,
  * wp, template_redirect) must come in the reference's order up to
  * template_redirect (rendering's own queries come after), and the
- * Link, X-Pingback, no-cache and content-type headers must agree.
+ * Link, X-Pingback, no-cache and content-type headers must agree. After
+ * template_redirect, the loop as the template renders it must agree too:
+ * loop_start, the_post and loop_end in order (a singular page's template
+ * renders inside the main query's loop; a query block or a latest-posts
+ * block walks its query with the_post and sets the main query's post up
+ * again after). loop_no_results is left out: the
+ * reference also fires it as each template part looks for a saved copy,
+ * a query the engine does not make.
  *
  *   php tests/front-lifecycle.test.php
  */
@@ -22,6 +29,7 @@ const HEADERS = ['link', 'x-pingback', 'cache-control', 'expires', 'content-type
 $ENGINE = minn_test_url();
 $REF = minn_test_reference_url();
 $SITE = minn_test_site_root();
+$WP = '/opt/homebrew/bin/wp --path=' . escapeshellarg($SITE . '/wp-reference');
 
 [$ph] = minn_test_fetch($REF . '/', 3);
 if (($ph['status'] ?? 0) !== 200) {
@@ -58,7 +66,19 @@ register_shutdown_function(static function () use ($stacks): void {
     }
 });
 
-/** One traced GET: [status, the lifecycle actions in order, the compared headers]. */
+// A page whose content holds query loops: one inheriting the main query inside the singular page's loop, one that finds nothing, one that finds two posts.
+$loopQuery = static fn (int $id, string $query): string => '<!-- wp:query {"queryId":' . $id . ',"query":' . $query . '} --><div class="wp-block-query"><!-- wp:post-template --><!-- wp:post-title /--><!-- /wp:post-template --><!-- wp:query-no-results --><!-- wp:paragraph --><p>None.</p><!-- /wp:paragraph --><!-- /wp:query-no-results --></div><!-- /wp:query -->';
+$loopContent = $loopQuery(71, '{"perPage":3,"inherit":true}')
+    . $loopQuery(72, '{"perPage":3,"postType":"post","order":"desc","orderBy":"date","search":"zz-no-such-words","inherit":false}')
+    . $loopQuery(73, '{"perPage":2,"postType":"post","order":"desc","orderBy":"date","sticky":"exclude","inherit":false}');
+$loopPage = (int) trim((string) shell_exec("{$WP} post create --post_type=page --post_status=publish --post_name=zz-lifecycle-loops --post_title='zz lifecycle loops' --post_content=" . escapeshellarg($loopContent) . ' --porcelain 2>/dev/null'));
+register_shutdown_function(static function () use ($WP, $loopPage): void {
+    if ($loopPage > 1) {
+        shell_exec("{$WP} post delete {$loopPage} --force >/dev/null 2>&1");
+    }
+});
+
+/** One traced GET: [status, the lifecycle actions in order, the compared headers, the loop as rendering walks it]. */
 $get = static function (string $base, string $content, string $run, string $path): array {
     touch("{$content}/minn-trace/{$run}.open");
     $ch = curl_init($base . $path);
@@ -73,18 +93,21 @@ $get = static function (string $base, string $content, string $run, string $path
         }
     }
     sort($headers);
-    // The request's own steps end at template_redirect; what rendering queries after it is another comparison.
+    // The request's own steps end at template_redirect; the loop rendering walks comes after it.
     $actions = [];
+    $loop = [];
+    $rendering = false;
     foreach (@file("{$content}/minn-trace/{$run}.ndjson", FILE_IGNORE_NEW_LINES) ?: [] as $line) {
         $hook = (string) (json_decode($line, true)[0] ?? '');
-        if (in_array($hook, LIFECYCLE, true)) {
+        if (!$rendering && in_array($hook, LIFECYCLE, true)) {
             $actions[] = $hook;
         }
-        if ($hook === 'template_redirect') {
-            break;
+        if ($rendering && in_array($hook, ['loop_start', 'the_post', 'loop_end'], true)) {
+            $loop[] = $hook;
         }
+        $rendering = $rendering || $hook === 'template_redirect';
     }
-    return [$status, $actions, array_map(static fn (string $h) => str_replace('charset=utf-8', 'charset=UTF-8', $h), $headers)];
+    return [$status, $actions, array_map(static fn (string $h) => str_replace('charset=utf-8', 'charset=UTF-8', $h), $headers), $loop];
 };
 
 $paths = [
@@ -95,13 +118,15 @@ $paths = [
     'a category' => '/category/uncategorized/',
     'an author' => '/author/admin/',
     'a missing page' => '/no-such-page/',
+    'a page of query loops' => '/zz-lifecycle-loops/',
 ];
 foreach ($paths as $label => $path) {
     $run = 'front-' . substr(md5($path), 0, 10);
-    [$refStatus, $refActions, $refHeaders] = $get($REF, $stacks['reference'][1], "{$run}-r", $path);
-    [$status, $actions, $headers] = $get($ENGINE, $stacks['engine'][1], "{$run}-e", $path);
+    [$refStatus, $refActions, $refHeaders, $refLoop] = $get($REF, $stacks['reference'][1], "{$run}-r", $path);
+    [$status, $actions, $headers, $loop] = $get($ENGINE, $stacks['engine'][1], "{$run}-e", $path);
     $check("{$label}: status", $status === $refStatus, "{$status} vs {$refStatus}");
     $check("{$label}: the lifecycle's actions in order", $actions === $refActions, implode(' ', $actions) . "\n       vs " . implode(' ', $refActions));
+    $check("{$label}: the loop as the template renders it", $loop === $refLoop, implode(' ', $loop) . "\n       vs " . implode(' ', $refLoop));
     $check("{$label}: Link, pingback, caching and type headers", $headers === $refHeaders, json_encode($headers, JSON_UNESCAPED_SLASHES) . "\n       vs " . json_encode($refHeaders, JSON_UNESCAPED_SLASHES));
 }
 

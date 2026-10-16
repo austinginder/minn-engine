@@ -16836,6 +16836,52 @@ depth first with each module's own fetchpriority, where the reference prints dep
 dependents and gives each the highest fetchpriority of the queued modules that pull it in; and every
 `new WP_Script_Modules()` shares the page's registry, where each is its own in the reference.
 
+## The loop, as a block template walks it (2026-10-15)
+
+Found by the hunt (popular plugins and themes run on an engine copy and on WordPress side by side): on
+WooCommerce 11.2.1 a product's page answered 500 on Minn, `Call to a member function get_id() on string` in
+its add-to-cart form block. WooCommerce sets the global `$product` from `the_post`, and a block template never
+fired it; the hook-parity battery had `the_post`, `loop_start` and `loop_end` recorded as not fired on every
+front page. Observed on the reference with a recorder of each loop hook, its query and the post it set up:
+
+- A singular page's template (a post, a page, a static front page) renders inside the main query's loop:
+  `loop_start` and `the_post` before the first block, the header part included, `loop_end` after the last,
+  and `in_the_loop()` true in between. `PageRenderer` walks it so. A listing's template is not wrapped.
+- A query block's post template walks its query with `have_posts()` and `the_post()`: `loop_start` before the
+  first post, `loop_end` after the last, the global post and `in_the_loop()` moving with it, then the main
+  query's post set up again (`the_post` once more). An empty query fires `loop_no_results` and sets nothing up
+  again. An inheriting query walks `$wp_query` itself, unless the main query is already in its loop (a singular
+  template, or a post's content shown in a listing): then it runs a new WP_Query from the request the main
+  query was made from (`$wp_query->query`), so an inheriting query on a page lists that page, where the engine
+  printed its no-results text.
+- The latest-posts block runs WP_Query (`posts_per_page`, published posts, the block's order and orderby,
+  `ignore_sticky_posts`, `no_found_rows`, and `category__in` and `author` when it names them) and walks it the
+  same way, setting the main query's post up again after, found or not. It read the posts table itself, so a
+  block's categories, author and order were ignored. An empty one prints an empty list with no line break.
+
+As a loop starts (`loop_start`), the reference reads the authors of all its posts in two queries, the users and
+their meta; `the_post` then finds each author cached. The engine now does the same (`update_post_author_caches`,
+which was empty, through `cache_users`), and `cache_users` fills the row cache `get_userdata` reads as well as the
+object cache, so a user query's results are not read again one by one. Without it the loop's `the_post` read each
+author with two queries of its own, six more on the test site's home page than its SELECT ceiling allows;
+`update_user_metadata_cache` now fires on the front pages as on the reference. The facade lines the priming
+costs are paid by `_minn_comments_flattened`, which now calls `CommentThreads::flatten`, as its review said.
+
+`PostRecord::fromPost` turns a query's post into the record the blocks read. Suite front-lifecycle compares
+the loop hooks after `template_redirect` on every page it requests and on a page of query loops (one
+inheriting inside the page's loop, one empty, one with posts). Hook parity: `the_post`, `loop_start`,
+`loop_end` and `content_pagination` now agree on every front page and in the query-loop and core-blocks
+probes.
+
+Owed: the hunt found four more differences on these pages, left for their own batch. The template-part block
+looks for a saved part with WP_Query on the reference (`post_type` wp_template_part, `post_name__in`, the
+theme's `wp_theme` term, one post, no found rows), so a missing part fires `loop_no_results` and
+`pre_get_posts` can steer the lookup; the engine reads the posts table. The front's template choice runs no
+`pre_get_block_templates` or `get_block_templates` filter (nor the file ones), so the single-product wrapper
+WooCommerce adds there (a `woocommerce product` group) and its product body classes are missing. The
+latest-posts block prints no grid, author, excerpt, content or featured image. And a product's head links its
+REST form at `wp/v2/posts/<id>`, where the reference names the type's own route (`wp/v2/product/<id>`).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -16847,7 +16893,7 @@ rows that are `open` or `austin`.
 
 | Line | Section | Item | Status | Where settled, or why |
 |---|---|---|---|---|
-| 1604 | Assets (09-01) | WooCommerce's `$product` on a singular render | done | the lab's product pages print the same cart forms as the reference (checked 2026-10-12) |
+| 1604 | Assets (09-01) | WooCommerce's `$product` on a singular render | done | under a block theme only since "The loop, as a block template walks it (2026-10-15)": WooCommerce sets it from `the_post`, which block templates never fired (its product page failed on 11.2.1; the 2026-10-12 check looked at a classic theme's) |
 | 1639 | Storefront (09-01) | `wp_page_menu`'s home item and current class; classic sidebars | done | "The page-list menu and block widgets (2026-09-01)" |
 | 2619 | Translations (10-05) | `switch_to_user_locale` | done | real in the facade |
 | 2619 | Translations (10-05) | the admin and network core translation files | accepted | wp-admin is Minn Admin's; network files are multisite, which a single site never loads |
@@ -16901,3 +16947,7 @@ rows that are `open` or `austin`.
 | 16832 | Query Monitor's reflection (10-15) | the missing-dependency notice comes at registration, not once at the first tags or preloads | open | engine work owed (scratch rules in the section) |
 | 16832 | Query Monitor's reflection (10-15) | preload order and fetchpriority (dependencies first; the highest priority of the queued modules that pull it in) | open | engine work owed |
 | 16832 | Query Monitor's reflection (10-15) | `new WP_Script_Modules()` shares the page's registry | open | engine work owed |
+| 16876 | The loop, as a block template walks it (10-15) | the template-part block's saved-part lookup through WP_Query (`loop_no_results`, `pre_get_posts`) | open | engine work owed |
+| 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | open | engine work owed |
+| 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | open | engine work owed |
+| 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | open | engine work owed |

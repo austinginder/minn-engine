@@ -1,6 +1,7 @@
 <?php
 /** Comments: reads, counts, the writers. Behaviour from contracts/fixtures/api/media.json. */
 
+use Minn\Runtime\CommentThreads;
 use Minn\Runtime\Deferrals;
 use Minn\Content\CommentClasses;
 use Minn\Content\Comments;
@@ -873,14 +874,7 @@ function _minn_comments_template_args(WP_Post $post): array
 /** @internal a threaded query's comments as the walker takes them: each top-level comment, then its replies depth first */
 function _minn_comments_flattened(array $comments, array $args): array
 {
-    if (empty($args['hierarchical'])) {
-        return $comments;
-    }
-    $flat = [];
-    foreach ($comments as $top) {
-        array_push($flat, $top, ...array_values($top->get_children(['format' => 'flat', 'status' => $args['status'] ?? 'approve', 'orderby' => $args['orderby'] ?? ''])));
-    }
-    return $flat;
+    return empty($args['hierarchical']) ? $comments : CommentThreads::flatten($comments, ['format' => 'flat', 'status' => $args['status'] ?? 'approve', 'orderby' => $args['orderby'] ?? '']);
 }
 
 /** Comments grouped by type (comment, trackback, pingback, any other type under its own name), pings being trackbacks and pingbacks together. */
