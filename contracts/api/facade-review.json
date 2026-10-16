@@ -1625,9 +1625,9 @@
             "get_block_templates": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\TemplateIndex",
-                "why": "Lists the index's records less plugin ones, matches the query, then merges plugin registrations unless a post_type query has no slugs, between its pre and post filters: query logic TemplateIndex should hold.",
+                "why": "Lists the index's records less plugin ones, matches the query, then merges plugin registrations unless a post_type query has no slugs, between its pre and post filters: query logic TemplateIndex should hold; the result filter is handed the query with slug__not_in, as on the reference",
                 "doubt": "Template parts listed here never get hooked blocks while get_block_template applies them to a part; WP applies them through the _build_ helpers in both.",
-                "body": "44112a9f420a"
+                "body": "451e89d6e8df"
             },
             "get_block_wrapper_attributes": {
                 "verdict": "move",

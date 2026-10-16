@@ -36163,6 +36163,7 @@
                 "Minn\\Runtime\\TermQuery",
                 "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\UserWrites",
+                "Minn\\Theme\\TemplateIndex",
                 "Minn\\Theme\\Templates"
             ],
             "constructor": null,
@@ -130001,6 +130002,7 @@
                 "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\FrontLifecycle",
                 "Minn\\Theme\\PageRenderer",
+                "Minn\\Theme\\Templates",
                 "Minn\\Theme\\ThemeJsonData"
             ],
             "constructor": null,
@@ -176069,6 +176071,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Content\\RowCache",
                 "Minn\\Content\\Site",
                 "Minn\\Db",
                 "Minn\\Json",
@@ -176119,8 +176122,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 34
+                "line": 29,
+                "end": 35
             },
             "cases": [],
             "constants": [
@@ -176204,8 +176207,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 61
+                    "line": 42,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -176231,8 +176234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 76
+                    "line": 65,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -176253,8 +176256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -176275,8 +176278,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -176304,8 +176307,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 123
+                    "line": 104,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -176326,8 +176329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 133
+                    "line": 131,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -176338,8 +176341,8 @@
                     "doc": "The theme the index reads.",
                     "shapes": [],
                     "params": [],
-                    "line": 136,
-                    "end": 139
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -176365,8 +176368,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 145
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -176385,8 +176388,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 164
+                    "line": 154,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -176405,8 +176408,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 176
+                    "line": 168,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -176425,8 +176428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 182
+                    "line": 180,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -176439,8 +176442,8 @@
                         "@return array<string, array{title: string, description: string}>"
                     ],
                     "params": [],
-                    "line": 189,
-                    "end": 192
+                    "line": 190,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -176459,8 +176462,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 203
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -176470,7 +176473,7 @@
                     "signature": "savedRows(string $type): array",
                     "doc": "",
                     "shapes": [
-                        "@return list<array<string, mixed>>"
+                        "@return list<array<string, mixed>> read once a request for each type, as the templates' own rows are (a write to a post drops them)"
                     ],
                     "params": [
                         {
@@ -176481,8 +176484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 218
+                    "line": 207,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -176503,8 +176506,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 227
+                    "line": 222,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -176532,8 +176535,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 254
+                    "line": 231,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -176559,8 +176562,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 275
+                    "line": 257,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -176588,8 +176591,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 296
+                    "line": 279,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -176615,8 +176618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 310
+                    "line": 304,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -176642,8 +176645,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 322
+                    "line": 313,
+                    "end": 323
                 }
             ]
         },
@@ -177583,7 +177586,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/Templates.php",
-            "lines": 204,
+            "lines": 220,
             "doc": "Which template renders a resolution, and where its markup comes from:\na wp_template post saved from the site editor (matched by slug and the\ntheme term) wins over the theme's file. Parts resolve the same way\nthrough wp_template_part.",
             "implements": [],
             "extends": null,
@@ -177595,6 +177598,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Json",
                 "Minn\\Runtime\\BlockTemplates",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\Theme"
             ],
@@ -177639,8 +177643,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 30
+                "line": 25,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -177702,8 +177706,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 46
+                    "line": 38,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -177722,8 +177726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -177742,8 +177746,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 58
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -177764,30 +177768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 74
-                },
-                {
-                    "routes": [],
-                    "name": "candidates",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "candidates(Minn\\Front\\Resolution $resolution): array",
-                    "doc": "The block-theme template hierarchy for each kind of resolution.",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "resolution",
-                            "type": "Minn\\Front\\Resolution",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 81,
-                    "end": 84
+                    "line": 100,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -177798,8 +177780,8 @@
                     "doc": "The site editor's saved global styles for the active theme, when any.\nAn emptied node is stored as [] and reads as nothing, the way the\nreference reads it; a list where a map belongs is dropped the same way.",
                     "shapes": [],
                     "params": [],
-                    "line": 157,
-                    "end": 165
+                    "line": 174,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -177818,24 +177800,47 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 200
+                    "line": 210,
+                    "end": 217
+                },
+                {
+                    "routes": [],
+                    "name": "found",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "found(array $slugs): ?array",
+                    "doc": "The first of these slugs a template answers, in their order. With the runtime up the answer is the\nreference's: the templates get_block_templates finds for the slugs (its pre and result filters let a plugin\nadd one or change one, as The Events Calendar and WooCommerce do).",
+                    "shapes": [
+                        "@param list<string> $slugs",
+                        "@return array{slug: string, markup: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "slugs",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 80
                 },
                 {
                     "routes": [],
                     "name": "filtered",
                     "static": false,
                     "visibility": "private",
-                    "signature": "filtered(Minn\\Front\\Resolution $resolution, array $slugs): array",
-                    "doc": "Plugins reshape the hierarchy through the reference's\n\"{type}_template_hierarchy\" filters (WooCommerce sends its taxonomies to\narchive-product that way); the filter sees PHP file names and hands\nback the same, which become slugs again.",
+                    "signature": "filtered(string $type, array $slugs): array",
+                    "doc": "Plugins reshape a template type's hierarchy through the reference's\n\"{type}_template_hierarchy\" filters (WooCommerce sends its taxonomies to\narchive-product that way, The Events Calendar its archive to its own);\nthe filter sees PHP file names and hands back the same, which become\nslugs again.",
                     "shapes": [
                         "@param list<string> $slugs",
                         "@return list<string>"
                     ],
                     "params": [
                         {
-                            "name": "resolution",
-                            "type": "Minn\\Front\\Resolution",
+                            "name": "type",
+                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -177848,18 +177853,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 116
+                    "line": 120,
+                    "end": 128
                 },
                 {
                     "routes": [],
-                    "name": "hierarchy",
+                    "name": "groups",
                     "static": false,
                     "visibility": "private",
-                    "signature": "hierarchy(Minn\\Front\\Resolution $resolution): array",
-                    "doc": "",
+                    "signature": "groups(Minn\\Front\\Resolution $resolution): array",
+                    "doc": "The block-theme template hierarchy for each kind of resolution, as the\nreference's template loader walks it: a template type at a time (the\nfront page, the kind's own, then singular or archive, then index), each\nwith its own slugs, until one has a template.",
                     "shapes": [
-                        "@return list<string>"
+                        "@return array<string, list<string>> slugs by template type"
                     ],
                     "params": [
                         {
@@ -177870,8 +177875,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 150
+                    "line": 138,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -177884,8 +177889,8 @@
                         "@return array<string, list<array<string, mixed>>>"
                     ],
                     "params": [],
-                    "line": 173,
-                    "end": 190
+                    "line": 190,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -177911,8 +177916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 206
+                    "line": 219,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -177940,8 +177945,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 224
+                    "line": 232,
+                    "end": 241
                 }
             ]
         },

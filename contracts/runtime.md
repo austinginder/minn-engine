@@ -17029,6 +17029,19 @@ empty or not (`default-text-color` HEADER_TEXTCOLOR, `width` and `height` HEADER
 page rendering, its comments showed the default template: it calls `comments_template( '', true )`, and on the
 reference an empty file is the theme's comments.php, as the default `/comments.php` is.
 
+## The front's template chosen through get_block_templates (2026-10-16)
+
+The Events Calendar's events page showed the theme's empty archive on Minn and its calendar on WordPress: on a
+block theme it adds its own `archive-events` template through `get_block_templates`, after sending
+`archive-tribe_events` there through `archive_template_hierarchy`. Observed on the reference, the template loader
+walks the hierarchy a template type at a time (the front page, the kind's own, singular or archive, index), each
+type's slugs through its own `{type}_template_hierarchy` filter and then `get_block_templates` with `slug__in`
+(the pre filter with the query as asked, the result filter with `slug__not_in` added), taking the first slug in
+order that has a template, and stopping at the first type that has one. `Templates::forResolution` now walks it
+so, through the facade's `get_block_templates`; the templates it finds and their content match the reference's on
+every kind of page in the lab. WooCommerce's single-product wrapper, added through the same filter, now renders.
+The template index reads its saved templates once a request (two lookups on a home page cost one query).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17095,7 +17108,7 @@ rows that are `open` or `austin`.
 | 16832 | Query Monitor's reflection (10-15) | preload order and fetchpriority (dependencies first; the highest priority of the queued modules that pull it in) | open | engine work owed |
 | 16832 | Query Monitor's reflection (10-15) | `new WP_Script_Modules()` shares the page's registry | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | the template-part block's saved-part lookup through WP_Query (`loop_no_results`, `pre_get_posts`) | open | engine work owed |
-| 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | open | engine work owed |
+| 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | done | "The front's template chosen through get_block_templates (2026-10-16)"; the template-part lookup is still the row above |
 | 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | done | "A product's head link and its post terms (2026-10-16)": the route rest_get_queried_resource_route gives |
 | 16961 | What the_content adds before core's defaults (10-16) | plain text a filter adds before priority 10 is not texturized or given paragraphs | open | engine work owed |

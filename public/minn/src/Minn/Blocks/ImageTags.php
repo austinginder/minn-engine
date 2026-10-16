@@ -207,7 +207,7 @@ final readonly class ImageTags
     private static function minimumPriorityPixels(): int
     {
         $minimum = 50000;
-        return Runtime::booted() ? (int) Runtime::hooks()->filter('wp_min_priority_img_pixels', [$minimum]) : $minimum;
+        return (int) Runtime::hooks()->filter('wp_min_priority_img_pixels', [$minimum]);
     }
 
     private function enrichTag(string $tag, int $attachmentId, bool $withDataId, bool $autoSizes): string

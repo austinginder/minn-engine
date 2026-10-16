@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Content\RowCache;
 use Minn\Content\Site;
 use Minn\Db;
 use Minn\Json;
@@ -202,10 +203,10 @@ final class TemplateIndex
         return TemplatePartTheme::apply(TemplatePatterns::expand($content, $this->theme), $this->theme->slug);
     }
 
-    /** @return list<array<string, mixed>> */
+    /** @return list<array<string, mixed>> read once a request for each type, as the templates' own rows are (a write to a post drops them) */
     private function savedRows(string $type): array
     {
-        return $this->db->rows(
+        return RowCache::remember('theme_templates', "rows:{$this->theme->slug}:{$type}", fn (): array => $this->db->rows(
             "SELECT p.* FROM {$this->db->table('posts')} p
              JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID
              JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
@@ -214,7 +215,7 @@ final class TemplateIndex
                AND tt.taxonomy = 'wp_theme' AND t.slug = ?
              ORDER BY p.post_date DESC, p.ID DESC",
             [$type, $this->theme->slug],
-        );
+        ));
     }
 
     /** @return list<array<string, mixed>> */

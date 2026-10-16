@@ -3434,8 +3434,6 @@
             "probe:user-requests": "not fired"
         },
         "frontpage_template_hierarchy": {
-            "http:admin-front-home": "not fired",
-            "http:front-home": "not fired",
             "probe:rest-templates-lookup": "not fired"
         },
         "generate_rewrite_rules": {
@@ -3652,15 +3650,6 @@
             "probe:rest-templates-lookup": "not fired"
         },
         "get_block_templates": {
-            "http:admin-front-home": "not fired",
-            "http:admin-front-single": "not fired",
-            "http:front-404": "not fired",
-            "http:front-author": "not fired",
-            "http:front-category": "not fired",
-            "http:front-home": "not fired",
-            "http:front-page": "not fired",
-            "http:front-search": "not fired",
-            "http:front-single": "not fired",
             "probe:patch-security": "not fired",
             "probe:placeholders-a": "not fired",
             "probe:plugin-queue3": "not fired",
@@ -11646,15 +11635,6 @@
             "probe:rest-templates-lookup": "not fired"
         },
         "pre_get_block_templates": {
-            "http:admin-front-home": "not fired",
-            "http:admin-front-single": "not fired",
-            "http:front-404": "not fired",
-            "http:front-author": "not fired",
-            "http:front-category": "not fired",
-            "http:front-home": "not fired",
-            "http:front-page": "not fired",
-            "http:front-search": "not fired",
-            "http:front-single": "not fired",
             "probe:patch-security": "not fired",
             "probe:placeholders-a": "not fired",
             "probe:plugin-queue3": "not fired",
@@ -20450,8 +20430,6 @@
             "probe:widgets": "fired here only"
         },
         "{*}_template_hierarchy": {
-            "http:admin-front-home": "not fired",
-            "http:front-home": "not fired",
             "probe:rest-templates-controller": "not fired",
             "probe:rest-templates-lookup": "not fired"
         },

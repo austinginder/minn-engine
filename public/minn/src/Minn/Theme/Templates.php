@@ -11,6 +11,7 @@ use Minn\Front\Kind;
 use Minn\Front\Resolution;
 use Minn\Json;
 use Minn\Runtime\BlockTemplates;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -36,10 +37,43 @@ final readonly class Templates
      */
     public function forResolution(Resolution $resolution): ?array
     {
-        foreach ($this->candidates($resolution) as $slug) {
-            $markup = $this->template($slug);
-            if ($markup !== null) {
-                return ['slug' => $slug, 'markup' => $markup];
+        foreach ($this->groups($resolution) as $type => $slugs) {
+            $found = $this->found($this->filtered((string) $type, $slugs));
+            if ($found !== null) {
+                return $found;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The first of these slugs a template answers, in their order. With the runtime up the answer is the
+     * reference's: the templates get_block_templates finds for the slugs (its pre and result filters let a plugin
+     * add one or change one, as The Events Calendar and WooCommerce do).
+     *
+     * @param list<string> $slugs
+     * @return array{slug: string, markup: string}|null
+     */
+    private function found(array $slugs): ?array
+    {
+        if (!Runtime::booted()) {
+            foreach ($slugs as $slug) {
+                $markup = $this->template($slug);
+                if ($markup !== null) {
+                    return ['slug' => $slug, 'markup' => $markup];
+                }
+            }
+            return null;
+        }
+        $found = [];
+        foreach ((array) Handoff::blockTemplates(['slug__in' => $slugs], 'wp_template') as $template) {
+            if (is_object($template) && isset($template->slug, $template->content)) {
+                $found[(string) $template->slug] ??= (string) $template->content;
+            }
+        }
+        foreach ($slugs as $slug) {
+            if (isset($found[$slug])) {
+                return ['slug' => $slug, 'markup' => $found[$slug]];
             }
         }
         return null;
@@ -74,40 +108,18 @@ final readonly class Templates
     }
 
     /**
-     * The block-theme template hierarchy for each kind of resolution.
-     *
-     * @return list<string>
-     */
-    public function candidates(Resolution $resolution): array
-    {
-        return $this->filtered($resolution, $this->hierarchy($resolution));
-    }
-
-    /**
-     * Plugins reshape the hierarchy through the reference's
+     * Plugins reshape a template type's hierarchy through the reference's
      * "{type}_template_hierarchy" filters (WooCommerce sends its taxonomies to
-     * archive-product that way); the filter sees PHP file names and hands
-     * back the same, which become slugs again.
+     * archive-product that way, The Events Calendar its archive to its own);
+     * the filter sees PHP file names and hands back the same, which become
+     * slugs again.
      *
      * @param list<string> $slugs
      * @return list<string>
      */
-    private function filtered(Resolution $resolution, array $slugs): array
+    private function filtered(string $type, array $slugs): array
     {
-        $type = match ($resolution->kind) {
-            Kind::Single => 'single',
-            Kind::Page => 'page',
-            Kind::Category => 'category',
-            Kind::Tag => 'tag',
-            Kind::Taxonomy => 'taxonomy',
-            Kind::PostTypeArchive => 'archive',
-            Kind::Author => 'author',
-            Kind::Date => 'date',
-            Kind::Search => 'search',
-            Kind::NotFound => '404',
-            default => null,
-        };
-        if ($type === null || !Runtime::booted()) {
+        if (!Runtime::booted()) {
             return $slugs;
         }
         $names = array_map(static fn (string $slug) => $slug . '.php', $slugs);
@@ -115,38 +127,43 @@ final readonly class Templates
         return array_values(array_unique(array_map(static fn ($name) => (string) preg_replace('/\.php$/', '', (string) $name), $names)));
     }
 
-    /** @return list<string> */
-    private function hierarchy(Resolution $resolution): array
+    /**
+     * The block-theme template hierarchy for each kind of resolution, as the
+     * reference's template loader walks it: a template type at a time (the
+     * front page, the kind's own, then singular or archive, then index), each
+     * with its own slugs, until one has a template.
+     *
+     * @return array<string, list<string>> slugs by template type
+     */
+    private function groups(Resolution $resolution): array
     {
         $record = $resolution->record ?? [];
-        return match ($resolution->kind) {
-            Kind::Home => $resolution->postsPage ? ['home', 'index'] : ['front-page', 'home', 'index'],
+        $groups = match ($resolution->kind) {
+            Kind::Home => $resolution->postsPage ? ['home' => ['home', 'index']] : ['frontpage' => ['front-page'], 'home' => ['home', 'index']],
             Kind::Single => [
-                'single-' . ($record['post_type'] ?? 'post') . '-' . ($record['post_name'] ?? ''),
-                'single-' . ($record['post_type'] ?? 'post'),
-                'single',
-                'singular',
-                'index',
+                'single' => ['single-' . ($record['post_type'] ?? 'post') . '-' . ($record['post_name'] ?? ''), 'single-' . ($record['post_type'] ?? 'post'), 'single'],
+                'singular' => ['singular'],
             ],
-            Kind::Page => array_values(array_filter([
-                $resolution->front ? 'front-page' : null,
-                $this->customTemplate((int) ($record['ID'] ?? 0)),
-                'page-' . ($record['post_name'] ?? ''),
-                'page-' . (int) ($record['ID'] ?? 0),
-                'page',
-                'singular',
-                'index',
-            ])),
-            Kind::Category => ['category-' . ($record['slug'] ?? ''), 'category-' . (int) ($record['term_id'] ?? 0), 'category', 'archive', 'index'],
-            Kind::Tag => ['tag-' . ($record['slug'] ?? ''), 'tag-' . (int) ($record['term_id'] ?? 0), 'tag', 'archive', 'index'],
-            Kind::Taxonomy => ['taxonomy-' . ($record['taxonomy'] ?? '') . '-' . ($record['slug'] ?? ''), 'taxonomy-' . ($record['taxonomy'] ?? ''), 'taxonomy', 'archive', 'index'],
-            Kind::PostTypeArchive => ['archive-' . ($record['name'] ?? ''), 'archive', 'index'],
-            Kind::Author => ['author-' . ($record['user_nicename'] ?? ''), 'author-' . (int) ($record['ID'] ?? 0), 'author', 'archive', 'index'],
-            Kind::Date => ['date', 'archive', 'index'],
-            Kind::Search => ['search', 'index'],
-            Kind::NotFound => ['404', 'index'],
-            Kind::Redirect => ['index'],
+            Kind::Page => ($resolution->front ? ['frontpage' => ['front-page']] : []) + [
+                'page' => array_values(array_filter([
+                    $this->customTemplate((int) ($record['ID'] ?? 0)),
+                    'page-' . ($record['post_name'] ?? ''),
+                    'page-' . (int) ($record['ID'] ?? 0),
+                    'page',
+                ])),
+                'singular' => ['singular'],
+            ],
+            Kind::Category => ['category' => ['category-' . ($record['slug'] ?? ''), 'category-' . (int) ($record['term_id'] ?? 0), 'category'], 'archive' => ['archive']],
+            Kind::Tag => ['tag' => ['tag-' . ($record['slug'] ?? ''), 'tag-' . (int) ($record['term_id'] ?? 0), 'tag'], 'archive' => ['archive']],
+            Kind::Taxonomy => ['taxonomy' => ['taxonomy-' . ($record['taxonomy'] ?? '') . '-' . ($record['slug'] ?? ''), 'taxonomy-' . ($record['taxonomy'] ?? ''), 'taxonomy'], 'archive' => ['archive']],
+            Kind::PostTypeArchive => ['archive' => ['archive-' . ($record['name'] ?? ''), 'archive']],
+            Kind::Author => ['author' => ['author-' . ($record['user_nicename'] ?? ''), 'author-' . (int) ($record['ID'] ?? 0), 'author'], 'archive' => ['archive']],
+            Kind::Date => ['date' => ['date'], 'archive' => ['archive']],
+            Kind::Search => ['search' => ['search']],
+            Kind::NotFound => ['404' => ['404']],
+            Kind::Redirect => [],
         };
+        return $groups + ['index' => ['index']];
     }
 
     /**

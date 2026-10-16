@@ -38,7 +38,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 204 | Which template renders a resolution, and where its markup comes from: |
+| [`Templates`](#templates) | final readonly class | 220 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 142 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
@@ -1170,7 +1170,7 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
-Internals: `savedRows()` (private, line 206), `pluginRows()` (private, line 221), `fromRow()` (private, line 230), `fromFile()` (private, line 256), `fromPlugin()` (private, line 278), `fileTitle()` (private, line 303), `savedArea()` (private, line 312)
+Internals: `savedRows()` (private, line 207), `pluginRows()` (private, line 222), `fromRow()` (private, line 231), `fromFile()` (private, line 257), `fromPlugin()` (private, line 279), `fileTitle()` (private, line 304), `savedArea()` (private, line 313)
 
 
 ## TemplatePartTheme
@@ -1333,12 +1333,6 @@ post id), the theme's file (its path), or nowhere; with its markup.
 
 - `@return array{0: 'post'|'file'|'none', 1: int|string, 2: ?string}`
 
-### `candidates(Minn\Front\Resolution $resolution): array`
-
-The block-theme template hierarchy for each kind of resolution.
-
-- `@return list<string>`
-
 ### `userStyles(): ?array`
 
 The site editor's saved global styles for the active theme, when any.
@@ -1349,7 +1343,7 @@ reference reads it; a list where a map belongs is dropped the same way.
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `filtered()` (private, line 95), `hierarchy()` (private, line 119), `savedOfTheme()` (private, line 173), `saved()` (private, line 202), `savedRow()` (private, line 215)
+Internals: `found()` (private, line 57), `filtered()` (private, line 120), `groups()` (private, line 138), `savedOfTheme()` (private, line 190), `saved()` (private, line 219), `savedRow()` (private, line 232)
 
 
 ## Theme

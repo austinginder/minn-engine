@@ -1709,7 +1709,7 @@ function get_block_templates($query = [], $template_type = 'wp_template')
             }
         }
     }
-    return apply_filters('get_block_templates', $templates, $query, $template_type);
+    return apply_filters('get_block_templates', $templates, $query + ['slug__not_in' => []], $template_type);
 }
 
 /** @internal */
