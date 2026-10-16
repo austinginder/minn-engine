@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1603
+        "delegates": 1604
     },
     "functions": {
         "__": {
@@ -283,6 +283,10 @@
         "_minn_die_variable_mismatch": {
             "file": "functions.php",
             "statement": "wp_die(__('A variable mismatch has been detected.'), __('Sorry, you are not allowed to view this item.'), 400);"
+        },
+        "_minn_do_added_blocks": {
+            "file": "blocks.php",
+            "statement": "return str_contains((string) $content, '<!-- wp:') ? do_blocks($content) : $content;"
         },
         "_minn_dropdown_script": {
             "file": "widgets.php",

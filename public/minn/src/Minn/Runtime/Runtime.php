@@ -253,18 +253,19 @@ final class Runtime
 
     /**
      * The the_content defaults the engine's own rendering has already done:
-     * blocks, texturize, paragraphs, shortcodes, block hooks, and the image
-     * attributes. What it has not (an attachment's own link, smilies, the
-     * capital P, insecure home addresses) runs with the plugins' own
-     * callbacks.
+     * blocks, texturize, paragraphs, block hooks, and the image attributes.
+     * Shortcodes run in their place in the chain (do_shortcode at 11), so a
+     * shortcode a plugin's filter adds before then runs as on the reference,
+     * and block markup a filter adds before do_blocks is rendered then. What
+     * the engine has not done (an attachment's own link, smilies, the capital
+     * P, insecure home addresses) runs with the plugins' own callbacks.
      */
     private const CONTENT_DONE = [
         'apply_block_hooks_to_content_from_post_object' => 8,
-        'do_blocks' => 9,
+        'do_blocks' => [9, '_minn_do_added_blocks'],
         'wptexturize' => 10,
         'wpautop' => 10,
         'shortcode_unautop' => 10,
-        'do_shortcode' => 11,
         // The images are fitted out already; what is left of its work is each one through wp_content_img_tag.
         'wp_filter_content_tags' => [12, '_minn_content_img_tag'],
     ];

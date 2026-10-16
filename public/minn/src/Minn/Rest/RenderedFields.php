@@ -33,7 +33,7 @@ final class RenderedFields
     public static function content(PostRecord $p): string
     {
         $html = Blocks::render($p->content);
-        return (string) self::withPost($p, static fn () => Runtime::contentFilter(Runtime::shortcodes()->apply($html)));
+        return (string) self::withPost($p, static fn () => Runtime::contentFilter($html));
     }
 
     /** The rendered excerpt. */

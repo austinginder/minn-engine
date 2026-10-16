@@ -19,7 +19,7 @@ the block parser and renderer
 | [`Parser`](#parser) | final class | 114 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
 | [`RenderState`](#renderstate) | final class | 350 | Per-request rendering state, owned by the renderer. The reference numbers |
-| [`Renderer`](#renderer) | final class | 449 | Renders a block tree the way the reference renders post_content: |
+| [`Renderer`](#renderer) | final class | 454 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
@@ -996,7 +996,7 @@ plugin's callback took over. It applies the block supports it knows
 itself (layout, element styles); the facade's render_block filters do
 the rest, and all of them for any other block.
 
-Internals: `renderWith()` (private, line 218), `generatedClass()` (private, line 411), `elementsClass()` (private, line 426), `renderNamed()` (private, line 432), `decorate()` (private, line 460), `gallery()` (private, line 484)
+Internals: `renderWith()` (private, line 219), `generatedClass()` (private, line 417), `elementsClass()` (private, line 432), `renderNamed()` (private, line 438), `decorate()` (private, line 466), `gallery()` (private, line 490)
 
 
 ## Selector

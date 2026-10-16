@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Closure;
 use Minn\I18n\Gettext;
 use Minn\Support\ScriptTag;
 
@@ -32,6 +33,72 @@ final class AssetQueue
         }
         Runtime::current()->set('assets_' . $kind, $own);
         return $own;
+    }
+
+    /**
+     * The scripts, styles and script modules queued now, to compare with once a block has rendered.
+     *
+     * @return array{0: list<string>, 1: list<string>, 2: list<string>}
+     */
+    public static function snapshot(): array
+    {
+        return [self::assets('script')->queue(), self::assets('style')->queue(), Runtime::scriptModules()->queue()];
+    }
+
+    /**
+     * Takes off the queues what joined them since the snapshot: what a block that rendered nothing enqueued, as
+     * the reference takes it off.
+     *
+     * @param array{0: list<string>, 1: list<string>, 2: list<string>} $before
+     */
+    public static function dequeueSince(array $before): void
+    {
+        [$scripts, $styles, $modules] = self::snapshot();
+        foreach (array_diff($scripts, $before[0]) as $handle) {
+            self::assets('script')->dequeue($handle);
+        }
+        foreach (array_diff($styles, $before[1]) as $handle) {
+            self::assets('style')->dequeue($handle);
+        }
+        foreach (array_diff($modules, $before[2]) as $id) {
+            Runtime::scriptModules()->dequeue($id);
+        }
+    }
+
+    /**
+     * After a block has rendered: when a named block rendered nothing, whitespace aside, and its render enqueued
+     * something or its own assets are not all queued yet, enqueue_empty_block_content_assets is asked; unless it
+     * keeps them, what the render enqueued is taken off the queues again and the block's own are not added.
+     * Otherwise $enqueue adds its own. The text between blocks (no name) is never asked about, as on the reference.
+     *
+     * @param array{0: list<string>, 1: list<string>, 2: list<string>} $before
+     */
+    public static function settleBlock(array $before, string $html, string $name, Closure $enqueue, mixed $type = null): void
+    {
+        if ($name !== '' && trim($html) === '' && (self::snapshot() !== $before || self::pending($type)) && !Runtime::hooks()->filter('enqueue_empty_block_content_assets', [false, $name])) {
+            self::dequeueSince($before);
+            return;
+        }
+        $enqueue();
+    }
+
+    /** Whether a block type has assets of its own not queued yet (its scripts, view scripts and modules, styles). */
+    private static function pending(mixed $type): bool
+    {
+        if (!is_object($type)) {
+            return false;
+        }
+        foreach ([...(array) ($type->script_handles ?? []), ...(array) ($type->view_script_handles ?? [])] as $handle) {
+            if (!self::assets('script')->enqueued((string) $handle)) {
+                return true;
+            }
+        }
+        foreach ((array) ($type->style_handles ?? []) as $handle) {
+            if (!self::assets('style')->enqueued((string) $handle)) {
+                return true;
+            }
+        }
+        return array_diff(array_map('strval', (array) ($type->view_script_module_ids ?? [])), Runtime::scriptModules()->queue()) !== [];
     }
 
     /** The request's registry of one kind of asset, script or style, made the first time it is asked for. */

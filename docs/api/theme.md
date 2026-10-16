@@ -7,7 +7,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ArchiveTitle`](#archivetitle) | final class | 55 | The label and name an archive titles itself with: `Category:` around the |
 | [`BodyClasses`](#bodyclasses) | final class | 86 | The body-class list a classic theme's body_class() starts from, in the |
 | [`BodyFacts`](#bodyfacts) | final readonly class | 10 | The facts about a page that decide the body classes a classic theme's |
-| [`ClassicContent`](#classiccontent) | final class | 39 | What a classic theme's the_content() prints: the engine's block pipeline |
+| [`ClassicContent`](#classiccontent) | final class | 38 | What a classic theme's the_content() prints: the engine's block pipeline |
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 125 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`CustomCss`](#customcss) | final class | 69 | Custom CSS as theme.json and blocks write it (a styles node's "css", a |
@@ -129,8 +129,8 @@ __construct(bool $loggedIn = false, bool $customLogo = false, bool $embedRespons
 
 What a classic theme's the_content() prints: the engine's block pipeline
 (render, password gate, the more-tag teaser in listings), the cached
-embeds, then the runtime's shortcodes and the_content filters so plugin
-code sees the same hook order the reference runs.
+embeds, then the_content's filters (shortcodes in do_shortcode's place
+among them) so plugin code sees the same hook order the reference runs.
 
 Used by: `Minn\Front\FeedTags`
 

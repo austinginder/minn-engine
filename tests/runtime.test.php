@@ -70,6 +70,18 @@ foreach (['minn-test-early-pluggable' => 'requiring wp-includes/pluggable.php wh
     [, $referenceEarly] = minn_test_fetch(minn_test_reference_url() . "/hello-world/?{$switch}=1");
     $check("{$label}, as on the reference", $early($engineEarly) !== null && $early($engineEarly) === $early($referenceEarly), var_export([$early($engineEarly), $early($referenceEarly)], true));
 }
+// Blocks that render nothing give back what their render enqueued, unless enqueue_empty_block_content_assets keeps it.
+$emptyBlocks = static fn (string $html): ?string => preg_match('/<!-- minn-test-empty-blocks (.*?) -->/', $html, $m) === 1 ? $m[1] : null;
+foreach (['1' => 'a block that renders nothing gives back what its render enqueued', 'keep' => 'enqueue_empty_block_content_assets keeps what an empty block enqueued'] as $switch => $label) {
+    [, $engineEmpty] = minn_test_fetch($base . "/hello-world/?minn-test-empty-blocks={$switch}");
+    [, $referenceEmpty] = minn_test_fetch(minn_test_reference_url() . "/hello-world/?minn-test-empty-blocks={$switch}");
+    $check("{$label}, as on the reference", $emptyBlocks($engineEmpty) !== null && $emptyBlocks($engineEmpty) === $emptyBlocks($referenceEmpty), var_export([$emptyBlocks($engineEmpty), $emptyBlocks($referenceEmpty)], true));
+}
+// What a plugin adds in the_content before core's defaults run is treated as the reference treats it.
+$ordered = static fn (string $html): ?string => preg_match('/<!--minn-order-->(.*?)<!--\/minn-order-->/s', $html, $m) === 1 ? $m[1] : null;
+[, $engineOrder] = minn_test_fetch($base . '/hello-world/?minn-test-content-order=1');
+[, $referenceOrder] = minn_test_fetch(minn_test_reference_url() . '/hello-world/?minn-test-content-order=1');
+$check('block markup and a shortcode a the_content filter adds before do_blocks and do_shortcode are rendered, as on the reference', $ordered($engineOrder) !== null && $ordered($engineOrder) === $ordered($referenceOrder), var_export([$ordered($engineOrder), $ordered($referenceOrder)], true));
 // A comments_template filter that hands back no file: the default comments template stands in, as on the reference.
 $commentsTemplate = static fn (string $html): ?string => preg_match('/<!-- minn-test-comments-template (.*?) -->/', $html, $m) === 1 ? $m[1] : null;
 [, $engineComments] = minn_test_fetch($base . '/hello-world/?minn-test-comments-template=1');

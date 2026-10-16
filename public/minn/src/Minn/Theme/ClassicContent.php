@@ -18,8 +18,8 @@ use Minn\Html;
 /**
  * What a classic theme's the_content() prints: the engine's block pipeline
  * (render, password gate, the more-tag teaser in listings), the cached
- * embeds, then the runtime's shortcodes and the_content filters so plugin
- * code sees the same hook order the reference runs.
+ * embeds, then the_content's filters (shortcodes in do_shortcode's place
+ * among them) so plugin code sees the same hook order the reference runs.
  */
 final class ClassicContent
 {
@@ -56,7 +56,6 @@ final class ClassicContent
         if ($seams !== null) {
             $content = $seams->filterContent($content, $post);
         }
-        $content = Runtime::shortcodes()->apply($content);
         return Runtime::contentFilter($content);
     }
 }

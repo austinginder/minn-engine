@@ -458,6 +458,12 @@ function render_block($parsed_block)
     return $block->render();
 }
 
+/** @internal content the engine rendered itself, with block markup a the_content filter added since rendered now (in do_blocks's place on the_content) */
+function _minn_do_added_blocks($content)
+{
+    return str_contains((string) $content, '<!-- wp:') ? do_blocks($content) : $content;
+}
+
 function do_blocks($content)
 {
     $blocks = parse_blocks((string) $content);

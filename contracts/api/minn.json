@@ -16069,7 +16069,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/PostBlocks.php",
-            "lines": 271,
+            "lines": 270,
             "doc": "The post-* blocks: they render the context's current post.",
             "implements": [],
             "extends": null,
@@ -16255,7 +16255,7 @@
                         }
                     ],
                     "line": 70,
-                    "end": 117
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -16281,8 +16281,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 131
+                    "line": 118,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -16308,8 +16308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 145
+                    "line": 132,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -16335,8 +16335,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 157
+                    "line": 146,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -16362,8 +16362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 197
+                    "line": 158,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -16389,8 +16389,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 227
+                    "line": 198,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -16416,8 +16416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 259
+                    "line": 229,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -16443,8 +16443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 264
+                    "line": 260,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -16470,8 +16470,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 280
+                    "line": 272,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -16490,8 +16490,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 285
+                    "line": 281,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -16538,8 +16538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 300
+                    "line": 286,
+                    "end": 299
                 }
             ]
         },
@@ -20126,7 +20126,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Renderer.php",
-            "lines": 449,
+            "lines": 454,
             "doc": "Renders a block tree the way the reference renders post_content:\ndelimiters gone, each block's own HTML kept with inner blocks rendered\nin place, then the per-block render-time additions (layout classes, the\nparagraph class, image attributes, gallery ids, style-variation\ncounters), and finally texturize over the whole.",
             "implements": [],
             "extends": null,
@@ -20162,6 +20162,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Html",
                 "Minn\\Media\\Uploads",
+                "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\Templates",
@@ -20197,8 +20198,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 93,
-                "end": 98
+                "line": 94,
+                "end": 99
             },
             "cases": [],
             "constants": [
@@ -20341,8 +20342,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 68
+                    "line": 54,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -20353,8 +20354,8 @@
                     "doc": "The per-request rendering state: counters, containers, variations, the images seen.",
                     "shapes": [],
                     "params": [],
-                    "line": 101,
-                    "end": 104
+                    "line": 102,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -20365,8 +20366,8 @@
                     "doc": "What is being rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 107,
-                    "end": 110
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -20385,8 +20386,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 116
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -20397,8 +20398,8 @@
                     "doc": "The image tag builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 119,
-                    "end": 122
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -20417,8 +20418,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 167
+                    "line": 126,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -20446,8 +20447,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 183
+                    "line": 177,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -20475,8 +20476,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 194
+                    "line": 192,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -20495,8 +20496,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 216
+                    "line": 203,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -20515,8 +20516,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 231
+                    "line": 229,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -20537,8 +20538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 245
+                    "line": 239,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -20557,8 +20558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 260
+                    "line": 253,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -20577,8 +20578,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 276
+                    "line": 269,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -20599,8 +20600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 288
+                    "line": 286,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -20621,8 +20622,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 301
+                    "line": 299,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -20635,8 +20636,8 @@
                         "@return array<string, mixed>|null"
                     ],
                     "params": [],
-                    "line": 310,
-                    "end": 313
+                    "line": 311,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -20655,8 +20656,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 367
+                    "line": 317,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -20669,8 +20670,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 376,
-                    "end": 380
+                    "line": 382,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -20698,8 +20699,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 391
+                    "line": 389,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -20718,8 +20719,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 402
+                    "line": 405,
+                    "end": 408
                 },
                 {
                     "routes": [],
@@ -20745,8 +20746,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 225
+                    "line": 219,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -20772,8 +20773,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 423
+                    "line": 417,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -20792,8 +20793,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 429
+                    "line": 432,
+                    "end": 435
                 },
                 {
                     "routes": [],
@@ -20821,8 +20822,8 @@
                             "doc": "the bound attributes' values, put into a static block's HTML"
                         }
                     ],
-                    "line": 432,
-                    "end": 458
+                    "line": 438,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -20862,8 +20863,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 460,
-                    "end": 482
+                    "line": 466,
+                    "end": 488
                 },
                 {
                     "routes": [],
@@ -20874,8 +20875,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 484,
-                    "end": 489
+                    "line": 490,
+                    "end": 495
                 }
             ]
         },
@@ -119838,7 +119839,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AssetQueue.php",
-            "lines": 95,
+            "lines": 161,
             "doc": "The scripts and styles a request queues, as WordPress's asset functions\nqueue them: each kind's registry kept for the request, a handle queued\n(with the notice for one queued before init), and a script's element,\nfrom a file or inline, through the attribute filters.",
             "implements": [],
             "extends": null,
@@ -119851,6 +119852,7 @@
                 "Minn\\Support\\ScriptTag"
             ],
             "usedBy": [
+                "Minn\\Blocks\\Renderer",
                 "Minn\\Content\\MediaShortcodes",
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Runtime\\ScriptModules"
@@ -119884,8 +119886,94 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 35
+                    "line": 27,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "snapshot",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "snapshot(): array",
+                    "doc": "The scripts, styles and script modules queued now, to compare with once a block has rendered.",
+                    "shapes": [
+                        "@return array{0: list<string>, 1: list<string>, 2: list<string>}"
+                    ],
+                    "params": [],
+                    "line": 43,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "dequeueSince",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "dequeueSince(array $before): void",
+                    "doc": "Takes off the queues what joined them since the snapshot: what a block that rendered nothing enqueued, as\nthe reference takes it off.",
+                    "shapes": [
+                        "@param array{0: list<string>, 1: list<string>, 2: list<string>} $before"
+                    ],
+                    "params": [
+                        {
+                            "name": "before",
+                            "type": "array",
+                            "shape": "array{0: list<string>, 1: list<string>, 2: list<string>}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "settleBlock",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "settleBlock(array $before, string $html, string $name, Closure $enqueue, mixed $type = NULL): void",
+                    "doc": "After a block has rendered: when a named block rendered nothing, whitespace aside, and its render enqueued\nsomething or its own assets are not all queued yet, enqueue_empty_block_content_assets is asked; unless it\nkeeps them, what the render enqueued is taken off the queues again and the block's own are not added.\nOtherwise $enqueue adds its own. The text between blocks (no name) is never asked about, as on the reference.",
+                    "shapes": [
+                        "@param array{0: list<string>, 1: list<string>, 2: list<string>} $before"
+                    ],
+                    "params": [
+                        {
+                            "name": "before",
+                            "type": "array",
+                            "shape": "array{0: list<string>, 1: list<string>, 2: list<string>}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "enqueue",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -119904,8 +119992,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 47
+                    "line": 105,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -119931,8 +120019,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 65
+                    "line": 121,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -119960,8 +120048,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 81
+                    "line": 141,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -119980,8 +120068,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 88
+                    "line": 151,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -120000,8 +120088,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 95
+                    "line": 158,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -120020,8 +120108,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 101
+                    "line": 165,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -120047,8 +120135,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 109
+                    "line": 171,
+                    "end": 176
+                },
+                {
+                    "routes": [],
+                    "name": "pending",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "pending(mixed $type): bool",
+                    "doc": "Whether a block type has assets of its own not queued yet (its scripts, view scripts and modules, styles).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 102
                 }
             ]
         },
@@ -150749,7 +150857,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 426,
+            "lines": 427,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -151051,8 +151159,8 @@
             "constants": [
                 {
                     "name": "CONTENT_DONE",
-                    "value": "array (   'apply_block_hooks_to_content_from_post_object' => 8,   'do_blocks' => 9,   'wptexturize' => 10,   'wpautop' => 10,   'shortcode_unautop' => 10,   'do_shortcode' => 11,   'wp_filter_content_tags' =>    array (     0 => 12,     1 => '_minn_content_img_tag',   ), )",
-                    "doc": "The the_content defaults the engine's own rendering has already done:\nblocks, texturize, paragraphs, shortcodes, block hooks, and the image\nattributes. What it has not (an attachment's own link, smilies, the\ncapital P, insecure home addresses) runs with the plugins' own\ncallbacks.",
+                    "value": "array (   'apply_block_hooks_to_content_from_post_object' => 8,   'do_blocks' =>    array (     0 => 9,     1 => '_minn_do_added_blocks',   ),   'wptexturize' => 10,   'wpautop' => 10,   'shortcode_unautop' => 10,   'wp_filter_content_tags' =>    array (     0 => 12,     1 => '_minn_content_img_tag',   ), )",
+                    "doc": "The the_content defaults the engine's own rendering has already done:\nblocks, texturize, paragraphs, block hooks, and the image attributes.\nShortcodes run in their place in the chain (do_shortcode at 11), so a\nshortcode a plugin's filter adds before then runs as on the reference,\nand block markup a filter adds before do_blocks is rendered then. What\nthe engine has not done (an attachment's own link, smilies, the capital\nP, insecure home addresses) runs with the plugins' own callbacks.",
                     "visibility": "private"
                 }
             ],
@@ -151573,8 +151681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 276
+                    "line": 274,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -151585,8 +151693,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 279,
-                    "end": 282
+                    "line": 280,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -151597,8 +151705,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 285,
-                    "end": 288
+                    "line": 286,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -151609,8 +151717,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 291,
-                    "end": 294
+                    "line": 292,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -151621,8 +151729,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 297,
-                    "end": 300
+                    "line": 298,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -151633,8 +151741,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 303,
-                    "end": 309
+                    "line": 304,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -151645,8 +151753,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 312,
-                    "end": 315
+                    "line": 313,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -151657,8 +151765,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 318,
-                    "end": 321
+                    "line": 319,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -151669,8 +151777,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 324,
-                    "end": 327
+                    "line": 325,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -151681,8 +151789,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 330,
-                    "end": 333
+                    "line": 331,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -151708,8 +151816,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 339
+                    "line": 337,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -151735,8 +151843,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 345
+                    "line": 343,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -151747,8 +151855,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 348,
-                    "end": 351
+                    "line": 349,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -151759,8 +151867,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 354,
-                    "end": 357
+                    "line": 355,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -151771,8 +151879,8 @@
                     "doc": "Whether the facade's functions and classes are defined yet.",
                     "shapes": [],
                     "params": [],
-                    "line": 360,
-                    "end": 363
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -151791,8 +151899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 366,
-                    "end": 393
+                    "line": 367,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -151803,8 +151911,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 425,
-                    "end": 428
+                    "line": 426,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -151815,8 +151923,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 431,
-                    "end": 448
+                    "line": 432,
+                    "end": 449
                 },
                 {
                     "routes": [],
@@ -151835,8 +151943,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 403,
-                    "end": 417
+                    "line": 404,
+                    "end": 418
                 }
             ]
         },
@@ -171188,8 +171296,8 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/ClassicContent.php",
-            "lines": 39,
-            "doc": "What a classic theme's the_content() prints: the engine's block pipeline\n(render, password gate, the more-tag teaser in listings), the cached\nembeds, then the runtime's shortcodes and the_content filters so plugin\ncode sees the same hook order the reference runs.",
+            "lines": 38,
+            "doc": "What a classic theme's the_content() prints: the engine's block pipeline\n(render, password gate, the more-tag teaser in listings), the cached\nembeds, then the_content's filters (shortcodes in do_shortcode's place\namong them) so plugin code sees the same hook order the reference runs.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -171238,7 +171346,7 @@
                         }
                     ],
                     "line": 27,
-                    "end": 61
+                    "end": 60
                 }
             ]
         },

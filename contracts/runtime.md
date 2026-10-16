@@ -16947,6 +16947,35 @@ check undone the namespace goes missing again. Inspiro's local Google Fonts are 
 is named by a hash of `WP_CONTENT_DIR`, which on the lab's WordPress twin is its own path, so the two stacks name
 the same file differently, a lab artifact.
 
+## What the_content adds before core's defaults, and what an empty block enqueued (2026-10-16)
+
+The engine renders a post's content itself (its blocks, texturize, paragraphs, images) and then runs
+`the_content` without the defaults it has done. Probed on the reference with filters at priorities 5, 10 and 20:
+block markup a filter adds at 5 is rendered by `do_blocks` at 9, and a shortcode added at 10 runs at
+`do_shortcode`'s 11; on the engine the block's comments reached the page as they were and the shortcode stayed
+as typed, because the engine had run its shortcodes before any filter. Share buttons and related-posts boxes add
+their shortcodes at the default priority. Shortcodes now run in `do_shortcode`'s place in the chain, and at
+`do_blocks`'s place content that carries block markup is rendered (`_minn_do_added_blocks`; the engine's own
+rendering leaves none, so its content passes through untouched).
+
+Owed: plain text a filter adds before priority 10 is neither texturized nor given paragraphs, as the reference's
+defaults would; the engine's pass ran before it.
+
+The hunt's WooCommerce showcase printed `product-query-frontend.js` on Minn only. Observed on the reference with
+blocks that enqueue as they render: a block that renders nothing, or only whitespace, has the scripts, styles
+and script modules its render newly enqueued taken off the queues again (one queued before stays), and its own
+assets are not added; `enqueue_empty_block_content_assets` returning true keeps them. The filter is asked only
+when there is something to keep (the render enqueued something, or the block's own assets are not all queued),
+and never for the text between blocks, which has no name (hook parity caught the engine asking for those in
+feeds and REST responses). The engine's renderer and
+`WP_Block::render` (a plugin's block, or one rendered with `render_block()`) now do the same through
+`AssetQueue::snapshot`, `dequeueSince` and `settleBlock`; WooCommerce's product query block, which renders nothing
+outside a product collection, no longer leaves its script behind.
+
+Suite runtime compares both with the reference through its fixture plugin: block markup and shortcodes added
+around core's defaults, and empty, whitespace and full blocks in a post's content and rendered directly, with and
+without the filter.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17016,3 +17045,4 @@ rows that are `open` or `austin`.
 | 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | done | "A product's head link and its post terms (2026-10-16)": the route rest_get_queried_resource_route gives |
+| 16961 | What the_content adds before core's defaults (10-16) | plain text a filter adds before priority 10 is not texturized or given paragraphs | open | engine work owed |

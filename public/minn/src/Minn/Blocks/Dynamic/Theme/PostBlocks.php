@@ -98,7 +98,6 @@ final readonly class PostBlocks
             $content = $seams->filterContent($content, $post);
         }
         if (Runtime::booted()) {
-            $content = Runtime::shortcodes()->apply($content);
             $content = Runtime::contentFilter($content);
         }
         if ($content === '' || $content === '0') {

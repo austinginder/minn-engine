@@ -3008,8 +3008,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "the render pipeline: engine-rendered core blocks, bindings, inner blocks, the dynamic callback with the supports block and global post kept, assets and the render filters",
-                "body": "65e99ac9142c"
+                "why": "the render pipeline: engine-rendered core blocks, bindings, inner blocks, the dynamic callback with the supports block and global post kept, assets (given back when the block rendered nothing) and the render filters",
+                "body": "d7aad28cfbd5"
             },
             "WP_Block::render_inner_blocks": {
                 "verdict": "move",

@@ -5,11 +5,11 @@
         "minn": 686,
         "composes": 2143,
         "leaf": 1005,
-        "noop": 3146,
+        "noop": 3147,
         "placeholder": 0,
         "deadend": 1770,
-        "functions": 8672,
-        "minnMethods": 1398,
+        "functions": 8673,
+        "minnMethods": 1400,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -7736,6 +7736,8 @@
             "minn": [
                 "Minn\\Blocks\\Bindings::html",
                 "Minn\\Content\\Blocks::renderer",
+                "Minn\\Runtime\\AssetQueue::settleBlock",
+                "Minn\\Runtime\\AssetQueue::snapshot",
                 "Minn\\Runtime\\BlockFilters::rendered"
             ],
             "composes": [
@@ -36760,6 +36762,15 @@
             "minn": [],
             "composes": [
                 "recurse_dirsize"
+            ]
+        },
+        "_minn_do_added_blocks": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "do_blocks"
             ]
         },
         "_minn_dropdown_script": {

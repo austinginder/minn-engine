@@ -171,6 +171,54 @@ if (isset($_GET['minn-test-comment-form'])) {
     }, 1);
 }
 
+// Blocks that render nothing (?minn-test-empty-blocks, =keep with
+// enqueue_empty_block_content_assets asking for their assets): an empty block,
+// one of whitespace and a full one in the post's content, and an empty one
+// rendered directly; each enqueues as it renders. What stays queued is noted.
+if (isset($_GET['minn-test-empty-blocks'])) {
+    add_action('init', static function () {
+        foreach (['early', 'content', 'spaced', 'direct', 'full'] as $handle) {
+            wp_register_script("minn-test-empty-{$handle}", plugins_url("probe.js?{$handle}", __FILE__), [], '1.0.0');
+        }
+        wp_register_style('minn-test-empty-style', plugins_url('probe.css?empty', __FILE__), [], '1.0.0');
+        register_block_type('minn-test/empty', ['attributes' => ['as' => ['type' => 'string', 'default' => 'content']], 'render_callback' => static function ($attributes) {
+            wp_enqueue_script('minn-test-empty-early');
+            wp_enqueue_script('minn-test-empty-' . $attributes['as']);
+            wp_enqueue_style('minn-test-empty-style');
+            return $attributes['as'] === 'spaced' ? " \n " : '';
+        }]);
+        register_block_type('minn-test/full', ['render_callback' => static function () {
+            wp_enqueue_script('minn-test-empty-full');
+            return '<p>full</p>';
+        }]);
+    });
+    add_action('wp_enqueue_scripts', static fn () => wp_enqueue_script('minn-test-empty-early'));
+    if ($_GET['minn-test-empty-blocks'] === 'keep') {
+        add_filter('enqueue_empty_block_content_assets', '__return_true');
+    }
+    add_filter('the_content', static fn ($content) => $content . '<!-- wp:minn-test/empty /--><!-- wp:minn-test/empty {"as":"spaced"} /--><!-- wp:minn-test/full /-->', 1);
+    add_action('wp_footer', static function () {
+        render_block(parse_blocks('<!-- wp:minn-test/empty {"as":"direct"} /-->')[0]);
+        $queued = [];
+        foreach (['early', 'content', 'spaced', 'direct', 'full'] as $handle) {
+            $queued[$handle] = wp_script_is("minn-test-empty-{$handle}", 'enqueued');
+        }
+        $queued['style'] = wp_style_is('minn-test-empty-style', 'enqueued');
+        echo '<!-- minn-test-empty-blocks ' . json_encode($queued) . ' -->';
+    }, 1);
+}
+
+// Content a plugin adds in the_content around core's defaults
+// (?minn-test-content-order): block markup at 5, before do_blocks; a shortcode
+// at 10, before do_shortcode; another at 20, after it. The post's content is
+// noted in the page between markers.
+if (isset($_GET['minn-test-content-order'])) {
+    add_shortcode('minn_test_order', static fn () => '<span class="minn-test-order">ran</span>');
+    add_filter('the_content', static fn ($content) => $content . '<!-- wp:paragraph --><p>added at 5</p><!-- /wp:paragraph -->', 5);
+    add_filter('the_content', static fn ($content) => $content . '[minn_test_order]', 10);
+    add_filter('the_content', static fn ($content) => '<!--minn-order-->' . $content . '[minn_test_order] at 20<!--/minn-order-->', 20);
+}
+
 // The template-enhancement buffer (?minn-test-enhance): the action before the
 // template, the buffer opening, and the whole page handed to the filter, noted
 // in the page itself.

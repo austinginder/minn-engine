@@ -26,6 +26,7 @@ use Minn\Extension\Extensions;
 use Minn\Front\Permalinks;
 use Minn\Media\Uploads;
 use Minn\Runtime\BlockFilters;
+use Minn\Runtime\AssetQueue;
 use Minn\Runtime\Runtime;
 use Minn\Html;
 use Minn\Theme\Templates;
@@ -345,11 +346,16 @@ final class Renderer
                 $block = $before;
             }
             $bound = Bindings::values($block, $this->blockContext());
+            $queued = $asCallback || !$native ? null : AssetQueue::snapshot();
             $html = $this->renderNamed($bound === [] ? $block : $block->withAttrs(array_merge($block->attrs, $bound)), $bound);
-            // A block that renders nothing loads its assets only when enqueue_empty_block_content_assets asks
-            // for them, asked while they are not loaded yet.
-            if ($html !== '' || (!$asCallback && !isset($this->state->blocks()[$block->name]) && Runtime::hooks()->filter('enqueue_empty_block_content_assets', [false, $block->name]))) {
+            // A block that renders nothing, or only whitespace, loads its assets only when
+            // enqueue_empty_block_content_assets asks for them, asked while they are not loaded yet; what its render
+            // enqueued is taken off the queues again, as the reference takes it. A plugin's block settles this in
+            // WP_Block::render, which renders it.
+            if (trim($html) !== '' || (!$asCallback && $native && (!isset($this->state->blocks()[$block->name]) || AssetQueue::snapshot() !== $queued) && Runtime::hooks()->filter('enqueue_empty_block_content_assets', [false, $block->name]))) {
                 $this->state->recordBlock($block->name);
+            } elseif ($queued !== null) {
+                AssetQueue::dequeueSince($queued);
             }
             $html = $seams === null ? $html : $seams->filterBlock($block, $html);
             if (!$filtered) {

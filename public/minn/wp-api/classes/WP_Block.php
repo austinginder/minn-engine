@@ -106,6 +106,7 @@ class WP_Block implements \Minn\Objects\RenderedBlock
         if ($bound !== []) {
             $this->attributes = array_merge($this->attributes, $bound);
         }
+        $queued = Minn\Runtime\AssetQueue::snapshot();
         $block_content = !$options['dynamic'] || empty($this->block_type->skip_inner_blocks) ? $this->render_inner_blocks() : '';
         if ($is_dynamic) {
             $global_post = $GLOBALS['post'] ?? null;
@@ -115,10 +116,9 @@ class WP_Block implements \Minn\Objects\RenderedBlock
             WP_Block_Supports::$block_to_render = $parent;
             $GLOBALS['post'] = $global_post;
         }
-        if ($bound !== [] && $block_content !== '') {
-            $block_content = \Minn\Blocks\Bindings::html($block_content, (string) $this->name, $bound);
-        }
-        $this->enqueue_assets();
+        $block_content = $bound !== [] && $block_content !== '' ? \Minn\Blocks\Bindings::html($block_content, (string) $this->name, $bound) : $block_content;
+        // A block that rendered nothing gives back what its render enqueued, and adds none of its own.
+        Minn\Runtime\AssetQueue::settleBlock($queued, $block_content, (string) $this->name, $this->enqueue_assets(...), $this->block_type);
         if (($options['minn_filters'] ?? true) === false) {
             // The engine's renderer applies the render_block filters once around a bridged block.
             return $block_content;
