@@ -56,6 +56,25 @@ return [
         $v = $verdict('guarded', "if (function_exists('wp_missing_fn')) { wp_missing_fn(); } if (class_exists('WP_Missing_Class')) { new WP_Missing_Class(); }");
         return $v['functions'] === [] && $v['classes'] === [] ? true : json_encode($v);
     },
+    'a guard written with its backslashes escaped guards the namespaced class it names' => static function () use ($verdict): bool|string {
+        $v = $verdict('guard-escaped', <<<'PHP'
+            if (class_exists('Vendor\\Sdk\\AbstractProvider')) { new \Vendor\Sdk\AbstractProvider(); }
+            PHP);
+        return $v['classes'] === [] ? true : json_encode($v);
+    },
+    'a class checked for guards the other classes of its namespace (Ninja Forms and the AI client)' => static function () use ($verdict): bool|string {
+        $v = $verdict('guard-namespace', <<<'PHP'
+            if (!class_exists('\\Vendor\\Sdk\\Client')) { return; }
+            new \Vendor\Sdk\AbstractProvider();
+            PHP);
+        return $v['classes'] === [] ? true : json_encode($v);
+    },
+    'a check for a class of another namespace guards nothing here' => static function () use ($verdict): bool|string {
+        $v = $verdict('guard-elsewhere', <<<'PHP'
+            if (class_exists('Other\\Sdk\\Client')) { new \Vendor\Sdk\AbstractProvider(); }
+            PHP);
+        return $v['classes'] === ['Vendor\\Sdk\\AbstractProvider'] ? true : json_encode($v);
+    },
     'the folder\'s own declarations are not reported' => static function () use ($verdict): bool|string {
         $v = $verdict('own', 'function wp_missing_fn() {} class WP_Missing_Class {} wp_missing_fn(); new WP_Missing_Class();');
         return $v['functions'] === [] && $v['classes'] === [] ? true : json_encode($v);

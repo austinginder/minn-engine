@@ -133,7 +133,7 @@ the WordPress runtime plugins load against
 | [`StoredObjects`](#storedobjects) | final class | 78 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 196 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
-| [`Symbols`](#symbols) | final class | 478 | A static read of what a plugin's PHP calls: global functions and classes |
+| [`Symbols`](#symbols) | final class | 498 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 152 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TemplateFiles`](#templatefiles) | final class | 44 | The theme templates WordPress's template functions name: the index and |
 | [`TermEvents`](#termevents) | final readonly class | 114 | What the reference's REST terms controller tells plugins, for the |
@@ -7627,7 +7627,7 @@ answers itself is not counted, as the gate counts it.
 - `@param array{functions?: array<string, string>, classes?: array<string, string>} $deadEnds name => area, as data/deadend-symbols.json holds them`
 - `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool, deadEnds: array<string, list<string>>}`
 
-Internals: `keep()` (private, line 81), `fingerprint()` (private, line 92), `namesStamp()` (private, line 105), `reduced()` (private, line 117), `verdict()` (private, line 203), `phpFiles()` (private, line 237), `scan()` (private, line 271), `scanTokens()` (private, line 297), `noteName()` (private, line 386), `resolve()` (private, line 423), `readImports()` (private, line 440), `significant()` (private, line 487)
+Internals: `keep()` (private, line 81), `fingerprint()` (private, line 92), `namesStamp()` (private, line 105), `reduced()` (private, line 117), `verdict()` (private, line 203), `phpFiles()` (private, line 237), `scan()` (private, line 271), `scanTokens()` (private, line 297), `inGuardedNamespace()` (private, line 386), `noteName()` (private, line 405), `resolve()` (private, line 443), `readImports()` (private, line 460), `significant()` (private, line 507)
 
 
 ## TagEditor

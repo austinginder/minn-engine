@@ -155206,7 +155206,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Symbols.php",
-            "lines": 478,
+            "lines": 498,
             "doc": "A static read of what a plugin's PHP calls: global functions and classes\nit uses but does not itself declare, minus the ones it guards with\nfunction_exists() or class_exists(). Checked against what the runtime\nprovides, this decides whether a plugin loads at all.\n\nThe read is cached in the minn_runtime_symbols option, keeping only the\nreference's own names (all a verdict reads). An entry is trusted while\nthe folder's fingerprint (its own time and its top-level files' newest)\nholds, for up to FULL_CHECK_EVERY seconds; then the whole folder is\nwalked again, as an update replaces it. Installing, updating or\nactivating a plugin walks its folder at once (recheck()). Walking every\nfolder on every request cost hundreds of milliseconds on a site with\nmany plugins.",
             "implements": [],
             "extends": null,
@@ -155600,6 +155600,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "inGuardedNamespace",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "inGuardedNamespace(string $lower, array $guarded): bool",
+                    "doc": "Whether a class sits in the namespace of a class the folder checks for: a\nplugin that asks class_exists( 'Vendor\\\\Lib\\\\Client' ) before using the\nlibrary treats the library as optional, its other classes with it (Ninja\nForms checks WordPress's AI client so, then builds its requirements).",
+                    "shapes": [
+                        "@param array<string, true> $guarded lower-cased names"
+                    ],
+                    "params": [
+                        {
+                            "name": "lower",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "guarded",
+                            "type": "array",
+                            "shape": "array<string, true>",
+                            "default": null,
+                            "doc": "lower-cased names"
+                        }
+                    ],
+                    "line": 386,
+                    "end": 395
+                },
+                {
+                    "routes": [],
                     "name": "noteName",
                     "static": true,
                     "visibility": "private",
@@ -155646,8 +155675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 386,
-                    "end": 415
+                    "line": 405,
+                    "end": 435
                 },
                 {
                     "routes": [],
@@ -155682,8 +155711,8 @@
                             "doc": "alias (lower case) => class"
                         }
                     ],
-                    "line": 423,
-                    "end": 430
+                    "line": 443,
+                    "end": 450
                 },
                 {
                     "routes": [],
@@ -155719,8 +155748,8 @@
                             "doc": "alias (lower case) => class, added to"
                         }
                     ],
-                    "line": 440,
-                    "end": 484
+                    "line": 460,
+                    "end": 504
                 },
                 {
                     "routes": [],
@@ -155755,8 +155784,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 487,
-                    "end": 498
+                    "line": 507,
+                    "end": 518
                 }
             ]
         },

@@ -17042,6 +17042,17 @@ so, through the facade's `get_block_templates`; the templates it finds and their
 every kind of page in the lab. WooCommerce's single-product wrapper, added through the same filter, now renders.
 The template index reads its saved templates once a request (two lookups on a home page cost one query).
 
+## The gate reads a namespaced guard (2026-10-16)
+
+The gate refused Ninja Forms for `WordPress\AiClient\Providers\Models\DTO\ModelRequirements`, a class of the AI
+client WordPress bundles and the engine does not carry. Ninja Forms builds it only after
+`class_exists( 'WordPress\\AiClient\\AiClient' )`, so on the engine (and on the reference without the client) it
+never does. Two things kept the gate from seeing that. It took a guard's name from the literal as written, so a
+namespaced name with its backslashes escaped, as single-quoted PHP writes them, never matched any class; it reads
+the name as PHP does now. And a guard covered the one name it checks, where a plugin that checks a library's
+class treats the library as optional: a class in the namespace of a class the folder checks for counts as
+guarded. Ninja Forms loads (its two REST namespaces with it); the unit suite holds the three cases.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

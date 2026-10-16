@@ -214,7 +214,7 @@ final class Symbols
         $missingClasses = [];
         foreach ($scan['classes'] as $name) {
             $lower = strtolower($name);
-            if ($gap->lacksClass($name) && !isset($scan['declaredClasses'][$lower]) && !isset($scan['guarded'][$lower])) {
+            if ($gap->lacksClass($name) && !isset($scan['declaredClasses'][$lower]) && !isset($scan['guarded'][$lower]) && !self::inGuardedNamespace($lower, $scan['guarded'])) {
                 $missingClasses[] = $name;
             }
         }
@@ -376,6 +376,25 @@ final class Symbols
     }
 
     /**
+     * Whether a class sits in the namespace of a class the folder checks for: a
+     * plugin that asks class_exists( 'Vendor\\Lib\\Client' ) before using the
+     * library treats the library as optional, its other classes with it (Ninja
+     * Forms checks WordPress's AI client so, then builds its requirements).
+     *
+     * @param array<string, true> $guarded lower-cased names
+     */
+    private static function inGuardedNamespace(string $lower, array $guarded): bool
+    {
+        foreach (array_keys($guarded) as $name) {
+            $cut = strrpos((string) $name, '\\');
+            if ($cut !== false && $cut > 0 && str_starts_with($lower, substr((string) $name, 0, $cut + 1))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * A name token: a class reference when it follows new / extends /
      * implements / instanceof or precedes ::, a call when it precedes "(",
      * and a guard when the call is an existence check on a literal.
@@ -406,7 +425,8 @@ final class Symbols
             if (in_array($lower, ['function_exists', 'class_exists', 'interface_exists', 'method_exists', 'is_callable', 'defined', 'trait_exists', 'enum_exists'], true)) {
                 $arg = self::significant($tokens, $i + 1, 1);
                 if ($arg !== null && $arg[0] === T_CONSTANT_ENCAPSED_STRING) {
-                    $table->guard(trim($arg[1], '\'"'));
+                    // The name as PHP reads the literal: 'Vendor\\Lib' is Vendor\Lib, and a leading backslash is no part of it.
+                    $table->guard(ltrim(str_replace('\\\\', '\\', substr($arg[1], 1, -1)), '\\'));
                 }
                 return;
             }
