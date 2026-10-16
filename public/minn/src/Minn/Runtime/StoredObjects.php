@@ -8,10 +8,15 @@ use Minn\Support\Serialized;
 
 /**
  * The classes a stored blob may name and come back as. The serialized
- * reader never instantiates; the facade registers one factory per value
- * class it owns (WP_Post, WP_Term, WP_Comment) and a record naming any
- * other class stays a stdClass of its properties. That is what lets a
- * transient the reference wrote, holding post objects, read back typed.
+ * reader never instantiates by itself; the facade registers one factory per
+ * value class it owns (WP_Post, WP_Term, WP_Comment), and any other class
+ * comes back as itself only when it is plain data: a class that exists,
+ * written in PHP, that runs nothing as it is revived or let go (no
+ * __wakeup, __unserialize or __destruct, not Serializable), so no stored
+ * blob can make code run (PHP object injection). Plugins keep settings in
+ * such objects (WooCommerce PayPal Payments does) and read them back typed,
+ * as the reference revives them. Anything else stays a stdClass of its
+ * properties.
  */
 final class StoredObjects
 {
@@ -41,18 +46,79 @@ final class StoredObjects
         self::$factories[strtolower($class)] = $factory;
     }
 
-    /** The reviver the serialized reader takes: PHP's array wrappers rebuilt, a factory's object, or the properties as they are. */
+    /** The reviver the serialized reader takes: PHP's array wrappers rebuilt, a factory's object, a plain data object, or the properties as they are. */
     public static function reviver(): \Closure
     {
-        return static function (string $class, \stdClass $properties): object {
+        return static function (string $class, \stdClass $properties, array $pairs = []): object {
             $name = strtolower($class);
             $wrapper = isset(self::WRAPPERS[$name]) ? self::arrayWrapper(self::WRAPPERS[$name], $properties) : null;
             if ($wrapper !== null) {
                 return $wrapper;
             }
             $factory = self::$factories[$name] ?? null;
-            return $factory === null ? $properties : $factory($properties);
+            return $factory === null ? (self::plain($class, $pairs) ?? $properties) : $factory($properties);
         };
+    }
+
+    /**
+     * A plain data object revived from its stored properties, as PHP's own reader
+     * would, without its constructor: each property set in the scope of the
+     * class that declares it (a parent's private one by its owner's name, a
+     * readonly one where it may be initialized). Null for a class that is not
+     * plain data, for the engine's own classes, or when a value does not fit
+     * a typed property.
+     *
+     * @param list<array{0: int|string, 1: mixed}> $pairs the stored names and values
+     */
+    private static function plain(string $class, array $pairs): ?object
+    {
+        if (preg_match('/^\\\\?[A-Za-z_\x80-\xff][A-Za-z0-9_\x80-\xff]*(\\\\[A-Za-z_\x80-\xff][A-Za-z0-9_\x80-\xff]*)*$/', $class) !== 1 || str_starts_with(strtolower(ltrim($class, '\\')), 'minn\\') || !class_exists($class)) {
+            return null;
+        }
+        $reflection = new \ReflectionClass($class);
+        if ($reflection->isInternal() || $reflection->isAbstract() || $reflection->isEnum() || $reflection->implementsInterface(\Serializable::class)) {
+            return null;
+        }
+        foreach (['__wakeup', '__unserialize', '__destruct'] as $magic) {
+            if ($reflection->hasMethod($magic)) {
+                return null;
+            }
+        }
+        $object = $reflection->newInstanceWithoutConstructor();
+        try {
+            foreach ($pairs as [$raw, $value]) {
+                [$owner, $property] = self::owner($reflection, (string) $raw);
+                if (strcasecmp($owner, $reflection->getName()) !== 0 && !is_subclass_of($reflection->getName(), $owner)) {
+                    return null;
+                }
+                \Closure::bind(static function (object $target) use ($property, $value): void {
+                    $target->{$property} = $value;
+                }, null, $owner)($object);
+            }
+        } catch (\Throwable) {
+            return null;
+        }
+        return $object;
+    }
+
+    /**
+     * The class whose scope sets a stored property, and the property's name:
+     * "\0Owner\0name" is Owner's private one, "\0*\0name" a protected one,
+     * any other name the class's own (or a parent's, where it is declared).
+     *
+     * @return array{0: string, 1: string}
+     */
+    private static function owner(\ReflectionClass $reflection, string $raw): array
+    {
+        if (str_starts_with($raw, "\0")) {
+            $parts = explode("\0", $raw, 3);
+            $name = $parts[2] ?? '';
+            if (($parts[1] ?? '*') !== '*') {
+                return [$parts[1], $name];
+            }
+            $raw = $name;
+        }
+        return [$reflection->hasProperty($raw) ? $reflection->getProperty($raw)->getDeclaringClass()->getName() : $reflection->getName(), $raw];
     }
 
     /**

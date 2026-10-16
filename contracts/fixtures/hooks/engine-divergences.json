@@ -409,7 +409,8 @@
         "probe:sweep-rules",
         "probe:attachment-model",
         "probe:shortcode-callbacks",
-        "probe:script-modules-private"
+        "probe:script-modules-private",
+        "probe:stored-objects"
     ],
     "hooks": {
         "_get_page_link": {
@@ -11816,6 +11817,7 @@
             "probe:sitemap-classes": "not fired",
             "probe:small-classes": "not fired",
             "probe:small-hooks": "not fired",
+            "probe:stored-objects": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:taxonomy-more": "not fired",
@@ -12301,6 +12303,7 @@
             "probe:sitemap-classes": "not fired",
             "probe:small-classes": "not fired",
             "probe:small-hooks": "not fired",
+            "probe:stored-objects": "not fired",
             "probe:sweep-rules": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:taxonomy-more": "not fired",
@@ -13319,6 +13322,7 @@
             "probe:site-options": "not fired",
             "probe:small-classes": "not fired",
             "probe:speculative-loading": "not fired",
+            "probe:stored-objects": "not fired",
             "probe:tabs-and-parts": "not fired",
             "probe:tabs-render": "not fired",
             "probe:term-sanitize": "not fired",
@@ -17263,6 +17267,7 @@
             "probe:site-options": "not fired",
             "probe:sitemap-classes": "not fired",
             "probe:small-classes": "not fired",
+            "probe:stored-objects": "not fired",
             "probe:symbols": "not fired",
             "probe:taxonomy-default-term": "not fired",
             "probe:taxonomy-more": "not fired",

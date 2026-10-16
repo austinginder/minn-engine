@@ -17053,6 +17053,23 @@ the name as PHP does now. And a guard covered the one name it checks, where a pl
 class treats the library as optional: a class in the namespace of a class the folder checks for counts as
 guarded. Ninja Forms loads (its two REST namespaces with it); the unit suite holds the three cases.
 
+## Plain data objects come back from storage as their class (2026-10-16)
+
+WooCommerce PayPal Payments keeps its Pay Later settings as an array of its own `PayLaterMessagingDTO` objects in
+an option, and its getters are typed to return that class. The engine's reader never revived a class it did not
+own (PHP object injection: a stored blob naming a class whose `__wakeup` or `__destruct` runs code), so the
+option came back holding stdClass records and the plugin failed while booting. The reference revives any class.
+Austin's choice (2026-10-16) sits between: a class comes back as itself when it is plain data, a class that
+exists, written in PHP, abstract or an enum neither, not `Serializable`, with no `__wakeup`, `__unserialize` or
+`__destruct`, so reviving it or letting it go runs nothing. It is made without its constructor, as unserialize
+makes it, and each stored property is set in the scope of the class that declares it (a parent's private one
+under its owner's name, a readonly one where it may be initialized). A class name that is not one, the engine's
+own classes, PHP's own, a value that does not fit a typed property and a private name of a class it does not
+extend all leave it a stdClass of its properties, as before. The serialized reader hands the reviver the stored
+names with their values for this. Probe stored-objects (a plain object, a parent's private property of the same
+name, objects in lists and in an untyped property, an option read from the database) matches the reference;
+the unit suite holds the classes the engine still refuses.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

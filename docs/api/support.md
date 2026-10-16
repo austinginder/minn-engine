@@ -31,7 +31,7 @@ escaping, serialized readers, small helpers
 | [`Sanitize`](#sanitize) | final class | 92 | Text made fit to store the way WordPress's sanitizers make it, each ending |
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
-| [`Serialized`](#serialized) | final class | 369 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
+| [`Serialized`](#serialized) | final class | 371 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
 | [`Text`](#text) | final class | 69 | Plain text shaped the way WordPress's formatting helpers shape it: cut to |
@@ -1041,7 +1041,7 @@ reviver makes of the class name and those properties; nothing here
 instantiates anything itself. A blob with trailing bytes or a
 malformed shape is INVALID.
 
-- `@param ?\Closure(string, \stdClass): object $revive`
+- `@param ?\Closure(string, \stdClass, list<array{0: int|string, 1: mixed}>): object $revive handed the class, the properties, and the stored names with their values`
 
 ### static `storedClass(object $object): ?string`
 
@@ -1068,7 +1068,7 @@ float, string, arrays of those, and objects written as their class.
 
 The integer values of a serialized list such as sticky_posts.
 
-Internals: `read()` (private, line 85), `readValue()` (private, line 98), `readObject()` (private, line 154), `encodeRecord()` (private, line 208), `encodeWrapper()` (private, line 225), `expect()` (private, line 232), `size()` (private, line 246), `until()` (private, line 279), `encodeValue()` (private, line 312), `encodeObject()` (private, line 352)
+Internals: `read()` (private, line 85), `readValue()` (private, line 98), `readObject()` (private, line 154), `encodeRecord()` (private, line 210), `encodeWrapper()` (private, line 227), `expect()` (private, line 234), `size()` (private, line 248), `until()` (private, line 281), `encodeValue()` (private, line 314), `encodeObject()` (private, line 354)
 
 
 ## Slashes

@@ -130,7 +130,7 @@ the WordPress runtime plugins load against
 | [`SiteOptions`](#siteoptions) | final class | 76 | The network's options, as a single site keeps them: options stored not |
 | [`SiteTime`](#sitetime) | final class | 90 | Time as the site keeps it: its timezone (the named one, else the UTC |
 | [`SiteUrls`](#siteurls) | final class | 140 | The site's own addresses as WordPress builds them: the home and site |
-| [`StoredObjects`](#storedobjects) | final class | 78 | The classes a stored blob may name and come back as. The serialized |
+| [`StoredObjects`](#storedobjects) | final class | 139 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 196 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
 | [`Symbols`](#symbols) | final class | 498 | A static read of what a plugin's PHP calls: global functions and classes |
@@ -7430,10 +7430,15 @@ Internals: `joined()` (private, line 147), `tail()` (private, line 153)
 `final class Minn\Runtime\StoredObjects` · `public/minn/src/Minn/Runtime/StoredObjects.php`
 
 The classes a stored blob may name and come back as. The serialized
-reader never instantiates; the facade registers one factory per value
-class it owns (WP_Post, WP_Term, WP_Comment) and a record naming any
-other class stays a stdClass of its properties. That is what lets a
-transient the reference wrote, holding post objects, read back typed.
+reader never instantiates by itself; the facade registers one factory per
+value class it owns (WP_Post, WP_Term, WP_Comment), and any other class
+comes back as itself only when it is plain data: a class that exists,
+written in PHP, that runs nothing as it is revived or let go (no
+__wakeup, __unserialize or __destruct, not Serializable), so no stored
+blob can make code run (PHP object injection). Plugins keep settings in
+such objects (WooCommerce PayPal Payments does) and read them back typed,
+as the reference revives them. Anything else stays a stdClass of its
+properties.
 
 - const `WRAPPERS` = `array (   'arrayobject' => 'ArrayObject',   'arrayiterator' => 'ArrayIterator',   'recursivearrayiterator' => 'RecursiveArrayIterator', )` — PHP's array wrappers a stored record may name, by lower-cased class name.
 
@@ -7452,7 +7457,7 @@ Registers what a record naming this class becomes.
 
 ### static `reviver(): Closure`
 
-The reviver the serialized reader takes: PHP's array wrappers rebuilt, a factory's object, or the properties as they are.
+The reviver the serialized reader takes: PHP's array wrappers rebuilt, a factory's object, a plain data object, or the properties as they are.
 
 ### static `knows(string $class): bool`
 
@@ -7462,7 +7467,7 @@ Whether a factory is registered for the class.
 
 Forgets every factory, for suites.
 
-Internals: `arrayWrapper()` (private, line 68)
+Internals: `plain()` (private, line 73), `owner()` (private, line 111), `arrayWrapper()` (private, line 134)
 
 
 ## SymbolGap

@@ -7,16 +7,112 @@ use Minn\Support\Serialized;
 
 /**
  * Object records in a serialized blob: the reader never instantiates, the
- * registry decides what a known class becomes, and everything else stays a
- * stdClass of its properties (the reference would hand back an incomplete
- * class there, which nothing can use).
+ * registry decides what a known class becomes, a plain data class comes back
+ * as itself, and everything else stays a stdClass of its properties (the
+ * reference would hand back an incomplete class for a missing one, which
+ * nothing can use, and revive one that runs code, which the engine will not).
  */
 $post = 'O:7:"WP_Post":2:{s:2:"ID";i:5;s:9:"post_name";s:5:"hello";}';
 $private = 'O:3:"Box":2:{s:10:"' . "\0Box\0" . 'inner";s:1:"x";s:7:"' . "\0*\0" . 'prot";i:2;}';
 StoredObjects::reset();
 StoredObjects::register('WP_Post', static fn (stdClass $properties): ArrayObject => new ArrayObject((array) $properties));
 
+// Plain data classes a plugin keeps settings in, and ones that run code as they are revived or let go.
+if (!class_exists('ZzUnitPlainBase', false)) {
+    class ZzUnitPlainBase
+    {
+        private string $secret = 'base';
+        public function baseSecret(): string
+        {
+            return $this->secret;
+        }
+    }
+    final class ZzUnitPlain extends ZzUnitPlainBase
+    {
+        public string $name = '';
+        public int $count = 0;
+        public array $list = [];
+        public ?ZzUnitPlain $child = null;
+        protected string $guarded = '';
+        private string $secret = '';
+        public readonly string $fixed;
+        public function __construct()
+        {
+            throw new LogicException('a stored object is revived without its constructor');
+        }
+        public function parts(): array
+        {
+            return [$this->name, $this->count, $this->list, $this->child?->name, $this->guarded, $this->secret, $this->fixed, $this->baseSecret()];
+        }
+    }
+    final class ZzUnitWakes
+    {
+        public string $name = '';
+        public function __wakeup(): void
+        {
+        }
+    }
+    final class ZzUnitUnserializes
+    {
+        public string $name = '';
+        public function __unserialize(array $data): void
+        {
+        }
+    }
+    final class ZzUnitDestructs
+    {
+        public string $name = '';
+        public function __destruct()
+        {
+        }
+    }
+}
+$plainBlob = static function (array $props, string $class = 'ZzUnitPlain'): string {
+    $out = '';
+    foreach ($props as $key => $value) {
+        $out .= serialize($key) . serialize($value);
+    }
+    return 'O:' . strlen($class) . ':"' . $class . '":' . count($props) . ':{' . $out . '}';
+};
+
 return [
+    'a plain data object comes back as its class, every property set, its constructor not run' => static function () use ($plainBlob): bool|string {
+        $child = $plainBlob(['name' => 'kid']);
+        $blob = $plainBlob(['name' => 'a', 'count' => 3, 'list' => [1, 'x'], "\0*\0guarded" => 'g', "\0ZzUnitPlain\0secret" => 's', 'fixed' => 'f', "\0ZzUnitPlainBase\0secret" => 'b']);
+        $blob = substr($blob, 0, -1) . serialize('child') . $child . '}';
+        $blob = (string) preg_replace('/^O:11:"ZzUnitPlain":7:/', 'O:11:"ZzUnitPlain":8:', $blob);
+        $value = Serialized::decode($blob, StoredObjects::reviver());
+        return $value instanceof ZzUnitPlain && $value->parts() === ['a', 3, [1, 'x'], 'kid', 'g', 's', 'f', 'b'] ? true : var_export($value, true);
+    },
+    'a revived plain object writes back byte for byte' => static function (): bool|string {
+        $object = (new ReflectionClass(ZzUnitPlain::class))->newInstanceWithoutConstructor();
+        $object->name = 'n';
+        $blob = serialize($object);
+        return Serialized::encode(Serialized::decode($blob, StoredObjects::reviver())) === $blob ? true : 'differs';
+    },
+    'a class that runs code as it is revived or let go stays a stdClass' => static function () use ($plainBlob): bool|string {
+        foreach (['ZzUnitWakes', 'ZzUnitUnserializes', 'ZzUnitDestructs'] as $class) {
+            $value = Serialized::decode($plainBlob(['name' => 'n'], $class), StoredObjects::reviver());
+            if (!$value instanceof stdClass || $value->name !== 'n') {
+                return $class;
+            }
+        }
+        return true;
+    },
+    "the engine's own classes, PHP's own, and a name no class may have stay records" => static function () use ($plainBlob): bool|string {
+        foreach (['Minn\\Content\\PostRecord', 'DateTimeZone', 'Zz Unit Bad', 'ZzUnitMissingClass'] as $class) {
+            $value = Serialized::decode($plainBlob(['name' => 'n'], $class), StoredObjects::reviver());
+            if (!$value instanceof stdClass) {
+                return $class;
+            }
+        }
+        return true;
+    },
+    'a value that does not fit its typed property, or a private name of a class it does not extend, keeps it a stdClass' => static function () use ($plainBlob): bool|string {
+        $typed = Serialized::decode($plainBlob(['count' => 'many']), StoredObjects::reviver());
+        $foreign = Serialized::decode($plainBlob(["\0ZzUnitWakes\0name" => 'n']), StoredObjects::reviver());
+        return $typed instanceof stdClass && $foreign instanceof stdClass ? true : var_export([$typed, $foreign], true);
+    },
     'without a reviver an object record is a stdClass of its properties' => static function () use ($post): bool {
         $value = Serialized::decode($post);
         return $value instanceof stdClass && $value->ID === 5 && $value->post_name === 'hello';

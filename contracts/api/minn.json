@@ -154550,8 +154550,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/StoredObjects.php",
-            "lines": 78,
-            "doc": "The classes a stored blob may name and come back as. The serialized\nreader never instantiates; the facade registers one factory per value\nclass it owns (WP_Post, WP_Term, WP_Comment) and a record naming any\nother class stays a stdClass of its properties. That is what lets a\ntransient the reference wrote, holding post objects, read back typed.",
+            "lines": 139,
+            "doc": "The classes a stored blob may name and come back as. The serialized\nreader never instantiates by itself; the facade registers one factory per\nvalue class it owns (WP_Post, WP_Term, WP_Comment), and any other class\ncomes back as itself only when it is plain data: a class that exists,\nwritten in PHP, that runs nothing as it is revived or let go (no\n__wakeup, __unserialize or __destruct, not Serializable), so no stored\nblob can make code run (PHP object injection). Plugins keep settings in\nsuch objects (WooCommerce PayPal Payments does) and read them back typed,\nas the reference revives them. Anything else stays a stdClass of its\nproperties.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -154602,8 +154602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 36
+                    "line": 34,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -154629,8 +154629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 42
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -154638,11 +154638,11 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "reviver(): Closure",
-                    "doc": "The reviver the serialized reader takes: PHP's array wrappers rebuilt, a factory's object, or the properties as they are.",
+                    "doc": "The reviver the serialized reader takes: PHP's array wrappers rebuilt, a factory's object, a plain data object, or the properties as they are.",
                     "shapes": [],
                     "params": [],
-                    "line": 45,
-                    "end": 56
+                    "line": 50,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -154661,8 +154661,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 86
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -154673,8 +154673,66 @@
                     "doc": "Forgets every factory, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 89,
-                    "end": 92
+                    "line": 155,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "plain",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "plain(string $class, array $pairs): ?object",
+                    "doc": "A plain data object revived from its stored properties, as PHP's own reader\nwould, without its constructor: each property set in the scope of the\nclass that declares it (a parent's private one by its owner's name, a\nreadonly one where it may be initialized). Null for a class that is not\nplain data, for the engine's own classes, or when a value does not fit\na typed property.",
+                    "shapes": [
+                        "@param list<array{0: int|string, 1: mixed}> $pairs the stored names and values"
+                    ],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pairs",
+                            "type": "array",
+                            "shape": "list<array{0: int|string, 1: mixed}>",
+                            "default": null,
+                            "doc": "the stored names and values"
+                        }
+                    ],
+                    "line": 73,
+                    "end": 102
+                },
+                {
+                    "routes": [],
+                    "name": "owner",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "owner(ReflectionClass $reflection, string $raw): array",
+                    "doc": "The class whose scope sets a stored property, and the property's name:\n\"\\0Owner\\0name\" is Owner's private one, \"\\0*\\0name\" a protected one,\nany other name the class's own (or a parent's, where it is declared).",
+                    "shapes": [
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "reflection",
+                            "type": "ReflectionClass",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "raw",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -154700,8 +154758,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 80
+                    "line": 134,
+                    "end": 146
                 }
             ]
         },
@@ -169084,7 +169142,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Serialized.php",
-            "lines": 369,
+            "lines": 371,
             "doc": "Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing\nhere executes the blob; each reader scans for the one shape it needs.",
             "implements": [],
             "extends": null,
@@ -169249,7 +169307,7 @@
                     "signature": "decode(string $blob, ?Closure $revive = NULL): mixed",
                     "doc": "A serialized scalar or array as PHP data, parsed by this reader:\nstrings, integers, floats, booleans, null, and arrays of those. An\nobject record becomes a stdClass of its properties, or whatever the\nreviver makes of the class name and those properties; nothing here\ninstantiates anything itself. A blob with trailing bytes or a\nmalformed shape is INVALID.",
                     "shapes": [
-                        "@param ?\\Closure(string, \\stdClass): object $revive"
+                        "@param ?\\Closure(string, \\stdClass, list<array{0: int|string, 1: mixed}>): object $revive handed the class, the properties, and the stored names with their values"
                     ],
                     "params": [
                         {
@@ -169262,9 +169320,9 @@
                         {
                             "name": "revive",
                             "type": "?Closure",
-                            "shape": "?\\Closure(string, \\stdClass): object",
+                            "shape": "?\\Closure(string, \\stdClass, list<array{0: int|string, 1: mixed}>): object",
                             "default": "NULL",
-                            "doc": ""
+                            "doc": "handed the class, the properties, and the stored names with their values"
                         }
                     ],
                     "line": 71,
@@ -169287,8 +169345,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 198
+                    "line": 197,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -169307,8 +169365,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 264
+                    "line": 262,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -169327,8 +169385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 277
+                    "line": 273,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -169347,8 +169405,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 310
+                    "line": 296,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -169367,8 +169425,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 372,
-                    "end": 378
+                    "line": 374,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -169470,7 +169528,7 @@
                         }
                     ],
                     "line": 154,
-                    "end": 192
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -169498,8 +169556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 222
+                    "line": 210,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -169518,8 +169576,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 230
+                    "line": 227,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -169552,8 +169610,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 238
+                    "line": 234,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -169593,8 +169651,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 253
+                    "line": 248,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -169627,8 +169685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 288
+                    "line": 281,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -169647,8 +169705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 342
+                    "line": 314,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -169667,8 +169725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 352,
-                    "end": 369
+                    "line": 354,
+                    "end": 371
                 }
             ]
         },

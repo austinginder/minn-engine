@@ -1,0 +1,160 @@
+[
+    [
+        "a plain object read back",
+        {
+            "class": "ZzProbeStoredDto",
+            "properties": {
+                "|ZzProbeStoredBase|secret": "base-secret",
+                "|*|level": 1,
+                "name": "cart",
+                "enabled": true,
+                "list": [
+                    "inline",
+                    2,
+                    null
+                ],
+                "child": {
+                    "class": "ZzProbeStoredDto",
+                    "properties": {
+                        "|ZzProbeStoredBase|secret": "base-secret",
+                        "|*|level": 1,
+                        "name": "nested",
+                        "enabled": false,
+                        "list": [],
+                        "child": null,
+                        "|*|guarded": "g",
+                        "|ZzProbeStoredDto|secret": "own-secret",
+                        "fixed": "f"
+                    }
+                },
+                "|*|guarded": "g",
+                "|ZzProbeStoredDto|secret": "own-secret",
+                "fixed": "fixed-value"
+            }
+        }
+    ],
+    [
+        "read back equal to what was stored",
+        true
+    ],
+    [
+        "objects in a list and in an untyped property",
+        {
+            "cart": {
+                "class": "ZzProbeStoredDto",
+                "properties": {
+                    "|ZzProbeStoredBase|secret": "base-secret",
+                    "|*|level": 1,
+                    "name": "cart",
+                    "enabled": true,
+                    "list": [
+                        "inline",
+                        2,
+                        null
+                    ],
+                    "child": {
+                        "class": "ZzProbeStoredDto",
+                        "properties": {
+                            "|ZzProbeStoredBase|secret": "base-secret",
+                            "|*|level": 1,
+                            "name": "nested",
+                            "enabled": false,
+                            "list": [],
+                            "child": null,
+                            "|*|guarded": "g",
+                            "|ZzProbeStoredDto|secret": "own-secret",
+                            "fixed": "f"
+                        }
+                    },
+                    "|*|guarded": "g",
+                    "|ZzProbeStoredDto|secret": "own-secret",
+                    "fixed": "fixed-value"
+                }
+            },
+            "loose": {
+                "class": "ZzProbeStoredLoose",
+                "properties": {
+                    "anything": {
+                        "k": {
+                            "class": "ZzProbeStoredDto",
+                            "properties": {
+                                "|ZzProbeStoredBase|secret": "base-secret",
+                                "|*|level": 1,
+                                "name": "in-loose",
+                                "enabled": false,
+                                "list": [],
+                                "child": null,
+                                "|*|guarded": "g",
+                                "|ZzProbeStoredDto|secret": "own-secret",
+                                "fixed": "f"
+                            }
+                        }
+                    },
+                    "more": "default"
+                }
+            }
+        }
+    ],
+    [
+        "no constructor ran while reading",
+        true
+    ],
+    [
+        "written back the same",
+        true
+    ],
+    [
+        "an option holding them, read from the database",
+        {
+            "cart": {
+                "class": "ZzProbeStoredDto",
+                "properties": {
+                    "|ZzProbeStoredBase|secret": "base-secret",
+                    "|*|level": 1,
+                    "name": "cart",
+                    "enabled": true,
+                    "list": [
+                        "inline",
+                        2,
+                        null
+                    ],
+                    "child": {
+                        "class": "ZzProbeStoredDto",
+                        "properties": {
+                            "|ZzProbeStoredBase|secret": "base-secret",
+                            "|*|level": 1,
+                            "name": "nested",
+                            "enabled": false,
+                            "list": [],
+                            "child": null,
+                            "|*|guarded": "g",
+                            "|ZzProbeStoredDto|secret": "own-secret",
+                            "fixed": "f"
+                        }
+                    },
+                    "|*|guarded": "g",
+                    "|ZzProbeStoredDto|secret": "own-secret",
+                    "fixed": "fixed-value"
+                }
+            },
+            "checkout": {
+                "class": "ZzProbeStoredDto",
+                "properties": {
+                    "|ZzProbeStoredBase|secret": "base-secret",
+                    "|*|level": 1,
+                    "name": "checkout",
+                    "enabled": false,
+                    "list": [],
+                    "child": null,
+                    "|*|guarded": "g",
+                    "|ZzProbeStoredDto|secret": "own-secret",
+                    "fixed": "f"
+                }
+            }
+        }
+    ],
+    [
+        "its getter sees its own class",
+        true
+    ]
+]

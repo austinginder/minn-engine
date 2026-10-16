@@ -66,7 +66,7 @@ final class Serialized
      * instantiates anything itself. A blob with trailing bytes or a
      * malformed shape is INVALID.
      *
-     * @param ?\Closure(string, \stdClass): object $revive
+     * @param ?\Closure(string, \stdClass, list<array{0: int|string, 1: mixed}>): object $revive handed the class, the properties, and the stored names with their values
      */
     public static function decode(string $blob, ?\Closure $revive = null): mixed
     {
@@ -165,6 +165,7 @@ final class Serialized
         $object = new \stdClass();
         $keys = [];
         $hidden = [];
+        $pairs = [];
         for ($i = 0; $i < $count; $i++) {
             $raw = self::read($blob, $offset, $revive);
             if (!is_string($raw) && !is_int($raw)) {
@@ -173,6 +174,7 @@ final class Serialized
             // A class with its own serialization (ArrayObject) numbers its parts: i:0 the flags, i:1 the storage.
             $name = is_int($raw) ? (string) $raw : (str_starts_with($raw, "\0") ? (string) substr($raw, (int) strrpos($raw, "\0") + 1) : $raw);
             $value = self::read($blob, $offset, $revive);
+            $pairs[] = [$raw, $value];
             if (property_exists($object, $name)) {
                 $hidden[] = [$raw, $value];
                 continue;
@@ -183,7 +185,7 @@ final class Serialized
             }
         }
         self::expect($blob, $offset, '}');
-        $result = $revive === null ? $object : $revive($class, $object);
+        $result = $revive === null ? $object : $revive($class, $object, $pairs);
         if ($result === $object && $class !== 'stdClass') {
             self::$records ??= new \WeakMap();
             self::$records[$object] = ['class' => $class, 'keys' => $keys, 'hidden' => $hidden];
