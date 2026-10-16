@@ -107,6 +107,17 @@ function ok( cond, label, detail ) {
 		} );
 		ok( bar.present && bar.bodyClass && bar.config, 'the Minn bar renders on the public site', JSON.stringify( bar ) );
 		ok( bar.edit, 'the bar offers Edit for the page being viewed' );
+		// bar.js does nothing unless it finds the corner its key names; a menu that opens shows it bound.
+		const bound = await page.evaluate( () => {
+			const corner = document.querySelector( '#minn-cornerbar' );
+			const site = document.querySelector( '#minn-bar [data-barmenu="minn-bar-menu-site"]' );
+			if ( ! corner || ! site ) return { ghost: false, opened: false };
+			site.click();
+			const opened = ! document.querySelector( '#minn-bar-menu-site' ).hidden && 'true' === site.getAttribute( 'aria-expanded' );
+			site.click();
+			return { ghost: corner.classList.contains( 'minn-bar-ghost' ), opened };
+		} );
+		ok( bound.ghost && bound.opened, 'bar.js binds to the bar: it ghosts and its menus open', JSON.stringify( bound ) );
 		ok( errors.length === 0, 'no console, page, or REST errors', errors.slice( 0, 8 ).join( '\n      ' ) );
 	} finally {
 		await browser.close();

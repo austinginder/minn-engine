@@ -44627,7 +44627,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/AdminBar.php",
-            "lines": 326,
+            "lines": 364,
             "doc": "The Minn bar on the public site: the same server-rendered chrome the\napp ships (assets/js/bar.js and assets/css/bar.css from the bundle),\nbuilt here for a signed-in reader who can edit. There is no other bar\nand no other admin on the engine, so it is on for everyone who passes\nthe edit_posts gate; the app's per-person opt-in does not apply.",
             "implements": [],
             "extends": null,
@@ -44645,7 +44645,8 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Html",
                 "Minn\\I18n\\Gettext",
-                "Minn\\Json"
+                "Minn\\Json",
+                "Minn\\Support\\Serialized"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -44708,12 +44709,28 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 37
+                "line": 41,
+                "end": 56
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "SITE_APPEARANCE",
+                    "value": "'minn_admin_site_appearance'",
+                    "doc": "Where the app keeps the site's default look: its scheme and its mode (dark, light or system).",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
+                {
+                    "name": "key",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "The key this request's corner carries and MINN_BAR repeats, so bar.js\nbinds to the bar printed here. The bar comes after the post content,\nand content keeps id, style and hidden for roles without\nunfiltered_html, so a lookup by a fixed id would find the content's\ncopy first. Content cannot know a key minted per request.",
+                    "visibility": "private",
+                    "promoted": false
+                },
                 {
                     "name": "session",
                     "type": "Minn\\Auth\\Authenticated",
@@ -44838,8 +44855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 46
+                    "line": 59,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -44850,8 +44867,8 @@
                     "doc": "The stylesheet link for the head.",
                     "shapes": [],
                     "params": [],
-                    "line": 55,
-                    "end": 58
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -44870,8 +44887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 89
+                    "line": 80,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -44890,8 +44907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -44924,8 +44941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 141
+                    "line": 111,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -44944,8 +44961,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 159
+                    "line": 168,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -44973,8 +44990,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 181
+                    "line": 186,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -44993,8 +45010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 195
+                    "line": 215,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -45005,8 +45022,8 @@
                     "doc": "The notifications menu; bar.js fills the items.",
                     "shapes": [],
                     "params": [],
-                    "line": 198,
-                    "end": 208
+                    "line": 229,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -45025,8 +45042,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 221
+                    "line": 242,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -45039,8 +45056,20 @@
                         "@return array{tone: string, label: string, title: string, sub: string, fix: ?array}|null"
                     ],
                     "params": [],
-                    "line": 229,
-                    "end": 243
+                    "line": 260,
+                    "end": 274
+                },
+                {
+                    "routes": [],
+                    "name": "siteMode",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "siteMode(): string",
+                    "doc": "The site's default mode the app keeps (dark, light or system), for a reader who never chose one.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 277,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -45061,8 +45090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 262
+                    "line": 285,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -45095,8 +45124,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 286
+                    "line": 303,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -45107,8 +45136,8 @@
                     "doc": "post type slug => editor route base, for the palette's content results.",
                     "shapes": [],
                     "params": [],
-                    "line": 289,
-                    "end": 296
+                    "line": 328,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -45127,8 +45156,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 315
+                    "line": 337,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -45139,8 +45168,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 317,
-                    "end": 320
+                    "line": 356,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -45159,8 +45188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 325
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -45179,8 +45208,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 330
+                    "line": 366,
+                    "end": 369
                 },
                 {
                     "routes": [],
@@ -45199,8 +45228,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 335
+                    "line": 371,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -45211,8 +45240,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 337,
-                    "end": 340
+                    "line": 376,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -45259,8 +45288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 350
+                    "line": 381,
+                    "end": 389
                 }
             ]
         },
@@ -169167,6 +169196,7 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Terms",
                 "Minn\\Extension\\Loader",
+                "Minn\\Front\\AdminBar",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\MediaObject",

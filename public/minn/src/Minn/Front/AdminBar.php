@@ -15,6 +15,7 @@ use Minn\Content\UserRecord;
 use Minn\Json;
 use Minn\Html;
 use Minn\I18n\Gettext;
+use Minn\Support\Serialized;
 
 /**
  * The Minn bar on the public site: the same server-rendered chrome the
@@ -25,6 +26,18 @@ use Minn\I18n\Gettext;
  */
 final readonly class AdminBar
 {
+    /** Where the app keeps the site's default look: its scheme and its mode (dark, light or system). */
+    private const SITE_APPEARANCE = 'minn_admin_site_appearance';
+
+    /**
+     * The key this request's corner carries and MINN_BAR repeats, so bar.js
+     * binds to the bar printed here. The bar comes after the post content,
+     * and content keeps id, style and hidden for roles without
+     * unfiltered_html, so a lookup by a fixed id would find the content's
+     * copy first. Content cannot know a key minted per request.
+     */
+    private string $key;
+
     public function __construct(
         private Authenticated $session,
         private Capabilities $capabilities,
@@ -34,6 +47,12 @@ final readonly class AdminBar
         private Appearance $appearance,
         private AdminTypes $types,
     ) {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $key = '';
+        for ($i = 0; $i < 20; $i++) {
+            $key .= $alphabet[random_int(0, strlen($alphabet) - 1)];
+        }
+        $this->key = $key;
     }
 
     /** The bar for a signed-in editor, or null for anyone else. */
@@ -63,6 +82,7 @@ final readonly class AdminBar
         [$editUrl, $editLabel, $editHint] = $this->editTarget($resolution);
         $status = $this->status();
         $config = [
+            'key' => $this->key,
             'rest' => $this->permalinks->url('/wp-json/'),
             'nonce' => Nonce::create($this->session->id(), $this->session->token),
             'app' => $this->appUrl(),
@@ -97,13 +117,17 @@ final readonly class AdminBar
         $avatar = 'https://secure.gravatar.com/avatar/' . hash('sha256', strtolower(trim($user->email))) . '?s=104&d=mm&r=g';
         $can = fn (string $cap): bool => $this->capabilities->can($this->session->id(), $cap);
 
-        $out = '<div id="minn-cornerbar"' . ($status === null ? ' class="minn-bar-ghost"' : '') . '>'
-            . '<div id="minn-bar-root" data-minn-theme="dark" data-minn-scheme="' . Html::attr($scheme) . '">';
+        // The corner always ships ghosted, so the mark never flashes before
+        // bar.js runs; a status chip waits inside the tucked bar. Both
+        // pre-paint scripts find the bar through their own position
+        // (currentScript's parent), never by id, for the reason the key exists.
+        $out = '<div id="minn-cornerbar" class="minn-bar-ghost" data-minn-bar="' . Html::attr($this->key) . '">'
+            . '<div id="minn-bar-root" data-minn-theme="dark" data-minn-scheme="' . Html::attr($scheme) . '" data-minn-font="' . Html::attr($appearance['font']) . '">';
         if ($scheme === 'custom') {
             $out .= $this->customSchemeStyle($appearance);
         }
-        $out .= '<script>(function(){try{var t=localStorage.getItem("minn-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";}document.getElementById("minn-bar-root").setAttribute("data-minn-theme",t);}catch(e){}})();</script>'
-            . '<script>(function(){try{var c=document.getElementById("minn-cornerbar");if(!c||!c.classList.contains("minn-bar-ghost")){return;}var ts=0;try{ts=parseInt(sessionStorage.getItem("minn-bar-corner")||"0",10);sessionStorage.removeItem("minn-bar-corner");}catch(e){}if(ts&&Date.now()-ts<60000){c.classList.add("minn-bar-peek");}}catch(e){}})();</script>';
+        $out .= '<script>(function(){try{var r=document.currentScript&&document.currentScript.parentNode;if(!r){return;}var t=localStorage.getItem("minn-theme");if(!t){t=' . Json::encode($this->siteMode()) . ';}if(t!=="dark"&&t!=="light"){t=window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";}r.setAttribute("data-minn-theme",t);}catch(e){}})();</script>'
+            . '<script>(function(){try{var c=document.currentScript&&document.currentScript.parentNode;c=c&&c.parentNode;if(!c||!c.classList||!c.classList.contains("minn-bar-ghost")){return;}var ts=0;try{ts=parseInt(sessionStorage.getItem("minn-bar-corner")||"0",10);sessionStorage.removeItem("minn-bar-corner");}catch(e){}if(ts&&Date.now()-ts<60000){c.classList.add("minn-bar-peek");}}catch(e){}})();</script>';
 
         $out .= '<header id="minn-bar" aria-label="' . Html::attr(self::t('Minn Admin Bar')) . '">';
         $out .= '<div class="minn-bar-zone minn-bar-left">'
@@ -123,7 +147,7 @@ final readonly class AdminBar
             . '<button type="button" class="minn-bar-btn minn-bar-iconbtn" id="minn-bar-search" title="' . Html::attr(self::t('Search Minn Admin')) . '" aria-label="' . Html::attr(self::t('Search Minn Admin')) . '">' . self::icon('<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>') . '</button>'
             . '<button type="button" class="minn-bar-btn minn-bar-iconbtn" data-barmenu="minn-bar-menu-new" aria-haspopup="menu" aria-expanded="false" aria-label="' . Html::attr(self::t('Create new')) . '">' . self::icon('<path d="M12 5v14M5 12h14"/>') . '</button>';
         if ($editUrl !== '') {
-            $out .= '<a class="minn-bar-btn minn-bar-edit" href="' . Html::attr($editUrl) . '">' . self::icon('<path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>') . '<span>' . Html::esc($editLabel) . '</span></a>';
+            $out .= '<span class="minn-bar-edit-wrap"><a class="minn-bar-btn minn-bar-edit" href="' . Html::attr($editUrl) . '">' . self::icon('<path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>') . '<span>' . Html::esc($editLabel) . '</span></a></span>';
         }
         $out .= '<span class="minn-bar-divider"></span>'
             . '<span class="minn-bar-bellwrap"><button type="button" class="minn-bar-btn minn-bar-iconbtn" data-barmenu="minn-bar-menu-notif" aria-haspopup="menu" aria-expanded="false" aria-label="' . Html::attr(self::t('Notifications')) . '">'
@@ -169,8 +193,15 @@ final readonly class AdminBar
             if ($status['fix'] !== null || $can('manage_options')) {
                 $out .= '<div class="minn-bar-menu-rule"></div>';
             }
+            // The fix asks, then confirms, and no button has an id: a <label for>
+            // in post content clicks any labelable element it can name by id.
             if ($status['fix'] !== null) {
-                $out .= '<button type="button" class="minn-bar-menu-item" role="menuitem" id="minn-bar-status-fix">' . self::icon('<path d="M18.4 5.6a9 9 0 1 0 .8 8.4"/><path d="M19 3v5h-5"/>') . '<span class="minn-bar-menu-copy"><span class="minn-bar-menu-title">' . Html::esc($status['fix']['label']) . '</span></span></button>';
+                $out .= '<button type="button" class="minn-bar-menu-item" role="menuitem" data-barfix="ask">' . self::icon('<path d="M18.4 5.6a9 9 0 1 0 .8 8.4"/><path d="M19 3v5h-5"/>') . '<span class="minn-bar-menu-copy"><span class="minn-bar-menu-title">' . Html::esc($status['fix']['label']) . '</span></span></button>'
+                    . '<div data-barfix-confirm hidden>'
+                    . '<div class="minn-bar-menu-item minn-bar-menu-static"><span class="minn-bar-menu-copy"><span class="minn-bar-menu-title">' . Html::esc($status['fix']['label']) . '</span><span class="minn-bar-menu-sub minn-bar-menu-wrap">' . Html::esc($status['fix']['confirm']) . '</span></span></div>'
+                    . '<button type="button" class="minn-bar-menu-item" role="menuitem" data-barfix="confirm">' . self::icon('<path d="m5 12 5 5 9-10"/>') . '<span class="minn-bar-menu-copy"><span class="minn-bar-menu-title">' . Html::esc(self::t('Confirm')) . '</span></span></button>'
+                    . '<button type="button" class="minn-bar-menu-item" role="menuitem" data-barfix="cancel">' . self::icon('<path d="M6 6l12 12M18 6 6 18"/>') . '<span class="minn-bar-menu-copy"><span class="minn-bar-menu-title">' . Html::esc(self::t('Cancel')) . '</span></span></button>'
+                    . '</div>';
             }
             if ($can('manage_options')) {
                 $out .= self::menuItem($this->appPath('settings'), '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>', self::t('Visibility settings'));
@@ -237,9 +268,17 @@ final readonly class AdminBar
             'title' => self::t('Search engines are discouraged'),
             'sub' => self::t('The site asks search engines not to index it. Visitors can still browse normally.'),
             'fix' => $this->capabilities->can($this->session->id(), 'manage_options')
-                ? ['label' => self::t('Allow search engines'), 'kind' => 'settings', 'body' => ['blog_public' => 1]]
+                ? ['label' => self::t('Allow search engines'), 'confirm' => self::t('Search engines will be allowed to index the site.'), 'kind' => 'settings', 'body' => ['blog_public' => 1]]
                 : null,
         ];
+    }
+
+    /** The site's default mode the app keeps (dark, light or system), for a reader who never chose one. */
+    private function siteMode(): string
+    {
+        $stored = Serialized::decode((string) ($this->site->option(self::SITE_APPEARANCE) ?? ''));
+        $mode = is_array($stored) ? ($stored['mode'] ?? '') : '';
+        return in_array($mode, ['dark', 'light'], true) ? $mode : 'system';
     }
 
     /** @return array{0: string, 1: string, 2: string} url (or ''), label, hint */

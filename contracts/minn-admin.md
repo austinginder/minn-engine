@@ -112,6 +112,20 @@ previews and anonymous readers get no bar. The bar is on for everyone who
 passes the gate: there is no per-person opt-in on the engine. Suite:
 `admin-surfaces` (section 8) and `tests/browser/admin-views.test.js`.
 
+Since Minn Admin 0.43 `bar.js` binds only to the corner whose
+`data-minn-bar` repeats `MINN_BAR.key`, a 20-character key minted per
+request (post content can carry the bar's ids, but cannot know the key);
+without the pair it does nothing. The corner always ships ghosted, a
+status chip included, and the root carries `data-minn-font`. The two
+pre-paint scripts find the bar through `document.currentScript`, and a
+reader who never chose light or dark starts in the site default the app
+keeps in `minn_admin_site_appearance`. The status fix asks, then confirms
+(`data-barfix`), with no id a label in post content could click. The
+engine's copy fell behind the plugin's here once and the bar went inert
+on every Minn site; the suites now check the key pair and that a menu opens.
+Still owed: the per-person "site" scheme, which follows the site's default
+scheme.
+
 ## Honest gaps
 
 The adapter namespaces (`minn-admin/v1/<plugin>/*`), captured admin notices,

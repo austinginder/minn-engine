@@ -421,6 +421,26 @@ $html = (string) @file_get_contents( "$ENGINE/hello-world/", false, $ctx );
 check( str_contains( $html, 'id="minn-bar-root"' ) && str_contains( $html, 'minn-front-bar' ), 'a signed-in editor gets the Minn bar and its body class' );
 check( str_contains( $html, '/minn/admin/assets/css/bar.css' ) && str_contains( $html, '/minn/admin/assets/js/bar.js' ) && str_contains( $html, 'window.MINN_BAR = {' ), 'the bar loads the app bundle\'s own assets and config' );
 check( str_contains( $html, 'minn-admin/editor/posts/1' ), 'the bar offers Edit for the post being viewed' );
+// bar.js binds only to the corner whose data-minn-bar repeats MINN_BAR.key (Minn Admin 0.43): without the pair it does nothing at all.
+$bar_key = static function ( string $html ): array {
+	preg_match( '/<div id="minn-cornerbar" class="minn-bar-ghost" data-minn-bar="([A-Za-z0-9]{16,})">/', $html, $corner );
+	preg_match( '/window\.MINN_BAR = (\{.*?\});<\/script>/s', $html, $config );
+	return array( $corner[1] ?? '', (string) ( json_decode( $config[1] ?? '{}', true )['key'] ?? '' ) );
+};
+[ $corner_key, $config_key ] = $bar_key( $html );
+check( '' !== $corner_key && $corner_key === $config_key, 'the corner ships ghosted with the key MINN_BAR repeats', json_encode( array( $corner_key, $config_key ) ) );
+check( $corner_key !== $bar_key( (string) @file_get_contents( "$ENGINE/hello-world/", false, $ctx ) )[0], 'each request mints its own key' );
+check( (bool) preg_match( '/<div id="minn-bar-root" data-minn-theme="dark" data-minn-scheme="[a-z]+" data-minn-font="(minn|wordpress)">/', $html ), 'the bar root carries the reader\'s scheme and font' );
+check( str_contains( $html, 'var r=document.currentScript&&document.currentScript.parentNode' ) && ! str_contains( $html, 'getElementById("minn-bar-root")' ), 'the pre-paint scripts find the bar by their own place, not by id' );
+check( str_contains( $html, '<span class="minn-bar-edit-wrap"><a class="minn-bar-btn minn-bar-edit"' ), 'the Edit button sits in its wrap' );
+// A status chip still ghosts, and its fix asks before it acts, with no id a label in post content could click.
+[ , $settings ] = as_fetch( $ENGINE, '/wp/v2/settings', $admin );
+$was_public     = (int) ( $settings['blog_public'] ?? 1 );
+[ $s ] = as_fetch( $ENGINE, '/wp/v2/settings', $admin, 'POST', '{"blog_public":0}' );
+$hidden = (string) @file_get_contents( "$ENGINE/hello-world/", false, $ctx );
+as_fetch( $ENGINE, '/wp/v2/settings', $admin, 'POST', json_encode( array( 'blog_public' => $was_public ) ) );
+check( 200 === $s && str_contains( $hidden, 'class="minn-bar-btn minn-bar-status" data-tone="blue"' ) && '' !== $bar_key( $hidden )[0], 'hidden from search: the chip shows and the corner still ghosts', "status $s" );
+check( str_contains( $hidden, 'data-barfix="ask"' ) && str_contains( $hidden, 'data-barfix="confirm"' ) && str_contains( $hidden, 'data-barfix="cancel"' ) && ! str_contains( $hidden, 'id="minn-bar-status-fix"' ), 'the fix asks, then confirms, through data-barfix' );
 $anon = (string) @file_get_contents( "$ENGINE/hello-world/", false, stream_context_create( array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false ) ) ) );
 check( ! str_contains( $anon, 'minn-bar-root' ) && ! str_contains( $anon, 'minn-front-bar' ), 'anonymous readers see no bar' );
 $css = minn_test_fetch( "$ENGINE/minn/admin/assets/css/bar.css" );
