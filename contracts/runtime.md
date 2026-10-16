@@ -16976,6 +16976,29 @@ Suite runtime compares both with the reference through its fixture plugin: block
 around core's defaults, and empty, whitespace and full blocks in a post's content and rendered directly, with and
 without the filter.
 
+## A plugin that takes over image loading, as Elementor's does (2026-10-16)
+
+The dogfood suite had failed on two pages since Elementor 4.3.5 arrived on the dogfood site (2026-10-14). Its
+image loading module turns WordPress's own off and does the job itself: on `init` it closes high fetch priority
+(`wp_high_priority_element_flag(false)`), it turns lazy loading off (`wp_lazy_loading_enabled`), and through
+`wp_content_img_tag` it writes its own attributes into each image, inserted at the front of the tag. Observed on
+the reference, every image passes through `wp_content_img_tag` twice on a block theme's page: once as the_content
+fits it, once more as the whole template is (context `template`), the content's images again among them. Three
+things the engine did otherwise:
+
+- It reopened high fetch priority as each page began (`RenderState::reset`), so a featured image took it after
+  a plugin had taken it off the table. A flag closed before the page renders stays closed.
+- It ran no template pass: the page's images were offered to `wp_content_img_tag` once, the template's own
+  (a featured image) never. `PageRenderer` now offers each image of the rendered template, in the template's
+  context.
+- It marked content images lazy without asking `wp_lazy_loading_enabled`. It asks now, for images and iframes;
+  and an image a plugin makes lazy after it was fitted gets "auto" first in its sizes on the next pass, as the
+  reference gives it.
+
+The dogfood suite passes again (24 of 24), Elementor's own quirks included (a content image carrying its
+`fetchpriority` twice, as on the reference). Hook parity: `wp_content_img_tag` and `wp_lazy_loading_enabled`
+now agree in 17 more scenarios.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

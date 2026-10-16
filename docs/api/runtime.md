@@ -906,7 +906,7 @@ registered sizes, a size fitted to a box, the file for a size (or an
 icon), the srcset and sizes pair, the loading attributes an image earns
 where it sits, the img element itself, and the site icon.
 
-Used by: `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\AttachmentModel`
+Used by: `Minn\Blocks\ImageTags`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\AttachmentModel`
 
 ### static `sizes(): array`
 

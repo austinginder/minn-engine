@@ -142,7 +142,13 @@ final readonly class PageRenderer
      */
     private function document(Resolution $resolution, array $coreClasses, array $template, Page $query): string
     {
+        // The page starts its own count of images, but high fetch priority a plugin took off the table before
+        // (Elementor's image loading does, on init, through wp_high_priority_element_flag) stays off it.
+        $priorityOpen = RenderState::current()->priorityAvailable();
         RenderState::current()->reset();
+        if (!$priorityOpen) {
+            RenderState::current()->closePriority();
+        }
         $this->renderer->withContext(new Context($resolution, $query->posts, $query->total, $this->bridge->perPage(), true));
         // The reference texturizes the rendered template as a whole, after the
         // blocks: straight quotes in a theme's own markup curl, content that was
@@ -158,7 +164,9 @@ final readonly class PageRenderer
         }
         RenderState::current()->enter('template');
         try {
-            $body = Texturize::html($this->renderer->renderBlocks(Parser::parse($template['markup'])));
+            // Then, as the reference does with the whole template, each image is offered to wp_content_img_tag (in
+            // the template's context), the content's images again among them.
+            $body = $this->renderer->images()->content(Texturize::html($this->renderer->renderBlocks(Parser::parse($template['markup']))), 'template');
         } finally {
             RenderState::current()->leave('template');
         }

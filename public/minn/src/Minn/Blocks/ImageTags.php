@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Blocks;
 
 use Closure;
+use Minn\Runtime\AttachmentImages;
 use Minn\Runtime\Runtime;
 
 use Minn\Content\Posts;
@@ -63,7 +64,7 @@ final readonly class ImageTags
             if (strtolower($m[1]) === 'iframe') {
                 return $template ? $m[0] : self::lazyFrame($m[0]);
             }
-            return (string) Runtime::hooks()->filter('wp_content_img_tag', [$template ? $this->sized($m[0]) : $this->fit($m[0]), $context, self::attachmentOf($m[0])]);
+            return (string) Runtime::hooks()->filter('wp_content_img_tag', [$template ? self::autoSizedWhenLazy($this->sized($m[0])) : $this->fit($m[0]), $context, self::attachmentOf($m[0])]);
         }, $html);
     }
 
@@ -94,7 +95,7 @@ final readonly class ImageTags
     {
         return (string) preg_replace_callback('/<img\s[^>]*>/i', function (array $m) use ($context): string {
             $done = RenderState::current()->fittedImage($m[0]) || str_contains($m[0], ' decoding=') || str_contains($m[0], ' loading=');
-            $tag = $done ? $m[0] : $this->fit($m[0]);
+            $tag = $done ? self::autoSizedWhenLazy($m[0]) : $this->fit($m[0]);
             return Runtime::hooks()->has('wp_content_img_tag') ? (string) Runtime::hooks()->filter('wp_content_img_tag', [$tag, $context, self::attachmentOf($tag)]) : $tag;
         }, $html);
     }
@@ -138,10 +139,16 @@ final readonly class ImageTags
         return str_replace($m[0], ' sizes="auto, ' . $m[1] . '"', $tag);
     }
 
+    /** An image a plugin made lazy after it was fitted (Elementor's image loading does) gets "auto" sizes on the next pass, as on the reference. */
+    private static function autoSizedWhenLazy(string $tag): string
+    {
+        return preg_match('/\sloading=["\']?lazy\b/i', $tag) === 1 ? self::autoSized($tag) : $tag;
+    }
+
     /** An iframe with a width and a height, and no loading of its own, loads lazily. */
     private static function lazyFrame(string $tag): string
     {
-        if (str_contains($tag, ' loading=') || preg_match('/\swidth=/', $tag) !== 1 || preg_match('/\sheight=/', $tag) !== 1) {
+        if (str_contains($tag, ' loading=') || preg_match('/\swidth=/', $tag) !== 1 || preg_match('/\sheight=/', $tag) !== 1 || !self::lazyAllowed('iframe')) {
             return $tag;
         }
         return (string) preg_replace('/^<iframe\s/i', '<iframe loading="lazy" ', $tag, 1);
@@ -160,12 +167,14 @@ final readonly class ImageTags
      * On a page the first big-enough content image is fetched eagerly with
      * high priority, the next few are eager, and the rest lazy; only lazy
      * images carry the "auto" sizes hint. In a REST response every image is
-     * lazy.
+     * lazy. A plugin that turns lazy loading off (wp_lazy_loading_enabled;
+     * Elementor's image loading does) leaves every image without it.
      */
     private function loadingPrefix(int $width = 0, int $height = 0): array
     {
+        $lazy = self::lazyAllowed('img') ? ['loading="lazy" decoding="async"', true] : ['decoding="async"', false];
         if (!($this->front)()) {
-            return ['loading="lazy" decoding="async"', true];
+            return $lazy;
         }
         // Three eager images per page, every <img> on the page counting toward
         // the budget; the first eager image large enough to be worth the
@@ -173,7 +182,7 @@ final readonly class ImageTags
         // or an avatar is not, so the flag can fall to a later image.
         $seen = RenderState::current()->nextImage();
         if ($seen > 3) {
-            return ['loading="lazy" decoding="async"', true];
+            return $lazy;
         }
         $large = $width * $height >= self::minimumPriorityPixels();
         return $large && RenderState::current()->claimPriority() ? ['fetchpriority="high" decoding="async"', false] : ['decoding="async"', false];
@@ -186,6 +195,12 @@ final readonly class ImageTags
             return ['fetchpriority="high" decoding="async"', false];
         }
         return ['decoding="async"', false];
+    }
+
+    /** Whether content images or iframes may load lazily (wp_lazy_loading_enabled, asked for the_content). */
+    private static function lazyAllowed(string $tagName): bool
+    {
+        return (bool) AttachmentImages::lazyLoading($tagName, 'the_content');
     }
 
     /** The area an image must cover before it is worth fetching first. */

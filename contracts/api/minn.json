@@ -17679,7 +17679,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/ImageTags.php",
-            "lines": 312,
+            "lines": 326,
             "doc": "The attributes the reference adds to an <img> that carries a\nwp-image-{id} class: loading, decoding, width and height (prepended, in\nthat order), and srcset plus sizes (appended). The srcset lists the\ndisplayed size first, then every same-ratio size in stored order, then\nthe original.",
             "implements": [],
             "extends": null,
@@ -17689,6 +17689,7 @@
                 "Minn\\Html",
                 "Minn\\Media\\Metadata",
                 "Minn\\Media\\Uploads",
+                "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -17724,8 +17725,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 30
+                "line": 26,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -17776,8 +17777,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -17796,8 +17797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 42
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -17816,8 +17817,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 48
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -17843,8 +17844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 68
+                    "line": 59,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -17870,8 +17871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 100
+                    "line": 94,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -17904,8 +17905,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 307,
-                    "end": 332
+                    "line": 322,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -17924,8 +17925,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 84
+                    "line": 72,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -17944,8 +17945,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 108
+                    "line": 104,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -17964,8 +17965,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 112,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -17984,8 +17985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 127
+                    "line": 118,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -18004,8 +18005,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 139
+                    "line": 131,
+                    "end": 140
+                },
+                {
+                    "routes": [],
+                    "name": "autoSizedWhenLazy",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "autoSizedWhenLazy(string $tag): string",
+                    "doc": "An image a plugin made lazy after it was fitted (Elementor's image loading does) gets \"auto\" sizes on the next pass, as on the reference.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -18024,8 +18045,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 148
+                    "line": 149,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -18058,8 +18079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 157
+                    "line": 157,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -18067,7 +18088,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "loadingPrefix(int $width = 0, int $height = 0): array",
-                    "doc": "On a page the first big-enough content image is fetched eagerly with\nhigh priority, the next few are eager, and the rest lazy; only lazy\nimages carry the \"auto\" sizes hint. In a REST response every image is\nlazy.",
+                    "doc": "On a page the first big-enough content image is fetched eagerly with\nhigh priority, the next few are eager, and the rest lazy; only lazy\nimages carry the \"auto\" sizes hint. In a REST response every image is\nlazy. A plugin that turns lazy loading off (wp_lazy_loading_enabled;\nElementor's image loading does) leaves every image without it.",
                     "shapes": [],
                     "params": [
                         {
@@ -18085,8 +18106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 180
+                    "line": 173,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -18121,8 +18142,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 189
+                    "line": 192,
+                    "end": 198
+                },
+                {
+                    "routes": [],
+                    "name": "lazyAllowed",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lazyAllowed(string $tagName): bool",
+                    "doc": "Whether content images or iframes may load lazily (wp_lazy_loading_enabled, asked for the_content).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tagName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -18133,8 +18174,8 @@
                     "doc": "The area an image must cover before it is worth fetching first.",
                     "shapes": [],
                     "params": [],
-                    "line": 192,
-                    "end": 196
+                    "line": 207,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -18174,8 +18215,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 217
+                    "line": 213,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -18203,8 +18244,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 265
+                    "line": 242,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -18265,8 +18306,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 300
+                    "line": 288,
+                    "end": 315
                 }
             ]
         },
@@ -121311,6 +121352,7 @@
                 "Minn\\Support\\Text"
             ],
             "usedBy": [
+                "Minn\\Blocks\\ImageTags",
                 "Minn\\Front\\CustomLogo",
                 "Minn\\Front\\EmbedCard",
                 "Minn\\Front\\FeedTags",
@@ -174026,7 +174068,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/PageRenderer.php",
-            "lines": 199,
+            "lines": 207,
             "doc": "A whole page from the active block theme: the template the resolution\nmaps to, rendered against the main query, inside the document shell the\nreference emits (skip link, wp-site-blocks, the skip-link target on the\nfirst main element).",
             "implements": [],
             "extends": null,
@@ -174366,7 +174408,7 @@
                         }
                     ],
                     "line": 143,
-                    "end": 187
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -174387,8 +174429,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 201
+                    "line": 203,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -174421,8 +174463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 233
+                    "line": 218,
+                    "end": 241
                 }
             ]
         },
