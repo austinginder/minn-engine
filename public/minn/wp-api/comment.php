@@ -844,7 +844,11 @@ function comments_template($file = '/comments.php', $separate_comments = false)
         define('COMMENTS_TEMPLATE', true);
     }
     $theme_template = locate_template([ltrim((string) $file, '/')]);
-    require apply_filters('comments_template', $theme_template !== '' ? $theme_template : MINN_ENGINE_DIR . '/wp-api/theme-compat/comments.php');
+    $compat = MINN_ENGINE_DIR . '/wp-api/theme-compat/comments.php';
+    $include = (string) apply_filters('comments_template', $theme_template !== '' ? $theme_template : $compat);
+    // A path the filter hands back that is no file (Colibri's is relative to its theme) gives way to the
+    // parent theme's file, then the default template, as on the reference.
+    require $include !== '' && is_file($include) ? $include : (is_file($parent = get_template_directory() . '/' . ltrim((string) $file, '/')) ? $parent : $compat);
 }
 
 /** @internal the query comments_template runs: one page of top-level comments when paged, the last page found by counting them when the newest come first */
@@ -891,28 +895,28 @@ function separate_comments(&$comments)
     return $groups;
 }
 
-/** @internal the default author, email, url (and cookies) fields */
-function _minn_comment_form_fields(): array
+/** @internal the default author, email, url (and cookies) fields, written in the form's format (html5 or xhtml) */
+function _minn_comment_form_fields(bool $html5): array
 {
     $commenter = wp_get_current_commenter();
     $req = (bool) get_option('require_name_email');
     $required = $req ? ' <span class="required">' . esc_html__('*') . '</span>' : '';
-    $attr = $req ? ' required' : '';
+    $attr = $req ? ($html5 ? ' required' : ' required="required"') : '';
     $fields = [
         'author' => '<p class="comment-form-author"><label for="author">' . __('Name') . $required . '</label> <input id="author" name="author" type="text" value="' . esc_attr($commenter['comment_author']) . '" size="30" maxlength="245" autocomplete="name"' . $attr . ' /></p>',
-        'email' => '<p class="comment-form-email"><label for="email">' . __('Email') . $required . '</label> <input id="email" name="email" type="email" value="' . esc_attr($commenter['comment_author_email']) . '" size="30" maxlength="100" aria-describedby="email-notes" autocomplete="email"' . $attr . ' /></p>',
-        'url' => '<p class="comment-form-url"><label for="url">' . __('Website') . '</label> <input id="url" name="url" type="url" value="' . esc_attr($commenter['comment_author_url']) . '" size="30" maxlength="200" autocomplete="url" /></p>',
+        'email' => '<p class="comment-form-email"><label for="email">' . __('Email') . $required . '</label> <input id="email" name="email" type="' . ($html5 ? 'email' : 'text') . '" value="' . esc_attr($commenter['comment_author_email']) . '" size="30" maxlength="100" aria-describedby="email-notes" autocomplete="email"' . $attr . ' /></p>',
+        'url' => '<p class="comment-form-url"><label for="url">' . __('Website') . '</label> <input id="url" name="url" type="' . ($html5 ? 'url' : 'text') . '" value="' . esc_attr($commenter['comment_author_url']) . '" size="30" maxlength="200" autocomplete="url" /></p>',
     ];
     if (get_option('show_comments_cookies_opt_in') && has_action('set_comment_cookies', 'wp_set_comment_cookies')) {
-        $fields['cookies'] = _minn_comment_cookies_field();
+        $fields['cookies'] = _minn_comment_cookies_field($html5);
     }
     return $fields;
 }
 
 /** @internal the cookies consent field, checked for a remembered commenter */
-function _minn_comment_cookies_field(): string
+function _minn_comment_cookies_field(bool $html5): string
 {
-    $consent = empty(wp_get_current_commenter()['comment_author_email']) ? '' : ' checked';
+    $consent = empty(wp_get_current_commenter()['comment_author_email']) ? '' : ($html5 ? ' checked' : ' checked="checked"');
     return '<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes"' . $consent . ' /> <label for="wp-comment-cookies-consent">' . __('Save my name, email, and website in this browser for the next time I comment.') . '</label></p>';
 }
 
@@ -922,17 +926,21 @@ function _minn_comment_form_args($args, WP_Post $post): array
     $user = wp_get_current_user();
     $req = (bool) get_option('require_name_email');
     $block = (bool) Runtime::current()->get('block_theme', false);
-    $custom_button = is_array($args) && (isset($args['submit_button']) || isset($args['submit_field']));
+    // The caller's format, else html5 where the theme supports it for the comment form; the default fields are written in it. The defaults themselves say xhtml.
+    $args = wp_parse_args($args);
+    $html5 = ($args['format'] ??= current_theme_supports('html5', 'comment-form') ? 'html5' : 'xhtml') === 'html5';
+    $custom_button = isset($args['submit_button']) || isset($args['submit_field']);
     $marked = $req ? '<span class="required-field-message">' . sprintf(__('Required fields are marked %s'), '<span class="required">' . esc_html__('*') . '</span>') . '</span>' : '';
     $defaults = [
-        'fields' => apply_filters('comment_form_default_fields', _minn_comment_form_fields()),
-        'comment_field' => '<p class="comment-form-comment"><label for="comment">' . _x('Comment', 'noun') . ' <span class="required">' . esc_html__('*') . '</span></label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required></textarea></p>',
+        'fields' => apply_filters('comment_form_default_fields', _minn_comment_form_fields($html5)),
+        'comment_field' => '<p class="comment-form-comment"><label for="comment">' . _x('Comment', 'noun') . ' <span class="required">' . esc_html__('*') . '</span></label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525"' . ($html5 ? ' required' : ' required="required"') . '></textarea></p>',
         'must_log_in' => '<p class="must-log-in">' . sprintf(__('You must be <a href="%s">logged in</a> to post a comment.'), esc_url(wp_login_url(get_permalink($post->ID)))) . '</p>',
         // As the reference writes it: the name, the profile and log-out links, and the required-fields note.
         'logged_in_as' => '<p class="logged-in-as">' . sprintf(__('Logged in as %1$s. <a href="%2$s">Edit your profile</a>. <a href="%3$s">Log out?</a>'), esc_html($user->display_name), get_edit_profile_url(), wp_logout_url(apply_filters('the_permalink', get_permalink($post->ID), $post->ID))) . ' ' . $marked . '</p>',
         'comment_notes_before' => '<p class="comment-notes"><span id="email-notes">' . __('Your email address will not be published.') . '</span> ' . $marked . '</p>',
         'comment_notes_after' => '',
         'action' => site_url('/wp-comments-post.php'),
+        'novalidate' => false,
         'id_form' => 'commentform',
         'id_submit' => 'submit',
         'class_container' => 'comment-respond',
@@ -987,7 +995,7 @@ function comment_form($args = [], $post = null)
 /** @internal the form element with its fields and submit */
 function _minn_comment_form_body(array $args, WP_Post $post): void
 {
-    printf('<form action="%s" method="post" id="%s" class="%s"%s>', esc_url($args['action']), esc_attr($args['id_form']), esc_attr($args['class_form']), $args['format'] === 'html5' ? ' novalidate' : '');
+    printf('<form action="%s" method="post" id="%s" class="%s"%s>', esc_url($args['action']), esc_attr($args['id_form']), esc_attr($args['class_form']), $args['novalidate'] ? ' novalidate' : '');
     do_action('comment_form_top');
     if (is_user_logged_in()) {
         echo apply_filters('comment_form_logged_in', $args['logged_in_as'], wp_get_current_commenter(), wp_get_current_user()->display_name);
@@ -1000,7 +1008,7 @@ function _minn_comment_form_body(array $args, WP_Post $post): void
         $fields += (array) $args['fields'];
         // A signed-out reader's fields always offer the consent box, a plugin's own fields included.
         if (!isset($fields['cookies']) && get_option('show_comments_cookies_opt_in') && has_action('set_comment_cookies', 'wp_set_comment_cookies')) {
-            $fields['cookies'] = _minn_comment_cookies_field();
+            $fields['cookies'] = _minn_comment_cookies_field($args['format'] === 'html5');
         }
     }
     $fields = apply_filters('comment_form_fields', $fields);

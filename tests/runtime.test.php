@@ -62,6 +62,26 @@ $enhanced = static function (string $html): ?string {
 [, $engineEnhanced] = minn_test_fetch($base . '/hello-world/?minn-test-enhance=1');
 [, $referenceEnhanced] = minn_test_fetch(minn_test_reference_url() . '/hello-world/?minn-test-enhance=1');
 $check('the template-enhancement buffer hands a plugin the whole page, as the reference\'s does', $enhanced($engineEnhanced) !== null && $enhanced($engineEnhanced) === $enhanced($referenceEnhanced), var_export([$enhanced($engineEnhanced), $enhanced($referenceEnhanced)], true));
+// A plugin that needs the pluggable functions while it loads: requiring wp-includes/pluggable.php gets them
+// (Really Simple Security's key), and asking who is signed in before then hears nobody (All in One SEO).
+foreach (['minn-test-early-pluggable' => 'requiring wp-includes/pluggable.php while a plugin loads defines the pluggable functions', 'minn-test-early-user' => 'get_current_user_id() while a plugin loads is 0'] as $switch => $label) {
+    $early = static fn (string $html): ?string => preg_match('/<!-- minn-test-early (.*?) -->/', $html, $m) === 1 ? $m[1] : null;
+    [, $engineEarly] = minn_test_fetch($base . "/hello-world/?{$switch}=1");
+    [, $referenceEarly] = minn_test_fetch(minn_test_reference_url() . "/hello-world/?{$switch}=1");
+    $check("{$label}, as on the reference", $early($engineEarly) !== null && $early($engineEarly) === $early($referenceEarly), var_export([$early($engineEarly), $early($referenceEarly)], true));
+}
+// A comments_template filter that hands back no file: the default comments template stands in, as on the reference.
+$commentsTemplate = static fn (string $html): ?string => preg_match('/<!-- minn-test-comments-template (.*?) -->/', $html, $m) === 1 ? $m[1] : null;
+[, $engineComments] = minn_test_fetch($base . '/hello-world/?minn-test-comments-template=1');
+[, $referenceComments] = minn_test_fetch(minn_test_reference_url() . '/hello-world/?minn-test-comments-template=1');
+$check('a comments_template path that is no file falls back to the default template, as on the reference', $commentsTemplate($engineComments) !== null && $commentsTemplate($engineComments) === $commentsTemplate($referenceComments), var_export([$commentsTemplate($engineComments), $commentsTemplate($referenceComments)], true));
+// The comment form in the caller's format (an xhtml form's fields say required="required"), and unchecked only when asked.
+$commentForm = static fn (string $html): ?string => preg_match('/<!-- minn-test-comment-form (.*?) -->/', $html, $m) === 1 ? $m[1] : null;
+foreach (['xhtml' => 'a comment form asked for in xhtml writes its fields in xhtml', 'novalidate' => 'a comment form asked not to validate says novalidate'] as $form => $label) {
+    [, $engineForm] = minn_test_fetch($base . "/hello-world/?minn-test-comment-form={$form}");
+    [, $referenceForm] = minn_test_fetch(minn_test_reference_url() . "/hello-world/?minn-test-comment-form={$form}");
+    $check("{$label}, as on the reference", $commentForm($engineForm) !== null && $commentForm($engineForm) === $commentForm($referenceForm), var_export([$commentForm($engineForm), $commentForm($referenceForm)], true));
+}
 $check('feed content runs the_content', str_contains($feed, 'minn-test-plugin-content'));
 
 // The plugin's REST routes: engine and reference answer from the same code on the same database.

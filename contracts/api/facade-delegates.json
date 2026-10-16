@@ -1742,7 +1742,7 @@
         },
         "get_current_user_id": {
             "file": "user.php",
-            "statement": "return Runtime::booted() ? CurrentUser::id() : 0;"
+            "statement": "return Runtime::booted() && function_exists('wp_get_current_user') ? CurrentUser::id() : 0;"
         },
         "get_custom_logo": {
             "file": "theme.php",

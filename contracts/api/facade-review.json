@@ -12058,29 +12058,27 @@
             "_minn_comment_cookies_field": {
                 "verdict": "move",
                 "to": "Minn\\Front\\CommentFormMarkup",
-                "why": "the cookies consent checkbox markup, checked for a remembered commenter; form markup by rules",
-                "body": "6f23ac7cf903"
+                "why": "the cookies consent checkbox markup, checked for a remembered commenter (checked=\"checked\" in xhtml); form markup by rules",
+                "body": "d7f8f5517db0"
             },
             "_minn_comment_form_args": {
                 "verdict": "move",
                 "to": "Minn\\Front\\CommentFormMarkup",
-                "why": "the default texts and markup (notes, logged-in line, block-theme button classes), comment_form_default_fields and comment_form_defaults, then the merge; form rules",
-                "doubt": "format defaults to xhtml without asking current_theme_supports('html5', 'comment-form'), so an html5 theme's form gets no novalidate",
-                "body": "eb311b37c5fb"
+                "why": "the caller's format or the theme's html5 comment-form support, the default texts and markup (notes, logged-in line, block-theme button classes, novalidate off), comment_form_default_fields and comment_form_defaults, then the merge; form rules",
+                "body": "e7bdb294dd7d"
             },
             "_minn_comment_form_body": {
                 "verdict": "move",
                 "to": "Minn\\Front\\CommentFormMarkup",
                 "why": "the form element, logged-in or notes line, the field list with the cookies box, each field filter and the before and after actions, the submit field and id fields; markup by rules",
                 "doubt": "comment_form_after_fields never fires when the comment field is last (the common move-it-down snippet); a signed-in user's comment_form_fields sees only the comment field yet prints any field a plugin adds",
-                "body": "d20e2356e258"
+                "body": "63544c5291ad"
             },
             "_minn_comment_form_fields": {
                 "verdict": "move",
                 "to": "Minn\\Front\\CommentFormMarkup",
-                "why": "builds the author, email and url field markup from the remembered commenter and require_name_email, plus the cookies box; form markup by rules",
-                "doubt": "the inputs are always type email and url with a bare required, where the API uses type text and required=\"required\" for an xhtml form",
-                "body": "5d72d61d8de5"
+                "why": "builds the author, email and url field markup from the remembered commenter and require_name_email, plus the cookies box, in the form's format (html5 types and a bare required, or xhtml's text and required=\"required\"); form markup by rules",
+                "body": "17a2a08f3d32"
             },
             "_minn_comments_template_args": {
                 "verdict": "move",
@@ -12184,9 +12182,8 @@
             "comments_template": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "fills $wp_query's comment fields, $overridden_cpage and the template's local commenter variables, then requires comments.php in this scope; the query rules sit in the _minn helpers, which move",
-                "doubt": "comments_template filters the located file (or theme-compat) and requires the answer unchecked, where the API filters the stylesheet path and then falls back by file_exists to the parent theme and theme-compat",
-                "body": "30afaa7ef191"
+                "why": "fills $wp_query's comment fields, $overridden_cpage and the template's local commenter variables, then requires comments.php in this scope (the filtered file, else the parent theme's, else theme-compat, as a probe of the reference showed); the query rules sit in the _minn helpers, which move",
+                "body": "a607ffbf6a5f"
             },
             "edit_comment_link": {
                 "verdict": "keep",

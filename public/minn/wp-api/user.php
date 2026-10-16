@@ -77,9 +77,10 @@ function wp_validate_application_password($input_user)
     return Minn\Runtime\ApplicationPasswordSignIn::validate($input_user);
 }
 
+/** 0 until the pluggable functions load (a plugin asking while it loads hears nobody), as on the reference: Minn\Runtime\CurrentUser. */
 function get_current_user_id()
 {
-    return Runtime::booted() ? CurrentUser::id() : 0;
+    return Runtime::booted() && function_exists('wp_get_current_user') ? CurrentUser::id() : 0;
 }
 
 function get_user($user_id)

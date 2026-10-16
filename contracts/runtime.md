@@ -16882,6 +16882,38 @@ WooCommerce adds there (a `woocommerce product` group) and its product body clas
 latest-posts block prints no grid, author, excerpt, content or featured image. And a product's head links its
 REST form at `wp/v2/posts/<id>`, where the reference names the type's own route (`wp/v2/product/<id>`).
 
+## Plugins that reach for WordPress's pieces early, or hand back their own comments template (2026-10-15)
+
+Three of the hunt's top plugins and themes failed every page, or every post, on Minn:
+
+- **Really Simple Security** (3 million installs) requires `wp-includes/pluggable.php` while it loads, to call
+  `wp_generate_password` for its key. The engine laid an empty placeholder there, so the call failed and the
+  gate paused the plugin. The engine now lays a loader in its place (`layout/wp-includes/pluggable.php`) that
+  loads the engine's pluggable functions: at once when a plugin asks before the plugins have loaded, as the
+  reference's file does, and to no effect after. An install lays it over the placeholder, and an engine update
+  replaces a placeholder still as an engine wrote it. Twelve of the hunt's 48 plugins require this file
+  somewhere (LiteSpeed Cache, WP Mail SMTP, Wordfence, Yoast SEO and Redux among them).
+- **All in One SEO** asks `get_current_user_id()` while it loads. The engine's answer waits for the pluggable
+  functions and threw; the reference answers 0 until `wp_get_current_user` exists, and so does the facade now.
+- **Colibri WP** filters `comments_template` to a path relative to its theme (`template-parts/blog/comments.php`),
+  which is no file from where it is required, and the engine required it as given. Probed on the reference with
+  a relative path, a missing absolute path, an empty one and `./comments.php`, under a theme with a
+  comments.php, one without, and a child theme with one of its own: a filtered path that is no file gives way to
+  the parent theme's file named by the call (with or without its leading slash; the child's is not asked),
+  then to theme-compat, with no warning. The facade does the same.
+
+With Colibri's comments showing, its comment form differed too: the engine wrote html5 fields under every
+theme. The reference's form takes the caller's format, else html5 where the theme supports html5 for the
+comment form, else xhtml (the email and website inputs typed text, `required="required"`, a remembered
+commenter's consent `checked="checked"`). `comment_form_defaults` is still handed xhtml. `novalidate` prints
+only when the caller asks (a `novalidate` default of false follows `action`), where the engine printed it for
+any html5 form. The facade review had all three as doubts, and the probes settled them.
+
+Suite runtime compares each case with the reference through its fixture plugin: the early require, the
+early user, a comments template that is no file, a comment form asked for in xhtml, and one asked not to
+validate. `wp-includes/pluggable-deprecated.php` stays a placeholder: the engine keeps the deprecated
+pluggables with the rest, and loading them all early could take a name a plugin defines later.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

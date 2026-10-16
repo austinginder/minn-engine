@@ -128,6 +128,49 @@ add_filter('template_include', static function ($template) {
     return $template;
 });
 
+// A plugin that needs pluggable functions while it loads, before the reference
+// defines them (?minn-test-early-pluggable, as Really Simple Security makes its key:
+// it requires wp-includes/pluggable.php and calls wp_generate_password), or asks
+// who is signed in then (?minn-test-early-user, as All in One SEO does). What it
+// heard is noted in the page.
+if (isset($_GET['minn-test-early-pluggable']) || isset($_GET['minn-test-early-user'])) {
+    $minnTestEarly = [function_exists('wp_generate_password'), get_current_user_id()];
+    if (isset($_GET['minn-test-early-pluggable']) && !function_exists('wp_generate_password')) {
+        require_once ABSPATH . WPINC . '/pluggable.php';
+        $minnTestEarly[] = strlen(wp_generate_password(12, false));
+    }
+    add_action('wp_footer', static function () use ($minnTestEarly) {
+        echo '<!-- minn-test-early ' . json_encode($minnTestEarly) . ' -->';
+    });
+}
+
+// A comments_template filter that hands back a path that is no file
+// (?minn-test-comments-template; Colibri's is relative to its theme): the
+// comments template printed in the footer, noted by its length and hash.
+if (isset($_GET['minn-test-comments-template'])) {
+    add_action('wp_footer', static function () {
+        add_filter('comments_template', static fn () => 'template-parts/blog/comments.php', 99);
+        ob_start();
+        comments_template();
+        $printed = (string) ob_get_clean();
+        echo '<!-- minn-test-comments-template ' . strlen($printed) . ' ' . md5($printed) . ' -->';
+    }, 1);
+}
+
+// The comment form in the format a caller asks for (?minn-test-comment-form=xhtml,
+// or =novalidate for an unchecked form), as a remembered commenter sees it: noted
+// by its length and hash.
+if (isset($_GET['minn-test-comment-form'])) {
+    add_action('wp_footer', static function () {
+        $args = $_GET['minn-test-comment-form'] === 'novalidate' ? ['novalidate' => true] : ['format' => 'xhtml'];
+        add_filter('wp_get_current_commenter', static fn () => ['comment_author' => 'Reader', 'comment_author_email' => 'reader@example.com', 'comment_author_url' => '']);
+        ob_start();
+        comment_form($args, get_queried_object_id());
+        $printed = (string) ob_get_clean();
+        echo '<!-- minn-test-comment-form ' . strlen($printed) . ' ' . md5($printed) . ' -->';
+    }, 1);
+}
+
 // The template-enhancement buffer (?minn-test-enhance): the action before the
 // template, the buffer opening, and the whole page handed to the filter, noted
 // in the page itself.

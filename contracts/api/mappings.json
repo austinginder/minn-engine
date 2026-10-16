@@ -36462,7 +36462,7 @@
         },
         "_minn_comment_form_args": {
             "file": "comment.php",
-            "lines": 34,
+            "lines": 38,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -36473,6 +36473,7 @@
                 "_minn_comment_form_fields",
                 "_x",
                 "apply_filters",
+                "current_theme_supports",
                 "esc_html",
                 "esc_html__",
                 "esc_url",
@@ -43970,7 +43971,7 @@
         },
         "comments_template": {
             "file": "comment.php",
-            "lines": 24,
+            "lines": 28,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -43981,6 +43982,7 @@
                 "get_comment_pages_count",
                 "get_option",
                 "get_query_var",
+                "get_template_directory",
                 "is_page",
                 "is_single",
                 "locate_template",
