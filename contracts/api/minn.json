@@ -160121,7 +160121,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ThemeSupports.php",
-            "lines": 219,
+            "lines": 244,
             "doc": "What a theme supports, as add_theme_support keeps it (probe rest-themes):\na bare feature is true, anything else its arguments. html5 lists add up\n(repeats and all), post thumbnails stay on for every type once on, post\nformats keep only real formats, the custom logo fills in its defaults at\nonce (flexible both ways when asked for bare), and the custom header and\nbackground get theirs as WordPress finishes loading, a header with no\nwidth or height made flexible that way. title-tag declared after loading\nis refused. A block theme supports thumbnails, responsive embeds, editor\nstyles, HTML5 markup and feed links before its own setup runs.\n\nThe features themselves (data/theme-features.json, and any a theme\nregisters) say how each is shown in REST: its schema, or the default\nwhen the theme does not support it.",
             "implements": [],
             "extends": null,
@@ -160305,8 +160305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 116
+                    "line": 132,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -160317,8 +160317,8 @@
                     "doc": "_add_default_theme_supports: what every block theme supports before its own setup.",
                     "shapes": [],
                     "params": [],
-                    "line": 119,
-                    "end": 127
+                    "line": 144,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -160337,8 +160337,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 137
+                    "line": 155,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -160349,8 +160349,8 @@
                     "doc": "_custom_header_background_just_in_time: the header's and background's defaults filled in once loaded.",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 163
+                    "line": 165,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -160376,8 +160376,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 192
+                    "line": 191,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -160390,8 +160390,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 195,
-                    "end": 200
+                    "line": 220,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -160412,8 +160412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 220
+                    "line": 228,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -160455,8 +160455,38 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 238
+                    "line": 255,
+                    "end": 263
+                },
+                {
+                    "routes": [],
+                    "name": "withConstants",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "withConstants(string $feature, array $args): array",
+                    "doc": "The custom header's and background's arguments and their old constants, as the reference keeps them in\nstep (themes from before the arguments read the constants, Twenty Eleven's header among them): a constant a\ntheme defined first sets its argument, and an argument the theme passed defines its constant, empty or not\n(header-text as NO_HEADER_TEXT, turned around).",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "feature",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -160484,8 +160514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 244
+                    "line": 266,
+                    "end": 269
                 }
             ]
         },

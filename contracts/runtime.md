@@ -17019,6 +17019,16 @@ failed while booting, each on a different piece of the API:
   followed by the scheme's HMAC-MD5 under it. A null scheme draws a deprecation from `hash_hmac` there, so the
   probe leaves it out.
 
+## Twenty Eleven's header and comments (2026-10-16)
+
+Twenty Eleven failed every page: it reads `HEADER_TEXTCOLOR`, which the reference defines for it. Probed on the
+reference: `add_theme_support( 'custom-header', $args )` defines a constant for each argument the theme passes,
+empty or not (`default-text-color` HEADER_TEXTCOLOR, `width` and `height` HEADER_IMAGE_WIDTH and _HEIGHT,
+`default-image` HEADER_IMAGE, `header-text` NO_HEADER_TEXT turned around), and `custom-background` its own
+(BACKGROUND_COLOR, BACKGROUND_IMAGE); a constant the theme defined first sets its argument instead. With the
+page rendering, its comments showed the default template: it calls `comments_template( '', true )`, and on the
+reference an empty file is the theme's comments.php, as the default `/comments.php` is.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

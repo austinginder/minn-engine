@@ -96,11 +96,36 @@ final class ThemeSupports
             'post-thumbnails' => $had === true || $args === [] ? true : [array_values(array_unique(array_merge(is_array($had) ? (array) $had[0] : [], (array) $args[0])))],
             'post-formats' => [array_values(array_intersect((array) ($args[0] ?? []), self::FORMATS))],
             'custom-logo' => [array_merge(self::LOGO, $args === [] ? ['flex-width' => true, 'flex-height' => true] : (array) $args[0])],
-            'custom-header', 'custom-background' => [(array) ($args[0] ?? [])],
+            'custom-header', 'custom-background' => [self::withConstants($feature, (array) ($args[0] ?? []))],
             default => $args === [] ? true : $args,
         };
         Runtime::current()->set(self::KEY, $supports);
         return true;
+    }
+
+    /**
+     * The custom header's and background's arguments and their old constants, as the reference keeps them in
+     * step (themes from before the arguments read the constants, Twenty Eleven's header among them): a constant a
+     * theme defined first sets its argument, and an argument the theme passed defines its constant, empty or not
+     * (header-text as NO_HEADER_TEXT, turned around).
+     *
+     * @param array<string, mixed> $args
+     * @return array<string, mixed>
+     */
+    private static function withConstants(string $feature, array $args): array
+    {
+        $constants = $feature === 'custom-header'
+            ? ['header-text' => 'NO_HEADER_TEXT', 'width' => 'HEADER_IMAGE_WIDTH', 'height' => 'HEADER_IMAGE_HEIGHT', 'default-text-color' => 'HEADER_TEXTCOLOR', 'default-image' => 'HEADER_IMAGE']
+            : ['default-color' => 'BACKGROUND_COLOR', 'default-image' => 'BACKGROUND_IMAGE'];
+        foreach ($constants as $key => $constant) {
+            $inverse = $constant === 'NO_HEADER_TEXT';
+            if (defined($constant)) {
+                $args[$key] = $inverse ? !constant($constant) : constant($constant);
+            } elseif (array_key_exists($key, $args)) {
+                define($constant, $inverse ? !$args[$key] : $args[$key]);
+            }
+        }
+        return $args;
     }
 
     /** remove_theme_support: false when the theme did not support it. */

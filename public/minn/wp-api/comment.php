@@ -843,12 +843,12 @@ function comments_template($file = '/comments.php', $separate_comments = false)
     if (!defined('COMMENTS_TEMPLATE')) {
         define('COMMENTS_TEMPLATE', true);
     }
-    $theme_template = locate_template([ltrim((string) $file, '/')]);
+    $theme_template = locate_template([ltrim((string) ($file ?: '/comments.php'), '/')]);
     $compat = MINN_ENGINE_DIR . '/wp-api/theme-compat/comments.php';
     $include = (string) apply_filters('comments_template', $theme_template !== '' ? $theme_template : $compat);
     // A path the filter hands back that is no file (Colibri's is relative to its theme) gives way to the
     // parent theme's file, then the default template, as on the reference.
-    require $include !== '' && is_file($include) ? $include : (is_file($parent = get_template_directory() . '/' . ltrim((string) $file, '/')) ? $parent : $compat);
+    require $include !== '' && is_file($include) ? $include : (is_file($parent = get_template_directory() . '/' . ltrim((string) ($file ?: '/comments.php'), '/')) ? $parent : $compat);
 }
 
 /** @internal the query comments_template runs: one page of top-level comments when paged, the last page found by counting them when the newest come first */

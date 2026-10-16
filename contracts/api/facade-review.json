@@ -12182,8 +12182,8 @@
             "comments_template": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "fills $wp_query's comment fields, $overridden_cpage and the template's local commenter variables, then requires comments.php in this scope (the filtered file, else the parent theme's, else theme-compat, as a probe of the reference showed); the query rules sit in the _minn helpers, which move",
-                "body": "a607ffbf6a5f"
+                "why": "fills $wp_query's comment fields, $overridden_cpage and the template's local commenter variables, then requires comments.php in this scope (an empty file is /comments.php) (the filtered file, else the parent theme's, else theme-compat, as a probe of the reference showed); the query rules sit in the _minn helpers, which move",
+                "body": "b17e9e3be345"
             },
             "edit_comment_link": {
                 "verdict": "keep",

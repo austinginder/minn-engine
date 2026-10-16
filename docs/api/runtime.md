@@ -148,7 +148,7 @@ the WordPress runtime plugins load against
 | [`TermWriter`](#termwriter) | final readonly class | 157 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`TermWrites`](#termwrites) | final class | 268 | Terms written as WordPress's taxonomy functions write them: a term made, |
 | [`ThemeMods`](#thememods) | final class | 57 | The active theme's settings (theme_mods_{stylesheet}) as WordPress keeps |
-| [`ThemeSupports`](#themesupports) | final class | 219 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
+| [`ThemeSupports`](#themesupports) | final class | 244 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
 | [`Themes`](#themes) | final class | 116 | The site's themes as WordPress names and finds them: the active |
 | [`Transients`](#transients) | final class | 142 | Values kept for a while, as WordPress keeps them in options: the site's |
@@ -8459,7 +8459,7 @@ or else cut to its schema.
 
 - `@param array<string, mixed> $config the feature as it was registered`
 
-Internals: `unwrapped()` (private, line 241)
+Internals: `withConstants()` (private, line 115), `unwrapped()` (private, line 266)
 
 
 ## ThemeSwitch
