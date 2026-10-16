@@ -22,7 +22,7 @@ use Minn\Support\Serialized;
  * endpoints asked with the installed headers (each plugin's Name, Version
  * and Update URI, so a plugin that updates from elsewhere is never offered
  * the directory's plugin of the same folder name), the answer kept in the
- * minn_updates option (JSON) for twelve hours, and the offers applied by
+ * minn_updates option (JSON) for 24 hours, and the offers applied by
  * downloading the release archive through the one package unpacker. A
  * plugin or theme the directory does not know keeps its folder untouched
  * and is never offered anything. The per-item
@@ -39,7 +39,7 @@ use Minn\Support\Serialized;
 final class Updates
 {
     public const OPTION = 'minn_updates';
-    public const TTL = 12 * 3600;
+    public const TTL = 24 * 3600;
 
 
     private ?array $state = null;
@@ -113,14 +113,14 @@ final class Updates
         }
     }
 
-    /** Asks the directory now, whatever the cache says, and keeps the answer. */
-    public function refresh(): array
+    /** Asks the directory now, whatever the cache says, and keeps the answer; the daily pass says so. */
+    public function refresh(Asking $asking = Asking::Now): array
     {
-        return $this->state = $this->check();
+        return $this->state = $this->check($asking);
     }
 
     /** Asks the directory now and stores the answer. */
-    public function check(): array
+    public function check(Asking $asking = Asking::Now): array
     {
         $plugins = [];
         $active = Serialized::stringList($this->site->option('active_plugins'));
@@ -142,12 +142,12 @@ final class Updates
             'translations' => '{}',
             'locale' => Json::encode($this->locales('plugins_update_check_locales'), Json::ESCAPED),
             'all' => 'true',
-        ]);
+        ], $asking);
         $themeAnswer = $themes === [] ? [] : Directory::post($this->http, 'themes/update-check/1.1/', [
             'themes' => Json::encode(['active' => $stylesheet, 'themes' => $themes], Json::ESCAPED),
             'translations' => '{}',
             'locale' => Json::encode($this->locales('themes_update_check_locales'), Json::ESCAPED),
-        ]);
+        ], $asking);
         $stored = Json::decode((string) ($this->site->option(self::OPTION) ?? ''), or: null);
         $supplied = $this->supplied(is_array($stored) ? $stored : []);
         $state = [

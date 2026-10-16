@@ -75,10 +75,10 @@ final class Releases
      *
      * @return array{checked: int, latest: ?array<string, string>, answered: bool}
      */
-    public function refresh(): array
+    public function refresh(Asking $asking = Asking::Now): array
     {
         $latest = $this->stored()['latest'];
-        $reply = $this->http->get($this->source, headers: ['Accept: application/json'], timeout: 5.0, hosts: [self::origin($this->source)], maxBytes: 1048576, userAgent: Directory::userAgent());
+        $reply = $this->http->get($this->source, headers: $asking->headers(['Accept: application/json']), timeout: 5.0, hosts: [self::origin($this->source)], maxBytes: 1048576, userAgent: Directory::userAgent());
         $answered = $reply->ok() || $reply->code === 404;
         if ($reply->ok()) {
             $answer = $reply->json();

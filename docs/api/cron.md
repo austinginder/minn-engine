@@ -4,7 +4,7 @@ scheduled publishing
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Cron`](#cron) | final readonly class | 175 | The engine's scheduled work: scheduled posts go live when their time |
+| [`Cron`](#cron) | final readonly class | 214 | The engine's scheduled work: scheduled posts go live when their time |
 
 ## Cron
 
@@ -12,7 +12,8 @@ scheduled publishing
 
 The engine's scheduled work: scheduled posts go live when their time
 comes, the cron option's due events fire, expired throttle rows and
-transients are swept, and the daily auto-update check runs. Triggered
+transients are swept, and once every 24 hours the update service is
+asked about Minn, plugins and themes before automatic updates run. Triggered
 by wp-cron.php, `wp minn cron`, `minn cron`, or a front request that
 finds something due (after its response is sent). One run at a time,
 through a short-lived lock option.
@@ -24,6 +25,8 @@ the engine's own scheduled posts and sweeps run.
 
 - const `LOCK` = `'minn_cron_lock'`
 - const `LOCK_TTL` = `60`
+- const `DAILY` = `'minn_daily_next'` — When the next daily update pass is due (a timestamp); the slots stay 24 hours apart however late a run is.
+- const `DAY` = `86400`
 
 Used by: `Minn\Cli\MinnCommand`, `Minn\Engine`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`
 
@@ -54,7 +57,13 @@ a request repeated as fast as a visitor can send it costs two reads.
 
 ### `due(): bool`
 
-True when a scheduled post's time has come or the cron option holds a due event.
+True when a scheduled post's time has come, the cron option holds a due event, or the daily update pass is due.
 
-Internals: `fireEvents()` (private, line 102), `applyAutoUpdates()` (private, line 120), `postDue()` (private, line 131), `publishDue()` (private, line 146), `sweepTransients()` (private, line 168), `sweepThrottle()` (private, line 182), `lock()` (private, line 187), `unlock()` (private, line 202)
+### static `nextSlot(int $slot, int $now): int`
+
+The slot after a daily pass that ran at `$now` for `$slot`: 24 hours on
+from the first run, then whole days on from the slot, the first one
+still ahead (a site that slept a week checks once, not seven times).
+
+Internals: `fireEvents()` (private, line 110), `dailySlot()` (private, line 132), `daily()` (private, line 149), `postDue()` (private, line 173), `publishDue()` (private, line 188), `sweepTransients()` (private, line 210), `sweepThrottle()` (private, line 224), `lock()` (private, line 229), `unlock()` (private, line 244)
 

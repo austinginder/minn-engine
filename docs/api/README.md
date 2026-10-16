@@ -24,7 +24,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Mail`](mail.md) | 24 | sending mail and the notices the engine sends |
 | [`Minn\Media`](media.md) | 15 | uploads, image sizes and attachment metadata |
 | [`Minn\Objects`](objects.md) | 30 |  |
-| [`Minn\Ops`](ops.md) | 18 |  |
+| [`Minn\Ops`](ops.md) | 19 |  |
 | [`Minn\Query`](query.md) | 10 | shared SQL fragments |
 | [`Minn\Rest`](rest.md) | 87 | the wp/v2 surface: shapes and controllers |
 | [`Minn\Runtime`](runtime.md) | 163 | the WordPress runtime plugins load against |

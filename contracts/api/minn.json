@@ -40336,8 +40336,8 @@
             "namespace": "Minn\\Cron",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Cron/Cron.php",
-            "lines": 175,
-            "doc": "The engine's scheduled work: scheduled posts go live when their time\ncomes, the cron option's due events fire, expired throttle rows and\ntransients are swept, and the daily auto-update check runs. Triggered\nby wp-cron.php, `wp minn cron`, `minn cron`, or a front request that\nfinds something due (after its response is sent). One run at a time,\nthrough a short-lived lock option.\n\nFiring the cron option's due hooks needs the booted runtime and the\nfacade, so it arrives as a closure the caller supplies (from the front\npipeline, or the CLI once it has booted the runtime); with none, only\nthe engine's own scheduled posts and sweeps run.",
+            "lines": 214,
+            "doc": "The engine's scheduled work: scheduled posts go live when their time\ncomes, the cron option's due events fire, expired throttle rows and\ntransients are swept, and once every 24 hours the update service is\nasked about Minn, plugins and themes before automatic updates run. Triggered\nby wp-cron.php, `wp minn cron`, `minn cron`, or a front request that\nfinds something due (after its response is sent). One run at a time,\nthrough a short-lived lock option.\n\nFiring the cron option's due hooks needs the booted runtime and the\nfacade, so it arrives as a closure the caller supplies (from the front\npipeline, or the CLI once it has booted the runtime); with none, only\nthe engine's own scheduled posts and sweeps run.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -40346,7 +40346,9 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Db",
+                "Minn\\Ops\\Asking",
                 "Minn\\Ops\\AutoUpdates",
+                "Minn\\Ops\\Releases",
                 "Minn\\Ops\\Updates",
                 "Minn\\Runtime\\CronTable",
                 "Minn\\Runtime\\PostWrites",
@@ -40402,8 +40404,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 39,
-                "end": 41
+                "line": 46,
+                "end": 48
             },
             "cases": [],
             "constants": [
@@ -40416,6 +40418,18 @@
                 {
                     "name": "LOCK_TTL",
                     "value": "60",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "DAILY",
+                    "value": "'minn_daily_next'",
+                    "doc": "When the next daily update pass is due (a timestamp); the slots stay 24 hours apart however late a run is.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "DAY",
+                    "value": "86400",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -40508,8 +40522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 53
+                    "line": 56,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -40522,8 +40536,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 56,
-                    "end": 78
+                    "line": 63,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -40534,8 +40548,8 @@
                     "doc": "True when a hit has nothing to do: no job is due and the housekeeping\n(expired transients and throttle rows) ran within the last minute, so\na request repeated as fast as a visitor can send it costs two reads.",
                     "shapes": [],
                     "params": [],
-                    "line": 85,
-                    "end": 88
+                    "line": 93,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -40543,11 +40557,38 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "due(): bool",
-                    "doc": "True when a scheduled post's time has come or the cron option holds a due event.",
+                    "doc": "True when a scheduled post's time has come, the cron option holds a due event, or the daily update pass is due.",
                     "shapes": [],
                     "params": [],
-                    "line": 91,
-                    "end": 94
+                    "line": 99,
+                    "end": 102
+                },
+                {
+                    "routes": [],
+                    "name": "nextSlot",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "nextSlot(int $slot, int $now): int",
+                    "doc": "The slot after a daily pass that ran at `$now` for `$slot`: 24 hours on\nfrom the first run, then whole days on from the slot, the first one\nstill ahead (a site that slept a week checks once, not seven times).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slot",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "now",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -40558,22 +40599,42 @@
                     "doc": "Fires the due events through the runtime. A callback that throws\nends the events step, as a fatal ends the reference's cron request;\nthe event was already rescheduled or removed, so it does not repeat\non the next trigger, and the sweeps still run.",
                     "shapes": [],
                     "params": [],
-                    "line": 102,
-                    "end": 111
+                    "line": 110,
+                    "end": 119
                 },
                 {
                     "routes": [],
-                    "name": "applyAutoUpdates",
+                    "name": "dailySlot",
                     "static": false,
                     "visibility": "private",
-                    "signature": "applyAutoUpdates(): array",
-                    "doc": "The daily auto-update pass. The stamp is written before the pass so\na failing update is retried tomorrow, not on every trigger; what was\nrefused is reported by name.",
+                    "signature": "dailySlot(): int",
+                    "doc": "When the daily update pass is next due; 0 on a site that has never run one.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 132,
+                    "end": 135
+                },
+                {
+                    "routes": [],
+                    "name": "daily",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "daily(int $slot): array",
+                    "doc": "The daily update pass, once every 24 hours: the update service asked\nabout Minn's releases and about the site's plugins and themes, each\nmarked as the day's scheduled check (the service counts those, one a\nsite, and keeps nothing else), then the automatic updates. The next\nslot is written first, 24 hours after this one and never in the past,\nso a failure waits for tomorrow instead of repeating on every trigger,\nand a late run does not push the next one later. What was refused is\nreported by name.",
                     "shapes": [
                         "@return list<string>"
                     ],
-                    "params": [],
-                    "line": 120,
-                    "end": 129
+                    "params": [
+                        {
+                            "name": "slot",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 149,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -40584,8 +40645,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 131,
-                    "end": 137
+                    "line": 173,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -40596,8 +40657,8 @@
                     "doc": "A scheduled post goes live as the reference publishes it: status only,\ndates and modified untouched, term counts refreshed. With plugins\nloaded it goes through check_and_publish_future_post, the reference's\nown publish_future_post work, so they hear publish_post and the\ntransition; a plugin that throws on one post holds back no other.",
                     "shapes": [],
                     "params": [],
-                    "line": 146,
-                    "end": 166
+                    "line": 188,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -40608,8 +40669,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 168,
-                    "end": 180
+                    "line": 210,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -40620,8 +40681,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 182,
-                    "end": 185
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -40632,8 +40693,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 187,
-                    "end": 200
+                    "line": 229,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -40644,8 +40705,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 206
+                    "line": 244,
+                    "end": 248
                 }
             ]
         },
@@ -85179,6 +85240,63 @@
             ]
         },
         {
+            "name": "Minn\\Ops\\Asking",
+            "short": "Asking",
+            "namespace": "Minn\\Ops",
+            "kind": "enum",
+            "file": "public/minn/src/Minn/Ops/Asking.php",
+            "lines": 11,
+            "doc": "Why the engine asks the update service: the daily pass, once every 24\nhours (marked X-Minn-Check: daily, which the service counts as one site\nrunning that day), or anything else (a person checking, an update needing\na fresh answer), which goes unmarked.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Cron\\Cron",
+                "Minn\\Ops\\Directory",
+                "Minn\\Ops\\Releases",
+                "Minn\\Ops\\Updates"
+            ],
+            "constructor": null,
+            "cases": [
+                {
+                    "name": "Daily",
+                    "value": null,
+                    "doc": ""
+                },
+                {
+                    "name": "Now",
+                    "value": null,
+                    "doc": ""
+                }
+            ],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "headers",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "headers(array $headers): array",
+                    "doc": "The request headers, with the daily mark when this is the daily pass. @param list<string> $headers @return list<string>",
+                    "shapes": [
+                        "@param list<string> $headers @return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "@return list<string>"
+                        }
+                    ],
+                    "line": 19,
+                    "end": 22
+                }
+            ]
+        },
+        {
             "name": "Minn\\Ops\\AutoUpdates",
             "short": "AutoUpdates",
             "namespace": "Minn\\Ops",
@@ -86201,7 +86319,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Directory.php",
-            "lines": 74,
+            "lines": 76,
             "doc": "The Minn update service, https://updates.minn.run: the one place the\nengine asks about anything it does not have yet, so a site running Minn\ntalks to Minn and never to wordpress.org. The service speaks\nwordpress.org's own endpoints under /v1/ (plugin and theme update checks,\ndirectory search and information, translations) with every address a site\nwould fetch pointed back at itself: packages under /v1/download/, icons,\nscreenshots and emoji under /v1/assets/. It also serves Minn's own\nreleases and changelogs. Every request names the engine and the WordPress\nversion it is compatible with (which judges a plugin's \"Requires at\nleast\"), never the site's address. A development install says \"(lab)\"\nafter the version, so the service counts it apart from real sites.",
             "implements": [],
             "extends": null,
@@ -86209,6 +86327,7 @@
                 "Minn\\Db",
                 "Minn\\Engine",
                 "Minn\\Http",
+                "Minn\\Ops\\Asking",
                 "Minn\\RestError",
                 "Minn\\Runtime\\Options"
             ],
@@ -86328,8 +86447,8 @@
                     "name": "post",
                     "static": true,
                     "visibility": "public",
-                    "signature": "post(Minn\\Http $http, string $path, array $form): array",
-                    "doc": "A form POST to the service (the update checks) over the caller's client, its answer decoded.",
+                    "signature": "post(Minn\\Http $http, string $path, array $form, Minn\\Ops\\Asking $asking = Minn\\Ops\\Asking::Now): array",
+                    "doc": "A form POST to the service (the update checks) over the caller's client, its answer decoded.\nThe daily pass's checks are marked (Asking::Daily): the service counts those, one a site,\nas the sites running Minn that day, and keeps nothing else about it.",
                     "shapes": [
                         "@param array<string, string> $form",
                         "@return array<string, mixed>"
@@ -86355,10 +86474,17 @@
                             "shape": "array<string, string>",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "asking",
+                            "type": "Minn\\Ops\\Asking",
+                            "shape": "",
+                            "default": "Minn\\Ops\\Asking::Now",
+                            "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 98
+                    "line": 93,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -88564,12 +88690,14 @@
                 "Minn\\Content\\Site",
                 "Minn\\Http",
                 "Minn\\Json",
+                "Minn\\Ops\\Asking",
                 "Minn\\Ops\\Directory",
                 "Minn\\Ops\\Release"
             ],
             "usedBy": [
                 "Minn\\Admin\\Notifications",
                 "Minn\\Cli\\Installer",
+                "Minn\\Cron\\Cron",
                 "Minn\\Ops\\CoreStatus",
                 "Minn\\Rest\\Services"
             ],
@@ -88748,12 +88876,20 @@
                     "name": "refresh",
                     "static": false,
                     "visibility": "public",
-                    "signature": "refresh(): array",
+                    "signature": "refresh(Minn\\Ops\\Asking $asking = Minn\\Ops\\Asking::Now): array",
                     "doc": "Asks the service now and keeps the answer; `answered` says whether it\ndid (when it did not, `latest` is the last answer kept).",
                     "shapes": [
                         "@return array{checked: int, latest: ?array<string, string>, answered: bool}"
                     ],
-                    "params": [],
+                    "params": [
+                        {
+                            "name": "asking",
+                            "type": "Minn\\Ops\\Asking",
+                            "shape": "",
+                            "default": "Minn\\Ops\\Asking::Now",
+                            "doc": ""
+                        }
+                    ],
                     "line": 78,
                     "end": 92
                 },
@@ -89270,7 +89406,7 @@
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Updates.php",
             "lines": 456,
-            "doc": "Update offers for the site's plugins and themes from the directory, asked\nthrough the Minn update service (Ops\\Directory), which answers with\nwordpress.org's own offers and serves their packages: the update-check\nendpoints asked with the installed headers (each plugin's Name, Version\nand Update URI, so a plugin that updates from elsewhere is never offered\nthe directory's plugin of the same folder name), the answer kept in the\nminn_updates option (JSON) for twelve hours, and the offers applied by\ndownloading the release archive through the one package unpacker. A\nplugin or theme the directory does not know keeps its folder untouched\nand is never offered anything. The per-item\nauto-update lists are the site's own auto_update_plugins and\nauto_update_themes options, in the shape the app already reads.\n\nThe directory is not the only source. A plugin that hosts itself answers\nfor its own version through the update transient's filter, which is where\nWordPress reads it too, so Runtime\\PluginUpdates asks the runtime the same\nquestion and its answer is merged in. Applying such an offer goes through\nthe publisher: a package outside the directory is unpacked only when\n`upgrader_pre_download` hands back a copy it verified.",
+            "doc": "Update offers for the site's plugins and themes from the directory, asked\nthrough the Minn update service (Ops\\Directory), which answers with\nwordpress.org's own offers and serves their packages: the update-check\nendpoints asked with the installed headers (each plugin's Name, Version\nand Update URI, so a plugin that updates from elsewhere is never offered\nthe directory's plugin of the same folder name), the answer kept in the\nminn_updates option (JSON) for 24 hours, and the offers applied by\ndownloading the release archive through the one package unpacker. A\nplugin or theme the directory does not know keeps its folder untouched\nand is never offered anything. The per-item\nauto-update lists are the site's own auto_update_plugins and\nauto_update_themes options, in the shape the app already reads.\n\nThe directory is not the only source. A plugin that hosts itself answers\nfor its own version through the update transient's filter, which is where\nWordPress reads it too, so Runtime\\PluginUpdates asks the runtime the same\nquestion and its answer is merged in. Applying such an offer goes through\nthe publisher: a package outside the directory is unpacked only when\n`upgrader_pre_download` hands back a copy it verified.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -89278,6 +89414,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Http",
                 "Minn\\Json",
+                "Minn\\Ops\\Asking",
                 "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Directory",
                 "Minn\\Ops\\Packages",
@@ -89352,7 +89489,7 @@
                 },
                 {
                     "name": "TTL",
-                    "value": "43200",
+                    "value": "86400",
                     "doc": "",
                     "visibility": "public"
                 }
@@ -89485,10 +89622,18 @@
                     "name": "refresh",
                     "static": false,
                     "visibility": "public",
-                    "signature": "refresh(): array",
-                    "doc": "Asks the directory now, whatever the cache says, and keeps the answer.",
+                    "signature": "refresh(Minn\\Ops\\Asking $asking = Minn\\Ops\\Asking::Now): array",
+                    "doc": "Asks the directory now, whatever the cache says, and keeps the answer; the daily pass says so.",
                     "shapes": [],
-                    "params": [],
+                    "params": [
+                        {
+                            "name": "asking",
+                            "type": "Minn\\Ops\\Asking",
+                            "shape": "",
+                            "default": "Minn\\Ops\\Asking::Now",
+                            "doc": ""
+                        }
+                    ],
                     "line": 117,
                     "end": 120
                 },
@@ -89497,10 +89642,18 @@
                     "name": "check",
                     "static": false,
                     "visibility": "public",
-                    "signature": "check(): array",
+                    "signature": "check(Minn\\Ops\\Asking $asking = Minn\\Ops\\Asking::Now): array",
                     "doc": "Asks the directory now and stores the answer.",
                     "shapes": [],
-                    "params": [],
+                    "params": [
+                        {
+                            "name": "asking",
+                            "type": "Minn\\Ops\\Asking",
+                            "shape": "",
+                            "default": "Minn\\Ops\\Asking::Now",
+                            "doc": ""
+                        }
+                    ],
                     "line": 123,
                     "end": 172
                 },

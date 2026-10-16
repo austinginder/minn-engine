@@ -17082,6 +17082,22 @@ through the options store, so wp-config's WP_HOME wins) and the environment type
 now introduces itself with the same User-Agent as every other request to the service (it sent the HTTP
 client's default before). Unit `directory`.
 
+## The update check runs once every 24 hours (2026-10-16)
+
+Austin: "set the update check to once every 24 hours". Before, a Minn site asked the update service only while
+someone used Minn Admin (the release check when a day old, plugin and theme checks when twelve hours old), so
+the service could not tell sites from admin visits. The engine's cron now holds a daily pass: once every 24
+hours it asks about Minn's releases and about the site's plugins and themes, then runs the automatic updates
+(the pass that used to stand alone behind `minn_auto_updates_last`). Its slots are fixed by the first run and
+stay 24 hours apart however late a run is (`minn_daily_next`, autoloaded; `Cron::nextSlot`), so a site that
+slept a week checks once, and a late run never pushes the next one later. A front request starts the cron
+when the pass is due, as it does for a due event. The pass's two requests carry `X-Minn-Check: daily`
+(`Ops\Asking::Daily`); every other check goes unmarked. The service counts the marked release checks of a day
+as the sites that ran Minn that day, by version, and the followed plugins a marked plugin check names as their
+installs on Minn, with nothing kept about the site (updates.minn.run 0.3.1). The plugin and theme answer is now
+kept 24 hours, not twelve (`Updates::TTL`, and `_maybe_update_*` on converted sites' cron events). Unit
+`directory` holds the mark and the slot arithmetic; suites cron, cron-mail, upgrades and perf pass.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

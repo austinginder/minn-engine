@@ -13491,8 +13491,8 @@
                 "gates": [
                     "unprobed"
                 ],
-                "why": "whether a stored update check is under twelve hours old; the engine's update rule",
-                "body": "ad183cb9643a"
+                "why": "whether a stored update check is under 24 hours old; the engine's update rule",
+                "body": "a45687f2f0f9"
             },
             "spawn_cron": {
                 "verdict": "move",

@@ -5,11 +5,12 @@
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Archive`](#archive) | final class | 105 | A zip unpacked the safe way, for the plugin and theme installer and for |
+| [`Asking`](#asking) | enum | 11 | Why the engine asks the update service: the daily pass, once every 24 |
 | [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
 | [`Changelog`](#changelog) | final class | 73 | A changelog read from its repository rather than shipped: a Minn release |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
-| [`Directory`](#directory) | final class | 74 | The Minn update service, https://updates.minn.run: the one place the |
+| [`Directory`](#directory) | final class | 76 | The Minn update service, https://updates.minn.run: the one place the |
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
 | [`EngineUpdate`](#engineupdate) | final readonly class | 160 | Replaces the running engine with a published release. The release's |
@@ -56,6 +57,26 @@ Whether a zip file holds an entry by that name.
 A plain folder name: no separators, never "." or "..".
 
 Internals: `isSymlinkEntry()` (private, line 112)
+
+
+## Asking
+
+`enum Minn\Ops\Asking` · `public/minn/src/Minn/Ops/Asking.php`
+
+Why the engine asks the update service: the daily pass, once every 24
+hours (marked X-Minn-Check: daily, which the service counts as one site
+running that day), or anything else (a person checking, an update needing
+a fresh answer), which goes unmarked.
+
+Cases: `Daily`, `Now`
+
+Used by: `Minn\Cron\Cron`, `Minn\Ops\Directory`, `Minn\Ops\Releases`, `Minn\Ops\Updates`
+
+### `headers(array $headers): array`
+
+The request headers, with the daily mark when this is the daily pass. @param list<string> $headers @return list<string>
+
+- `@param list<string> $headers @return list<string>`
 
 
 ## AutoUpdates
@@ -248,9 +269,11 @@ or development, or its address names a development host (localhost, a
 .localhost, .test, .local, .example, .invalid or .internal name, a
 private or loopback address). Staging counts as a real site.
 
-### static `post(Minn\Http $http, string $path, array $form): array`
+### static `post(Minn\Http $http, string $path, array $form, Minn\Ops\Asking $asking = Minn\Ops\Asking::Now): array`
 
 A form POST to the service (the update checks) over the caller's client, its answer decoded.
+The daily pass's checks are marked (Asking::Daily): the service counts those, one a site,
+as the sites running Minn that day, and keeps nothing else about it.
 
 - `@param array<string, string> $form`
 - `@return array<string, mixed>`
@@ -660,7 +683,7 @@ never wordpress.org, and never GitHub directly.
 - const `TTL` = `86400`
 - const `SOURCE` = `'https://updates.minn.run/v1/minn/releases/latest'`
 
-Used by: `Minn\Admin\Notifications`, `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Rest\Services`
+Used by: `Minn\Admin\Notifications`, `Minn\Cli\Installer`, `Minn\Cron\Cron`, `Minn\Ops\CoreStatus`, `Minn\Rest\Services`
 
 ```php
 __construct(Closure $load, Closure $save, string $installed, string $source = self::SOURCE, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
@@ -683,7 +706,7 @@ The stored answer: when GitHub was last asked and the latest release then.
 
 Whether the stored answer is a day old, or there is none.
 
-### `refresh(): array`
+### `refresh(Minn\Ops\Asking $asking = Minn\Ops\Asking::Now): array`
 
 Asks the service now and keeps the answer; `answered` says whether it
 did (when it did not, `latest` is the last answer kept).
@@ -777,7 +800,7 @@ wordpress.org's own offers and serves their packages: the update-check
 endpoints asked with the installed headers (each plugin's Name, Version
 and Update URI, so a plugin that updates from elsewhere is never offered
 the directory's plugin of the same folder name), the answer kept in the
-minn_updates option (JSON) for twelve hours, and the offers applied by
+minn_updates option (JSON) for 24 hours, and the offers applied by
 downloading the release archive through the one package unpacker. A
 plugin or theme the directory does not know keeps its folder untouched
 and is never offered anything. The per-item
@@ -792,7 +815,7 @@ the publisher: a package outside the directory is unpacked only when
 `upgrader_pre_download` hands back a copy it verified.
 
 - const `OPTION` = `'minn_updates'`
-- const `TTL` = `43200`
+- const `TTL` = `86400`
 
 Used by: `Minn\Admin\Notifications`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cron\Cron`, `Minn\Rest\Services`
 
@@ -815,11 +838,11 @@ in the update transients when they are not there already.
 
 The stored answer, refreshed when older than the TTL or absent.
 
-### `refresh(): array`
+### `refresh(Minn\Ops\Asking $asking = Minn\Ops\Asking::Now): array`
 
-Asks the directory now, whatever the cache says, and keeps the answer.
+Asks the directory now, whatever the cache says, and keeps the answer; the daily pass says so.
 
-### `check(): array`
+### `check(Minn\Ops\Asking $asking = Minn\Ops\Asking::Now): array`
 
 Asks the directory now and stores the answer.
 

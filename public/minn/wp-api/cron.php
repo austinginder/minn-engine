@@ -146,7 +146,7 @@ function wp_clean_update_cache()
 
 /**
  * Minn's own core, plugin and theme checks, run when the stored answer is
- * older than twelve hours (a deliberate difference: the reference asks
+ * older than 24 hours (a deliberate difference: the reference asks
  * wordpress.org; contracts/api/different.json).
  */
 function _maybe_update_core()
@@ -164,9 +164,9 @@ function _maybe_update_themes()
     _minn_update_check_is_fresh('update_themes') || wp_update_themes();
 }
 
-/** @internal whether an update transient was filled in the last twelve hours */
+/** @internal whether an update transient was filled in the last 24 hours */
 function _minn_update_check_is_fresh(string $transient): bool
 {
     $stored = get_site_transient($transient);
-    return is_object($stored) && isset($stored->last_checked) && time() - (int) $stored->last_checked < 12 * HOUR_IN_SECONDS;
+    return is_object($stored) && isset($stored->last_checked) && time() - (int) $stored->last_checked < DAY_IN_SECONDS;
 }

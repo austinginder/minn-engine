@@ -11,6 +11,8 @@ use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Db;
+use Minn\Ops\Asking;
+use Minn\Ops\Releases;
 use Minn\Ops\Updates;
 use Minn\Runtime\CronTable;
 use Minn\Runtime\PostWrites;
@@ -20,7 +22,8 @@ use Throwable;
 /**
  * The engine's scheduled work: scheduled posts go live when their time
  * comes, the cron option's due events fire, expired throttle rows and
- * transients are swept, and the daily auto-update check runs. Triggered
+ * transients are swept, and once every 24 hours the update service is
+ * asked about Minn, plugins and themes before automatic updates run. Triggered
  * by wp-cron.php, `wp minn cron`, `minn cron`, or a front request that
  * finds something due (after its response is sent). One run at a time,
  * through a short-lived lock option.
@@ -34,6 +37,10 @@ final readonly class Cron
 {
     private const LOCK = 'minn_cron_lock';
     private const LOCK_TTL = 60;
+
+    /** When the next daily update pass is due (a timestamp); the slots stay 24 hours apart however late a run is. */
+    private const DAILY = 'minn_daily_next';
+    private const DAY = 86400;
 
     /** @param ?Closure(): int $fireDueEvents fires the cron option's due hooks and returns how many ran */
     public function __construct(private Db $db, private Site $site, private PostWriter $writer, private ?Updates $updates = null, private ?Closure $fireDueEvents = null)
@@ -67,8 +74,9 @@ final readonly class Cron
             }
             $report[] = 'swept ' . $this->sweepTransients() . ' expired transients';
             $report[] = 'swept ' . $this->sweepThrottle() . ' expired throttle rows';
-            if ($this->updates !== null && (int) ($this->site->option('minn_auto_updates_last') ?? 0) < time() - 86400) {
-                array_push($report, ...$this->applyAutoUpdates());
+            $slot = $this->dailySlot();
+            if ($this->updates !== null && $slot <= time()) {
+                array_push($report, ...$this->daily($slot));
             }
             $this->site->setOption('minn_cron_last', (string) time());
             return $report;
@@ -87,10 +95,10 @@ final readonly class Cron
         return !$this->due() && (int) (Runtime::options()->get('minn_cron_last') ?? 0) > time() - 60;
     }
 
-    /** True when a scheduled post's time has come or the cron option holds a due event. */
+    /** True when a scheduled post's time has come, the cron option holds a due event, or the daily update pass is due. */
     public function due(): bool
     {
-        return $this->postDue() || CronTable::due(CronTable::fromBlob($this->site->option('cron')), time()) !== [];
+        return ($this->updates !== null && $this->dailySlot() <= time()) || $this->postDue() || CronTable::due(CronTable::fromBlob($this->site->option('cron')), time()) !== [];
     }
 
     /**
@@ -111,17 +119,51 @@ final readonly class Cron
     }
 
     /**
-     * The daily auto-update pass. The stamp is written before the pass so
-     * a failing update is retried tomorrow, not on every trigger; what was
-     * refused is reported by name.
+     * The slot after a daily pass that ran at `$now` for `$slot`: 24 hours on
+     * from the first run, then whole days on from the slot, the first one
+     * still ahead (a site that slept a week checks once, not seven times).
+     */
+    public static function nextSlot(int $slot, int $now): int
+    {
+        return $slot <= 0 ? $now + self::DAY : $slot + self::DAY * (intdiv(max(0, $now - $slot), self::DAY) + 1);
+    }
+
+    /** When the daily update pass is next due; 0 on a site that has never run one. */
+    private function dailySlot(): int
+    {
+        return (int) ($this->site->option(self::DAILY) ?? 0);
+    }
+
+    /**
+     * The daily update pass, once every 24 hours: the update service asked
+     * about Minn's releases and about the site's plugins and themes, each
+     * marked as the day's scheduled check (the service counts those, one a
+     * site, and keeps nothing else), then the automatic updates. The next
+     * slot is written first, 24 hours after this one and never in the past,
+     * so a failure waits for tomorrow instead of repeating on every trigger,
+     * and a late run does not push the next one later. What was refused is
+     * reported by name.
      *
      * @return list<string>
      */
-    private function applyAutoUpdates(): array
+    private function daily(int $slot): array
     {
-        $this->site->setOption('minn_auto_updates_last', (string) time());
+        $this->site->setOption(self::DAILY, (string) self::nextSlot($slot, time()));
+        $lines = [];
+        try {
+            Releases::forSite($this->site, defined('MINN_ENGINE_VERSION') ? MINN_ENGINE_VERSION : '0.0.0')->refresh(Asking::Daily);
+            $lines[] = 'asked the update service about Minn';
+        } catch (Throwable $failure) {
+            $lines[] = 'the release check stopped: ' . $failure->getMessage();
+        }
+        try {
+            $this->updates->refresh(Asking::Daily);
+            $lines[] = 'checked plugins and themes';
+        } catch (Throwable $failure) {
+            $lines[] = 'the plugin and theme check stopped: ' . $failure->getMessage();
+        }
         $result = $this->updates->runAuto(\Minn\Ops\AutoUpdates::forSite());
-        $lines = ['applied ' . count($result['done']) . ' automatic update' . (count($result['done']) === 1 ? '' : 's')];
+        $lines[] = 'applied ' . count($result['done']) . ' automatic update' . (count($result['done']) === 1 ? '' : 's');
         foreach ($result['failed'] as $item => $reason) {
             $lines[] = "automatic update of {$item} refused: {$reason}";
         }
