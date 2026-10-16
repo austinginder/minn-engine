@@ -1580,6 +1580,9 @@ function get_post_class($css_class = '', $post = null)
     return array_unique(apply_filters('post_class', $build($terms), $extra, $post->ID));
 }
 
+// A query loop's items take their classes from here, through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind(['postClass' => static fn (...$args) => get_post_class(...$args)]);
+
 /** The body's class list: the tokens the classic renderer stood for this page, the caller's extras, then the body_class filter. */
 /**
  * The body classes: the themed page's, or off the front the main query's

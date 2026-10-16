@@ -153,7 +153,7 @@ final class Renderer
         (new SocialLinks(MINN_ENGINE_DIR . '/data/social-icons.json'))->register($renderer);
         $users = new Users($db);
         (new PostBlocks($posts, $users, $site, $permalinks))->register($renderer);
-        (new QueryBlocks($posts, $site, $permalinks))->register($renderer);
+        (new QueryBlocks($site, $permalinks))->register($renderer);
         (new TermBlocks(new Terms($db), $permalinks))->register($renderer);
         (new Comments($site, $permalinks, $posts, $users))->register($renderer);
         if ($theme !== null) {

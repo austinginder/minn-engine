@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Minn\Db;
+use Minn\Runtime\TermQuery;
 
 /**
  * Reads over the posts table. A post comes back as a PostRecord; a listing
@@ -112,8 +113,9 @@ final readonly class Posts
             return;
         }
         $terms = [];
+        // The terms come whole, as get_term reads them, so asking for one of them later needs no query of its own.
         foreach ($this->db->rows(
-            "SELECT tr.object_id, tt.taxonomy, t.term_id, t.slug FROM {$this->db->table('term_relationships')} tr
+            'SELECT tr.object_id, ' . TermQuery::COLUMNS . " FROM {$this->db->table('term_relationships')} tr
              JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
              JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
              WHERE tr.object_id IN (?) AND tt.taxonomy IN (?)
@@ -121,6 +123,8 @@ final readonly class Posts
             [$ids, array_values($taxonomies)],
         ) as $row) {
             $terms[(int) $row['object_id']][(string) $row['taxonomy']][] = [(int) $row['term_id'], (string) $row['slug']];
+            unset($row['object_id']);
+            TermQuery::keep($row);
         }
         foreach ($ids as $id) {
             foreach ($taxonomies as $taxonomy) {

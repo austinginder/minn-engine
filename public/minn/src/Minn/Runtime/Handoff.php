@@ -49,7 +49,7 @@ final class Handoff
     /**
      * Binds answers by name: currentUser, signedIn, user, userBy,
      * becomeUser, cacheUsers, authenticate, setPassword, password, hashPassword, hash,
-     * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
+     * createNonce, verifyNonce, mail, avatar, postClass, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
      * factories newError, newPost, postInstance, newTerm, newComment,
      * commentInstance, newUser, newDependency, and the query factories newQuery,
      * newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
@@ -151,6 +151,12 @@ final class Handoff
     public static function mail(mixed ...$args): mixed
     {
         return self::answer('mail', ...$args);
+    }
+
+    /** A post's classes, through post_class (get_post_class). */
+    public static function postClass(mixed ...$args): mixed
+    {
+        return self::answer('postClass', ...$args);
     }
 
     /** A user's or address's avatar image, or false (get_avatar). */

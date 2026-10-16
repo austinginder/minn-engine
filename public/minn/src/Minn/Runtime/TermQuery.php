@@ -17,7 +17,7 @@ final readonly class TermQuery
 {
     public const DEFAULTS = ['taxonomy' => null, 'object_ids' => null, 'orderby' => 'name', 'order' => 'ASC', 'hide_empty' => true, 'include' => [], 'exclude' => [], 'exclude_tree' => [], 'number' => '', 'offset' => '', 'fields' => 'all', 'count' => false, 'name' => '', 'slug' => '', 'term_taxonomy_id' => '', 'hierarchical' => true, 'search' => '', 'name__like' => '', 'description__like' => '', 'pad_counts' => false, 'get' => '', 'child_of' => 0, 'parent' => '', 'childless' => false, 'cache_domain' => 'core', 'update_term_meta_cache' => true, 'meta_query' => '', 'meta_key' => '', 'meta_value' => ''];
 
-    private const COLUMNS = 't.term_id, t.name, t.slug, t.term_group, tt.term_taxonomy_id, tt.taxonomy, tt.description, tt.parent, tt.count';
+    public const COLUMNS = 't.term_id, t.name, t.slug, t.term_group, tt.term_taxonomy_id, tt.taxonomy, tt.description, tt.parent, tt.count';
 
     /** @param Closure(string): string $slug the slug sanitiser, so the reference's filters apply */
     public function __construct(private Db $db, private Closure $slug)
@@ -28,6 +28,12 @@ final readonly class TermQuery
     public function row(int $termId, ?string $taxonomy): ?array
     {
         return RowCache::remember('term_rows', "row:{$termId}:" . ($taxonomy ?? ''), fn (): ?array => $this->readRow($termId, $taxonomy));
+    }
+
+    /** A term row read elsewhere (a list of posts' terms, read together), kept so row() answers from it. @param array<string, mixed> $row */
+    public static function keep(array $row): void
+    {
+        RowCache::put('term_rows', 'row:' . (int) ($row['term_id'] ?? 0) . ':' . (string) ($row['taxonomy'] ?? ''), $row);
     }
 
     /** @return array<string, mixed>|null */

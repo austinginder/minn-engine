@@ -31,7 +31,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 503 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 553 | Reads over the posts table. A post comes back as a PostRecord; a listing |
+| [`Posts`](#posts) | final readonly class | 556 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`RowCache`](#rowcache) | final class | 100 | Rows read once a request: posts, their terms, users, and every object's |
@@ -1398,7 +1398,7 @@ Internals: `fit()` (private, line 178), `announceSticky()` (private, line 279), 
 Reads over the posts table. A post comes back as a PostRecord; a listing
 is the main query's (WP_Query); rendering and escaping happen elsewhere.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TemplateObject`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserWrites`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TemplateObject`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserWrites`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1607,7 +1607,7 @@ The newest autosave of a post (by date, then id), by one author or, given 0, any
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 20), `ids()` (private, line 133), `byName()` (private, line 155), `byPath()` (private, line 230), `readTerms()` (private, line 319), `revisions()` (private, line 355), `readRevisions()` (private, line 366), `weekMode()` (private, line 455), `monthBeside()` (private, line 532)
+Internals: `record()` (private, line 21), `ids()` (private, line 137), `byName()` (private, line 159), `byPath()` (private, line 234), `readTerms()` (private, line 323), `revisions()` (private, line 359), `readRevisions()` (private, line 370), `weekMode()` (private, line 459), `monthBeside()` (private, line 536)
 
 
 ## Reader

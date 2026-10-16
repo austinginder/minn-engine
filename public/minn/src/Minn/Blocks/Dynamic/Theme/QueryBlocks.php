@@ -9,7 +9,6 @@ use Minn\I18n\Gettext;
 use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Content\Page;
-use Minn\Content\Posts;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\Styles;
@@ -25,7 +24,6 @@ use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Front\Permalinks;
 use Minn\Html;
-use Minn\Support\Serialized;
 
 /** query, post-template, query-title, query-no-results, query-pagination, query-total. */
 final class QueryBlocks
@@ -34,7 +32,6 @@ final class QueryBlocks
     private array $queries = [];
 
     public function __construct(
-        private readonly Posts $posts,
         private readonly Site $site,
         private readonly Permalinks $permalinks,
     ) {
@@ -165,8 +162,6 @@ final class QueryBlocks
             return '';
         }
         $context = $renderer->context();
-        $sticky = Serialized::intList($this->site->option('sticky_posts'));
-        $onFrontPage = $context->resolution->kind === Kind::Home && $context->resolution->paged === 1;
         $items = '';
         while ($loop->have_posts()) {
             $loop->the_post();
@@ -181,8 +176,8 @@ final class QueryBlocks
                 $inner .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$index++]);
             }
             $context->popPost();
-            $isSticky = $onFrontPage && in_array($post->id, $sticky, true);
-            $items .= '<li class="' . implode(' ', $this->postClasses($post, $isSticky)) . '">' . $inner . '</li>';
+            // Its classes are asked for once its blocks are rendered, through post_class, as the reference asks.
+            $items .= '<li class="' . Html::attr(implode(' ', (array) Handoff::postClass('wp-block-post'))) . '">' . $inner . '</li>';
         }
         MainQuery::current()->reset_postdata();
         $columns = (int) ($block->attrs['layout']['columnCount'] ?? 0);
@@ -195,37 +190,6 @@ final class QueryBlocks
             trailingClasses: Layout::classes('core/post-template', $block->attrs),
         );
         return $open . $items . '</ul>';
-    }
-
-    /** @return list<string> */
-    private function postClasses(PostRecord $post, bool $sticky): array
-    {
-        $id = $post->id;
-        $type = $post->type;
-        $classes = ['wp-block-post', 'post-' . $id, $type, 'type-' . $type, 'status-' . $post->status];
-        if ($type === 'post') {
-            $formats = $this->posts->terms($id, 'post_format');
-            $classes[] = 'format-' . ($formats === [] ? 'standard' : str_replace('post-format-', '', $formats[0][1]));
-        }
-        if ($sticky) {
-            $classes[] = 'sticky';
-        }
-        if ($post->isProtected()) {
-            $classes[] = 'post-password-required';
-        }
-        if ((int) ($this->posts->meta($id, '_thumbnail_id') ?? 0) > 0) {
-            $classes[] = 'has-post-thumbnail';
-        }
-        $classes[] = 'hentry';
-        if ($type === 'post') {
-            foreach ($this->posts->terms($id, 'category') as [, $slug]) {
-                $classes[] = 'category-' . $slug;
-            }
-            foreach ($this->posts->terms($id, 'post_tag') as [, $slug]) {
-                $classes[] = 'tag-' . $slug;
-            }
-        }
-        return $classes;
     }
 
     private function queryTitle(Block $block, Renderer $renderer): string

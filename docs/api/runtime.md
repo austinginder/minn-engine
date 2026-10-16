@@ -58,7 +58,7 @@ the WordPress runtime plugins load against
 | [`FileNames`](#filenames) | final class | 119 | Files as WordPress's file functions name and remove them: a name made |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 490 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 496 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 403 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
@@ -140,7 +140,7 @@ the WordPress runtime plugins load against
 | [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
 | [`TermLookup`](#termlookup) | final class | 365 | Terms looked up as WordPress's taxonomy functions find them: a list by |
 | [`TermOrder`](#termorder) | final class | 61 | A term query's ORDER BY as the reference writes it (probe |
-| [`TermQuery`](#termquery) | final readonly class | 376 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
+| [`TermQuery`](#termquery) | final readonly class | 382 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
 | [`TermQueryRunner`](#termqueryrunner) | final class | 254 | WP_Term_Query::get_terms as the reference runs it (probe |
 | [`TermQueryTree`](#termquerytree) | final class | 146 | What a term query does with its rows, as the reference does it (probe |
 | [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
@@ -2700,7 +2700,7 @@ Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Can`, `Minn\Auth\SignIn`, `Minn\Blo
 
 Binds answers by name: currentUser, signedIn, user, userBy,
 becomeUser, cacheUsers, authenticate, setPassword, password, hashPassword, hash,
-createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
+createNonce, verifyNonce, mail, avatar, postClass, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
 factories newError, newPost, postInstance, newTerm, newComment,
 commentInstance, newUser, newDependency, and the query factories newQuery,
 newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
@@ -2770,6 +2770,10 @@ Whether a nonce holds for an action: 1 or 2 by its age, or false (wp_verify_nonc
 ### static `mail(mixed ...$args): mixed`
 
 Sends an email (wp_mail): whether it was accepted for delivery.
+
+### static `postClass(mixed ...$args): mixed`
+
+A post's classes, through post_class (get_post_class).
 
 ### static `avatar(mixed ...$args): mixed`
 
@@ -3017,7 +3021,7 @@ ignored list filled in.
 
 A theme by its folder and root (new WP_Theme).
 
-Internals: `answer()` (private, line 528)
+Internals: `answer()` (private, line 534)
 
 
 ## Heartbeat
@@ -7893,7 +7897,7 @@ the single-term lookups. Behaviour pinned by contracts/fixtures/api/content.json
 - const `DEFAULTS` = `array (   'taxonomy' => NULL,   'object_ids' => NULL,   'orderby' => 'name',   'order' => 'ASC',   'hide_empty' => true,   'include' =>    array (   ),   'exclude' =>    array (   ),   'exclude_tree' =>    array (   ),   'number' => '',   'offset' => '',   'fields' => 'all',   'count' => false,   'name' => '',   'slug' => '',   'term_taxonomy_id' => '',   'hierarchical' => true,   'search' => '',   'name__like' => '',   'description__like' => '',   'pad_counts' => false,   'get' => '',   'child_of' => 0,   'parent' => '',   'childless' => false,   'cache_domain' => 'core',   'update_term_meta_cache' => true,   'meta_query' => '',   'meta_key' => '',   'meta_value' => '', )`
 - const `COLUMNS` = `'t.term_id, t.name, t.slug, t.term_group, tt.term_taxonomy_id, tt.taxonomy, tt.description, tt.parent, tt.count'`
 
-Used by: `Minn\Runtime\Records`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`
+Used by: `Minn\Content\Posts`, `Minn\Runtime\Records`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`
 
 ```php
 __construct(Minn\Db $db, Closure $slug)
@@ -7906,6 +7910,12 @@ __construct(Minn\Db $db, Closure $slug)
 A term row joined with its taxonomy row, by id (and taxonomy when known). @return array<string, mixed>|null
 
 - `@return array<string, mixed>|null`
+
+### static `keep(array $row): void`
+
+A term row read elsewhere (a list of posts' terms, read together), kept so row() answers from it. @param array<string, mixed> $row
+
+- `@param array<string, mixed> $row`
 
 ### `find(string $field, mixed $value, ?string $taxonomy): ?array`
 
@@ -7971,7 +7981,7 @@ The object ids attached to any of the terms in any of the taxonomies. @param lis
 
 - `@param list<int> $termIds @param list<string> $taxonomies @return list<int>`
 
-Internals: `readRow()` (private, line 34), `idList()` (private, line 220), `descendants()` (private, line 227), `where()` (private, line 246), `metaClauses()` (private, line 320), `ids()` (private, line 378), `like()` (private, line 387)
+Internals: `readRow()` (private, line 40), `idList()` (private, line 226), `descendants()` (private, line 233), `where()` (private, line 252), `metaClauses()` (private, line 326), `ids()` (private, line 384), `like()` (private, line 393)
 
 
 ## TermQueryRunner

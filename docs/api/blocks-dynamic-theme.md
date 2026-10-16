@@ -7,7 +7,7 @@ the template blocks a block theme composes with
 | [`Comments`](#comments) | final readonly class | 271 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
 | [`Navigation`](#navigation) | final readonly class | 535 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 265 | The post-* blocks: they render the context's current post. |
-| [`QueryBlocks`](#queryblocks) | final class | 313 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
+| [`QueryBlocks`](#queryblocks) | final class | 279 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
 | [`TermBlocks`](#termblocks) | final readonly class | 71 | term-name, term-count and term-description: the term a block's context |
 
@@ -108,7 +108,7 @@ query, post-template, query-title, query-no-results, query-pagination, query-tot
 Used by: `Minn\Blocks\Renderer`
 
 ```php
-__construct(Minn\Content\Posts $posts, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 ```
 
 
@@ -116,7 +116,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Site $site, Minn\Front\Perma
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 58), `queried()` (private, line 80), `page()` (private, line 89), `loop()` (private, line 105), `current()` (private, line 124), `total()` (private, line 137), `postTemplate()` (private, line 161), `postClasses()` (private, line 201), `queryTitle()` (private, line 231), `noResults()` (private, line 251), `pagination()` (private, line 265), `paginationBase()` (private, line 311), `numbers()` (private, line 326), `archiveTitle()` (private, line 338)
+Internals: `query()` (private, line 55), `queried()` (private, line 77), `page()` (private, line 86), `loop()` (private, line 102), `current()` (private, line 121), `total()` (private, line 134), `postTemplate()` (private, line 158), `queryTitle()` (private, line 195), `noResults()` (private, line 215), `pagination()` (private, line 229), `paginationBase()` (private, line 275), `numbers()` (private, line 290), `archiveTitle()` (private, line 302)
 
 
 ## Structure

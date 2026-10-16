@@ -16914,6 +16914,20 @@ early user, a comments template that is no file, a comment form asked for in xht
 validate. `wp-includes/pluggable-deprecated.php` stays a placeholder: the engine keeps the deprecated
 pluggables with the rest, and loading them all early could take a name a plugin defines later.
 
+## A query loop's items take their classes from post_class (2026-10-16)
+
+The hunt's WooCommerce search page showed WordPress's product items carrying `instock`, `purchasable`,
+`product-type-simple` and `first` where Minn's did not. The engine wrote each post template item's classes
+itself, so no plugin's `post_class` filter was asked. Observed on the reference: each item's classes come from
+`get_post_class('wp-block-post')`, asked once per item after its blocks are rendered. The post template now asks
+the facade's `get_post_class` the same way, through `Runtime\Handoff::postClass`, and its own copy of the class
+rules is gone. Hook parity: `post_class`, `post_class_taxonomies`, `is_sticky`, `has_post_thumbnail`,
+`post_thumbnail_id`, `post_password_required` and `get_the_terms` now agree on every front page.
+
+Asking `get_the_terms` per item read each term again: the posts' terms were primed as ids and slugs only. The
+reference reads the whole terms of a list of posts in one query, and the engine's priming now selects the
+columns `get_term` reads and keeps each row (`TermQuery::keep`), so the home page runs 26 SELECTs (it ran 30).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
