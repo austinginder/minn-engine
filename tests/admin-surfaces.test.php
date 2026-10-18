@@ -287,9 +287,12 @@ check( null !== $one && array_keys( $one ) === array_keys( $emap['minn-admin/min
 check( null !== $one && $one['status'] === $emap['minn-admin/minn-admin']['status'] && $one['version'] === $emap['minn-admin/minn-admin']['version'], 'stored active state and version agree' );
 $ext = array_values( array_filter( $eb, static fn( $p ) => str_starts_with( $p['plugin'], 'minn-block-visibility/' ) ) );
 check( 1 === count( $ext ) && 'active' === $ext[0]['status'], 'Minn extensions join the list with their own activation state', json_encode( $ext ) );
+$css_was = array_values( array_filter( $eb, static fn( $p ) => str_starts_with( $p['plugin'], 'minn-simple-custom-css/' ) ) )[0]['status'] ?? 'inactive';
 [ $s, $b ] = as_fetch( $ENGINE, '/wp/v2/plugins/minn-simple-custom-css/minn-simple-custom-css', $admin, 'PUT', '{"status":"inactive"}' );
 [ $s2, $b2 ] = as_fetch( $ENGINE, '/wp/v2/plugins/minn-simple-custom-css/minn-simple-custom-css', $admin, 'PUT', '{"status":"active"}' );
 check( 'inactive' === ( $b['status'] ?? '' ) && 'active' === ( $b2['status'] ?? '' ), 'extension activation round-trips through minn_active_extensions', json_encode( array( $b['status'] ?? $s, $b2['status'] ?? $s2 ) ) );
+// Put it back as it was: left on, it adds a query to every page the perf suite counts.
+as_fetch( $ENGINE, '/wp/v2/plugins/minn-simple-custom-css/minn-simple-custom-css', $admin, 'PUT', json_encode( array( 'status' => $css_was ) ) );
 [ $s ] = as_fetch( $ENGINE, '/wp/v2/plugins', $author );
 check( 403 === $s, 'plugins need activate_plugins', "status $s" );
 
