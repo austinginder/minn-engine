@@ -6,8 +6,9 @@ use Minn\Runtime\DbDelta;
 
 function dbDelta($queries = '', $execute = true)
 {
+    // A string is cut at every semicolon, wherever it falls (Elementor Pro joins its CREATE TABLEs with none between; probe dbdelta-split).
     if (is_string($queries)) {
-        $queries = array_filter(array_map('trim', preg_split('/;\s*$/m', $queries)), static fn ($q) => $q !== '');
+        $queries = array_filter(array_map('trim', explode(';', $queries)), static fn ($q) => $q !== '');
     }
     $queries = apply_filters('dbdelta_queries', array_values((array) $queries));
     $creates = apply_filters('dbdelta_create_queries', DbDelta::creates($queries));

@@ -12938,7 +12938,7 @@
         },
         "__get_option": {
             "file": "upgrade.php",
-            "line": 87,
+            "line": 88,
             "statements": 6,
             "lines": 10
         },
@@ -15542,7 +15542,7 @@
         },
         "add_clean_index": {
             "file": "upgrade.php",
-            "line": 78,
+            "line": 79,
             "statements": 4,
             "lines": 4
         },
@@ -16514,7 +16514,7 @@
         },
         "drop_index": {
             "file": "upgrade.php",
-            "line": 65,
+            "line": 66,
             "statements": 6,
             "lines": 8
         },
@@ -18740,13 +18740,13 @@
         },
         "maybe_add_column": {
             "file": "upgrade.php",
-            "line": 33,
+            "line": 34,
             "statements": 4,
             "lines": 6
         },
         "maybe_create_table": {
             "file": "upgrade.php",
-            "line": 23,
+            "line": 24,
             "statements": 4,
             "lines": 6
         },

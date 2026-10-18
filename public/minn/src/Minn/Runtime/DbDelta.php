@@ -36,6 +36,8 @@ final readonly class DbDelta
      */
     public function apply(array $creates, bool $execute): array
     {
+        // New tables are told first, in the order given; then what changed in tables already there (probe dbdelta-split).
+        $created = [];
         $done = [];
         $tables = $this->tables();
         foreach ($creates as $table => $query) {
@@ -43,7 +45,7 @@ final readonly class DbDelta
                 if ($execute) {
                     $this->db->execute($query);
                 }
-                $done[$table] = "Created table {$table}";
+                $created[$table] = "Created table {$table}";
                 continue;
             }
             if (!preg_match('|\((.*)\)|s', $query, $body)) {
@@ -73,7 +75,7 @@ final readonly class DbDelta
                 }
             }
         }
-        return $done;
+        return $created + $done;
     }
 
     /** @return array{0: array<string, string>, 1: list<string>} column definitions by lowercase name, and the index lines */

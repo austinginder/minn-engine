@@ -17245,6 +17245,25 @@ next-largest of the 215 most-run plugins in the hunt lab is under 4,800
 files. A cached verdict made under the old cap is walked again within
 `FULL_CHECK_EVERY` (five minutes).
 
+## dbDelta cuts at every semicolon (2026-10-18)
+
+Elementor Pro creates its form submission tables with one dbDelta() call of
+three CREATE TABLE statements joined with nothing between one's semicolon
+and the next. The engine cut a string of queries only at a semicolon that
+ended a line, so the three went to the database as one query: a syntax
+error, no tables, and every Elementor Pro form submission on a Minn site
+answered 500, with no entry kept and no mail sent. The write flows found it
+(the hunt lab's write flow for Elementor Pro, which submits a form on each stack and compares what was kept and sent).
+
+As the reference does it (probe `dbdelta-split`, with `$execute` false so
+nothing is written): a string is cut at every semicolon wherever it falls,
+blank pieces dropped, a trailing semicolon or none alike; new tables are
+told first, in the order given, then the columns and indexes added to tables
+already there. The line-end cut was worse than the error: a CREATE TABLE for
+a table that exists followed on the same line by another read the second as
+the first's columns, and with `$execute` true would have added them to the
+existing table.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

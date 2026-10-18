@@ -21573,8 +21573,8 @@
             "dbDelta": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\DbDelta",
-                "why": "splits the queries and runs the dbdelta filters before the engine's DbDelta; the splitting and filters belong with it",
-                "body": "e39022c42e47"
+                "why": "splits the queries and runs the dbdelta filters before the engine's DbDelta; the splitting and filters belong with it; a string is cut at every semicolon (probe dbdelta-split)",
+                "body": "91a5d07b14c8"
             },
             "drop_index": {
                 "verdict": "move",

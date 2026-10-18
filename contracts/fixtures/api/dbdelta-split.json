@@ -1,0 +1,51 @@
+[
+    [
+        "joined with nothing between",
+        [
+            "Created table {t}a",
+            "Created table {t}b",
+            "Created table {t}c"
+        ]
+    ],
+    [
+        "one per line",
+        [
+            "Created table {t}a",
+            "Created table {t}b"
+        ]
+    ],
+    [
+        "no trailing semicolon",
+        [
+            "Created table {t}a",
+            "Created table {t}b"
+        ]
+    ],
+    [
+        "blank queries between",
+        [
+            "Created table {t}a",
+            "Created table {t}b"
+        ]
+    ],
+    [
+        "as a list",
+        [
+            "Created table {t}a",
+            "Created table {t}b"
+        ]
+    ],
+    [
+        "a semicolon inside a default",
+        [
+            "Created table {t}d"
+        ]
+    ],
+    [
+        "an existing table, a column added",
+        [
+            "Created table {t}e",
+            "Added column wp_options.zz_probe_extra"
+        ]
+    ]
+]

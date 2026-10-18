@@ -44366,7 +44366,7 @@
         },
         "dbDelta": {
             "file": "upgrade.php",
-            "lines": 6,
+            "lines": 7,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\DbDelta::apply",

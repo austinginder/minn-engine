@@ -47,7 +47,7 @@ the WordPress runtime plugins load against
 | [`CronEvents`](#cronevents) | final class | 297 | Scheduled events as WordPress keeps them in the cron option: the list |
 | [`CronTable`](#crontable) | final class | 133 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`CurrentUser`](#currentuser) | final class | 19 | Who the request is, as the reference settles it before init: the user |
-| [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
+| [`DbDelta`](#dbdelta) | final readonly class | 127 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
 | [`DebugMode`](#debugmode) | final class | 104 | PHP's error settings from the debug constants, as the reference's boot |
 | [`Deferrals`](#deferrals) | final class | 66 | The switches an importer flips for the length of a request (probe |
 | [`DocumentTitle`](#documenttitle) | final class | 95 | The page's title as WordPress's title functions make it from the main |
@@ -2348,7 +2348,7 @@ A table's index names.
 
 Runs one DDL statement.
 
-Internals: `definitions()` (private, line 80)
+Internals: `definitions()` (private, line 82)
 
 
 ## DebugMode

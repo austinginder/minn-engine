@@ -128652,7 +128652,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/DbDelta.php",
-            "lines": 125,
+            "lines": 127,
             "doc": "dbDelta as the reference does it: a CREATE TABLE statement creates the\ntable when it is missing, otherwise the columns and keys the statement\nhas and the table lacks are added. Nothing is ever dropped or altered.",
             "implements": [],
             "extends": null,
@@ -128740,7 +128740,7 @@
                         }
                     ],
                     "line": 37,
-                    "end": 77
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -128753,8 +128753,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 104,
-                    "end": 107
+                    "line": 106,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -128775,8 +128775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 121
+                    "line": 116,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -128797,8 +128797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 131
+                    "line": 130,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -128817,8 +128817,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 137
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -128839,8 +128839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 97
+                    "line": 82,
+                    "end": 99
                 }
             ]
         },
