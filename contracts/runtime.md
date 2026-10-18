@@ -17232,6 +17232,19 @@ Still owed: the `setup_userdata` globals (`$user_ID`, `$userdata`,
 Sitemap line is `Front\Sitemaps::robots()`, which the engine's own robots.txt
 uses too.
 
+## WPML loads (2026-10-18)
+
+The gate reads a plugin folder's PHP files to learn what it needs, and a
+folder past the file cap was not loaded, since its needs were not all known.
+WPML (Multilingual CMS 5.1) is 7,080 files against a cap of 6,000, so a Minn
+site running it served every page in one language. Read whole, it needs
+nothing the engine lacks. The cap is 10,000 now: the walk of WPML takes about
+2 seconds and 64 MB at its peak, once, when the plugin is installed, updated
+or activated (the verdict is cached on the folder's fingerprint), and the
+next-largest of the 215 most-run plugins in the hunt lab is under 4,800
+files. A cached verdict made under the old cap is walked again within
+`FULL_CHECK_EVERY` (five minutes).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

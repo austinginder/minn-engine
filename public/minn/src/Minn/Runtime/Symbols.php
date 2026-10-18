@@ -21,7 +21,11 @@ namespace Minn\Runtime;
  */
 final class Symbols
 {
-    private const MAX_FILES = 6000;
+    /**
+     * The most PHP files a folder's walk reads; a folder past it is not loaded, as its needs are not all known.
+     * WPML is 7,080 (64 MB at its peak, once, on activation); the next of the 215 most-run plugins is under 4,800.
+     */
+    private const MAX_FILES = 10000;
     private const SKIP_DIRS = ['node_modules', 'tests', 'test', '.git'];
     /** Bumped whenever the token reader changes, so every cached scan is made again. */
     private const READER = 4;

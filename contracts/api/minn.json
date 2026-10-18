@@ -155693,7 +155693,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Symbols.php",
-            "lines": 498,
+            "lines": 502,
             "doc": "A static read of what a plugin's PHP calls: global functions and classes\nit uses but does not itself declare, minus the ones it guards with\nfunction_exists() or class_exists(). Checked against what the runtime\nprovides, this decides whether a plugin loads at all.\n\nThe read is cached in the minn_runtime_symbols option, keeping only the\nreference's own names (all a verdict reads). An entry is trusted while\nthe folder's fingerprint (its own time and its top-level files' newest)\nholds, for up to FULL_CHECK_EVERY seconds; then the whole folder is\nwalked again, as an update replaces it. Installing, updating or\nactivating a plugin walks its folder at once (recheck()). Walking every\nfolder on every request cost hundreds of milliseconds on a site with\nmany plugins.",
             "implements": [],
             "extends": null,
@@ -155713,8 +155713,8 @@
             "constants": [
                 {
                     "name": "MAX_FILES",
-                    "value": "6000",
-                    "doc": "",
+                    "value": "10000",
+                    "doc": "The most PHP files a folder's walk reads; a folder past it is not loaded, as its needs are not all known.\nWPML is 7,080 (64 MB at its peak, once, on activation); the next of the 215 most-run plugins is under 4,800.",
                     "visibility": "private"
                 },
                 {
@@ -155774,8 +155774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 62
+                    "line": 43,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -155801,8 +155801,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 78
+                    "line": 73,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -155823,8 +155823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 144
+                    "line": 145,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -155852,8 +155852,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 156
+                    "line": 156,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -155889,8 +155889,8 @@
                             "doc": "name => area, as data/deadend-symbols.json holds them"
                         }
                     ],
-                    "line": 169,
-                    "end": 193
+                    "line": 173,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -155916,8 +155916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 89
+                    "line": 85,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -155936,8 +155936,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 102
+                    "line": 96,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -155948,8 +155948,8 @@
                     "doc": "The reference names a reduced scan was kept against: a new interface (a WordPress update) makes every scan again.",
                     "shapes": [],
                     "params": [],
-                    "line": 105,
-                    "end": 109
+                    "line": 109,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -155971,8 +155971,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 133
+                    "line": 121,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -156008,8 +156008,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 234
+                    "line": 207,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -156030,8 +156030,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 257
+                    "line": 241,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -156053,8 +156053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 287
+                    "line": 275,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -156082,8 +156082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 376
+                    "line": 301,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -156111,8 +156111,8 @@
                             "doc": "lower-cased names"
                         }
                     ],
-                    "line": 386,
-                    "end": 395
+                    "line": 390,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -156162,8 +156162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 435
+                    "line": 409,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -156198,8 +156198,8 @@
                             "doc": "alias (lower case) => class"
                         }
                     ],
-                    "line": 443,
-                    "end": 450
+                    "line": 447,
+                    "end": 454
                 },
                 {
                     "routes": [],
@@ -156235,8 +156235,8 @@
                             "doc": "alias (lower case) => class, added to"
                         }
                     ],
-                    "line": 460,
-                    "end": 504
+                    "line": 464,
+                    "end": 508
                 },
                 {
                     "routes": [],
@@ -156271,8 +156271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 507,
-                    "end": 518
+                    "line": 511,
+                    "end": 522
                 }
             ]
         },
