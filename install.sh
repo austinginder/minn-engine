@@ -8,20 +8,29 @@
 #   bash <(curl -sL https://minn.run/install)
 #
 # Downloads the latest minn.zip (the public/minn/ tree, Minn Admin
-# bundled at minn/admin), runs preflight, then php minn/bin/minn install.
-# wp-config.php, wp-content/, and the database are not touched.
+# bundled at minn/admin) and its signature, checks the signature against
+# the release keys below, then runs php minn/bin/minn install (preflight
+# first). wp-config.php, wp-content/, and the database are not touched.
 #
 # Flags:
 #   --force          install even when preflight is RED
-#   --engine-url=URL zip to download (default: GitHub latest release)
-#   --park=DIR       where WordPress's own files go
+#   --engine-url=URL zip to download (default: GitHub latest release);
+#                    its signature is read from URL.sig
+#   --park=DIR       where WordPress's own files go (default: beside the
+#                    webroot, in wp-parked)
 # ====================================================
 set -euo pipefail
 
 FORCE=false
 ENGINE_URL="https://github.com/austinginder/minn-engine/releases/latest/download/minn.zip"
 PARK=""
-VERSION="0.1.0"
+
+# The release keys a Minn engine trusts (Ops\EngineUpdate::KEYS: the working
+# key, then the offline recovery key). The install suite keeps them in step.
+MINN_KEYS=(
+    "+Usjnr1ZTudBbWToqYLkZ1Oy2yKN07d9+u62AIJ2FG8="
+    "QpNzSZpXf3TPiHs9mqur30xFrOXs/yFG4uNqBkVajQk="
+)
 
 for arg in "$@"; do
     case "$arg" in
@@ -66,16 +75,29 @@ find_webroot() {
 }
 
 find_php() {
-    local cmd ver
-    for cmd in php php8.4 php8.3 php8.2; do
-        if command -v "$cmd" >/dev/null 2>&1; then
-            ver="$("$cmd" -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || true)"
-            case "$ver" in
-                8.2|8.3|8.4|8.5|8.6) echo "$cmd"; return 0 ;;
-            esac
+    local cmd
+    for cmd in php php8.5 php8.4 php8.3; do
+        if command -v "$cmd" >/dev/null 2>&1 && "$cmd" -r 'exit(PHP_VERSION_ID >= 80300 ? 0 : 1);' 2>/dev/null; then
+            echo "$cmd"
+            return 0
         fi
     done
     return 1
+}
+
+# Exit 0 when one of the trusted keys signed the archive, 2 when PHP has no sodium.
+verify_signature() {
+    "$1" -r '
+        if (!function_exists("sodium_crypto_sign_verify_detached")) { exit(2); }
+        $zip = (string) file_get_contents($argv[1]);
+        $signature = base64_decode(trim((string) file_get_contents($argv[2])), true);
+        if ($signature === false || strlen($signature) !== SODIUM_CRYPTO_SIGN_BYTES) { exit(1); }
+        foreach (array_slice($argv, 3) as $key) {
+            $public = base64_decode($key, true);
+            if ($public !== false && strlen($public) === SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES && sodium_crypto_sign_verify_detached($signature, $zip, $public)) { exit(0); }
+        }
+        exit(1);
+    ' "$2" "$3" "${MINN_KEYS[@]}"
 }
 
 extract_zip() {
@@ -102,7 +124,7 @@ if [ -f "$WEBROOT/minn/bootstrap.php" ] && [ -f "$WEBROOT/wp-cli.yml" ] && grep 
     echo_error "Minn is already installed here. Status: php minn/bin/minn status $WEBROOT"
 fi
 
-PHP="$(find_php)" || echo_error "Need PHP 8.2 or newer on PATH (php, php8.4, php8.3, or php8.2)."
+PHP="$(find_php)" || echo_error "Need PHP 8.3 or newer on PATH (php, php8.5, php8.4, or php8.3)."
 echo_info "PHP: $PHP ($("$PHP" -r 'echo PHP_VERSION;'))"
 
 if ! command -v curl >/dev/null 2>&1; then
@@ -113,10 +135,23 @@ WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/minn-install.XXXXXX")"
 cleanup() { rm -rf "$WORKDIR"; }
 trap cleanup EXIT
 
-echo_info "Downloading Minn v${VERSION} from $ENGINE_URL"
+echo_info "Downloading Minn from $ENGINE_URL"
 if ! curl -L --fail --progress-bar "$ENGINE_URL" -o "$WORKDIR/minn.zip"; then
-    echo_error "Download failed. The v${VERSION} release zip is not up yet, or $ENGINE_URL is unreachable."
+    echo_error "Download failed. No release zip is up at $ENGINE_URL yet, or it is unreachable."
 fi
+if ! curl -L --fail --silent "${ENGINE_URL}.sig" -o "$WORKDIR/minn.zip.sig"; then
+    echo_error "The release has no signature at ${ENGINE_URL}.sig, so nothing is installed."
+fi
+set +e
+verify_signature "$PHP" "$WORKDIR/minn.zip" "$WORKDIR/minn.zip.sig"
+SIGNED=$?
+set -e
+if [ "$SIGNED" -eq 2 ]; then
+    echo_error "This PHP has no sodium extension, so the release signature cannot be checked and nothing is installed."
+elif [ "$SIGNED" -ne 0 ]; then
+    echo_error "The download is not signed with a Minn release key, so nothing is installed."
+fi
+echo_info "Signature checked: signed with a Minn release key."
 
 extract_zip "$WORKDIR/minn.zip" "$WORKDIR/extracted" "$PHP"
 
@@ -137,15 +172,6 @@ if [ ! -f "$ENGINE_SRC/bin/minn" ]; then
     echo_error "The zip is missing minn/bin/minn."
 fi
 
-echo_info "Preflight"
-set +e
-"$PHP" "$ENGINE_SRC/bin/minn" preflight "$WEBROOT"
-PREFLIGHT=$?
-set -e
-if [ "$PREFLIGHT" -ne 0 ] && [ "$FORCE" != true ]; then
-    echo_error "Preflight is RED. Fix the items above, or re-run with --force."
-fi
-
 INSTALL_ARGS=(install "$WEBROOT")
 if [ "$FORCE" = true ]; then
     INSTALL_ARGS+=(--force)
@@ -154,8 +180,10 @@ if [ -n "$PARK" ]; then
     INSTALL_ARGS+=(--park="$PARK")
 fi
 
-echo_info "Installing Minn into $WEBROOT"
-"$PHP" "$ENGINE_SRC/bin/minn" "${INSTALL_ARGS[@]}"
+echo_info "Installing Minn into $WEBROOT (preflight first)"
+if ! "$PHP" "$ENGINE_SRC/bin/minn" "${INSTALL_ARGS[@]}"; then
+    echo_error "Minn is not installed; the reason is above."
+fi
 
 echo "--------------------------------------------------"
 echo_success "Minn is installed."

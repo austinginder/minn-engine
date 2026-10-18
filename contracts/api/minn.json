@@ -25611,7 +25611,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Preflight.php",
-            "lines": 417,
+            "lines": 427,
             "doc": "What a site will and will not get from the engine, before anything\nmoves: the config it can read, the database it can reach, the theme's\nkind, the plugins the extensions cover, and the content survey (the\nshortcodes, third-party blocks, menus, extra tables, and extra post\ntypes in the database). Every finding is a light; the worst decides.",
             "implements": [],
             "extends": null,
@@ -25715,7 +25715,7 @@
                         }
                     ],
                     "line": 42,
-                    "end": 72
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -25741,8 +25741,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 94
+                    "line": 87,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -25750,7 +25750,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "readConfig(string $file): array",
-                    "doc": "The database constants and prefix, read from the file as text: nothing in it runs.",
+                    "doc": "The database constants, WP_HOME and the prefix, read from the file as text: nothing in it runs.",
                     "shapes": [],
                     "params": [
                         {
@@ -25761,8 +25761,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 125
+                    "line": 103,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -25788,8 +25788,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 139
+                    "line": 141,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -25817,8 +25817,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 151
+                    "line": 152,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -25846,8 +25846,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 183
+                    "line": 164,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -25876,8 +25876,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 252
+                    "line": 203,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -25926,8 +25926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 288
+                    "line": 272,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -25948,8 +25948,8 @@
                             "doc": "the first five, and how many more"
                         }
                     ],
-                    "line": 294,
-                    "end": 297
+                    "line": 304,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -26000,8 +26000,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 314
+                    "line": 318,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -26043,8 +26043,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 356
+                    "line": 327,
+                    "end": 366
                 },
                 {
                     "routes": [],
@@ -26070,8 +26070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 383
+                    "line": 368,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -26097,8 +26097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 385,
-                    "end": 401
+                    "line": 395,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -26133,8 +26133,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 424
+                    "line": 414,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -26160,8 +26160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 433
+                    "line": 436,
+                    "end": 443
                 },
                 {
                     "routes": [],
@@ -26180,8 +26180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 435,
-                    "end": 438
+                    "line": 445,
+                    "end": 448
                 }
             ]
         },

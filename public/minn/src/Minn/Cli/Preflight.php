@@ -61,7 +61,13 @@ final class Preflight
         }
         $this->light('GREEN', "database {$config['DB_NAME']} reachable, prefix {$config['prefix']}");
         $option = self::optionReader($db, $config['prefix']);
-        $this->say('  home ' . ($option('home') ?? '?') . ', permalinks ' . ($option('permalink_structure') ?: '(plain)'));
+        $home = $option('home') ?? '?';
+        if (isset($config['WP_HOME']) && rtrim($config['WP_HOME'], '/') !== rtrim($home, '/')) {
+            $home = "{$config['WP_HOME']} (WP_HOME in wp-config.php; the database says {$home})";
+        } elseif (!isset($config['WP_HOME']) && $config['homeInConfig']) {
+            $home .= ' in the database (wp-config.php sets WP_HOME)';
+        }
+        $this->say("  home {$home}, permalinks " . ($option('permalink_structure') ?: '(plain)'));
 
         $this->preflightTheme($root, $option);
         [$coveredShortcodes, $coveredBlocks, $coveredTypes] = $this->preflightPlugins($root, $option);
@@ -93,18 +99,22 @@ final class Preflight
         return 'none';
     }
 
-    /** The database constants and prefix, read from the file as text: nothing in it runs. */
+    /** The database constants, WP_HOME and the prefix, read from the file as text: nothing in it runs. */
     private static function readConfig(string $file): array
     {
         $source = (string) file_get_contents($file);
-        $config = ['prefix' => 'wp_'];
-        if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+)[\'"]\s*,\s*[\'"](.*?)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
+        // Docker official image: extra defines (WP_HOME among them) come from an environment variable.
+        if (str_contains($source, 'WORDPRESS_CONFIG_EXTRA')) {
+            $source .= "\n" . self::env('WORDPRESS_CONFIG_EXTRA', '');
+        }
+        $config = ['prefix' => 'wp_', 'homeInConfig' => (bool) preg_match('/define\s*\(\s*[\'"]WP_HOME[\'"]/', $source)];
+        if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+|WP_HOME)[\'"]\s*,\s*[\'"](.*?)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
             foreach ($m as $pair) {
                 $config[$pair[1]] = stripslashes($pair[2]);
             }
         }
         // Docker official image: define('DB_NAME', getenv('WORDPRESS_DB_NAME'))
-        if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+)[\'"]\s*,\s*getenv\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
+        if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+|WP_HOME)[\'"]\s*,\s*getenv\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
             foreach ($m as $pair) {
                 $value = self::env($pair[2]);
                 if ($value !== null) {
@@ -113,7 +123,7 @@ final class Preflight
             }
         }
         // Docker official image: define('DB_NAME', getenv_docker('WORDPRESS_DB_NAME', 'wordpress'))
-        if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+)[\'"]\s*,\s*getenv_docker\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]*)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
+        if (preg_match_all('/define\s*\(\s*[\'"](DB_[A-Z_]+|WP_HOME)[\'"]\s*,\s*getenv_docker\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]*)[\'"]\s*\)/', $source, $m, PREG_SET_ORDER)) {
             foreach ($m as $pair) {
                 $config[$pair[1]] = self::env($pair[2], stripslashes($pair[3]));
             }

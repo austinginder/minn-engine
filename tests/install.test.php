@@ -86,6 +86,9 @@ foreach ($stubs as $file => $content) {
 }
 $before = $tree($WEBROOT);
 $configBefore = md5_file("$WEBROOT/wp-config.php");
+// A second copy for the curl installer, at the end.
+mkdir("$SCRATCH/sh");
+exec('cp -a ' . escapeshellarg($WEBROOT) . ' ' . escapeshellarg("$SCRATCH/sh/public"));
 
 [$out, $code] = $minn('status ' . escapeshellarg($WEBROOT));
 $check('status reads a WordPress webroot', $code === 0 && str_contains($out, ': wordpress'), $out);
@@ -107,6 +110,15 @@ $check('preflight reports no extra tables on the engine site', str_contains($out
 $check('preflight reports no extra post types on the engine site', str_contains($out, 'no extra post types'), $out);
 [$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
 $check('eject refuses a WordPress webroot', $code === 1 && str_contains($out, 'not installed'), $out);
+
+[$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=/dev/null/wp-parked');
+$check('a park folder that cannot be made is refused with the way out, and no PHP warning', $code === 1 && str_contains($out, 'cannot create /dev/null/wp-parked') && str_contains($out, '--park=<dir>') && !str_contains($out, 'Warning') && $tree($WEBROOT) === $before, $out);
+$readConfig = new ReflectionMethod(Minn\Cli\Preflight::class, 'readConfig');
+file_put_contents("$SCRATCH/home-config.php", "<?php\ndefine( 'DB_NAME', 'x' );\ndefine( 'WP_HOME', 'https://example.org' );\n");
+file_put_contents("$SCRATCH/home-expr-config.php", "<?php\ndefine( 'DB_NAME', 'x' );\ndefine( 'WP_HOME', 'https://' . \$_SERVER['HTTP_HOST'] );\n");
+$homeConfig = $readConfig->invoke(null, "$SCRATCH/home-config.php");
+$homeExpr = $readConfig->invoke(null, "$SCRATCH/home-expr-config.php");
+$check('preflight reads WP_HOME from wp-config.php, and knows when it is set in a way it cannot read', ($homeConfig['WP_HOME'] ?? '') === 'https://example.org' && !isset($homeExpr['WP_HOME']) && $homeExpr['homeInConfig'] === true, json_encode([$homeConfig, $homeExpr]));
 
 [$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=' . escapeshellarg($PARK));
 $check('install succeeds', $code === 0 && str_contains($out, 'Installed.'), $out);
@@ -237,6 +249,45 @@ $check(
     $manifest !== null && $manifest->shortcodes === ['eeb_protect_content'] && $manifest->blocks === ['jetpack/slideshow', 'mosne/dark-palette'] && ($manifest->types[0]['slug'] ?? '') === 'zz_note',
     json_encode($manifest),
 );
+
+// The curl installer (minn.run/install): it installs only an archive signed with a key the engine trusts.
+$script = (string) file_get_contents("$ROOT/install.sh");
+preg_match('/^MINN_KEYS=\((.*?)^\)/ms', $script, $keyBlock);
+preg_match_all('/"([A-Za-z0-9+\/=]{44})"/', $keyBlock[1] ?? '', $scriptKeys);
+$check('the curl installer trusts exactly the release keys the engine trusts', $scriptKeys[1] === Minn\Ops\EngineUpdate::KEYS, json_encode($scriptKeys[1]));
+$shRoot = "$SCRATCH/sh/public";
+$shBefore = $tree($shRoot);
+$curlInstall = static function (string $zip, string $extra = '') use ($ROOT, $shRoot): array {
+    exec('cd ' . escapeshellarg($shRoot) . ' && bash ' . escapeshellarg("$ROOT/install.sh") . ' --engine-url=' . escapeshellarg('file://' . $zip) . " {$extra} 2>&1", $out, $code);
+    return [implode("\n", $out), $code];
+};
+$fake = "$SCRATCH/fake-release";
+mkdir("$fake/minn/bin", 0755, true);
+file_put_contents("$fake/minn/bootstrap.php", "<?php\n");
+file_put_contents("$fake/minn/bin/minn", "<?php\nfile_put_contents(getcwd() . '/ran', 'yes');\n");
+exec('cd ' . escapeshellarg($fake) . ' && zip -qr ../fake.zip minn');
+[$out, $code] = $curlInstall("$SCRATCH/fake.zip");
+$check('the curl installer refuses a release with no signature', $code !== 0 && str_contains($out, 'has no signature') && $tree($shRoot) === $shBefore, $out);
+file_put_contents("$SCRATCH/fake.zip.sig", base64_encode(random_bytes(SODIUM_CRYPTO_SIGN_BYTES)) . "\n");
+[$out, $code] = $curlInstall("$SCRATCH/fake.zip");
+$check('the curl installer refuses a release signed with no trusted key', $code !== 0 && str_contains($out, 'not signed with a Minn release key') && $tree($shRoot) === $shBefore && !is_file("$shRoot/ran"), $out);
+$release = getenv('MINN_TEST_RELEASE_ZIP') ?: "$ROOT/dist/minn.zip";
+$signedRelease = is_file($release) && is_file("{$release}.sig");
+if ($signedRelease) {
+    try {
+        (new Minn\Ops\EngineUpdate($ENGINE_DIR))->verify((string) file_get_contents($release), hash_file('sha256', $release), trim((string) file_get_contents("{$release}.sig")), 'test');
+    } catch (Throwable) {
+        $signedRelease = false;
+    }
+}
+if ($signedRelease) {
+    [$out, $code] = $curlInstall($release, '--park=' . escapeshellarg("$SCRATCH/sh/wp-parked"));
+    $check('the curl installer checks a signed release and installs it', $code === 0 && str_contains($out, 'Signature checked') && str_contains($out, 'Minn is installed') && is_file("$shRoot/minn/bootstrap.php"), $out);
+    [$out, $code] = $minn('eject ' . escapeshellarg($shRoot));
+    $check('and eject puts that webroot back as it was', $code === 0 && $tree($shRoot) === $shBefore, $out);
+} else {
+    echo "  skip the signed curl install: no signed release at {$release} (php scripts/build-release.php)\n";
+}
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

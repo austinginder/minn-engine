@@ -182,8 +182,8 @@ final class Installer
             $this->say("Install refused: {$park} exists and is not empty. Pass --park=<dir>.");
             return 1;
         }
-        if (!is_dir($park) && !mkdir($park, 0755, true)) {
-            $this->say("Install refused: cannot create {$park}.");
+        if (!is_dir($park) && !@mkdir($park, 0755, true)) {
+            $this->say("Install refused: cannot create {$park}, as this user cannot write to " . dirname($park) . '. Pass --park=<dir> with a folder this user can write, outside the webroot.');
             return 1;
         }
         $moved = [];

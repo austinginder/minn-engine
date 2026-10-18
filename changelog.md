@@ -6,7 +6,7 @@ The first release of Minn, a from-scratch, MIT-licensed engine for an existing W
 
 ### Added
 
-* **Install and eject in one command each.** From the folder that holds `wp-config.php`, `bash <(curl -sL https://minn.run/install)` runs a preflight (the theme, plugins, shortcodes, blocks and extra tables Minn will and will not serve, each GREEN, AMBER or RED), parks WordPress's own files beside the webroot, and puts Minn in their place. `php minn/bin/minn eject .` puts WordPress back. Nothing in `wp-config.php`, `wp-content/` or the database changes either way.
+* **Install and eject in one command each.** From the folder that holds `wp-config.php`, `bash <(curl -sL https://minn.run/install)` checks the download's signature against Minn's release keys, runs a preflight (the theme, plugins, shortcodes, blocks and extra tables Minn will and will not serve, each GREEN, AMBER or RED), parks WordPress's own files beside the webroot, and puts Minn in their place. `php minn/bin/minn eject .` puts WordPress back. Nothing in `wp-config.php`, `wp-content/` or the database changes either way.
 
 * **Visitors read the site.** Pretty permalinks, page hierarchies, category, tag, author and date archives, search, pagination, feeds, sitemaps, embeds, comments and the redirects WordPress makes all resolve as WordPress resolves them. Block themes render through their templates, parts, patterns and theme.json styles, and classic themes run their PHP templates.
 

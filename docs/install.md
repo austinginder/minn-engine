@@ -11,9 +11,16 @@ On a host, from the directory that contains `wp-config.php`:
 bash <(curl -sL https://minn.run/install)
 ```
 
-That script downloads the latest `minn.zip` release (the `public/minn/` tree,
-Minn Admin bundled at `minn/admin`), runs preflight, and hands off to
-`php minn/bin/minn install`. Flags: `--force`, `--engine-url=URL`, `--park=DIR`.
+That script needs PHP 8.3 or newer with sodium. It downloads the latest
+`minn.zip` release (the `public/minn/` tree, Minn Admin bundled at
+`minn/admin`) and its `minn.zip.sig`, and installs nothing unless the archive
+carries an Ed25519 signature from one of the release keys built into the
+script (the same keys as `Ops\EngineUpdate::KEYS`; the install suite keeps
+them in step). Then it hands off to `php minn/bin/minn install`, which runs
+preflight first. Flags: `--force`, `--engine-url=URL` (its signature is read
+from `URL.sig`), `--park=DIR` (WordPress's own files go beside the webroot in
+`wp-parked` unless named; a folder the user cannot create is refused with this
+hint).
 The installer lives at the repo root as `install.sh` and is served from
 https://minn.run/install.
 
