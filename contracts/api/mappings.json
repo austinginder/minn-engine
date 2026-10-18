@@ -45197,7 +45197,7 @@
         },
         "dynamic_sidebar": {
             "file": "widgets.php",
-            "lines": 27,
+            "lines": 28,
             "kind": "composes",
             "minn": [],
             "composes": [

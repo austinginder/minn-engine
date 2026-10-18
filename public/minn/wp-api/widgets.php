@@ -184,7 +184,8 @@ function is_dynamic_sidebar()
 
 function dynamic_sidebar($index = 1)
 {
-    $index = is_int($index) ? "sidebar-{$index}" : sanitize_title((string) $index);
+    // A sidebar is found by its name as well as its id, the name first (Enfold asks for 'Sidebar Blog', id av_blog; probe sidebar-names).
+    $index = is_int($index) ? "sidebar-{$index}" : (array_search(sanitize_title((string) $index), array_map(static fn (array $sidebar): string => sanitize_title((string) ($sidebar['name'] ?? '')), (array) ($GLOBALS['wp_registered_sidebars'] ?? [])), true) ?: sanitize_title((string) $index));
     $sidebars = wp_get_sidebars_widgets();
     if (!isset($GLOBALS['wp_registered_sidebars'][$index]) || empty($sidebars[$index])) {
         do_action('dynamic_sidebar_before', $index, false);

@@ -17264,6 +17264,18 @@ a table that exists followed on the same line by another read the second as
 the first's columns, and with `$execute` true would have added them to the
 existing table.
 
+## A sidebar asked for by its name (2026-10-18)
+
+Enfold and Avada print their sidebars by name (`dynamic_sidebar('Sidebar
+Blog')` for the sidebar registered with the id `av_blog`), and on a Minn site
+those sidebars printed nothing: the engine read the string only as an id.
+As the reference does it (probe `sidebar-names`): `dynamic_sidebar()` finds a
+sidebar by its name as well as its id, the name compared as sanitize_title()
+makes it (so case and spacing do not matter), a name match first; a number
+names `sidebar-N`, a number written as a string does not;
+`is_active_sidebar()` takes the id only. Rerun in the hunt lab, Enfold's front
+page is 99.9% alike and Avada's 98.4%, the widgets in place.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

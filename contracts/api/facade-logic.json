@@ -14450,7 +14450,7 @@
         },
         "_minn_rss_widget_item": {
             "file": "widgets.php",
-            "line": 320,
+            "line": 321,
             "statements": 11,
             "lines": 16
         },
@@ -14702,13 +14702,13 @@
         },
         "_minn_widget_nav": {
             "file": "widgets.php",
-            "line": 375,
+            "line": 376,
             "statements": 2,
             "lines": 2
         },
         "_minn_widget_nav_label": {
             "file": "widgets.php",
-            "line": 386,
+            "line": 387,
             "statements": 4,
             "lines": 6
         },
@@ -15116,7 +15116,7 @@
         },
         "_wp_block_theme_register_classic_sidebars": {
             "file": "widgets.php",
-            "line": 458,
+            "line": 459,
             "statements": 2,
             "lines": 4
         },
@@ -15434,7 +15434,7 @@
         },
         "_wp_remove_unregistered_widgets": {
             "file": "widgets.php",
-            "line": 446,
+            "line": 447,
             "statements": 3,
             "lines": 7
         },
@@ -18464,7 +18464,7 @@
         },
         "is_active_widget": {
             "file": "widgets.php",
-            "line": 216,
+            "line": 217,
             "statements": 2,
             "lines": 13
         },
@@ -18812,7 +18812,7 @@
         },
         "next_widget_id_number": {
             "file": "widgets.php",
-            "line": 500,
+            "line": 501,
             "statements": 3,
             "lines": 7
         },
@@ -19130,7 +19130,7 @@
         },
         "register_sidebar_widget": {
             "file": "widgets.php",
-            "line": 512,
+            "line": 513,
             "statements": 3,
             "lines": 3
         },
@@ -19166,7 +19166,7 @@
         },
         "register_widget_control": {
             "file": "widgets.php",
-            "line": 520,
+            "line": 521,
             "statements": 3,
             "lines": 3
         },
@@ -20708,7 +20708,7 @@
         },
         "wp_check_widget_editor_deps": {
             "file": "widgets.php",
-            "line": 467,
+            "line": 468,
             "statements": 3,
             "lines": 9
         },
@@ -20780,7 +20780,7 @@
         },
         "wp_convert_widget_settings": {
             "file": "widgets.php",
-            "line": 243,
+            "line": 244,
             "statements": 6,
             "lines": 17
         },
@@ -22358,7 +22358,7 @@
         },
         "wp_map_sidebars_widgets": {
             "file": "widgets.php",
-            "line": 492,
+            "line": 493,
             "statements": 3,
             "lines": 3
         },
@@ -23474,7 +23474,7 @@
         },
         "wp_sidebar_description": {
             "file": "widgets.php",
-            "line": 439,
+            "line": 440,
             "statements": 2,
             "lines": 2
         },
@@ -23882,13 +23882,13 @@
         },
         "wp_widget_rss_output": {
             "file": "widgets.php",
-            "line": 287,
+            "line": 288,
             "statements": 9,
             "lines": 28
         },
         "wp_widget_rss_process": {
             "file": "widgets.php",
-            "line": 340,
+            "line": 341,
             "statements": 11,
             "lines": 20
         },

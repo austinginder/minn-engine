@@ -22091,8 +22091,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "renders a sidebar's widgets in turn (params, before_widget, its filters and actions); the loop beside WidgetAreas::render",
-                "body": "404681302216"
+                "why": "renders a sidebar's widgets in turn (params, before_widget, its filters and actions); the loop beside WidgetAreas::render; a sidebar is found by its name as well as its id (probe sidebar-names)",
+                "body": "08d61f2d84ce"
             },
             "is_active_sidebar": {
                 "verdict": "move",

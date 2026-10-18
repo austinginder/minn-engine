@@ -1,0 +1,148 @@
+[
+    [
+        "dynamic_sidebar('zz_probe_blog')",
+        [
+            true,
+            [
+                "zz-probe-widget"
+            ],
+            true
+        ]
+    ],
+    [
+        "is_active_sidebar('zz_probe_blog')",
+        true
+    ],
+    [
+        "dynamic_sidebar('Zz Probe Blog')",
+        [
+            true,
+            [
+                "zz-probe-widget"
+            ],
+            true
+        ]
+    ],
+    [
+        "is_active_sidebar('Zz Probe Blog')",
+        false
+    ],
+    [
+        "dynamic_sidebar('zz probe blog')",
+        [
+            true,
+            [
+                "zz-probe-widget"
+            ],
+            true
+        ]
+    ],
+    [
+        "is_active_sidebar('zz probe blog')",
+        false
+    ],
+    [
+        "dynamic_sidebar('ZZ PROBE BLOG')",
+        [
+            true,
+            [
+                "zz-probe-widget"
+            ],
+            true
+        ]
+    ],
+    [
+        "is_active_sidebar('ZZ PROBE BLOG')",
+        false
+    ],
+    [
+        "dynamic_sidebar('Zz-Probe-Blog')",
+        [
+            true,
+            [
+                "zz-probe-widget"
+            ],
+            true
+        ]
+    ],
+    [
+        "is_active_sidebar('Zz-Probe-Blog')",
+        false
+    ],
+    [
+        "dynamic_sidebar('Zz Probe Empty')",
+        [
+            false,
+            [],
+            false
+        ]
+    ],
+    [
+        "is_active_sidebar('Zz Probe Empty')",
+        false
+    ],
+    [
+        "dynamic_sidebar('zz_probe_empty')",
+        [
+            false,
+            [],
+            false
+        ]
+    ],
+    [
+        "is_active_sidebar('zz_probe_empty')",
+        false
+    ],
+    [
+        "dynamic_sidebar(77)",
+        [
+            true,
+            [
+                "zz-probe-widget"
+            ],
+            true
+        ]
+    ],
+    [
+        "is_active_sidebar(77)",
+        true
+    ],
+    [
+        "dynamic_sidebar('77')",
+        [
+            false,
+            [],
+            false
+        ]
+    ],
+    [
+        "is_active_sidebar('77')",
+        false
+    ],
+    [
+        "dynamic_sidebar('Zz Probe Numbered')",
+        [
+            true,
+            [
+                "zz-probe-widget"
+            ],
+            true
+        ]
+    ],
+    [
+        "is_active_sidebar('Zz Probe Numbered')",
+        false
+    ],
+    [
+        "dynamic_sidebar('No Such Sidebar')",
+        [
+            false,
+            [],
+            false
+        ]
+    ],
+    [
+        "is_active_sidebar('No Such Sidebar')",
+        false
+    ]
+]
