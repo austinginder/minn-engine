@@ -7,13 +7,19 @@ namespace Minn\Front;
 /**
  * What the sitemaps share with WP_Sitemaps, which serves them: the two
  * stylesheets browsers get when they open a sitemap, their CSS
- * (wp_sitemaps_stylesheet_css filters it), and the date form an entry's
- * lastmod takes.
+ * (wp_sitemaps_stylesheet_css filters it), the date form an entry's
+ * lastmod takes, and the line robots.txt names the index by.
  */
 final class Sitemaps
 {
     /** The stylesheets' own CSS (wp_sitemaps_stylesheet_css filters it when plugins are loaded). */
     public const CSS = 'body{font:15px/1.5 sans-serif;margin:2em}table{border-collapse:collapse}td{padding:.35em 1em .35em 0;border-bottom:1px solid #ddd}';
+
+    /** robots.txt with the index's Sitemap line after it, on a public site; as it was on one hidden from search. */
+    public static function robots(string $output, bool $public, string $indexUrl): string
+    {
+        return $public ? $output . "\nSitemap: {$indexUrl}\n" : $output;
+    }
 
     /** The engine's own stylesheet for browsers that open a sitemap. */
     public static function stylesheet(string $css = self::CSS): string

@@ -41573,7 +41573,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 334,
+            "lines": 335,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -41821,7 +41821,7 @@
                         }
                     ],
                     "line": 182,
-                    "end": 195
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -41847,8 +41847,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 220
+                    "line": 205,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -41874,8 +41874,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 254
+                    "line": 233,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -41894,8 +41894,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 261
+                    "line": 258,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -41921,8 +41921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 332
+                    "line": 264,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -42018,8 +42018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 402
+                    "line": 336,
+                    "end": 403
                 }
             ]
         },
@@ -50301,6 +50301,7 @@
                 "Minn\\Cron\\Cron",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PrintedResponse",
+                "Minn\\Front\\Sitemaps",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
@@ -53768,12 +53769,14 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/Sitemaps.php",
-            "lines": 34,
-            "doc": "What the sitemaps share with WP_Sitemaps, which serves them: the two\nstylesheets browsers get when they open a sitemap, their CSS\n(wp_sitemaps_stylesheet_css filters it), and the date form an entry's\nlastmod takes.",
+            "lines": 40,
+            "doc": "What the sitemaps share with WP_Sitemaps, which serves them: the two\nstylesheets browsers get when they open a sitemap, their CSS\n(wp_sitemaps_stylesheet_css filters it), the date form an entry's\nlastmod takes, and the line robots.txt names the index by.",
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Front\\ProbeController"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -53786,6 +53789,40 @@
             ],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "robots",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "robots(string $output, bool $public, string $indexUrl): string",
+                    "doc": "robots.txt with the index's Sitemap line after it, on a public site; as it was on one hidden from search.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "output",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "public",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "indexUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 22
+                },
                 {
                     "routes": [],
                     "name": "stylesheet",
@@ -53803,8 +53840,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 19,
-                    "end": 22
+                    "line": 25,
+                    "end": 28
                 },
                 {
                     "routes": [],
@@ -53823,8 +53860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 28
+                    "line": 31,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -53843,8 +53880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 45
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -53870,8 +53907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 39
+                    "line": 36,
+                    "end": 45
                 }
             ]
         },

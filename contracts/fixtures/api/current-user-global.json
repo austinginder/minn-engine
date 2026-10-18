@@ -1,0 +1,37 @@
+[
+    [
+        "the global is the current user",
+        true
+    ],
+    [
+        "after wp_set_current_user(1)",
+        {
+            "the global": 1,
+            "is the object returned": true,
+            "is wp_get_current_user()": true,
+            "allcaps an array": true,
+            "manage_options in allcaps": true,
+            "administrator in allcaps": true
+        }
+    ],
+    [
+        "the same user again is the same object",
+        true
+    ],
+    [
+        "after wp_set_current_user(3)",
+        [
+            true,
+            3,
+            3
+        ]
+    ],
+    [
+        "after wp_set_current_user(0)",
+        [
+            true,
+            0,
+            false
+        ]
+    ]
+]

@@ -580,9 +580,13 @@ endif;
 if (!function_exists('wp_set_current_user')) :
 function wp_set_current_user($id, $name = '')
 {
-    $user = new WP_User($id, $name);
-    Runtime::current()->set('current_user', $user);
-    do_action('set_current_user');
+    // The same user again is the same object; plugins read the user from the global (probe current-user-global).
+    $user = Runtime::current()->get('current_user');
+    if (!$user instanceof WP_User || $id === null || (int) $id !== $user->ID) {
+        $user = $GLOBALS['current_user'] = new WP_User($id, $name);
+        Runtime::current()->set('current_user', $user);
+        do_action('set_current_user');
+    }
     return $user;
 }
 endif;

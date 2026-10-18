@@ -3,10 +3,10 @@
     "summary": {
         "functions": 3493,
         "methods": 3806,
-        "delegates": 3441,
+        "delegates": 3442,
         "logicFunctions": 1828,
-        "logicMethods": 2030,
-        "logicLines": 30297,
+        "logicMethods": 2029,
+        "logicLines": 30296,
         "kept": 0
     },
     "byFile": {
@@ -92,7 +92,7 @@
         },
         "pluggable.php": {
             "logic": 40,
-            "lines": 349
+            "lines": 352
         },
         "classes/wpdb.php": {
             "logic": 45,
@@ -214,13 +214,13 @@
             "logic": 21,
             "lines": 169
         },
-        "classes/WP_Sitemaps.php": {
-            "logic": 30,
-            "lines": 165
-        },
         "http.php": {
             "logic": 26,
             "lines": 165
+        },
+        "classes/WP_Sitemaps.php": {
+            "logic": 29,
+            "lines": 161
         },
         "bookmark.php": {
             "logic": 14,
@@ -10428,12 +10428,6 @@
             "statements": 3,
             "lines": 3
         },
-        "WP_Sitemaps::add_robots": {
-            "file": "classes/WP_Sitemaps.php",
-            "line": 65,
-            "statements": 2,
-            "lines": 4
-        },
         "WP_Sitemaps::init": {
             "file": "classes/WP_Sitemaps.php",
             "line": 27,
@@ -10448,157 +10442,157 @@
         },
         "WP_Sitemaps_Index::get_index_url": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 128,
+            "line": 125,
             "statements": 2,
             "lines": 4
         },
         "WP_Sitemaps_Index::get_sitemap_list": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 114,
+            "line": 111,
             "statements": 3,
             "lines": 10
         },
         "WP_Sitemaps_Posts::__construct": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 275,
+            "line": 272,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Posts::get_max_num_pages": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 306,
+            "line": 303,
             "statements": 6,
             "lines": 10
         },
         "WP_Sitemaps_Posts::get_object_subtypes": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 281,
+            "line": 278,
             "statements": 4,
             "lines": 4
         },
         "WP_Sitemaps_Posts::get_posts_query_args": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 320,
+            "line": 317,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Posts::get_url_list": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 289,
+            "line": 286,
             "statements": 7,
             "lines": 13
         },
         "WP_Sitemaps_Provider::get_sitemap_entries": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 239,
+            "line": 236,
             "statements": 3,
             "lines": 8
         },
         "WP_Sitemaps_Provider::get_sitemap_type_data": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 225,
+            "line": 222,
             "statements": 5,
             "lines": 10
         },
         "WP_Sitemaps_Provider::get_sitemap_url": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 251,
+            "line": 248,
             "statements": 4,
             "lines": 11
         },
         "WP_Sitemaps_Registry::add_provider": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 79,
+            "line": 76,
             "statements": 5,
             "lines": 9
         },
         "WP_Sitemaps_Renderer::__construct": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 143,
+            "line": 140,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Renderer::get_sitemap_index_stylesheet_url": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 155,
+            "line": 152,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Renderer::get_sitemap_stylesheet_url": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 149,
+            "line": 146,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Renderer::render_index": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 161,
+            "line": 158,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Renderer::render_sitemap": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 172,
+            "line": 169,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Stylesheet::render_stylesheet": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 188,
+            "line": 185,
             "statements": 3,
             "lines": 7
         },
         "WP_Sitemaps_Taxonomies::__construct": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 330,
+            "line": 327,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Taxonomies::get_max_num_pages": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 360,
+            "line": 357,
             "statements": 4,
             "lines": 8
         },
         "WP_Sitemaps_Taxonomies::get_object_subtypes": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 336,
+            "line": 333,
             "statements": 3,
             "lines": 3
         },
         "WP_Sitemaps_Taxonomies::get_taxonomies_query_args": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 372,
+            "line": 369,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Taxonomies::get_url_list": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 343,
+            "line": 340,
             "statements": 6,
             "lines": 13
         },
         "WP_Sitemaps_Users::__construct": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 382,
+            "line": 379,
             "statements": 2,
             "lines": 2
         },
         "WP_Sitemaps_Users::get_max_num_pages": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 401,
+            "line": 398,
             "statements": 3,
             "lines": 5
         },
         "WP_Sitemaps_Users::get_url_list": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 388,
+            "line": 385,
             "statements": 5,
             "lines": 9
         },
         "WP_Sitemaps_Users::get_users_query_args": {
             "file": "classes/WP_Sitemaps.php",
-            "line": 410,
+            "line": 407,
             "statements": 3,
             "lines": 3
         },
@@ -17192,7 +17186,7 @@
         },
         "get_currentuserinfo": {
             "file": "pluggable.php",
-            "line": 671,
+            "line": 675,
             "statements": 2,
             "lines": 2
         },
@@ -18248,13 +18242,13 @@
         },
         "get_user_by": {
             "file": "pluggable.php",
-            "line": 605,
+            "line": 609,
             "statements": 5,
             "lines": 7
         },
         "get_user_by_email": {
             "file": "pluggable.php",
-            "line": 662,
+            "line": 666,
             "statements": 2,
             "lines": 2
         },
@@ -18266,7 +18260,7 @@
         },
         "get_userdatabylogin": {
             "file": "pluggable.php",
-            "line": 653,
+            "line": 657,
             "statements": 2,
             "lines": 2
         },
@@ -19676,7 +19670,7 @@
         },
         "set_current_user": {
             "file": "pluggable.php",
-            "line": 680,
+            "line": 684,
             "statements": 2,
             "lines": 2
         },
@@ -20750,7 +20744,7 @@
         },
         "wp_clearcookie": {
             "file": "pluggable.php",
-            "line": 699,
+            "line": 703,
             "statements": 2,
             "lines": 2
         },
@@ -21248,7 +21242,7 @@
         },
         "wp_generate_password": {
             "file": "pluggable.php",
-            "line": 632,
+            "line": 636,
             "statements": 6,
             "lines": 12
         },
@@ -21416,7 +21410,7 @@
         },
         "wp_get_cookie_login": {
             "file": "pluggable.php",
-            "line": 708,
+            "line": 712,
             "statements": 2,
             "lines": 2
         },
@@ -22310,7 +22304,7 @@
         },
         "wp_login": {
             "file": "pluggable.php",
-            "line": 717,
+            "line": 721,
             "statements": 5,
             "lines": 7
         },
@@ -22772,7 +22766,7 @@
         },
         "wp_rand": {
             "file": "pluggable.php",
-            "line": 623,
+            "line": 627,
             "statements": 3,
             "lines": 3
         },
@@ -23379,8 +23373,8 @@
         "wp_set_current_user": {
             "file": "pluggable.php",
             "line": 581,
-            "statements": 4,
-            "lines": 4
+            "statements": 3,
+            "lines": 7
         },
         "wp_set_internal_encoding": {
             "file": "load.php",
@@ -23438,7 +23432,7 @@
         },
         "wp_setcookie": {
             "file": "pluggable.php",
-            "line": 689,
+            "line": 693,
             "statements": 3,
             "lines": 3
         },

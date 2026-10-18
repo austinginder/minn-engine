@@ -64,10 +64,7 @@ class WP_Sitemaps implements \Minn\Objects\SitemapServer
 
     public function add_robots($output, $is_public)
     {
-        if (!$is_public) {
-            return $output;
-        }
-        return $output . "\nSitemap: " . esc_url($this->index->get_index_url()) . "\n";
+        return Sitemaps::robots((string) $output, (bool) $is_public, esc_url($this->index->get_index_url()));
     }
 }
 

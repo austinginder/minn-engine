@@ -43,7 +43,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
 | [`SitemapRequest`](#sitemaprequest) | final class | 83 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
-| [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
+| [`Sitemaps`](#sitemaps) | final class | 40 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
 | [`TermLists`](#termlists) | final class | 134 | A term's parent chain and the tag cloud, built from term rows the caller |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
 | [`ToolbarMenus`](#toolbarmenus) | final class | 339 | The nodes WordPress puts on the toolbar itself, as the reference adds |
@@ -1498,10 +1498,16 @@ Internals: `elements()` (private, line 37), `element()` (private, line 53), `doc
 
 What the sitemaps share with WP_Sitemaps, which serves them: the two
 stylesheets browsers get when they open a sitemap, their CSS
-(wp_sitemaps_stylesheet_css filters it), and the date form an entry's
-lastmod takes.
+(wp_sitemaps_stylesheet_css filters it), the date form an entry's
+lastmod takes, and the line robots.txt names the index by.
 
 - const `CSS` = `'body{font:15px/1.5 sans-serif;margin:2em}table{border-collapse:collapse}td{padding:.35em 1em .35em 0;border-bottom:1px solid #ddd}'` — The stylesheets' own CSS (wp_sitemaps_stylesheet_css filters it when plugins are loaded).
+
+Used by: `Minn\Front\ProbeController`
+
+### static `robots(string $output, bool $public, string $indexUrl): string`
+
+robots.txt with the index's Sitemap line after it, on a public site; as it was on one hidden from search.
 
 ### static `stylesheet(string $css = self::CSS): string`
 
@@ -1515,7 +1521,7 @@ The stylesheet the sitemap index links: one column, the sitemaps.
 
 A GMT date as a sitemap dates it (W3C, UTC).
 
-Internals: `xsl()` (private, line 30)
+Internals: `xsl()` (private, line 36)
 
 
 ## TermLists

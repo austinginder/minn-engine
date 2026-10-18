@@ -47,7 +47,7 @@ final readonly class ProbeController
             }
         }
         $public = ($this->site->option('blog_public') ?? '1') !== '0';
-        $body = "User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n" . ($public ? "\nSitemap: " . $this->permalinks->url('/wp-sitemap.xml') . "\n" : '');
+        $body = Sitemaps::robots("User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n", $public, $this->permalinks->url('/wp-sitemap.xml'));
         return new Response(200, ['Content-Type' => 'text/plain; charset=utf-8'], $body);
     }
 

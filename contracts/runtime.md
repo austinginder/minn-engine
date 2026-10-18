@@ -17213,6 +17213,25 @@ priority now (probe `hook-priority`).
 Owed: `get_theme_data()` takes its `$options` but does not yet leave theme
 supports out for `with_supports => false`.
 
+## The $current_user global (2026-10-18)
+
+WordPress keeps the current user in the `$current_user` global, and plugin
+code reads it straight from there (`global $current_user;
+$current_user->allcaps`). The engine kept the user in runtime state only, so
+the global stayed null: Capability Manager Enhanced 500'd every signed-in page
+on `array_merge(null, ...)`. `wp_set_current_user()` now sets the global with
+the runtime's user, and, as the reference does, gives back the same object
+when asked for the user already current, without firing `set_current_user`
+again; the engine's nonce recheck clears both together (probe
+`current-user-global`). The facade review's doubt on it had named this.
+
+Still owed: the `setup_userdata` globals (`$user_ID`, `$userdata`,
+`$user_login` and the rest) are never set.
+
+`WP_Sitemaps::add_robots` became a delegate on the way: the robots.txt
+Sitemap line is `Front\Sitemaps::robots()`, which the engine's own robots.txt
+uses too.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17285,3 +17304,4 @@ rows that are `open` or `austin`.
 | 16961 | What the_content adds before core's defaults (10-16) | plain text a filter adds before priority 10 is not texturized or given paragraphs | open | engine work owed |
 | 17101 | Preset slugs in kebab case (10-18) | core's default font sizes printed when the theme no longer has their slugs (`defaultFontSizes: false`) | open | engine work owed |
 | 17101 | Methods keep the reference's shape (10-18) | `WP_Theme_JSON_Resolver::get_theme_data()` ignores `with_supports => false` | open | engine work owed |
+| 17101 | The $current_user global (10-18) | the `setup_userdata` globals (`$user_ID`, `$userdata`, `$user_login`, ...) | open | engine work owed |

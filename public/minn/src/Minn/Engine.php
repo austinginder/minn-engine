@@ -191,6 +191,7 @@ final readonly class Engine
         if ($refused && $session !== null && $runtime->reader->userId === 0) {
             $runtime->identify(Reader::forUser($session->id(), $runtime->capabilities, $runtime->reader->postPassword, $session->token));
             $runtime->set('current_user', null);
+            unset($GLOBALS['current_user']);
         }
     }
 

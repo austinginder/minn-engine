@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 686,
-        "composes": 2144,
+        "composes": 2143,
         "leaf": 1004,
-        "noop": 3148,
+        "noop": 3149,
         "placeholder": 0,
         "deadend": 1770,
         "functions": 8674,
-        "minnMethods": 1401,
+        "minnMethods": 1402,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -27691,9 +27691,11 @@
         },
         "WP_Sitemaps::add_robots": {
             "file": "classes/WP_Sitemaps.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\Sitemaps::robots"
+            ],
             "composes": [
                 "esc_url"
             ]
@@ -74811,10 +74813,11 @@
         },
         "wp_set_current_user": {
             "file": "pluggable.php",
-            "lines": 4,
+            "lines": 8,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
                 "Minn\\Runtime\\Runtime::set"
             ],
             "composes": [

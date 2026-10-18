@@ -9728,12 +9728,6 @@
                 "why": "fills the server's registry, renderer and index properties plugins read and replace",
                 "body": "5c092dcb72df"
             },
-            "WP_Sitemaps::add_robots": {
-                "verdict": "move",
-                "to": "Minn\\Front\\Sitemaps",
-                "why": "appends the Sitemap line with the index URL on a public site; ProbeController's plugin-less robots.txt builds the same line, so it belongs beside the engine's sitemap URLs, the robots_txt callback staying",
-                "body": "2b791ef51e2f"
-            },
             "WP_Sitemaps::init": {
                 "verdict": "keep",
                 "reason": "contract",
@@ -18488,9 +18482,9 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "makes a WP_User the request's in runtime state and fires set_current_user; the request's user is engine state CurrentUser settles",
-                "doubt": "the global $current_user and the setup_userdata globals are never set, and set_current_user fires even when that user is already current",
-                "body": "096a609e742e"
+                "why": "makes a WP_User the request's in runtime state and fires set_current_user; the request's user is engine state CurrentUser settles; the same user again is the same object, and the user is the $current_user global (probe current-user-global)",
+                "doubt": "the setup_userdata globals ($user_ID, $userdata, $user_login and the rest) are never set",
+                "body": "8686b4c801bf"
             },
             "wp_set_password": {
                 "verdict": "move",
