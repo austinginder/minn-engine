@@ -30,7 +30,7 @@ final readonly class PackagesController
     #[Route(Method::Get, '/minn-admin/v1/themes/search', policy: new Policy(Access::Floor, caps: ['install_themes']))]
     public function searchThemes(Request $request): Response
     {
-        return Reply::answer($request, ['themes' => $this->packages->searchThemes(trim((string) ($request->query('q') ?? '')))]);
+        return Reply::answer($request, ['themes' => $this->packages->searchThemes(trim(self::required($request, 'q')))]);
     }
 
     /** Installs a theme from the directory by slug. */
@@ -110,14 +110,20 @@ final readonly class PackagesController
     #[Route(Method::Get, '/minn-admin/v1/plugins/search', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
     public function searchPlugins(Request $request): Response
     {
-        return Reply::answer($request, $this->packages->searchPlugins(trim((string) ($request->query('q') ?? '')), (int) ($request->query('page') ?? 1)));
+        return Reply::answer($request, $this->packages->searchPlugins(trim(self::required($request, 'q')), (int) ($request->query('page') ?? 1)));
     }
 
     /** One directory plugin's details. */
     #[Route(Method::Get, '/minn-admin/v1/plugins/info', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
     public function pluginInfo(Request $request): Response
     {
-        return Reply::answer($request, $this->packages->pluginInfo(trim((string) ($request->query('slug') ?? ''))));
+        return Reply::answer($request, $this->packages->pluginInfo(trim(self::required($request, 'slug'))));
+    }
+
+    /** A parameter the plugin registers as required: absent, the reference's missing-parameter 400; empty, the handler's own answer. */
+    private static function required(Request $request, string $name): string
+    {
+        return (string) ($request->query($name) ?? throw RestError::missingParams([$name]));
     }
 
     private function uploaded(Request $request, string $kind): string

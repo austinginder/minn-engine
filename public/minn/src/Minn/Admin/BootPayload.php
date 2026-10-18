@@ -52,7 +52,7 @@ final readonly class BootPayload
         $role = $roles === [] ? '' : ($this->capabilities->roles()->all()[$roles[0]]['name'] ?? $roles[0]);
         $locale = $this->translations?->localeOf($userId) ?? ($this->site->option('WPLANG') ?: 'en_US');
         [$i18n, $plural] = $this->translations?->catalog($locale) ?? [[], ''];
-        $plugin = $this->pluginPayload();
+        $plugin = self::fromPlugin();
         // WooCommerce runs as code on the runtime; the Commerce views key off
         // these, and wc/v3 answers through the plugin's own REST controllers.
         $wc = self::commerce($plugin);
@@ -82,7 +82,8 @@ final readonly class BootPayload
             // No admin-ajax plugin toggles: the app falls back to PUT wp/v2/plugins.
             'pluginAjax' => null,
             'comments' => is_bool($plugin['comments'] ?? null) ? $plugin['comments'] : true,
-            'hidden' => $this->hidden->listFor($userId),
+            // The plugin's list while it runs as code: its registry holds what its adapters add.
+            'hidden' => $plugin['hidden'] ?? $this->hidden->listFor($userId),
             'pretty' => $this->permalinks->isPretty(),
             // The wp-admin pages the engine opens: those whose action a plugin answers itself (a
             // page builder's editor, post.php?action=elementor), while the Minn Legacy Pack supplies
@@ -209,15 +210,18 @@ final readonly class BootPayload
      * code on the runtime, so the app boots with the same keys on both
      * stacks (connectors, discussion defaults, roles, post formats, the
      * adapter flags). Engine-owned keys win; the withheld ones would send
-     * the app to a wp-admin page the engine does not have.
+     * the app to a wp-admin page the engine does not have. Null while the
+     * plugin is not running as code.
+     *
+     * @return array<string, mixed>|null
      */
-    private function pluginPayload(): ?array
+    public static function fromPlugin(): ?array
     {
         if (!class_exists('Minn_Admin', false) || !method_exists('Minn_Admin', 'boot_payload')) {
             return null;
         }
         try {
-            $this->standHomeQuery();
+            self::standHomeQuery();
             $payload = \Minn_Admin::boot_payload();
             return is_array($payload) ? $payload : null;
         } catch (\Throwable $e) {
@@ -233,7 +237,7 @@ final readonly class BootPayload
      * closes comments on old posts reports the feature off when its newest
      * post is old).
      */
-    private function standHomeQuery(): void
+    private static function standHomeQuery(): void
     {
         if (!function_exists('_minn_run_main_query')) {
             return;

@@ -1562,7 +1562,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BootPayload.php",
-            "lines": 253,
+            "lines": 257,
             "doc": "The window.MINN boot payload, assembled from the engine: the keys app.js\nneeds to boot and drive the wp/v2 surface, with capabilities from the\nengine's own model.",
             "implements": [],
             "extends": null,
@@ -1582,6 +1582,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\AppController",
+                "Minn\\Admin\\LanguageController",
                 "Minn\\Engine"
             ],
             "constructor": {
@@ -1796,7 +1797,21 @@
                         }
                     ],
                     "line": 48,
-                    "end": 97
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "fromPlugin",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromPlugin(): ?array",
+                    "doc": "What Minn Admin's own boot_payload() computes when the plugin runs as\ncode on the runtime, so the app boots with the same keys on both\nstacks (connectors, discussion defaults, roles, post formats, the\nadapter flags). Engine-owned keys win; the withheld ones would send\nthe app to a wp-admin page the engine does not have. Null while the\nplugin is not running as code.",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [],
+                    "line": 218,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -1824,8 +1839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 114
+                    "line": 101,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -1838,8 +1853,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 117,
-                    "end": 135
+                    "line": 118,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -1860,8 +1875,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 146
+                    "line": 144,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -1889,32 +1904,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 205
-                },
-                {
-                    "routes": [],
-                    "name": "pluginPayload",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "pluginPayload(): ?array",
-                    "doc": "What Minn Admin's own boot_payload() computes when the plugin runs as\ncode on the runtime, so the app boots with the same keys on both\nstacks (connectors, discussion defaults, roles, post formats, the\nadapter flags). Engine-owned keys win; the withheld ones would send\nthe app to a wp-admin page the engine does not have.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 214,
-                    "end": 227
+                    "line": 156,
+                    "end": 206
                 },
                 {
                     "routes": [],
                     "name": "standHomeQuery",
-                    "static": false,
+                    "static": true,
                     "visibility": "private",
                     "signature": "standHomeQuery(): void",
                     "doc": "The reference serves the app shell from the home query, so the global\npost is the newest post while the payload is built; the comments\nfeature check reads it through the comments_open filter (a site that\ncloses comments on old posts reports the feature off when its newest\npost is old).",
                     "shapes": [],
                     "params": [],
-                    "line": 236,
-                    "end": 247
+                    "line": 240,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -1925,8 +1928,8 @@
                     "doc": "What Minn Admin's own adapters contribute when the plugin runs as code\non the runtime: plugin surfaces (Tools), editor panels, design\nsources, editor commands, block forms. Absent, the app's fallbacks apply.",
                     "shapes": [],
                     "params": [],
-                    "line": 254,
-                    "end": 273
+                    "line": 258,
+                    "end": 277
                 }
             ]
         },
@@ -3317,11 +3320,12 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/LanguageController.php",
-            "lines": 98,
+            "lines": 108,
             "doc": "Languages: what is installed, what a person reads in, what the site defaults to.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\Translations",
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Content\\Site",
@@ -3381,11 +3385,18 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 30
+                "line": 33,
+                "end": 40
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "REPAINTED",
+                    "value": "array (   0 => 'roles',   1 => 'surfaces',   2 => 'editorPanels',   3 => 'hidden',   4 => 'menuRemoved',   5 => 'builders',   6 => 'designs',   7 => 'editorCommands',   8 => 'blockForms',   9 => 'insertBlocks',   10 => 'imageBlocks',   11 => 'postFormats',   12 => 'visibility',   13 => 'appearanceSlots', )",
+                    "doc": "The boot slices Minn Admin's own boot-locale sends beside the catalog:\nlabels its code translated on the server (role names, surfaces, post\nformats, appearance slots), built in this request, so in the new language.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "translations",
@@ -3453,8 +3464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 42
+                    "line": 44,
+                    "end": 52
                 },
                 {
                     "routes": [
@@ -3475,8 +3486,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 59
+                    "line": 56,
+                    "end": 69
                 },
                 {
                     "routes": [
@@ -3497,8 +3508,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 73,
+                    "end": 76
                 },
                 {
                     "routes": [
@@ -3526,8 +3537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 80
+                    "line": 80,
+                    "end": 90
                 },
                 {
                     "routes": [
@@ -3548,8 +3559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 89
+                    "line": 94,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -3575,8 +3586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 100
+                    "line": 101,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -3597,8 +3608,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 116
+                    "line": 113,
+                    "end": 126
                 }
             ]
         },
@@ -4458,7 +4469,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/PackagesController.php",
-            "lines": 113,
+            "lines": 119,
             "doc": "Adding and removing themes and extensions from the Extensions view.",
             "implements": [],
             "extends": null,
@@ -4722,6 +4733,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "required",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "required(Minn\\Http\\Request $request, string $name): string",
+                    "doc": "A parameter the plugin registers as required: absent, the reference's missing-parameter 400; empty, the handler's own answer.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 124,
+                    "end": 127
+                },
+                {
+                    "routes": [],
                     "name": "uploaded",
                     "static": false,
                     "visibility": "private",
@@ -4744,8 +4782,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 133
+                    "line": 129,
+                    "end": 139
                 }
             ]
         },
@@ -4832,8 +4870,8 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/PreferencesController.php",
-            "lines": 115,
-            "doc": "A person's own settings in minn-admin/v1: their appearance, the views\nthey hid, and an administrator's reach into another person's, for the\nuser edit page.",
+            "lines": 133,
+            "doc": "A person's own settings in minn-admin/v1: their appearance, the views\nthey hid, and an administrator's reach into another person's, for the\nuser edit page. While Minn Admin runs as code, hiding is the plugin's\nown routes': only its registry knows the surfaces, editor panels, design\nsources and slash namespaces its adapters add.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -4845,6 +4883,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Http\\RouteMiss",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Reply"
@@ -4880,8 +4919,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 29
+                "line": 27,
+                "end": 32
             },
             "cases": [],
             "constants": [],
@@ -4934,8 +4973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [
@@ -4956,8 +4995,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 43
+                    "line": 43,
+                    "end": 46
                 },
                 {
                     "routes": [
@@ -4985,8 +5024,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 50,
+                    "end": 53
                 },
                 {
                     "routes": [
@@ -5014,8 +5053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 57
+                    "line": 57,
+                    "end": 60
                 },
                 {
                     "routes": [
@@ -5043,8 +5082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 64
+                    "line": 64,
+                    "end": 68
                 },
                 {
                     "routes": [
@@ -5072,8 +5111,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 77
+                    "line": 72,
+                    "end": 82
                 },
                 {
                     "routes": [
@@ -5094,8 +5133,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 88
+                    "line": 86,
+                    "end": 94
                 },
                 {
                     "routes": [
@@ -5116,8 +5155,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 97
+                    "line": 98,
+                    "end": 104
+                },
+                {
+                    "routes": [],
+                    "name": "leaveToPlugin",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "leaveToPlugin(): void",
+                    "doc": "Declines the route while Minn Admin runs as code, so the plugin's own\nanswers: it validates against every integration its adapters register\nand repaints with the slices they build (the engine's registry holds\nonly the core views, and an empty answer emptied the app's nav).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 112,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -5136,8 +5187,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 106
+                    "line": 119,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -5145,7 +5196,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "integrationState(int $userId): array",
-                    "doc": "The boot slices a hide or unhide repaints from. The engine registers no\nplugin surfaces, editor panels, design sources, or block forms.",
+                    "doc": "The boot slices a hide or unhide repaints from when Minn Admin is not\nrunning as code: no plugin surfaces, editor panels, design sources, or\nblock forms then.",
                     "shapes": [],
                     "params": [
                         {
@@ -5156,8 +5207,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 124
+                    "line": 133,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -5176,8 +5227,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 130
+                    "line": 147,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -5196,8 +5247,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 135
+                    "line": 153,
+                    "end": 156
                 }
             ]
         },
@@ -69617,6 +69668,7 @@
                 "Minn\\Http"
             ],
             "usedBy": [
+                "Minn\\Admin\\PreferencesController",
                 "Minn\\Http\\Router",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\IndexController",

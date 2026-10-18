@@ -140,6 +140,29 @@ builders (Gravity Forms, ACF field groups, ACPT, memberships) are Minn
 Admin's own routes on the engine and stamp themselves; the suite checks
 custom CSS and role defaults, a stale save of each included.
 
+## The routes the engine answers in the plugin's place (2026-10-18)
+
+The engine's own controllers answer 69 of the minn-admin/v1 routes; the
+plugin's code answers the rest. A port falls behind when the plugin's
+answer grows, so `admin-surfaces` section 9 compares every engine-owned
+GET without captures (33, found from the `#[Route]` attributes) with the
+plugin's, by keys and value types, with the known differences listed
+beside their reasons (Minn's own release in `core`, the plugin
+inventory left out of `boot-status`, the locked wp-config switches).
+
+The first sweep found three ports that had fallen behind. **boot-locale** sent only the
+catalog, so after a language switch the server-translated labels (role
+names, surfaces, post formats, block forms, appearance slots) stayed in
+the old language until a reload. It now adds the plugin's slices from
+`BootPayload::fromPlugin()`. **Hiding** knew only the core views: the
+engine refused a plugin surface as unregistered, and every hide or unhide
+answered with empty surfaces and block forms, which the app takes as
+the new nav, so the nav lost every plugin surface. While Minn Admin runs as code the four hide routes
+are the plugin's own (`PreferencesController::leaveToPlugin()`), and the
+boot payload's `hidden` is its list. **Search and plugin info** answered
+a missing `q` or `slug` as the plugin does not (200, `no_slug`); now the
+reference's missing-parameter 400.
+
 The namespace index (`/wp-json/minn-admin/v1`) lists a route the engine
 answers in part with the plugin's endpoints for the rest: the post-types
 GET is the engine's, its POST the plugin's, and both are listed. The

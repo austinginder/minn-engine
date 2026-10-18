@@ -1169,7 +1169,7 @@ it and goes on to the next route, so a catch-all pattern can leave a
 path it does not own to whatever registers after it (a plugin's route
 under the same namespace, say) instead of answering "no route" itself.
 
-Used by: `Minn\Http\Router`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\IndexController`, `Minn\Rest\PolicyGate`, `Minn\Rest\TermCollectionParams`, `Minn\Rest\TermObject`
+Used by: `Minn\Admin\PreferencesController`, `Minn\Http\Router`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\IndexController`, `Minn\Rest\PolicyGate`, `Minn\Rest\TermCollectionParams`, `Minn\Rest\TermObject`
 
 
 ## RouteParams

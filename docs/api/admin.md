@@ -11,20 +11,20 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`App`](#app) | final readonly class | 106 | The Minn Admin app on disk the engine serves the shell and assets from: |
 | [`AppController`](#appcontroller) | final readonly class | 150 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
-| [`BootPayload`](#bootpayload) | final readonly class | 253 | The window.MINN boot payload, assembled from the engine: the keys app.js |
+| [`BootPayload`](#bootpayload) | final readonly class | 257 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 46 | What the app bundle answers for: the user guide it carries, the |
 | [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 45 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
 | [`LanguageChoices`](#languagechoices) | final class | 42 | The language picker's markup. English always leads the list and carries the |
-| [`LanguageController`](#languagecontroller) | final readonly class | 98 | Languages: what is installed, what a person reads in, what the site defaults to. |
+| [`LanguageController`](#languagecontroller) | final readonly class | 108 | Languages: what is installed, what a person reads in, what the site defaults to. |
 | [`LegacyPackController`](#legacypackcontroller) | final readonly class | 49 | The Minn Legacy Pack installed for an editor that needs it |
 | [`Notifications`](#notifications) | final readonly class | 191 | The bell feed: pending and recent comments, translation offers and a |
 | [`OverviewController`](#overviewcontroller) | final readonly class | 140 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
-| [`PackagesController`](#packagescontroller) | final readonly class | 113 | Adding and removing themes and extensions from the Extensions view. |
+| [`PackagesController`](#packagescontroller) | final readonly class | 119 | Adding and removing themes and extensions from the Extensions view. |
 | [`PostListMarkup`](#postlistmarkup) | final class | 39 | The markup a post list writes beside each post, as the reference writes |
-| [`PreferencesController`](#preferencescontroller) | final readonly class | 115 | A person's own settings in minn-admin/v1: their appearance, the views |
+| [`PreferencesController`](#preferencescontroller) | final readonly class | 133 | A person's own settings in minn-admin/v1: their appearance, the views |
 | [`RenderController`](#rendercontroller) | final readonly class | 52 | The editor's island previews: block markup rendered by the same |
 | [`SessionsController`](#sessionscontroller) | final readonly class | 72 | A person's sign-in sessions, read from the same session_tokens store |
 | [`SiteController`](#sitecontroller) | final readonly class | 90 | The small Settings-view routes of minn-admin/v1: the site logo, the |
@@ -362,7 +362,7 @@ engine's own model.
 
 - const `PLUGIN_KEYS_WITHHELD` = `array (   0 => 'notices', )` — Boot keys the plugin computes that point the app at wp-admin pages the engine does not serve.
 
-Used by: `Minn\Admin\AppController`, `Minn\Engine`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageController`, `Minn\Engine`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Auth\Capabilities $capabilities, Minn\Admin\App $app, string $engineVersion, Minn\Admin\Appearance $appearance, Minn\Admin\HiddenIntegrations $hidden, Minn\Content\SiteIcon $icon, bool $blockTheme = false, ?Minn\Admin\Translations $translations = NULL)
@@ -377,7 +377,18 @@ The site's name, or Site when it has none.
 
 The window.MINN payload the app boots from, for one signed-in session.
 
-Internals: `userSlice()` (private, line 100), `siteSlice()` (private, line 117), `commerce()` (private, line 143), `caps()` (private, line 155), `pluginPayload()` (private, line 214), `standHomeQuery()` (private, line 236), `adapterSlices()` (private, line 254)
+### static `fromPlugin(): ?array`
+
+What Minn Admin's own boot_payload() computes when the plugin runs as
+code on the runtime, so the app boots with the same keys on both
+stacks (connectors, discussion defaults, roles, post formats, the
+adapter flags). Engine-owned keys win; the withheld ones would send
+the app to a wp-admin page the engine does not have. Null while the
+plugin is not running as code.
+
+- `@return array<string, mixed>|null`
+
+Internals: `userSlice()` (private, line 101), `siteSlice()` (private, line 118), `commerce()` (private, line 144), `caps()` (private, line 156), `standHomeQuery()` (private, line 240), `adapterSlices()` (private, line 258)
 
 
 ## BundleController
@@ -606,6 +617,10 @@ Internals: `option()` (private, line 52)
 
 Languages: what is installed, what a person reads in, what the site defaults to.
 
+- const `REPAINTED` = `array (   0 => 'roles',   1 => 'surfaces',   2 => 'editorPanels',   3 => 'hidden',   4 => 'menuRemoved',   5 => 'builders',   6 => 'designs',   7 => 'editorCommands',   8 => 'blockForms',   9 => 'insertBlocks',   10 => 'imageBlocks',   11 => 'postFormats',   12 => 'visibility',   13 => 'appearanceSlots', )` — The boot slices Minn Admin's own boot-locale sends beside the catalog:
+labels its code translated on the server (role names, surfaces, post
+formats, appearance slots), built in this request, so in the new language.
+
 Used by: `Minn\Rest\Api`
 
 ```php
@@ -643,7 +658,7 @@ Route: `POST /minn-admin/v1/site/language (floor edit_posts + manage_options)`
 
 Sets the site's locale.
 
-Internals: `setUserLocale()` (private, line 91), `ensure()` (private, line 103)
+Internals: `setUserLocale()` (private, line 101), `ensure()` (private, line 113)
 
 
 ## LegacyPackController
@@ -803,7 +818,7 @@ Route: `GET /minn-admin/v1/plugins/info (floor edit_posts + install_plugins)`
 
 One directory plugin's details.
 
-Internals: `uploaded()` (private, line 123)
+Internals: `required()` (private, line 124), `uploaded()` (private, line 129)
 
 
 ## PostListMarkup
@@ -837,7 +852,9 @@ sticky, format) unbroken, and the closing tag.
 
 A person's own settings in minn-admin/v1: their appearance, the views
 they hid, and an administrator's reach into another person's, for the
-user edit page.
+user edit page. While Minn Admin runs as code, hiding is the plugin's
+own routes': only its registry knows the surfaces, editor panels, design
+sources and slash namespaces its adapters add.
 
 Used by: `Minn\Rest\Api`
 
@@ -894,7 +911,7 @@ Route: `POST /minn-admin/v1/integrations/unhide (floor edit_posts)`
 
 Shows a view again for the caller.
 
-Internals: `integrationId()` (private, line 99), `integrationState()` (private, line 112), `appearanceBody()` (private, line 126), `editableUser()` (private, line 132)
+Internals: `leaveToPlugin()` (private, line 112), `integrationId()` (private, line 119), `integrationState()` (private, line 133), `appearanceBody()` (private, line 147), `editableUser()` (private, line 153)
 
 
 ## RenderController

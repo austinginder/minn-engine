@@ -10,6 +10,7 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Http\RouteMiss;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
 use Minn\RestError;
@@ -17,7 +18,9 @@ use Minn\RestError;
 /**
  * A person's own settings in minn-admin/v1: their appearance, the views
  * they hid, and an administrator's reach into another person's, for the
- * user edit page.
+ * user edit page. While Minn Admin runs as code, hiding is the plugin's
+ * own routes': only its registry knows the surfaces, editor panels, design
+ * sources and slash namespaces its adapters add.
  */
 final readonly class PreferencesController
 {
@@ -60,6 +63,7 @@ final readonly class PreferencesController
     #[Route(Method::Get, '/minn-admin/v1/users/{id:\d+}/hidden', policy: new Policy(Access::Own, 'edit_user', param: 'id', caps: ['edit_posts'], signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function hidden(Request $request, string $id): Response
     {
+        self::leaveToPlugin();
         return Reply::answer($request, ['hidden' => $this->hiddenIntegrations->listFor($this->editableUser($id))]);
     }
 
@@ -67,6 +71,7 @@ final readonly class PreferencesController
     #[Route(Method::Post, '/minn-admin/v1/users/{id:\d+}/integrations/unhide', policy: new Policy(Access::Own, 'edit_user', param: 'id', caps: ['edit_posts'], signIn: 'rest_forbidden', signInMessage: 'Sorry, you are not allowed to do that.'))]
     public function unhideForUser(Request $request, string $id): Response
     {
+        self::leaveToPlugin();
         $userId = $this->editableUser($id);
         $integration = $request->json()['integration'] ?? $request->query('integration');
         if (!is_string($integration) || $integration === '') {
@@ -80,6 +85,7 @@ final readonly class PreferencesController
     #[Route(Method::Post, '/minn-admin/v1/integrations/hide', policy: new Policy(Access::Floor))]
     public function hide(Request $request): Response
     {
+        self::leaveToPlugin();
         $userId = $this->caller->requireFloor();
         if (!$this->hiddenIntegrations->hide($userId, $this->integrationId($request))) {
             throw new RestError('minn_unknown_integration', 'That integration is not registered.', 400);
@@ -91,9 +97,23 @@ final readonly class PreferencesController
     #[Route(Method::Post, '/minn-admin/v1/integrations/unhide', policy: new Policy(Access::Floor))]
     public function unhide(Request $request): Response
     {
+        self::leaveToPlugin();
         $userId = $this->caller->requireFloor();
         $this->hiddenIntegrations->unhide($userId, $this->integrationId($request));
         return Reply::answer($request, $this->integrationState($userId));
+    }
+
+    /**
+     * Declines the route while Minn Admin runs as code, so the plugin's own
+     * answers: it validates against every integration its adapters register
+     * and repaints with the slices they build (the engine's registry holds
+     * only the core views, and an empty answer emptied the app's nav).
+     */
+    private static function leaveToPlugin(): void
+    {
+        if (class_exists('Minn_Admin_Surfaces', false)) {
+            throw new RouteMiss();
+        }
     }
 
     private function integrationId(Request $request): string
@@ -106,8 +126,9 @@ final readonly class PreferencesController
     }
 
     /**
-     * The boot slices a hide or unhide repaints from. The engine registers no
-     * plugin surfaces, editor panels, design sources, or block forms.
+     * The boot slices a hide or unhide repaints from when Minn Admin is not
+     * running as code: no plugin surfaces, editor panels, design sources, or
+     * block forms then.
      */
     private function integrationState(int $userId): array
     {

@@ -20,6 +20,16 @@ use Minn\RestError;
 /** Languages: what is installed, what a person reads in, what the site defaults to. */
 final readonly class LanguageController
 {
+    /**
+     * The boot slices Minn Admin's own boot-locale sends beside the catalog:
+     * labels its code translated on the server (role names, surfaces, post
+     * formats, appearance slots), built in this request, so in the new language.
+     */
+    private const REPAINTED = [
+        'roles', 'surfaces', 'editorPanels', 'hidden', 'menuRemoved', 'builders', 'designs', 'editorCommands',
+        'blockForms', 'insertBlocks', 'imageBlocks', 'postFormats', 'visibility', 'appearanceSlots',
+    ];
+
     public function __construct(
         private Translations $translations,
         private Users $users,
@@ -55,7 +65,7 @@ final readonly class LanguageController
             'userRole' => $this->capabilities->roles()->all()[$this->capabilities->rolesOf($userId)[0] ?? '']['name'] ?? '',
             'locale' => $locale,
             'rtl' => Translations::isRtl($locale),
-        ]);
+        ] + array_intersect_key(BootPayload::fromPlugin() ?? [], array_flip(self::REPAINTED)));
     }
 
     /** Sets the caller's own locale. */

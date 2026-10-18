@@ -139,6 +139,15 @@ as_parity( 'a role-defaults save on a stale stamp is refused (409)', '/minn-admi
 [ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/custom-css', $admin, 'POST', '{"css":"body{}","base":"000000000000"}' );
 check( 409 === $s, 'the stale custom-css save answers 409 on the engine', "status $s" );
 
+// The repaint slices. A language switch repaints the labels the server translated
+// (roles, surfaces, post formats, appearance slots) from boot-locale, and a hide or
+// unhide repaints the nav and block picker from its answer: while Minn Admin runs as
+// code its own registry answers, so neither comes back empty on the engine.
+as_parity( 'boot-locale carries the slices a language switch repaints', '/minn-admin/v1/boot-locale', $admin );
+as_parity( 'hiding a core view answers with the boot slices', '/minn-admin/v1/integrations/hide', $admin, array(), 'POST', '{"id":"core:media"}' );
+as_parity( 'unhiding it answers with them too', '/minn-admin/v1/integrations/unhide', $admin, array(), 'POST', '{"id":"core:media"}' );
+as_parity( 'an unknown integration is refused as unregistered', '/minn-admin/v1/integrations/hide', $admin, array(), 'POST', '{"id":"surface:minn-no-such"}' );
+
 // The namespace index: each route both stacks serve lists the same methods, a
 // route the engine answers in part (its GET) with the plugin's POST beside it.
 // Minn's own routes (the switch is WordPress-only) and the arguments aside.
@@ -473,6 +482,72 @@ $anon = (string) @file_get_contents( "$ENGINE/hello-world/", false, stream_conte
 check( ! str_contains( $anon, 'minn-bar-root' ) && ! str_contains( $anon, 'minn-front-bar' ), 'anonymous readers see no bar' );
 $css = minn_test_fetch( "$ENGINE/minn/admin/assets/css/bar.css" );
 check( 200 === $css[0]['status'] && str_starts_with( $css[0]['content-type'] ?? '', 'text/css' ), 'bar.css is served', json_encode( $css[0] ) );
+
+// 9. The routes the engine answers in Minn Admin's place keep the plugin's shape.
+// Every minn-admin/v1 GET the engine's own controllers serve (no captures), read
+// from their #[Route] attributes so a new port is swept without a line here, is
+// compared with the plugin's answer by keys and value types: a key the plugin
+// added and the port never learned (0.46's stamps, boot-locale's slices) shows
+// here before the app meets it. Known differences, each with its reason:
+$by_design = array(
+	'/minn-admin/v1/engine-changelog' => array( 'status 404 vs 200' ),                      // Minn's own changelog: the engine's route alone
+	'/minn-admin/v1/boot-status'      => array(
+		'$.plugins only on WordPress', '$.pluginUpdates only on WordPress', '$.pluginMeta only on WordPress', // left out of the burst: the app loads each standalone
+		'$.core.checked only on the engine', '$.core.product only on the engine',                            // Minn's release, not WordPress's (as /core)
+	),
+	'/minn-admin/v1/core'             => array( '$.checked only on the engine', '$.product only on the engine' ),
+	'/minn-admin/v1/system'           => array( '$.config.constants.list.lock only on WordPress' ), // the engine shows each wp-config switch locked
+	'/minn-admin/v1/system/cron'      => array( '$.items.list.title only on the engine' ),
+);
+$as_shape = function ( $v ) use ( &$as_shape ) {
+	if ( ! is_array( $v ) ) {
+		return get_debug_type( $v );
+	}
+	if ( array() === $v ) {
+		return 'empty';
+	}
+	if ( array_is_list( $v ) ) {
+		return array( 'list' => $as_shape( $v[0] ) );
+	}
+	ksort( $v );
+	return array_map( $as_shape, $v );
+};
+$shape_diff = function ( $a, $b, string $at = '$' ) use ( &$shape_diff ): array {
+	if ( ! is_array( $a ) || ! is_array( $b ) ) {
+		return in_array( 'empty', array( $a, $b ), true ) || in_array( 'null', array( $a, $b ), true ) || $a === $b ? array() : array( "$at " . json_encode( $a ) . ' vs ' . json_encode( $b ) );
+	}
+	if ( isset( $a['list'] ) !== isset( $b['list'] ) ) {
+		return array( "$at list vs object" );
+	}
+	$out = array();
+	foreach ( array_diff_key( $a, $b ) as $k => $_ ) {
+		$out[] = "$at.$k only on WordPress";
+	}
+	foreach ( array_diff_key( $b, $a ) as $k => $_ ) {
+		$out[] = "$at.$k only on the engine";
+	}
+	foreach ( array_intersect_key( $a, $b ) as $k => $_ ) {
+		array_push( $out, ...$shape_diff( $a[ $k ], $b[ $k ], "$at.$k" ) );
+	}
+	return $out;
+};
+$owned = array();
+foreach ( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( "$ROOT/public/minn/src/Minn", FilesystemIterator::SKIP_DOTS ) ) as $file ) {
+	preg_match_all( "#\#\[Route\(Method::Get, '(/minn-admin/v1/[^'{]*)'#", (string) file_get_contents( (string) $file ), $found );
+	array_push( $owned, ...$found[1] );
+}
+$owned = array_unique( $owned );
+sort( $owned );
+$drift = array();
+foreach ( $owned as $route ) {
+	[ $rs, $rb ] = as_fetch( $REF, $route, $admin );
+	[ $es, $eb ] = as_fetch( $ENGINE, $route, $admin );
+	$found = $rs !== $es ? array( "status $rs vs $es" ) : $shape_diff( $as_shape( minn_test_via_service( $rb ) ), $as_shape( $eb ) );
+	foreach ( array_diff( $found, $by_design[ $route ] ?? array() ) as $d ) {
+		$drift[] = "$route $d";
+	}
+}
+check( count( $owned ) >= 30 && array() === $drift, sprintf( 'the %d minn-admin/v1 GETs the engine answers itself keep the plugin\'s shape', count( $owned ) ), implode( "\n      ", $drift ) );
 
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );
