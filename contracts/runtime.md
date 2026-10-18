@@ -17165,6 +17165,54 @@ theme's file and the `comments_template` filter run as they do on WordPress.
 A comments block without inner blocks and without `legacy` still renders
 nothing, as on the reference.
 
+## Methods keep the reference's shape (2026-10-18)
+
+The Events Calendar Pro 500'd every page on Minn: it calls
+`WP_REST_Server::get_raw_data()` statically, as WordPress declares it, and
+the facade declared it on the instance. The api suite checked every
+function's signature but no method's, so nothing had said so. It now checks
+every method a facade class declares against the inventory: static or not,
+its visibility, and its parameters by name, by reference, variadic and
+optional. A difference is a fatal error waiting for the plugin that meets it:
+
+- static: `WP_REST_Server::get_raw_data`, `WP_Widget_Media`'s
+  `get_default_description`, `get_l10n_defaults` and `reset_default_labels`,
+  PHPMailer's `lang`;
+- visibility: a subclass valid against WordPress cannot load under a wider
+  parent (a theme's Customizer control declaring `render_content()`
+  protected; an image editor's `get_default_quality()`; a media widget's
+  `has_content()`), so `WP_Customize_Control::render_content`,
+  `WP_Image_Editor::get_default_quality` (and its required `$mime_type`),
+  `WP_Widget_Media{,_Gallery}::has_content`, `WP_Query::generate_cache_key`,
+  `WP_Date_Query::is_first_order_clause`, `WP_Http::parse_url`, four of
+  `WP_REST_Server`'s and the private ones of `WP_Textdomain_Registry`,
+  PHPMailer and `WP_Block` now match; `wpdb::_insert_replace_helper` is
+  public with its optional `$format` and `$type`, as plugins call it;
+- parameters: the reference's names (`WP_HTTP_Response::set_status($code)`,
+  `WP_Sitemaps::add_robots(..., $is_public)`, `WP_Query::parse_search(&$query_vars)`,
+  `iis7_url_rewrite_rules($add_parent_tags)`, `invalidate_mo_files_cache($upgrader, $hook_extra)`,
+  the Customizer partial's required `$component` and `$id`), `opens_block(string ...$block_type)`,
+  SimplePie's `set_file(&$file)` and the last optional parameter of its two `pass_*`
+  methods, and `WP_Theme_JSON_Resolver::get_theme_data($deprecated, $options)`.
+
+Kept on purpose, each listed in the check with its reason:
+`WP_REST_Server::match_request_to_handler` and
+`WP_Block_Supports::register_attributes` stay public (the REST runtime, the
+batch route and `WP_Block` call them from outside), the asset registries'
+constructors take the engine's registry, and three private helpers keep the
+engine's shape.
+
+`has_filter()` and `WP_Hook::has_filter()` took no priority. With a callback
+and a whole-number priority the reference answers whether the callback is
+hooked at that priority, each priority on its own; a priority given as a string, or no
+callback, answers as if none was given. The engine returned the callback's
+lowest priority, so `has_filter($hook, $callback, 10)` for one hooked at 5
+answered 5, truthy, where WordPress says false. `Hooks::has()` takes the
+priority now (probe `hook-priority`).
+
+Owed: `get_theme_data()` takes its `$options` but does not yet leave theme
+supports out for `with_supports => false`.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17236,3 +17284,4 @@ rows that are `open` or `austin`.
 | 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | done | "A product's head link and its post terms (2026-10-16)": the route rest_get_queried_resource_route gives |
 | 16961 | What the_content adds before core's defaults (10-16) | plain text a filter adds before priority 10 is not texturized or given paragraphs | open | engine work owed |
 | 17101 | Preset slugs in kebab case (10-18) | core's default font sizes printed when the theme no longer has their slugs (`defaultFontSizes: false`) | open | engine work owed |
+| 17101 | Methods keep the reference's shape (10-18) | `WP_Theme_JSON_Resolver::get_theme_data()` ignores `with_supports => false` | open | engine work owed |

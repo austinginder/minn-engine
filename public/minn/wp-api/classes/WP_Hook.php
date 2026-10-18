@@ -51,18 +51,15 @@ final class WP_Hook implements Iterator, ArrayAccess
         return $exists;
     }
 
-    public function has_filter($hook_name = '', $callback = false)
+    public function has_filter($hook_name = '', $callback = false, $priority = false)
     {
         if ($callback === false) {
             return $this->has_filters();
         }
         $id = _wp_filter_build_unique_id($hook_name, $callback, false);
-        foreach ($this->callbacks as $priority => $callbacks) {
-            if (isset($callbacks[$id])) {
-                return $priority;
-            }
-        }
-        return false;
+        // The lowest priority it is hooked at (the table is kept in order), or, asked about one, whether it is there.
+        $at = array_key_first(array_filter($this->callbacks, static fn (array $callbacks): bool => isset($callbacks[$id])));
+        return is_int($priority) ? isset($this->callbacks[$priority][$id]) : ($at ?? false);
     }
 
     public function has_filters()

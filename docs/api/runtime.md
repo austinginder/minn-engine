@@ -60,7 +60,7 @@ the WordPress runtime plugins load against
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
 | [`Handoff`](#handoff) | final class | 496 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
-| [`Hooks`](#hooks) | final class | 419 | The hook registry plugin code registers into and the engine fires. |
+| [`Hooks`](#hooks) | final class | 426 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
 | [`KsesRules`](#ksesrules) | final class | 95 | The HTML WordPress's kses functions let through: the elements and |
 | [`LegacyPack`](#legacypack) | final class | 308 | WordPress's own browser files, for the plugins whose screens are built on |
@@ -3118,9 +3118,11 @@ Removes a callback from a hook.
 
 Every callback of a hook, or only those at one priority. Always true, as observed.
 
-### `has(string $hook, callable|array|string|false $callback = false): int|bool`
+### `has(string $hook, callable|array|string|false $callback = false, string|int|false $priority = false): int|bool`
 
 With a callback: its lowest priority, or false; without: whether anything is registered.
+A callback and a whole-number priority ask whether it is hooked at that one; a priority as a
+string answers as none does (probe hook-priority).
 
 ### `hasBeyond(string $hook, array $done): bool`
 
@@ -3236,7 +3238,7 @@ The 'all' callbacks run with the arguments given, the hook's name first (_wp_cal
 
 - `@param list<mixed> $args`
 
-Internals: `run()` (private, line 344), `nextPriority()` (private, line 393), `fireAll()` (private, line 413), `id()` (private, line 425)
+Internals: `run()` (private, line 351), `nextPriority()` (private, line 400), `fireAll()` (private, line 420), `id()` (private, line 432)
 
 
 ## Interactivity

@@ -170,7 +170,7 @@ final class WP_Theme_JSON_Resolver
      * Reading it registers the theme's block style partials as block
      * styles, once a request, as the reference's read does.
      */
-    public static function get_theme_data(): WP_Theme_JSON
+    public static function get_theme_data($deprecated = [], $options = []): WP_Theme_JSON
     {
         if (!Runtime::current()->get('block_style_partials_registered', false)) {
             Runtime::current()->set('block_style_partials_registered', true);

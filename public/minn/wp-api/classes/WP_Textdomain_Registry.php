@@ -55,12 +55,12 @@ class WP_Textdomain_Registry
         return array_values(array_filter(array_merge((array) glob($path . '/*.mo'), (array) glob($path . '/*.l10n.php'))));
     }
 
-    public function invalidate_mo_files_cache($file, $translation)
+    public function invalidate_mo_files_cache($upgrader, $hook_extra)
     {
         $this->cached_mo_files = [];
     }
 
-    public function get_paths_for_domain($domain)
+    private function get_paths_for_domain($domain)
     {
         $paths = [defined('WP_LANG_DIR') ? WP_LANG_DIR . '/plugins' : ''];
         if (isset($this->custom_paths[$domain])) {
@@ -69,7 +69,7 @@ class WP_Textdomain_Registry
         return array_values(array_filter($paths));
     }
 
-    public function get_path_from_lang_dir($domain, $locale)
+    private function get_path_from_lang_dir($domain, $locale)
     {
         return $this->find($domain, $locale);
     }

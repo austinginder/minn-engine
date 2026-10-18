@@ -375,7 +375,7 @@ class wpdb
         return $this->_insert_replace_helper($table, $data, $format, 'REPLACE');
     }
 
-    private function _insert_replace_helper($table, $data, $format, $type)
+    public function _insert_replace_helper($table, $data, $format = null, $type = 'INSERT')
     {
         $data = $this->process_fields($table, $data, $format);
         if ($data === false || $data === []) {

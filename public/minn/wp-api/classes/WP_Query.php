@@ -170,9 +170,9 @@ class WP_Query implements \Minn\Objects\Query
         do_action('parse_tax_query', $this);
     }
 
-    protected function parse_search(&$q)
+    protected function parse_search(&$query_vars)
     {
-        return Runtime::postQuery()->search($this, $q, $_GET['s'] ?? null);
+        return Runtime::postQuery()->search($this, $query_vars, $_GET['s'] ?? null);
     }
 
     protected function parse_search_terms($terms)
@@ -185,9 +185,9 @@ class WP_Query implements \Minn\Objects\Query
         return Runtime::postQuery()->stopwords();
     }
 
-    protected function parse_search_order(&$q)
+    protected function parse_search_order(&$query_vars)
     {
-        return PostSearch::order($GLOBALS['wpdb']->posts, (string) $q['s'], (int) ($q['search_terms_count'] ?? 1), (array) ($q['search_orderby_title'] ?? []));
+        return PostSearch::order($GLOBALS['wpdb']->posts, (string) $query_vars['s'], (int) ($query_vars['search_terms_count'] ?? 1), (array) ($query_vars['search_orderby_title'] ?? []));
     }
 
     protected function parse_orderby($orderby)
@@ -634,7 +634,7 @@ class WP_Query implements \Minn\Objects\Query
         return $post instanceof WP_Post ? Minn\Runtime\PostData::generate($post, $this) : false;
     }
 
-    public function generate_cache_key(array $args, $sql)
+    protected function generate_cache_key(array $args, $sql)
     {
         return md5(serialize($args) . $sql);
     }

@@ -1233,7 +1233,7 @@ class PHPMailer
         return false;
     }
 
-    protected function lang($key)
+    protected static function lang($key)
     {
         if (count(static::$language) < 1) {
             static::setLanguage();
@@ -1486,7 +1486,7 @@ class PHPMailer
         $this->oauth = $oauth;
     }
 
-    protected function getSmtpErrorMessage($base_key)
+    private function getSmtpErrorMessage($base_key)
     {
         $message = $this->lang($base_key);
         $error = $this->smtp !== null ? $this->smtp->getError() : [];
@@ -1496,7 +1496,7 @@ class PHPMailer
         return $message;
     }
 
-    protected function mailPassthru($to, $subject, $body, $header, $params)
+    private function mailPassthru($to, $subject, $body, $header, $params)
     {
         $subject = $this->encodeHeader($this->secureHeader($subject));
         foreach (['Sending with mail()', 'Sendmail path: ' . ini_get('sendmail_path'), "Envelope sender: {$this->Sender}", "To: {$to}", "Subject: {$subject}", "Headers: {$header}", 'Additional params: ' . ($params ?? 'none')] as $line) {

@@ -135,21 +135,21 @@ abstract class WP_Widget_Media extends WP_Widget
     }
 
     /** The default labels are read fresh each time here, so there is no cache to clear; a widget's own labels stay. */
-    public function reset_default_labels()
+    public static function reset_default_labels()
     {
     }
 
-    public function has_content($instance)
+    protected function has_content($instance)
     {
         return !empty($instance['attachment_id']) || !empty($instance['url']);
     }
 
-    public function get_default_description()
+    protected static function get_default_description()
     {
         return 'A media item.';
     }
 
-    public function get_l10n_defaults()
+    protected static function get_l10n_defaults()
     {
         return [
             'no_media_selected' => 'No media selected',

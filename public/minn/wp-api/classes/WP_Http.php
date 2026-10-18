@@ -40,9 +40,9 @@ namespace {
             return $this->status;
         }
 
-        public function set_status($status)
+        public function set_status($code)
         {
-            $this->status = absint($status);
+            $this->status = absint($code);
         }
 
         public function get_data()
@@ -388,7 +388,7 @@ namespace {
             return filter_var((string) $maybe_ip, FILTER_VALIDATE_IP) !== false;
         }
 
-        public static function parse_url($url)
+        protected static function parse_url($url)
         {
             return wp_parse_url($url);
         }

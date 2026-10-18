@@ -4215,7 +4215,7 @@
                 "verdict": "keep",
                 "reason": "contract",
                 "why": "finds a callback's priority in the object's own table",
-                "body": "aee0df10656c"
+                "body": "567cac679fbd"
             },
             "WP_Hook::has_filters": {
                 "verdict": "keep",
@@ -9167,7 +9167,7 @@
                 "to": "Minn\\Support\\WebServer",
                 "why": "builds the IIS web.config rewrite rule, inside its parent tags when asked, through iis7_url_rewrite_rules; server rule markup for WebServer",
                 "doubt": "names the rule from get_option('home') where the reference uses home_url(), so a home_url filter is missed",
-                "body": "60d92275723f"
+                "body": "27883ddf1eb1"
             },
             "WP_Rewrite::init": {
                 "verdict": "move",
@@ -9732,7 +9732,7 @@
                 "verdict": "move",
                 "to": "Minn\\Front\\Sitemaps",
                 "why": "appends the Sitemap line with the index URL on a public site; ProbeController's plugin-less robots.txt builds the same line, so it belongs beside the engine's sitemap URLs, the robots_txt callback staying",
-                "body": "78317e7e05de"
+                "body": "2b791ef51e2f"
             },
             "WP_Sitemaps::init": {
                 "verdict": "keep",

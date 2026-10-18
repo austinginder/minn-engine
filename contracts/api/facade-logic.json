@@ -6,7 +6,7 @@
         "delegates": 3441,
         "logicFunctions": 1828,
         "logicMethods": 2030,
-        "logicLines": 30301,
+        "logicLines": 30297,
         "kept": 0
     },
     "byFile": {
@@ -346,10 +346,6 @@
             "logic": 10,
             "lines": 92
         },
-        "classes/WP_Hook.php": {
-            "logic": 13,
-            "lines": 90
-        },
         "classes/WP_Duotone.php": {
             "logic": 13,
             "lines": 89
@@ -357,6 +353,10 @@
         "classes/WP_oEmbed.php": {
             "logic": 13,
             "lines": 88
+        },
+        "classes/WP_Hook.php": {
+            "logic": 13,
+            "lines": 86
         },
         "classes/Walker_Comment.php": {
             "logic": 8,
@@ -5174,7 +5174,7 @@
         },
         "WP_Hook::apply_filters": {
             "file": "classes/WP_Hook.php",
-            "line": 88,
+            "line": 85,
             "statements": 6,
             "lines": 16
         },
@@ -5186,25 +5186,25 @@
         },
         "WP_Hook::build_preinitialized_hooks": {
             "file": "classes/WP_Hook.php",
-            "line": 131,
+            "line": 128,
             "statements": 3,
             "lines": 11
         },
         "WP_Hook::current_priority": {
             "file": "classes/WP_Hook.php",
-            "line": 123,
+            "line": 120,
             "statements": 2,
             "lines": 4
         },
         "WP_Hook::do_action": {
             "file": "classes/WP_Hook.php",
-            "line": 108,
+            "line": 105,
             "statements": 2,
             "lines": 2
         },
         "WP_Hook::do_all_hook": {
             "file": "classes/WP_Hook.php",
-            "line": 114,
+            "line": 111,
             "statements": 1,
             "lines": 5
         },
@@ -5212,29 +5212,29 @@
             "file": "classes/WP_Hook.php",
             "line": 54,
             "statements": 4,
-            "lines": 10
+            "lines": 6
         },
         "WP_Hook::has_filters": {
             "file": "classes/WP_Hook.php",
-            "line": 68,
+            "line": 65,
             "statements": 2,
             "lines": 6
         },
         "WP_Hook::offsetSet": {
             "file": "classes/WP_Hook.php",
-            "line": 156,
+            "line": 153,
             "statements": 2,
             "lines": 6
         },
         "WP_Hook::offsetUnset": {
             "file": "classes/WP_Hook.php",
-            "line": 166,
+            "line": 163,
             "statements": 2,
             "lines": 2
         },
         "WP_Hook::remove_all_filters": {
             "file": "classes/WP_Hook.php",
-            "line": 78,
+            "line": 75,
             "statements": 2,
             "lines": 6
         },

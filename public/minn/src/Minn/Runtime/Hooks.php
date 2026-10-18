@@ -111,13 +111,20 @@ final class Hooks
         return true;
     }
 
-    /** With a callback: its lowest priority, or false; without: whether anything is registered. */
-    public function has(string $hook, callable|array|string|false $callback = false): int|bool
+    /**
+     * With a callback: its lowest priority, or false; without: whether anything is registered.
+     * A callback and a whole-number priority ask whether it is hooked at that one; a priority as a
+     * string answers as none does (probe hook-priority).
+     */
+    public function has(string $hook, callable|array|string|false $callback = false, int|string|false $priority = false): int|bool
     {
         if ($callback === false) {
             return ($this->hooks[$hook] ?? []) !== [];
         }
         $id = self::id($callback);
+        if (is_int($priority)) {
+            return isset($this->hooks[$hook][$priority][$id]);
+        }
         $priorities = array_keys($this->hooks[$hook] ?? []);
         sort($priorities);
         foreach ($priorities as $priority) {

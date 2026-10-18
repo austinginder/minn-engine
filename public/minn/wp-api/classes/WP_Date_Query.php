@@ -39,7 +39,7 @@ class WP_Date_Query
         return $this->builder()->sanitize((array) $queries, $defaults);
     }
 
-    public function is_first_order_clause($query)
+    protected function is_first_order_clause($query)
     {
         return DateSql::isFirstOrder((array) $query);
     }

@@ -222,7 +222,7 @@ class WP_Customize_Control
         return null;
     }
 
-    public function render_content()
+    protected function render_content()
     {
     }
 }
@@ -300,7 +300,7 @@ class WP_Customize_Partial
     public $container_inclusive = false;
     public $fallback_refresh = true;
 
-    public function __construct($manager = null, $id = '', $args = [])
+    public function __construct($component, $id, $args = [])
     {
         $this->id = (string) $id;
         foreach ((array) $args as $key => $value) {

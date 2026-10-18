@@ -12858,7 +12858,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/BlockStream.php",
-            "lines": 285,
+            "lines": 299,
             "doc": "Block markup read one token at a time, as the reference's streaming\nblock processor reads it (probe block-processor). A delimiter is an HTML\ncomment: whitespace after \"<!--\", an optional \"/\" (the closing flag),\n\"wp:\", a name (lowercase, an optional namespace), whitespace, optional\nJSON object attributes followed by whitespace, then \"-->\" or \"/-->\"\n(void). Any other comment is HTML. The HTML between delimiters comes out\nas its own token, reported as void (freeform at the top, inner HTML in a\nblock) before the delimiter that ends it, which is already read, so the\nclosing flag shows that delimiter's. Quirks kept on purpose:\n- trailing HTML after the last delimiter is dropped when it holds a\ncomment;\n- an unterminated comment is incomplete input only when it could\nstill become a delimiter, otherwise reading just stops;\n- attributes are parsed only when asked, and only that sets the JSON\nerror.",
             "implements": [],
             "extends": null,
@@ -13207,6 +13207,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "opensAny",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "opensAny(array $types): bool",
+                    "doc": "Whether the delimiter opens a block of any of the types named, or of any type when none is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 156,
+                    "end": 167
+                },
+                {
+                    "routes": [],
                     "name": "opens",
                     "static": false,
                     "visibility": "public",
@@ -13222,8 +13242,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 165
+                    "line": 170,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -13242,8 +13262,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 175
+                    "line": 182,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -13256,8 +13276,8 @@
                         "@return array{0: int, 1: int}|null"
                     ],
                     "params": [],
-                    "line": 178,
-                    "end": 185
+                    "line": 192,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -13270,8 +13290,8 @@
                         "@return array<mixed>|null"
                     ],
                     "params": [],
-                    "line": 188,
-                    "end": 203
+                    "line": 202,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -13282,8 +13302,8 @@
                     "doc": "From where the last token ended: the HTML before the next delimiter, the delimiter, or the end.",
                     "shapes": [],
                     "params": [],
-                    "line": 206,
-                    "end": 222
+                    "line": 220,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -13309,8 +13329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 232
+                    "line": 238,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -13321,8 +13341,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 234,
-                    "end": 245
+                    "line": 248,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -13341,8 +13361,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 252
+                    "line": 261,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -13363,8 +13383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 279
+                    "line": 276,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -13383,8 +13403,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 291
+                    "line": 296,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -13403,8 +13423,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 310
+                    "line": 308,
+                    "end": 324
                 }
             ]
         },
@@ -131979,7 +131999,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 419,
+            "lines": 426,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
@@ -132246,8 +132266,8 @@
                     "name": "has",
                     "static": false,
                     "visibility": "public",
-                    "signature": "has(string $hook, callable|array|string|false $callback = false): int|bool",
-                    "doc": "With a callback: its lowest priority, or false; without: whether anything is registered.",
+                    "signature": "has(string $hook, callable|array|string|false $callback = false, string|int|false $priority = false): int|bool",
+                    "doc": "With a callback: its lowest priority, or false; without: whether anything is registered.\nA callback and a whole-number priority ask whether it is hooked at that one; a priority as a\nstring answers as none does (probe hook-priority).",
                     "shapes": [],
                     "params": [
                         {
@@ -132263,10 +132283,17 @@
                             "shape": "",
                             "default": "false",
                             "doc": ""
+                        },
+                        {
+                            "name": "priority",
+                            "type": "string|int|false",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 129
+                    "line": 119,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -132294,8 +132321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 148
+                    "line": 144,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -132323,8 +132350,8 @@
                             "doc": "the value first"
                         }
                     ],
-                    "line": 155,
-                    "end": 159
+                    "line": 162,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -132360,8 +132387,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 176
+                    "line": 179,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -132389,8 +132416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 192
+                    "line": 193,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -132418,8 +132445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 210
+                    "line": 208,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -132447,8 +132474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 222
+                    "line": 225,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -132476,8 +132503,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 235
+                    "line": 238,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -132505,8 +132532,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 247
+                    "line": 250,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -132555,8 +132582,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 263
+                    "line": 263,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -132605,8 +132632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 278
+                    "line": 278,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -132625,8 +132652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 284
+                    "line": 288,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -132645,8 +132672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 290
+                    "line": 294,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -132657,8 +132684,8 @@
                     "doc": "The hook running now, or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 293,
-                    "end": 296
+                    "line": 300,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -132677,8 +132704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 302
+                    "line": 306,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -132699,8 +132726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 320
+                    "line": 317,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -132713,8 +132740,8 @@
                         "@return array<string, array<int, list<callable>>> a read-only view for diagnostics"
                     ],
                     "params": [],
-                    "line": 327,
-                    "end": 337
+                    "line": 334,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -132735,8 +132762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 406,
-                    "end": 411
+                    "line": 413,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -132787,8 +132814,8 @@
                             "doc": "what an 'all' callback gets after the hook's name; the arguments when null"
                         }
                     ],
-                    "line": 344,
-                    "end": 391
+                    "line": 351,
+                    "end": 398
                 },
                 {
                     "routes": [],
@@ -132814,8 +132841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 402
+                    "line": 400,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -132841,8 +132868,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 413,
-                    "end": 422
+                    "line": 420,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -132861,8 +132888,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 425,
-                    "end": 435
+                    "line": 432,
+                    "end": 442
                 }
             ]
         },

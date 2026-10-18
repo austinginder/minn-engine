@@ -8,7 +8,7 @@ the block parser and renderer
 | [`Bindings`](#bindings) | final class | 138 | Block bindings (probe block-bindings): a block attribute bound to a |
 | [`Block`](#block) | final readonly class | 63 | One parsed block. A null name is freeform HTML between blocks. The |
 | [`BlockName`](#blockname) | final class | 17 | The block name rules: a string, lower-case, `namespace/name`. |
-| [`BlockStream`](#blockstream) | final class | 285 | Block markup read one token at a time, as the reference's streaming |
+| [`BlockStream`](#blockstream) | final class | 299 | Block markup read one token at a time, as the reference's streaming |
 | [`Context`](#context) | final class | 76 | What the template blocks render against: the resolution, the main |
 | [`CoreBlocks`](#coreblocks) | final class | 26 | The core block types' metadata as the reference registers them |
 | [`Duotone`](#duotone) | final class | 79 | Duotone filters (probe block-supports): a CSS color read into its red, |
@@ -242,6 +242,10 @@ The open block types, outermost first, with #html for an HTML span. @return list
 
 - `@return list<string>`
 
+### `opensAny(array $types): bool`
+
+Whether the delimiter opens a block of any of the types named, or of any type when none is.
+
 ### `opens(?string $type): bool`
 
 Whether this token opens a block (of the type, when given): never after a closer, and HTML only at the top.
@@ -262,7 +266,7 @@ The delimiter's attributes, parsed now (setting the JSON error), or null. @retur
 
 - `@return array<mixed>|null`
 
-Internals: `scan()` (private, line 206), `emitHtml()` (private, line 224), `matchDelimiter()` (private, line 234), `finish()` (private, line 247), `nextDelimiter()` (private, line 262), `commentEnd()` (private, line 282), `couldBeDelimiter()` (private, line 294)
+Internals: `scan()` (private, line 220), `emitHtml()` (private, line 238), `matchDelimiter()` (private, line 248), `finish()` (private, line 261), `nextDelimiter()` (private, line 276), `commentEnd()` (private, line 296), `couldBeDelimiter()` (private, line 308)
 
 
 ## Context

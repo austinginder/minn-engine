@@ -1,0 +1,47 @@
+[
+    [
+        "nothing hooked",
+        false
+    ],
+    [
+        "has_filter",
+        {
+            "any": true,
+            "the callback": 5,
+            "at its priority": true,
+            "at another": false,
+            "priority as a string": 5,
+            "no callback, a priority": true,
+            "no callback, another priority": true,
+            "another callback at it": false,
+            "hooked at 0": 0,
+            "at 0": true,
+            "has_action at its priority": true
+        }
+    ],
+    [
+        "hooked at 5 and 20",
+        {
+            "the callback": 5,
+            "at 20": true,
+            "at 5": true,
+            "at 10": false
+        }
+    ],
+    [
+        "WP_Hook, hooked at 5 and 20",
+        {
+            "at 20": true,
+            "at 10": false
+        }
+    ],
+    [
+        "WP_Hook::has_filter",
+        {
+            "at its priority": true,
+            "at another": false,
+            "no priority": 5,
+            "no callback, a priority": true
+        }
+    ]
+]

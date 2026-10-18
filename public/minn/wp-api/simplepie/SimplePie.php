@@ -100,7 +100,7 @@ class SimplePie
         $this->permanent_url = $this->feed_url;
     }
 
-    public function set_file($file)
+    public function set_file(&$file)
     {
         if ($file instanceof File) {
             $this->feed_url = $file->url;

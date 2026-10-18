@@ -31,7 +31,7 @@ function remove_action($hook_name, $callback, $priority = 10)
 
 function has_filter($hook_name, $callback = false, $priority = false)
 {
-    return Runtime::hooks()->has((string) $hook_name, $callback);
+    return Runtime::hooks()->has((string) $hook_name, $callback, $priority);
 }
 
 function has_action($hook_name, $callback = false, $priority = false)

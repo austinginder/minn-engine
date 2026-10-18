@@ -827,11 +827,11 @@ class Sanitize implements RegistryAware
     {
     }
 
-    public function pass_cache_data($enable_cache = true, $cache_location = './cache', $cache_name_function = 'md5', $cache_class = null)
+    public function pass_cache_data($enable_cache = true, $cache_location = './cache', $cache_name_function = 'md5', $cache_class = null, $cache = null)
     {
     }
 
-    public function pass_file_data($file_class = null, $timeout = 10, $useragent = '', $force_fsockopen = false)
+    public function pass_file_data($file_class = null, $timeout = 10, $useragent = '', $force_fsockopen = false, $curl_options = [])
     {
     }
 

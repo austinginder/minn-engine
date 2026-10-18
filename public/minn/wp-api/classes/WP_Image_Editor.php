@@ -78,7 +78,7 @@ abstract class WP_Image_Editor
         return true;
     }
 
-    public function get_default_quality($mime_type = '')
+    protected function get_default_quality($mime_type)
     {
         return $mime_type === 'image/webp' ? 86 : $this->default_quality;
     }

@@ -2462,7 +2462,7 @@
         },
         "has_filter": {
             "file": "hooks.php",
-            "statement": "return Runtime::hooks()->has((string) $hook_name, $callback);"
+            "statement": "return Runtime::hooks()->has((string) $hook_name, $callback, $priority);"
         },
         "has_header_image": {
             "file": "custom-header.php",

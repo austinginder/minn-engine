@@ -79,7 +79,7 @@ class WP_Block implements \Minn\Objects\RenderedBlock
     }
 
     /** The bound attributes' values, as the sources answer them for this block and its context (Minn\\Blocks\\Bindings). */
-    public function process_block_bindings()
+    private function process_block_bindings()
     {
         return \Minn\Blocks\Bindings::values(MinnBlock::fromArray($this->parsed_block), (array) $this->available_context);
     }

@@ -119,9 +119,9 @@ class WP_Block_Processor
         return BlockStream::normalize(substr($a_text, $a_at, $a_length)) === BlockStream::normalize(substr($b_text, $b_at, $b_length));
     }
 
-    public function opens_block(?string $block_type = null): bool
+    public function opens_block(string ...$block_type): bool
     {
-        return $this->stream->opens($block_type);
+        return $this->stream->opensAny($block_type);
     }
 
     public function is_html(): bool

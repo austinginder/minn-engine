@@ -60,7 +60,7 @@ class WP_REST_Server implements \Minn\Objects\RestServer
         return wp_json_encode(['code' => $code, 'message' => $message, 'data' => ['status' => $status]]);
     }
 
-    public function get_json_encode_options(WP_REST_Request $request)
+    protected function get_json_encode_options(WP_REST_Request $request)
     {
         $options = 0;
         return apply_filters('rest_json_encode_options', $options, $request);
@@ -580,7 +580,7 @@ class WP_REST_Server implements \Minn\Objects\RestServer
         return RouteIndex::describe((string) $route, $callbacks, $this->get_route_options($route) ?: [], (string) $context, static fn (string $route) => rest_url($route));
     }
 
-    public function get_max_batch_size()
+    protected function get_max_batch_size()
     {
         return apply_filters('rest_get_max_batch_size', 25);
     }
@@ -590,7 +590,7 @@ class WP_REST_Server implements \Minn\Objects\RestServer
         return false;
     }
 
-    public function set_status($code)
+    protected function set_status($code)
     {
         status_header($code);
     }
@@ -612,7 +612,7 @@ class WP_REST_Server implements \Minn\Objects\RestServer
         header_remove($key);
     }
 
-    public function get_raw_data()
+    public static function get_raw_data()
     {
         return (string) (Runtime::current()->request?->body ?? '');
     }
@@ -628,7 +628,7 @@ class WP_REST_Server implements \Minn\Objects\RestServer
         return $headers;
     }
 
-    public function get_json_last_error()
+    protected function get_json_last_error()
     {
         return json_last_error() === JSON_ERROR_NONE ? false : json_last_error_msg();
     }

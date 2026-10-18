@@ -13612,7 +13612,7 @@
         },
         "WP_Hook::has_filter": {
             "file": "classes/WP_Hook.php",
-            "lines": 10,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [

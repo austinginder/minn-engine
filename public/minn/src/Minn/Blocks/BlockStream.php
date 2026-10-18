@@ -152,6 +152,20 @@ final class BlockStream
         return $this->open;
     }
 
+    /** Whether the delimiter opens a block of any of the types named, or of any type when none is. */
+    public function opensAny(array $types): bool
+    {
+        if ($types === []) {
+            return $this->opens(null);
+        }
+        foreach ($types as $type) {
+            if ($this->opens((string) $type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Whether this token opens a block (of the type, when given): never after a closer, and HTML only at the top. */
     public function opens(?string $type): bool
     {

@@ -62,9 +62,9 @@ class WP_Sitemaps implements \Minn\Objects\SitemapServer
         return $bypass;
     }
 
-    public function add_robots($output, $public)
+    public function add_robots($output, $is_public)
     {
-        if (!$public) {
+        if (!$is_public) {
             return $output;
         }
         return $output . "\nSitemap: " . esc_url($this->index->get_index_url()) . "\n";

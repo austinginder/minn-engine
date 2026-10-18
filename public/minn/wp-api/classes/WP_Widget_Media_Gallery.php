@@ -29,7 +29,7 @@ class WP_Widget_Media_Gallery extends WP_Widget_Media
         echo gallery_shortcode($atts);
     }
 
-    public function has_content($instance)
+    protected function has_content($instance)
     {
         if (!parent::has_content($instance)) {
             return !empty($instance['ids']);
