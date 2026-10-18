@@ -64,13 +64,13 @@ final class SocialLinks
         $classes = ['wp-social-link', 'wp-social-link-' . $service];
         $style = [];
         if (!empty($parent->attrs['iconColor'])) {
-            $classes[] = 'has-' . Styles::slug((string) $parent->attrs['iconColor']) . '-color';
+            $classes[] = 'has-' . Styles::preset((string) $parent->attrs['iconColor']) . '-color';
         }
         if (!empty($parent->attrs['iconColorValue'])) {
             $style[] = 'color:' . Styles::value((string) $parent->attrs['iconColorValue']);
         }
         if (!empty($parent->attrs['iconBackgroundColor'])) {
-            $classes[] = 'has-' . Styles::slug((string) $parent->attrs['iconBackgroundColor']) . '-background-color';
+            $classes[] = 'has-' . Styles::preset((string) $parent->attrs['iconBackgroundColor']) . '-background-color';
         }
         if (!empty($parent->attrs['iconBackgroundColorValue'])) {
             $style[] = 'background-color:' . Styles::value((string) $parent->attrs['iconBackgroundColorValue']);

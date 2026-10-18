@@ -29,7 +29,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`QueryClasses`](#queryclasses) | final readonly class | 128 | The body-class tokens the main query stands for, in the reference's |
 | [`SpacingScale`](#spacingscale) | final class | 48 | The spacing sizes a theme.json spacing scale makes (probe |
 | [`StyleLayers`](#stylelayers) | final class | 67 | What plugins change about the global stylesheet's layers and nodes, for |
-| [`StylePresets`](#stylepresets) | final class | 151 | The preset side of theme.json: the colour, gradient, font-size, |
+| [`StylePresets`](#stylepresets) | final class | 152 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 88 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |

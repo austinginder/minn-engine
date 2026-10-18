@@ -21474,12 +21474,13 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/StyleEngine.php",
-            "lines": 195,
+            "lines": 217,
             "doc": "What a block's style object comes to, as the reference's style engine\nreads it (probe style-engine): the declarations each style property\nmakes and the class names a preset or a set colour earns.\n\n- Groups in the order background, colour, border, shadow, dimensions,\nspacing, typography, and properties in their order within a group.\n- A value goes into the declarations as given. Whether it makes CSS is\nfor the declarations holder to judge.\n- A preset (\"var:preset|color|base\") becomes a custom property only\nwhere the definition names one for its kind (a colour, a gradient,\nspacing, a font size or family, a shadow, a dimension, a border radius,\na border side's colour). Elsewhere it makes nothing, and with presets\nturned into class names it makes none anywhere.\n- Sides and corners (\"padding\" => [\"top\" => ...]) name their own\nproperties in the order given. Border sides come after the whole\nborder.",
             "implements": [],
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Blocks\\Styles",
                 "Minn\\Theme\\StylePresets"
             ],
             "constructor": null,
@@ -21717,7 +21718,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "kebab(string $text): string",
-                    "doc": "A name in kebab case, as the reference's _wp_to_kebab_case cuts it (\"lineHeight\", \"Zz Space\" become \"line-height\", \"zz-space\").",
+                    "doc": "A name in kebab case, as the reference cuts a style property, a preset\nslug and the class made from it (\"lineHeight\" line-height, \"h1\" h-1,\n\"XMLHttpRequest\" xml-http-request, \"1st Place\" 1st-place, \"ÜberCool\"\nÜber-cool: probe media, kebab cases). Words follow lodash's kebabCase:\na capital starts one, a run of capitals is one, digits are one apart\nfrom letters unless they make an ordinal. Unlike lodash, a straight\napostrophe is dropped and a curly one separates, a symbol outside\nLatin-1's punctuation (×, an emoji, a CJK letter) joins the word it\ntouches, and only ASCII letters are lower-cased.",
                     "shapes": [],
                     "params": [
                         {
@@ -21728,8 +21729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 218
+                    "line": 224,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -21990,11 +21991,13 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Styles.php",
-            "lines": 155,
+            "lines": 161,
             "doc": "The inline style and class names a block's \"style\" and preset\nattributes produce at render time, for the dynamic blocks that build\ntheir own wrapper (static blocks already carry them in stored markup).",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Blocks\\StyleEngine"
+            ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Search",
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
@@ -22043,6 +22046,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "preset",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "preset(string $slug): string",
+                    "doc": "The class token for a preset a block names (a colour, font size or family): its slug in kebab case, as the reference makes has-*-color.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 36
+                },
+                {
+                    "routes": [],
                     "name": "slug",
                     "static": true,
                     "visibility": "public",
@@ -22058,8 +22081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -22078,8 +22101,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 61
+                    "line": 50,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -22098,8 +22121,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 159
+                    "line": 149,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -22118,8 +22141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 165
+                    "line": 168,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -22147,8 +22170,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 82
+                    "line": 70,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -22176,8 +22199,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 92
+                    "line": 91,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -22205,8 +22228,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 109
+                    "line": 101,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -22234,8 +22257,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 130
+                    "line": 118,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -22263,8 +22286,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 140
+                    "line": 139,
+                    "end": 146
                 }
             ]
         },
@@ -175791,7 +175814,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/StylePresets.php",
-            "lines": 151,
+            "lines": 152,
             "doc": "The preset side of theme.json: the colour, gradient, font-size,\nfont-family, spacing, and shadow lists a theme declares over core's\nown, as the custom properties on :root and the has-* utility classes\nthe reference prints for them. Pure: settings in, CSS fragments out.",
             "implements": [],
             "extends": null,
@@ -175963,7 +175986,7 @@
                         }
                     ],
                     "line": 111,
-                    "end": 120
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -175993,8 +176016,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 140
+                    "line": 131,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -176022,8 +176045,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 159
+                    "line": 150,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -176049,8 +176072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 165
+                    "line": 163,
+                    "end": 166
                 }
             ]
         },

@@ -40,14 +40,14 @@ final readonly class Search
             $position = 'button-outside';
         }
         $useIcon = (bool) $block->attr('buttonUseIcon', false);
-        $family = empty($block->attrs['fontFamily']) ? '' : ' has-' . Styles::slug((string) $block->attrs['fontFamily']) . '-font-family';
+        $family = empty($block->attrs['fontFamily']) ? '' : ' has-' . Styles::preset((string) $block->attrs['fontFamily']) . '-font-family';
 
         $buttonClasses = ['wp-block-search__button'];
         if (!empty($block->attrs['textColor'])) {
-            array_push($buttonClasses, 'has-text-color', 'has-' . Styles::slug((string) $block->attrs['textColor']) . '-color');
+            array_push($buttonClasses, 'has-text-color', 'has-' . Styles::preset((string) $block->attrs['textColor']) . '-color');
         }
         if (!empty($block->attrs['backgroundColor'])) {
-            array_push($buttonClasses, 'has-background', 'has-' . Styles::slug((string) $block->attrs['backgroundColor']) . '-background-color');
+            array_push($buttonClasses, 'has-background', 'has-' . Styles::preset((string) $block->attrs['backgroundColor']) . '-background-color');
         }
         if ($family !== '') {
             $buttonClasses[] = trim($family);

@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1604
+        "delegates": 1605
     },
     "functions": {
         "__": {
@@ -763,6 +763,10 @@
         "_wp_sidebars_changed": {
             "file": "theme.php",
             "statement": "retrieve_widgets(true);"
+        },
+        "_wp_to_kebab_case": {
+            "file": "template.php",
+            "statement": "return \\Minn\\Blocks\\StyleEngine::kebab((string) $input_string);"
         },
         "_wp_upload_dir": {
             "file": "link-template.php",

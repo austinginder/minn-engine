@@ -130,7 +130,7 @@ final readonly class Navigation
         // The block's own colour, size, and family presets ride on both
         // the nav and its list; the typography style rides inline on both.
         $presets = self::presetClasses($block);
-        $family = empty($block->attrs['fontFamily']) ? [] : ['has-' . Styles::slug((string) $block->attrs['fontFamily']) . '-font-family'];
+        $family = empty($block->attrs['fontFamily']) ? [] : ['has-' . Styles::preset((string) $block->attrs['fontFamily']) . '-font-family'];
         $inline = Styles::inline((array) $block->attr('style', []));
         $style = $inline === '' ? '' : 'style="' . Html::attr($inline) . '" ';
 
@@ -328,16 +328,16 @@ final readonly class Navigation
             $classes[] = 'has-text-color';
         }
         if (!empty($block->attrs['textColor'])) {
-            $classes[] = 'has-' . Styles::slug((string) $block->attrs['textColor']) . '-color';
+            $classes[] = 'has-' . Styles::preset((string) $block->attrs['textColor']) . '-color';
         }
         if (!empty($block->attrs['backgroundColor']) || isset($block->attrs['style']['color']['background'])) {
             $classes[] = 'has-background';
         }
         if (!empty($block->attrs['backgroundColor'])) {
-            $classes[] = 'has-' . Styles::slug((string) $block->attrs['backgroundColor']) . '-background-color';
+            $classes[] = 'has-' . Styles::preset((string) $block->attrs['backgroundColor']) . '-background-color';
         }
         if (!empty($block->attrs['fontSize'])) {
-            $classes[] = 'has-' . Styles::slug((string) $block->attrs['fontSize']) . '-font-size';
+            $classes[] = 'has-' . Styles::preset((string) $block->attrs['fontSize']) . '-font-size';
         }
         return $classes;
     }
@@ -461,7 +461,7 @@ final readonly class Navigation
         $style = '';
         foreach (['Text' => ['color', 'has-text-color', '-color'], 'Background' => ['background-color', 'has-background', '-background-color']] as $kind => [$property, $has, $suffix]) {
             if (!empty($nav["overlay{$kind}Color"])) {
-                $classes .= " {$has} has-" . Styles::slug((string) $nav["overlay{$kind}Color"]) . $suffix;
+                $classes .= " {$has} has-" . Styles::preset((string) $nav["overlay{$kind}Color"]) . $suffix;
             } elseif (!empty($nav["customOverlay{$kind}Color"])) {
                 $classes .= " {$has}";
                 $style .= "{$property}: " . $nav["customOverlay{$kind}Color"] . ';';

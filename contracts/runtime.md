@@ -17098,6 +17098,46 @@ installs on Minn, with nothing kept about the site (updates.minn.run 0.3.1). The
 kept 24 hours, not twelve (`Updates::TTL`, and `_maybe_update_*` on converted sites' cron events). Unit
 `directory` holds the mark and the slot arithmetic; suites cron, cron-mail, upgrades and perf pass.
 
+## Preset slugs in kebab case (2026-10-18)
+
+A preset slug becomes a class and a custom property in kebab case on the
+reference, and WordPress 7.1 cuts kebab case with digits as words of their
+own: `h1` is `h-1`, `theme-palette1` is `theme-palette-1`, `xLarge2` is
+`x-large-2`, `accent_2` is `accent-2`, `1st Place` is `1st-place`. The
+editor saves the same classes on static blocks. The engine had three
+answers and none of them that one:
+
+- `StyleEngine::kebab` kept digits on the word before them (`h1`), lost
+  accented letters (`café` became `caf`) and kept `.` inside a word;
+- the facade's `_wp_to_kebab_case` re-cut names with its own regexes and
+  kept `a--b`, `size.one` and `-lead` as given (26 of the probe's 75 off);
+- the dynamic blocks' preset classes (`has-*-color`, `-background-color`,
+  `-font-size`, `-font-family`, the social icons' and the navigation
+  overlay's) went through `Styles::slug`, which only strips characters, so
+  `xLarge` stayed `xLarge`;
+- the engine's own preset stylesheet (`StylePresets`, the front's) printed
+  each slug as registered, so a classic theme whose palette is `palette1`
+  got `.has-palette1-color` beside content saved with `has-palette-1-color`,
+  and the colour never applied.
+
+One kebab now (`StyleEngine::kebab`): the facade's function delegates to
+it, `Styles::preset()` makes the class token, and `StylePresets` names each
+custom property and class with it. Its words follow lodash's kebabCase (a
+capital starts one, a run of capitals is one, digits stand apart unless they
+make an ordinal); as the reference has it, only ASCII letters are
+lower-cased (`ÜberCool` is `Über-cool`), a straight apostrophe is dropped
+and a curly one separates, and a symbol outside Latin-1's punctuation
+(`×`, an emoji, a CJK letter) joins the word it touches. Probe
+`preset-slugs`: the 75 names, a dynamic block's classes for eight slugs, and
+the global stylesheet's names for presets added to the theme's own.
+
+Found on the way, owed: when a theme that sets `defaultFontSizes: false`
+no longer has core's size slugs (small, medium, large, x-large), the
+reference still prints core's sizes in the stylesheet (fluid, from 13, 20,
+36 and 42 px) and the engine prints none, so content using
+`has-small-font-size` loses its size there. `data/presets.json` holds no
+font sizes.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17168,3 +17208,4 @@ rows that are `open` or `austin`.
 | 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | done | "A product's head link and its post terms (2026-10-16)": the route rest_get_queried_resource_route gives |
 | 16961 | What the_content adds before core's defaults (10-16) | plain text a filter adds before priority 10 is not texturized or given paragraphs | open | engine work owed |
+| 17101 | Preset slugs in kebab case (10-18) | core's default font sizes printed when the theme no longer has their slugs (`defaultFontSizes: false`) | open | engine work owed |

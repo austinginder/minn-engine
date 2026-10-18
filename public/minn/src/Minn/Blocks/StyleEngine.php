@@ -210,10 +210,32 @@ final class StyleEngine
         return is_string($value) ? [$property => $value] : [];
     }
 
-    /** A name in kebab case, as the reference's _wp_to_kebab_case cuts it ("lineHeight", "Zz Space" become "line-height", "zz-space"). */
+    /**
+     * A name in kebab case, as the reference cuts a style property, a preset
+     * slug and the class made from it ("lineHeight" line-height, "h1" h-1,
+     * "XMLHttpRequest" xml-http-request, "1st Place" 1st-place, "ÜberCool"
+     * Über-cool: probe media, kebab cases). Words follow lodash's kebabCase:
+     * a capital starts one, a run of capitals is one, digits are one apart
+     * from letters unless they make an ordinal. Unlike lodash, a straight
+     * apostrophe is dropped and a curly one separates, a symbol outside
+     * Latin-1's punctuation (×, an emoji, a CJK letter) joins the word it
+     * touches, and only ASCII letters are lower-cased.
+     */
     public static function kebab(string $text): string
     {
-        preg_match_all('/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/', str_replace("'", '', $text), $words);
-        return strtolower(implode('-', $words[0]));
+        $upper = 'A-Z\x{C0}-\x{D6}\x{D8}-\x{DE}';
+        $lower = 'a-z\x{DF}-\x{F6}\x{F8}-\x{FF}';
+        $break = '\x{00}-\x{2F}\x{3A}-\x{40}\x{5B}-\x{60}\x{7B}-\x{BF}\x{1680}\x{180E}\x{2000}-\x{206F}\x{3000}\x{FEFF}';
+        [$u, $l, $b, $other] = ["[{$upper}]", "[{$lower}]", "[{$break}]", "[^{$break}0-9{$upper}{$lower}]"];
+        $word = implode('|', [
+            "{$u}?{$l}+(?={$b}|{$u}|$)",
+            "(?:{$u}|{$other})+(?={$b}|{$u}(?:{$l}|{$other})|$)",
+            "{$u}?(?:{$l}|{$other})+",
+            "{$u}+",
+            '\d*(?:1ST|2ND|3RD|(?![123])\dTH)(?=\b|[a-z_])',
+            '\d*(?:1st|2nd|3rd|(?![123])\dth)(?=\b|[A-Z_])',
+            '\d+',
+        ]);
+        return preg_match_all("/{$word}/u", str_replace("'", '', $text), $words) > 0 ? strtolower(implode('-', $words[0])) : '';
     }
 }

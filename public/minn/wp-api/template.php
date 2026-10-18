@@ -445,13 +445,7 @@ function get_blogs_of_user($user_id, $all = false)
 
 function _wp_to_kebab_case($input_string)
 {
-    $string = (string) $input_string;
-    $string = preg_replace('/([a-z\d])([A-Z])/', '$1-$2', $string);
-    $string = preg_replace('/([A-Z]+)([A-Z][a-z\d]+)/', '$1-$2', $string);
-    $string = preg_replace('/([a-zA-Z])(\d)/', '$1-$2', $string);
-    $string = preg_replace('/(\d)([a-zA-Z])/', '$1-$2', $string);
-    $string = preg_replace('/[\s_]+/', '-', $string);
-    return strtolower($string);
+    return \Minn\Blocks\StyleEngine::kebab((string) $input_string);
 }
 
 /** The theme file for a template type (through the hierarchy and type filters); under a block theme the canvas stands in. */

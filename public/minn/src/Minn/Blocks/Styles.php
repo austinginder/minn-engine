@@ -29,6 +29,12 @@ final class Styles
         return $value;
     }
 
+    /** The class token for a preset a block names (a colour, font size or family): its slug in kebab case, as the reference makes has-*-color. */
+    public static function preset(string $slug): string
+    {
+        return StyleEngine::kebab($slug);
+    }
+
     /** A class-name token from an attribute: letters, digits, dashes, underscores; nothing that ends an attribute. */
     public static function slug(string $value): string
     {
@@ -150,10 +156,10 @@ final class Styles
             $classes[] = 'has-text-align-' . self::slug((string) $attrs['textAlign']);
         }
         if (!empty($attrs['fontSize'])) {
-            $classes[] = 'has-' . self::slug((string) $attrs['fontSize']) . '-font-size';
+            $classes[] = 'has-' . self::preset((string) $attrs['fontSize']) . '-font-size';
         }
         if (!empty($attrs['fontFamily'])) {
-            $classes[] = 'has-' . self::slug((string) $attrs['fontFamily']) . '-font-family';
+            $classes[] = 'has-' . self::preset((string) $attrs['fontFamily']) . '-font-family';
         }
         return $classes;
     }

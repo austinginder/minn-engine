@@ -80,7 +80,7 @@ final class StylePresets
         $out = '';
         foreach ($presets as $kind => $entries) {
             foreach ($entries as $entry) {
-                $out .= "--wp--preset--{$kind}--{$entry['slug']}: {$entry['value']};";
+                $out .= '--wp--preset--' . $kind . '--' . StyleEngine::kebab((string) $entry['slug']) . ": {$entry['value']};";
             }
         }
         return $out;
@@ -113,7 +113,8 @@ final class StylePresets
         $out = '';
         foreach ([['color', 'color', 'color'], ['color', 'background-color', 'background-color'], ['color', 'border-color', 'border-color'], ['gradient', 'gradient-background', 'background'], ['font-size', 'font-size', 'font-size'], ['font-family', 'font-family', 'font-family']] as [$kind, $suffix, $property]) {
             foreach ((array) ($presets[$kind] ?? []) as $preset) {
-                $out .= "{$prefix}.has-{$preset['slug']}-{$suffix}{{$property}: var(--wp--preset--{$kind}--{$preset['slug']}) !important;}";
+                $slug = StyleEngine::kebab((string) $preset['slug']);
+                $out .= "{$prefix}.has-{$slug}-{$suffix}{{$property}: var(--wp--preset--{$kind}--{$slug}) !important;}";
             }
         }
         return $out;

@@ -20901,13 +20901,6 @@
                 "why": "prints wp_get_document_title() inside a title element when the theme supports title-tag",
                 "body": "a594639c26ca"
             },
-            "_wp_to_kebab_case": {
-                "verdict": "delegate",
-                "to": "Minn\\Blocks\\StyleEngine::kebab",
-                "why": "re-cuts camel case and separators with its own regexes; StyleEngine::kebab already splits words as the reference does",
-                "doubt": "punctuation and apostrophes survive here ('a.b' stays 'a.b') where WordPress's word split drops them",
-                "body": "9a6517653b35"
-            },
             "add_thickbox": {
                 "verdict": "keep",
                 "reason": "compose",
