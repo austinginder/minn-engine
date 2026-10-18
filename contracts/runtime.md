@@ -17138,6 +17138,33 @@ reference still prints core's sizes in the stylesheet (fluid, from 13, 20,
 `has-small-font-size` loses its size there. `data/presets.json` holds no
 font sizes.
 
+## The legacy comments blocks (2026-10-18)
+
+Twenty Twenty-Two's single template still holds `core/post-comments`, and a
+comments block saved before it held inner blocks carries `legacy: true`. The
+engine registered no post-comments block and rendered a legacy comments block
+from its (absent) inner blocks, so those posts showed no comments and no
+form; the hunt found it on TT2. As the reference renders them (probe
+`legacy-comments`):
+
+- the inside is `comments_template()`'s output: the theme's `comments.php`,
+  or core's own when the theme has none;
+- the wrapper is a `div` (a legacy block's `tagName` is ignored) in the
+  dynamic-block class order: text alignment, then the extra classes, then the custom class,
+  the block's class and the support classes. A legacy comments block puts
+  `wp-block-post-comments` first among the extra classes, before its alignment,
+  and `wp-block-comments` as its own class;
+- nothing at all when the post takes no comments and has none; a protected
+  post gets the template's own password notice inside the wrapper;
+- `comment-reply` is queued whether or not comments are threaded (the
+  blocks queue it; `comments_template()` queues nothing).
+
+`Comments::legacy()` renders both; the inside comes from the facade's
+`_minn_legacy_comments()`, which calls `comments_template()` by name so a
+theme's file and the `comments_template` filter run as they do on WordPress.
+A comments block without inner blocks and without `legacy` still renders
+nothing, as on the reference.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

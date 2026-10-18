@@ -12086,6 +12086,12 @@
                 "why": "builds the classic template's comment query: statuses, the reader's held ones, threading, the page offset and the newest-first last page from a top-level count; the twin of BlockQueries::comments for the block path",
                 "body": "aa39cb2e8392"
             },
+            "_minn_legacy_comments": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the legacy comments blocks' inside: comment-reply queued and comments_template()'s output, called by name so a theme's comments.php and a plugin's comments_template filter run as on the reference",
+                "body": "55affda23939"
+            },
             "_minn_list_comments_args": {
                 "verdict": "move",
                 "to": "Minn\\Front\\CommentList",

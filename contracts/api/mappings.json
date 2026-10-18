@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 686,
-        "composes": 2143,
+        "composes": 2144,
         "leaf": 1004,
         "noop": 3148,
         "placeholder": 0,
         "deadend": 1770,
-        "functions": 8673,
+        "functions": 8674,
         "minnMethods": 1401,
         "leafLinesOver15": 12
     },
@@ -37242,6 +37242,16 @@
                 "Minn\\Html::addClasses"
             ],
             "composes": []
+        },
+        "_minn_legacy_comments": {
+            "file": "comment.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "comments_template",
+                "wp_enqueue_script"
+            ]
         },
         "_minn_link_attributes": {
             "file": "link-template.php",

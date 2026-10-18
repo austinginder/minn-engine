@@ -1,12 +1,12 @@
 {
     "method": "tests/tools/facade-logic.php: functions and methods in public/minn/wp-api (generated dead ends and placeholders apart) whose body holds more than one statement or a control structure, by tokens; lines are the body's non-blank, non-comment lines; a docblock tag @minn-facade-logic <reason> keeps one out of the count and lists it under \"kept\"",
     "summary": {
-        "functions": 3492,
+        "functions": 3493,
         "methods": 3806,
         "delegates": 3441,
-        "logicFunctions": 1827,
+        "logicFunctions": 1828,
         "logicMethods": 2030,
-        "logicLines": 30297,
+        "logicLines": 30301,
         "kept": 0
     },
     "byFile": {
@@ -35,8 +35,8 @@
             "lines": 706
         },
         "comment.php": {
-            "logic": 69,
-            "lines": 663
+            "logic": 70,
+            "lines": 667
         },
         "deprecated.php": {
             "logic": 156,
@@ -14106,6 +14106,12 @@
             "statements": 3,
             "lines": 10
         },
+        "_minn_legacy_comments": {
+            "file": "comment.php",
+            "line": 1512,
+            "statements": 4,
+            "lines": 4
+        },
         "_minn_link_attributes": {
             "file": "link-template.php",
             "line": 708,
@@ -14282,7 +14288,7 @@
         },
         "_minn_post_comments_form": {
             "file": "comment.php",
-            "line": 1507,
+            "line": 1520,
             "statements": 4,
             "lines": 6
         },

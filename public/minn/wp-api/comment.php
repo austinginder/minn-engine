@@ -1504,6 +1504,19 @@ function wp_send_note_notification($user, $comment, $post)
  * markup, with comment-reply enqueued while replies are threaded (the reply
  * links move this form), as the reference's block enqueues it.
  */
+/**
+ * What the legacy comments blocks print inside their wrapper: comments_template()'s output for the post the loop
+ * stands on. The blocks queue comment-reply whether or not comments are threaded (probe legacy-comments);
+ * comments_template() itself queues nothing.
+ */
+function _minn_legacy_comments(): string
+{
+    wp_enqueue_script('comment-reply');
+    ob_start();
+    comments_template();
+    return (string) ob_get_clean();
+}
+
 function _minn_post_comments_form(int $postId): string
 {
     if (get_option('thread_comments')) {

@@ -4,7 +4,7 @@ the template blocks a block theme composes with
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Comments`](#comments) | final readonly class | 271 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
+| [`Comments`](#comments) | final readonly class | 296 | comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. |
 | [`Navigation`](#navigation) | final readonly class | 535 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 270 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 279 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
@@ -15,7 +15,7 @@ the template blocks a block theme composes with
 
 `final readonly class Minn\Blocks\Dynamic\Theme\Comments` · `public/minn/src/Minn/Blocks/Dynamic/Theme/Comments.php`
 
-comments, comments-title, comment-template, the comment-* blocks, and the comment form.
+comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments.
 
 Used by: `Minn\Blocks\Renderer`
 
@@ -37,7 +37,7 @@ drops it (RowCache).
 
 - `@param array<string, mixed> $vars`
 
-Internals: `comments()` (private, line 58), `title()` (private, line 72), `template()` (private, line 112), `records()` (private, line 136), `count()` (private, line 149), `list()` (private, line 155), `avatar()` (private, line 186), `authorAvatar()` (private, line 198), `date()` (private, line 214), `commentPost()` (private, line 230), `authorName()` (private, line 236), `content()` (private, line 250), `replyLink()` (private, line 261), `form()` (private, line 274), `commentForm()` (private, line 289)
+Internals: `comments()` (private, line 59), `legacy()` (private, line 85), `title()` (private, line 97), `template()` (private, line 137), `records()` (private, line 161), `count()` (private, line 174), `list()` (private, line 180), `avatar()` (private, line 211), `authorAvatar()` (private, line 223), `date()` (private, line 239), `commentPost()` (private, line 255), `authorName()` (private, line 261), `content()` (private, line 275), `replyLink()` (private, line 286), `form()` (private, line 299), `commentForm()` (private, line 314)
 
 
 ## Navigation

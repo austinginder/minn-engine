@@ -29,7 +29,7 @@ use Minn\Content\PasswordGate;
 use Minn\Runtime\Avatar;
 use Minn\Runtime\Runtime;
 
-/** comments, comments-title, comment-template, the comment-* blocks, and the comment form. */
+/** comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. */
 final readonly class Comments
 {
     public function __construct(
@@ -52,11 +52,15 @@ final readonly class Comments
         $renderer->registerDynamic('core/comment-content', $this->content(...));
         $renderer->registerDynamic('core/comment-reply-link', $this->replyLink(...));
         $renderer->registerDynamic('core/post-comments-form', $this->form(...));
+        $renderer->registerDynamic('core/post-comments', $this->legacy(...));
     }
 
     /** Nothing at all when the post has no comments and takes none. */
     private function comments(Block $block, Renderer $renderer): string
     {
+        if (!empty($block->attrs['legacy'])) {
+            return $this->legacy($block, $renderer);
+        }
         $post = $renderer->context()->post();
         if ($post === null || PasswordGate::is($post) || ($post->commentStatus !== 'open' && self::count($post) === 0)) {
             return '';
@@ -67,6 +71,27 @@ final readonly class Comments
             $out .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$inner++]);
         }
         return $out;
+    }
+
+    /**
+     * The comments as a classic theme prints them (comments_template(), the
+     * theme's comments.php or core's own), in the block's wrapper: the legacy
+     * post-comments block (Twenty Twenty-Two's single template), and a
+     * comments block saved before it held inner blocks (legacy). A legacy
+     * comments block keeps post-comments' class ahead of its own. Nothing
+     * when the post takes no comments and has none; a protected post gets
+     * the template's own notice.
+     */
+    private function legacy(Block $block, Renderer $renderer): string
+    {
+        $post = $renderer->context()->post();
+        if ($post === null || ($post->commentStatus !== 'open' && self::count($post) === 0)) {
+            return '';
+        }
+        $legacy = $block->name === 'core/comments';
+        $align = Styles::align($block->attrs);
+        $extra = [...($legacy ? ['wp-block-post-comments'] : []), ...($align === null ? [] : [$align])];
+        return Wrapper::open('div', $legacy ? 'wp-block-comments' : 'wp-block-post-comments', $block, extraClasses: $extra) . \_minn_legacy_comments() . '</div>';
     }
 
     private function title(Block $block, Renderer $renderer): string
