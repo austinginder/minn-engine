@@ -171,6 +171,19 @@ final class RuntimeRoutes
             }
             if (!isset($data['routes'][$route])) {
                 $data['routes'][$route] = $description;
+                continue;
+            }
+            // A route the engine answers in part (Minn Admin's post-types GET) and a plugin in
+            // the rest (its POST): the plugin's endpoints for the other methods are listed after the engine's.
+            $covered = array_merge(...array_map(static fn (array $endpoint): array => (array) ($endpoint['methods'] ?? []), (array) ($data['routes'][$route]['endpoints'] ?? [])));
+            foreach ((array) ($description['endpoints'] ?? []) as $endpoint) {
+                $more = array_values(array_diff((array) ($endpoint['methods'] ?? []), $covered));
+                if ($more === []) {
+                    continue;
+                }
+                $data['routes'][$route]['endpoints'][] = ['methods' => $more] + $endpoint;
+                $data['routes'][$route]['methods'] = [...(array) ($data['routes'][$route]['methods'] ?? []), ...$more];
+                $covered = [...$covered, ...$more];
             }
         }
         return new Response($response->status, $response->headers, Json::encode($data, Json::ESCAPED));

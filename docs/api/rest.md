@@ -61,7 +61,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 479 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 492 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 503 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
@@ -2751,7 +2751,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 104), `dispatchDone()` (private, line 310), `asksForXml()` (private, line 385), `oembedXml()` (private, line 396), `look()` (private, line 410), `remember()` (private, line 415), `decode()` (private, line 422), `expand()` (private, line 442), `newWpRequest()` (private, line 467), `toResponse()` (private, line 496)
+Internals: `allow()` (private, line 104), `dispatchDone()` (private, line 323), `asksForXml()` (private, line 398), `oembedXml()` (private, line 409), `look()` (private, line 423), `remember()` (private, line 428), `decode()` (private, line 435), `expand()` (private, line 455), `newWpRequest()` (private, line 480), `toResponse()` (private, line 509)
 
 
 ## Schema

@@ -5852,7 +5852,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/StructureController.php",
-            "lines": 131,
+            "lines": 159,
             "doc": "The Structure view of minn-admin/v1: post types, taxonomies, and the\nterms switcher, each with its live counts, answered from the registries.",
             "implements": [],
             "extends": null,
@@ -5994,7 +5994,7 @@
                         }
                     ],
                     "line": 70,
-                    "end": 108
+                    "end": 112
                 },
                 {
                     "routes": [
@@ -6015,8 +6015,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 134
+                    "line": 116,
+                    "end": 142
+                },
+                {
+                    "routes": [],
+                    "name": "stamp",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "stamp(array $definition): string",
+                    "doc": "A definition's stamp, as Minn Admin makes it: a save sends it back as\n`base`, and a copy opened before someone else changed the definition\nis refused (409). Lists sorted, keys sorted, the escaped JSON's md5\ncut to twelve characters.",
+                    "shapes": [
+                        "@param array<string, mixed> $definition"
+                    ],
+                    "params": [
+                        {
+                            "name": "definition",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 152,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -6029,8 +6051,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 137,
-                    "end": 140
+                    "line": 165,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -6049,8 +6071,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 145
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -6069,8 +6091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 153
+                    "line": 175,
+                    "end": 181
                 }
             ]
         },
@@ -109730,7 +109752,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 479,
+            "lines": 492,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -109953,7 +109975,7 @@
                         }
                     ],
                     "line": 150,
-                    "end": 177
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -109979,8 +110001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 193
+                    "line": 202,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -110008,8 +110030,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 209
+                    "line": 214,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -110028,8 +110050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 216
+                    "line": 225,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -110064,8 +110086,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 227
+                    "line": 236,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -110084,8 +110106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 236
+                    "line": 243,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -110104,8 +110126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 259
+                    "line": 256,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -110134,8 +110156,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 279
+                    "line": 281,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -110156,8 +110178,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 294
+                    "line": 300,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -110176,8 +110198,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 307
+                    "line": 310,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -110203,8 +110225,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 372
+                    "line": 341,
+                    "end": 385
                 },
                 {
                     "routes": [],
@@ -110230,8 +110252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 382
+                    "line": 392,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -110250,8 +110272,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 487
+                    "line": 496,
+                    "end": 500
                 },
                 {
                     "routes": [],
@@ -110262,8 +110284,8 @@
                     "doc": "The runtime's REST server, the one door to it (built, with rest_api_init, on first use).",
                     "shapes": [],
                     "params": [],
-                    "line": 491,
-                    "end": 494
+                    "line": 504,
+                    "end": 507
                 },
                 {
                     "routes": [],
@@ -110318,8 +110340,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 319
+                    "line": 323,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -110338,8 +110360,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 385,
-                    "end": 388
+                    "line": 398,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -110365,8 +110387,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 396,
-                    "end": 407
+                    "line": 409,
+                    "end": 420
                 },
                 {
                     "routes": [],
@@ -110387,8 +110409,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 410,
-                    "end": 413
+                    "line": 423,
+                    "end": 426
                 },
                 {
                     "routes": [],
@@ -110421,8 +110443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 419
+                    "line": 428,
+                    "end": 432
                 },
                 {
                     "routes": [],
@@ -110441,8 +110463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 422,
-                    "end": 432
+                    "line": 435,
+                    "end": 445
                 },
                 {
                     "routes": [],
@@ -110464,8 +110486,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 442,
-                    "end": 465
+                    "line": 455,
+                    "end": 478
                 },
                 {
                     "routes": [],
@@ -110484,8 +110506,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 467,
-                    "end": 480
+                    "line": 480,
+                    "end": 493
                 },
                 {
                     "routes": [],
@@ -110504,8 +110526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 496,
-                    "end": 504
+                    "line": 509,
+                    "end": 517
                 }
             ]
         },

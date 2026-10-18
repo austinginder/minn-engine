@@ -126,6 +126,25 @@ on every Minn site; the suites now check the key pair and that a menu opens.
 Still owed: the per-person "site" scheme, which follows the site's default
 scheme.
 
+## Stale writes (Minn Admin 0.46)
+
+A definition the app can edit carries a `stamp`, and a save sends it back
+as `base`: a copy opened before someone else changed the definition is
+refused with 409 (`minn_stale`) before anything is written. The stamp is
+the definition's escaped JSON, its lists and keys sorted, as an md5 cut
+to twelve characters. The engine answers the Structure lists itself
+(`Admin\StructureController`), so it stamps each post type and taxonomy
+the same way, from the same fields, and `admin-surfaces` compares the
+values with the plugin's. Custom CSS, role defaults and the adapters'
+builders (Gravity Forms, ACF field groups, ACPT, memberships) are Minn
+Admin's own routes on the engine and stamp themselves; the suite checks
+custom CSS and role defaults, a stale save of each included.
+
+The namespace index (`/wp-json/minn-admin/v1`) lists a route the engine
+answers in part with the plugin's endpoints for the rest: the post-types
+GET is the engine's, its POST the plugin's, and both are listed. The
+engine's own endpoints still list no arguments.
+
 ## Honest gaps
 
 The adapter namespaces (`minn-admin/v1/<plugin>/*`), captured admin notices,

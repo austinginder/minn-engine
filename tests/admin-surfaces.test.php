@@ -127,6 +127,34 @@ as_parity( 'post-types list matches (storage backends aside: the engine has none
 as_parity( 'taxonomies list matches', '/minn-admin/v1/taxonomies', $admin, array( 'backends' ) );
 [ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/post-types', $author );
 check( 403 === $s, 'post-types needs manage_options', "status $s" );
+// Minn Admin 0.46's stale-write contract: each definition carries a stamp (the parity
+// checks above compare its value), and a save sending back a stale one is refused
+// before anything is written. Custom CSS and role defaults are Minn Admin's own routes.
+[ , $types ] = as_fetch( $ENGINE, '/minn-admin/v1/post-types', $admin );
+check( 1 === preg_match( '/^[0-9a-f]{12}$/', (string) ( $types['types'][0]['stamp'] ?? '' ) ), 'a post type carries a twelve-character stamp' );
+as_parity( 'custom-css carries the same stamp', '/minn-admin/v1/custom-css', $admin );
+as_parity( 'role-defaults carries the same stamp', '/minn-admin/v1/role-defaults', $admin );
+as_parity( 'a custom-css save on a stale stamp is refused (409)', '/minn-admin/v1/custom-css', $admin, array(), 'POST', '{"css":"body{}","base":"000000000000"}' );
+as_parity( 'a role-defaults save on a stale stamp is refused (409)', '/minn-admin/v1/role-defaults', $admin, array(), 'POST', '{"policies":{},"base":"000000000000"}' );
+[ $s ] = as_fetch( $ENGINE, '/minn-admin/v1/custom-css', $admin, 'POST', '{"css":"body{}","base":"000000000000"}' );
+check( 409 === $s, 'the stale custom-css save answers 409 on the engine', "status $s" );
+
+// The namespace index: each route both stacks serve lists the same methods, a
+// route the engine answers in part (its GET) with the plugin's POST beside it.
+// Minn's own routes (the switch is WordPress-only) and the arguments aside.
+[ , $rix ] = as_fetch( $REF, '/minn-admin/v1', null );
+[ , $eix ] = as_fetch( $ENGINE, '/minn-admin/v1', null );
+$off = array();
+foreach ( array_intersect_key( (array) ( $rix['routes'] ?? array() ), (array) ( $eix['routes'] ?? array() ) ) as $route => $entry ) {
+	$theirs = (array) ( $entry['methods'] ?? array() );
+	$ours   = (array) ( $eix['routes'][ $route ]['methods'] ?? array() );
+	sort( $theirs );
+	sort( $ours );
+	if ( $theirs !== $ours ) {
+		$off[] = $route . ' ' . implode( ',', $ours ) . ' vs ' . implode( ',', $theirs );
+	}
+}
+check( count( (array) ( $rix['routes'] ?? array() ) ) > 100 && array() === $off, 'the minn-admin/v1 index lists the methods the reference does', implode( '; ', $off ) );
 
 // 2. wp/v2 taxonomies.
 as_parity( 'wp/v2/taxonomies (view) matches', '/wp/v2/taxonomies', null );

@@ -28,7 +28,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`RenderController`](#rendercontroller) | final readonly class | 52 | The editor's island previews: block markup rendered by the same |
 | [`SessionsController`](#sessionscontroller) | final readonly class | 72 | A person's sign-in sessions, read from the same session_tokens store |
 | [`SiteController`](#sitecontroller) | final readonly class | 90 | The small Settings-view routes of minn-admin/v1: the site logo, the |
-| [`StructureController`](#structurecontroller) | final readonly class | 131 | The Structure view of minn-admin/v1: post types, taxonomies, and the |
+| [`StructureController`](#structurecontroller) | final readonly class | 159 | The Structure view of minn-admin/v1: post types, taxonomies, and the |
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
 | [`ThemesController`](#themescontroller) | final readonly class | 99 | The theme inventory of minn-admin/v1: every theme on disk with its |
 | [`Translations`](#translations) | final readonly class | 237 | Languages for the admin. A person's locale is their `locale` user meta, |
@@ -1038,7 +1038,7 @@ Route: `GET /minn-admin/v1/taxonomies (floor edit_posts)`
 
 Every taxonomy with its counts.
 
-Internals: `publicTypes()` (private, line 137), `termCount()` (private, line 142), `postCount()` (private, line 147)
+Internals: `stamp()` (private, line 152), `publicTypes()` (private, line 165), `termCount()` (private, line 170), `postCount()` (private, line 175)
 
 
 ## SystemController

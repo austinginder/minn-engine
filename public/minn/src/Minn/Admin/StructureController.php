@@ -80,8 +80,7 @@ final readonly class StructureController
             $supports = $declared
                 ? ['title', 'editor']
                 : array_keys(array_filter((array) ($admin[$slug]['supports'] ?? ['title' => true, 'editor' => true])));
-            $out[] = [
-                'slug' => $slug,
+            $definition = [
                 'plural' => (string) $type['name'],
                 'singular' => (string) ($admin[$slug]['labels']['singular_name'] ?? $type['name']),
                 'description' => (string) $type['description'],
@@ -89,13 +88,18 @@ final readonly class StructureController
                 'hierarchical' => (bool) $type['hierarchical'],
                 'has_archive' => (bool) $type['has_archive'],
                 'show_in_rest' => true,
-                'rest_base' => (string) $type['rest_base'],
                 'supports' => $supports,
                 // The reference registers post_format on posts; wp/v2/types hides it (not in REST), the Structure view lists it.
                 'taxonomies' => array_values($slug === 'post' ? [...$type['taxonomies'], 'post_format'] : $type['taxonomies']),
+            ];
+            $out[] = [
+                'slug' => $slug,
+                ...$definition,
+                'rest_base' => (string) $type['rest_base'],
                 'count' => $this->postCount($slug),
                 'source' => $declared ? 'minn' : 'core',
                 'editable' => false,
+                'stamp' => self::stamp($definition),
             ];
         }
         $catalog = [];
@@ -117,20 +121,44 @@ final readonly class StructureController
             if (!$taxonomy['visibility']['show_ui'] || in_array($slug, ['nav_menu', 'wp_pattern_category', 'post_format'], true)) {
                 continue;
             }
-            $out[] = [
-                'slug' => $slug,
+            $definition = [
                 'plural' => html_entity_decode($taxonomy['labels']['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'singular' => html_entity_decode($taxonomy['labels']['singular_name'], ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'public' => (bool) $taxonomy['visibility']['public'],
                 'hierarchical' => (bool) $taxonomy['hierarchical'],
                 'show_in_rest' => true,
                 'object_types' => array_values($taxonomy['types']),
+            ];
+            $out[] = [
+                'slug' => $slug,
+                ...$definition,
                 'count' => $this->termCount($slug),
                 'source' => 'core',
                 'editable' => false,
+                'stamp' => self::stamp($definition),
             ];
         }
         return Reply::answer($request, ['taxonomies' => $out, 'backends' => []]);
+    }
+
+    /**
+     * A definition's stamp, as Minn Admin makes it: a save sends it back as
+     * `base`, and a copy opened before someone else changed the definition
+     * is refused (409). Lists sorted, keys sorted, the escaped JSON's md5
+     * cut to twelve characters.
+     *
+     * @param array<string, mixed> $definition
+     */
+    private static function stamp(array $definition): string
+    {
+        foreach ($definition as $key => $value) {
+            if (is_array($value)) {
+                sort($value);
+                $definition[$key] = $value;
+            }
+        }
+        ksort($definition);
+        return substr(md5(Json::encode($definition, Json::ESCAPED)), 0, 12);
     }
 
     /** @return list<string> */
