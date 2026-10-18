@@ -140,6 +140,25 @@ final class ThemeSupports
         return true;
     }
 
+    /**
+     * get_classic_theme_supports_block_editor_settings: the editor settings a
+     * classic theme's supports amount to, the custom-value switches, and its
+     * palette, sizes and gradients when it declares them.
+     *
+     * @return array<string, mixed>
+     */
+    public static function classicEditorSettings(): array
+    {
+        $settings = ['disableCustomColors' => self::get('disable-custom-colors'), 'disableCustomFontSizes' => self::get('disable-custom-font-sizes'), 'disableCustomGradients' => self::get('disable-custom-gradients'), 'disableLayoutStyles' => self::get('disable-layout-styles'), 'enableCustomLineHeight' => self::get('custom-line-height'), 'enableCustomSpacing' => self::get('custom-spacing'), 'enableCustomUnits' => self::get('custom-units')];
+        foreach (['colors' => 'editor-color-palette', 'fontSizes' => 'editor-font-sizes', 'gradients' => 'editor-gradient-presets'] as $key => $feature) {
+            $declared = current((array) self::get($feature));
+            if ($declared !== false) {
+                $settings[$key] = $declared;
+            }
+        }
+        return $settings;
+    }
+
     /** _add_default_theme_supports: what every block theme supports before its own setup. */
     public static function blockThemeDefaults(): void
     {

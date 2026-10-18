@@ -1,0 +1,1390 @@
+[
+    [
+        "the block theme as it is",
+        {
+            "with supports": {
+                "version": 3,
+                "settings": {
+                    "color": {
+                        "custom": true,
+                        "customGradient": true,
+                        "defaultDuotone": false,
+                        "defaultGradients": false,
+                        "defaultPalette": false,
+                        "palette": {
+                            "theme": [
+                                {
+                                    "color": "#FFFFFF",
+                                    "name": "Base",
+                                    "slug": "base"
+                                },
+                                {
+                                    "color": "#111111",
+                                    "name": "Contrast",
+                                    "slug": "contrast"
+                                },
+                                {
+                                    "color": "#FFEE58",
+                                    "name": "Accent 1",
+                                    "slug": "accent-1"
+                                },
+                                {
+                                    "color": "#F6CFF4",
+                                    "name": "Accent 2",
+                                    "slug": "accent-2"
+                                },
+                                {
+                                    "color": "#503AA8",
+                                    "name": "Accent 3",
+                                    "slug": "accent-3"
+                                },
+                                {
+                                    "color": "#686868",
+                                    "name": "Accent 4",
+                                    "slug": "accent-4"
+                                },
+                                {
+                                    "color": "#FBFAF3",
+                                    "name": "Accent 5",
+                                    "slug": "accent-5"
+                                },
+                                {
+                                    "color": "color-mix(in srgb, currentColor 20%, transparent)",
+                                    "name": "Accent 6",
+                                    "slug": "accent-6"
+                                }
+                            ]
+                        },
+                        "link": true,
+                        "heading": true,
+                        "button": true,
+                        "caption": true
+                    },
+                    "typography": {
+                        "customFontSize": true,
+                        "lineHeight": true,
+                        "writingMode": true,
+                        "defaultFontSizes": false,
+                        "fluid": true,
+                        "fontSizes": {
+                            "theme": [
+                                {
+                                    "fluid": false,
+                                    "name": "Small",
+                                    "size": "0.875rem",
+                                    "slug": "small"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "1.125rem",
+                                        "min": "1rem"
+                                    },
+                                    "name": "Medium",
+                                    "size": "1rem",
+                                    "slug": "medium"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "1.375rem",
+                                        "min": "1.125rem"
+                                    },
+                                    "name": "Large",
+                                    "size": "1.38rem",
+                                    "slug": "large"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "2rem",
+                                        "min": "1.75rem"
+                                    },
+                                    "name": "Extra Large",
+                                    "size": "1.75rem",
+                                    "slug": "x-large"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "3rem",
+                                        "min": "2.15rem"
+                                    },
+                                    "name": "Extra Extra Large",
+                                    "size": "2.15rem",
+                                    "slug": "xx-large"
+                                }
+                            ]
+                        },
+                        "fontFamilies": {
+                            "theme": [
+                                {
+                                    "name": "Manrope",
+                                    "slug": "manrope",
+                                    "fontFamily": "Manrope, sans-serif",
+                                    "fontFace": [
+                                        {
+                                            "src": [
+                                                "file:./assets/fonts/manrope/Manrope-VariableFont_wght.woff2"
+                                            ],
+                                            "fontWeight": "200 800",
+                                            "fontStyle": "normal",
+                                            "fontFamily": "Manrope"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Fira Code",
+                                    "slug": "fira-code",
+                                    "fontFamily": "\"Fira Code\", monospace",
+                                    "fontFace": [
+                                        {
+                                            "src": [
+                                                "file:./assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2"
+                                            ],
+                                            "fontWeight": "300 700",
+                                            "fontStyle": "normal",
+                                            "fontFamily": "\"Fira Code\""
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "textColumns": true
+                    },
+                    "spacing": {
+                        "units": [
+                            "%",
+                            "px",
+                            "em",
+                            "rem",
+                            "vh",
+                            "vw"
+                        ],
+                        "padding": true,
+                        "defaultSpacingSizes": false,
+                        "spacingSizes": {
+                            "theme": [
+                                {
+                                    "name": "Tiny",
+                                    "size": "10px",
+                                    "slug": "20"
+                                },
+                                {
+                                    "name": "X-Small",
+                                    "size": "20px",
+                                    "slug": "30"
+                                },
+                                {
+                                    "name": "Small",
+                                    "size": "30px",
+                                    "slug": "40"
+                                },
+                                {
+                                    "name": "Regular",
+                                    "size": "clamp(30px, 5vw, 50px)",
+                                    "slug": "50"
+                                },
+                                {
+                                    "name": "Large",
+                                    "size": "clamp(30px, 7vw, 70px)",
+                                    "slug": "60"
+                                },
+                                {
+                                    "name": "X-Large",
+                                    "size": "clamp(50px, 7vw, 90px)",
+                                    "slug": "70"
+                                },
+                                {
+                                    "name": "XX-Large",
+                                    "size": "clamp(70px, 10vw, 140px)",
+                                    "slug": "80"
+                                }
+                            ]
+                        },
+                        "blockGap": true,
+                        "margin": true
+                    },
+                    "layout": {
+                        "contentSize": "645px",
+                        "wideSize": "1340px"
+                    },
+                    "useRootPaddingAwareAlignments": true,
+                    "background": {
+                        "backgroundImage": true,
+                        "backgroundSize": true,
+                        "gradient": true
+                    },
+                    "border": {
+                        "color": true,
+                        "radius": true,
+                        "style": true,
+                        "width": true
+                    },
+                    "dimensions": {
+                        "aspectRatio": true,
+                        "height": true,
+                        "minHeight": true,
+                        "minWidth": true,
+                        "width": true
+                    },
+                    "position": {
+                        "sticky": true
+                    }
+                },
+                "styles": "8b45b9c50afd951de8ee861dd4e223b7",
+                "templateParts": [
+                    {
+                        "area": "header",
+                        "name": "header",
+                        "title": "Header"
+                    },
+                    {
+                        "area": "header",
+                        "name": "vertical-header",
+                        "title": "Vertical site header"
+                    },
+                    {
+                        "area": "header",
+                        "name": "header-large-title",
+                        "title": "Header with large title"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer",
+                        "title": "Footer"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer-columns",
+                        "title": "Footer Columns"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer-newsletter",
+                        "title": "Footer Newsletter"
+                    },
+                    {
+                        "area": "uncategorized",
+                        "name": "sidebar",
+                        "title": "Sidebar"
+                    }
+                ],
+                "customTemplates": [
+                    {
+                        "name": "page-no-title",
+                        "postTypes": [
+                            "page"
+                        ],
+                        "title": "Page No Title"
+                    }
+                ]
+            },
+            "without": {
+                "version": 3,
+                "settings": {
+                    "color": {
+                        "defaultDuotone": false,
+                        "defaultGradients": false,
+                        "defaultPalette": false,
+                        "palette": {
+                            "theme": [
+                                {
+                                    "color": "#FFFFFF",
+                                    "name": "Base",
+                                    "slug": "base"
+                                },
+                                {
+                                    "color": "#111111",
+                                    "name": "Contrast",
+                                    "slug": "contrast"
+                                },
+                                {
+                                    "color": "#FFEE58",
+                                    "name": "Accent 1",
+                                    "slug": "accent-1"
+                                },
+                                {
+                                    "color": "#F6CFF4",
+                                    "name": "Accent 2",
+                                    "slug": "accent-2"
+                                },
+                                {
+                                    "color": "#503AA8",
+                                    "name": "Accent 3",
+                                    "slug": "accent-3"
+                                },
+                                {
+                                    "color": "#686868",
+                                    "name": "Accent 4",
+                                    "slug": "accent-4"
+                                },
+                                {
+                                    "color": "#FBFAF3",
+                                    "name": "Accent 5",
+                                    "slug": "accent-5"
+                                },
+                                {
+                                    "color": "color-mix(in srgb, currentColor 20%, transparent)",
+                                    "name": "Accent 6",
+                                    "slug": "accent-6"
+                                }
+                            ]
+                        },
+                        "link": true,
+                        "heading": true,
+                        "button": true,
+                        "caption": true
+                    },
+                    "layout": {
+                        "contentSize": "645px",
+                        "wideSize": "1340px"
+                    },
+                    "spacing": {
+                        "defaultSpacingSizes": false,
+                        "spacingSizes": {
+                            "theme": [
+                                {
+                                    "name": "Tiny",
+                                    "size": "10px",
+                                    "slug": "20"
+                                },
+                                {
+                                    "name": "X-Small",
+                                    "size": "20px",
+                                    "slug": "30"
+                                },
+                                {
+                                    "name": "Small",
+                                    "size": "30px",
+                                    "slug": "40"
+                                },
+                                {
+                                    "name": "Regular",
+                                    "size": "clamp(30px, 5vw, 50px)",
+                                    "slug": "50"
+                                },
+                                {
+                                    "name": "Large",
+                                    "size": "clamp(30px, 7vw, 70px)",
+                                    "slug": "60"
+                                },
+                                {
+                                    "name": "X-Large",
+                                    "size": "clamp(50px, 7vw, 90px)",
+                                    "slug": "70"
+                                },
+                                {
+                                    "name": "XX-Large",
+                                    "size": "clamp(70px, 10vw, 140px)",
+                                    "slug": "80"
+                                }
+                            ]
+                        },
+                        "units": [
+                            "%",
+                            "px",
+                            "em",
+                            "rem",
+                            "vh",
+                            "vw"
+                        ],
+                        "blockGap": true,
+                        "margin": true,
+                        "padding": true
+                    },
+                    "typography": {
+                        "writingMode": true,
+                        "defaultFontSizes": false,
+                        "fluid": true,
+                        "fontSizes": {
+                            "theme": [
+                                {
+                                    "fluid": false,
+                                    "name": "Small",
+                                    "size": "0.875rem",
+                                    "slug": "small"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "1.125rem",
+                                        "min": "1rem"
+                                    },
+                                    "name": "Medium",
+                                    "size": "1rem",
+                                    "slug": "medium"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "1.375rem",
+                                        "min": "1.125rem"
+                                    },
+                                    "name": "Large",
+                                    "size": "1.38rem",
+                                    "slug": "large"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "2rem",
+                                        "min": "1.75rem"
+                                    },
+                                    "name": "Extra Large",
+                                    "size": "1.75rem",
+                                    "slug": "x-large"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "3rem",
+                                        "min": "2.15rem"
+                                    },
+                                    "name": "Extra Extra Large",
+                                    "size": "2.15rem",
+                                    "slug": "xx-large"
+                                }
+                            ]
+                        },
+                        "fontFamilies": {
+                            "theme": [
+                                {
+                                    "name": "Manrope",
+                                    "slug": "manrope",
+                                    "fontFamily": "Manrope, sans-serif",
+                                    "fontFace": [
+                                        {
+                                            "src": [
+                                                "file:./assets/fonts/manrope/Manrope-VariableFont_wght.woff2"
+                                            ],
+                                            "fontWeight": "200 800",
+                                            "fontStyle": "normal",
+                                            "fontFamily": "Manrope"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Fira Code",
+                                    "slug": "fira-code",
+                                    "fontFamily": "\"Fira Code\", monospace",
+                                    "fontFace": [
+                                        {
+                                            "src": [
+                                                "file:./assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2"
+                                            ],
+                                            "fontWeight": "300 700",
+                                            "fontStyle": "normal",
+                                            "fontFamily": "\"Fira Code\""
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "lineHeight": true,
+                        "textColumns": true
+                    },
+                    "useRootPaddingAwareAlignments": true,
+                    "background": {
+                        "backgroundImage": true,
+                        "backgroundSize": true,
+                        "gradient": true
+                    },
+                    "border": {
+                        "color": true,
+                        "radius": true,
+                        "style": true,
+                        "width": true
+                    },
+                    "dimensions": {
+                        "aspectRatio": true,
+                        "height": true,
+                        "minHeight": true,
+                        "minWidth": true,
+                        "width": true
+                    },
+                    "position": {
+                        "sticky": true
+                    }
+                },
+                "styles": "8b45b9c50afd951de8ee861dd4e223b7",
+                "templateParts": [
+                    {
+                        "area": "header",
+                        "name": "header",
+                        "title": "Header"
+                    },
+                    {
+                        "area": "header",
+                        "name": "vertical-header",
+                        "title": "Vertical site header"
+                    },
+                    {
+                        "area": "header",
+                        "name": "header-large-title",
+                        "title": "Header with large title"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer",
+                        "title": "Footer"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer-columns",
+                        "title": "Footer Columns"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer-newsletter",
+                        "title": "Footer Newsletter"
+                    },
+                    {
+                        "area": "uncategorized",
+                        "name": "sidebar",
+                        "title": "Sidebar"
+                    }
+                ],
+                "customTemplates": [
+                    {
+                        "name": "page-no-title",
+                        "postTypes": [
+                            "page"
+                        ],
+                        "title": "Page No Title"
+                    }
+                ]
+            },
+            "with_supports true is the default": true
+        }
+    ],
+    [
+        "with classic theme supports added",
+        {
+            "with supports": {
+                "version": 3,
+                "settings": {
+                    "color": {
+                        "custom": false,
+                        "customGradient": true,
+                        "palette": {
+                            "theme": [
+                                {
+                                    "color": "#FFFFFF",
+                                    "name": "Base",
+                                    "slug": "base"
+                                },
+                                {
+                                    "color": "#111111",
+                                    "name": "Contrast",
+                                    "slug": "contrast"
+                                },
+                                {
+                                    "color": "#FFEE58",
+                                    "name": "Accent 1",
+                                    "slug": "accent-1"
+                                },
+                                {
+                                    "color": "#F6CFF4",
+                                    "name": "Accent 2",
+                                    "slug": "accent-2"
+                                },
+                                {
+                                    "color": "#503AA8",
+                                    "name": "Accent 3",
+                                    "slug": "accent-3"
+                                },
+                                {
+                                    "color": "#686868",
+                                    "name": "Accent 4",
+                                    "slug": "accent-4"
+                                },
+                                {
+                                    "color": "#FBFAF3",
+                                    "name": "Accent 5",
+                                    "slug": "accent-5"
+                                },
+                                {
+                                    "color": "color-mix(in srgb, currentColor 20%, transparent)",
+                                    "name": "Accent 6",
+                                    "slug": "accent-6"
+                                }
+                            ]
+                        },
+                        "gradients": {
+                            "theme": [
+                                {
+                                    "name": "Probe Fade",
+                                    "slug": "probe-fade",
+                                    "gradient": "linear-gradient(90deg,#000 0%,#fff 100%)"
+                                }
+                            ]
+                        },
+                        "defaultDuotone": false,
+                        "defaultGradients": false,
+                        "defaultPalette": false,
+                        "link": true,
+                        "heading": true,
+                        "button": true,
+                        "caption": true
+                    },
+                    "typography": {
+                        "customFontSize": true,
+                        "lineHeight": true,
+                        "fontSizes": {
+                            "theme": [
+                                {
+                                    "fluid": false,
+                                    "name": "Small",
+                                    "size": "0.875rem",
+                                    "slug": "small"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "1.125rem",
+                                        "min": "1rem"
+                                    },
+                                    "name": "Medium",
+                                    "size": "1rem",
+                                    "slug": "medium"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "1.375rem",
+                                        "min": "1.125rem"
+                                    },
+                                    "name": "Large",
+                                    "size": "1.38rem",
+                                    "slug": "large"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "2rem",
+                                        "min": "1.75rem"
+                                    },
+                                    "name": "Extra Large",
+                                    "size": "1.75rem",
+                                    "slug": "x-large"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "3rem",
+                                        "min": "2.15rem"
+                                    },
+                                    "name": "Extra Extra Large",
+                                    "size": "2.15rem",
+                                    "slug": "xx-large"
+                                }
+                            ]
+                        },
+                        "writingMode": true,
+                        "defaultFontSizes": false,
+                        "fluid": true,
+                        "fontFamilies": {
+                            "theme": [
+                                {
+                                    "name": "Manrope",
+                                    "slug": "manrope",
+                                    "fontFamily": "Manrope, sans-serif",
+                                    "fontFace": [
+                                        {
+                                            "src": [
+                                                "file:./assets/fonts/manrope/Manrope-VariableFont_wght.woff2"
+                                            ],
+                                            "fontWeight": "200 800",
+                                            "fontStyle": "normal",
+                                            "fontFamily": "Manrope"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Fira Code",
+                                    "slug": "fira-code",
+                                    "fontFamily": "\"Fira Code\", monospace",
+                                    "fontFace": [
+                                        {
+                                            "src": [
+                                                "file:./assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2"
+                                            ],
+                                            "fontWeight": "300 700",
+                                            "fontStyle": "normal",
+                                            "fontFamily": "\"Fira Code\""
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "textColumns": true
+                    },
+                    "spacing": {
+                        "units": [
+                            "%",
+                            "px",
+                            "em",
+                            "rem",
+                            "vh",
+                            "vw"
+                        ],
+                        "padding": true,
+                        "defaultSpacingSizes": false,
+                        "spacingSizes": {
+                            "theme": [
+                                {
+                                    "name": "Tiny",
+                                    "size": "10px",
+                                    "slug": "20"
+                                },
+                                {
+                                    "name": "X-Small",
+                                    "size": "20px",
+                                    "slug": "30"
+                                },
+                                {
+                                    "name": "Small",
+                                    "size": "30px",
+                                    "slug": "40"
+                                },
+                                {
+                                    "name": "Regular",
+                                    "size": "clamp(30px, 5vw, 50px)",
+                                    "slug": "50"
+                                },
+                                {
+                                    "name": "Large",
+                                    "size": "clamp(30px, 7vw, 70px)",
+                                    "slug": "60"
+                                },
+                                {
+                                    "name": "X-Large",
+                                    "size": "clamp(50px, 7vw, 90px)",
+                                    "slug": "70"
+                                },
+                                {
+                                    "name": "XX-Large",
+                                    "size": "clamp(70px, 10vw, 140px)",
+                                    "slug": "80"
+                                }
+                            ]
+                        },
+                        "blockGap": true,
+                        "margin": true
+                    },
+                    "layout": {
+                        "contentSize": "645px",
+                        "wideSize": "1340px"
+                    },
+                    "useRootPaddingAwareAlignments": true,
+                    "background": {
+                        "backgroundImage": true,
+                        "backgroundSize": true,
+                        "gradient": true
+                    },
+                    "border": {
+                        "color": true,
+                        "radius": true,
+                        "style": true,
+                        "width": true
+                    },
+                    "dimensions": {
+                        "aspectRatio": true,
+                        "height": true,
+                        "minHeight": true,
+                        "minWidth": true,
+                        "width": true
+                    },
+                    "position": {
+                        "sticky": true
+                    }
+                },
+                "styles": "8b45b9c50afd951de8ee861dd4e223b7",
+                "templateParts": [
+                    {
+                        "area": "header",
+                        "name": "header",
+                        "title": "Header"
+                    },
+                    {
+                        "area": "header",
+                        "name": "vertical-header",
+                        "title": "Vertical site header"
+                    },
+                    {
+                        "area": "header",
+                        "name": "header-large-title",
+                        "title": "Header with large title"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer",
+                        "title": "Footer"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer-columns",
+                        "title": "Footer Columns"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer-newsletter",
+                        "title": "Footer Newsletter"
+                    },
+                    {
+                        "area": "uncategorized",
+                        "name": "sidebar",
+                        "title": "Sidebar"
+                    }
+                ],
+                "customTemplates": [
+                    {
+                        "name": "page-no-title",
+                        "postTypes": [
+                            "page"
+                        ],
+                        "title": "Page No Title"
+                    }
+                ]
+            },
+            "without": {
+                "version": 3,
+                "settings": {
+                    "color": {
+                        "defaultDuotone": false,
+                        "defaultGradients": false,
+                        "defaultPalette": false,
+                        "palette": {
+                            "theme": [
+                                {
+                                    "color": "#FFFFFF",
+                                    "name": "Base",
+                                    "slug": "base"
+                                },
+                                {
+                                    "color": "#111111",
+                                    "name": "Contrast",
+                                    "slug": "contrast"
+                                },
+                                {
+                                    "color": "#FFEE58",
+                                    "name": "Accent 1",
+                                    "slug": "accent-1"
+                                },
+                                {
+                                    "color": "#F6CFF4",
+                                    "name": "Accent 2",
+                                    "slug": "accent-2"
+                                },
+                                {
+                                    "color": "#503AA8",
+                                    "name": "Accent 3",
+                                    "slug": "accent-3"
+                                },
+                                {
+                                    "color": "#686868",
+                                    "name": "Accent 4",
+                                    "slug": "accent-4"
+                                },
+                                {
+                                    "color": "#FBFAF3",
+                                    "name": "Accent 5",
+                                    "slug": "accent-5"
+                                },
+                                {
+                                    "color": "color-mix(in srgb, currentColor 20%, transparent)",
+                                    "name": "Accent 6",
+                                    "slug": "accent-6"
+                                }
+                            ]
+                        },
+                        "link": true,
+                        "heading": true,
+                        "button": true,
+                        "caption": true
+                    },
+                    "layout": {
+                        "contentSize": "645px",
+                        "wideSize": "1340px"
+                    },
+                    "spacing": {
+                        "defaultSpacingSizes": false,
+                        "spacingSizes": {
+                            "theme": [
+                                {
+                                    "name": "Tiny",
+                                    "size": "10px",
+                                    "slug": "20"
+                                },
+                                {
+                                    "name": "X-Small",
+                                    "size": "20px",
+                                    "slug": "30"
+                                },
+                                {
+                                    "name": "Small",
+                                    "size": "30px",
+                                    "slug": "40"
+                                },
+                                {
+                                    "name": "Regular",
+                                    "size": "clamp(30px, 5vw, 50px)",
+                                    "slug": "50"
+                                },
+                                {
+                                    "name": "Large",
+                                    "size": "clamp(30px, 7vw, 70px)",
+                                    "slug": "60"
+                                },
+                                {
+                                    "name": "X-Large",
+                                    "size": "clamp(50px, 7vw, 90px)",
+                                    "slug": "70"
+                                },
+                                {
+                                    "name": "XX-Large",
+                                    "size": "clamp(70px, 10vw, 140px)",
+                                    "slug": "80"
+                                }
+                            ]
+                        },
+                        "units": [
+                            "%",
+                            "px",
+                            "em",
+                            "rem",
+                            "vh",
+                            "vw"
+                        ],
+                        "blockGap": true,
+                        "margin": true,
+                        "padding": true
+                    },
+                    "typography": {
+                        "writingMode": true,
+                        "defaultFontSizes": false,
+                        "fluid": true,
+                        "fontSizes": {
+                            "theme": [
+                                {
+                                    "fluid": false,
+                                    "name": "Small",
+                                    "size": "0.875rem",
+                                    "slug": "small"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "1.125rem",
+                                        "min": "1rem"
+                                    },
+                                    "name": "Medium",
+                                    "size": "1rem",
+                                    "slug": "medium"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "1.375rem",
+                                        "min": "1.125rem"
+                                    },
+                                    "name": "Large",
+                                    "size": "1.38rem",
+                                    "slug": "large"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "2rem",
+                                        "min": "1.75rem"
+                                    },
+                                    "name": "Extra Large",
+                                    "size": "1.75rem",
+                                    "slug": "x-large"
+                                },
+                                {
+                                    "fluid": {
+                                        "max": "3rem",
+                                        "min": "2.15rem"
+                                    },
+                                    "name": "Extra Extra Large",
+                                    "size": "2.15rem",
+                                    "slug": "xx-large"
+                                }
+                            ]
+                        },
+                        "fontFamilies": {
+                            "theme": [
+                                {
+                                    "name": "Manrope",
+                                    "slug": "manrope",
+                                    "fontFamily": "Manrope, sans-serif",
+                                    "fontFace": [
+                                        {
+                                            "src": [
+                                                "file:./assets/fonts/manrope/Manrope-VariableFont_wght.woff2"
+                                            ],
+                                            "fontWeight": "200 800",
+                                            "fontStyle": "normal",
+                                            "fontFamily": "Manrope"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Fira Code",
+                                    "slug": "fira-code",
+                                    "fontFamily": "\"Fira Code\", monospace",
+                                    "fontFace": [
+                                        {
+                                            "src": [
+                                                "file:./assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2"
+                                            ],
+                                            "fontWeight": "300 700",
+                                            "fontStyle": "normal",
+                                            "fontFamily": "\"Fira Code\""
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "lineHeight": true,
+                        "textColumns": true
+                    },
+                    "useRootPaddingAwareAlignments": true,
+                    "background": {
+                        "backgroundImage": true,
+                        "backgroundSize": true,
+                        "gradient": true
+                    },
+                    "border": {
+                        "color": true,
+                        "radius": true,
+                        "style": true,
+                        "width": true
+                    },
+                    "dimensions": {
+                        "aspectRatio": true,
+                        "height": true,
+                        "minHeight": true,
+                        "minWidth": true,
+                        "width": true
+                    },
+                    "position": {
+                        "sticky": true
+                    }
+                },
+                "styles": "8b45b9c50afd951de8ee861dd4e223b7",
+                "templateParts": [
+                    {
+                        "area": "header",
+                        "name": "header",
+                        "title": "Header"
+                    },
+                    {
+                        "area": "header",
+                        "name": "vertical-header",
+                        "title": "Vertical site header"
+                    },
+                    {
+                        "area": "header",
+                        "name": "header-large-title",
+                        "title": "Header with large title"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer",
+                        "title": "Footer"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer-columns",
+                        "title": "Footer Columns"
+                    },
+                    {
+                        "area": "footer",
+                        "name": "footer-newsletter",
+                        "title": "Footer Newsletter"
+                    },
+                    {
+                        "area": "uncategorized",
+                        "name": "sidebar",
+                        "title": "Sidebar"
+                    }
+                ],
+                "customTemplates": [
+                    {
+                        "name": "page-no-title",
+                        "postTypes": [
+                            "page"
+                        ],
+                        "title": "Page No Title"
+                    }
+                ]
+            },
+            "with_supports true is the default": true
+        }
+    ],
+    [
+        "supports removed again",
+        {
+            "version": 3,
+            "settings": {
+                "color": {
+                    "custom": true,
+                    "customGradient": true,
+                    "defaultDuotone": false,
+                    "defaultGradients": false,
+                    "defaultPalette": false,
+                    "palette": {
+                        "theme": [
+                            {
+                                "color": "#FFFFFF",
+                                "name": "Base",
+                                "slug": "base"
+                            },
+                            {
+                                "color": "#111111",
+                                "name": "Contrast",
+                                "slug": "contrast"
+                            },
+                            {
+                                "color": "#FFEE58",
+                                "name": "Accent 1",
+                                "slug": "accent-1"
+                            },
+                            {
+                                "color": "#F6CFF4",
+                                "name": "Accent 2",
+                                "slug": "accent-2"
+                            },
+                            {
+                                "color": "#503AA8",
+                                "name": "Accent 3",
+                                "slug": "accent-3"
+                            },
+                            {
+                                "color": "#686868",
+                                "name": "Accent 4",
+                                "slug": "accent-4"
+                            },
+                            {
+                                "color": "#FBFAF3",
+                                "name": "Accent 5",
+                                "slug": "accent-5"
+                            },
+                            {
+                                "color": "color-mix(in srgb, currentColor 20%, transparent)",
+                                "name": "Accent 6",
+                                "slug": "accent-6"
+                            }
+                        ]
+                    },
+                    "link": true,
+                    "heading": true,
+                    "button": true,
+                    "caption": true
+                },
+                "typography": {
+                    "customFontSize": true,
+                    "lineHeight": true,
+                    "writingMode": true,
+                    "defaultFontSizes": false,
+                    "fluid": true,
+                    "fontSizes": {
+                        "theme": [
+                            {
+                                "fluid": false,
+                                "name": "Small",
+                                "size": "0.875rem",
+                                "slug": "small"
+                            },
+                            {
+                                "fluid": {
+                                    "max": "1.125rem",
+                                    "min": "1rem"
+                                },
+                                "name": "Medium",
+                                "size": "1rem",
+                                "slug": "medium"
+                            },
+                            {
+                                "fluid": {
+                                    "max": "1.375rem",
+                                    "min": "1.125rem"
+                                },
+                                "name": "Large",
+                                "size": "1.38rem",
+                                "slug": "large"
+                            },
+                            {
+                                "fluid": {
+                                    "max": "2rem",
+                                    "min": "1.75rem"
+                                },
+                                "name": "Extra Large",
+                                "size": "1.75rem",
+                                "slug": "x-large"
+                            },
+                            {
+                                "fluid": {
+                                    "max": "3rem",
+                                    "min": "2.15rem"
+                                },
+                                "name": "Extra Extra Large",
+                                "size": "2.15rem",
+                                "slug": "xx-large"
+                            }
+                        ]
+                    },
+                    "fontFamilies": {
+                        "theme": [
+                            {
+                                "name": "Manrope",
+                                "slug": "manrope",
+                                "fontFamily": "Manrope, sans-serif",
+                                "fontFace": [
+                                    {
+                                        "src": [
+                                            "file:./assets/fonts/manrope/Manrope-VariableFont_wght.woff2"
+                                        ],
+                                        "fontWeight": "200 800",
+                                        "fontStyle": "normal",
+                                        "fontFamily": "Manrope"
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "Fira Code",
+                                "slug": "fira-code",
+                                "fontFamily": "\"Fira Code\", monospace",
+                                "fontFace": [
+                                    {
+                                        "src": [
+                                            "file:./assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2"
+                                        ],
+                                        "fontWeight": "300 700",
+                                        "fontStyle": "normal",
+                                        "fontFamily": "\"Fira Code\""
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "textColumns": true
+                },
+                "spacing": {
+                    "units": [
+                        "%",
+                        "px",
+                        "em",
+                        "rem",
+                        "vh",
+                        "vw"
+                    ],
+                    "padding": true,
+                    "defaultSpacingSizes": false,
+                    "spacingSizes": {
+                        "theme": [
+                            {
+                                "name": "Tiny",
+                                "size": "10px",
+                                "slug": "20"
+                            },
+                            {
+                                "name": "X-Small",
+                                "size": "20px",
+                                "slug": "30"
+                            },
+                            {
+                                "name": "Small",
+                                "size": "30px",
+                                "slug": "40"
+                            },
+                            {
+                                "name": "Regular",
+                                "size": "clamp(30px, 5vw, 50px)",
+                                "slug": "50"
+                            },
+                            {
+                                "name": "Large",
+                                "size": "clamp(30px, 7vw, 70px)",
+                                "slug": "60"
+                            },
+                            {
+                                "name": "X-Large",
+                                "size": "clamp(50px, 7vw, 90px)",
+                                "slug": "70"
+                            },
+                            {
+                                "name": "XX-Large",
+                                "size": "clamp(70px, 10vw, 140px)",
+                                "slug": "80"
+                            }
+                        ]
+                    },
+                    "blockGap": true,
+                    "margin": true
+                },
+                "layout": {
+                    "contentSize": "645px",
+                    "wideSize": "1340px"
+                },
+                "useRootPaddingAwareAlignments": true,
+                "background": {
+                    "backgroundImage": true,
+                    "backgroundSize": true,
+                    "gradient": true
+                },
+                "border": {
+                    "color": true,
+                    "radius": true,
+                    "style": true,
+                    "width": true
+                },
+                "dimensions": {
+                    "aspectRatio": true,
+                    "height": true,
+                    "minHeight": true,
+                    "minWidth": true,
+                    "width": true
+                },
+                "position": {
+                    "sticky": true
+                }
+            },
+            "styles": "8b45b9c50afd951de8ee861dd4e223b7",
+            "templateParts": [
+                {
+                    "area": "header",
+                    "name": "header",
+                    "title": "Header"
+                },
+                {
+                    "area": "header",
+                    "name": "vertical-header",
+                    "title": "Vertical site header"
+                },
+                {
+                    "area": "header",
+                    "name": "header-large-title",
+                    "title": "Header with large title"
+                },
+                {
+                    "area": "footer",
+                    "name": "footer",
+                    "title": "Footer"
+                },
+                {
+                    "area": "footer",
+                    "name": "footer-columns",
+                    "title": "Footer Columns"
+                },
+                {
+                    "area": "footer",
+                    "name": "footer-newsletter",
+                    "title": "Footer Newsletter"
+                },
+                {
+                    "area": "uncategorized",
+                    "name": "sidebar",
+                    "title": "Sidebar"
+                }
+            ],
+            "customTemplates": [
+                {
+                    "name": "page-no-title",
+                    "postTypes": [
+                        "page"
+                    ],
+                    "title": "Page No Title"
+                }
+            ]
+        }
+    ]
+]

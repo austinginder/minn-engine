@@ -160639,7 +160639,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ThemeSupports.php",
-            "lines": 244,
+            "lines": 263,
             "doc": "What a theme supports, as add_theme_support keeps it (probe rest-themes):\na bare feature is true, anything else its arguments. html5 lists add up\n(repeats and all), post thumbnails stay on for every type once on, post\nformats keep only real formats, the custom logo fills in its defaults at\nonce (flexible both ways when asked for bare), and the custom header and\nbackground get theirs as WordPress finishes loading, a header with no\nwidth or height made flexible that way. title-tag declared after loading\nis refused. A block theme supports thumbnails, responsive embeds, editor\nstyles, HTML5 markup and feed links before its own setup runs.\n\nThe features themselves (data/theme-features.json, and any a theme\nregisters) say how each is shown in REST: its schema, or the default\nwhen the theme does not support it.",
             "implements": [],
             "extends": null,
@@ -160828,6 +160828,20 @@
                 },
                 {
                     "routes": [],
+                    "name": "classicEditorSettings",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "classicEditorSettings(): array",
+                    "doc": "get_classic_theme_supports_block_editor_settings: the editor settings a\nclassic theme's supports amount to, the custom-value switches, and its\npalette, sizes and gradients when it declares them.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 150,
+                    "end": 160
+                },
+                {
+                    "routes": [],
                     "name": "blockThemeDefaults",
                     "static": true,
                     "visibility": "public",
@@ -160835,8 +160849,8 @@
                     "doc": "_add_default_theme_supports: what every block theme supports before its own setup.",
                     "shapes": [],
                     "params": [],
-                    "line": 144,
-                    "end": 152
+                    "line": 163,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -160855,8 +160869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 162
+                    "line": 174,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -160867,8 +160881,8 @@
                     "doc": "_custom_header_background_just_in_time: the header's and background's defaults filled in once loaded.",
                     "shapes": [],
                     "params": [],
-                    "line": 165,
-                    "end": 188
+                    "line": 184,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -160894,8 +160908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 217
+                    "line": 210,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -160908,8 +160922,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 220,
-                    "end": 225
+                    "line": 239,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -160930,8 +160944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 245
+                    "line": 247,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -160973,8 +160987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 263
+                    "line": 274,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -161032,8 +161046,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 269
+                    "line": 285,
+                    "end": 288
                 }
             ]
         },
@@ -175813,7 +175827,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/StyleLayers.php",
-            "lines": 67,
+            "lines": 68,
             "doc": "What plugins change about the global stylesheet's layers and nodes, for\nGlobalStyles: core's preset lists when wp_theme_json_data_default\nchanged core's layer, and the style nodes wp_theme_json_get_style_nodes\nkeeps (probe hook-inputs-2). Without those filters the stylesheet is the\nengine's own, byte for byte.",
             "implements": [],
             "extends": null,
@@ -175842,7 +175856,7 @@
                     ],
                     "params": [],
                     "line": 25,
-                    "end": 44
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -175872,8 +175886,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 70
+                    "line": 56,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -175894,8 +175908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 80,
+                    "end": 83
                 }
             ]
         },
@@ -175905,7 +175919,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/StylePresets.php",
-            "lines": 152,
+            "lines": 160,
             "doc": "The preset side of theme.json: the colour, gradient, font-size,\nfont-family, spacing, and shadow lists a theme declares over core's\nown, as the custom properties on :root and the has-* utility classes\nthe reference prints for them. Pure: settings in, CSS fragments out.",
             "implements": [],
             "extends": null,
@@ -176081,34 +176095,42 @@
                 },
                 {
                     "routes": [],
-                    "name": "defaultSlugsFirst",
+                    "name": "fontSizes",
                     "static": true,
                     "visibility": "public",
-                    "signature": "defaultSlugsFirst(array $presets, array $defaults): array",
-                    "doc": "A theme size that reuses one of core's slugs prints in core's position;\nthe theme's own slugs follow.",
+                    "signature": "fontSizes(array $defaults, array $own, array $settings): array",
+                    "doc": "Core's font sizes, always printed, then the theme's: a theme size\nwith one of core's slugs takes its place when defaultFontSizes is\nfalse, and gives way to core's while core's are kept (probe\ndefault-presets).",
                     "shapes": [
-                        "@param list<array> $presets",
-                        "@param list<string> $defaults",
+                        "@param list<array{slug: string, value: string}> $defaults core's, as data/presets.json holds them",
+                        "@param list<array> $own the theme's (and the site editor's) presets",
+                        "@param array<string, mixed> $settings the theme's settings, which say whether core's are kept",
                         "@return list<array>"
                     ],
                     "params": [
                         {
-                            "name": "presets",
+                            "name": "defaults",
+                            "type": "array",
+                            "shape": "list<array{slug: string, value: string}>",
+                            "default": null,
+                            "doc": "core's, as data/presets.json holds them"
+                        },
+                        {
+                            "name": "own",
                             "type": "array",
                             "shape": "list<array>",
                             "default": null,
-                            "doc": ""
+                            "doc": "the theme's (and the site editor's) presets"
                         },
                         {
-                            "name": "defaults",
+                            "name": "settings",
                             "type": "array",
-                            "shape": "list<string>",
+                            "shape": "array<string, mixed>",
                             "default": null,
-                            "doc": ""
+                            "doc": "the theme's settings, which say whether core's are kept"
                         }
                     ],
-                    "line": 131,
-                    "end": 141
+                    "line": 134,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -176136,8 +176158,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 160
+                    "line": 158,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -176163,8 +176185,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 166
+                    "line": 171,
+                    "end": 174
                 }
             ]
         },
@@ -179252,7 +179274,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/ThemeStyles.php",
-            "lines": 142,
+            "lines": 169,
             "doc": "The active theme's global styles as wp/v2/global-styles/themes/{stylesheet}\nreports them: the engine's defaults (captured from the reference under a\ntheme with no theme.json) with the theme's own settings and styles over\nthem, and the style variations the theme ships.",
             "implements": [],
             "extends": null,
@@ -179393,6 +179415,20 @@
                 },
                 {
                     "routes": [],
+                    "name": "themeLayer",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "themeLayer(): array",
+                    "doc": "The theme's own layer, as the resolver's theme data holds it: no core\nlayer under it, its settings normalized as settings() normalizes\nthem, its styles with partials and section styles in, and the\ntemplate lists and pattern slugs it declares.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 67,
+                    "end": 84
+                },
+                {
+                    "routes": [],
                     "name": "patterns",
                     "static": false,
                     "visibility": "public",
@@ -179402,8 +179438,8 @@
                         "@return array<mixed>"
                     ],
                     "params": [],
-                    "line": 60,
-                    "end": 64
+                    "line": 87,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -179414,8 +179450,8 @@
                     "doc": "Styles: the theme's over the defaults, block style partials and section styles in, every var:preset token resolved.",
                     "shapes": [],
                     "params": [],
-                    "line": 67,
-                    "end": 74
+                    "line": 94,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -179428,8 +179464,8 @@
                         "@return list<array>"
                     ],
                     "params": [],
-                    "line": 84,
-                    "end": 103
+                    "line": 111,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -179457,8 +179493,8 @@
                             "doc": "slug => block types"
                         }
                     ],
-                    "line": 113,
-                    "end": 128
+                    "line": 140,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -179471,8 +179507,8 @@
                         "@return array<string, list<string>>"
                     ],
                     "params": [],
-                    "line": 135,
-                    "end": 145
+                    "line": 162,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -179485,8 +179521,8 @@
                         "@return array{settings?: array, styles?: array} core's layer: the one given, else the stored one"
                     ],
                     "params": [],
-                    "line": 148,
-                    "end": 151
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -179499,8 +179535,8 @@
                         "@return array{settings: array, styles: array} core's own layer as stored"
                     ],
                     "params": [],
-                    "line": 154,
-                    "end": 157
+                    "line": 181,
+                    "end": 184
                 }
             ]
         },

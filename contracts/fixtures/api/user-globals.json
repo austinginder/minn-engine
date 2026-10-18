@@ -1,0 +1,266 @@
+[
+    [
+        "after wp_set_current_user(0)",
+        {
+            "user_ID": [
+                "integer",
+                0
+            ],
+            "user_login": [
+                "string",
+                ""
+            ],
+            "userdata": [
+                "NULL",
+                null
+            ],
+            "user_level": [
+                "integer",
+                0
+            ],
+            "user_email": [
+                "string",
+                ""
+            ],
+            "user_url": [
+                "string",
+                ""
+            ],
+            "user_identity": [
+                "string",
+                ""
+            ]
+        }
+    ],
+    [
+        "a set_current_user callback sees",
+        {
+            "user_ID": [
+                "integer",
+                1
+            ],
+            "user_login": [
+                "string",
+                "admin"
+            ],
+            "userdata": [
+                "WP_User",
+                1
+            ],
+            "user_level": [
+                "integer",
+                10
+            ],
+            "user_email": [
+                "string",
+                "admin@minn-engine.localhost"
+            ],
+            "user_url": [
+                "string",
+                "https://minn.localhost"
+            ],
+            "user_identity": [
+                "string",
+                "admin"
+            ]
+        }
+    ],
+    [
+        "after wp_set_current_user(1)",
+        {
+            "user_ID": [
+                "integer",
+                1
+            ],
+            "user_login": [
+                "string",
+                "admin"
+            ],
+            "userdata": [
+                "WP_User",
+                1
+            ],
+            "user_level": [
+                "integer",
+                10
+            ],
+            "user_email": [
+                "string",
+                "admin@minn-engine.localhost"
+            ],
+            "user_url": [
+                "string",
+                "https://minn.localhost"
+            ],
+            "user_identity": [
+                "string",
+                "admin"
+            ]
+        }
+    ],
+    [
+        "after wp_set_current_user(3)",
+        {
+            "user_ID": [
+                "integer",
+                3
+            ],
+            "user_login": [
+                "string",
+                "scribe"
+            ],
+            "userdata": [
+                "WP_User",
+                3
+            ],
+            "user_level": [
+                "integer",
+                2
+            ],
+            "user_email": [
+                "string",
+                "scribe@minn-engine.localhost"
+            ],
+            "user_url": [
+                "string",
+                ""
+            ],
+            "user_identity": [
+                "string",
+                "scribe"
+            ]
+        }
+    ],
+    [
+        "setup_userdata(1) while user 3 is current",
+        {
+            "user_ID": [
+                "integer",
+                1
+            ],
+            "user_login": [
+                "string",
+                "admin"
+            ],
+            "userdata": [
+                "WP_User",
+                1
+            ],
+            "user_level": [
+                "integer",
+                10
+            ],
+            "user_email": [
+                "string",
+                "admin@minn-engine.localhost"
+            ],
+            "user_url": [
+                "string",
+                "https://minn.localhost"
+            ],
+            "user_identity": [
+                "string",
+                "admin"
+            ]
+        }
+    ],
+    [
+        "setup_userdata() names the current user",
+        {
+            "user_ID": [
+                "integer",
+                3
+            ],
+            "user_login": [
+                "string",
+                "scribe"
+            ],
+            "userdata": [
+                "WP_User",
+                3
+            ],
+            "user_level": [
+                "integer",
+                2
+            ],
+            "user_email": [
+                "string",
+                "scribe@minn-engine.localhost"
+            ],
+            "user_url": [
+                "string",
+                ""
+            ],
+            "user_identity": [
+                "string",
+                "scribe"
+            ]
+        }
+    ],
+    [
+        "setup_userdata() of a user who does not exist",
+        {
+            "user_ID": [
+                "integer",
+                0
+            ],
+            "user_login": [
+                "string",
+                ""
+            ],
+            "userdata": [
+                "NULL",
+                null
+            ],
+            "user_level": [
+                "integer",
+                0
+            ],
+            "user_email": [
+                "string",
+                ""
+            ],
+            "user_url": [
+                "string",
+                ""
+            ],
+            "user_identity": [
+                "string",
+                ""
+            ]
+        }
+    ],
+    [
+        "back to no one",
+        {
+            "user_ID": [
+                "integer",
+                0
+            ],
+            "user_login": [
+                "string",
+                ""
+            ],
+            "userdata": [
+                "NULL",
+                null
+            ],
+            "user_level": [
+                "integer",
+                0
+            ],
+            "user_email": [
+                "string",
+                ""
+            ],
+            "user_url": [
+                "string",
+                ""
+            ],
+            "user_identity": [
+                "string",
+                ""
+            ]
+        }
+    ]
+]

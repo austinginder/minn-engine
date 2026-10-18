@@ -166,9 +166,11 @@ final class WP_Theme_JSON_Resolver
     }
 
     /**
-     * The active theme over the defaults, the site editor's styles aside.
-     * Reading it registers the theme's block style partials as block
-     * styles, once a request, as the reference's read does.
+     * The active theme's own layer, core's and the site editor's aside,
+     * over what its classic theme supports amount to unless with_supports
+     * is false (probe theme-data-supports). Reading it registers the
+     * theme's block style partials as block styles, once a request, as the
+     * reference's read does.
      */
     public static function get_theme_data($deprecated = [], $options = []): WP_Theme_JSON
     {
@@ -180,8 +182,13 @@ final class WP_Theme_JSON_Resolver
                 }
             }
         }
-        // The theme's own read never asks core's layer filter (probe theme-json-resolver).
-        return self::minn_merged(_minn_theme_styles(), 'theme');
+        $theme = _minn_theme_json_object(_minn_theme_styles()->themeLayer());
+        if (($options['with_supports'] ?? true) === false) {
+            return $theme;
+        }
+        $supports = new WP_Theme_JSON(WP_Theme_JSON::get_from_editor_settings(get_classic_theme_supports_block_editor_settings()));
+        $supports->merge($theme);
+        return $supports;
     }
 
     /**

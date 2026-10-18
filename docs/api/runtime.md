@@ -148,7 +148,7 @@ the WordPress runtime plugins load against
 | [`TermWriter`](#termwriter) | final readonly class | 157 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`TermWrites`](#termwrites) | final class | 268 | Terms written as WordPress's taxonomy functions write them: a term made, |
 | [`ThemeMods`](#thememods) | final class | 57 | The active theme's settings (theme_mods_{stylesheet}) as WordPress keeps |
-| [`ThemeSupports`](#themesupports) | final class | 244 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
+| [`ThemeSupports`](#themesupports) | final class | 263 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
 | [`Themes`](#themes) | final class | 116 | The site's themes as WordPress names and finds them: the active |
 | [`Transients`](#transients) | final class | 142 | Values kept for a while, as WordPress keeps them in options: the site's |
@@ -8430,6 +8430,14 @@ add_theme_support: false when refused. @param list<mixed> $args
 
 remove_theme_support: false when the theme did not support it.
 
+### static `classicEditorSettings(): array`
+
+get_classic_theme_supports_block_editor_settings: the editor settings a
+classic theme's supports amount to, the custom-value switches, and its
+palette, sizes and gradients when it declares them.
+
+- `@return array<string, mixed>`
+
 ### static `blockThemeDefaults(): void`
 
 _add_default_theme_supports: what every block theme supports before its own setup.
@@ -8467,7 +8475,7 @@ or else cut to its schema.
 
 - `@param array<string, mixed> $config the feature as it was registered`
 
-Internals: `withConstants()` (private, line 115), `unwrapped()` (private, line 266)
+Internals: `withConstants()` (private, line 115), `unwrapped()` (private, line 285)
 
 
 ## ThemeSwitch

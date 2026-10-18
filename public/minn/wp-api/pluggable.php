@@ -585,6 +585,7 @@ function wp_set_current_user($id, $name = '')
     if (!$user instanceof WP_User || $id === null || (int) $id !== $user->ID) {
         $user = $GLOBALS['current_user'] = new WP_User($id, $name);
         Runtime::current()->set('current_user', $user);
+        setup_userdata($user->ID);
         do_action('set_current_user');
     }
     return $user;

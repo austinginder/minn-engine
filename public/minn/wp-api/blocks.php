@@ -2223,14 +2223,7 @@ function block_core_navigation_filter_out_empty_blocks($parsed_blocks)
 /** The editor settings a classic theme's supports amount to: the custom-value switches, and its palettes and sizes when it declares them. */
 function get_classic_theme_supports_block_editor_settings()
 {
-    $settings = ['disableCustomColors' => get_theme_support('disable-custom-colors'), 'disableCustomFontSizes' => get_theme_support('disable-custom-font-sizes'), 'disableCustomGradients' => get_theme_support('disable-custom-gradients'), 'disableLayoutStyles' => get_theme_support('disable-layout-styles'), 'enableCustomLineHeight' => get_theme_support('custom-line-height'), 'enableCustomSpacing' => get_theme_support('custom-spacing'), 'enableCustomUnits' => get_theme_support('custom-units')];
-    foreach (['colors' => 'editor-color-palette', 'fontSizes' => 'editor-font-sizes', 'gradients' => 'editor-gradient-presets'] as $key => $feature) {
-        $declared = current((array) get_theme_support($feature));
-        if ($declared !== false) {
-            $settings[$key] = $declared;
-        }
-    }
-    return $settings;
+    return Minn\Runtime\ThemeSupports::classicEditorSettings();
 }
 
 /** A block support's style printed in a style tag: in the head under a block theme, else in the footer, at the priority given. */

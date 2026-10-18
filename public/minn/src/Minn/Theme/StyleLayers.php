@@ -39,6 +39,7 @@ final class StyleLayers
             'aspect-ratio' => $list($settings['dimensions']['aspectRatios'] ?? [], 'ratio'),
             'color' => $list($settings['color']['palette'] ?? [], 'color'),
             'gradient' => $list($settings['color']['gradients'] ?? [], 'gradient'),
+            'font-size' => $list($settings['typography']['fontSizes'] ?? [], 'size'),
             'shadow' => $list($settings['shadow']['presets'] ?? [], 'shadow'),
         ] + $stored;
     }

@@ -1,0 +1,571 @@
+[
+    [
+        "the theme as it is",
+        {
+            "font-size properties": [
+                [
+                    "--wp--preset--font-size--small",
+                    "0.875rem"
+                ],
+                [
+                    "--wp--preset--font-size--medium",
+                    "clamp(1rem, 1rem + ((1vw - 0.2rem) * 0.196), 1.125rem)"
+                ],
+                [
+                    "--wp--preset--font-size--large",
+                    "clamp(1.125rem, 1.125rem + ((1vw - 0.2rem) * 0.392), 1.375rem)"
+                ],
+                [
+                    "--wp--preset--font-size--x-large",
+                    "clamp(1.75rem, 1.75rem + ((1vw - 0.2rem) * 0.392), 2rem)"
+                ],
+                [
+                    "--wp--preset--font-size--xx-large",
+                    "clamp(2.15rem, 2.15rem + ((1vw - 0.2rem) * 1.333), 3rem)"
+                ]
+            ],
+            "font-size classes": [
+                [
+                    "small",
+                    "var(--wp--preset--font-size--small) !important;"
+                ],
+                [
+                    "medium",
+                    "var(--wp--preset--font-size--medium) !important;"
+                ],
+                [
+                    "large",
+                    "var(--wp--preset--font-size--large) !important;"
+                ],
+                [
+                    "x-large",
+                    "var(--wp--preset--font-size--x-large) !important;"
+                ],
+                [
+                    "xx-large",
+                    "var(--wp--preset--font-size--xx-large) !important;"
+                ]
+            ],
+            "colour properties": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "base",
+                "contrast",
+                "accent-1",
+                "accent-2",
+                "accent-3",
+                "accent-4",
+                "accent-5",
+                "accent-6"
+            ],
+            "colour classes": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "base",
+                "contrast",
+                "accent-1",
+                "accent-2",
+                "accent-3",
+                "accent-4",
+                "accent-5",
+                "accent-6",
+                "black-background",
+                "cyan-bluish-gray-background",
+                "white-background",
+                "pale-pink-background",
+                "vivid-red-background",
+                "luminous-vivid-orange-background",
+                "luminous-vivid-amber-background",
+                "light-green-cyan-background",
+                "vivid-green-cyan-background",
+                "pale-cyan-blue-background",
+                "vivid-cyan-blue-background",
+                "vivid-purple-background",
+                "base-background",
+                "contrast-background",
+                "accent-1-background",
+                "accent-2-background",
+                "accent-3-background",
+                "accent-4-background",
+                "accent-5-background",
+                "accent-6-background",
+                "black-border",
+                "cyan-bluish-gray-border",
+                "white-border",
+                "pale-pink-border",
+                "vivid-red-border",
+                "luminous-vivid-orange-border",
+                "luminous-vivid-amber-border",
+                "light-green-cyan-border",
+                "vivid-green-cyan-border",
+                "pale-cyan-blue-border",
+                "vivid-cyan-blue-border",
+                "vivid-purple-border",
+                "base-border",
+                "contrast-border",
+                "accent-1-border",
+                "accent-2-border",
+                "accent-3-border",
+                "accent-4-border",
+                "accent-5-border",
+                "accent-6-border"
+            ]
+        }
+    ],
+    [
+        "own sizes and palette only, defaults off",
+        {
+            "font-size properties": [
+                [
+                    "--wp--preset--font-size--small",
+                    "13px"
+                ],
+                [
+                    "--wp--preset--font-size--medium",
+                    "clamp(14px, 0.875rem + ((1vw - 3.2px) * 0.588), 20px)"
+                ],
+                [
+                    "--wp--preset--font-size--large",
+                    "clamp(22.041px, 1.378rem + ((1vw - 3.2px) * 1.369), 36px)"
+                ],
+                [
+                    "--wp--preset--font-size--x-large",
+                    "clamp(25.014px, 1.563rem + ((1vw - 3.2px) * 1.665), 42px)"
+                ],
+                [
+                    "--wp--preset--font-size--probe-tiny",
+                    "0.7rem"
+                ],
+                [
+                    "--wp--preset--font-size--probe-huge",
+                    "clamp(1.743rem, 1.743rem + ((1vw - 0.2rem) * 1.972), 3rem)"
+                ]
+            ],
+            "font-size classes": [
+                [
+                    "small",
+                    "var(--wp--preset--font-size--small) !important;"
+                ],
+                [
+                    "medium",
+                    "var(--wp--preset--font-size--medium) !important;"
+                ],
+                [
+                    "large",
+                    "var(--wp--preset--font-size--large) !important;"
+                ],
+                [
+                    "x-large",
+                    "var(--wp--preset--font-size--x-large) !important;"
+                ],
+                [
+                    "probe-tiny",
+                    "var(--wp--preset--font-size--probe-tiny) !important;"
+                ],
+                [
+                    "probe-huge",
+                    "var(--wp--preset--font-size--probe-huge) !important;"
+                ]
+            ],
+            "colour properties": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "probe-ink"
+            ],
+            "colour classes": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "probe-ink",
+                "black-background",
+                "cyan-bluish-gray-background",
+                "white-background",
+                "pale-pink-background",
+                "vivid-red-background",
+                "luminous-vivid-orange-background",
+                "luminous-vivid-amber-background",
+                "light-green-cyan-background",
+                "vivid-green-cyan-background",
+                "pale-cyan-blue-background",
+                "vivid-cyan-blue-background",
+                "vivid-purple-background",
+                "probe-ink-background",
+                "black-border",
+                "cyan-bluish-gray-border",
+                "white-border",
+                "pale-pink-border",
+                "vivid-red-border",
+                "luminous-vivid-orange-border",
+                "luminous-vivid-amber-border",
+                "light-green-cyan-border",
+                "vivid-green-cyan-border",
+                "pale-cyan-blue-border",
+                "vivid-cyan-blue-border",
+                "vivid-purple-border",
+                "probe-ink-border"
+            ]
+        }
+    ],
+    [
+        "own sizes and palette only, defaults on",
+        {
+            "font-size properties": [
+                [
+                    "--wp--preset--font-size--small",
+                    "13px"
+                ],
+                [
+                    "--wp--preset--font-size--medium",
+                    "clamp(14px, 0.875rem + ((1vw - 3.2px) * 0.588), 20px)"
+                ],
+                [
+                    "--wp--preset--font-size--large",
+                    "clamp(22.041px, 1.378rem + ((1vw - 3.2px) * 1.369), 36px)"
+                ],
+                [
+                    "--wp--preset--font-size--x-large",
+                    "clamp(25.014px, 1.563rem + ((1vw - 3.2px) * 1.665), 42px)"
+                ],
+                [
+                    "--wp--preset--font-size--probe-tiny",
+                    "0.7rem"
+                ],
+                [
+                    "--wp--preset--font-size--probe-huge",
+                    "clamp(1.743rem, 1.743rem + ((1vw - 0.2rem) * 1.972), 3rem)"
+                ]
+            ],
+            "font-size classes": [
+                [
+                    "small",
+                    "var(--wp--preset--font-size--small) !important;"
+                ],
+                [
+                    "medium",
+                    "var(--wp--preset--font-size--medium) !important;"
+                ],
+                [
+                    "large",
+                    "var(--wp--preset--font-size--large) !important;"
+                ],
+                [
+                    "x-large",
+                    "var(--wp--preset--font-size--x-large) !important;"
+                ],
+                [
+                    "probe-tiny",
+                    "var(--wp--preset--font-size--probe-tiny) !important;"
+                ],
+                [
+                    "probe-huge",
+                    "var(--wp--preset--font-size--probe-huge) !important;"
+                ]
+            ],
+            "colour properties": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "probe-ink"
+            ],
+            "colour classes": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "probe-ink",
+                "black-background",
+                "cyan-bluish-gray-background",
+                "white-background",
+                "pale-pink-background",
+                "vivid-red-background",
+                "luminous-vivid-orange-background",
+                "luminous-vivid-amber-background",
+                "light-green-cyan-background",
+                "vivid-green-cyan-background",
+                "pale-cyan-blue-background",
+                "vivid-cyan-blue-background",
+                "vivid-purple-background",
+                "probe-ink-background",
+                "black-border",
+                "cyan-bluish-gray-border",
+                "white-border",
+                "pale-pink-border",
+                "vivid-red-border",
+                "luminous-vivid-orange-border",
+                "luminous-vivid-amber-border",
+                "light-green-cyan-border",
+                "vivid-green-cyan-border",
+                "pale-cyan-blue-border",
+                "vivid-cyan-blue-border",
+                "vivid-purple-border",
+                "probe-ink-border"
+            ]
+        }
+    ],
+    [
+        "one of core's slugs kept, defaults off",
+        {
+            "font-size properties": [
+                [
+                    "--wp--preset--font-size--small",
+                    "0.8rem"
+                ],
+                [
+                    "--wp--preset--font-size--medium",
+                    "clamp(14px, 0.875rem + ((1vw - 3.2px) * 0.588), 20px)"
+                ],
+                [
+                    "--wp--preset--font-size--large",
+                    "clamp(22.041px, 1.378rem + ((1vw - 3.2px) * 1.369), 36px)"
+                ],
+                [
+                    "--wp--preset--font-size--x-large",
+                    "clamp(25.014px, 1.563rem + ((1vw - 3.2px) * 1.665), 42px)"
+                ],
+                [
+                    "--wp--preset--font-size--probe-huge",
+                    "clamp(1.743rem, 1.743rem + ((1vw - 0.2rem) * 1.972), 3rem)"
+                ]
+            ],
+            "font-size classes": [
+                [
+                    "small",
+                    "var(--wp--preset--font-size--small) !important;"
+                ],
+                [
+                    "medium",
+                    "var(--wp--preset--font-size--medium) !important;"
+                ],
+                [
+                    "large",
+                    "var(--wp--preset--font-size--large) !important;"
+                ],
+                [
+                    "x-large",
+                    "var(--wp--preset--font-size--x-large) !important;"
+                ],
+                [
+                    "probe-huge",
+                    "var(--wp--preset--font-size--probe-huge) !important;"
+                ]
+            ],
+            "colour properties": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "probe-ink"
+            ],
+            "colour classes": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "probe-ink",
+                "black-background",
+                "cyan-bluish-gray-background",
+                "white-background",
+                "pale-pink-background",
+                "vivid-red-background",
+                "luminous-vivid-orange-background",
+                "luminous-vivid-amber-background",
+                "light-green-cyan-background",
+                "vivid-green-cyan-background",
+                "pale-cyan-blue-background",
+                "vivid-cyan-blue-background",
+                "vivid-purple-background",
+                "probe-ink-background",
+                "black-border",
+                "cyan-bluish-gray-border",
+                "white-border",
+                "pale-pink-border",
+                "vivid-red-border",
+                "luminous-vivid-orange-border",
+                "luminous-vivid-amber-border",
+                "light-green-cyan-border",
+                "vivid-green-cyan-border",
+                "pale-cyan-blue-border",
+                "vivid-cyan-blue-border",
+                "vivid-purple-border",
+                "probe-ink-border"
+            ]
+        }
+    ],
+    [
+        "one of core's slugs kept, defaults on",
+        {
+            "font-size properties": [
+                [
+                    "--wp--preset--font-size--small",
+                    "13px"
+                ],
+                [
+                    "--wp--preset--font-size--medium",
+                    "clamp(14px, 0.875rem + ((1vw - 3.2px) * 0.588), 20px)"
+                ],
+                [
+                    "--wp--preset--font-size--large",
+                    "clamp(22.041px, 1.378rem + ((1vw - 3.2px) * 1.369), 36px)"
+                ],
+                [
+                    "--wp--preset--font-size--x-large",
+                    "clamp(25.014px, 1.563rem + ((1vw - 3.2px) * 1.665), 42px)"
+                ],
+                [
+                    "--wp--preset--font-size--probe-huge",
+                    "clamp(1.743rem, 1.743rem + ((1vw - 0.2rem) * 1.972), 3rem)"
+                ]
+            ],
+            "font-size classes": [
+                [
+                    "small",
+                    "var(--wp--preset--font-size--small) !important;"
+                ],
+                [
+                    "medium",
+                    "var(--wp--preset--font-size--medium) !important;"
+                ],
+                [
+                    "large",
+                    "var(--wp--preset--font-size--large) !important;"
+                ],
+                [
+                    "x-large",
+                    "var(--wp--preset--font-size--x-large) !important;"
+                ],
+                [
+                    "probe-huge",
+                    "var(--wp--preset--font-size--probe-huge) !important;"
+                ]
+            ],
+            "colour properties": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "probe-ink"
+            ],
+            "colour classes": [
+                "black",
+                "cyan-bluish-gray",
+                "white",
+                "pale-pink",
+                "vivid-red",
+                "luminous-vivid-orange",
+                "luminous-vivid-amber",
+                "light-green-cyan",
+                "vivid-green-cyan",
+                "pale-cyan-blue",
+                "vivid-cyan-blue",
+                "vivid-purple",
+                "probe-ink",
+                "black-background",
+                "cyan-bluish-gray-background",
+                "white-background",
+                "pale-pink-background",
+                "vivid-red-background",
+                "luminous-vivid-orange-background",
+                "luminous-vivid-amber-background",
+                "light-green-cyan-background",
+                "vivid-green-cyan-background",
+                "pale-cyan-blue-background",
+                "vivid-cyan-blue-background",
+                "vivid-purple-background",
+                "probe-ink-background",
+                "black-border",
+                "cyan-bluish-gray-border",
+                "white-border",
+                "pale-pink-border",
+                "vivid-red-border",
+                "luminous-vivid-orange-border",
+                "luminous-vivid-amber-border",
+                "light-green-cyan-border",
+                "vivid-green-cyan-border",
+                "pale-cyan-blue-border",
+                "vivid-cyan-blue-border",
+                "vivid-purple-border",
+                "probe-ink-border"
+            ]
+        }
+    ]
+]

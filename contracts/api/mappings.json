@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 686,
-        "composes": 2143,
+        "composes": 2142,
         "leaf": 1004,
-        "noop": 3149,
+        "noop": 3150,
         "placeholder": 0,
         "deadend": 1770,
         "functions": 8674,
-        "minnMethods": 1402,
+        "minnMethods": 1403,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -30396,7 +30396,7 @@
         },
         "WP_Theme_JSON_Resolver::get_theme_data": {
             "file": "classes/WP_Theme_JSON_Resolver.php",
-            "lines": 10,
+            "lines": 15,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -30404,7 +30404,9 @@
                 "Minn\\Runtime\\Runtime::set"
             ],
             "composes": [
+                "_minn_theme_json_object",
                 "_minn_theme_styles",
+                "get_classic_theme_supports_block_editor_settings",
                 "register_block_style"
             ]
         },
@@ -47650,13 +47652,12 @@
         },
         "get_classic_theme_supports_block_editor_settings": {
             "file": "blocks.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "current",
-                "get_theme_support"
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ThemeSupports::classicEditorSettings"
             ],
+            "composes": [],
             "deadend": "editor"
         },
         "get_clean_basedomain": {
@@ -74813,7 +74814,7 @@
         },
         "wp_set_current_user": {
             "file": "pluggable.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -74821,7 +74822,8 @@
                 "Minn\\Runtime\\Runtime::set"
             ],
             "composes": [
-                "do_action"
+                "do_action",
+                "setup_userdata"
             ]
         },
         "wp_set_internal_encoding": {

@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1605
+        "delegates": 1606
     },
     "functions": {
         "__": {
@@ -1679,6 +1679,10 @@
         "get_children": {
             "file": "post.php",
             "statement": "return Minn\\Runtime\\PostReads::children($args, $output);"
+        },
+        "get_classic_theme_supports_block_editor_settings": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\ThemeSupports::classicEditorSettings();"
         },
         "get_comment": {
             "file": "comment.php",

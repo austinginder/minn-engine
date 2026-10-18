@@ -56,6 +56,33 @@ final readonly class ThemeStyles
         return Theme::merge($settings, $own);
     }
 
+    /**
+     * The theme's own layer, as the resolver's theme data holds it: no core
+     * layer under it, its settings normalized as settings() normalizes
+     * them, its styles with partials and section styles in, and the
+     * template lists and pattern slugs it declares.
+     *
+     * @return array<string, mixed>
+     */
+    public function themeLayer(): array
+    {
+        $json = $this->theme?->json() ?? [];
+        $layer = ['version' => 3];
+        if (is_array($json['settings'] ?? null)) {
+            $layer['settings'] = StyleSettings::normalize($json['settings'], 'theme');
+        }
+        if (is_array($json['styles'] ?? null)) {
+            $layer['styles'] = StyleSettings::resolved($this->withSectionStyles($json['styles'], $this->partials()));
+        }
+        // In the order the theme.json writes them.
+        foreach ($json as $key => $value) {
+            if (in_array($key, ['customTemplates', 'templateParts', 'patterns'], true) && is_array($value)) {
+                $layer[$key] = $value;
+            }
+        }
+        return $layer;
+    }
+
     /** The pattern directory slugs the theme.json lists (its patterns), as given; [] when it lists none. @return array<mixed> */
     public function patterns(): array
     {

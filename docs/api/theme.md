@@ -28,8 +28,8 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 128 | The body-class tokens the main query stands for, in the reference's |
 | [`SpacingScale`](#spacingscale) | final class | 48 | The spacing sizes a theme.json spacing scale makes (probe |
-| [`StyleLayers`](#stylelayers) | final class | 67 | What plugins change about the global stylesheet's layers and nodes, for |
-| [`StylePresets`](#stylepresets) | final class | 152 | The preset side of theme.json: the colour, gradient, font-size, |
+| [`StyleLayers`](#stylelayers) | final class | 68 | What plugins change about the global stylesheet's layers and nodes, for |
+| [`StylePresets`](#stylepresets) | final class | 160 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 88 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
@@ -41,7 +41,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Templates`](#templates) | final readonly class | 220 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
-| [`ThemeStyles`](#themestyles) | final readonly class | 142 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
+| [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`TreeStyles`](#treestyles) | final readonly class | 259 | The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree |
 | [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
 | [`UserStyles`](#userstyles) | final readonly class | 111 | The site editor's saved global styles: one wp_global_styles post per |
@@ -972,13 +972,16 @@ are left out.
 
 The has-* utility classes the presets give every colour, gradient, font size, and font family; each under the prefix given (a block's :where(selector)).
 
-### static `defaultSlugsFirst(array $presets, array $defaults): array`
+### static `fontSizes(array $defaults, array $own, array $settings): array`
 
-A theme size that reuses one of core's slugs prints in core's position;
-the theme's own slugs follow.
+Core's font sizes, always printed, then the theme's: a theme size
+with one of core's slugs takes its place when defaultFontSizes is
+false, and gives way to core's while core's are kept (probe
+default-presets).
 
-- `@param list<array> $presets`
-- `@param list<string> $defaults`
+- `@param list<array{slug: string, value: string}> $defaults core's, as data/presets.json holds them`
+- `@param list<array> $own the theme's (and the site editor's) presets`
+- `@param array<string, mixed> $settings the theme's settings, which say whether core's are kept`
 - `@return list<array>`
 
 ### static `spacingPresets(array $defaults, array $own): array`
@@ -1532,6 +1535,15 @@ The site's active theme as styling data, whether or not it is a block theme.
 
 Settings: presets by origin, appearanceTools expanded, the defaults underneath.
 
+### `themeLayer(): array`
+
+The theme's own layer, as the resolver's theme data holds it: no core
+layer under it, its settings normalized as settings() normalizes
+them, its styles with partials and section styles in, and the
+template lists and pattern slugs it declares.
+
+- `@return array<string, mixed>`
+
 ### `patterns(): array`
 
 The pattern directory slugs the theme.json lists (its patterns), as given; [] when it lists none. @return array<mixed>
@@ -1551,7 +1563,7 @@ way the theme's own are.
 
 - `@return list<array>`
 
-Internals: `withSectionStyles()` (private, line 113), `partials()` (private, line 135), `defaults()` (private, line 148), `storedCore()` (private, line 154)
+Internals: `withSectionStyles()` (private, line 140), `partials()` (private, line 162), `defaults()` (private, line 175), `storedCore()` (private, line 181)
 
 
 ## TreeStyles

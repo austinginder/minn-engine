@@ -17131,12 +17131,10 @@ and a curly one separates, and a symbol outside Latin-1's punctuation
 `preset-slugs`: the 75 names, a dynamic block's classes for eight slugs, and
 the global stylesheet's names for presets added to the theme's own.
 
-Found on the way, owed: when a theme that sets `defaultFontSizes: false`
-no longer has core's size slugs (small, medium, large, x-large), the
-reference still prints core's sizes in the stylesheet (fluid, from 13, 20,
-36 and 42 px) and the engine prints none, so content using
-`has-small-font-size` loses its size there. `data/presets.json` holds no
-font sizes.
+Found on the way: when a theme that sets `defaultFontSizes: false` no
+longer has core's size slugs (small, medium, large, x-large), the reference
+still prints core's sizes in the stylesheet and the engine printed none.
+Settled the same day ("Three owed rows settled").
 
 ## The legacy comments blocks (2026-10-18)
 
@@ -17210,8 +17208,7 @@ lowest priority, so `has_filter($hook, $callback, 10)` for one hooked at 5
 answered 5, truthy, where WordPress says false. `Hooks::has()` takes the
 priority now (probe `hook-priority`).
 
-Owed: `get_theme_data()` takes its `$options` but does not yet leave theme
-supports out for `with_supports => false`.
+`get_theme_data()`'s `with_supports` followed the same day ("Three owed rows settled").
 
 ## The $current_user global (2026-10-18)
 
@@ -17225,8 +17222,7 @@ when asked for the user already current, without firing `set_current_user`
 again; the engine's nonce recheck clears both together (probe
 `current-user-global`). The facade review's doubt on it had named this.
 
-Still owed: the `setup_userdata` globals (`$user_ID`, `$userdata`,
-`$user_login` and the rest) are never set.
+The `setup_userdata` globals followed the same day ("Three owed rows settled").
 
 `WP_Sitemaps::add_robots` became a delegate on the way: the robots.txt
 Sitemap line is `Front\Sitemaps::robots()`, which the engine's own robots.txt
@@ -17275,6 +17271,34 @@ makes it (so case and spacing do not matter), a name match first; a number
 names `sidebar-N`, a number written as a string does not;
 `is_active_sidebar()` takes the id only. Rerun in the hunt lab, Enfold's front
 page is 99.9% alike and Avada's 98.4%, the widgets in place.
+
+## Three owed rows settled: user globals, theme data, core's font sizes (2026-10-18)
+
+- **The old user globals.** `wp_set_current_user()` now runs
+  `setup_userdata()` before `set_current_user` fires, as the reference does,
+  so `$user_ID`, `$user_login`, `$userdata`, `$user_level`, `$user_email`,
+  `$user_url` and `$user_identity` name the current user, and a
+  `set_current_user` callback already sees them (probe `user-globals`).
+- **`WP_Theme_JSON_Resolver::get_theme_data()`** answered the theme over
+  core's defaults. The reference answers the theme's own layer: its settings
+  (appearanceTools expanded), its styles, and the template lists in the order
+  its theme.json writes them, with what the classic theme supports amount to
+  underneath unless `with_supports` is false (the custom colour, gradient and
+  font-size switches, a declared gradient set; the theme's own presets win).
+  `ThemeStyles::themeLayer()` is that layer, and the supports layer is
+  `get_from_editor_settings()` of `get_classic_theme_supports_block_editor_settings()`,
+  which moved into the engine (`ThemeSupports::classicEditorSettings`). The
+  test site has no classic theme, so the supports a theme without theme.json
+  adds beyond these (appearance tools, border, link colour) are not probed,
+  and neither is `editor-spacing-sizes` (probe `theme-data-supports`).
+- **Core's font sizes** (small, medium, large, x-large: 13, 20, 36 and 42 px,
+  fluid as the theme's settings make them) print in the global stylesheet
+  whatever the theme lists, before the theme's own. A theme size with one of
+  core's slugs takes its place when `defaultFontSizes` is false and gives way
+  to core's when it is true. The engine printed only the theme's sizes, so a
+  theme without core's slugs lost `has-small-font-size` and the rest.
+  `data/presets.json` now carries core's sizes (probe `default-presets`, which
+  also shows core's colours print either way, as they did).
 
 ## Open items register (2026-10-12)
 
@@ -17346,6 +17370,6 @@ rows that are `open` or `austin`.
 | 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | done | "A product's head link and its post terms (2026-10-16)": the route rest_get_queried_resource_route gives |
 | 16961 | What the_content adds before core's defaults (10-16) | plain text a filter adds before priority 10 is not texturized or given paragraphs | open | engine work owed |
-| 17101 | Preset slugs in kebab case (10-18) | core's default font sizes printed when the theme no longer has their slugs (`defaultFontSizes: false`) | open | engine work owed |
-| 17101 | Methods keep the reference's shape (10-18) | `WP_Theme_JSON_Resolver::get_theme_data()` ignores `with_supports => false` | open | engine work owed |
-| 17101 | The $current_user global (10-18) | the `setup_userdata` globals (`$user_ID`, `$userdata`, `$user_login`, ...) | open | engine work owed |
+| 17101 | Preset slugs in kebab case (10-18) | core's default font sizes printed when the theme no longer has their slugs (`defaultFontSizes: false`) | done | "Three owed rows settled" (probe `default-presets`) |
+| 17101 | Methods keep the reference's shape (10-18) | `WP_Theme_JSON_Resolver::get_theme_data()` ignores `with_supports => false` | done | "Three owed rows settled": the theme's own layer over its supports (probe `theme-data-supports`) |
+| 17101 | The $current_user global (10-18) | the `setup_userdata` globals (`$user_ID`, `$userdata`, `$user_login`, ...) | done | "Three owed rows settled" (probe `user-globals`) |

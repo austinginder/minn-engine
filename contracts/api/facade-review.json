@@ -1636,13 +1636,6 @@
                 "doubt": "Attributes a block support returns beyond style, class, id and aria-label are printed; WP keeps only the caller's extra attributes past those four.",
                 "body": "19a3c769e2cb"
             },
-            "get_classic_theme_supports_block_editor_settings": {
-                "verdict": "keep",
-                "reason": "compose",
-                "why": "Reads the classic theme supports through get_theme_support into the editor settings keys.",
-                "doubt": "No spacingSizes from editor-spacing-sizes support, which WP (6.6+) adds beside colors, font sizes and gradients.",
-                "body": "75193cbba98f"
-            },
             "get_comment_delimited_block_content": {
                 "verdict": "delegate",
                 "to": "Minn\\Blocks\\Serializer::delimited",
@@ -18482,9 +18475,8 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "makes a WP_User the request's in runtime state and fires set_current_user; the request's user is engine state CurrentUser settles; the same user again is the same object, and the user is the $current_user global (probe current-user-global)",
-                "doubt": "the setup_userdata globals ($user_ID, $userdata, $user_login and the rest) are never set",
-                "body": "8686b4c801bf"
+                "why": "makes a WP_User the request's in runtime state, sets the setup_userdata globals and fires set_current_user; the request's user is engine state CurrentUser settles; the same user again is the same object, and the user is the $current_user global (probes current-user-global, user-globals)",
+                "body": "24bb174b2c4b"
             },
             "wp_set_password": {
                 "verdict": "move",

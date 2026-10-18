@@ -30,7 +30,7 @@ final class StylePresets
             'aspect-ratio' => $core['aspect-ratio'] ?? [],
             'color' => $merge($core['color'] ?? [], self::presetList($settings['color']['palette'] ?? []), 'color'),
             'gradient' => $merge($core['gradient'] ?? [], self::presetList($settings['color']['gradients'] ?? []), 'gradient'),
-            'font-size' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => self::fluidFontSize($p, $settings)], self::defaultSlugsFirst($fontSizes, ['small', 'medium', 'large', 'x-large'])),
+            'font-size' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => self::fluidFontSize($p, $settings)], self::fontSizes($core['font-size'] ?? [], $fontSizes, $settings)),
             'font-family' => array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p['fontFamily']], self::fontFamilies($settings)),
             'spacing' => self::spacingPresets($core['spacing'] ?? [], $spacing),
             'shadow' => $merge($core['shadow'] ?? [], self::presetList($settings['shadow']['presets'] ?? []), 'shadow'),
@@ -121,23 +121,31 @@ final class StylePresets
     }
 
     /**
-     * A theme size that reuses one of core's slugs prints in core's position;
-     * the theme's own slugs follow.
+     * Core's font sizes, always printed, then the theme's: a theme size
+     * with one of core's slugs takes its place when defaultFontSizes is
+     * false, and gives way to core's while core's are kept (probe
+     * default-presets).
      *
-     * @param list<array> $presets
-     * @param list<string> $defaults
+     * @param list<array{slug: string, value: string}> $defaults core's, as data/presets.json holds them
+     * @param list<array> $own the theme's (and the site editor's) presets
+     * @param array<string, mixed> $settings the theme's settings, which say whether core's are kept
      * @return list<array>
      */
-    public static function defaultSlugsFirst(array $presets, array $defaults): array
+    public static function fontSizes(array $defaults, array $own, array $settings): array
     {
-        $rank = array_flip($defaults);
-        $keyed = [];
-        foreach ($presets as $i => $preset) {
-            $slug = (string) ($preset['slug'] ?? '');
-            $keyed[] = [isset($rank[$slug]) ? $rank[$slug] : count($defaults) + $i, $preset];
+        $keepDefaults = ($settings['typography']['defaultFontSizes'] ?? true) !== false;
+        $sizes = [];
+        foreach ($defaults as $preset) {
+            $sizes[(string) $preset['slug']] = ['slug' => (string) $preset['slug'], 'size' => (string) $preset['value']];
         }
-        usort($keyed, static fn (array $a, array $b) => $a[0] <=> $b[0]);
-        return array_column($keyed, 1);
+        $core = $sizes;
+        foreach ($own as $preset) {
+            $slug = (string) ($preset['slug'] ?? '');
+            if (!isset($core[$slug]) || !$keepDefaults) {
+                $sizes[$slug] = $preset;
+            }
+        }
+        return array_values($sizes);
     }
 
     /**
