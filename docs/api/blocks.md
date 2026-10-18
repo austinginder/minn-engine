@@ -18,7 +18,7 @@ the block parser and renderer
 | [`LayoutStyle`](#layoutstyle) | final class | 193 | The CSS rules a block's layout writes (wp_get_layout_style, probe |
 | [`Parser`](#parser) | final class | 114 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
-| [`RenderState`](#renderstate) | final class | 350 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`RenderState`](#renderstate) | final class | 398 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 454 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
@@ -683,7 +683,7 @@ Leaf helpers with no renderer in hand reach it through current().
 
 - const `MAX_DEPTH` = `64`
 
-Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\FeedController`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Runtime`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Excerpt`, `Minn\Front\FeedController`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Runtime`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`
 
 
 ### static `current(): self`
@@ -743,6 +743,26 @@ so whatever was seen meanwhile is given back.
 $filter run while the_content filters content the engine rendered: the
 images it already holds count as fitted out, so only what the filter's
 other callbacks add is fitted (fittedImage()).
+
+### `postContent(int $id, Closure $render): string`
+
+A post's content as a post-content block renders it, or '' while that
+post's content is already being rendered further out: the reference
+prints nothing there, so a post that shows its own content (directly,
+or through an inheriting query loop) renders it once.
+
+- `@param \Closure(): string $render`
+
+### `renderAdded(string $content, Closure $render): string`
+
+Block markup a the_content filter put before or after what the engine
+rendered, rendered by $render (do_blocks, in its place on the_content).
+The engine's own rendering is never parsed again, so block delimiters
+in comment text or an embed's markup stay inert, as the reference parses
+only the stored content; where a filter changed the rendering itself,
+nothing is parsed.
+
+- `@param \Closure(string): string $render`
 
 ### `fittedImage(string $tag): bool`
 

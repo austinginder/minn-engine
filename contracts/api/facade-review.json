@@ -11694,9 +11694,9 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "builds an INSERT or REPLACE from the processed fields, NULL for null values; statement building by rules for a new Query\\WriteSql beside Query\\Sql, keeping the $this->process_fields, $this->prepare and $this->query calls",
+                "why": "builds an INSERT or REPLACE from the processed fields, NULL for null values; statement building by rules for a new Query\\WriteSql beside Query\\Sql, keeping the $this->process_fields, $this->prepare and $this->query calls; builds only an INSERT or a REPLACE (probe sweep-1018)",
                 "doubt": "insert_id is not reset to 0 first, each value is prepared alone where the reference prepares the whole statement once, and check_current_query is set as a dynamic property nothing reads",
-                "body": "6ab6b261e357"
+                "body": "1985641dbe10"
             },
             "wpdb::_weak_escape": {
                 "verdict": "keep",

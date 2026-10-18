@@ -195,6 +195,23 @@ if ($referenceUp) {
         [$rh] = minn_test_fetch($reference . '/?rest_route=/minn-test/v1/deprecated&case=' . $case);
         $check($label, $picked($eh, $deprecations) !== [] && $picked($eh, $deprecations) === $picked($rh, $deprecations), json_encode([$picked($eh, $deprecations), $picked($rh, $deprecations)], JSON_UNESCAPED_SLASHES));
     }
+    // A comment posted while a plugin cancels redirects: a blank page, no Location (security sweep 2026-10-18).
+    $cancelled = [];
+    foreach (['engine' => $base, 'reference' => $reference] as $stack => $url) {
+        $email = "zz-cancel-{$stack}@minn-lab.org";
+        $ch = curl_init($url . '/wp-comments-post.php?minn-test-cancel-redirect=1');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => http_build_query(['comment_post_ID' => 1, 'author' => 'Zz Cancel', 'email' => $email, 'comment' => "zz a cancelled redirect, {$stack}", 'redirect_to' => 'https://evil.example/']), CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60]);
+        $raw = (string) curl_exec($ch);
+        $size = (int) curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $cancelled[$stack] = [curl_getinfo($ch, CURLINFO_RESPONSE_CODE), preg_match('/^location:/im', substr($raw, 0, $size)) === 1, trim(substr($raw, $size))];
+        // Gone before the other stack posts: one stack's comment would be the other's flood.
+        foreach (get_comments(['author_email' => $email, 'status' => 'all']) as $comment) {
+            if ((int) $comment->comment_ID > 1) {
+                wp_delete_comment((int) $comment->comment_ID, true);
+            }
+        }
+    }
+    $check('a comment whose redirect a plugin cancels gets a blank page and no Location, as on the reference', $cancelled['engine'] === [200, false, ''] && $cancelled['engine'] === $cancelled['reference'], json_encode($cancelled));
 } else {
     echo "  --  reference not reachable; header rows skipped\n";
 }
@@ -228,6 +245,20 @@ $activated = activate_plugin($gatePlugin);
 $seen[] = $gateFiles();
 update_option('active_plugins', $before);
 $check('the symbol gate walks a folder again on a recheck and on activation, not only after five minutes', $activated === null && $seen === [2, 2, 3, 4], json_encode([$activated, $seen]));
+
+// A walk that began long ago and never finished (its request ran out of time or memory) holds the folder back
+// instead of being walked again by every request; a recheck (install, update, activation) tries again (security sweep 2026-10-18).
+$fingerprint = (new ReflectionMethod(Minn\Runtime\Symbols::class, 'fingerprint'))->invoke(null, $gateDir);
+$stored = (array) (Minn\Runtime\Runtime::options()->get('minn_runtime_symbols') ?: []);
+$pending = new ReflectionProperty(Minn\Runtime\Symbols::class, 'pending');
+$cache = (array) ($pending->getValue() ?? $stored);
+$gateKey = basename(dirname($gateDir)) . '/' . basename($gateDir);
+$cache[$gateKey] = ['began' => time() - 600, 'fingerprint' => $fingerprint];
+$pending->setValue(null, $cache);
+$held = Minn\Runtime\Symbols::missing($gateDir, Minn\Runtime\Runtime::options());
+Minn\Runtime\Symbols::recheck($gateDir, Minn\Runtime\Runtime::options());
+$again = Minn\Runtime\Symbols::missing($gateDir, Minn\Runtime\Runtime::options());
+$check('a walk that never finished holds its folder back until a recheck', $held['truncated'] === true && $again['truncated'] === false && $again['files'] === 4, json_encode([$held, $again]));
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

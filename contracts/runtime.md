@@ -16851,9 +16851,9 @@ front page. Observed on the reference with a recorder of each loop hook, its que
   first post, `loop_end` after the last, the global post and `in_the_loop()` moving with it, then the main
   query's post set up again (`the_post` once more). An empty query fires `loop_no_results` and sets nothing up
   again. An inheriting query walks `$wp_query` itself, unless the main query is already in its loop (a singular
-  template, or a post's content shown in a listing): then it runs a new WP_Query from the request the main
-  query was made from (`$wp_query->query`), so an inheriting query on a page lists that page, where the engine
-  printed its no-results text.
+  template, or a post's content shown in a listing): then it walks a copy of the main query from its start,
+  running no query (corrected 2026-10-18: a new query made from the home page's empty request found nothing), so an
+  inheriting query on a page lists that page, where the engine printed its no-results text.
 - The latest-posts block runs WP_Query (`posts_per_page`, published posts, the block's order and orderby,
   `ignore_sticky_posts`, `no_found_rows`, and `category__in` and `author` when it names them) and walks it the
   same way, setting the main query's post up again after, found or not. It read the posts table itself, so a
@@ -17299,6 +17299,26 @@ page is 99.9% alike and Avada's 98.4%, the widgets in place.
   theme without core's slugs lost `has-small-font-size` and the rest.
   `data/presets.json` now carries core's sizes (probe `default-presets`, which
   also shows core's colours print either way, as they did).
+
+## What the security sweep of October 18 changed (2026-10-18)
+
+The sweep is `docs/security-review-2026-10-18.md`. What it changed in how the engine renders and answers:
+
+- **Added block markup** in `the_content` is parsed only where a filter put it, before or after
+  the engine's rendering, never inside it: block delimiters in comment text stay text.
+- **A post's content renders once.** A post-content block for a post already being rendered
+  prints nothing, and an inheriting loop inside the main loop walks a copy of the main query
+  from its start (no query runs), as the reference does; each item's classes are asked for its
+  own post.
+- **A navigation's overlay colours** print on a submenu's list and on the mobile overlay's
+  container, a named one as its classes, a custom one as `has-*` and a declaration through the
+  style filter (probe `navigation-overlay`).
+- **`bloginfo()`** texturizes, converts and escapes, through the `bloginfo` filter.
+- **`wp_upload_dir($time)`** dates the folder by the time asked for.
+- **Salts** leave out a placeholder or shared key or salt, for every scheme, and key it from
+  the option of that name.
+- **`get_current_user_id()`** is a number; a reply to a spam or trashed comment is refused; a
+  cancelled comment redirect is a blank page.
 
 ## Open items register (2026-10-12)
 

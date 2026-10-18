@@ -36772,7 +36772,9 @@
             "file": "blocks.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Blocks\\RenderState::current"
+            ],
             "composes": [
                 "do_blocks"
             ]
@@ -77662,7 +77664,7 @@
         },
         "wpdb::_insert_replace_helper": {
             "file": "classes/wpdb.php",
-            "lines": 13,
+            "lines": 14,
             "kind": "leaf",
             "minn": [],
             "composes": []

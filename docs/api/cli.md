@@ -10,7 +10,7 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 341 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 365 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
@@ -276,6 +276,7 @@ will not get before anything moves.
 (a symlinked minn/ is shared between sites) and an engine update
 cannot take it. It is PHP that returns first, so a web request for it
 prints nothing, and it names the webroot it belongs to.
+- const `PARK_MARK` = `'.minn-park'` — The mark install leaves in the park, naming the webroot parked there; eject takes no park without it.
 - const `RECORD_HEAD` = `'<?php return; // Minn Engine\'s install record: what `wp minn eject` puts back. ?> '`
 - const `LEGACY_RECORD` = `'.install.json'` — Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink.
 - const `CORE_ENTRIES` = `array (   0 => 'wp-admin',   1 => 'wp-includes',   2 => 'index.php',   3 => 'wp-activate.php',   4 => 'wp-blog-header.php',   5 => 'wp-comments-post.php',   6 => 'wp-config-sample.php',   7 => 'wp-cron.php',   8 => 'wp-links-opml.php',   9 => 'wp-load.php',   10 => 'wp-login.php',   11 => 'wp-mail.php',   12 => 'wp-settings.php',   13 => 'wp-signup.php',   14 => 'wp-trackback.php',   15 => 'xmlrpc.php',   16 => 'license.txt',   17 => 'readme.html', )` — The files WordPress keeps at the webroot, moved aside as a set.
@@ -321,9 +322,15 @@ Installs the engine into a webroot when the preflight allows it.
 
 - `@param array<string, string|true> $options`
 
-### `eject(string $root): int`
+### `eject(string $root, array $options): int`
 
-Puts WordPress back and removes the engine's files.
+Puts WordPress back and removes the engine's files. The park is the
+one the install record names only when it carries the mark install
+left there for this webroot: the record is a file in the webroot, so
+anything able to write there could otherwise point an eject at any
+folder the operator can read. --park=<dir> names it outright.
+
+- `@param array<string, string|true> $options`
 
 ### static `state(string $root): string`
 
@@ -338,7 +345,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 117), `inside()` (private, line 310), `move()` (private, line 319), `copyTree()` (private, line 335), `version()` (private, line 354), `say()` (private, line 359)
+Internals: `help()` (private, line 119), `inside()` (private, line 327), `move()` (private, line 336), `copyTree()` (private, line 359), `version()` (private, line 378), `say()` (private, line 383)
 
 
 ## MaintenanceCommand

@@ -23894,7 +23894,7 @@
         },
         "wpdb::__get": {
             "file": "classes/wpdb.php",
-            "line": 762,
+            "line": 763,
             "statements": 2,
             "lines": 4
         },
@@ -23918,25 +23918,25 @@
         },
         "wpdb::check_database_version": {
             "file": "classes/wpdb.php",
-            "line": 558,
+            "line": 559,
             "statements": 2,
             "lines": 2
         },
         "wpdb::check_safe_collation": {
             "file": "classes/wpdb.php",
-            "line": 521,
+            "line": 522,
             "statements": 5,
             "lines": 13
         },
         "wpdb::columns": {
             "file": "classes/wpdb.php",
-            "line": 704,
+            "line": 705,
             "statements": 3,
             "lines": 8
         },
         "wpdb::delete": {
             "file": "classes/wpdb.php",
-            "line": 416,
+            "line": 417,
             "statements": 6,
             "lines": 12
         },
@@ -23960,13 +23960,13 @@
         },
         "wpdb::flush": {
             "file": "classes/wpdb.php",
-            "line": 571,
+            "line": 572,
             "statements": 6,
             "lines": 6
         },
         "wpdb::get_charset_collate": {
             "file": "classes/wpdb.php",
-            "line": 636,
+            "line": 637,
             "statements": 4,
             "lines": 8
         },
@@ -23978,7 +23978,7 @@
         },
         "wpdb::get_col_charset": {
             "file": "classes/wpdb.php",
-            "line": 679,
+            "line": 680,
             "statements": 7,
             "lines": 13
         },
@@ -24002,7 +24002,7 @@
         },
         "wpdb::get_table_charset": {
             "file": "classes/wpdb.php",
-            "line": 658,
+            "line": 659,
             "statements": 7,
             "lines": 16
         },
@@ -24014,7 +24014,7 @@
         },
         "wpdb::hide_errors": {
             "file": "classes/wpdb.php",
-            "line": 602,
+            "line": 603,
             "statements": 3,
             "lines": 3
         },
@@ -24026,7 +24026,7 @@
         },
         "wpdb::log_query": {
             "file": "classes/wpdb.php",
-            "line": 545,
+            "line": 546,
             "statements": 2,
             "lines": 2
         },
@@ -24044,31 +24044,31 @@
         },
         "wpdb::print_error": {
             "file": "classes/wpdb.php",
-            "line": 581,
+            "line": 582,
             "statements": 4,
             "lines": 10
         },
         "wpdb::process_field_charsets": {
             "file": "classes/wpdb.php",
-            "line": 463,
+            "line": 464,
             "statements": 2,
             "lines": 4
         },
         "wpdb::process_field_formats": {
             "file": "classes/wpdb.php",
-            "line": 450,
+            "line": 451,
             "statements": 5,
             "lines": 8
         },
         "wpdb::process_field_lengths": {
             "file": "classes/wpdb.php",
-            "line": 472,
+            "line": 473,
             "statements": 2,
             "lines": 4
         },
         "wpdb::process_fields": {
             "file": "classes/wpdb.php",
-            "line": 437,
+            "line": 438,
             "statements": 3,
             "lines": 8
         },
@@ -24098,43 +24098,43 @@
         },
         "wpdb::set_sql_mode": {
             "file": "classes/wpdb.php",
-            "line": 728,
+            "line": 729,
             "statements": 3,
             "lines": 3
         },
         "wpdb::show_errors": {
             "file": "classes/wpdb.php",
-            "line": 595,
+            "line": 596,
             "statements": 3,
             "lines": 3
         },
         "wpdb::strip_invalid_text": {
             "file": "classes/wpdb.php",
-            "line": 481,
+            "line": 482,
             "statements": 2,
             "lines": 12
         },
         "wpdb::strip_invalid_text_for_column": {
             "file": "classes/wpdb.php",
-            "line": 717,
+            "line": 718,
             "statements": 2,
             "lines": 2
         },
         "wpdb::strip_invalid_text_from_query": {
             "file": "classes/wpdb.php",
-            "line": 498,
+            "line": 499,
             "statements": 4,
             "lines": 6
         },
         "wpdb::supports_collation": {
             "file": "classes/wpdb.php",
-            "line": 565,
+            "line": 566,
             "statements": 2,
             "lines": 2
         },
         "wpdb::suppress_errors": {
             "file": "classes/wpdb.php",
-            "line": 609,
+            "line": 610,
             "statements": 3,
             "lines": 3
         },
@@ -24146,13 +24146,13 @@
         },
         "wpdb::timer_start": {
             "file": "classes/wpdb.php",
-            "line": 739,
+            "line": 740,
             "statements": 2,
             "lines": 2
         },
         "wpdb::update": {
             "file": "classes/wpdb.php",
-            "line": 395,
+            "line": 396,
             "statements": 9,
             "lines": 17
         }

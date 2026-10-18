@@ -31,6 +31,8 @@ final class Symbols
     private const READER = 4;
     /** How long a cached entry is trusted on its fingerprint alone before the folder is walked again. */
     private const FULL_CHECK_EVERY = 300;
+    /** A walk begun this long ago that never finished ran out of time or memory: its folder is held back instead of walked again on every request. */
+    private const GIVE_UP_AFTER = 120;
 
     /** @var array<string, mixed>|null the cache with this request's changes, written once at shutdown */
     private static ?array $pending = null;
@@ -43,7 +45,7 @@ final class Symbols
     public static function missing(string $dir, Options $options): array
     {
         $cache = self::$pending ?? (is_array($stored = $options->get('minn_runtime_symbols')) ? $stored : []);
-        $key = basename($dir);
+        $key = self::key($dir);
         $entry = $cache[$key] ?? null;
         $fingerprint = self::fingerprint($dir);
         $names = self::namesStamp();
@@ -58,6 +60,17 @@ final class Symbols
             // An entry still matching the folder keeps its scan (reduced, if an older engine stored it whole); a reader change retires it.
             $same = is_array($entry) && ($entry['reader'] ?? 0) === self::READER && ($entry['mtime'] ?? 0) === $newest && ($entry['count'] ?? -1) === count($files)
                 && (($entry['names'] ?? '') === $names || !isset($entry['names']));
+            if (!$same) {
+                $began = is_array($entry) ? (int) ($entry['began'] ?? 0) : 0;
+                if ($began > 0 && time() - $began >= self::GIVE_UP_AFTER && ($entry['fingerprint'] ?? '') === $fingerprint) {
+                    // Held back as a folder too large to read, until it changes or is installed or activated again (recheck()).
+                    return ['functions' => [], 'classes' => [], 'redeclares' => [], 'files' => count($files), 'truncated' => true];
+                }
+                // Marked at once, not at shutdown: a request that dies in the walk leaves the mark behind.
+                $cache[$key] = ['began' => $began ?: time(), 'fingerprint' => $fingerprint];
+                self::keep($cache, $options);
+                $options->update('minn_runtime_symbols', $cache, 'off');
+            }
             $entry = ['reader' => self::READER, 'names' => $names, 'mtime' => $newest, 'count' => count($files), 'fingerprint' => $fingerprint, 'checked' => time(), 'scan' => self::reduced($same ? $entry['scan'] : self::scan($files))];
             $cache[$key] = $entry;
             self::keep($cache, $options);
@@ -73,17 +86,26 @@ final class Symbols
     public static function recheck(string $dir, Options $options): void
     {
         $cache = self::$pending ?? (is_array($stored = $options->get('minn_runtime_symbols')) ? $stored : []);
-        $key = basename(rtrim($dir, '/'));
+        $key = self::key($dir);
         if (!is_array($cache[$key] ?? null)) {
             return;
         }
         $cache[$key]['checked'] = 0;
+        unset($cache[$key]['began']);
         self::keep($cache, $options);
     }
 
-    /** The cache changed this request: written once, when the request ends. */
+    /** A folder's place in the cache: its parent's name and its own (plugins/kubio, themes/kubio, mu-plugins/x.php), so a plugin and a theme of one name keep entries of their own. */
+    private static function key(string $dir): string
+    {
+        $dir = rtrim($dir, '/');
+        return basename(dirname($dir)) . '/' . basename($dir);
+    }
+
+    /** The cache changed this request: written once, when the request ends; entries an older engine kept by name alone go. */
     private static function keep(array $cache, Options $options): void
     {
+        $cache = array_filter($cache, static fn ($entry, $key): bool => str_contains((string) $key, '/'), ARRAY_FILTER_USE_BOTH);
         if (self::$pending === null) {
             register_shutdown_function(static function () use ($options): void {
                 $options->update('minn_runtime_symbols', self::$pending, 'off');

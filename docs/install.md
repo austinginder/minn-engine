@@ -113,7 +113,8 @@ the fallback). The engine itself loads `wp-config.php` normally for CLI and web.
    development `minn/` is often one symlinked engine shared by several
    sites) and an engine update cannot remove it. It is PHP that returns
    first, so a web request for it shows nothing, and eject acts only on a
-   record that names its own webroot.
+   record that names its own webroot. The park gets a mark of its own,
+   `.minn-park`, naming the webroot parked there.
 
 Static CSS and JS are served from inside `minn/` (`minn/assets/`) and from
 the Minn Admin copy the engine serves (`wp-content/plugins/minn-admin/assets/`,
@@ -151,7 +152,12 @@ Removes the shape files, any leftover copies from an earlier installer
 (`minn-admin-asset/`, `minn-engine/`, `wp-includes/js/jquery/`), the engine's
 `wp-includes/` and `wp-admin/` (shape files plus require placeholders), and
 `minn/` (a symlink is unlinked, a copy deleted), moves every parked entry
-back, and removes the park when it is empty. The tree is the one install
+back, and removes the park when it is empty. It takes the park the install
+record names only when that folder carries install's `.minn-park` mark for
+this webroot (the record is a file in the webroot, which a compromised plugin
+could rewrite to point an eject run as root at any folder), and never a park
+that is a link; `--park=DIR` names the folder outright. A parked link comes
+back as the link it was, never as a copy of what it points at. The tree is the one install
 found, byte for byte (`tests/install.test.php` proves it on a scratch webroot),
 apart from Minn Admin's plugin folder: it stays in `wp-content/plugins`, so
 WordPress keeps its admin.

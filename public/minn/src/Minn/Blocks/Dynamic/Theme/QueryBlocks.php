@@ -92,9 +92,9 @@ final class QueryBlocks
      * A loop as the query block sets it: the main query's page when it
      * inherits, else its own query for the page its query-{id}-page asks for.
      * An inheriting loop inside the main query's loop (a singular page's
-     * template, a post's content in a listing) asks again with the request the
-     * main query was made from, as the reference does, so it shows the main
-     * query's posts rather than finding that loop already under way.
+     * template, a post's content in a listing) walks a copy of the main query
+     * from its start, as the reference does (no query runs again), so it shows
+     * the main query's posts rather than finding that loop already under way.
      *
      * @param array<string, mixed> $attrs the block's query
      * @return array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int}
@@ -106,7 +106,8 @@ final class QueryBlocks
         if (!empty($attrs['inherit'])) {
             $main = MainQuery::current();
             if ($main->in_the_loop) {
-                $query = Handoff::newQuery($main->query);
+                $query = clone $main;
+                $query->rewind_posts();
                 return ['page' => self::page($query), 'query' => $query, 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage];
             }
             return ['page' => new Page($context->posts, $context->total), 'query' => $main, 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage];
@@ -176,8 +177,9 @@ final class QueryBlocks
                 $inner .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$index++]);
             }
             $context->popPost();
-            // Its classes are asked for once its blocks are rendered, through post_class, as the reference asks.
-            $items .= '<li class="' . Html::attr(implode(' ', (array) Handoff::postClass('wp-block-post'))) . '">' . $inner . '</li>';
+            // Its classes are asked for once its blocks are rendered, through post_class, as the reference asks,
+            // for the item's own post: a loop inside its blocks has set the main query's post up again.
+            $items .= '<li class="' . Html::attr(implode(' ', (array) Handoff::postClass('wp-block-post', $post->id))) . '">' . $inner . '</li>';
         }
         MainQuery::current()->reset_postdata();
         $columns = (int) ($block->attrs['layout']['columnCount'] ?? 0);

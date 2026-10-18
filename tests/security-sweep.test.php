@@ -3,8 +3,9 @@
 declare(strict_types=1);
 
 /**
- * The security sweep of 2026-10-13 (docs/security-review-2026-10-13.md),
- * pinned where only a request or the engine itself shows it. Compared with
+ * The security sweeps of 2026-10-13 and 2026-10-18
+ * (docs/security-review-<date>.md), pinned where only a request or the
+ * engine itself shows it. Compared with
  * the reference: a published post of a type nobody may query is not shown,
  * and media_handle_upload keeps the caller's overrides. The engine's own:
  * a plugin is paused only after failing on plain requests (two requests
@@ -116,6 +117,77 @@ $check('wp plugin delete with a slug that climbs out of the plugins folder delet
 // No SQL mode can switch backslash escaping off: the engine's literals depend on it.
 $mode = $wp("eval 'global \$wpdb; \$wpdb->set_sql_mode([\"NO_BACKSLASH_ESCAPES\", \"ERROR_FOR_DIVISION_BY_ZERO\"]); echo \$wpdb->get_var(\"SELECT @@SESSION.sql_mode\");'");
 $check('set_sql_mode keeps every mode but NO_BACKSLASH_ESCAPES', $mode === 'ERROR_FOR_DIVISION_BY_ZERO', $mode);
+
+// 2026-10-18: block markup a commenter writes stays text where a page's own content shows its comments.
+$refWp = static fn (string $code): string => trim((string) shell_exec('cd ' . escapeshellarg("{$SITE}/wp-reference") . ' && wp eval ' . escapeshellarg($code) . ' 2>/dev/null'));
+$staged = json_decode($refWp('
+    $content = "<!-- wp:paragraph --><p>Sweep page.</p><!-- /wp:paragraph -->\n<!-- wp:comments --><div class=\"wp-block-comments\"><!-- wp:comment-template --><!-- wp:comment-content /--><!-- /wp:comment-template --></div><!-- /wp:comments -->";
+    $post = wp_insert_post(["post_title" => "zz sweep comment blocks", "post_status" => "publish", "post_type" => "page", "post_content" => $content, "comment_status" => "open"]);
+    $text = wp_unslash(wp_filter_kses(wp_slash("Hello <!-- wp:search {\"label\":\"ZZSWEEP\"} /--> there")));
+    $comment = is_int($post) && $post > 1 ? wp_insert_comment(["comment_post_ID" => $post, "comment_content" => $text, "comment_approved" => 1, "comment_author" => "Zz Sweep"]) : 0;
+    echo json_encode([$post, $comment, get_permalink($post)]);
+'), true);
+if (is_array($staged) && is_int($staged[0]) && $staged[0] > 1) {
+    $path = (string) parse_url((string) $staged[2], PHP_URL_PATH);
+    [, $engine] = $http($ENGINE . $path);
+    [, $reference] = $http($REF . $path);
+    $inert = static fn (string $body): bool => str_contains($body, 'Hello <!-- wp:search {"label":"ZZSWEEP"} /--> there') && !str_contains($body, 'class="wp-block-search');
+    $check('a comment\'s block markup is printed as text, not rendered (it is on the reference)', $inert($engine) && $inert($reference), 'engine ' . ($inert($engine) ? 'inert' : 'rendered') . ', reference ' . ($inert($reference) ? 'inert' : 'rendered'));
+    $refWp('wp_delete_post(' . $staged[0] . ', true);');
+} else {
+    $check('the comment-blocks page could be staged', false, json_encode($staged));
+}
+
+// 2026-10-18: a post that shows its own content, and two posts whose inheriting loops list each other, render as on the
+// reference: a post's content never inside itself, an inheriting loop inside the main loop walking a copy of it from the start.
+$staged = json_decode($refWp('
+    $loop = "<!-- wp:query {\"query\":{\"inherit\":true}} --><div class=\"wp-block-query\"><!-- wp:post-template --><!-- wp:post-content /--><!-- /wp:post-template --></div><!-- /wp:query -->";
+    $ids = [];
+    $ids[] = wp_insert_post(["post_title" => "zz sweep self", "post_status" => "publish", "post_content" => "<!-- wp:paragraph --><p>ZZSELF</p><!-- /wp:paragraph -->\n<!-- wp:post-content /-->"]);
+    $ids[] = wp_insert_post(["post_title" => "zz sweep loop a", "post_status" => "publish", "post_content" => "<!-- wp:paragraph --><p>ZZLOOPA</p><!-- /wp:paragraph -->\n" . $loop]);
+    $ids[] = wp_insert_post(["post_title" => "zz sweep loop b", "post_status" => "publish", "post_content" => "<!-- wp:paragraph --><p>ZZLOOPB</p><!-- /wp:paragraph -->\n" . $loop]);
+    echo json_encode([$ids, get_permalink($ids[0])]);
+'), true);
+$ids = array_values(array_filter((array) ($staged[0] ?? []), static fn ($id) => is_int($id) && $id > 1));
+if (count($ids) === 3) {
+    $sequence = static fn (string $body): string => implode(' ', array_map(static fn (array $m) => $m[1] !== '' ? $m[1] : 'post-' . $m[2], (preg_match_all('/(ZZLOOPA|ZZLOOPB|ZZSELF)|<li class="wp-block-post [^"]*\bpost-(\d+)\b/', $body, $found, PREG_SET_ORDER) ? $found : [])));
+    $self = (string) parse_url((string) $staged[1], PHP_URL_PATH);
+    [$status, $engine] = $http($ENGINE . $self);
+    [, $reference] = $http($REF . $self);
+    $check('a post that shows its own content renders it once (it does on the reference)', $status === 200 && substr_count($engine, 'ZZSELF') === 1 && substr_count($reference, 'ZZSELF') === 1, 'engine ' . substr_count($engine, 'ZZSELF') . ', reference ' . substr_count($reference, 'ZZSELF'));
+    $started = microtime(true);
+    [$status, $engine] = $http($ENGINE . '/');
+    $took = microtime(true) - $started;
+    [, $reference] = $http($REF . '/');
+    $check('posts whose loops list each other render their loops as the reference does, at once', $status === 200 && $took < 10 && $sequence($engine) === $sequence($reference) && str_contains($engine, 'ZZLOOPA'), sprintf('%.1fs; engine %s; reference %s', $took, substr($sequence($engine), 0, 300), substr($sequence($reference), 0, 300)));
+}
+$check('the loop posts could be staged and are removed', count($ids) === 3, json_encode($staged));
+if ($ids !== []) {
+    $refWp('foreach (' . var_export($ids, true) . ' as $id) { wp_delete_post($id, true); }');
+}
+
+// 2026-10-18: a key or salt that is the installer's placeholder, or that another key or salt shares, is left out
+// (its option keys the scheme instead), as on the reference: SECRET_KEY, which this site does not define, set four ways.
+$salted = static function (string $side, string $secret) use ($ROOT, $SITE): string {
+    $code = '[$side, $secret, $site] = [$argv[1], $argv[2], $argv[3]];
+        $config = (string) file_get_contents("{$site}/public/wp-config.php");
+        foreach (["@AUTH_KEY", "@AUTH_SALT"] as $tag) {
+            if ($secret === $tag && preg_match("/define\\(\\s*.(" . substr($tag, 1) . ").,\\s*.(.*?).\\s*\\);/", $config, $m)) { $secret = stripcslashes($m[2]); }
+        }
+        define("SECRET_KEY", $secret);
+        if ($side === "reference") { define("WP_USE_THEMES", false); $_SERVER["HTTP_HOST"] = parse_url(getenv("MINN_SALT_HOST"), PHP_URL_HOST); chdir("{$site}/wp-reference"); require "wp-load.php"; } else { require getenv("MINN_SALT_ROOT") . "/tests/tools/engine-runtime.php"; }
+        echo md5(wp_salt("zz-plugin-scheme")), " ", md5(wp_salt("auth")), " ", md5(wp_salt("nonce"));';
+    return trim((string) shell_exec('MINN_SALT_ROOT=' . escapeshellarg($ROOT) . ' MINN_SALT_HOST=' . escapeshellarg(minn_test_url()) . ' php -d display_errors=0 -r ' . escapeshellarg($code) . ' ' . escapeshellarg($side) . ' ' . escapeshellarg($secret) . ' ' . escapeshellarg($SITE) . ' 2>/dev/null'));
+};
+$hadOptions = $refWp('echo json_encode([get_option("auth_key", null) !== null, get_option("auth_salt", null) !== null]);');
+foreach (['the placeholder' => 'put your unique phrase here', 'AUTH_KEY again' => '@AUTH_KEY', 'AUTH_SALT again' => '@AUTH_SALT', 'a key of its own' => 'zz-a-secret-key-of-its-own-0123456789'] as $label => $secret) {
+    $engine = $salted('engine', $secret);
+    $reference = $salted('reference', $secret);
+    $check("SECRET_KEY as {$label} salts a plugin's scheme, auth and nonce as on the reference", $engine !== '' && $engine === $reference, "engine {$engine}, reference {$reference}");
+}
+// The salt options a shared key made on both stacks go again, unless the site had them.
+[$hadKey, $hadSalt] = json_decode($hadOptions, true) ?: [true, true];
+$refWp(($hadKey ? '' : 'delete_option("auth_key");') . ($hadSalt ? '' : 'delete_option("auth_salt");'));
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

@@ -43,6 +43,10 @@ foreach (['single_post_title', 'single_cat_title', 'single_tag_title', 'single_m
     add_filter($filter, 'wptexturize');
     add_filter($filter, 'strip_tags');
 }
+// The site's name and description as bloginfo() and get_bloginfo('display') print them (probe sweep-1018).
+foreach (['wptexturize', 'convert_chars', 'esc_html'] as $callback) {
+    add_filter('bloginfo', $callback);
+}
 foreach (['wp_title', 'document_title'] as $filter) {
     add_filter($filter, 'wptexturize');
     add_filter($filter, 'convert_chars');

@@ -286,7 +286,7 @@
         },
         "_minn_do_added_blocks": {
             "file": "blocks.php",
-            "statement": "return str_contains((string) $content, '<!-- wp:') ? do_blocks($content) : $content;"
+            "statement": "return Minn\\Blocks\\RenderState::current()->renderAdded((string) $content, static fn (string $markup): string => (string) do_blocks($markup));"
         },
         "_minn_dropdown_script": {
             "file": "widgets.php",

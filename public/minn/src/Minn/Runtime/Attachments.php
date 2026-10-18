@@ -39,7 +39,7 @@ final class Attachments
     /** The uploads folder made on disk when asked (wp_upload_dir), and returned. */
     public static function uploadDirMade(mixed $time = null, mixed $createDir = true, mixed $refreshCache = false): mixed
     {
-        $dir = self::uploadDir();
+        $dir = self::uploadDir($time);
         if ($createDir && $dir['error'] === false) {
             self::makeDir($dir['path']);
         }

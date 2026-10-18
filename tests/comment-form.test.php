@@ -65,6 +65,10 @@ $keep = ['comment_registration' => $option('comment_registration'), 'disallowed_
 $closed = (int) trim((string) shell_exec("{$WP} post create --post_title='zz form closed' --post_status=publish --comment_status=closed --porcelain 2>/dev/null"));
 $draft = (int) trim((string) shell_exec("{$WP} post create --post_title='zz form draft' --post_status=draft --comment_status=open --porcelain 2>/dev/null"));
 $held = (int) trim((string) shell_exec("{$WP} comment create --comment_post_ID=1 --comment_author='Held' --comment_author_email=held" . DOMAIN . " --comment_content='zz held parent' --comment_approved=0 --porcelain 2>/dev/null"));
+// Parents a reply may not answer either (security sweep 2026-10-18): one marked spam, one in the trash.
+$spamParent = (int) trim((string) shell_exec("{$WP} comment create --comment_post_ID=1 --comment_author='Spam' --comment_author_email=spam-parent" . DOMAIN . " --comment_content='zz spam parent' --comment_approved=spam --porcelain 2>/dev/null"));
+$trashParent = (int) trim((string) shell_exec("{$WP} comment create --comment_post_ID=1 --comment_author='Trash' --comment_author_email=trash-parent" . DOMAIN . " --comment_content='zz trash parent' --comment_approved=trash --porcelain 2>/dev/null"));
+$parents = [$held, $spamParent, $trashParent];
 register_shutdown_function(static function () use ($WP, $keep, $closed, $draft, $sweep, $links): void {
     shell_exec("{$WP} plugin deactivate minn-test-comment-guard >/dev/null 2>&1");
     foreach ($links as $link) {
@@ -131,6 +135,8 @@ $cases = [
     'no comment' => [['comment_post_ID' => 1, 'author' => 'A', 'email' => 'six' . DOMAIN, 'comment' => '   '], []],
     'a name too long' => [['comment_post_ID' => 1, 'author' => str_repeat('n', 250), 'email' => 'seven' . DOMAIN, 'comment' => 'hello'], []],
     'a reply to a held comment' => [['comment_post_ID' => 1, 'author' => 'A', 'email' => 'eight' . DOMAIN, 'comment' => 'a reply', 'comment_parent' => $held], []],
+    'a reply to a comment marked spam' => [['comment_post_ID' => 1, 'author' => 'A', 'email' => 'eight-spam' . DOMAIN, 'comment' => 'a reply to spam', 'comment_parent' => $spamParent], []],
+    'a reply to a trashed comment' => [['comment_post_ID' => 1, 'author' => 'A', 'email' => 'eight-trash' . DOMAIN, 'comment' => 'a reply to the trash', 'comment_parent' => $trashParent], []],
     'sign-in required' => [['comment_post_ID' => 1, 'author' => 'A', 'email' => 'nine' . DOMAIN, 'comment' => 'hello'], ['comment_registration' => '1']],
     'a disallowed word' => [['comment_post_ID' => 1, 'author' => 'A', 'email' => 'ten' . DOMAIN, 'comment' => 'this has zzforbidden in it'], ['comment_registration' => '0', 'disallowed_keys' => 'zzforbidden']],
     // A spam plugin's say (the guard fixture).
@@ -142,7 +148,7 @@ $cases = [
     'a plugin sends the reader elsewhere' => [['comment_post_ID' => 1, 'author' => 'A', 'email' => 'sixteen' . DOMAIN, 'comment' => 'zz-guard-redirect me', 'wp-comment-cookies-consent' => 'yes'], []],
 ];
 
-$check('the fixtures exist (closed post, draft, held comment)', $closed > 0 && $draft > 0 && $held > 0);
+$check('the fixtures exist (closed post, draft, held, spam and trashed comments)', $closed > 0 && $draft > 0 && $held > 0 && $spamParent > 0 && $trashParent > 0);
 foreach ($cases as $label => [$form, $options]) {
     if (str_starts_with($label, 'a plugin ') && !str_contains($option('active_plugins'), 'minn-test-comment-guard')) {
         shell_exec("{$WP} plugin activate minn-test-comment-guard >/dev/null 2>&1");
@@ -159,7 +165,7 @@ foreach ($cases as $label => [$form, $options]) {
         // Each stack's comment goes before the other posts (the held parent stays).
         $sweepBut = json_decode((string) shell_exec("{$WP} comment list --status=any --fields=comment_ID,comment_author_email --format=json 2>/dev/null"), true);
         foreach (is_array($sweepBut) ? $sweepBut : [] as $comment) {
-            if (str_ends_with((string) ($comment['comment_author_email'] ?? ''), DOMAIN) && (int) $comment['comment_ID'] !== $held) {
+            if (str_ends_with((string) ($comment['comment_author_email'] ?? ''), DOMAIN) && !in_array((int) $comment['comment_ID'], $parents, true)) {
                 shell_exec("{$WP} comment delete " . (int) $comment['comment_ID'] . ' --force >/dev/null 2>&1');
             }
         }

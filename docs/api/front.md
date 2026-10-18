@@ -12,7 +12,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
-| [`CommentPostController`](#commentpostcontroller) | final readonly class | 52 | wp-comments-post.php: the comment form's target. The reference's |
+| [`CommentPostController`](#commentpostcontroller) | final readonly class | 56 | wp-comments-post.php: the comment form's target. The reference's |
 | [`CustomLogo`](#customlogo) | final class | 25 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
 | [`FeedController`](#feedcontroller) | final readonly class | 60 | The feeds, wherever a request asks for one: the feed var of the rule its |
@@ -357,7 +357,7 @@ Route: `* /wp-comments-post.php (public)`
 
 The comment form's target.
 
-Internals: `submit()` (private, line 49), `refusal()` (private, line 70)
+Internals: `submit()` (private, line 49), `refusal()` (private, line 74)
 
 
 ## CustomLogo

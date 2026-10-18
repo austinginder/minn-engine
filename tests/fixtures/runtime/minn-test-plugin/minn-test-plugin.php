@@ -147,6 +147,12 @@ if (isset($_GET['minn-test-early-pluggable']) || isset($_GET['minn-test-early-us
 // A comments_template filter that hands back a path that is no file
 // (?minn-test-comments-template; Colibri's is relative to its theme): the
 // comments template printed in the footer, noted by its length and hash.
+// A plugin that cancels redirects (?minn-test-cancel-redirect, on a comment form post): the
+// form's redirect then goes nowhere, and the address the commenter asked for is never sent.
+if (isset($_GET['minn-test-cancel-redirect'])) {
+    add_filter('wp_redirect', '__return_false');
+}
+
 if (isset($_GET['minn-test-comments-template'])) {
     add_action('wp_footer', static function () {
         add_filter('comments_template', static fn () => 'template-parts/blog/comments.php', 99);

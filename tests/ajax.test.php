@@ -298,6 +298,14 @@ if (!is_array($doorMint) || empty($doorMint['admin_cookie'])) {
     $check('a public page whose plugin script needs a WordPress script the engine has no file for notes the plugin', $f['status'] === 200 && is_array($row) && $row['theme'] === false && in_array('wp-util', $row['handles'] ?? [], true) && ($row['page'] ?? '') === '/', json_encode([$f, $kept]));
     $told = array_values(array_filter((array) ($boot($signIn)['legacyPack']['wanted'] ?? []), static fn ($w): bool => ($w['plugin'] ?? '') === 'minn-test-ajax/minn-test-ajax.php'));
     $check('the app is told the plugin needs the pack, by name, with the scripts and the page', count($told) === 1 && $told[0]['name'] === 'Minn test ajax' && $told[0]['theme'] === '' && in_array('wp-util', $told[0]['handles'], true) && $told[0]['page'] === '/', json_encode($told));
+    // A 404 lines up the same scripts, but its address is whatever a visitor typed: the note keeps a page the site has (security sweep 2026-10-18).
+    shell_exec("{$WP} option delete minn_legacy_pack_wanted >/dev/null 2>&1");
+    $ch = curl_init($ENGINE . '/zz-a-visitor-chose-this-text-' . str_repeat('x', 300) . '/?minn-test-wants-pack=1');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 30]);
+    curl_exec($ch);
+    $missing = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    $row = json_decode($option('minn_legacy_pack_wanted'), true)['minn-test-ajax/minn-test-ajax.php'] ?? null;
+    $check('a 404 never names its own address as the page that needs the pack', $missing === 404 && is_array($row) && $row['page'] === '/', json_encode([$missing, $row]));
     $adminMint = json_decode((string) shell_exec("{$WP} eval-file " . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 1 2>/dev/null'), true);
     if (is_array($adminMint) && !empty($adminMint['nonce'])) {
         // The stand-in is installed (its folder is linked in), so the offer only activates it: nothing is downloaded.

@@ -62,7 +62,11 @@ final readonly class CommentPostController
         }
         Handoff::safeRedirect(Runtime::hooks()->filter('comment_post_redirect', [$location, $comment]));
         $sent = (array) Runtime::current()->get('redirect', []);
-        $response = Response::redirect((string) ($sent['location'] ?? $location), (int) ($sent['status'] ?? 302));
+        if ((string) ($sent['location'] ?? '') === '') {
+            // A plugin cancelled the redirect: the page is blank, and the address asked for is never sent.
+            return new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], '');
+        }
+        $response = Response::redirect((string) $sent['location'], (int) ($sent['status'] ?? 302));
         return is_string($sent['by'] ?? null) ? $response->withHeader('X-Redirect-By', (string) $sent['by']) : $response;
     }
 

@@ -66,6 +66,15 @@ if (!class_exists('ZzUnitPlainBase', false)) {
         {
         }
     }
+    final class ZzUnitSets
+    {
+        public string $name = '';
+        public static array $heard = [];
+        public function __set(string $property, mixed $value): void
+        {
+            self::$heard[] = $property;
+        }
+    }
 }
 $plainBlob = static function (array $props, string $class = 'ZzUnitPlain'): string {
     $out = '';
@@ -96,6 +105,11 @@ return [
             if (!$value instanceof stdClass || $value->name !== 'n') {
                 return $class;
             }
+        }
+        // A property the class does not declare would be set through __set (security sweep 2026-10-18).
+        $value = Serialized::decode($plainBlob(['name' => 'n', 'undeclared' => 'u'], 'ZzUnitSets'), StoredObjects::reviver());
+        if (!$value instanceof stdClass || ZzUnitSets::$heard !== []) {
+            return 'ZzUnitSets';
         }
         return true;
     },

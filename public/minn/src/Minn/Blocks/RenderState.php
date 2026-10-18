@@ -46,6 +46,10 @@ final class RenderState
 
     /** @var list<list<string>> the images of each content the_content is filtering, innermost last */
     private array $contentImages = [];
+    /** @var list<string> each content the_content is filtering, as the engine rendered it, innermost last */
+    private array $contentRendered = [];
+    /** @var array<int, true> the posts a post-content block is rendering the content of */
+    private array $contentPosts = [];
 
     /**
      * The state of the request being rendered, which its runtime holds, so
@@ -149,11 +153,55 @@ final class RenderState
     public function filteringContent(string $content, \Closure $filter): mixed
     {
         $this->contentImages[] = preg_match_all('/<img\s[^>]*>/i', $content, $m) > 0 ? $m[0] : [];
+        $this->contentRendered[] = $content;
         try {
             return $filter();
         } finally {
             array_pop($this->contentImages);
+            array_pop($this->contentRendered);
         }
+    }
+
+    /**
+     * A post's content as a post-content block renders it, or '' while that
+     * post's content is already being rendered further out: the reference
+     * prints nothing there, so a post that shows its own content (directly,
+     * or through an inheriting query loop) renders it once.
+     *
+     * @param \Closure(): string $render
+     */
+    public function postContent(int $id, \Closure $render): string
+    {
+        if (isset($this->contentPosts[$id])) {
+            return '';
+        }
+        $this->contentPosts[$id] = true;
+        try {
+            return $render();
+        } finally {
+            unset($this->contentPosts[$id]);
+        }
+    }
+
+    /**
+     * Block markup a the_content filter put before or after what the engine
+     * rendered, rendered by $render (do_blocks, in its place on the_content).
+     * The engine's own rendering is never parsed again, so block delimiters
+     * in comment text or an embed's markup stay inert, as the reference parses
+     * only the stored content; where a filter changed the rendering itself,
+     * nothing is parsed.
+     *
+     * @param \Closure(string): string $render
+     */
+    public function renderAdded(string $content, \Closure $render): string
+    {
+        $rendered = end($this->contentRendered);
+        $at = is_string($rendered) ? ($rendered === '' ? 0 : strpos($content, $rendered)) : false;
+        if ($at === false) {
+            return $content;
+        }
+        $parse = static fn (string $part): string => str_contains($part, '<!-- wp:') ? $render($part) : $part;
+        return $parse(substr($content, 0, $at)) . $rendered . $parse(substr($content, $at + strlen($rendered)));
     }
 
     /** Whether an image tag is one the content being filtered held when the filter began. */

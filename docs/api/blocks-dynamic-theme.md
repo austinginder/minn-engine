@@ -5,9 +5,9 @@ the template blocks a block theme composes with
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 296 | comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. |
-| [`Navigation`](#navigation) | final readonly class | 535 | navigation, navigation-link, page-list. A navigation block's items come |
-| [`PostBlocks`](#postblocks) | final readonly class | 270 | The post-* blocks: they render the context's current post. |
-| [`QueryBlocks`](#queryblocks) | final class | 279 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
+| [`Navigation`](#navigation) | final readonly class | 552 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`PostBlocks`](#postblocks) | final readonly class | 272 | The post-* blocks: they render the context's current post. |
+| [`QueryBlocks`](#queryblocks) | final class | 281 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
 | [`TermBlocks`](#termblocks) | final readonly class | 71 | term-name, term-count and term-description: the term a block's context |
 
@@ -76,7 +76,7 @@ that opens on hover, the init watcher, and its tab index.
 
 Registers this family's blocks with the renderer.
 
-Internals: `wiring()` (private, line 70), `navigation()` (private, line 97), `responsive()` (private, line 178), `items()` (private, line 215), `groups()` (private, line 237), `filteredItems()` (private, line 263), `linkedPosts()` (private, line 285), `weighLinks()` (private, line 298), `linkable()` (private, line 313), `presetClasses()` (private, line 324), `overlayColors()` (private, line 346), `link()` (private, line 358), `submenu()` (private, line 393), `overlayClose()` (private, line 421), `classicItems()` (private, line 432), `pageList()` (private, line 438), `submenuColours()` (private, line 458), `ancestorsOf()` (private, line 474), `pageItems()` (private, line 501), `navParent()` (private, line 532), `menuPost()` (private, line 550), `enqueueView()` (private, line 565)
+Internals: `wiring()` (private, line 71), `navigation()` (private, line 98), `responsive()` (private, line 180), `items()` (private, line 217), `groups()` (private, line 239), `filteredItems()` (private, line 265), `linkedPosts()` (private, line 287), `weighLinks()` (private, line 300), `linkable()` (private, line 315), `presetClasses()` (private, line 326), `overlay()` (private, line 358), `link()` (private, line 375), `submenu()` (private, line 410), `overlayClose()` (private, line 439), `classicItems()` (private, line 450), `pageList()` (private, line 456), `submenuColours()` (private, line 476), `ancestorsOf()` (private, line 492), `pageItems()` (private, line 519), `navParent()` (private, line 550), `menuPost()` (private, line 568), `enqueueView()` (private, line 583)
 
 
 ## PostBlocks
@@ -96,7 +96,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Users $users, Minn\Content\S
 
 Registers this family's blocks with the renderer.
 
-Internals: `title()` (private, line 54), `content()` (private, line 70), `date()` (private, line 118), `authorName()` (private, line 132), `excerpt()` (private, line 146), `featuredImage()` (private, line 158), `terms()` (private, line 198), `navigationLink()` (private, line 229), `termRow()` (private, line 260), `previewSource()` (private, line 272), `target()` (private, line 281), `open()` (private, line 286)
+Internals: `title()` (private, line 55), `content()` (private, line 71), `contentOf()` (private, line 77), `date()` (private, line 121), `authorName()` (private, line 135), `excerpt()` (private, line 149), `featuredImage()` (private, line 161), `terms()` (private, line 201), `navigationLink()` (private, line 232), `termRow()` (private, line 263), `previewSource()` (private, line 275), `target()` (private, line 284), `open()` (private, line 289)
 
 
 ## QueryBlocks
@@ -116,7 +116,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 55), `queried()` (private, line 77), `page()` (private, line 86), `loop()` (private, line 102), `current()` (private, line 121), `total()` (private, line 134), `postTemplate()` (private, line 158), `queryTitle()` (private, line 195), `noResults()` (private, line 215), `pagination()` (private, line 229), `paginationBase()` (private, line 275), `numbers()` (private, line 290), `archiveTitle()` (private, line 302)
+Internals: `query()` (private, line 55), `queried()` (private, line 77), `page()` (private, line 86), `loop()` (private, line 102), `current()` (private, line 122), `total()` (private, line 135), `postTemplate()` (private, line 159), `queryTitle()` (private, line 197), `noResults()` (private, line 217), `pagination()` (private, line 231), `paginationBase()` (private, line 277), `numbers()` (private, line 292), `archiveTitle()` (private, line 304)
 
 
 ## Structure

@@ -1,0 +1,155 @@
+[
+    [
+        "_insert_replace_helper by type",
+        {
+            "INSERT": {
+                "result": false,
+                "sent": "a query"
+            },
+            "insert": {
+                "result": false,
+                "sent": "a query"
+            },
+            "REPLACE": {
+                "result": false,
+                "sent": "a query"
+            },
+            "Replace": {
+                "result": false,
+                "sent": "a query"
+            },
+            "INSERT IGNORE": {
+                "result": false,
+                "sent": "nothing"
+            },
+            "DELETE": {
+                "result": false,
+                "sent": "nothing"
+            },
+            "UPDATE": {
+                "result": false,
+                "sent": "nothing"
+            },
+            "": {
+                "result": false,
+                "sent": "nothing"
+            },
+            "INSERT INTO zz_other SELECT * FROM wp_users; --": {
+                "result": false,
+                "sent": "nothing"
+            }
+        }
+    ],
+    [
+        "is_protected_meta",
+        [
+            [
+                "_x",
+                true
+            ],
+            [
+                "x",
+                false
+            ],
+            [
+                "%20_x",
+                false
+            ],
+            [
+                "%01_x",
+                true
+            ],
+            [
+                "%7F_x",
+                true
+            ],
+            [
+                "%E2%80%8B_x",
+                false
+            ],
+            [
+                "%C2%A0_x",
+                false
+            ],
+            [
+                "%E2%80%A8_x",
+                false
+            ],
+            [
+                "%EF%BB%BF_x",
+                false
+            ],
+            [
+                "%C3%A9_x",
+                false
+            ],
+            [
+                "%09_x",
+                true
+            ],
+            [
+                "__x",
+                true
+            ],
+            [
+                "",
+                false
+            ],
+            [
+                "_",
+                true
+            ]
+        ]
+    ],
+    [
+        "bloginfo display filters",
+        [
+            10,
+            10,
+            10
+        ]
+    ],
+    [
+        "bloginfo printed",
+        {
+            "bloginfo": "It&#8217;s &lt;b&gt;bold&lt;/b&gt; &#038; &#8220;quoted&#8221; &#8212; &lt;script&gt;x&lt;/script&gt;",
+            "display": "It&#8217;s &lt;b&gt;bold&lt;/b&gt; &#038; &#8220;quoted&#8221; &#8212; &lt;script&gt;x&lt;/script&gt;",
+            "raw": "It's <b>bold</b> & \"quoted\" -- <script>x</script>"
+        }
+    ],
+    [
+        "navigation overlay colours",
+        [
+            {
+                "style": "color:blue"
+            }
+        ]
+    ],
+    [
+        "wp_upload_dir for a time",
+        [
+            {
+                "subdir": "/2019/03",
+                "error": false
+            },
+            {
+                "subdir": "/2019/03",
+                "error": false
+            }
+        ]
+    ],
+    [
+        "wp_upload_dir with no time is this month",
+        true
+    ],
+    [
+        "wp_validate_auth_cookie with only the logged-in cookie",
+        {
+            "no cookie given, scheme 'auth'": false,
+            "no cookie given, scheme 'secure_auth'": false,
+            "no cookie given, scheme 'logged_in'": 1,
+            "no cookie given, scheme ''": false,
+            "the logged-in cookie given, scheme auth": false
+        }
+    ]
+]

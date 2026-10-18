@@ -23,6 +23,7 @@ use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Html;
 use Minn\Support\Kses;
+use Minn\Support\KsesCss;
 
 /**
  * navigation, navigation-link, page-list. A navigation block's items come
@@ -126,7 +127,7 @@ final readonly class Navigation
         $vertical = ($layout['orientation'] ?? '') === 'vertical';
         $justify = (string) ($layout['justifyContent'] ?? '');
         $responsive = (string) $block->attr('overlayMenu', 'mobile') !== 'never';
-        $colors = self::overlayColors($block);
+        $colors = self::overlay($block->attrs, ': ');
         // The block's own colour, size, and family presets ride on both
         // the nav and its list; the typography style rides inline on both.
         $presets = self::presetClasses($block);
@@ -175,7 +176,8 @@ final readonly class Navigation
      * interactivity runtime drives, the close button, and the list inside.
      * Whitespace matches the reference's template byte for byte.
      */
-    private function responsive(string $nav, string $label, string $list, int $id, bool $hasIcon, string $colors): string
+    /** @param array{0: string, 1: string} $colors the overlay's classes and declarations (overlay()) */
+    private function responsive(string $nav, string $label, string $list, int $id, bool $hasIcon, array $colors): string
     {
         // The label sits in the context's JSON, inside a single-quoted attribute, encoded as the reference encodes it.
         $ariaLabel = substr(\Minn\Json::encode(\Minn\I18n\Gettext::text('Menu'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), 1, -1);
@@ -192,7 +194,7 @@ final readonly class Navigation
             : Html::esc(\Minn\I18n\Gettext::text('Close'));
         return $nav . ($label === '' ? '' : ' aria-label="' . Html::attr($label) . '"') . ' ' . "\n\t\t" . ' data-wp-interactive="core/navigation" data-wp-context=\'{"overlayOpenedBy":{"click":false,"hover":false,"focus":false},"type":"overlay","roleAttribute":"","ariaLabel":"' . $ariaLabel . '"}\'>'
             . '<button aria-haspopup="dialog" ' . $open . ' class="wp-block-navigation__responsive-container-open" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.openMenuOnClick"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t" . '>' . $openInner . '</button>'
-            . "\n\t\t\t\t" . '<div class="' . Html::attr('wp-block-navigation__responsive-container' . $colors) . '"  id="modal-' . $id . '" ' . "\n\t\t\t\t" . 'data-wp-class--has-modal-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-class--is-menu-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-watch="callbacks.initMenu"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t\t" . 'data-wp-on--focusout="actions.handleMenuFocusout"' . "\n\t\t\t\t" . 'tabindex="-1"' . "\n\t\t\t" . '>'
+            . "\n\t\t\t\t" . '<div class="' . Html::attr('wp-block-navigation__responsive-container' . $colors[0]) . '" ' . ($colors[1] === '' ? '' : 'style="' . Html::attr($colors[1]) . '"') . ' id="modal-' . $id . '" ' . "\n\t\t\t\t" . 'data-wp-class--has-modal-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-class--is-menu-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-watch="callbacks.initMenu"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t\t" . 'data-wp-on--focusout="actions.handleMenuFocusout"' . "\n\t\t\t\t" . 'tabindex="-1"' . "\n\t\t\t" . '>'
             . "\n\t\t\t\t\t" . '<div class="wp-block-navigation__responsive-close" tabindex="-1">'
             . "\n\t\t\t\t\t\t" . '<div class="wp-block-navigation__responsive-dialog" ' . "\n\t\t\t\t" . 'data-wp-bind--aria-modal="state.ariaModal"' . "\n\t\t\t\t" . 'data-wp-bind--aria-label="state.ariaLabel"' . "\n\t\t\t\t" . 'data-wp-bind--role="state.roleAttribute"' . "\n\t\t\t" . '>'
             . "\n\t\t\t\t\t\t\t" . '<button ' . $close . ' class="wp-block-navigation__responsive-container-close" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.closeMenuOnClick"' . "\n\t\t\t" . '>' . $closeInner . '</button>'
@@ -342,17 +344,32 @@ final readonly class Navigation
         return $classes;
     }
 
-    /** The overlay's colour classes, from the overlay* attributes. */
-    private static function overlayColors(Block $block): string
+    /**
+     * The overlay's colours, as the reference applies them to the mobile
+     * overlay and to a submenu's list: a has-* class for each colour given
+     * (a named one's own class too, a named one winning over a custom one),
+     * and the custom ones as declarations through the style filter, which
+     * drops one carrying a URL, quotes or a function it does not allow
+     * (probe navigation-overlay).
+     *
+     * @param array<string, mixed> $attrs the navigation's attributes, or its context
+     * @return array{0: string, 1: string} the classes, each led by a space, and the declarations
+     */
+    private static function overlay(array $attrs, string $separator): array
     {
         $classes = '';
-        if (!empty($block->attrs['overlayTextColor'])) {
-            $classes .= ' has-text-color has-' . $block->attrs['overlayTextColor'] . '-color';
+        $declarations = [];
+        foreach (['Text' => ['color', 'has-text-color', '-color'], 'Background' => ['background-color', 'has-background', '-background-color']] as $kind => [$property, $has, $suffix]) {
+            $named = (string) ($attrs["overlay{$kind}Color"] ?? '');
+            $custom = (string) ($attrs["customOverlay{$kind}Color"] ?? '');
+            if ($named !== '') {
+                $classes .= " {$has} has-" . Styles::preset($named) . $suffix;
+            } elseif ($custom !== '') {
+                $classes .= " {$has}";
+                $declarations[] = $property . $separator . $custom;
+            }
         }
-        if (!empty($block->attrs['overlayBackgroundColor'])) {
-            $classes .= ' has-background has-' . $block->attrs['overlayBackgroundColor'] . '-background-color';
-        }
-        return $classes;
+        return [$classes, $declarations === [] ? '' : KsesCss::style(implode(';', $declarations))];
     }
 
     private function link(Block $block, Renderer $renderer): string
@@ -414,7 +431,8 @@ final readonly class Navigation
         $className = trim((string) $block->attr('className', ''));
         $item = 'class="' . Html::attr('wp-block-navigation-item has-child' . ($onClick ? ' open-on-click' : ($icon ? ' open-on-hover-click' : '')) . ($className === '' ? '' : ' ' . $className) . ' wp-block-navigation-submenu') . '"';
         $open = $wired || $inNavigation ? self::wiring($onClick ? 'click' : 'hover') . $item : $item;
-        return '<li ' . $open . '>' . $head . '<ul' . ($wired ? ' data-wp-on--focus="actions.openMenuOnFocus"' : '') . ' class="' . Html::attr('wp-block-navigation__submenu-container' . ($className === '' ? '' : ' ' . $className) . ' wp-block-navigation-submenu') . '">' . $this->items($block->innerBlocks, $renderer) . '</ul></li>';
+        [$colours, $declarations] = self::overlay($settings, ':');
+        return '<li ' . $open . '>' . $head . '<ul' . ($wired ? ' data-wp-on--focus="actions.openMenuOnFocus"' : '') . ($declarations === '' ? '' : ' style="' . Html::attr($declarations) . '"') . ' class="' . Html::attr('wp-block-navigation__submenu-container' . $colours . ($className === '' ? '' : ' ' . $className) . ' wp-block-navigation-submenu') . '">' . $this->items($block->innerBlocks, $renderer) . '</ul></li>';
     }
 
     /** The overlay's close button: an icon (named by aria-label), its text, or both. */

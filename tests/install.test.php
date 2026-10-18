@@ -154,6 +154,16 @@ $check('wp core version reads the shape file', $c2 === 0 && implode('', $version
 exec('cd ' . escapeshellarg($WEBROOT) . ' && wp minn info 2>&1', $info, $c3);
 $check('wp minn info reports the installed engine dir', $c3 === 0 && str_contains(implode("\n", $info), 'Engine dir: ' . realpath("$WEBROOT/minn")), implode("\n", $info));
 
+// A record pointed at a folder install never parked in is refused (security sweep 2026-10-18): the record is a webroot file.
+$decoy = "$SCRATCH/decoy";
+mkdir($decoy);
+file_put_contents("$decoy/wp-load.php", "<?php // not parked here\n");
+file_put_contents("$WEBROOT/.minn-install.php", str_replace(json_encode($PARK, JSON_UNESCAPED_SLASHES), json_encode($decoy, JSON_UNESCAPED_SLASHES), $record));
+[$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
+$check('eject refuses a park that carries no mark from this install, and moves nothing', $code === 1 && str_contains($out, 'does not carry this install') && is_file("$decoy/wp-load.php") && is_dir("$WEBROOT/minn"), $out);
+file_put_contents("$WEBROOT/.minn-install.php", $record);
+$check('install marks its park with the webroot it parked', trim((string) @file_get_contents("$PARK/.minn-park")) === realpath($WEBROOT));
+
 [$out, $code] = $minn('eject ' . escapeshellarg($WEBROOT));
 $check('eject succeeds', $code === 0 && str_contains($out, 'Ejected.'), $out);
 $check('the tree is back byte for byte', $tree($WEBROOT) === $before, json_encode(array_keys($tree($WEBROOT))) . ' vs ' . json_encode(array_keys($before)));
@@ -283,7 +293,9 @@ if ($signedRelease) {
 if ($signedRelease) {
     [$out, $code] = $curlInstall($release, '--park=' . escapeshellarg("$SCRATCH/sh/wp-parked"));
     $check('the curl installer checks a signed release and installs it', $code === 0 && str_contains($out, 'Signature checked') && str_contains($out, 'Minn is installed') && is_file("$shRoot/minn/bootstrap.php"), $out);
-    [$out, $code] = $minn('eject ' . escapeshellarg($shRoot));
+    // Ejected by the engine it installed, as on a host.
+    exec('php ' . escapeshellarg("$shRoot/minn/bin/minn") . ' eject ' . escapeshellarg($shRoot) . ' 2>&1', $ejected, $code);
+    $out = implode("\n", $ejected);
     $check('and eject puts that webroot back as it was', $code === 0 && $tree($shRoot) === $shBefore, $out);
 } else {
     echo "  skip the signed curl install: no signed release at {$release} (php scripts/build-release.php)\n";

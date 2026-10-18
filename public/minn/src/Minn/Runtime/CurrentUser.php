@@ -16,10 +16,10 @@ use Minn\Content\Reader;
  */
 final class CurrentUser
 {
-    /** The request's user id (get_current_user_id). */
-    public static function id(): mixed
+    /** The request's user id, as a number (get_current_user_id casts it). */
+    public static function id(): int
     {
-        return Handoff::currentUser()->ID;
+        return (int) (Handoff::currentUser()->ID ?? 0);
     }
 
     /** Settles the request's user and reader; returns the user's id (0 for nobody). */

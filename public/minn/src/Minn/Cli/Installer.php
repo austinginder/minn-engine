@@ -29,6 +29,8 @@ final class Installer
      * prints nothing, and it names the webroot it belongs to.
      */
     private const RECORD = '.minn-install.php';
+    /** The mark install leaves in the park, naming the webroot parked there; eject takes no park without it. */
+    private const PARK_MARK = '.minn-park';
     private const RECORD_HEAD = "<?php return; // Minn Engine's install record: what `wp minn eject` puts back. ?>\n";
     /** Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink. */
     private const LEGACY_RECORD = '.install.json';
@@ -91,7 +93,7 @@ final class Installer
             $code = match ($command) {
                 'preflight' => $self->preflight($root) === 'RED' ? 1 : 0,
                 'install' => $self->install($root, $options),
-                'eject' => $self->eject($root),
+                'eject' => $self->eject($root, $options),
                 'status' => $self->status($root),
                 'update' => $self->update($options),
                 default => $self->help(),
@@ -186,6 +188,7 @@ final class Installer
             $this->say("Install refused: cannot create {$park}, as this user cannot write to " . dirname($park) . '. Pass --park=<dir> with a folder this user can write, outside the webroot.');
             return 1;
         }
+        file_put_contents("{$park}/" . self::PARK_MARK, (realpath($root) ?: $root) . "\n");
         $moved = [];
         foreach (self::CORE_ENTRIES as $entry) {
             if (file_exists("{$root}/{$entry}") || is_link("{$root}/{$entry}")) {
@@ -219,17 +222,30 @@ final class Installer
         return 0;
     }
 
-    /** Puts WordPress back and removes the engine's files. */
-    public function eject(string $root): int
+    /**
+     * Puts WordPress back and removes the engine's files. The park is the
+     * one the install record names only when it carries the mark install
+     * left there for this webroot: the record is a file in the webroot, so
+     * anything able to write there could otherwise point an eject at any
+     * folder the operator can read. --park=<dir> names it outright.
+     *
+     * @param array<string, string|true> $options
+     */
+    public function eject(string $root, array $options): int
     {
         if (self::state($root) !== 'minn') {
             $this->say('Eject refused: the engine is not installed here.');
             return 1;
         }
         $manifest = self::record($root);
-        $park = (string) ($manifest['park'] ?? '');
-        if ($park === '' || !is_dir($park)) {
+        $named = is_string($options['park'] ?? null);
+        $park = rtrim($named ? (string) $options['park'] : (string) ($manifest['park'] ?? ''), '/');
+        if ($park === '' || !is_dir($park) || is_link($park)) {
             $this->say("Eject refused: parked files not found at {$park}.");
+            return 1;
+        }
+        if (!$named && trim((string) @file_get_contents("{$park}/" . self::PARK_MARK)) !== (realpath($root) ?: $root)) {
+            $this->say("Eject refused: {$park} does not carry this install's mark (" . self::PARK_MARK . '). Pass --park=<dir> naming the folder WordPress was parked in.');
             return 1;
         }
         foreach ((array) ($manifest['layout'] ?? ShapeFiles::LAYOUT) as $file) {
@@ -259,6 +275,7 @@ final class Installer
                 $restored++;
             }
         }
+        @unlink("{$park}/" . self::PARK_MARK);
         if (count(scandir($park) ?: []) <= 2) {
             rmdir($park);
         }
@@ -315,13 +332,20 @@ final class Installer
         return !in_array('..', explode('/', $path), true);
     }
 
-    /** rename() first; copy+remove when the park is on another filesystem. */
+    /** rename() first; copy+remove when the park is on another filesystem, a link copied as the link it is. */
     private static function move(string $from, string $to): void
     {
         if (@rename($from, $to)) {
             return;
         }
-        if (is_link($from) || !is_dir($from)) {
+        if (is_link($from)) {
+            if (!@symlink((string) readlink($from), $to)) {
+                throw new \RuntimeException("Cannot move {$from} to {$to}.");
+            }
+            unlink($from);
+            return;
+        }
+        if (!is_dir($from)) {
             if (!@copy($from, $to)) {
                 throw new \RuntimeException("Cannot move {$from} to {$to}.");
             }
@@ -334,8 +358,8 @@ final class Installer
 
     private static function copyTree(string $from, string $to): void
     {
-        if (is_link($from) && !is_dir($from)) {
-            copy($from, $to);
+        if (is_link($from)) {
+            symlink((string) readlink($from), $to);
             return;
         }
         if (!is_dir($from)) {

@@ -158,7 +158,9 @@ final class LegacyPack
             if ($handles === $had && (int) ($row['seen'] ?? 0) > $now - 86400) {
                 continue;
             }
-            $kept[$key] = ['theme' => $seen['theme'], 'handles' => $handles, 'page' => Runtime::current()->request->path, 'seen' => $now];
+            // The page named is one the site has: a 404's address is whatever a visitor typed, so the page kept before stays.
+            $page = MainQuery::current()->is_404 ? (string) ($row['page'] ?? '/') : substr(Runtime::current()->request->path, 0, 200);
+            $kept[$key] = ['theme' => $seen['theme'], 'handles' => $handles, 'page' => $page, 'seen' => $now];
             $changed = true;
         }
         if ($changed) {

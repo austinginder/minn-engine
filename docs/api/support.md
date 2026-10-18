@@ -564,7 +564,7 @@ hooks the facade wires in (safe_style_css, safecss_filter_attr_allow_css).
 - const `CSS_URL_PROPERTIES` = `array (   0 => 'background',   1 => 'background-image',   2 => 'cursor',   3 => 'filter',   4 => 'mask',   5 => 'clip-path', )` — The properties that may use a url().
 - const `CSS_GRADIENT_PROPERTIES` = `array (   0 => 'background',   1 => 'background-image', )` — The properties that may use a gradient.
 
-Used by: `Minn\Blocks\Layout`, `Minn\Support\Kses`, `Minn\Support\KsesAttributes`
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Layout`, `Minn\Support\Kses`, `Minn\Support\KsesAttributes`
 
 
 ### static `style(string $style): string`

@@ -10,6 +10,7 @@ use Minn\Blocks\Block;
 use Minn\Blocks\Dynamic\Dates;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
+use Minn\Blocks\RenderState;
 use Minn\Blocks\Wrapper;
 use Minn\Blocks\Styles;
 use Minn\Content\Blocks;
@@ -66,14 +67,16 @@ final readonly class PostBlocks
         return self::open($tag, ['wp-block-post-title', ...Styles::classes($block->attrs)], $block, styleFirst: true) . $title . '</' . $tag . '>';
     }
 
-    /** In a loop the content stops at the more tag with a "(more…)" link; on its own page it runs whole. */
+    /** In a loop the content stops at the more tag with a "(more…)" link; on its own page it runs whole. A post's content never renders inside itself. */
     private function content(Block $block, Renderer $renderer): string
     {
+        $post = $renderer->context()->post();
+        return $post === null ? '' : RenderState::current()->postContent($post->id, fn (): string => $this->contentOf($block, $renderer, $post));
+    }
+
+    private function contentOf(Block $block, Renderer $renderer, PostRecord $post): string
+    {
         $context = $renderer->context();
-        $post = $context->post();
-        if ($post === null) {
-            return '';
-        }
         $raw = (string) ($this->previewSource($post, $context->resolution) ?? $post)['post_content'];
         if (PasswordGate::is($post)) {
             $raw = PasswordGate::formForReader($post, $this->permalinks->url(''), $this->permalinks->forPost($post));

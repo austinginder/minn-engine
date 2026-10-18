@@ -1,0 +1,90 @@
+[
+    [
+        "never, named",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container has-text-color has-contrast-color has-background has-base-background-color wp-block-navigation-submenu\">",
+            "container": ""
+        }
+    ],
+    [
+        "never, custom",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" style=\"color:#123456\" class=\"wp-block-navigation__submenu-container has-text-color has-background wp-block-navigation-submenu\">",
+            "container": ""
+        }
+    ],
+    [
+        "never, named and custom",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" style=\"background-color:red\" class=\"wp-block-navigation__submenu-container has-text-color has-contrast-color has-background wp-block-navigation-submenu\">",
+            "container": ""
+        }
+    ],
+    [
+        "never, custom carrying more CSS",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" style=\"color:blue\" class=\"wp-block-navigation__submenu-container has-text-color has-background wp-block-navigation-submenu\">",
+            "container": ""
+        }
+    ],
+    [
+        "never, custom with an expression",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" style=\"background-color:red;position:fixed\" class=\"wp-block-navigation__submenu-container has-text-color has-background wp-block-navigation-submenu\">",
+            "container": ""
+        }
+    ],
+    [
+        "mobile, named",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container has-text-color has-contrast-color has-background has-base-background-color wp-block-navigation-submenu\">",
+            "container": "<div class=\"wp-block-navigation__responsive-container has-text-color has-contrast-color has-background has-base-background-color\"  id=\"modal-"
+        }
+    ],
+    [
+        "mobile, custom",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" style=\"color:#123456\" class=\"wp-block-navigation__submenu-container has-text-color has-background wp-block-navigation-submenu\">",
+            "container": "<div class=\"wp-block-navigation__responsive-container has-text-color has-background\" style=\"color: #123456\" id=\"modal-"
+        }
+    ],
+    [
+        "mobile, named and custom",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" style=\"background-color:red\" class=\"wp-block-navigation__submenu-container has-text-color has-contrast-color has-background wp-block-navigation-submenu\">",
+            "container": "<div class=\"wp-block-navigation__responsive-container has-text-color has-contrast-color has-background\" style=\"background-color: red\" id=\"modal-"
+        }
+    ],
+    [
+        "mobile, custom carrying more CSS",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" style=\"color:blue\" class=\"wp-block-navigation__submenu-container has-text-color has-background wp-block-navigation-submenu\">",
+            "container": "<div class=\"wp-block-navigation__responsive-container has-text-color has-background\" style=\"color: blue\" id=\"modal-"
+        }
+    ],
+    [
+        "mobile, custom with an expression",
+        {
+            "submenu": "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" style=\"background-color:red;position:fixed\" class=\"wp-block-navigation__submenu-container has-text-color has-background wp-block-navigation-submenu\">",
+            "container": "<div class=\"wp-block-navigation__responsive-container has-text-color has-background\" style=\"background-color: red;position:fixed\" id=\"modal-"
+        }
+    ],
+    [
+        "page list, custom",
+        [
+            "<li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-hover-click has-text-color has-background\" style=\"color: #123456;background-color: rgb(1, 2, 3);\">"
+        ]
+    ],
+    [
+        "page list, custom carrying more CSS",
+        [
+            "<li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-hover-click has-text-color has-background\" style=\"color: blue;background:url(javascript:alert(1));background-color: red&quot; data-zz=&quot;1;\">"
+        ]
+    ],
+    [
+        "page list, custom with an expression",
+        [
+            "<li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-hover-click has-text-color has-background\" style=\"color: expression(alert(1));background-color: red;position:fixed;\">"
+        ]
+    ]
+]

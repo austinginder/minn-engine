@@ -458,10 +458,10 @@ function render_block($parsed_block)
     return $block->render();
 }
 
-/** @internal content the engine rendered itself, with block markup a the_content filter added since rendered now (in do_blocks's place on the_content) */
+/** @internal content the engine rendered itself, with block markup a the_content filter added around it since rendered now (in do_blocks's place on the_content) */
 function _minn_do_added_blocks($content)
 {
-    return str_contains((string) $content, '<!-- wp:') ? do_blocks($content) : $content;
+    return Minn\Blocks\RenderState::current()->renderAdded((string) $content, static fn (string $markup): string => (string) do_blocks($markup));
 }
 
 function do_blocks($content)

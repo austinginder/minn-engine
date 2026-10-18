@@ -89,6 +89,20 @@ $findings = [
     'Cookies for argon2 hashes never changed their key' => ['tests/unit/security-sweep.php', 'the cookie fragment'],
     'An eject followed paths out of the webroot' => ['tests/unit/security-sweep.php', 'eject acts only'],
     'A bound URL attribute kept any scheme' => ['tests/unit/security-sweep.php', 'keeps only an allowed scheme'],
+    // The sweep of 2026-10-18 (docs/security-review-2026-10-18.md).
+    'A commenter\'s block markup was rendered as blocks' => ['tests/security-sweep.test.php', 'block markup is printed as text, not rendered'],
+    'A post that showed its own content rendered it without end' => ['tests/security-sweep.test.php', 'renders it once'],
+    'The curl installer installed a download nobody signed' => ['tests/install.test.php', 'refuses a release signed with no trusted key'],
+    'A placeholder or shared SECRET_KEY salted plugins\' tokens' => ['tests/security-sweep.test.php', "salts a plugin's scheme, auth and nonce as on the reference"],
+    'An eject took any park the install record named' => ['tests/install.test.php', 'eject refuses a park that carries no mark'],
+    'A stored object\'s undeclared property ran its __set' => ['tests/unit/stored-objects.php', 'would be set through __set'],
+    'A cancelled comment redirect sent the commenter\'s address' => ['tests/runtime.test.php', 'a plugin cancels gets a blank page'],
+    'wpdb::_insert_replace_helper built any statement type' => ['tests/tools/sweep-1018-probe.php', '_insert_replace_helper by type'],
+    'A symbol walk that never finished ran again on every request' => ['tests/runtime.test.php', 'a walk that never finished holds'],
+    'A plugin and a theme of one folder name shared a symbol cache entry' => ['tests/runtime.test.php', "basename(dirname(\$gateDir)) . '/' . basename(\$gateDir)"],
+    'A 404\'s address was kept as a page needing the Legacy Pack' => ['tests/ajax.test.php', 'a 404 never names its own address'],
+    'Replies to spam and trashed comments were taken' => ['tests/comment-form.test.php', 'a reply to a comment marked spam'],
+    'bloginfo() printed the site\'s name and description unescaped' => ['tests/tools/sweep-1018-probe.php', 'bloginfo display filters'],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 

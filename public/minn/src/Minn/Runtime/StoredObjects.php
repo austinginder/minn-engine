@@ -12,7 +12,7 @@ use Minn\Support\Serialized;
  * value class it owns (WP_Post, WP_Term, WP_Comment), and any other class
  * comes back as itself only when it is plain data: a class that exists,
  * written in PHP, that runs nothing as it is revived or let go (no
- * __wakeup, __unserialize or __destruct, not Serializable), so no stored
+ * __wakeup, __unserialize, __destruct or __set, not Serializable), so no stored
  * blob can make code run (PHP object injection). Plugins keep settings in
  * such objects (WooCommerce PayPal Payments does) and read them back typed,
  * as the reference revives them. Anything else stays a stdClass of its
@@ -79,7 +79,8 @@ final class StoredObjects
         if ($reflection->isInternal() || $reflection->isAbstract() || $reflection->isEnum() || $reflection->implementsInterface(\Serializable::class)) {
             return null;
         }
-        foreach (['__wakeup', '__unserialize', '__destruct'] as $magic) {
+        // __set too: a stored property the class does not declare would be set through it.
+        foreach (['__wakeup', '__unserialize', '__destruct', '__set'] as $magic) {
             if ($reflection->hasMethod($magic)) {
                 return null;
             }

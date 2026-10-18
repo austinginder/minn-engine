@@ -44,7 +44,8 @@ final class CommentForm
         $parent = abs((int) ($text('comment_parent')));
         if ($parent > 0) {
             $replied = Records::comment($parent);
-            if (!$replied instanceof Comment || (string) $replied->comment_approved === '0') {
+            // Held, spam and trashed parents alike: as a number, their status is 0 (comment-form suite).
+            if (!$replied instanceof Comment || (int) $replied->comment_approved === 0) {
                 Runtime::hooks()->action('comment_reply_to_unapproved_comment', [$postId, $parent]);
                 return Handoff::newError('comment_reply_to_unapproved_comment', 'Sorry, replies to unapproved comments are not allowed.', 403);
             }

@@ -377,7 +377,8 @@ class wpdb
 
     public function _insert_replace_helper($table, $data, $format = null, $type = 'INSERT')
     {
-        $data = $this->process_fields($table, $data, $format);
+        // Only an INSERT or a REPLACE is built: any other type sends nothing (probe sweep-1018).
+        $data = in_array(strtoupper((string) $type), ['INSERT', 'REPLACE'], true) ? $this->process_fields($table, $data, $format) : false;
         if ($data === false || $data === []) {
             return false;
         }

@@ -33,7 +33,7 @@ the WordPress runtime plugins load against
 | [`CommentCloser`](#commentcloser) | final readonly class | 30 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentEvents`](#commentevents) | final readonly class | 254 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
-| [`CommentForm`](#commentform) | final class | 106 | The comment form's submission with plugins loaded |
+| [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
 | [`CommentPages`](#commentpages) | final class | 115 | Which page of a post's comments a comment falls on, and the link that |
 | [`CommentQuery`](#commentquery) | final readonly class | 28 | The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner). |
 | [`CommentQueryRunner`](#commentqueryrunner) | final class | 131 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
@@ -63,7 +63,7 @@ the WordPress runtime plugins load against
 | [`Hooks`](#hooks) | final class | 426 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
 | [`KsesRules`](#ksesrules) | final class | 95 | The HTML WordPress's kses functions let through: the elements and |
-| [`LegacyPack`](#legacypack) | final class | 308 | WordPress's own browser files, for the plugins whose screens are built on |
+| [`LegacyPack`](#legacypack) | final class | 310 | WordPress's own browser files, for the plugins whose screens are built on |
 | [`MainQuery`](#mainquery) | final class | 23 | The query the request answers ($wp_query), as WordPress keeps it: the |
 | [`MenuEvents`](#menuevents) | final readonly class | 225 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
@@ -130,10 +130,10 @@ the WordPress runtime plugins load against
 | [`SiteOptions`](#siteoptions) | final class | 76 | The network's options, as a single site keeps them: options stored not |
 | [`SiteTime`](#sitetime) | final class | 90 | Time as the site keeps it: its timezone (the named one, else the UTC |
 | [`SiteUrls`](#siteurls) | final class | 140 | The site's own addresses as WordPress builds them: the home and site |
-| [`StoredObjects`](#storedobjects) | final class | 139 | The classes a stored blob may name and come back as. The serialized |
+| [`StoredObjects`](#storedobjects) | final class | 140 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 196 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
-| [`Symbols`](#symbols) | final class | 502 | A static read of what a plugin's PHP calls: global functions and classes |
+| [`Symbols`](#symbols) | final class | 524 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 152 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TemplateFiles`](#templatefiles) | final class | 44 | The theme templates WordPress's template functions name: the index and |
 | [`TermEvents`](#termevents) | final readonly class | 114 | What the reference's REST terms controller tells plugins, for the |
@@ -1690,7 +1690,7 @@ The stored comment, or the refusal the form answers with.
 
 - `@param array<string, mixed> $form the posted fields, unslashed`
 
-Internals: `store()` (private, line 77), `postRefusal()` (private, line 95), `fieldRefusal()` (private, line 124)
+Internals: `store()` (private, line 78), `postRefusal()` (private, line 96), `fieldRefusal()` (private, line 125)
 
 
 ## CommentPages
@@ -2292,9 +2292,9 @@ request out.
 
 Used by: `Minn\Front\ToolbarMenus`, `Minn\Runtime\Attachments`, `Minn\Runtime\BlockQueries`, `Minn\Runtime\CommentPages`, `Minn\Runtime\EditLinks`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaData`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\UserWrites`
 
-### static `id(): mixed`
+### static `id(): int`
 
-The request's user id (get_current_user_id).
+The request's user id, as a number (get_current_user_id casts it).
 
 ### static `settle(Minn\Runtime\Runtime $runtime): int`
 
@@ -3468,7 +3468,7 @@ active, the file is not in it, or its type is not one a browser loads.
 
 The file as the answer to the request for it.
 
-Internals: `owner()` (private, line 175), `editors()` (private, line 194), `seenWanting()` (private, line 222), `wantedWhere()` (private, line 296)
+Internals: `owner()` (private, line 177), `editors()` (private, line 196), `seenWanting()` (private, line 224), `wantedWhere()` (private, line 298)
 
 
 ## MainQuery
@@ -3479,7 +3479,7 @@ The query the request answers ($wp_query), as WordPress keeps it: the
 main query ($wp_the_query) unless a plugin swapped in another, an empty
 one made when there is none yet.
 
-Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\SitemapController`, `Minn\Front\SitemapRequest`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\BlockQueries`, `Minn\Runtime\CommentPages`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\EditLinks`, `Minn\Runtime\PostData`, `Minn\Runtime\TemplateFiles`, `Minn\Theme\ClassicContent`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\SitemapController`, `Minn\Front\SitemapRequest`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\BlockQueries`, `Minn\Runtime\CommentPages`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\EditLinks`, `Minn\Runtime\LegacyPack`, `Minn\Runtime\PostData`, `Minn\Runtime\TemplateFiles`, `Minn\Theme\ClassicContent`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\PageRenderer`
 
 ### static `current(): Minn\Objects\Query`
 
@@ -7436,7 +7436,7 @@ reader never instantiates by itself; the facade registers one factory per
 value class it owns (WP_Post, WP_Term, WP_Comment), and any other class
 comes back as itself only when it is plain data: a class that exists,
 written in PHP, that runs nothing as it is revived or let go (no
-__wakeup, __unserialize or __destruct, not Serializable), so no stored
+__wakeup, __unserialize, __destruct or __set, not Serializable), so no stored
 blob can make code run (PHP object injection). Plugins keep settings in
 such objects (WooCommerce PayPal Payments does) and read them back typed,
 as the reference revives them. Anything else stays a stdClass of its
@@ -7469,7 +7469,7 @@ Whether a factory is registered for the class.
 
 Forgets every factory, for suites.
 
-Internals: `plain()` (private, line 73), `owner()` (private, line 111), `arrayWrapper()` (private, line 134)
+Internals: `plain()` (private, line 73), `owner()` (private, line 112), `arrayWrapper()` (private, line 135)
 
 
 ## SymbolGap
@@ -7593,6 +7593,7 @@ WPML is 7,080 (64 MB at its peak, once, on activation); the next of the 215 most
 - const `SKIP_DIRS` = `array (   0 => 'node_modules',   1 => 'tests',   2 => 'test',   3 => '.git', )`
 - const `READER` = `4` — Bumped whenever the token reader changes, so every cached scan is made again.
 - const `FULL_CHECK_EVERY` = `300` — How long a cached entry is trusted on its fingerprint alone before the folder is walked again.
+- const `GIVE_UP_AFTER` = `120` — A walk begun this long ago that never finished ran out of time or memory: its folder is held back instead of walked again on every request.
 
 Used by: `Minn\Cli\Preflight`, `Minn\Runtime\Plugins`, `Minn\Runtime\Upgrade`
 
@@ -7635,7 +7636,7 @@ answers itself is not counted, as the gate counts it.
 - `@param array{functions?: array<string, string>, classes?: array<string, string>} $deadEnds name => area, as data/deadend-symbols.json holds them`
 - `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool, deadEnds: array<string, list<string>>}`
 
-Internals: `keep()` (private, line 85), `fingerprint()` (private, line 96), `namesStamp()` (private, line 109), `reduced()` (private, line 121), `verdict()` (private, line 207), `phpFiles()` (private, line 241), `scan()` (private, line 275), `scanTokens()` (private, line 301), `inGuardedNamespace()` (private, line 390), `noteName()` (private, line 409), `resolve()` (private, line 447), `readImports()` (private, line 464), `significant()` (private, line 511)
+Internals: `key()` (private, line 99), `keep()` (private, line 106), `fingerprint()` (private, line 118), `namesStamp()` (private, line 131), `reduced()` (private, line 143), `verdict()` (private, line 229), `phpFiles()` (private, line 263), `scan()` (private, line 297), `scanTokens()` (private, line 323), `inGuardedNamespace()` (private, line 412), `noteName()` (private, line 431), `resolve()` (private, line 469), `readImports()` (private, line 486), `significant()` (private, line 533)
 
 
 ## TagEditor
