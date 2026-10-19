@@ -147,6 +147,21 @@ if (isset($_GET['minn-test-early-pluggable']) || isset($_GET['minn-test-early-us
 // A comments_template filter that hands back a path that is no file
 // (?minn-test-comments-template; Colibri's is relative to its theme): the
 // comments template printed in the footer, noted by its length and hash.
+// Forms that post to admin-post.php: a handler for visitors (nopriv) and one for the signed in, each
+// printing who ran it and whether admin_init came first; one that redirects; none for minn_test_unhandled.
+add_action('admin_init', static function () {
+    $GLOBALS['minn_test_admin_init'] = true;
+});
+foreach (['admin_post_nopriv_minn_test_post' => 'nopriv', 'admin_post_minn_test_post' => 'signed in', 'admin_post_nopriv' => 'nopriv, no action', 'admin_post' => 'signed in, no action'] as $hook => $who) {
+    add_action($hook, static function () use ($who) {
+        echo 'minn-test-admin-post: ' . $who . ', admin_init ' . (empty($GLOBALS['minn_test_admin_init']) ? 'not run' : 'ran') . ', user ' . get_current_user_id() . ', is_admin ' . (is_admin() ? 'yes' : 'no');
+    });
+}
+add_action('admin_post_nopriv_minn_test_redirect', static function () {
+    wp_safe_redirect(home_url('/?minn-test-posted=1'));
+    exit;
+});
+
 // A plugin that cancels redirects (?minn-test-cancel-redirect, on a comment form post): the
 // form's redirect then goes nowhere, and the address the commenter asked for is never sent.
 if (isset($_GET['minn-test-cancel-redirect'])) {

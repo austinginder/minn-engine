@@ -119548,7 +119548,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/AdminActionController.php",
-            "lines": 96,
+            "lines": 132,
             "doc": "The wp-admin pages a plugin answers itself. The admin is Minn Admin, so\nthe engine draws no wp-admin screen, but a page builder opens its editor\nfrom one: Elementor's \"Edit with Elementor\" is post.php?post=N&action=elementor,\nwhose handler (admin_action_elementor) prints a whole page of its own and\nends the request before any screen is drawn.\n\nA request to a wp-admin page that names an action boots as an admin\nrequest, as the reference's does. The admin cookie (scoped to /wp-admin)\nis asked for, for the user the request is read as; without it the\nvisitor signs in and comes back. admin_init fires, then the action's\nhandlers. When no plugin handles the action, or its handlers return, the\nrequest lands in Minn Admin, where every other wp-admin address goes.\n\nOne page is an endpoint instead: the media modal's uploader posts its files\nto async-upload.php (action upload-attachment), which the reference answers\nas an ajax request, in plain text. After the page's action the upload runs\nthe handlers registered for the upload-attachment ajax action, as\nadmin-ajax.php would: WordPress's own answer comes with the Minn Legacy Pack,\nthe plugin that brings the modal.",
             "implements": [],
             "extends": null,
@@ -119564,6 +119564,7 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -119593,8 +119594,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 45,
-                "end": 49
+                "line": 46,
+                "end": 50
             },
             "cases": [],
             "constants": [
@@ -119607,6 +119608,12 @@
                 {
                     "name": "UPLOAD",
                     "value": "'/wp-admin/async-upload.php'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "POST",
+                    "value": "'/wp-admin/admin-post.php'",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -119649,8 +119656,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 55
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -119669,8 +119676,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 61
+                    "line": 59,
+                    "end": 62
                 },
                 {
                     "routes": [
@@ -119691,8 +119698,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 108
+                    "line": 66,
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "post(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "admin-post.php, where plugins' forms post, as the reference answers it\n(runtime suite, \"admin-post.php\"): an admin request with the admin\nheaders, admin_init, then admin_post_{action} for someone signed in\n(the admin cookie) or admin_post_nopriv_{action} for a visitor, and\nadmin_post or admin_post_nopriv when no action is named. A named action\nnobody handles is a 400; what the handlers print is the page, and a\nhandler that redirects and exits sends its redirect.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 123,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -119711,8 +119738,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 126
+                    "line": 151,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -119731,8 +119758,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 133
+                    "line": 165,
+                    "end": 169
                 }
             ]
         },
@@ -130678,6 +130705,7 @@
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AbilityRun",
                 "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",

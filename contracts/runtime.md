@@ -17406,6 +17406,17 @@ registries made for the probe every case followed those rules, but on the page's
 same call, while a copy of the router's registration under another id was. Until that condition is found the engine
 prints each module at its own priority.
 
+## admin-post.php answers forms (2026-10-18)
+
+Plugins point their forms at `admin-post.php` and hook `admin_post_{action}` (signed in) or
+`admin_post_nopriv_{action}` (visitors). The engine sent every visitor to sign in and every signed-in user to Minn
+Admin, so a visitor's newsletter or contact form never reached its handler. Observed on the reference with the
+runtime fixture plugin's handlers: an admin request with the admin headers (no-cache, frame options, the
+`frame-ancestors` policy, the referrer policy), `admin_init`, then the signed-in hook for someone with the admin
+cookie or the visitors' hook otherwise (`admin_post` or `admin_post_nopriv` when no action is named); a named action
+nobody handles is WordPress's own 400 page; what a handler prints is the page and a handler's redirect is sent. The
+engine answers the same (`AdminActionController::post`; runtime suite, "admin-post.php", eight cases on both stacks).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

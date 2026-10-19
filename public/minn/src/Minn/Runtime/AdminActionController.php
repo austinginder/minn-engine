@@ -41,6 +41,7 @@ final readonly class AdminActionController
     private const PAGE = '#^/wp-admin/[a-z0-9-]+\.php$#';
 
     private const UPLOAD = '/wp-admin/async-upload.php';
+    private const POST = '/wp-admin/admin-post.php';
 
     public function __construct(
         private Cookie $cookie,
@@ -51,7 +52,7 @@ final readonly class AdminActionController
     /** Whether a request is for a wp-admin page with an action to run, which the runtime boots as an admin request. */
     public static function claims(Request $request): bool
     {
-        return $request->path !== AjaxController::PATH && preg_match(self::PAGE, $request->path) === 1 && self::action($request) !== null;
+        return $request->path === self::POST || ($request->path !== AjaxController::PATH && preg_match(self::PAGE, $request->path) === 1 && self::action($request) !== null);
     }
 
     /** Whether a request is the media modal's upload, which the reference answers as an ajax request (DOING_AJAX). */
@@ -64,6 +65,9 @@ final readonly class AdminActionController
     #[Route(Method::Any, '/wp-admin/{page:[a-z0-9-]+\.php}', policy: new Policy(Access::Public))]
     public function dispatch(Request $request): Response
     {
+        if ($request->path === self::POST) {
+            return $this->post($request);
+        }
         $admin = Response::redirect($this->permalinks->url('/minn-admin/'), 302);
         $action = self::claims($request) ? self::action($request) : null;
         if ($action === null) {
@@ -105,6 +109,38 @@ final readonly class AdminActionController
         // which on Minn is Minn Admin.
         ob_end_clean();
         return $admin;
+    }
+
+    /**
+     * admin-post.php, where plugins' forms post, as the reference answers it
+     * (runtime suite, "admin-post.php"): an admin request with the admin
+     * headers, admin_init, then admin_post_{action} for someone signed in
+     * (the admin cookie) or admin_post_nopriv_{action} for a visitor, and
+     * admin_post or admin_post_nopriv when no action is named. A named action
+     * nobody handles is a 400; what the handlers print is the page, and a
+     * handler that redirects and exits sends its redirect.
+     */
+    private function post(Request $request): Response
+    {
+        $session = $this->cookie->admin($request->cookies, $request->secure);
+        $signedIn = $session !== null && $session->id() > 0 && $session->id() === Reader::current()->userId;
+        $headers = [
+            'Content-Type' => 'text/html; charset=' . Runtime::options()->filtered('blog_charset'),
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'Content-Security-Policy' => "frame-ancestors 'self';",
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
+        ] + NoCache::headers();
+        // Set before any handler prints or exits, so a redirect and an ended request carry them.
+        (new Response(200, $headers))->sendHead();
+        ob_start();
+        Runtime::hooks()->action('admin_init', []);
+        $action = self::action($request);
+        $hook = ($signedIn ? 'admin_post' : 'admin_post_nopriv') . ($action === null ? '' : '_' . $action);
+        if ($action !== null && !Runtime::hooks()->has($hook)) {
+            Handoff::stop('', '', ['response' => 400]);
+        }
+        Runtime::hooks()->action($hook, []);
+        return new Response(200, $headers, (string) ob_get_clean());
     }
 
     /**
