@@ -84,23 +84,29 @@ final readonly class PostBlocks
         // Nothing written still goes through the_content, as on the reference, which leaves the block
         // out only when nothing comes back: an attachment's page shows the attachment
         // (prepend_attachment), a page builder answers an empty post (Elementor's editor preview).
-        if (trim($raw) === '' && !Runtime::booted()) {
+        $booted = Runtime::booted();
+        if (trim($raw) === '' && !$booted) {
             return '';
         }
         $more = strpos($raw, '<!--more-->');
-        $suffix = '';
+        // Classic content goes through the_content as written, as the reference hands it.
+        $classic = $booted && !PasswordGate::is($post) && !str_contains($raw, '<!-- wp:');
         if ($context->inLoop() && $more !== false) {
             $raw = substr($raw, 0, $more);
-            $suffix = "\n" . ' <a href="' . Html::attr($this->permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . \Minn\I18n\Gettext::text('(more&hellip;)') . '</span></a>';
-            $content = rtrim(Blocks::render($raw)) . $suffix;
+            $link = ' <a href="' . Html::attr($this->permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . \Minn\I18n\Gettext::text('(more&hellip;)') . '</span></a>';
+            $content = $classic ? $raw . $link : rtrim(Blocks::render($raw)) . "\n" . $link;
         } else {
-            $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw));
+            $whole = str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw);
+            $content = $classic ? $whole : Blocks::render($whole);
         }
         $seams = Extensions::runner();
+        if ($classic) {
+            $content = Runtime::classicContentFilter($content);
+        }
         if ($seams !== null) {
             $content = $seams->filterContent($content, $post);
         }
-        if (Runtime::booted()) {
+        if ($booted && !$classic) {
             $content = Runtime::contentFilter($content);
         }
         if ($content === '' || $content === '0') {

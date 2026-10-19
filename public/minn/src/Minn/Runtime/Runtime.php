@@ -270,6 +270,18 @@ final class Runtime
         'wp_filter_content_tags' => [12, '_minn_content_img_tag'],
     ];
 
+    /**
+     * Classic content (no block markup) through the whole of the_content, as
+     * the reference runs it: handed as written, core's defaults (embeds,
+     * texturize, paragraphs, shortcodes, images) in their places, so a filter
+     * before them is handed the stored text and what it adds is formatted
+     * with the rest (runtime suite, "plain text a filter adds").
+     */
+    public static function classicContentFilter(string $content): string
+    {
+        return (string) RenderState::current()->filteringContent($content, static fn () => self::hooks()->filter('the_content', [$content]));
+    }
+
     /** Content the engine rendered itself, through the_content for everything else hooked there. */
     public static function contentFilter(string $content): string
     {

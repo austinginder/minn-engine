@@ -39,13 +39,21 @@ final class ClassicContent
         // Nothing written still goes through the_content, as on the reference: a page builder answers an
         // empty post (Elementor's editor preview, Brizy's editor frame under a classic theme).
         $more = strpos($raw, '<!--more-->');
+        // Classic content goes through the_content as written, as the reference hands it; its embeds, paragraphs and images come from the filter's own callbacks.
+        $classic = !str_contains($raw, '<!-- wp:');
         // The teaser stops at the more tag unless the whole text is wanted: a single post or page, or a feed ($more, as setup_postdata leaves it).
         if (!MainQuery::current()->is_singular() && empty($GLOBALS['more']) && $more !== false) {
             $label = $moreLinkText ?? \Minn\I18n\Gettext::text('(more&hellip;)');
-            $suffix = "\n" . ' <a href="' . Html::attr($link() . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . $label . '</span></a>';
-            $content = rtrim(Blocks::render(substr($raw, 0, $more))) . $suffix;
+            $moreLink = ' <a href="' . Html::attr($link() . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . $label . '</span></a>';
+            $content = $classic ? substr($raw, 0, $more) . $moreLink : rtrim(Blocks::render(substr($raw, 0, $more))) . "\n" . $moreLink;
         } else {
-            $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw));
+            $whole = str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw);
+            $content = $classic ? $whole : Blocks::render($whole);
+        }
+        if ($classic) {
+            $content = Runtime::classicContentFilter($content);
+            $seams = Extensions::runner();
+            return $seams === null ? $content : $seams->filterContent($content, $post);
         }
         $embed = $GLOBALS['wp_embed'] ?? null;
         if (is_object($embed) && method_exists($embed, 'autoembed')) {

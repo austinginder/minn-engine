@@ -16958,8 +16958,12 @@ their shortcodes at the default priority. Shortcodes now run in `do_shortcode`'s
 `do_blocks`'s place content that carries block markup is rendered (`_minn_do_added_blocks`; the engine's own
 rendering leaves none, so its content passes through untouched).
 
-Owed: plain text a filter adds before priority 10 is neither texturized nor given paragraphs, as the reference's
-defaults would; the engine's pass ran before it.
+Plain text a filter adds before priority 10 (settled 2026-10-18): on a block post it was texturized already and,
+as on the reference, given no paragraphs (`do_blocks` takes `wpautop` off for block content). Classic content (no
+block markup) now goes through `the_content` as written, core's defaults in their places (`Runtime::classicContentFilter`,
+on the front end, in a classic theme's `the_content()` and in REST's `content.rendered`), so a filter before them is
+handed the stored text and what it adds gets paragraphs with the rest, run-on words joining the last one. Runtime
+suite, "plain text a the_content filter adds".
 
 The hunt's WooCommerce showcase printed `product-query-frontend.js` on Minn only. Observed on the reference with
 blocks that enqueue as they render: a block that renders nothing, or only whitespace, has the scripts, styles
@@ -17389,7 +17393,7 @@ rows that are `open` or `austin`.
 | 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | done | "The front's template chosen through get_block_templates (2026-10-16)"; the template-part lookup is still the row above |
 | 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | done | "A product's head link and its post terms (2026-10-16)": the route rest_get_queried_resource_route gives |
-| 16961 | What the_content adds before core's defaults (10-16) | plain text a filter adds before priority 10 is not texturized or given paragraphs | open | engine work owed |
+| 16961 | What the_content adds before core's defaults (10-16) | plain text a filter adds before priority 10 is not texturized or given paragraphs | done | 2026-10-18: classic content goes through the_content as written (runtime suite, "plain text a the_content filter adds") |
 | 17101 | Preset slugs in kebab case (10-18) | core's default font sizes printed when the theme no longer has their slugs (`defaultFontSizes: false`) | done | "Three owed rows settled" (probe `default-presets`) |
 | 17101 | Methods keep the reference's shape (10-18) | `WP_Theme_JSON_Resolver::get_theme_data()` ignores `with_supports => false` | done | "Three owed rows settled": the theme's own layer over its supports (probe `theme-data-supports`) |
 | 17101 | The $current_user global (10-18) | the `setup_userdata` globals (`$user_ID`, `$userdata`, `$user_login`, ...) | done | "Three owed rows settled" (probe `user-globals`) |

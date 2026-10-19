@@ -6,7 +6,7 @@ the template blocks a block theme composes with
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 296 | comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. |
 | [`Navigation`](#navigation) | final readonly class | 552 | navigation, navigation-link, page-list. A navigation block's items come |
-| [`PostBlocks`](#postblocks) | final readonly class | 272 | The post-* blocks: they render the context's current post. |
+| [`PostBlocks`](#postblocks) | final readonly class | 278 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 281 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
 | [`TermBlocks`](#termblocks) | final readonly class | 71 | term-name, term-count and term-description: the term a block's context |
@@ -96,7 +96,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Users $users, Minn\Content\S
 
 Registers this family's blocks with the renderer.
 
-Internals: `title()` (private, line 55), `content()` (private, line 71), `contentOf()` (private, line 77), `date()` (private, line 121), `authorName()` (private, line 135), `excerpt()` (private, line 149), `featuredImage()` (private, line 161), `terms()` (private, line 201), `navigationLink()` (private, line 232), `termRow()` (private, line 263), `previewSource()` (private, line 275), `target()` (private, line 284), `open()` (private, line 289)
+Internals: `title()` (private, line 55), `content()` (private, line 71), `contentOf()` (private, line 77), `date()` (private, line 127), `authorName()` (private, line 141), `excerpt()` (private, line 155), `featuredImage()` (private, line 167), `terms()` (private, line 207), `navigationLink()` (private, line 238), `termRow()` (private, line 269), `previewSource()` (private, line 281), `target()` (private, line 290), `open()` (private, line 295)
 
 
 ## QueryBlocks

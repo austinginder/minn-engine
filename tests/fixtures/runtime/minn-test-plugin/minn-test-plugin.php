@@ -225,6 +225,24 @@ if (isset($_GET['minn-test-content-order'])) {
     add_filter('the_content', static fn ($content) => '<!--minn-order-->' . $content . '[minn_test_order] at 20<!--/minn-order-->', 20);
 }
 
+// Plain text a the_content filter adds before core's defaults (?minn-test-content-plain=<case>):
+// a paragraph of its own after the content, words run on to its end, a paragraph before it,
+// and what the filter was handed (whether the content still held block markup or paragraphs).
+// The content is noted in the page between markers, at 20.
+if (isset($_GET['minn-test-content-plain'])) {
+    $case = (string) $_GET['minn-test-content-plain'];
+    add_filter('the_content', static function ($content) use ($case) {
+        return match ($case) {
+            'paragraph' => $content . "\n\nIt's added -- plainly, \"quoted\".",
+            'inline' => $content . " and it's run on...",
+            'before' => "Before it's here\n\n" . $content,
+            'handed' => $content . ' [handed ' . (str_contains($content, '<!-- wp:') ? 'block markup' : 'no block markup') . ', ' . (str_contains($content, '<p>') ? 'paragraphs' : 'no paragraphs') . ']',
+            default => $content,
+        };
+    }, 5);
+    add_filter('the_content', static fn ($content) => '<!--minn-plain-->' . $content . '<!--/minn-plain-->', 20);
+}
+
 // The template-enhancement buffer (?minn-test-enhance): the action before the
 // template, the buffer opening, and the whole page handed to the filter, noted
 // in the page itself.

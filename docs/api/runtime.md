@@ -121,7 +121,7 @@ the WordPress runtime plugins load against
 | [`Registry`](#registry) | final class | 512 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RequestHeaders`](#requestheaders) | final class | 82 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 374 | The rewrite rules WordPress makes from its structures, as the reference |
-| [`Runtime`](#runtime) | final class | 427 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 439 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 347 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
@@ -6829,6 +6829,14 @@ in wp_footer); a sentinel buffer under the capture keeps the output
 either way: extra buffers are flushed through their handlers into the
 capture, and a capture closed early lands in the sentinel.
 
+### static `classicContentFilter(string $content): string`
+
+Classic content (no block markup) through the whole of the_content, as
+the reference runs it: handed as written, core's defaults (embeds,
+texturize, paragraphs, shortcodes, images) in their places, so a filter
+before them is handed the stored text and what it adds is formatted
+with the rest (runtime suite, "plain text a filter adds").
+
 ### static `contentFilter(string $content): string`
 
 Content the engine rendered itself, through the_content for everything else hooked there.
@@ -6904,7 +6912,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 404)
+Internals: `loadObjectCacheDropin()` (private, line 416)
 
 
 ## ScriptLoading

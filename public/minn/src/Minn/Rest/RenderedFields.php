@@ -32,6 +32,10 @@ final class RenderedFields
     /** The rendered content. */
     public static function content(PostRecord $p): string
     {
+        // Classic content goes through the_content as written, as the reference hands it.
+        if (!str_contains($p->content, '<!-- wp:')) {
+            return (string) self::withPost($p, static fn () => Runtime::classicContentFilter($p->content));
+        }
         $html = Blocks::render($p->content);
         return (string) self::withPost($p, static fn () => Runtime::contentFilter($html));
     }
