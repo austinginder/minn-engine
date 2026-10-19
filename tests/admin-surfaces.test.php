@@ -213,7 +213,7 @@ $released    = Minn\Ops\Changelog::released( (string) ( $rb['markdown'] ?? '' ) 
 check( 200 === $rs && 200 === $es && ( $rb['version'] ?? null ) === ( $eb['version'] ?? null ) && $released === ( $eb['markdown'] ?? null ), 'changelog is the bundled one without Unreleased sections (read from GitHub)', (string) minn_test_diff( $released, $eb['markdown'] ?? null ) );
 as_parity( 'guide matches', '/minn-admin/v1/guide', $admin );
 as_parity( 'plugin-updates matches (auto-updates and wordpress.org language updates are never offered here)', '/minn-admin/v1/plugin-updates', $admin, array( 'autoAllowed', 'translations', 'translationGroups' ) );
-as_parity( 'plugin-meta matches', '/minn-admin/v1/plugin-meta', $admin );
+as_parity( 'plugin-meta matches (Minn Admin\'s own entry comes from the Minn update service)', '/minn-admin/v1/plugin-meta', $admin, array( 'minn-admin/minn-admin.php' ) );
 [ $s, $b ] = as_fetch( $ENGINE, '/minn-admin/v1/translations', $admin );
 check( 200 === $s && array( 'count' => 0, 'groups' => array() ) === $b, 'translations reports nothing pending (no wordpress.org channel)', json_encode( $b ) );
 as_parity( 'users/1/hidden matches', '/minn-admin/v1/users/1/hidden', $admin );

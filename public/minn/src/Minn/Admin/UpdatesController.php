@@ -44,7 +44,8 @@ final readonly class UpdatesController
     public function pluginMeta(Request $request): Response
     {
         $this->caller->requireCap('activate_plugins');
-        return Reply::answer($request, (object) $this->updates->pluginMeta());
+        // Keyed by plugin file, so an object; with nothing to list, an empty list as the reference prints it.
+        return Reply::answer($request, $this->updates->pluginMeta());
     }
 
     /** Asks the Minn update service again, now: for plugin and theme offers, and for Minn itself (its status answered as core). */

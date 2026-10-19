@@ -134,7 +134,11 @@ up_parity( 'check-updates agrees (translation offers are wordpress.org state the
 [ , $eb ] = up_fetch( $ENGINE, '/minn-admin/v1/check-updates', $admin, 'POST', '{}' );
 check( 'minn' === ( $eb['core']['product'] ?? null ), 'check-updates also asks after Minn itself', json_encode( $eb['core'] ?? null ) );
 up_parity( 'plugin-updates agrees (translations are wordpress.org state the engine does not carry)', '/minn-admin/v1/plugin-updates', $admin, array( 'translations', 'translationGroups', 'autoAllowed' ) );
-up_parity( 'plugin-meta agrees', '/minn-admin/v1/plugin-meta', $admin );
+// The Minn update service also offers its author's own plugin, so the engine knows Minn Admin's page;
+// wordpress.org, which the reference asks, does not. By design: that one entry is set aside.
+up_parity( 'plugin-meta agrees (Minn Admin\'s own entry comes from the Minn update service)', '/minn-admin/v1/plugin-meta', $admin, array( 'minn-admin/minn-admin.php' ) );
+[ , $eb ] = up_fetch( $ENGINE, '/minn-admin/v1/plugin-meta', $admin );
+check( 'minn-admin' === ( $eb['minn-admin/minn-admin.php']['slug'] ?? null ) && str_starts_with( (string) ( $eb['minn-admin/minn-admin.php']['url'] ?? '' ), 'https://' ), 'plugin-meta names Minn Admin\'s page from the Minn update service', json_encode( $eb['minn-admin/minn-admin.php'] ?? null ) );
 up_parity( 'themes carry the offers and directory flags', '/minn-admin/v1/themes', $admin, array( 'screenshot' ) );
 [ , $eb ] = up_fetch( $ENGINE, '/minn-admin/v1/plugin-updates', $admin );
 check( true === ( $eb['autoAllowed'] ?? null ), 'per-item auto-updates are offered (cron applies them)', json_encode( $eb['autoAllowed'] ?? null ) );

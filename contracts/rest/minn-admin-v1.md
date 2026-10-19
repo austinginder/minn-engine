@@ -297,7 +297,7 @@ style.css, active first; `block` is the presence of `templates/index.html`;
 channel. `POST themes/activate {stylesheet}` writes `stylesheet`,
 `template`, and `current_theme` (404 for an unknown folder or a missing
 parent). `GET plugin-updates` is the empty shape with `autoAllowed: false`;
-`GET plugin-meta` is `{}`; `GET translations` is `{count: 0, groups: []}`.
+`GET plugin-meta` is `[]`; `GET translations` is `{count: 0, groups: []}`.
 The plugin list itself is `wp/v2/plugins` (contracts/rest/plugins.md).
 
 **Adding themes and extensions** (suite section 6a; `Minn\Admin\Packages`).
@@ -410,6 +410,10 @@ dogfood site against its own reference, both freshly checked:
   packs are wordpress.org state the engine does not carry, so translations stay 0.
 - `GET plugin-meta` → `{file: {slug, icon, url}}` for every plugin the directory knows
   (offers and current alike; the svg, 2x, or 1x icon; the directory URL).
+  An empty answer is `[]`, as the reference prints it. The update service also offers
+  its author's own plugin, so the engine lists Minn Admin with the page the service names,
+  where the reference (asking wordpress.org) lists nothing for it. That is by design: both
+  suites set the `minn-admin/minn-admin.php` entry aside, and the updates suite checks it.
 - `POST check-updates {}` → `{ok, pluginUpdates, themeUpdates, translations: 0,
   translationGroups: [], plugins: n, themes: n}`, plus on the engine `core` (the
   `GET /core` answer after asking the update service again; `update_core` alone may call it).

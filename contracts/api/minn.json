@@ -7076,7 +7076,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/UpdatesController.php",
-            "lines": 129,
+            "lines": 130,
             "doc": "The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists.",
             "implements": [],
             "extends": null,
@@ -7202,7 +7202,7 @@
                         }
                     ],
                     "line": 44,
-                    "end": 48
+                    "end": 49
                 },
                 {
                     "routes": [
@@ -7223,8 +7223,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 78
+                    "line": 53,
+                    "end": 79
                 },
                 {
                     "routes": [
@@ -7245,8 +7245,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 93
+                    "line": 83,
+                    "end": 94
                 },
                 {
                     "routes": [
@@ -7267,8 +7267,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 114
+                    "line": 98,
+                    "end": 115
                 },
                 {
                     "routes": [
@@ -7289,8 +7289,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 126
+                    "line": 119,
+                    "end": 127
                 },
                 {
                     "routes": [
@@ -7311,8 +7311,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 147
+                    "line": 131,
+                    "end": 148
                 }
             ]
         },

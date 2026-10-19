@@ -32,7 +32,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
 | [`ThemesController`](#themescontroller) | final readonly class | 99 | The theme inventory of minn-admin/v1: every theme on disk with its |
 | [`Translations`](#translations) | final readonly class | 237 | Languages for the admin. A person's locale is their `locale` user meta, |
-| [`UpdatesController`](#updatescontroller) | final readonly class | 129 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
+| [`UpdatesController`](#updatescontroller) | final readonly class | 130 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
 | [`UploadsSize`](#uploadssize) | final readonly class | 93 | How much the uploads folder holds, as Minn Admin 0.43 works it out and |
 | [`V1Controller`](#v1controller) | final readonly class | 80 | The boot burst of minn-admin/v1: the bell feed and its read marker, the |
 
