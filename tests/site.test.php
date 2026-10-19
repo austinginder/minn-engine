@@ -75,7 +75,7 @@ preg_match_all('#data-pair="\d" style="--i:\d"><span class="m">[A-Z]+</span><spa
 $capturedPaths = array_map(static fn (array $r): string => html_entity_decode($r['path']), $parity['rows'] ?? []);
 $check(array_slice(array_map('html_entity_decode', $shownPaths[1]), 0, 6) === $capturedPaths, 'the hero panel shows exactly the captured pairs, in order', implode(', ', $shownPaths[1] ?? []));
 $check(str_contains($home, '/wp-content/themes/minn-site/assets/front.js'), 'the front page loads its script');
-$check(substr_count($home, '<details id="faq-') === 8, 'every FAQ answer has its own address');
+$check(substr_count($home, '<details id="faq-') === 9, 'every FAQ answer has its own address');
 $check(str_contains($home, 'href="#content">Skip to content'), 'skip link targets the template\'s own main id');
 $check(!preg_match('/class="[^"]*has-global-padding/', $home), 'no global padding class without useRootPaddingAwareAlignments');
 [, $texturizePage] = minn_test_fetch($ENGINE . '/texturize-battery-its-quoted-fine/');
