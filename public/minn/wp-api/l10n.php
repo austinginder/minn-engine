@@ -148,12 +148,6 @@ function esc_attr_x($text, $context, $domain = 'default')
     return esc_attr(translate_with_gettext_context($text, $context, $domain));
 }
 
-/** @internal loads the domain from a folder's file for the locale when there is one, or names the folder for later */
-function _minn_load_from_folder(string $domain, string $folder, string $file, string $locale): bool
-{
-    return Minn\Runtime\Translations::fromFolder($domain, $folder, $file, $locale);
-}
-
 function load_plugin_textdomain($domain, $deprecated = false, $plugin_rel_path = false)
 {
     return Minn\Runtime\Translations::loadPlugin($domain, $deprecated, $plugin_rel_path);
@@ -161,15 +155,13 @@ function load_plugin_textdomain($domain, $deprecated = false, $plugin_rel_path =
 
 function load_muplugin_textdomain($domain, $mu_plugin_rel_path = '')
 {
-    $locale = determine_locale();
-    return _minn_load_from_folder((string) $domain, WPMU_PLUGIN_DIR . '/' . ltrim((string) $mu_plugin_rel_path, '/'), "{$domain}-{$locale}", $locale);
+    return Minn\Runtime\Translations::fromFolder((string) $domain, WPMU_PLUGIN_DIR . '/' . ltrim((string) $mu_plugin_rel_path, '/'));
 }
 
 function load_theme_textdomain($domain, $path = false)
 {
-    $locale = determine_locale();
     // A folder named in code holds "{domain}-{locale}" files, inside the themes root or not; only the active theme's own folder goes by locale alone.
-    return _minn_load_from_folder((string) $domain, $path !== false ? (string) $path : get_template_directory(), "{$domain}-{$locale}", $locale);
+    return Minn\Runtime\Translations::fromFolder((string) $domain, $path !== false ? (string) $path : get_template_directory());
 }
 
 function load_child_theme_textdomain($domain, $path = false)

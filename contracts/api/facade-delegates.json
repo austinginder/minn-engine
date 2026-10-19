@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1621
+        "delegates": 1622
     },
     "functions": {
         "__": {
@@ -367,10 +367,6 @@
         "_minn_links": {
             "file": "bookmark.php",
             "statement": "return new Links(Runtime::current()->db);"
-        },
-        "_minn_load_from_folder": {
-            "file": "l10n.php",
-            "statement": "return Minn\\Runtime\\Translations::fromFolder($domain, $folder, $file, $locale);"
         },
         "_minn_main_query": {
             "file": "query.php",
@@ -2896,6 +2892,10 @@
             "file": "l10n.php",
             "statement": "return Minn\\Runtime\\Translations::loadDefault($locale);"
         },
+        "load_muplugin_textdomain": {
+            "file": "l10n.php",
+            "statement": "return Minn\\Runtime\\Translations::fromFolder((string) $domain, WPMU_PLUGIN_DIR . '/' . ltrim((string) $mu_plugin_rel_path, '/'));"
+        },
         "load_plugin_textdomain": {
             "file": "l10n.php",
             "statement": "return Minn\\Runtime\\Translations::loadPlugin($domain, $deprecated, $plugin_rel_path);"
@@ -2903,6 +2903,10 @@
         "load_textdomain": {
             "file": "l10n.php",
             "statement": "return Minn\\Runtime\\Translations::load($domain, $mofile, $locale);"
+        },
+        "load_theme_textdomain": {
+            "file": "l10n.php",
+            "statement": "// A folder named in code holds \"{domain}-{locale}\" files, inside the themes root or not; only the active theme's own folder goes by locale alone.\n    return Minn\\Runtime\\Translations::fromFolder((string) $domain, $path !== false ? (string) $path : get_template_directory());"
         },
         "make_after_block_visitor": {
             "file": "blocks.php",

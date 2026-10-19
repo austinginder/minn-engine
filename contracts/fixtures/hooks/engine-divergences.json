@@ -437,7 +437,8 @@
         "probe:page-template-save",
         "probe:post-block-hooks",
         "probe:user-meta-writes",
-        "probe:comment-blocks"
+        "probe:comment-blocks",
+        "probe:text-domain-timing"
     ],
     "hooks": {
         "_get_page_link": {
@@ -5842,6 +5843,7 @@
             "probe:rest-themes-controller": "not fired",
             "probe:symbols": "not fired",
             "probe:template-getters": "not fired",
+            "probe:text-domain-timing": "not fired",
             "probe:theme-headers": "not fired",
             "probe:theme-json-resolver": "not fired",
             "probe:upgrader": "not fired",
@@ -11765,6 +11767,7 @@
             "probe:script-printing": "not fired",
             "probe:security-parity": "not fired",
             "probe:symbols": "not fired",
+            "probe:text-domain-timing": "not fired",
             "probe:theme-headers": "not fired",
             "probe:theme-json-resolver": "not fired",
             "probe:type-object-sharing": "not fired",

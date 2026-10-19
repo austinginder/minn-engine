@@ -21,6 +21,9 @@ final class TextDomains
     /** @var array<string, array{0: string, 1: bool}> domain => [folder, files named by locale alone] */
     private array $folders = [];
 
+    /** @var list<string> the active theme's folders */
+    private array $themes = [];
+
     /** @var array<string, true> */
     private array $closed = [];
 
@@ -151,20 +154,24 @@ final class TextDomains
         return null;
     }
 
-    /** Records the folder a plugin or theme named for its domain; files there are "{domain}-{locale}". */
+    /**
+     * Records the folder a plugin or theme named for its domain: files there
+     * are "{domain}-{locale}", or named by the locale alone at or below the
+     * active theme's folder, whichever domain names it (probe
+     * text-domain-timing).
+     */
     public function rememberFolder(string $domain, string $folder): void
     {
         $folder = rtrim($folder, '/');
-        // The active theme's own folder keeps its files named by locale alone, whoever names it again (probe theme-headers).
-        $this->folders[$domain] = [$folder, ($this->folders[$domain] ?? null) === [$folder, true]];
+        $inTheme = array_filter($this->themes, static fn (string $theme): bool => str_starts_with($folder . '/', $theme . '/')) !== [];
+        $this->folders[$domain] = [$folder, $inTheme];
         $this->lookAgainUnlessLoaded($domain);
     }
 
-    /** Records the active theme's own language folder; files there are named by locale alone. */
-    public function rememberThemeFolder(string $domain, string $folder): void
+    /** Records a folder of the active theme (its template's or its stylesheet's). */
+    public function rememberTheme(string $folder): void
     {
-        $this->folders[$domain] = [rtrim($folder, '/'), true];
-        $this->lookAgainUnlessLoaded($domain);
+        $this->themes[] = rtrim($folder, '/');
     }
 
     private function lookAgainUnlessLoaded(string $domain): void

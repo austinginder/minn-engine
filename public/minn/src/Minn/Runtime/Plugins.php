@@ -168,16 +168,17 @@ final class Plugins
     }
 
     /**
-     * An active theme's own text domain, named in its stylesheet header
-     * (the slug when it names none), reads its folder ("Domain Path", or
-     * "/languages") with files named by locale alone.
+     * An active theme's folder, where a domain's files are named by locale
+     * alone, and its own text domain, the one its stylesheet names (the slug
+     * when it names none), read from its "Domain Path" (or "/languages").
      */
     private static function rememberThemeDomain(string $folder, string $slug): void
     {
         $headers = FileHeaders::values("{$folder}/style.css", ['Text Domain', 'Domain Path']);
         $domain = $headers['Text Domain'] !== '' ? $headers['Text Domain'] : $slug;
         $path = $headers['Domain Path'] !== '' ? '/' . trim($headers['Domain Path'], '/') : '/languages';
-        Runtime::textDomains()->rememberThemeFolder($domain, $folder . $path);
+        Runtime::textDomains()->rememberTheme($folder);
+        Runtime::textDomains()->rememberFolder($domain, $folder . $path);
     }
 
     /**

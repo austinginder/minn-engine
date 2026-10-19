@@ -1,12 +1,12 @@
 {
     "method": "tests/tools/facade-logic.php: functions and methods in public/minn/wp-api (generated dead ends and placeholders apart) whose body holds more than one statement or a control structure, by tokens; lines are the body's non-blank, non-comment lines; a docblock tag @minn-facade-logic <reason> keeps one out of the count and lists it under \"kept\"",
     "summary": {
-        "functions": 3493,
+        "functions": 3492,
         "methods": 3809,
-        "delegates": 3462,
-        "logicFunctions": 1812,
+        "delegates": 3463,
+        "logicFunctions": 1810,
         "logicMethods": 2028,
-        "logicLines": 30108,
+        "logicLines": 30104,
         "kept": 0
     },
     "byFile": {
@@ -234,10 +234,6 @@
             "logic": 19,
             "lines": 151
         },
-        "l10n.php": {
-            "logic": 20,
-            "lines": 145
-        },
         "block-supports-deprecated.php": {
             "logic": 24,
             "lines": 144
@@ -245,6 +241,10 @@
         "classes/WP_Plugin_Dependencies.php": {
             "logic": 18,
             "lines": 143
+        },
+        "l10n.php": {
+            "logic": 18,
+            "lines": 141
         },
         "classes/WP_Filesystem.php": {
             "logic": 14,
@@ -12938,7 +12938,7 @@
         },
         "__ngettext": {
             "file": "l10n.php",
-            "line": 426,
+            "line": 418,
             "statements": 2,
             "lines": 2
         },
@@ -13022,7 +13022,7 @@
         },
         "_c": {
             "file": "l10n.php",
-            "line": 433,
+            "line": 425,
             "statements": 4,
             "lines": 4
         },
@@ -13286,13 +13286,13 @@
         },
         "_load_script_textdomain_from_src": {
             "file": "l10n.php",
-            "line": 292,
+            "line": 284,
             "statements": 10,
             "lines": 18
         },
         "_load_textdomain_just_in_time": {
             "file": "l10n.php",
-            "line": 196,
+            "line": 188,
             "statements": 8,
             "lines": 12
         },
@@ -14120,7 +14120,7 @@
         },
         "_minn_locale_switcher": {
             "file": "l10n.php",
-            "line": 359,
+            "line": 351,
             "statements": 2,
             "lines": 5
         },
@@ -14324,7 +14324,7 @@
         },
         "_minn_reload_textdomains": {
             "file": "l10n.php",
-            "line": 229,
+            "line": 221,
             "statements": 4,
             "lines": 13
         },
@@ -14558,7 +14558,7 @@
         },
         "_minn_textdomain_file": {
             "file": "l10n.php",
-            "line": 213,
+            "line": 205,
             "statements": 3,
             "lines": 7
         },
@@ -15710,7 +15710,7 @@
         },
         "before_last_bar": {
             "file": "l10n.php",
-            "line": 442,
+            "line": 434,
             "statements": 2,
             "lines": 2
         },
@@ -18140,7 +18140,7 @@
         },
         "get_translations_for_domain": {
             "file": "l10n.php",
-            "line": 256,
+            "line": 248,
             "statements": 4,
             "lines": 6
         },
@@ -18606,27 +18606,21 @@
             "statements": 2,
             "lines": 4
         },
-        "load_muplugin_textdomain": {
-            "file": "l10n.php",
-            "line": 162,
-            "statements": 2,
-            "lines": 2
-        },
         "load_script_module_textdomain": {
-            "file": "l10n.php",
-            "line": 280,
-            "statements": 2,
-            "lines": 2
-        },
-        "load_script_textdomain": {
             "file": "l10n.php",
             "line": 272,
             "statements": 2,
             "lines": 2
         },
+        "load_script_textdomain": {
+            "file": "l10n.php",
+            "line": 264,
+            "statements": 2,
+            "lines": 2
+        },
         "load_script_translations": {
             "file": "l10n.php",
-            "line": 315,
+            "line": 307,
             "statements": 5,
             "lines": 9
         },
@@ -18635,12 +18629,6 @@
             "line": 118,
             "statements": 6,
             "lines": 14
-        },
-        "load_theme_textdomain": {
-            "file": "l10n.php",
-            "line": 168,
-            "statements": 2,
-            "lines": 2
         },
         "locale_stylesheet": {
             "file": "embed.php",
@@ -20000,7 +19988,7 @@
         },
         "translations_api": {
             "file": "l10n.php",
-            "line": 389,
+            "line": 381,
             "statements": 7,
             "lines": 13
         },
@@ -20858,7 +20846,7 @@
         },
         "wp_dropdown_languages": {
             "file": "l10n.php",
-            "line": 407,
+            "line": 399,
             "statements": 5,
             "lines": 14
         },
@@ -21476,7 +21464,7 @@
         },
         "wp_get_l10n_php_file_data": {
             "file": "l10n.php",
-            "line": 455,
+            "line": 447,
             "statements": 3,
             "lines": 3
         },

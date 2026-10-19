@@ -73772,7 +73772,7 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/SiteLanguage.php",
-            "lines": 49,
+            "lines": 60,
             "doc": "The site's language as pages declare it: the locale in force (a switched\none first, then what pre_determine_locale or the WPLANG option give,\nthrough the locale filter) and the html element's dir and lang\nattributes, which a plugin may change through language_attributes.",
             "implements": [],
             "extends": null,
@@ -73799,11 +73799,23 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "locale(): string",
-                    "doc": "The locale in force (get_locale).",
+                    "doc": "The locale in force (get_locale). It still takes what\npre_determine_locale answers, which the reference's get_locale does\nnot (probe text-domain-timing; open in contracts/runtime.md, \"Text\ndomains read at their first translation\").",
                     "shapes": [],
                     "params": [],
-                    "line": 20,
-                    "end": 32
+                    "line": 25,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "configured",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "configured(): string",
+                    "doc": "The locale the WPLANG option names (en_US when it names none), through the locale filter.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 39,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -73814,8 +73826,8 @@
                     "doc": "The language tag pages carry: the locale with a hyphen, plain \"en\" read as en_US.",
                     "shapes": [],
                     "params": [],
-                    "line": 35,
-                    "end": 39
+                    "line": 46,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -73826,8 +73838,8 @@
                     "doc": "Whether the site's language is written right to left (is_rtl).",
                     "shapes": [],
                     "params": [],
-                    "line": 42,
-                    "end": 46
+                    "line": 53,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -73846,8 +73858,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 64
+                    "line": 60,
+                    "end": 75
                 }
             ]
         },
@@ -73857,7 +73869,7 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/TextDomains.php",
-            "lines": 193,
+            "lines": 200,
             "doc": "The text domains this request knows: each domain's files in the order they\nwere loaded, and the domains looked for and not found (known, with no\nfiles), all in the order they first appeared, which is the order a locale\nswitch reloads them in. A lookup asks a domain's files in load order and\nthe first one with a translation answers, each under its own plural rule.\nThe registry also remembers the folder a plugin or theme named for its\ndomain (and how files there are named), and the domains unloaded for good.",
             "implements": [],
             "extends": null,
@@ -73882,6 +73894,15 @@
                 },
                 {
                     "name": "folders",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "themes",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -73949,8 +73970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 38
+                    "line": 37,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -73969,8 +73990,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 44
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -73989,8 +74010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 52
+                    "line": 50,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -74009,8 +74030,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -74029,8 +74050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 69
+                    "line": 69,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -74049,8 +74070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 76
+                    "line": 75,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -74069,8 +74090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 87,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -74089,8 +74110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 93,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -74103,8 +74124,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 100,
-                    "end": 103
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -74130,8 +74151,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 111
+                    "line": 109,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -74152,8 +74173,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 121,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -74179,8 +74200,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 133
+                    "line": 127,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -74215,8 +74236,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 152
+                    "line": 145,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -74224,7 +74245,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "rememberFolder(string $domain, string $folder): void",
-                    "doc": "Records the folder a plugin or theme named for its domain; files there are \"{domain}-{locale}\".",
+                    "doc": "Records the folder a plugin or theme named for its domain: files there\nare \"{domain}-{locale}\", or named by the locale alone at or below the\nactive theme's folder, whichever domain names it (probe\ntext-domain-timing).",
                     "shapes": [],
                     "params": [
                         {
@@ -74242,25 +74263,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 161
+                    "line": 163,
+                    "end": 169
                 },
                 {
                     "routes": [],
-                    "name": "rememberThemeFolder",
+                    "name": "rememberTheme",
                     "static": false,
                     "visibility": "public",
-                    "signature": "rememberThemeFolder(string $domain, string $folder): void",
-                    "doc": "Records the active theme's own language folder; files there are named by locale alone.",
+                    "signature": "rememberTheme(string $folder): void",
+                    "doc": "Records a folder of the active theme (its template's or its stylesheet's).",
                     "shapes": [],
                     "params": [
-                        {
-                            "name": "domain",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
                         {
                             "name": "folder",
                             "type": "string",
@@ -74269,8 +74283,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 168
+                    "line": 172,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -74296,8 +74310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 185
+                    "line": 185,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -74316,8 +74330,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 191
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -74336,8 +74350,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 197
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -74350,8 +74364,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 204,
-                    "end": 207
+                    "line": 211,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -74370,8 +74384,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 175
+                    "line": 177,
+                    "end": 182
                 }
             ]
         },
@@ -142375,6 +142389,7 @@
                 "Minn\\Runtime\\Shortcodes",
                 "Minn\\Runtime\\TemplateFiles",
                 "Minn\\Runtime\\ThemeSupports",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Runtime\\UserQueryRunner"
             ],
             "constructor": null,
@@ -146037,7 +146052,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 268,
+            "lines": 269,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -146149,8 +146164,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 188,
-                    "end": 191
+                    "line": 189,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -146163,8 +146178,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 198,
-                    "end": 201
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -146190,8 +146205,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 229
+                    "line": 212,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -146210,8 +146225,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 235
+                    "line": 233,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -146259,7 +146274,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "rememberThemeDomain(string $folder, string $slug): void",
-                    "doc": "An active theme's own text domain, named in its stylesheet header\n(the slug when it names none), reads its folder (\"Domain Path\", or\n\"/languages\") with files named by locale alone.",
+                    "doc": "An active theme's folder, where a domain's files are named by locale\nalone, and its own text domain, the one its stylesheet names (the slug\nwhen it names none), read from its \"Domain Path\" (or \"/languages\").",
                     "shapes": [],
                     "params": [
                         {
@@ -146278,7 +146293,7 @@
                         }
                     ],
                     "line": 175,
-                    "end": 181
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -146311,8 +146326,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 260
+                    "line": 238,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -146345,8 +146360,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 278
+                    "line": 269,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -146365,8 +146380,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 286
+                    "line": 282,
+                    "end": 287
                 }
             ]
         },
@@ -167641,7 +167656,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Translations.php",
-            "lines": 128,
+            "lines": 133,
             "doc": "The translations a request loads, as WordPress's l10n functions load\nthem: the locale in force, a text domain loaded from its file (or its\nfolder named for later) and unloaded, the default domain, a plugin's,\na user's locale, and the translations installed on disk; each step with\nthe filters that may answer first.",
             "implements": [],
             "extends": null,
@@ -167652,6 +167667,7 @@
                 "Minn\\Runtime\\FileHeaders",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -167672,7 +167688,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "locale(): string",
-                    "doc": "The locale in force (determine_locale): a switched one, else pre_determine_locale, else the site's through determine_locale.",
+                    "doc": "The locale in force (determine_locale): a switched one, else pre_determine_locale, else the configured one through determine_locale.",
                     "shapes": [],
                     "params": [],
                     "line": 21,
@@ -167744,8 +167760,8 @@
                     "name": "fromFolder",
                     "static": true,
                     "visibility": "public",
-                    "signature": "fromFolder(string $domain, string $folder, string $file, string $locale): bool",
-                    "doc": "A domain loaded from a folder's file for the locale when there is one, or the folder named for later; a domain closed for good loads nothing.",
+                    "signature": "fromFolder(string $domain, string $folder): bool",
+                    "doc": "A domain's folder named for later (load_plugin_textdomain and the\nrest): nothing is read and no locale asked until the domain's first\ntranslation, which reads the folder's file for the locale then (probe\ntext-domain-timing).",
                     "shapes": [],
                     "params": [
                         {
@@ -167761,24 +167777,10 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "file",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "locale",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 93
+                    "line": 87,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -167797,8 +167799,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 101
+                    "line": 94,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -167806,7 +167808,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "loadPlugin(mixed $domain, mixed $deprecated = false, mixed $relativePath = false): bool",
-                    "doc": "A plugin's domain loaded from its folder (load_plugin_textdomain), the plugins folder unless a path under it is given.",
+                    "doc": "A plugin's domain named to load from its folder\n(load_plugin_textdomain): a path under the plugins folder when one is\ngiven; else the deprecated folder under the site's root, told as\ndeprecated since 2.7.0; else the plugins folder itself.",
                     "shapes": [],
                     "params": [
                         {
@@ -167831,8 +167833,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 109
+                    "line": 107,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -167851,8 +167853,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 122
+                    "line": 117,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -167873,8 +167875,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 144
+                    "line": 136,
+                    "end": 149
                 }
             ]
         },
@@ -185309,7 +185311,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/ThemeHeaders.php",
-            "lines": 98,
+            "lines": 95,
             "doc": "A theme's headers as the reference's WP_Theme reads and shows them\n(probe theme-headers): sanitized as read, in the theme's language, and\nwith markup.",
             "implements": [],
             "extends": null,
@@ -185510,7 +185512,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "loadDomain(string $domain, string $folder, string $domainPath): bool",
-                    "doc": "A theme's text domain loaded from its folder, as load_theme_textdomain\nloads it: the folder its Domain Path names, its languages folder when\nit names none. False for a theme that names no domain.",
+                    "doc": "A theme's text domain named to load from its folder, as\nload_theme_textdomain names it: the folder its Domain Path names, its\nlanguages folder when it names none. False for a theme that names no\ndomain.",
                     "shapes": [],
                     "params": [
                         {
@@ -185535,8 +185537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 115
+                    "line": 109,
+                    "end": 112
                 }
             ]
         },

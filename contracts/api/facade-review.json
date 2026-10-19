@@ -16199,12 +16199,6 @@
                 "why": "hands out the API's translations object for a loaded domain, the one NOOP_Translations otherwise",
                 "body": "17229a061a14"
             },
-            "load_muplugin_textdomain": {
-                "verdict": "move",
-                "to": "Minn\\I18n\\TextDomains",
-                "why": "the must-use plugin folder and the domain-locale file name are the loader's rules",
-                "body": "b5b49287ffba"
-            },
             "load_script_module_textdomain": {
                 "verdict": "keep",
                 "reason": "compose",
@@ -16222,15 +16216,6 @@
                 "to": "Minn\\I18n\\ScriptTranslations",
                 "why": "reads a script translation file through its three filters",
                 "body": "4bae0bf985d7"
-            },
-            "load_theme_textdomain": {
-                "verdict": "move",
-                "to": "Minn\\I18n\\TextDomains",
-                "gates": [
-                    "unprobed"
-                ],
-                "why": "the theme folder (or the one named) and the domain-locale file name are the loader's rules",
-                "body": "2e3bbe1c614b"
             },
             "translate": {
                 "verdict": "delegate",

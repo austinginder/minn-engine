@@ -40,7 +40,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 250 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 358 | The active block theme on disk, read as data: theme.json, the templates |
-| [`ThemeHeaders`](#themeheaders) | final class | 98 | A theme's headers as the reference's WP_Theme reads and shows them |
+| [`ThemeHeaders`](#themeheaders) | final class | 95 | A theme's headers as the reference's WP_Theme reads and shows them |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`TreeStyles`](#treestyles) | final readonly class | 259 | The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree |
@@ -1532,7 +1532,7 @@ description texturized.
 
 A theme object's text domain (WP_Theme::load_textdomain), loaded once for it.
 
-Internals: `sanitized()` (private, line 50), `loadDomain()` (private, line 108)
+Internals: `sanitized()` (private, line 50), `loadDomain()` (private, line 109)
 
 
 ## ThemeJsonData

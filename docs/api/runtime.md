@@ -92,7 +92,7 @@ the WordPress runtime plugins load against
 | [`PluginRemoval`](#pluginremoval) | final class | 135 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 268 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 269 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostCaches`](#postcaches) | final class | 27 | A post's cached rows let go as WordPress lets them go: its row, its meta |
 | [`PostData`](#postdata) | final class | 98 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 165 | What the reference's REST controllers tell plugins about a post they |
@@ -155,7 +155,7 @@ the WordPress runtime plugins load against
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
 | [`Themes`](#themes) | final class | 125 | The site's themes as WordPress names and finds them: the active |
 | [`Transients`](#transients) | final class | 142 | Values kept for a while, as WordPress keeps them in options: the site's |
-| [`Translations`](#translations) | final class | 128 | The translations a request loads, as WordPress's l10n functions load |
+| [`Translations`](#translations) | final class | 133 | The translations a request loads, as WordPress's l10n functions load |
 | [`TreeWalk`](#treewalk) | final class | 182 | The Walker contract's traversal: elements keyed by the walker's |
 | [`TypeProps`](#typeprops) | final class | 150 | A post type's or taxonomy's properties from the arguments it was built |
 | [`UpdateCounts`](#updatecounts) | final class | 67 | The updates waiting, as wp_get_update_data counts them for the user |
@@ -4183,7 +4183,7 @@ silence it, its wording with an alternative and without one, and
 whether a closing note follows the wording (and is heard after the
 version).
 
-Used by: `Minn\Query\DateSql`, `Minn\Runtime\Abilities`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Hooks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostQuery`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserQueryRunner`
+Used by: `Minn\Query\DateSql`, `Minn\Runtime\Abilities`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Hooks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostQuery`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Translations`, `Minn\Runtime\UserQueryRunner`
 
 ### static `wanted(string $filter, mixed ...$args): bool`
 
@@ -5025,7 +5025,7 @@ gate refused it.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 152), `rememberThemeDomain()` (private, line 175), `includeFile()` (private, line 237), `registerRealpath()` (private, line 268), `isolatedInclude()` (private, line 281)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 152), `rememberThemeDomain()` (private, line 175), `includeFile()` (private, line 238), `registerRealpath()` (private, line 269), `isolatedInclude()` (private, line 282)
 
 
 ## PostCaches
@@ -8986,7 +8986,7 @@ Used by: `Minn\Runtime\AccountFlows`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\
 
 ### static `locale(): string`
 
-The locale in force (determine_locale): a switched one, else pre_determine_locale, else the site's through determine_locale.
+The locale in force (determine_locale): a switched one, else pre_determine_locale, else the configured one through determine_locale.
 
 ### static `load(mixed $domain, mixed $mofile, mixed $locale = NULL): bool`
 
@@ -8999,9 +8999,12 @@ up in, and its folder where its script translations are looked for.
 
 A text domain unloaded (unload_textdomain): whether it had files; one that did stays closed unless it may load again.
 
-### static `fromFolder(string $domain, string $folder, string $file, string $locale): bool`
+### static `fromFolder(string $domain, string $folder): bool`
 
-A domain loaded from a folder's file for the locale when there is one, or the folder named for later; a domain closed for good loads nothing.
+A domain's folder named for later (load_plugin_textdomain and the
+rest): nothing is read and no locale asked until the domain's first
+translation, which reads the folder's file for the locale then (probe
+text-domain-timing).
 
 ### static `loadDefault(mixed $locale = NULL): bool`
 
@@ -9009,7 +9012,10 @@ The default domain loaded again for a locale, the one in force unless named (loa
 
 ### static `loadPlugin(mixed $domain, mixed $deprecated = false, mixed $relativePath = false): bool`
 
-A plugin's domain loaded from its folder (load_plugin_textdomain), the plugins folder unless a path under it is given.
+A plugin's domain named to load from its folder
+(load_plugin_textdomain): a path under the plugins folder when one is
+given; else the deprecated folder under the site's root, told as
+deprecated since 2.7.0; else the plugins folder itself.
 
 ### static `userLocale(mixed $user = 0): string`
 

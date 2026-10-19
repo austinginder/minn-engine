@@ -2545,14 +2545,18 @@ neighbours over those classes. Fixture `contracts/fixtures/api/l10n.json`
 - **`get_translations_for_domain`** is a `WP_Translations` for a loaded
   domain (its `translate` and `translate_plural` fall back to the
   original) and one shared `NOOP_Translations` otherwise.
-- **`load_plugin_textdomain($domain, false, $rel)`** reads
-  `WP_PLUGIN_DIR/$rel/{domain}-{locale}` (`.l10n.php` or `.mo`) when it
-  is there; when it is not, it names the folder and returns true without
-  loading. It fires no `plugin_locale` filter. `load_theme_textdomain`
-  and `load_muplugin_textdomain` work the same way, and a folder named in
-  code holds `{domain}-{locale}` files even inside the themes root; only
-  the active theme's own domain (its `Text Domain` header, or the slug)
-  reads its `Domain Path` (or `/languages`) by locale alone (`pl_PL.mo`).
+- **`load_plugin_textdomain($domain, false, $rel)`** names the folder
+  `WP_PLUGIN_DIR/$rel` for the domain and returns true; it reads nothing
+  and fires nothing, not even the locale filters, and the domain is read
+  at its first translation (corrected 2026-10-19, probe
+  `text-domain-timing`; this note had said a file that is there loads at
+  once). `load_theme_textdomain`, `load_child_theme_textdomain` and
+  `load_muplugin_textdomain` work the same way. A named folder holds
+  `{domain}-{locale}` files (`.l10n.php` or `.mo`), even inside the themes
+  root, except at or below the active theme's own folder, where any
+  domain's file is named by the locale alone (`pl_PL.mo`); the active
+  theme's own domain (its `Text Domain` header, or the slug) is named for
+  its `Domain Path` (or `/languages`) as it loads.
 - **Just in time** (suite `tests/l10n.test.php`, which stages files
   before either stack starts, because the reference reads the languages
   folder once per request). A domain used before anyone loaded it is
@@ -17815,6 +17819,50 @@ Left:
 - The reference keeps its scan of the themes root in the `theme_roots` site transient and for
   the request; the engine reads the folder each time it lists themes.
 
+## Text domains read at their first translation (2026-10-19)
+
+Probe `text-domain-timing`, from the register row at 17714.
+
+- `load_plugin_textdomain`, `load_theme_textdomain`, `load_child_theme_textdomain` and
+  `load_muplugin_textdomain` name the domain's folder and answer true. Nothing is read and
+  no hook fires, not even the locale filters. The domain is read at its first translation
+  (or `get_translations_for_domain`), from that folder's file for the locale in force then,
+  the load attempted even when no file is there; once read it is not read again, and naming
+  the folder again reads nothing. The engine read a file that was there at once
+  (`Runtime\Translations::fromFolder`), so `is_textdomain_loaded` answered true before any
+  translation and each further call read the file again.
+- A domain named and then unloaded before its first translation had nothing to unload
+  (false) and still loads at that translation. The engine had loaded it, so the unload closed
+  it for good and it stayed in English.
+- At or below the active theme's folder, a named folder's file is named by the locale alone
+  (`de_DE.mo`), whichever domain names it and whether a path was given or not
+  (`I18n\TextDomains::rememberTheme`); anywhere else, another theme's folder and the themes
+  root included, it is `{domain}-{locale}`. A path climbing into the theme with `..` is not
+  inside it, nor is a folder whose name only starts with the theme's. The engine named files
+  by locale alone only for the active theme's own domain.
+- `determine_locale` asks `pre_determine_locale` once, then the site's locale through the
+  `locale` filter; the engine asked `pre_determine_locale` twice.
+- A domain nobody named asks only the locale, on both stacks.
+- `load_plugin_textdomain`'s deprecated second argument, given without a plugin path, is a
+  folder under the site's root, and the call is told as deprecated since 2.7.0
+  (`deprecated_argument_run`); with a plugin path it is ignored without a word. The engine
+  ignored it always.
+
+No SELECT more on the pages measured.
+
+Left:
+
+- `get_locale` still takes what `pre_determine_locale` answers; the reference's does not
+  (it answers the site's locale through `locale`, so `get_user_locale`, `sanitize_title`
+  and `sanitize_file_name` never ask `pre_determine_locale`). Fixed alone, the hook battery
+  refuses it: in 40 probe scenarios the reference asks `pre_determine_locale` only while it
+  builds its default scripts (the language of `mediaelement-core`'s `mejsL10n`), and the
+  engine matched that only through this extra ask. The engine registers 14 default scripts
+  to the reference's 654 and no MediaElement player at all, so `[audio]` and `[video]` play
+  in the browser's own player. Settling it means the MediaElement scripts and styles (the
+  library is MIT; WordPress's skin and its init script would be the engine's own), or
+  Austin accepting the native player.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17900,6 +17948,7 @@ rows that are `open` or `austin`.
 | 17714 | The template part's four rows (10-19) | a synced pattern's and a post's content get no first-child or last-child hooked blocks | done | 2026-10-19: "Block hooks over a post's content" (probe `post-block-hooks`) |
 | 17714 | The template part's four rows (10-19) | the session store writes `session_tokens` without the meta API (no `added_user_meta` / `updated_user_meta`) | done | 2026-10-19: as above (probe `user-meta-writes`); the store still reads its blob by shape before the runtime is up |
 | 17714 | The template part's four rows (10-19) | `WP_Theme::get` returns a header as written, where the reference's sanitizes it as read | done | 2026-10-19: as above (probe `theme-headers`) |
-| 17714 | The template part's four rows (10-19) | text domains load when `load_*_textdomain` is called, not at the first translation; a domain nobody named is looked for | open | `Runtime\Translations::fromFolder` loads a file that is there at once; the reference notes the folder and waits (probe `theme-headers` holds the load a header triggers) |
+| 17714 | The template part's four rows (10-19) | text domains load when `load_*_textdomain` is called, not at the first translation; a domain nobody named is looked for | done | "Text domains read at their first translation (2026-10-19)": the folder is only named and read at the first translation, by locale alone inside the active theme's folder (probe `text-domain-timing`); a domain nobody named asks only the locale on both stacks |
 | 17811 | Themes as WordPress reads them (10-19) | the themes root's scan kept in the `theme_roots` site transient | accepted | the engine reads the folder each time it lists themes, a few directory reads; what is listed agrees, so nothing a visitor or plugin sees differs |
+| 17853 | Text domains at their first translation (10-19) | `get_locale` takes `pre_determine_locale`'s answer, which the reference's does not | austin | fixed alone, the hook battery refuses it: the reference asks `pre_determine_locale` in 40 probe scenarios only to build MediaElement's `mejsL10n`, and the engine registers no MediaElement player; build the player scripts (MIT library, the engine's own skin and init) or accept the native player, then fix `I18n\SiteLanguage::locale` |
 | 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | open | the reference's fallback lookup makes one from the classic menu or a page list unless `wp_navigation_should_create_fallback` says not; the engine renders the same items without writing (`Navigation::classicItems`) |

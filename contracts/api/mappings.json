@@ -2,13 +2,13 @@
     "generated": "2026-10-19",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 682,
-        "composes": 2128,
+        "minn": 683,
+        "composes": 2126,
         "leaf": 1006,
         "noop": 3169,
         "placeholder": 0,
         "deadend": 1767,
-        "functions": 8674,
+        "functions": 8673,
         "minnMethods": 1424,
         "leafLinesOver15": 11
     },
@@ -37322,15 +37322,6 @@
             "minn": [],
             "composes": []
         },
-        "_minn_load_from_folder": {
-            "file": "l10n.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Translations::fromFolder"
-            ],
-            "composes": []
-        },
         "_minn_load_requests": {
             "file": "http.php",
             "lines": 9,
@@ -54256,13 +54247,12 @@
         },
         "load_muplugin_textdomain": {
             "file": "l10n.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_load_from_folder",
-                "determine_locale"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Translations::fromFolder"
+            ],
+            "composes": []
         },
         "load_plugin_textdomain": {
             "file": "l10n.php",
@@ -54326,12 +54316,12 @@
         },
         "load_theme_textdomain": {
             "file": "l10n.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Translations::fromFolder"
+            ],
             "composes": [
-                "_minn_load_from_folder",
-                "determine_locale",
                 "get_template_directory"
             ]
         },

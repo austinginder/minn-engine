@@ -17,7 +17,7 @@ use Minn\Objects\User;
  */
 final class Translations
 {
-    /** The locale in force (determine_locale): a switched one, else pre_determine_locale, else the site's through determine_locale. */
+    /** The locale in force (determine_locale): a switched one, else pre_determine_locale, else the configured one through determine_locale. */
     public static function locale(): string
     {
         if (Runtime::locales()->switched()) {
@@ -27,7 +27,7 @@ final class Translations
         if (is_string($locale) && $locale !== '') {
             return $locale;
         }
-        return (string) Runtime::hooks()->filter('determine_locale', [SiteLanguage::locale()]);
+        return (string) Runtime::hooks()->filter('determine_locale', [SiteLanguage::configured()]);
     }
 
     /**
@@ -78,16 +78,14 @@ final class Translations
         return $had;
     }
 
-    /** A domain loaded from a folder's file for the locale when there is one, or the folder named for later; a domain closed for good loads nothing. */
-    public static function fromFolder(string $domain, string $folder, string $file, string $locale): bool
+    /**
+     * A domain's folder named for later (load_plugin_textdomain and the
+     * rest): nothing is read and no locale asked until the domain's first
+     * translation, which reads the folder's file for the locale then (probe
+     * text-domain-timing).
+     */
+    public static function fromFolder(string $domain, string $folder): bool
     {
-        $folder = rtrim($folder, '/');
-        // The active theme's own folder names its files by locale alone, whoever loads it.
-        $file = Runtime::textDomains()->folderFile($domain, $locale) === "{$folder}/{$locale}.mo" ? $locale : $file;
-        $mofile = "{$folder}/{$file}.mo";
-        if (!Runtime::textDomains()->closed($domain) && (is_readable($mofile) || is_readable("{$folder}/{$file}.l10n.php"))) {
-            return self::load($domain, $mofile, $locale);
-        }
         Runtime::textDomains()->rememberFolder($domain, $folder);
         return true;
     }
@@ -100,12 +98,19 @@ final class Translations
         return self::load('default', WP_LANG_DIR . "/{$locale}.mo", $locale);
     }
 
-    /** A plugin's domain loaded from its folder (load_plugin_textdomain), the plugins folder unless a path under it is given. */
+    /**
+     * A plugin's domain named to load from its folder
+     * (load_plugin_textdomain): a path under the plugins folder when one is
+     * given; else the deprecated folder under the site's root, told as
+     * deprecated since 2.7.0; else the plugins folder itself.
+     */
     public static function loadPlugin(mixed $domain, mixed $deprecated = false, mixed $relativePath = false): bool
     {
-        $folder = WP_PLUGIN_DIR . ($relativePath !== false ? '/' . trim((string) $relativePath, '/') : '');
-        $locale = self::locale();
-        return self::fromFolder((string) $domain, $folder, "{$domain}-{$locale}", $locale);
+        if ($relativePath === false && $deprecated !== false) {
+            Notices::deprecated('argument', 'load_plugin_textdomain', '2.7.0');
+            return self::fromFolder((string) $domain, ABSPATH . trim((string) $deprecated, '/'));
+        }
+        return self::fromFolder((string) $domain, WP_PLUGIN_DIR . ($relativePath !== false ? '/' . trim((string) $relativePath, '/') : ''));
     }
 
     /** A user's locale (get_user_locale), the signed-in user's for 0; the site's when the user has none or does not exist. */

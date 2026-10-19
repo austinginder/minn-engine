@@ -101,16 +101,13 @@ final class ThemeHeaders
     }
 
     /**
-     * A theme's text domain loaded from its folder, as load_theme_textdomain
-     * loads it: the folder its Domain Path names, its languages folder when
-     * it names none. False for a theme that names no domain.
+     * A theme's text domain named to load from its folder, as
+     * load_theme_textdomain names it: the folder its Domain Path names, its
+     * languages folder when it names none. False for a theme that names no
+     * domain.
      */
     private static function loadDomain(string $domain, string $folder, string $domainPath): bool
     {
-        if ($domain === '') {
-            return false;
-        }
-        $locale = Translations::locale();
-        return Translations::fromFolder($domain, $folder . ($domainPath !== '' ? $domainPath : '/languages'), "{$domain}-{$locale}", $locale);
+        return $domain !== '' && Translations::fromFolder($domain, $folder . ($domainPath !== '' ? $domainPath : '/languages'));
     }
 }

@@ -16,7 +16,12 @@ use Minn\Runtime\Runtime;
  */
 final class SiteLanguage
 {
-    /** The locale in force (get_locale). */
+    /**
+     * The locale in force (get_locale). It still takes what
+     * pre_determine_locale answers, which the reference's get_locale does
+     * not (probe text-domain-timing; open in contracts/runtime.md, "Text
+     * domains read at their first translation").
+     */
     public static function locale(): string
     {
         $stack = Runtime::locales();
@@ -27,6 +32,12 @@ final class SiteLanguage
         if (is_string($early) && $early !== '') {
             return $early;
         }
+        return self::configured();
+    }
+
+    /** The locale the WPLANG option names (en_US when it names none), through the locale filter. */
+    public static function configured(): string
+    {
         $locale = (string) (Runtime::options()->get('WPLANG') ?? '');
         return (string) Runtime::hooks()->filter('locale', [$locale === '' ? 'en_US' : $locale]);
     }
