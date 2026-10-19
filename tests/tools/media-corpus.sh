@@ -68,4 +68,11 @@ $F -f lavfi -i "$V:s=80x60:d=1.0" -f lavfi -i "sine=f=440:d=1.0:sample_rate=4410
 $F -f lavfi -i "$V:s=64x64:d=1.3" -f lavfi -i "sine=f=440:d=1.3" -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a flac -metadata title="MKV Title" "$OUT/v09-matroska.mkv"
 $F -f lavfi -i "$V:s=96x48:d=1.0" -c:v libx264 -preset veryfast -pix_fmt yuv420p -metadata:s:v:0 rotate=90 "$OUT/v10-rotated.mp4"
 $F -f lavfi -i "$V:s=80x64:d=1.0" -f lavfi -i "sine=f=440:d=1.0" -c:v wmv2 -c:a wmav2 -b:a 64k -metadata title="WMV Title" "$OUT/v11-windows.wmv"
+
+# More codecs in their containers: float WAV, AC-3 5.1 and MP3 in Matroska, PCM in AVI.
+tone 44100 1 t14.wav 0.3
+$F -i t14.wav -c:a pcm_f32le "$OUT/a14-float.wav"
+$F -f lavfi -i "$V:s=64x48:d=1.0" -f lavfi -i "sine=f=440:d=1.0" -af "aformat=channel_layouts=5.1" -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a ac3 "$OUT/v12-ac3.mkv"
+$F -f lavfi -i "$V:s=64x48:d=1.0" -f lavfi -i "sine=f=440:d=1.0" -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a libmp3lame -b:a 64k "$OUT/v13-mp3.mkv"
+$F -f lavfi -i "$V:s=80x60:d=1.0" -f lavfi -i "sine=f=440:d=1.0" -c:v mjpeg -c:a pcm_s16le "$OUT/v14-mjpeg-pcm.avi"
 ls -la "$OUT"

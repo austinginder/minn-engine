@@ -291,6 +291,27 @@
         }
     ],
     [
+        "a14-float.wav",
+        {
+            "dataformat": "wav",
+            "bitrate_mode": "cbr",
+            "wformattag": 3,
+            "codec": "IEEE Float",
+            "channels": 1,
+            "sample_rate": 44100,
+            "bitrate": 1411200,
+            "bits_per_sample": 32,
+            "lossless": false,
+            "channelmode": "mono",
+            "compression_ratio": 1,
+            "fileformat": "wav",
+            "filesize": 53012,
+            "mime_type": "audio/wav",
+            "length": 0,
+            "length_formatted": "0:00"
+        }
+    ],
+    [
         "v01-h264-aac.mp4",
         {
             "bitrate": 131164,
@@ -544,6 +565,89 @@
                 "compression_ratio": "(float) 0.09070294784580499"
             },
             "created_timestamp": 0
+        }
+    ],
+    [
+        "v12-ac3.mkv",
+        {
+            "bitrate": 27666,
+            "filesize": 59815,
+            "mime_type": "video/x-matroska",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 64,
+            "height": 48,
+            "fileformat": "matroska",
+            "dataformat": "h264",
+            "audio": {
+                "dataformat": "ac3",
+                "sample_rate": 44100,
+                "channels": "5.1",
+                "language": "und",
+                "bits_per_sample": 32,
+                "bitrate_mode": "cbr",
+                "lossless": false,
+                "bitrate": 448000,
+                "channelmode": "surround",
+                "compression_ratio": "(float) 0.06224712107065049"
+            }
+        }
+    ],
+    [
+        "v13-mp3.mkv",
+        {
+            "bitrate": 27309,
+            "filesize": 11699,
+            "mime_type": "video/x-matroska",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 64,
+            "height": 48,
+            "fileformat": "matroska",
+            "dataformat": "h264",
+            "audio": {
+                "dataformat": "mp3",
+                "sample_rate": 44100,
+                "channels": 1,
+                "language": "und",
+                "bits_per_sample": 16,
+                "bitrate": 64000,
+                "channelmode": "mono",
+                "bitrate_mode": "cbr",
+                "lossless": false,
+                "encoder_options": "CBR64",
+                "compression_ratio": "(float) 0.09070294784580499"
+            }
+        }
+    ],
+    [
+        "v14-mjpeg-pcm.avi",
+        {
+            "lossless": false,
+            "bitrate": 428624,
+            "bitrate_mode": "vbr",
+            "filesize": 152876,
+            "mime_type": "video/avi",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 80,
+            "height": 60,
+            "fileformat": "avi",
+            "dataformat": "avi",
+            "codec": "Microsoft Motion JPEG DIB",
+            "audio": {
+                "dataformat": "wav",
+                "bitrate_mode": "cbr",
+                "wformattag": 1,
+                "codec": "Pulse Code Modulation (PCM)",
+                "channels": 1,
+                "sample_rate": 44100,
+                "bitrate": 705600,
+                "bits_per_sample": 16,
+                "lossless": true,
+                "channelmode": "mono",
+                "compression_ratio": 1
+            }
         }
     ],
     [
@@ -1094,6 +1198,11 @@
                 true
             ],
             [
+                "a14-float.wav",
+                "wav",
+                true
+            ],
+            [
                 "v01-h264-aac.mp4",
                 "mp4",
                 true
@@ -1146,6 +1255,21 @@
             [
                 "v11-windows.wmv",
                 "asf",
+                true
+            ],
+            [
+                "v12-ac3.mkv",
+                "matroska",
+                true
+            ],
+            [
+                "v13-mp3.mkv",
+                "matroska",
+                true
+            ],
+            [
+                "v14-mjpeg-pcm.avi",
+                "avi",
                 true
             ],
             [
@@ -1334,5 +1458,1137 @@
                 "filesize": 4520
             }
         ]
+    ],
+    [
+        "LAME tags",
+        [
+            [
+                {
+                    "method": 4,
+                    "preset": 480
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--preset fast standard -b32 --lowpass 18500",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 480
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--preset standard -b32 --lowpass 18500",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 4,
+                    "preset": 500,
+                    "lowpass": 22100
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--preset fast extreme -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 4,
+                    "preset": 460,
+                    "lowpass": 18000
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--preset fast medium -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 470,
+                    "lowpass": 19500
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--r3mix -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 1004,
+                    "lowpass": 19000
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--alt-preset fast standard -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 1001
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--alt-preset standard -b32 --lowpass 18500",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 4,
+                    "preset": 1010
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--preset portable -b32 --lowpass 18500",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 430,
+                    "source": 2
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--preset radio -b32 --resample 44100",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 410,
+                    "minimum": 0
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "-V9",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 490,
+                    "flags": 4
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "-V1 -b32 --nogap",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 4,
+                    "preset": 440,
+                    "source": 0
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "-V6 -b32 --resample 44100",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 0,
+                    "quality": 57
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "-V4 -q3 -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 0,
+                    "quality": 0
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "VBR -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 0,
+                    "quality": 101
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "-V-1 -q9 -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 2,
+                    "preset": 0
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "abr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "ABR",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 9,
+                    "preset": 128
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "abr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "ABR -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 1,
+                    "preset": 0
+                },
+                {
+                    "bitrate": 128000,
+                    "bitrate_mode": "cbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "CBR128",
+                    "length": 2
+                }
+            ],
+            [
+                {
+                    "method": 1,
+                    "preset": 64
+                },
+                {
+                    "bitrate": 128000,
+                    "bitrate_mode": "cbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--alt-preset cbr 64",
+                    "length": 2
+                }
+            ],
+            [
+                {
+                    "method": 1,
+                    "preset": 320
+                },
+                {
+                    "bitrate": 128000,
+                    "bitrate_mode": "cbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "--preset insane --lowpass 18500",
+                    "length": 2
+                }
+            ],
+            [
+                {
+                    "method": 8,
+                    "preset": 0
+                },
+                {
+                    "bitrate": "(float) 99079.28427419353",
+                    "bitrate_mode": "cbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "CBR100 -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 0,
+                    "preset": 0
+                },
+                {
+                    "bitrate": "(float) 99079.28427419353",
+                    "bitrate_mode": "unk",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "UNK -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 7,
+                    "preset": 0
+                },
+                {
+                    "bitrate": "(float) 99079.28427419353",
+                    "bitrate_mode": "",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": " -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 15,
+                    "preset": 0
+                },
+                {
+                    "bitrate": "(float) 99079.28427419353",
+                    "bitrate_mode": "res",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "RES -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 16
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "-V2 -q0 -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 405
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "new/unknown preset: 405 - report to info@getid3.org -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 1008
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "new/unknown preset: 1008 - report to info@getid3.org -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 2047
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME4.0",
+                    "encoder_options": "new/unknown preset: 2047 - report to info@getid3.org -b32",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 4,
+                    "preset": 480,
+                    "encoder": "LAME3.90."
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "codec": "LAME",
+                    "encoder": "LAME3.90.3",
+                    "encoder_options": "--preset fast standard -b32 --lowpass 18500",
+                    "length": 3
+                }
+            ],
+            [
+                {
+                    "method": 4,
+                    "preset": 480,
+                    "encoder": "Lavc61.3"
+                },
+                {
+                    "bitrate": "(float) 99079.28427419355",
+                    "bitrate_mode": "vbr",
+                    "encoder_options": "VBR",
+                    "length": 3
+                }
+            ]
+        ]
+    ],
+    [
+        "LAME tags in an MPEG-2 mono file",
+        [
+            [
+                {
+                    "method": 1,
+                    "preset": 64
+                },
+                {
+                    "bitrate": 64000,
+                    "bitrate_mode": "cbr",
+                    "encoder_options": "--alt-preset cbr 64"
+                }
+            ],
+            [
+                {
+                    "method": 8,
+                    "preset": 0
+                },
+                {
+                    "bitrate": "(float) 65132.8125",
+                    "bitrate_mode": "cbr",
+                    "encoder_options": "CBR66 -b64"
+                }
+            ],
+            [
+                {
+                    "method": 0,
+                    "preset": 0
+                },
+                {
+                    "bitrate": "(float) 65132.8125",
+                    "bitrate_mode": "unk",
+                    "encoder_options": "UNK -b64"
+                }
+            ],
+            [
+                {
+                    "method": 4,
+                    "preset": 470
+                },
+                {
+                    "bitrate": "(float) 65132.81249999999",
+                    "bitrate_mode": "vbr",
+                    "encoder_options": "--r3mix -b64"
+                }
+            ],
+            [
+                {
+                    "method": 3,
+                    "preset": 430,
+                    "source": 1
+                },
+                {
+                    "bitrate": "(float) 65132.81249999999",
+                    "bitrate_mode": "vbr",
+                    "encoder_options": "--preset radio -b64 --resample 22050"
+                }
+            ]
+        ]
+    ],
+    [
+        "MPEG-4 video codes",
+        [
+            [
+                "avc1",
+                {
+                    "bitrate": 131164,
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime",
+                    "codec": "H.264/MPEG-4 AVC"
+                }
+            ],
+            [
+                "hvc1",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime",
+                    "codec": "H.265/HEVC"
+                }
+            ],
+            [
+                "mp4v",
+                {
+                    "bitrate": 131164,
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "mpeg4"
+                }
+            ],
+            [
+                "jpeg",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime",
+                    "codec": "JPEG"
+                }
+            ],
+            [
+                "mjpa",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime",
+                    "codec": "Motion JPEG-A"
+                }
+            ],
+            [
+                "png ",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime",
+                    "codec": "PNG"
+                }
+            ],
+            [
+                "rle ",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime"
+                }
+            ],
+            [
+                "SVQ3",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime",
+                    "codec": "Sorenson Video 3 (Apple Quicktime 5)"
+                }
+            ],
+            [
+                "cvid",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime",
+                    "codec": "Cinepak"
+                }
+            ],
+            [
+                "DIVX",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "divx"
+                }
+            ],
+            [
+                "xvid",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "xvid"
+                }
+            ],
+            [
+                "3IV2",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "3ivx"
+                }
+            ],
+            [
+                "avc3",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime"
+                }
+            ],
+            [
+                "zzzz",
+                {
+                    "mime_type": "video/mp4",
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime"
+                }
+            ]
+        ]
+    ],
+    [
+        "MPEG-4 video with a vendor",
+        [
+            [
+                "avc1",
+                {
+                    "lossless": false,
+                    "bitrate": 131164,
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime",
+                    "codec": "Lavc63.1.102 libx264"
+                }
+            ],
+            [
+                "jpeg",
+                {
+                    "lossless": false,
+                    "fileformat": "mp4",
+                    "dataformat": "quicktime",
+                    "codec": "Lavc63.1.102 libx264"
+                }
+            ],
+            [
+                "mp4v",
+                {
+                    "lossless": false,
+                    "bitrate": 131164,
+                    "fileformat": "mp4",
+                    "dataformat": "mpeg4",
+                    "codec": "Lavc63.1.102 libx264"
+                }
+            ]
+        ]
+    ],
+    [
+        "MPEG-4 sound codes",
+        [
+            [
+                "alac",
+                {
+                    "bitrate": 195980,
+                    "mime_type": "video/quicktime",
+                    "fileformat": "mp4",
+                    "codec": "H.264/MPEG-4 AVC"
+                }
+            ],
+            [
+                "raw ",
+                {
+                    "bitrate": 195980,
+                    "mime_type": "video/quicktime",
+                    "fileformat": "mp4",
+                    "codec": "RAW"
+                }
+            ],
+            [
+                "sowt",
+                {
+                    "bitrate": 195980,
+                    "mime_type": "video/quicktime",
+                    "fileformat": "mp4",
+                    "codec": "H.264/MPEG-4 AVC"
+                }
+            ],
+            [
+                "ac-3",
+                {
+                    "bitrate": 195980,
+                    "mime_type": "video/quicktime",
+                    "fileformat": "mp4",
+                    "codec": "H.264/MPEG-4 AVC"
+                }
+            ]
+        ]
+    ],
+    [
+        "wave format tags",
+        [
+            [
+                0,
+                {
+                    "dataformat": "wav",
+                    "codec": "Microsoft Unknown Wave Format",
+                    "lossless": false
+                }
+            ],
+            [
+                1,
+                {
+                    "dataformat": "wav",
+                    "codec": "Pulse Code Modulation (PCM)",
+                    "lossless": true
+                }
+            ],
+            [
+                2,
+                {
+                    "dataformat": "wav",
+                    "codec": "Microsoft ADPCM",
+                    "lossless": false
+                }
+            ],
+            [
+                3,
+                {
+                    "dataformat": "wav",
+                    "codec": "IEEE Float",
+                    "lossless": false
+                }
+            ],
+            [
+                6,
+                {
+                    "dataformat": "wav",
+                    "codec": "Microsoft A-Law",
+                    "lossless": false
+                }
+            ],
+            [
+                7,
+                {
+                    "dataformat": "wav",
+                    "codec": "Microsoft mu-Law",
+                    "lossless": false
+                }
+            ],
+            [
+                17,
+                {
+                    "dataformat": "wav",
+                    "codec": "Intel DVI/IMA ADPCM",
+                    "lossless": false
+                }
+            ],
+            [
+                49,
+                {
+                    "dataformat": "wav",
+                    "codec": "Microsoft GSM 6.10",
+                    "lossless": false
+                }
+            ],
+            [
+                80,
+                {
+                    "dataformat": "wav",
+                    "codec": "MPEG Layer-2 or Layer-1",
+                    "lossless": false
+                }
+            ],
+            [
+                146,
+                {
+                    "dataformat": "wav",
+                    "codec": "Dolby AC3 SPDIF",
+                    "lossless": false
+                }
+            ],
+            [
+                353,
+                {
+                    "dataformat": "wav",
+                    "codec": "Windows Media Audio V7 / V8 / V9",
+                    "lossless": false
+                }
+            ],
+            [
+                8192,
+                {
+                    "dataformat": "ac3",
+                    "codec": "Dolby AC3",
+                    "lossless": false
+                }
+            ],
+            [
+                2222,
+                {
+                    "dataformat": "litewave",
+                    "codec": "ClearJump LiteWave",
+                    "lossless": false
+                }
+            ],
+            [
+                26447,
+                {
+                    "dataformat": "wav",
+                    "codec": "Ogg Vorbis 1",
+                    "lossless": false
+                }
+            ],
+            [
+                4660,
+                {
+                    "dataformat": "wav",
+                    "codec": "",
+                    "lossless": false
+                }
+            ]
+        ]
+    ],
+    [
+        "AVI video codecs",
+        [
+            [
+                [
+                    "XVID",
+                    "XVID"
+                ],
+                "XviD MPEG-4 (www.xvid.org)"
+            ],
+            [
+                [
+                    "DIVX",
+                    "DIVX"
+                ],
+                "DivX MPEG-4 v4 (OpenDivX / Project Mayo)"
+            ],
+            [
+                [
+                    "FMP4",
+                    "XVID"
+                ],
+                "XviD MPEG-4 (www.xvid.org)"
+            ],
+            [
+                [
+                    "H264",
+                    "H264"
+                ],
+                "Intel ITU H.264 Videoconferencing"
+            ],
+            [
+                [
+                    "MJPG",
+                    "MJPG"
+                ],
+                "Microsoft Motion JPEG DIB"
+            ],
+            [
+                [
+                    "divx",
+                    "divx"
+                ],
+                "DivX MPEG-4"
+            ],
+            [
+                [
+                    "xvid",
+                    "xvid"
+                ],
+                null
+            ],
+            [
+                [
+                    "MP42",
+                    "MP42"
+                ],
+                "Microsoft MPEG-4 (low-motion)"
+            ],
+            [
+                [
+                    "zzzz",
+                    "zzzz"
+                ],
+                null
+            ]
+        ]
+    ],
+    [
+        "Vorbis nominal bitrates",
+        [
+            [
+                {
+                    "nominal": 0
+                },
+                "-q -4"
+            ],
+            [
+                {
+                    "nominal": 45000
+                },
+                "-q -1.2"
+            ],
+            [
+                {
+                    "nominal": 63500
+                },
+                "-q -0"
+            ],
+            [
+                {
+                    "nominal": 112000
+                },
+                "-q 3"
+            ],
+            [
+                {
+                    "nominal": 130000
+                },
+                "-q 4.1"
+            ],
+            [
+                {
+                    "nominal": 259500
+                },
+                "-q 8.1"
+            ],
+            [
+                {
+                    "nominal": 499821
+                },
+                "-q 10"
+            ],
+            [
+                {
+                    "nominal": 671000
+                },
+                "-q 11"
+            ],
+            [
+                {
+                    "nominal": 112000,
+                    "channels": 1
+                },
+                "Nominal bitrate: 112kbps"
+            ],
+            [
+                {
+                    "nominal": 112000,
+                    "rate": 48000
+                },
+                "-q 3"
+            ],
+            [
+                {
+                    "nominal": 112000,
+                    "rate": 32000
+                },
+                "Nominal bitrate: 112kbps"
+            ],
+            [
+                {
+                    "nominal": 40222,
+                    "channels": 1,
+                    "rate": 22050
+                },
+                "Nominal bitrate: 40kbps"
+            ]
+        ]
+    ],
+    [
+        "Flash codec numbers",
+        [
+            [
+                0,
+                null,
+                "Linear PCM, platform endian"
+            ],
+            [
+                1,
+                null,
+                "ADPCM"
+            ],
+            [
+                2,
+                "Sorenson H.263",
+                "mp3"
+            ],
+            [
+                3,
+                "Screen video",
+                "Linear PCM, little endian"
+            ],
+            [
+                4,
+                "On2 VP6",
+                "Nellymoser 16kHz mono"
+            ],
+            [
+                5,
+                "On2 VP6 with alpha channel",
+                "Nellymoser 8kHz mono"
+            ],
+            [
+                6,
+                "Screen video v2",
+                "Nellymoser"
+            ],
+            [
+                7,
+                "Sorenson H.264",
+                "G.711A-law logarithmic PCM"
+            ],
+            [
+                8,
+                null,
+                "G.711 mu-law logarithmic PCM"
+            ],
+            [
+                9,
+                null,
+                "reserved"
+            ],
+            [
+                10,
+                null,
+                "AAC"
+            ],
+            [
+                11,
+                null,
+                "Speex"
+            ],
+            [
+                12,
+                null,
+                false
+            ],
+            [
+                13,
+                null,
+                false
+            ],
+            [
+                14,
+                null,
+                "mp3 8kHz"
+            ],
+            [
+                15,
+                null,
+                "Device-specific sound"
+            ]
+        ]
+    ],
+    [
+        "wp_add_id3_tag_data",
+        {
+            "ID3v2 first values": {
+                "title": "T2",
+                "artist": "A2"
+            },
+            "ID3v1 when there is no ID3v2": {
+                "title": "T1",
+                "year": ""
+            },
+            "ID3v2 wins outright": {
+                "title": "T2"
+            },
+            "an empty ID3v2 list falls through": {
+                "title": "one"
+            },
+            "other tags are not read": [],
+            "length left out": {
+                "LENGTH": "5",
+                "title": "t"
+            },
+            "values made text": {
+                "artist": "",
+                "n": "0",
+                "num": "7",
+                "f": "1.5",
+                "b": "1"
+            },
+            "lists kept, cleaned": {
+                "genre": [
+                    "x<b>y</b>",
+                    [
+                        "<i>z</i>"
+                    ]
+                ],
+                "picture": {
+                    "data": "x"
+                }
+            },
+            "markup cleaned": {
+                "title": "x<b>y</b> &amp; <a href=\"z\">l</a>"
+            },
+            "the first value by order": {
+                "title": "three"
+            },
+            "terms of use mended": {
+                "terms_of_use": "Copyright notice. abc",
+                "copyright": "yright x"
+            },
+            "metadata kept beside": {
+                "title": "new",
+                "keep": 1
+            }
+        }
+    ],
+    [
+        "wp_get_media_creation_timestamp",
+        {
+            "nothing": false,
+            "no format": false,
+            "QuickTime": 1234,
+            "MPEG-4 reads the first box whatever it is": 5,
+            "MPEG-4 zero and before 1970": -2082844800,
+            "a number as text": 12,
+            "Matroska creation time": 1577934245,
+            "Matroska creation time that is no date": false,
+            "WebM date": 556,
+            "a date only in the second info": false,
+            "Windows Media": 0,
+            "another format": false,
+            "a format is matched exactly": false
+        }
     ]
 ]

@@ -76,6 +76,21 @@ final class Analyzer
             }
             return self::mpeg($source, $start, $end);
         }
+        if (str_starts_with($magic, 'fLaC')) {
+            return Flac::read($source);
+        }
+        if (str_starts_with($magic, 'OggS')) {
+            return Ogg::read($source);
+        }
+        if (Asf::detects($magic)) {
+            return Asf::read($source);
+        }
+        if (str_starts_with($magic, 'FLV')) {
+            return Flv::read($source);
+        }
+        if (Matroska::detects($magic)) {
+            return Matroska::read($source);
+        }
         if (Riff::detects($magic)) {
             return Riff::read($source);
         }

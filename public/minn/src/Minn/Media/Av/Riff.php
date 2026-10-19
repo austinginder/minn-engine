@@ -288,6 +288,12 @@ final class Riff
         return $names[$tag] ?? '';
     }
 
+    /** The name an AVI video codec code has; empty for one it does not know. */
+    public static function videoCodec(string $code): string
+    {
+        return self::videoCodecs()[$code] ?? '';
+    }
+
     /** @return array<string, string> code => name */
     private static function videoCodecs(): array
     {

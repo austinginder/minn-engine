@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Media\Av\Analyzer;
+use Minn\Media\FileTypes;
 
 /**
  * An audio or video file's metadata as WordPress's media readers keep it
@@ -101,6 +102,57 @@ final class AvMetadata
             break;
         }
         return $metadata;
+    }
+
+    /**
+     * An audio or video attachment's metadata with its cover kept as an
+     * attachment of its own, as wp_generate_attachment_metadata keeps it:
+     * where the attachment type or the theme supports thumbnails, the
+     * cover (found again by its digest, or written beside the file as
+     * "name-ext-image") becomes the attachment's thumbnail; the cover's
+     * bytes leave the metadata either way.
+     *
+     * @param array<string, mixed> $metadata
+     * @return array<string, mixed>
+     */
+    public static function withCover(mixed $attachmentId, string $file, array $metadata, string $kind): array
+    {
+        $image = $metadata['image'] ?? null;
+        if (!is_array($image) || empty($image['data'])) {
+            return $metadata;
+        }
+        $type = "attachment:{$kind}";
+        if (Registered::supports($type, 'thumbnail') || ThemeSupports::current('post-thumbnails', $type)) {
+            $cover = self::cover((string) $image['data'], (string) ($image['mime'] ?? ''), $file);
+            if ($cover !== null) {
+                MetaData::updatePost($attachmentId, '_thumbnail_id', $cover);
+            }
+        }
+        unset($metadata['image']['data']);
+        return $metadata;
+    }
+
+    /** The attachment a cover is kept as: one an earlier file made from the same bytes, or a new one. */
+    private static function cover(string $bytes, string $mime, string $file): ?int
+    {
+        $hash = md5($bytes);
+        $found = PostReads::query(['fields' => 'ids', 'post_type' => 'attachment', 'post_status' => 'inherit', 'posts_per_page' => 1, 'meta_key' => '_cover_hash', 'meta_value' => $hash]);
+        if (is_array($found) && $found !== []) {
+            return (int) reset($found);
+        }
+        $extensions = (string) array_search($mime, FileTypes::all(), true);
+        $name = str_replace('.', '-', basename($file)) . '-image.' . ($extensions === '' ? 'jpg' : explode('|', $extensions)[0]);
+        $upload = Handoff::uploadBits($name, $bytes);
+        if (!is_array($upload) || !empty($upload['error'])) {
+            return null;
+        }
+        $cover = Attachments::insert(['post_mime_type' => $mime, 'post_type' => 'attachment', 'post_content' => ''], $upload['file']);
+        if (!is_int($cover) || $cover < 1) {
+            return null;
+        }
+        Attachments::setMetadata($cover, Handoff::attachmentMetadata($cover, $upload['file']));
+        MetaData::updatePost($cover, '_cover_hash', $hash);
+        return $cover;
     }
 
     /**

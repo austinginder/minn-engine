@@ -81876,19 +81876,88 @@
             ]
         },
         {
+            "name": "Minn\\Media\\Av\\Ac3",
+            "short": "Ac3",
+            "namespace": "Minn\\Media\\Av",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/Av/Ac3.php",
+            "lines": 40,
+            "doc": "An AC-3 (Dolby Digital) frame's header as the reference's media reader\nreads it (probe media-meta): the rate, bitrate and channels, the low\nfrequency channel counted as \".1\". The centre mix level is read for every\nodd coding mode, mono included, so a mono frame reads its next bits as\nthe low frequency channel; the channel modes follow the coding mode.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Media\\Av\\Source"
+            ],
+            "usedBy": [
+                "Minn\\Media\\Av\\Matroska"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "BITRATES",
+                    "value": "array (   0 => 32,   1 => 40,   2 => 48,   3 => 56,   4 => 64,   5 => 80,   6 => 96,   7 => 112,   8 => 128,   9 => 160,   10 => 192,   11 => 224,   12 => 256,   13 => 320,   14 => 384,   15 => 448,   16 => 512,   17 => 576,   18 => 640, )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CHANNELS",
+                    "value": "array (   0 => 2,   1 => 1,   2 => 2,   3 => 3,   4 => 3,   5 => 4,   6 => 4,   7 => 5, )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "MODES",
+                    "value": "array (   0 => 'stereo',   1 => 'mono',   2 => 'surround',   3 => 'stereo',   4 => 'stereo',   5 => 'surround',   6 => 'surround',   7 => 'surround', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "frame",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "frame(string $bytes): ?array",
+                    "doc": "A frame's rate, bitrate, channels (an integer, or \"n.1\" with the low\nfrequency channel) and channel mode; null for bytes that are no frame.",
+                    "shapes": [
+                        "@return array{sampleRate: int, bitrate: int, channels: int|string, mode: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 52
+                }
+            ]
+        },
+        {
             "name": "Minn\\Media\\Av\\Analyzer",
             "short": "Analyzer",
             "namespace": "Minn\\Media\\Av",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Av/Analyzer.php",
-            "lines": 96,
+            "lines": 111,
             "doc": "A media file's analysis, keyed as the reference's media reader keys the\none it hands to the wp_read_audio_metadata and wp_read_video_metadata\nfilters (probe media-meta): the file's size, format and type, its audio\nand video streams, its playing time and bitrate, and its tags. The\nformat is found by the file's first bytes; a file named .mp3 with none\nis still typed as MPEG audio.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Media\\Av\\Asf",
+                "Minn\\Media\\Av\\Flac",
+                "Minn\\Media\\Av\\Flv",
                 "Minn\\Media\\Av\\Id3",
                 "Minn\\Media\\Av\\IsoMedia",
+                "Minn\\Media\\Av\\Matroska",
                 "Minn\\Media\\Av\\Mpeg",
+                "Minn\\Media\\Av\\Ogg",
                 "Minn\\Media\\Av\\Riff",
                 "Minn\\Media\\Av\\Source"
             ],
@@ -81946,8 +82015,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 109
+                    "line": 117,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -82005,7 +82074,7 @@
                         }
                     ],
                     "line": 69,
-                    "end": 89
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -82040,8 +82109,556 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 99
+                    "line": 107,
+                    "end": 114
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Media\\Av\\Asf",
+            "short": "Asf",
+            "namespace": "Minn\\Media\\Av",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/Av/Asf.php",
+            "lines": 182,
+            "doc": "Advanced Systems Format files (WMV, WMA, ASF) as the reference's media\nreader measures them (probe media-meta). The file properties give the\nplaying time (less the preroll) and creation date; each stream's\nproperties its size or wave format; the codec list the names; the\nstream bitrates the bitrate, the file's being their sum. A video file\nwith no audio still describes an empty ASF audio stream.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Media\\Av\\Source"
+            ],
+            "usedBy": [
+                "Minn\\Media\\Av\\Analyzer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "HEADER",
+                    "value": "'3026b2758e66cf11a6d900aa0062ce6c'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FILE_PROPERTIES",
+                    "value": "'a1dcab8c47a9cf118ee400c00c205365'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "STREAM_PROPERTIES",
+                    "value": "'9107dcb7b7a9cf118ee600c00c205365'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "STREAM_BITRATES",
+                    "value": "'ce75f87b8d46d1118d82006097c9a2b2'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CODEC_LIST",
+                    "value": "'4052d1861d31d011a3a400a0c90348f6'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "AUDIO",
+                    "value": "'409e69f84d5bcf11a8fd00805f5c442b'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "VIDEO",
+                    "value": "'c0ef19bc4d5bcf11a8fd00805f5c442b'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "EPOCH",
+                    "value": "11644473600",
+                    "doc": "Seconds between 1601, where a Windows file time starts, and 1970.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "detects",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "detects(string $head): bool",
+                    "doc": "Whether a file's first bytes are an ASF header object.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "head",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(Minn\\Media\\Av\\Source $source): array",
+                    "doc": "The file's analysis.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "bitrates",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "bitrates(string $body): array",
+                    "doc": "Each stream's bitrate by its number.",
+                    "shapes": [
+                        "@return array<int, int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 114,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "codecs",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "codecs(string $body): array",
+                    "doc": "The codec list's first video and first audio name.",
+                    "shapes": [
+                        "@return array{video?: string, audio?: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 130,
+                    "end": 147
+                },
+                {
+                    "routes": [],
+                    "name": "video",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "video(string $specific, int|float|null $bitrate, ?string $name): array",
+                    "doc": "A video stream's size and its codec's name.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "specific",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bitrate",
+                            "type": "int|float|null",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 154,
+                    "end": 165
+                },
+                {
+                    "routes": [],
+                    "name": "audio",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "audio(string $format, ?string $name): array",
+                    "doc": "An audio stream described by its wave format and its codec's name.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "format",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 172,
+                    "end": 195
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Media\\Av\\Flac",
+            "short": "Flac",
+            "namespace": "Minn\\Media\\Av",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/Av/Flac.php",
+            "lines": 115,
+            "doc": "FLAC, on its own or as the first packet of an Ogg stream, as the\nreference's media reader measures it (probe media-meta): the stream\ninformation block gives the rate, channels, depth and samples, the\ncomment block names the encoder, and a picture block is the cover.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Media\\Av\\Source"
+            ],
+            "usedBy": [
+                "Minn\\Media\\Av\\Analyzer",
+                "Minn\\Media\\Av\\Matroska",
+                "Minn\\Media\\Av\\Ogg"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(Minn\\Media\\Av\\Source $source): array",
+                    "doc": "A native FLAC file's analysis: the data after the metadata blocks,\nthe playing time from the sample count and a bitrate over the whole\nfile.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 41
+                },
+                {
+                    "routes": [],
+                    "name": "stream",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "stream(array $info, int|float|null $bitrate, ?string $vendor): array",
+                    "doc": "The stream a FLAC stream information block and vendor describe, with\nthe bitrate when one is known.",
+                    "shapes": [
+                        "@param array{sampleRate: int, channels: int, bits: int, samples: int} $info",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "info",
+                            "type": "array",
+                            "shape": "array{sampleRate: int, channels: int, bits: int, samples: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bitrate",
+                            "type": "int|float|null",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vendor",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "streamInfo",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "streamInfo(string $block): ?array",
+                    "doc": "A stream information block's rate, channels, depth and sample count.",
+                    "shapes": [
+                        "@return array{sampleRate: int, channels: int, bits: int, samples: int}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "blocks",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "blocks(Minn\\Media\\Av\\Source $source, int $at): array",
+                    "doc": "The metadata blocks from $at: the stream information, the comment\nblock's vendor, the first picture, and where the audio begins.",
+                    "shapes": [
+                        "@return array{info: ?array, vendor: ?string, picture: ?array, end: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "picture",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "picture(string $body): ?array",
+                    "doc": "A picture block's image: its type and bytes.",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 126
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Media\\Av\\Flv",
+            "short": "Flv",
+            "namespace": "Minn\\Media\\Av",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/Av/Flv.php",
+            "lines": 159,
+            "doc": "Flash video (FLV) as the reference's media reader measures it (probe\nmedia-meta). The onMetaData script tag gives the playing time, frame\nrate, data rates and codecs; the first audio tag gives the rate, sample\nsize and channels; the first video tag's Sorenson picture header the\nsize. The video's data rate is kept as written (kilobits), the audio's\nmade bits.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Media\\Av\\Source"
+            ],
+            "usedBy": [
+                "Minn\\Media\\Av\\Analyzer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "VIDEO_CODECS",
+                    "value": "array (   2 => 'Sorenson H.263',   3 => 'Screen video',   4 => 'On2 VP6',   5 => 'On2 VP6 with alpha channel',   6 => 'Screen video v2',   7 => 'Sorenson H.264', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "AUDIO_CODECS",
+                    "value": "'Linear PCM, platform endian|ADPCM|mp3|Linear PCM, little endian|Nellymoser 16kHz mono|Nellymoser 8kHz mono|Nellymoser|G.711A-law logarithmic PCM|G.711 mu-law logarithmic PCM|reserved|AAC|Speex|||mp3 8kHz|Device-specific sound'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PICTURE_SIZES",
+                    "value": "array (   2 =>    array (     0 => 352,     1 => 288,   ),   3 =>    array (     0 => 176,     1 => 144,   ),   4 =>    array (     0 => 128,     1 => 96,   ),   5 =>    array (     0 => 320,     1 => 240,   ),   6 =>    array (     0 => 160,     1 => 120,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(Minn\\Media\\Av\\Source $source): array",
+                    "doc": "The file's analysis.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "audio",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "audio(int $flags, array $meta): array",
+                    "doc": "The audio: its codec (by the metadata's code), the first tag's rate,\nsize and channels, and the metadata's rate in bits.",
+                    "shapes": [
+                        "@param array<string, mixed> $meta",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "flags",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "video",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "video(string $tag, array $meta): array",
+                    "doc": "The video: its frame rate, its size (from a Sorenson picture header),\nthe metadata's data rate as written, and its codec.",
+                    "shapes": [
+                        "@param array<string, mixed> $meta",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "pictureSize",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "pictureSize(string $bytes): array",
+                    "doc": "The width and height a Sorenson H.263 picture header gives: its\npicture size code, or the 8-bit or 16-bit size that follows it.",
+                    "shapes": [
+                        "@return array{0: int, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 121,
+                    "end": 133
+                },
+                {
+                    "routes": [],
+                    "name": "metaData",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "metaData(string $bytes): array",
+                    "doc": "The onMetaData object's numbers, read from its AMF0 encoding.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 140,
+                    "end": 172
                 }
             ]
         },
@@ -83232,6 +83849,428 @@
             ]
         },
         {
+            "name": "Minn\\Media\\Av\\Matroska",
+            "short": "Matroska",
+            "namespace": "Minn\\Media\\Av",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/Av/Matroska.php",
+            "lines": 302,
+            "doc": "Matroska and WebM files (MKV, MKA, WebM) as the reference's media reader\nmeasures them (probe media-meta). The segment information gives the\nplaying time and the date; the first video and audio tracks give the\nstreams, named by their codec where the reader knows it (and by the\ncodec identifier where it does not). MP3 and MP2 audio is described\nfrom its first frame, FLAC from its stream information, AC-3 from its\nfirst frame; the bitrate is the file's over its playing time, the video\nkeeping what a known audio bitrate leaves.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Media\\Av\\Ac3",
+                "Minn\\Media\\Av\\Flac",
+                "Minn\\Media\\Av\\Mpeg",
+                "Minn\\Media\\Av\\Riff",
+                "Minn\\Media\\Av\\Source"
+            ],
+            "usedBy": [
+                "Minn\\Media\\Av\\Analyzer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SEGMENT",
+                    "value": "408125543",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CONTAINERS",
+                    "value": "array (   0 => 440786851,   1 => 408125543,   2 => 357149030,   3 => 374648427,   4 => 174,   5 => 224,   6 => 225, )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "VIDEO",
+                    "value": "array (   'V_VP8' => 'vp8',   'V_MPEG4/ISO/AVC' => 'h264',   'V_MPEG4/ISO/ASP' => 'mpeg4',   'V_MS/VFW/FOURCC' => 'vcm', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "AUDIO",
+                    "value": "array (   'A_AAC' => 'aac',   'A_AC3' => 'ac3',   'A_MPEG/L3' => 'mp3',   'A_MPEG/L2' => 'mp2',   'A_FLAC' => 'flac',   'A_PCM/INT/LIT' => 'pcm', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "HEAD",
+                    "value": "262144",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "EPOCH",
+                    "value": "978307200",
+                    "doc": "Seconds between 1970 and 2001, where a Matroska date is counted from.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "detects",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "detects(string $head): bool",
+                    "doc": "Whether a file's first bytes are an EBML header.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "head",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(Minn\\Media\\Av\\Source $source): array",
+                    "doc": "The file's analysis.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "walk",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "walk(string $bytes, int $at, int $end, array $found, ?array $track = NULL): void",
+                    "doc": "The elements from $at to $end that matter here, gathered into $found.",
+                    "shapes": [
+                        "@param array<string, mixed> $found"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "end",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "found",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "track",
+                            "type": "?array",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "element",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "element(int $id, string $value, array $found, ?array $track): void",
+                    "doc": "One element's value kept where it belongs.",
+                    "shapes": [
+                        "@param array<string, mixed> $found",
+                        "@param array<string, mixed>|null $track"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "found",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "track",
+                            "type": "?array",
+                            "shape": "array<string, mixed>|null",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "audio",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "audio(array $track, string $bytes, ?int $segment): array",
+                    "doc": "A track's audio as the reference describes it: the codec's name, rate,\nchannels, language and depth, then what the codec's own reader adds.",
+                    "shapes": [
+                        "@param array<string, mixed> $track",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "track",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "segment",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 152,
+                    "end": 193
+                },
+                {
+                    "routes": [],
+                    "name": "video",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "video(array $track, int|float|null $bitrate): array",
+                    "doc": "A track's video: its codec's name (an AVI codec's named as AVI does),\nsize, display size, frame rate and the bitrate it has.",
+                    "shapes": [
+                        "@param array<string, mixed> $track",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "track",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bitrate",
+                            "type": "int|float|null",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 202,
+                    "end": 219
+                },
+                {
+                    "routes": [],
+                    "name": "firstBlock",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "firstBlock(string $bytes, ?int $segment, int $number): ?string",
+                    "doc": "The first frame of a track, from the first cluster's blocks.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "segment",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "number",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 222,
+                    "end": 256
+                },
+                {
+                    "routes": [],
+                    "name": "blockFor",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "blockFor(string $block, int $number): ?string",
+                    "doc": "A block's payload when it belongs to the track numbered $number.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "number",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 259,
+                    "end": 264
+                },
+                {
+                    "routes": [],
+                    "name": "identifier",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "identifier(string $bytes, int $at): ?int",
+                    "doc": "An element id at $at, which it moves past: a variable-length number with its marker kept.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 267,
+                    "end": 280
+                },
+                {
+                    "routes": [],
+                    "name": "size",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "size(string $bytes, int $at): ?int",
+                    "doc": "An element size at $at, which it moves past: its marker dropped, all ones (an unknown size) read as the most there can be.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 283,
+                    "end": 299
+                },
+                {
+                    "routes": [],
+                    "name": "float",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "float(string $value): float",
+                    "doc": "A float element's value (four or eight bytes, big-endian).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 302,
+                    "end": 309
+                },
+                {
+                    "routes": [],
+                    "name": "signed",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "signed(string $value): int",
+                    "doc": "A signed big-endian integer element's value.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 312,
+                    "end": 317
+                }
+            ]
+        },
+        {
             "name": "Minn\\Media\\Av\\Mpeg",
             "short": "Mpeg",
             "namespace": "Minn\\Media\\Av",
@@ -83247,6 +84286,7 @@
             ],
             "usedBy": [
                 "Minn\\Media\\Av\\Analyzer",
+                "Minn\\Media\\Av\\Matroska",
                 "Minn\\Media\\Av\\Riff"
             ],
             "constructor": null,
@@ -83411,12 +84451,211 @@
             ]
         },
         {
+            "name": "Minn\\Media\\Av\\Ogg",
+            "short": "Ogg",
+            "namespace": "Minn\\Media\\Av",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/Av/Ogg.php",
+            "lines": 144,
+            "doc": "Ogg files as the reference's media reader measures them (probe\nmedia-meta): Vorbis, Opus, or FLAC in its first packet. The audio is\ncounted from the end of the comment header to the start of the last\npage, and the last page's granule position over the rate is the playing\ntime (Opus's pre-skip included). A Vorbis stream's options are the\nquality its nominal bitrate stands for, when libVorbis made it in stereo\nat 44.1 or 48 kHz, and otherwise the nominal bitrate itself.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Media\\Av\\Flac",
+                "Minn\\Media\\Av\\Source"
+            ],
+            "usedBy": [
+                "Minn\\Media\\Av\\Analyzer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SCAN",
+                    "value": "1048576",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(Minn\\Media\\Av\\Source $source): array",
+                    "doc": "The file's analysis.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "page",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "page(Minn\\Media\\Av\\Source $source, int $at): ?array",
+                    "doc": "A page at an offset: where it starts and ends, its header length,\ngranule position, its whole body and its first packet.",
+                    "shapes": [
+                        "@return array{start: int, end: int, head: int, granule: int, body: string, packet: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "lastPage",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lastPage(Minn\\Media\\Av\\Source $source): ?array",
+                    "doc": "The last page of the file, found from its end.",
+                    "shapes": [
+                        "@return array{start: int, end: int, head: int, granule: int, body: string, packet: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "vendor",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "vendor(string $comment, int $skip): ?string",
+                    "doc": "The vendor string a comment header carries after its $skip-byte signature.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "comment",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "skip",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 133
+                },
+                {
+                    "routes": [],
+                    "name": "flacVendor",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "flacVendor(Minn\\Media\\Av\\Source $source, int $at): ?string",
+                    "doc": "The vendor of an Ogg FLAC stream's comment block, in the page after its first.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 136,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "vorbisOptions",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "vorbisOptions(int $nominal, int $channels, int $rate, string $vendor): ?string",
+                    "doc": "A Vorbis stream's options: its quality, or its nominal bitrate, or none without one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "nominal",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "channels",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rate",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vendor",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 146,
+                    "end": 158
+                }
+            ]
+        },
+        {
             "name": "Minn\\Media\\Av\\Riff",
             "short": "Riff",
             "namespace": "Minn\\Media\\Av",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Av/Riff.php",
-            "lines": 289,
+            "lines": 295,
             "doc": "RIFF files, WAV audio and AVI video, as the reference's media reader\nmeasures them (probe media-meta). A WAV's format chunk describes its\nstream (the codec named by its format tag, lossless only for PCM) and\nits data chunk times it. An AVI's headers give the frames and their\nrate, each stream's format, and the movie list that holds the data; its\nvideo has the bitrate the audio's leaves. MP3 audio in an AVI (or in a\nWAV that states its rate) is described from its first frame.",
             "implements": [],
             "extends": null,
@@ -83425,7 +84664,8 @@
                 "Minn\\Media\\Av\\Source"
             ],
             "usedBy": [
-                "Minn\\Media\\Av\\Analyzer"
+                "Minn\\Media\\Av\\Analyzer",
+                "Minn\\Media\\Av\\Matroska"
             ],
             "constructor": null,
             "cases": [],
@@ -83486,6 +84726,26 @@
                     ],
                     "line": 33,
                     "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "videoCodec",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "videoCodec(string $code): string",
+                    "doc": "The name an AVI video codec code has; empty for one it does not know.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "code",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 292,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -83793,8 +85053,8 @@
                         "@return array<string, string> code => name"
                     ],
                     "params": [],
-                    "line": 292,
-                    "end": 303
+                    "line": 298,
+                    "end": 309
                 }
             ]
         },
@@ -83810,11 +85070,17 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Media\\Av\\Ac3",
                 "Minn\\Media\\Av\\Analyzer",
+                "Minn\\Media\\Av\\Asf",
+                "Minn\\Media\\Av\\Flac",
+                "Minn\\Media\\Av\\Flv",
                 "Minn\\Media\\Av\\Id3",
                 "Minn\\Media\\Av\\IsoMedia",
                 "Minn\\Media\\Av\\Lame",
+                "Minn\\Media\\Av\\Matroska",
                 "Minn\\Media\\Av\\Mpeg",
+                "Minn\\Media\\Av\\Ogg",
                 "Minn\\Media\\Av\\Riff"
             ],
             "constructor": {
@@ -84724,6 +85990,7 @@
                 "Minn\\Media\\MediaModal",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Runtime\\Attachments",
+                "Minn\\Runtime\\AvMetadata",
                 "Minn\\Runtime\\FileNames",
                 "Minn\\Runtime\\FileTypeCheck"
             ],
@@ -125200,6 +126467,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\AttachmentModel",
+                "Minn\\Runtime\\AvMetadata",
                 "Minn\\Runtime\\FileNames",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\PostEvents",
@@ -125669,14 +126937,21 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AvMetadata.php",
-            "lines": 185,
+            "lines": 236,
             "doc": "An audio or video file's metadata as WordPress's media readers keep it\n(wp_read_audio_metadata, wp_read_video_metadata; probe media-meta), from\nthe engine's own analysis (Media\\Av): an audio file's stream described\nwhole, a video's size, format and codec with its audio beside, the\nplaying time rounded and as a clock, when it was made, its ID3 tags and\ncover, each through the reader's filter.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Media\\Av\\Analyzer",
+                "Minn\\Media\\FileTypes",
+                "Minn\\Runtime\\Attachments",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\KsesRules",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\ThemeSupports"
             ],
             "usedBy": [],
             "constructor": null,
@@ -125701,8 +126976,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 35
+                    "line": 21,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -125721,8 +126996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 73
+                    "line": 39,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -125751,8 +127026,52 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 104
+                    "line": 85,
+                    "end": 105
+                },
+                {
+                    "routes": [],
+                    "name": "withCover",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "withCover(mixed $attachmentId, string $file, array $metadata, string $kind): array",
+                    "doc": "An audio or video attachment's metadata with its cover kept as an\nattachment of its own, as wp_generate_attachment_metadata keeps it:\nwhere the attachment type or the theme supports thumbnails, the\ncover (found again by its digest, or written beside the file as\n\"name-ext-image\") becomes the attachment's thumbnail; the cover's\nbytes leave the metadata either way.",
+                    "shapes": [
+                        "@param array<string, mixed> $metadata",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "attachmentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metadata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 118,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -125771,8 +127090,42 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 130
+                    "line": 164,
+                    "end": 182
+                },
+                {
+                    "routes": [],
+                    "name": "cover",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "cover(string $bytes, string $mime, string $file): ?int",
+                    "doc": "The attachment a cover is kept as: one an earlier file made from the same bytes, or a new one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mime",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 136,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -125802,8 +127155,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 154
+                    "line": 191,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -125833,8 +127186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 179
+                    "line": 216,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -125856,8 +127209,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 191
+                    "line": 239,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -125876,8 +127229,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 200
+                    "line": 246,
+                    "end": 252
                 }
             ]
         },
@@ -133031,7 +134384,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 508,
+            "lines": 514,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -133114,6 +134467,7 @@
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\AssetView",
                 "Minn\\Runtime\\AttachmentModel",
+                "Minn\\Runtime\\AvMetadata",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\BlockQueries",
@@ -134619,6 +135973,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "uploadBits",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uploadBits(mixed $name, mixed $bits): mixed",
+                    "doc": "A file of these bytes written into this month's uploads folder by the layer (wp_upload_bits): its path, address and type, or the error.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bits",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 506,
+                    "end": 509
+                },
+                {
+                    "routes": [],
                     "name": "registerInitMeta",
                     "static": true,
                     "visibility": "public",
@@ -134626,8 +136007,8 @@
                     "doc": "The meta core and Minn Admin register on init, registered by the layer that holds their callbacks by name.",
                     "shapes": [],
                     "params": [],
-                    "line": 506,
-                    "end": 509
+                    "line": 512,
+                    "end": 515
                 },
                 {
                     "routes": [],
@@ -134646,8 +136027,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 512,
-                    "end": 515
+                    "line": 518,
+                    "end": 521
                 },
                 {
                     "routes": [],
@@ -134666,8 +136047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 518,
-                    "end": 521
+                    "line": 524,
+                    "end": 527
                 },
                 {
                     "routes": [],
@@ -134686,8 +136067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 524,
-                    "end": 527
+                    "line": 530,
+                    "end": 533
                 },
                 {
                     "routes": [],
@@ -134727,8 +136108,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 534,
-                    "end": 538
+                    "line": 540,
+                    "end": 544
                 },
                 {
                     "routes": [],
@@ -134747,8 +136128,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 541,
-                    "end": 544
+                    "line": 547,
+                    "end": 550
                 },
                 {
                     "routes": [],
@@ -134774,8 +136155,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 546,
-                    "end": 550
+                    "line": 552,
+                    "end": 556
                 }
             ]
         },
@@ -138375,6 +139756,7 @@
                 "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\Attachments",
+                "Minn\\Runtime\\AvMetadata",
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
@@ -147758,6 +149140,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Front\\RuleTable",
                 "Minn\\Rest\\BlockRendererController",
+                "Minn\\Runtime\\AvMetadata",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentQueryRunner",
@@ -151890,6 +153273,7 @@
                 "Minn\\Rest\\UserCollectionParams",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\Attachments",
+                "Minn\\Runtime\\AvMetadata",
                 "Minn\\Runtime\\BlockQueries",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
@@ -163591,6 +164975,7 @@
                 "Minn\\Front\\CustomLogo",
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Rest\\InstalledThemesController",
+                "Minn\\Runtime\\AvMetadata",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer"
             ],

@@ -17435,6 +17435,62 @@ loop over five pages (runtime suite, "a query loop of its own paginates"), and n
 
 The layout container hash stays engine-defined, as before.
 
+## Audio and video metadata, read by the engine (2026-10-19)
+
+`wp_read_audio_metadata` and `wp_read_video_metadata` were inert dead ends, so an audio or
+video upload recorded only its size. The engine now reads the files itself (`Media\Av`,
+clean room: every rule below comes from the reference's answers to built and patched files,
+never from its reader) and keeps what it finds as WordPress does (`Runtime\AvMetadata`).
+`wp_add_id3_tag_data` and `wp_get_media_creation_timestamp` take the reference's analysis
+shape, so a plugin that hands them its own reader's output gets the same answer.
+
+- **Formats.** MP3 (and layers 1 and 2), ID3v1 and ID3v2.2 to 2.4, MPEG-4 and QuickTime
+  (MP4, M4A, M4V, MOV), WAV and AVI, Ogg Vorbis, Opus and Ogg FLAC, FLAC, Matroska and WebM,
+  Flash video, Windows Media (WMV, WMA, ASF). A file the readers do not know keeps its size,
+  and an `.mp3` its type, as the reference keeps them.
+- **The assembly.** Audio metadata is the stream's description whole, then the format, size,
+  type, rounded length and clock, creation time, ID3 tags and cover. Video metadata picks the
+  video's lossless flag, bitrate (an integer), mode, size, format, encoder and codec, and adds
+  the audio stream. Tags come from ID3v2 alone when it has any, else ID3v1, each first value
+  cleaned as post content; `length` is left out and a cut-short terms-of-use notice mended.
+  Only an ID3v2 picture keeps its width and height.
+- **MP3.** A variable bitrate is the Xing bytes over the frames' duration; the playing time is
+  the audio less one average frame (`floor(bytes / frames)`), at the bitrate. A LAME method
+  that is neither VBR nor ABR averages in another order, at 1152 samples a frame for stereo
+  and 576 for mono. An MPEG 2.5 frame is looked into as stereo, so a mono one's Info frame is
+  missed. The LAME options are the reference's guess: its preset names (`--preset fast` for
+  method 4), the bitrate numbers that name none, the VBR level and quality from the Xing
+  quality, then `-b`, `--nogap`, a lowpass below `min(rate / 2 - 550, 22050)` that is not the
+  preset's own, and `--resample` (never for the radio preset at 32 kHz).
+- **MPEG-4.** Only AAC is audio (its bitrate from an `esds` directly inside its entry); a
+  video entry with a vendor is read the QuickTime way (compressor name, lossless false), one
+  without the ISO way (25 named codes, which make the file `mp4`). Only H.264 and MPEG-4
+  video get the bitrate the audio leaves; an uncompressed sound entry (`raw `) renames the
+  video codec. A version 2 sound description is read in the version 0 layout.
+- **The others.** WAV and AVI codecs come from the reference's 157 wave format tags and 300
+  AVI codec codes; AVI data starts 16 bytes into its movie list. Ogg audio runs from the
+  comment header (less a Vorbis framing byte) to the last page; Vorbis options are a quality
+  for libVorbis stereo at 44.1 or 48 kHz, else the nominal bitrate. Matroska names eleven
+  codec ids and leaves the rest raw; MP3 and AC-3 tracks are described from their first frame
+  (AC-3 reads a centre mix level even for mono, so mono reads as "1.1"). Flash keeps the
+  video's data rate in kilobits and makes the audio's bits. Windows Media rounds the data's
+  rate and gives the video what the audio leaves.
+- **Covers.** `wp_generate_attachment_metadata` keeps an audio or video file's cover as an
+  image attachment of its own (`name-ext-image.jpg`, `_cover_hash` its MD5, found again for
+  the next file with the same cover) and the attachment's thumbnail, where the attachment type
+  or the theme supports thumbnails; the cover's bytes leave the metadata either way.
+
+Left: MP3 and AC-3 audio inside a WAV, which the reference describes through readers of
+their own (AC-3's channels "1.1" and a reordered stream; a variable MP3 with no stated rate),
+MP2 in Matroska (the reference reads into a laced block and finds a false frame), and H.264
+in Flash video (the reference's size from it is not the picture's). Each is rare as an upload;
+the engine describes them by the rules above.
+
+Pinned: probes `media-meta` (69 rows: the corpus, each reader on the other's files,
+unreadable files, built ID3 tags, the LAME, MPEG-4, wave, AVI, Vorbis and Flash tables, the
+two helpers) and `media-cover`; unit `media-av`. The corpus is `tests/fixtures/media`, built by
+`tests/tools/media-corpus.sh`.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17508,3 +17564,4 @@ rows that are `open` or `austin`.
 | 17101 | Preset slugs in kebab case (10-18) | core's default font sizes printed when the theme no longer has their slugs (`defaultFontSizes: false`) | done | "Three owed rows settled" (probe `default-presets`) |
 | 17101 | Methods keep the reference's shape (10-18) | `WP_Theme_JSON_Resolver::get_theme_data()` ignores `with_supports => false` | done | "Three owed rows settled": the theme's own layer over its supports (probe `theme-data-supports`) |
 | 17101 | The $current_user global (10-18) | the `setup_userdata` globals (`$user_ID`, `$userdata`, `$user_login`, ...) | done | "Three owed rows settled" (probe `user-globals`) |
+| 17483 | Audio and video metadata (10-19) | MP3 and AC-3 inside a WAV, MP2 in Matroska, H.264 in Flash video: the reference's own readers for these, not followed | austin | rare as uploads, and the engine describes them by its other rules; accept, or owe them (each is a further reader of the reference's to learn from patched files) |

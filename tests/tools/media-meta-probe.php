@@ -156,6 +156,168 @@ $say('the filters answer', $typed([array_slice((array) wp_read_audio_metadata("{
 remove_filter('wp_read_audio_metadata', $changed);
 remove_filter('wp_read_video_metadata', $changed);
 
+// The tables the readers keep, through files changed byte by byte (checksums made again): the LAME
+// tag's methods, presets, lowpass, minimum bitrate, gapless flag and source rate; MPEG-4 codes and
+// vendors; wave format tags; AVI codecs; Vorbis nominal bitrates and layouts; Flash codec numbers.
+$read = static function (string $bytes, string $name, bool $video = false) use ($tmp) {
+    file_put_contents("{$tmp}/{$name}", $bytes);
+    return $video ? wp_read_video_metadata("{$tmp}/{$name}") : wp_read_audio_metadata("{$tmp}/{$name}");
+};
+$crc16 = static function (string $bytes): int {
+    $crc = 0;
+    foreach (str_split($bytes) as $byte) {
+        $crc ^= ord($byte);
+        for ($bit = 0; $bit < 8; $bit++) {
+            $crc = ($crc & 1) !== 0 ? ($crc >> 1) ^ 0xA001 : $crc >> 1;
+        }
+    }
+    return $crc;
+};
+$lame = static function (string $mp3, int $frame, array $set) use ($crc16): string {
+    $word = unpack('N', substr($mp3, $frame, 4))[1];
+    $side = (($word >> 19) & 3) === 3 ? ((($word >> 6) & 3) === 3 ? 17 : 32) : ((($word >> 6) & 3) === 3 ? 9 : 17);
+    $xing = $frame + 4 + $side;
+    $flags = unpack('N', substr($mp3, $xing + 4, 4))[1];
+    $at = $xing + 8 + (($flags & 1) ? 4 : 0) + (($flags & 2) ? 4 : 0) + (($flags & 4) ? 100 : 0);
+    if (isset($set['quality'])) {
+        $mp3 = substr_replace($mp3, pack('N', $set['quality']), $at, 4);
+    }
+    $at += ($flags & 8) ? 4 : 0;
+    if (isset($set['encoder'])) {
+        $mp3 = substr_replace($mp3, str_pad($set['encoder'], 9, ' '), $at, 9);
+    }
+    $mp3[$at + 9] = chr((ord($mp3[$at + 9]) & 0xF0) | ($set['method'] ?? (ord($mp3[$at + 9]) & 15)));
+    if (isset($set['lowpass'])) {
+        $mp3[$at + 10] = chr(intdiv($set['lowpass'], 100));
+    }
+    if (isset($set['flags'])) {
+        $mp3[$at + 19] = chr(($set['flags'] << 4) | (ord($mp3[$at + 19]) & 15));
+    }
+    if (isset($set['minimum'])) {
+        $mp3[$at + 20] = chr($set['minimum']);
+    }
+    if (isset($set['source'])) {
+        $mp3[$at + 24] = chr(($set['source'] << 6) | (ord($mp3[$at + 24]) & 0x3F));
+    }
+    if (isset($set['preset'])) {
+        $mp3 = substr_replace($mp3, pack('n', (unpack('n', substr($mp3, $at + 26, 2))[1] & 0xF800) | $set['preset']), $at + 26, 2);
+    }
+    return substr_replace($mp3, pack('n', $crc16(substr($mp3, $frame, $at + 34 - $frame))), $at + 34, 2);
+};
+$vbr = (string) file_get_contents("{$media}/a02-vbr-v2.mp3");
+$cbr = (string) file_get_contents("{$media}/a03-mono-v1.mp3");
+$variants = [
+    ['method' => 4, 'preset' => 480], ['method' => 3, 'preset' => 480], ['method' => 4, 'preset' => 500, 'lowpass' => 22100], ['method' => 4, 'preset' => 460, 'lowpass' => 18000],
+    ['method' => 3, 'preset' => 470, 'lowpass' => 19500], ['method' => 3, 'preset' => 1004, 'lowpass' => 19000], ['method' => 3, 'preset' => 1001], ['method' => 4, 'preset' => 1010],
+    ['method' => 3, 'preset' => 430, 'source' => 2], ['method' => 3, 'preset' => 410, 'minimum' => 0], ['method' => 3, 'preset' => 490, 'flags' => 4], ['method' => 4, 'preset' => 440, 'source' => 0],
+    ['method' => 3, 'preset' => 0, 'quality' => 57], ['method' => 3, 'preset' => 0, 'quality' => 0], ['method' => 3, 'preset' => 0, 'quality' => 101], ['method' => 2, 'preset' => 0],
+    ['method' => 9, 'preset' => 128], ['method' => 1, 'preset' => 0], ['method' => 1, 'preset' => 64], ['method' => 1, 'preset' => 320], ['method' => 8, 'preset' => 0],
+    ['method' => 0, 'preset' => 0], ['method' => 7, 'preset' => 0], ['method' => 15, 'preset' => 0], ['method' => 3, 'preset' => 16], ['method' => 3, 'preset' => 405],
+    ['method' => 3, 'preset' => 1008], ['method' => 3, 'preset' => 2047], ['method' => 4, 'preset' => 480, 'encoder' => 'LAME3.90.'], ['method' => 4, 'preset' => 480, 'encoder' => 'Lavc61.3'],
+];
+$say('LAME tags', array_map(static function (array $set) use ($read, $lame, $vbr, $typed): array {
+    $meta = $read($lame($vbr, 243, $set), 'lame.mp3');
+    return [$set, $typed(array_intersect_key((array) $meta, array_flip(['bitrate', 'bitrate_mode', 'codec', 'encoder', 'encoder_options', 'length'])))];
+}, $variants));
+$say('LAME tags in an MPEG-2 mono file', array_map(static function (array $set) use ($read, $lame, $cbr, $typed): array {
+    $meta = $read($lame($cbr, 0, $set), 'lame2.mp3');
+    return [$set, $typed(array_intersect_key((array) $meta, array_flip(['bitrate', 'bitrate_mode', 'encoder_options'])))];
+}, [['method' => 1, 'preset' => 64], ['method' => 8, 'preset' => 0], ['method' => 0, 'preset' => 0], ['method' => 4, 'preset' => 470], ['method' => 3, 'preset' => 430, 'source' => 1]]));
+
+$movie = (string) file_get_contents("{$media}/v01-h264-aac.mp4");
+$entry = strpos($movie, 'stsd') + 12;
+$sound = strpos($movie, 'mp4a', strpos($movie, 'stsd', $entry));
+$codes = ['avc1', 'hvc1', 'mp4v', 'jpeg', 'mjpa', 'png ', 'rle ', 'SVQ3', 'cvid', 'DIVX', 'xvid', '3IV2', 'avc3', 'zzzz'];
+$say('MPEG-4 video codes', array_map(static fn (string $code) => [$code, array_intersect_key((array) $read(substr_replace($movie, $code, $entry + 4, 4), 'code.mp4', true), array_flip(['bitrate', 'mime_type', 'fileformat', 'dataformat', 'codec', 'lossless']))], $codes));
+$say('MPEG-4 video with a vendor', array_map(static fn (string $code) => [$code, array_intersect_key((array) $read(substr_replace(substr_replace($movie, $code, $entry + 4, 4), 'appl', $entry + 20, 4), 'vendor.mp4', true), array_flip(['bitrate', 'fileformat', 'dataformat', 'codec', 'lossless']))], ['avc1', 'jpeg', 'mp4v']));
+$say('MPEG-4 sound codes', array_map(static fn (string $code) => [$code, array_intersect_key((array) $read(substr_replace($movie, $code, $sound, 4), 'sound.mp4', true), array_flip(['bitrate', 'mime_type', 'fileformat', 'codec', 'audio']))], ['alac', 'raw ', 'sowt', 'ac-3']));
+
+$wave = (string) file_get_contents("{$media}/a08-pcm16.wav");
+$tagAt = strpos($wave, 'fmt ') + 8;
+$say('wave format tags', array_map(static fn (int $tag) => [$tag, array_intersect_key((array) $read(substr_replace($wave, pack('v', $tag), $tagAt, 2), 'tag.wav'), array_flip(['dataformat', 'codec', 'lossless']))], [0, 1, 2, 3, 6, 7, 0x11, 0x31, 0x50, 0x92, 0x161, 0x2000, 0x08AE, 0x674F, 0x1234]));
+$avi = (string) file_get_contents("{$media}/v07-mpeg4.avi");
+$handler = strpos($avi, 'strh') + 12;
+$compression = strpos($avi, 'strf', $handler) + 24;
+$say('AVI video codecs', array_map(static fn (array $pair) => [$pair, $read(substr_replace(substr_replace($avi, $pair[0], $handler, 4), $pair[1], $compression, 4), 'codec.avi', true)['codec'] ?? null], [['XVID', 'XVID'], ['DIVX', 'DIVX'], ['FMP4', 'XVID'], ['H264', 'H264'], ['MJPG', 'MJPG'], ['divx', 'divx'], ['xvid', 'xvid'], ['MP42', 'MP42'], ['zzzz', 'zzzz']]));
+
+$crc32 = static function (string $page): int {
+    static $table = null;
+    if ($table === null) {
+        for ($i = 0; $i < 256; $i++) {
+            $value = $i << 24;
+            for ($bit = 0; $bit < 8; $bit++) {
+                $value = ($value & 0x80000000) !== 0 ? (($value << 1) ^ 0x04C11DB7) & 0xFFFFFFFF : ($value << 1) & 0xFFFFFFFF;
+            }
+            $table[$i] = $value;
+        }
+    }
+    $crc = 0;
+    foreach (str_split($page) as $byte) {
+        $crc = (($crc << 8) & 0xFFFFFFFF) ^ $table[(($crc >> 24) & 0xFF) ^ ord($byte)];
+    }
+    return $crc;
+};
+$ogg = (string) file_get_contents("{$media}/a10-vorbis.ogg");
+$vorbis = static function (array $set) use ($ogg, $crc32): string {
+    $head = strpos($ogg, "\x01vorbis") + 7;
+    if (isset($set['channels'])) {
+        $ogg[$head + 4] = chr($set['channels']);
+    }
+    if (isset($set['rate'])) {
+        $ogg = substr_replace($ogg, pack('V', $set['rate']), $head + 5, 4);
+    }
+    $ogg = substr_replace($ogg, pack('V', $set['nominal']), $head + 13, 4);
+    $length = 27 + ord($ogg[26]) + array_sum(array_map('ord', str_split(substr($ogg, 27, ord($ogg[26])))));
+    $ogg = substr_replace($ogg, "\0\0\0\0", 22, 4);
+    return substr_replace($ogg, pack('V', $crc32(substr($ogg, 0, $length))), 22, 4);
+};
+$say('Vorbis nominal bitrates', array_map(static fn (array $set) => [$set, $read($vorbis($set), 'nominal.ogg')['encoder_options'] ?? null], [
+    ['nominal' => 0], ['nominal' => 45000], ['nominal' => 63500], ['nominal' => 112000], ['nominal' => 130000], ['nominal' => 259500], ['nominal' => 499821], ['nominal' => 671000],
+    ['nominal' => 112000, 'channels' => 1], ['nominal' => 112000, 'rate' => 48000], ['nominal' => 112000, 'rate' => 32000], ['nominal' => 40222, 'channels' => 1, 'rate' => 22050],
+]));
+$flash = (string) file_get_contents("{$media}/v08-flash.flv");
+$say('Flash codec numbers', array_map(static function (int $code) use ($flash, $read): array {
+    $bytes = substr_replace($flash, pack('E', (float) $code), strpos($flash, 'videocodecid') + 13, 8);
+    $bytes = substr_replace($bytes, pack('E', (float) $code), strpos($bytes, 'audiocodecid') + 13, 8);
+    $meta = (array) $read($bytes, 'codec.flv', true);
+    return [$code, $meta['codec'] ?? null, $meta['audio']['codec'] ?? null];
+}, range(0, 15)));
+
+// The two helpers the readers use, handed analyses shaped as the reference's media reader shapes them.
+$tags = static function (array $data, array $metadata = []): array {
+    wp_add_id3_tag_data($metadata, $data);
+    return $metadata;
+};
+$say('wp_add_id3_tag_data', [
+    'ID3v2 first values' => $tags(['id3v2' => ['comments' => ['title' => ['T2', 'T2b'], 'artist' => ['A2']]]]),
+    'ID3v1 when there is no ID3v2' => $tags(['id3v1' => ['comments' => ['title' => ['T1'], 'year' => ['']]]]),
+    'ID3v2 wins outright' => $tags(['id3v2' => ['comments' => ['title' => ['T2']]], 'id3v1' => ['comments' => ['title' => ['T1'], 'artist' => ['A1']]]]),
+    'an empty ID3v2 list falls through' => $tags(['id3v2' => ['comments' => []], 'id3v1' => ['comments' => ['title' => ['one']]]]),
+    'other tags are not read' => $tags(['tags' => ['id3v2' => ['title' => ['T']]], 'comments' => ['title' => ['C']], 'quicktime' => ['comments' => ['title' => ['Q']]]]),
+    'length left out' => $tags(['id3v2' => ['comments' => ['length' => ['100'], 'LENGTH' => ['5'], 'title' => ['t']]]]),
+    'values made text' => $tags(['id3v2' => ['comments' => ['title' => [], 'artist' => [''], 'n' => [0], 'num' => [7], 'f' => [1.5], 'b' => [true]]]]),
+    'lists kept, cleaned' => $tags(['id3v2' => ['comments' => ['genre' => [['<script>x</script><b>y</b>', ['<i>z</i>']]], 'picture' => [['data' => 'x']]]]]),
+    'markup cleaned' => $tags(['id3v2' => ['comments' => ['title' => ['<script>x</script><b>y</b> & <a href="javascript:z">l</a>']]]]),
+    'the first value by order' => $tags(['id3v2' => ['comments' => ['title' => [3 => 'three', 1 => 'one']]]]),
+    'terms of use mended' => $tags(['id3v2' => ['comments' => ['terms_of_use' => ['yright notice. abc'], 'copyright' => ['yright x']]]]),
+    'metadata kept beside' => $tags(['id3v2' => ['comments' => ['title' => ['new']]]], ['title' => 'old', 'keep' => 1]),
+]);
+$say('wp_get_media_creation_timestamp', array_map(static fn (array $data) => wp_get_media_creation_timestamp($data), [
+    'nothing' => [],
+    'no format' => ['quicktime' => ['moov' => ['subatoms' => [['creation_time_unix' => 5]]]]],
+    'QuickTime' => ['fileformat' => 'quicktime', 'quicktime' => ['moov' => ['subatoms' => [['name' => 'mvhd', 'creation_time_unix' => 1234]]]]],
+    'MPEG-4 reads the first box whatever it is' => ['fileformat' => 'mp4', 'quicktime' => ['moov' => ['subatoms' => [['name' => 'trak', 'creation_time_unix' => 5], ['name' => 'mvhd', 'creation_time_unix' => 77]]]]],
+    'MPEG-4 zero and before 1970' => ['fileformat' => 'mp4', 'quicktime' => ['moov' => ['subatoms' => [['creation_time_unix' => -2082844800]]]]],
+    'a number as text' => ['fileformat' => 'quicktime', 'quicktime' => ['moov' => ['subatoms' => [['creation_time_unix' => '12.7']]]]],
+    'Matroska creation time' => ['fileformat' => 'matroska', 'matroska' => ['comments' => ['creation_time' => ['2020-01-02T03:04:05Z']], 'info' => [['DateUTC_unix' => 555]]]],
+    'Matroska creation time that is no date' => ['fileformat' => 'matroska', 'matroska' => ['comments' => ['creation_time' => ['not a date']], 'info' => [['DateUTC_unix' => 555]]]],
+    'WebM date' => ['fileformat' => 'webm', 'matroska' => ['info' => [['DateUTC_unix' => '556']]]],
+    'a date only in the second info' => ['fileformat' => 'matroska', 'matroska' => ['info' => [['x' => 1], ['DateUTC_unix' => 558]]]],
+    'Windows Media' => ['fileformat' => 'asf', 'asf' => ['file_properties_object' => ['creation_date_unix' => 0]]],
+    'another format' => ['fileformat' => 'riff', 'riff' => []],
+    'a format is matched exactly' => ['fileformat' => 'MP4', 'quicktime' => ['moov' => ['subatoms' => [['creation_time_unix' => 9]]]]],
+]));
+
 array_map('unlink', glob("{$tmp}/*"));
 @rmdir($tmp);
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

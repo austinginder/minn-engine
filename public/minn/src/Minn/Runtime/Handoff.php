@@ -502,6 +502,12 @@ final class Handoff
         return self::answer('attachmentMetadata', $attachmentId, $file);
     }
 
+    /** A file of these bytes written into this month's uploads folder by the layer (wp_upload_bits): its path, address and type, or the error. */
+    public static function uploadBits(mixed $name, mixed $bits): mixed
+    {
+        return self::answer('uploadBits', $name, $bits);
+    }
+
     /** The meta core and Minn Admin register on init, registered by the layer that holds their callbacks by name. */
     public static function registerInitMeta(): void
     {

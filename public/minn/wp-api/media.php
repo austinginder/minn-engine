@@ -976,8 +976,8 @@ function wp_generate_attachment_metadata($attachment_id, $file)
     $mime = (string) get_post_mime_type(get_post($attachment_id));
     $metadata = match (true) {
         str_starts_with($mime, 'image/') && file_is_displayable_image($file) => wp_create_image_subsizes($file, $attachment_id),
-        str_starts_with($mime, 'video/') => (array) wp_read_video_metadata($file) ?: _minn_read_file_size((string) $file),
-        str_starts_with($mime, 'audio/') => (array) wp_read_audio_metadata($file) ?: _minn_read_file_size((string) $file),
+        str_starts_with($mime, 'video/') => Minn\Runtime\AvMetadata::withCover($attachment_id, (string) $file, (array) wp_read_video_metadata($file), 'video') ?: _minn_read_file_size((string) $file),
+        str_starts_with($mime, 'audio/') => Minn\Runtime\AvMetadata::withCover($attachment_id, (string) $file, (array) wp_read_audio_metadata($file), 'audio') ?: _minn_read_file_size((string) $file),
         $mime === 'application/pdf' => _minn_pdf_previews((string) $file, $attachment_id),
         default => [],
     };

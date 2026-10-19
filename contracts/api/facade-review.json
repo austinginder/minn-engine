@@ -17377,9 +17377,9 @@
             "wp_generate_attachment_metadata": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Attachments",
-                "why": "dispatches by type to subsizes, the media readers or PDF previews and adds the file size; Handoff::attachmentMetadata asks the layer for what should be the engine's",
+                "why": "dispatches by type to subsizes, the media readers (their covers kept as attachments by AvMetadata::withCover) or PDF previews and adds the file size; Handoff::attachmentMetadata asks the layer for what should be the engine's",
                 "doubt": "(array) of a reader's false is [false], not empty, so a failing video or audio reader leaves a 0 => false entry instead of the file size",
-                "body": "1a36273da0db"
+                "body": "97d58f7f475f"
             },
             "wp_get_attachment_caption": {
                 "verdict": "keep",

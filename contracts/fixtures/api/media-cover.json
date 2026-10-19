@@ -1,0 +1,70 @@
+[
+    [
+        "MP3 with a JPEG cover",
+        {
+            "image": {
+                "mime": "image/jpeg",
+                "width": 32,
+                "height": 32
+            },
+            "has thumbnail": true,
+            "cover": {
+                "mime": "image/jpeg",
+                "title": "",
+                "name is its id": true,
+                "parent": 0,
+                "file": "zz-media-cover-one-mp3-image.jpg",
+                "hash": "25a4a4b5673790641a72d624b065ce90",
+                "metadata": {
+                    "width": 32,
+                    "height": 32,
+                    "filesize": 229,
+                    "sizes": []
+                }
+            }
+        }
+    ],
+    [
+        "a second file with the same cover is given the same image",
+        true
+    ],
+    [
+        "M4A with a PNG cover",
+        {
+            "image": {
+                "mime": "image/png"
+            },
+            "has thumbnail": true,
+            "cover": {
+                "mime": "image/png",
+                "title": "",
+                "name is its id": true,
+                "parent": 0,
+                "file": "zz-media-cover-three-m4a-image.png",
+                "hash": "dcc6d1656746d008448e8c78c52c6fcb",
+                "metadata": {
+                    "width": 24,
+                    "height": 20,
+                    "filesize": 500,
+                    "sizes": []
+                }
+            }
+        }
+    ],
+    [
+        "MP3 without a cover",
+        {
+            "image": null,
+            "has thumbnail": false
+        }
+    ],
+    [
+        "without thumbnail support",
+        {
+            "image": {
+                "mime": "image/jpeg"
+            },
+            "has thumbnail": false
+        }
+    ]
+]

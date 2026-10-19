@@ -817,7 +817,7 @@ Minn\Runtime\Handoff::bind([
 ]);
 
 // An attachment's metadata is made by the image editors plugins choose, so the engine asks for it through Minn\Runtime\Handoff.
-Minn\Runtime\Handoff::bind(['attachmentMetadata' => static fn ($attachment_id, $file) => wp_generate_attachment_metadata($attachment_id, $file)]);
+Minn\Runtime\Handoff::bind(['attachmentMetadata' => static fn ($attachment_id, $file) => wp_generate_attachment_metadata($attachment_id, $file), 'uploadBits' => static fn ($name, $bits) => wp_upload_bits($name, null, $bits)]);
 
 // What runs in this layer by its own names, asked for by the engine through Minn\Runtime\Handoff: the meta
 // registered on init, a query's template, the block templates, and hooked blocks inserted into content.
