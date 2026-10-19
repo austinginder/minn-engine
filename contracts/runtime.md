@@ -16485,8 +16485,8 @@ with `scripts/release-key.php generate --key=...`). The recovery key is
 kept offline and signs only a release that replaces a lost or exposed
 working key, shipping a KEYS list with a new pair. Every install's trusted
 keys come from the first release it ran, so this had to be in 0.1.0.
-Revocation and a signed freshness record for the release offer stay open
-(register row 14984): they change the update service's protocol, and a
+Revocation and a signed freshness record for the release offer come after
+0.1.0 (register row 14984): they change the update service's protocol, and a
 later release signed with the working key can bring them.
 
 Pinned: unit `admin-plugin` (laid, upgraded, kept, never over a link or
@@ -17494,7 +17494,7 @@ rows that are `open` or `austin`.
 | 13632 | The playlist block (10-11) | `playlist-view.js` is an empty module (and, found 2026-10-12, so are the tabs, accordion and image lightbox ones, whose blocks render their directives) | done | 2026-10-12: "The interactive blocks work in the browser" (suite `interactive-blocks`) |
 | 14006 | Imagick editor (10-11) | what `image_strip_meta` removes from a JPEG | accepted | profiles ImageMagick can write survive; the engine strips only names outside that set |
 | 14984 | An outside audit (10-11) | dead ends as a `__call` table, the DKIM key name, splitting this file | accepted | reasons given there |
-| 14984 | An outside audit (10-11) | release key revocation and freshness (the recovery key is built in: "Minn Admin lives in wp-content/plugins; a recovery release key"); the review's B items | austin | they change the update service's protocol, or wait on the agent-first decision |
+| 14984 | An outside audit (10-11) | release key revocation and freshness (the recovery key is built in: "Minn Admin lives in wp-content/plugins; a recovery release key"); the review's B items | accepted | after 0.1.0 (Austin, 2026-10-19): `install.sh` is served from minn.run, not shipped in `minn.zip`, so its freshness check can change without a release; revocation and a signed freshness record for the offer change the update service's protocol, and a later release signed with the working key can bring them |
 | 15221 | Security fixes (10-12) | a post type under a namespace of its own gets no route | done | 2026-10-12: routes, list and writes (probe `namespaced-type`) |
 | 15221 | Security fixes (10-12) | the audit's Lows | done | each verified and fixed or accepted with its reason ("The audit's Lows, route schemas, namespaced types and the block head") |
 | 16832 | Query Monitor's reflection (10-15) | the missing-dependency notice comes at registration, not once at the first tags or preloads | done | 2026-10-18: "Script modules printed, and registries of their own" (probe `script-modules-printing`) |

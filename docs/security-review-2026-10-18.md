@@ -70,6 +70,10 @@ These need Austin's call:
 - **An older signed release.** `install.sh` installs any release a trusted key signed, an old
   one included: the signature covers the archive's bytes, not its freshness. This is the
   freshness half of row 14984 (release key revocation and freshness).
+  Left for after 0.1.0 (Austin, 2026-10-19): the installer is served from minn.run and is
+  not part of `minn.zip`, so it can change without an engine release. Until then the
+  release candidates, signed with the working key, are the older signed releases there are;
+  they stay unpublished.
 - **Minn Admin's PHP in `minn/admin/`.** The release ships Minn Admin whole, so its PHP files
   sit in the webroot and answer when requested directly. The copy that runs is the one in
   `wp-content/plugins`, which Minn Admin updates; the `minn/admin` copy changes only with an
