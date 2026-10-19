@@ -121,9 +121,9 @@ the WordPress runtime plugins load against
 | [`Registry`](#registry) | final class | 512 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RequestHeaders`](#requestheaders) | final class | 82 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 374 | The rewrite rules WordPress makes from its structures, as the reference |
-| [`Runtime`](#runtime) | final class | 461 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 467 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
-| [`ScriptModules`](#scriptmodules) | final class | 347 | The script modules registry: registrations with typed dependencies, the |
+| [`ScriptModules`](#scriptmodules) | final class | 393 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 304 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`SiteInfo`](#siteinfo) | final class | 63 | What WordPress tells about the site (get_bloginfo): its name and tagline, |
@@ -6881,6 +6881,10 @@ The shortcode registry.
 
 The script modules registry.
 
+### static `newScriptModules(): Minn\Runtime\ScriptModules`
+
+A script modules registry of its own, as each new WP_Script_Modules keeps (probe script-modules-printing).
+
 ### static `interactivity(): Minn\Runtime\Interactivity`
 
 The interactivity API.
@@ -6932,7 +6936,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 438)
+Internals: `loadObjectCacheDropin()` (private, line 444)
 
 
 ## ScriptLoading
@@ -7074,7 +7078,8 @@ The import map script tag.
 
 ### `printPreloads(): string`
 
-The modulepreload links.
+The modulepreload links: the queued modules' static dependencies not
+queued themselves, each after its own (depth first, in queue order).
 
 ### `printHead(): string`
 
@@ -7092,7 +7097,7 @@ The script-module-data tags.
 
 The a11y module's tag, once.
 
-Internals: `placeIn()` (private, line 128), `printTags()` (private, line 268), `marked()` (private, line 292), `complete()` (private, line 304), `dependencies()` (private, line 327), `urlOf()` (private, line 348), `attr()` (private, line 353), `wrong()` (private, line 358)
+Internals: `placeIn()` (private, line 123), `printTags()` (private, line 267), `tellMissing()` (private, line 296), `dependenciesFirst()` (private, line 317), `marked()` (private, line 338), `complete()` (private, line 350), `dependencies()` (private, line 373), `urlOf()` (private, line 394), `attr()` (private, line 399), `wrong()` (private, line 404)
 
 
 ## ScriptPack

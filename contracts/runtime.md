@@ -17386,6 +17386,26 @@ an `excerpt_length` filter asks for more words than the block. The whole content
 and a post's content never renders inside itself. The list's own classes (and the block's alignment and class name)
 come before the block's wrapper classes, as on the reference.
 
+## Script modules printed, and registries of their own (2026-10-18)
+
+Three of the differences Query Monitor's reflection showed (probe `script-modules-printing`, on registries made for it):
+
+- **Each `new WP_Script_Modules()` keeps its own registry**; only the object `wp_script_modules()` returns is the
+  page's (`Runtime::newScriptModules`).
+- **The notice for a queued module whose dependencies are not registered** comes once per module, the first time
+  head tags, footer tags or preloads print, not as it registers (the import map and the module data never tell it, a
+  module never queued is never told, and a dependency registered later is not missing).
+- **Preloads print each dependency after its own**, depth first in queue order (the import map stays breadth first).
+
+Observed and not built: the reference raises a module's printed fetch priority to the highest own priority of the
+queued modules that are it or pull it in statically (low below auto below high), adds `data-wp-fetchpriority` with the
+module's own when that differs and is not auto, and keeps the first priority a tag or preload printed it at; a head
+module that depends on a footer one moves to the footer, and tags print each dependency before its dependents. On
+registries made for the probe every case followed those rules, but on the page's registry core's
+`@wordpress/interactivity-router` and the block view modules were never raised, even by a high dependent printed in the
+same call, while a copy of the router's registration under another id was. Until that condition is found the engine
+prints each module at its own priority.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17448,9 +17468,9 @@ rows that are `open` or `austin`.
 | 14984 | An outside audit (10-11) | release key revocation and freshness (the recovery key is built in: "Minn Admin lives in wp-content/plugins; a recovery release key"); the review's B items | austin | they change the update service's protocol, or wait on the agent-first decision |
 | 15221 | Security fixes (10-12) | a post type under a namespace of its own gets no route | done | 2026-10-12: routes, list and writes (probe `namespaced-type`) |
 | 15221 | Security fixes (10-12) | the audit's Lows | done | each verified and fixed or accepted with its reason ("The audit's Lows, route schemas, namespaced types and the block head") |
-| 16832 | Query Monitor's reflection (10-15) | the missing-dependency notice comes at registration, not once at the first tags or preloads | open | engine work owed (scratch rules in the section) |
-| 16832 | Query Monitor's reflection (10-15) | preload order and fetchpriority (dependencies first; the highest priority of the queued modules that pull it in) | open | engine work owed |
-| 16832 | Query Monitor's reflection (10-15) | `new WP_Script_Modules()` shares the page's registry | open | engine work owed |
+| 16832 | Query Monitor's reflection (10-15) | the missing-dependency notice comes at registration, not once at the first tags or preloads | done | 2026-10-18: "Script modules printed, and registries of their own" (probe `script-modules-printing`) |
+| 16832 | Query Monitor's reflection (10-15) | preload order and fetchpriority (dependencies first; the highest priority of the queued modules that pull it in) | open | order done 2026-10-18; the raised priority is observed ("Script modules printed") but one case on the page's registry does not follow it, so it is not built |
+| 16832 | Query Monitor's reflection (10-15) | `new WP_Script_Modules()` shares the page's registry | done | 2026-10-18: each new one keeps its own (probe `script-modules-printing`) |
 | 16876 | The loop, as a block template walks it (10-15) | the template-part block's saved-part lookup through WP_Query (`loop_no_results`, `pre_get_posts`) | austin | tried 2026-10-18: the query can be answered from the templates the engine reads (no posts SELECT), but its theme-term lookup by name costs a SELECT per part (the engine caches no term lookups), 2 or 3 a page, over the SQL ceilings; accept, or build a term-lookup cache first |
 | 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | done | "The front's template chosen through get_block_templates (2026-10-16)"; the template-part lookup is still the row above |
 | 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | done | 2026-10-18: "The latest-posts block, whole" (probe `latest-posts`) |

@@ -25,6 +25,8 @@ final class ScriptModules
     private array $done = [];
     private bool $a11yAvailable = false;
     private bool $a11yPrinted = false;
+    /** @var array<string, true> the queued modules whose missing dependencies were told */
+    private array $told = [];
 
     /**
      * @param Closure(string, string|false|null): string $url turns a src and version into the printed URL
@@ -45,7 +47,6 @@ final class ScriptModules
             return;
         }
         $dependencies = [];
-        $missing = [];
         foreach ($deps as $dep) {
             $depId = is_array($dep) ? (string) ($dep['id'] ?? '') : (string) $dep;
             if ($depId === '') {
@@ -53,12 +54,6 @@ final class ScriptModules
             }
             $import = is_array($dep) && ($dep['import'] ?? '') === 'dynamic' ? 'dynamic' : 'static';
             $dependencies[] = ['id' => $depId, 'import' => $import];
-            if (!isset($this->registered[$depId])) {
-                $missing[] = $depId;
-            }
-        }
-        if ($missing !== []) {
-            $this->wrong('WP_Script_Modules::register', 'The script module with the ID "' . $id . '" was enqueued with dependencies that are not registered: ' . implode(', ', $missing) . '.', '6.5.0');
         }
         $priority = (string) ($args['fetchpriority'] ?? 'auto');
         if (!in_array($priority, self::PRIORITIES, true)) {
@@ -213,11 +208,15 @@ final class ScriptModules
         return AssetQueue::inlineTag(Json::encode(['imports' => $imports], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'importmap', 'id' => 'wp-importmap']);
     }
 
-    /** The modulepreload links. */
+    /**
+     * The modulepreload links: the queued modules' static dependencies not
+     * queued themselves, each after its own (depth first, in queue order).
+     */
     public function printPreloads(): string
     {
+        $this->tellMissing();
         $out = '';
-        foreach ($this->dependencies($this->marked(), ['static']) as $id) {
+        foreach ($this->dependenciesFirst($this->marked()) as $id) {
             if (in_array($id, $this->queue, true)) {
                 continue;
             }
@@ -267,6 +266,7 @@ final class ScriptModules
 
     private function printTags(bool $footer): string
     {
+        $this->tellMissing();
         $out = '';
         foreach ($this->marked() as $id) {
             if (in_array($id, $this->done, true)) {
@@ -286,6 +286,52 @@ final class ScriptModules
             $out .= AssetQueue::tag($attributes);
         }
         return $out;
+    }
+
+    /**
+     * A queued module whose dependencies are not all registered is told
+     * once, as the page first prints its module tags or preloads, not as it
+     * registers (a dependency may be registered later).
+     */
+    private function tellMissing(): void
+    {
+        foreach ($this->queue as $id) {
+            if (!isset($this->registered[$id]) || isset($this->told[$id])) {
+                continue;
+            }
+            $missing = array_values(array_filter(array_column($this->registered[$id]['dependencies'], 'id'), fn (string $dep): bool => !isset($this->registered[$dep])));
+            if ($missing !== []) {
+                $this->told[$id] = true;
+                $this->wrong('WP_Script_Modules::register', 'The script module with the ID "' . $id . '" was enqueued with dependencies that are not registered: ' . implode(', ', $missing) . '.', '6.5.0');
+            }
+        }
+    }
+
+    /**
+     * The modules' registered static dependencies, each after its own: depth
+     * first, in the order the modules and their dependencies are given.
+     *
+     * @param list<string> $ids
+     * @return list<string>
+     */
+    private function dependenciesFirst(array $ids): array
+    {
+        $order = [];
+        $seen = [];
+        $visit = function (string $id) use (&$visit, &$order, &$seen): void {
+            foreach ($this->registered[$id]['dependencies'] ?? [] as $dep) {
+                if ($dep['import'] !== 'static' || !isset($this->registered[$dep['id']]) || isset($seen[$dep['id']])) {
+                    continue;
+                }
+                $seen[$dep['id']] = true;
+                $visit($dep['id']);
+                $order[] = $dep['id'];
+            }
+        };
+        foreach ($ids as $id) {
+            $visit($id);
+        }
+        return $order;
     }
 
     /** Queued modules that are registered with every dependency registered, in queue order. */

@@ -337,7 +337,13 @@ final class Runtime
     /** The script modules registry. */
     public static function scriptModules(): ScriptModules
     {
-        return self::$scriptModules ??= new ScriptModules(
+        return self::$scriptModules ??= self::newScriptModules();
+    }
+
+    /** A script modules registry of its own, as each new WP_Script_Modules keeps (probe script-modules-printing). */
+    public static function newScriptModules(): ScriptModules
+    {
+        return new ScriptModules(
             static fn (string $src, string|false|null $version): string => \_minn_script_module_url($src, $version),
             static fn (string $id, array $data): array => (array) self::hooks()->filter('script_module_data_' . $id, [$data]),
         );

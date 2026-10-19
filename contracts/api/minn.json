@@ -151741,7 +151741,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 461,
+            "lines": 467,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -152678,7 +152678,19 @@
                     "shapes": [],
                     "params": [],
                     "line": 338,
-                    "end": 344
+                    "end": 341
+                },
+                {
+                    "routes": [],
+                    "name": "newScriptModules",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newScriptModules(): Minn\\Runtime\\ScriptModules",
+                    "doc": "A script modules registry of its own, as each new WP_Script_Modules keeps (probe script-modules-printing).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 344,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -152689,8 +152701,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 347,
-                    "end": 350
+                    "line": 353,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -152701,8 +152713,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 353,
-                    "end": 356
+                    "line": 359,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -152713,8 +152725,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 359,
-                    "end": 362
+                    "line": 365,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -152725,8 +152737,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 365,
-                    "end": 368
+                    "line": 371,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -152752,8 +152764,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 374
+                    "line": 377,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -152779,8 +152791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 380
+                    "line": 383,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -152791,8 +152803,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 383,
-                    "end": 386
+                    "line": 389,
+                    "end": 392
                 },
                 {
                     "routes": [],
@@ -152803,8 +152815,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 389,
-                    "end": 392
+                    "line": 395,
+                    "end": 398
                 },
                 {
                     "routes": [],
@@ -152815,8 +152827,8 @@
                     "doc": "Whether the facade's functions and classes are defined yet.",
                     "shapes": [],
                     "params": [],
-                    "line": 395,
-                    "end": 398
+                    "line": 401,
+                    "end": 404
                 },
                 {
                     "routes": [],
@@ -152835,8 +152847,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 401,
-                    "end": 428
+                    "line": 407,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -152847,8 +152859,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 460,
-                    "end": 463
+                    "line": 466,
+                    "end": 469
                 },
                 {
                     "routes": [],
@@ -152859,8 +152871,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 466,
-                    "end": 483
+                    "line": 472,
+                    "end": 489
                 },
                 {
                     "routes": [],
@@ -152879,8 +152891,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 438,
-                    "end": 452
+                    "line": 444,
+                    "end": 458
                 }
             ]
         },
@@ -153142,7 +153154,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ScriptModules.php",
-            "lines": 347,
+            "lines": 393,
             "doc": "The script modules registry: registrations with typed dependencies, the\nqueue, and the four things a page prints from it (the import map, module\npreloads, the module tags split head/footer, and per-module JSON data).\nBehaviour pinned by the script-modules probe fixture.",
             "implements": [],
             "extends": null,
@@ -153178,8 +153190,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 35
+                "line": 35,
+                "end": 37
             },
             "cases": [],
             "constants": [
@@ -153230,6 +153242,15 @@
                 {
                     "name": "a11yPrinted",
                     "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "told",
+                    "type": "array",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -153303,8 +153324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 76
+                    "line": 44,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -153351,8 +153372,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 87
+                    "line": 74,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -153371,8 +153392,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -153391,8 +153412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 100
+                    "line": 91,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -153418,8 +153439,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 114
+                    "line": 98,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -153438,8 +153459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 112,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -153458,8 +153479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 126
+                    "line": 118,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -153472,8 +153493,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 142,
-                    "end": 145
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -153494,8 +153515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 160
+                    "line": 147,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -153508,8 +153529,8 @@
                         "@return array<string, array{src: string, version: string|false|null, dependencies: list<array{id: string, import: string}>, in_footer: bool, fetchpriority: string}>"
                     ],
                     "params": [],
-                    "line": 169,
-                    "end": 178
+                    "line": 164,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -153539,8 +153560,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 195
+                    "line": 183,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -153559,8 +153580,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 193,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -153571,8 +153592,8 @@
                     "doc": "The import map script tag.",
                     "shapes": [],
                     "params": [],
-                    "line": 204,
-                    "end": 214
+                    "line": 199,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -153580,11 +153601,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "printPreloads(): string",
-                    "doc": "The modulepreload links.",
+                    "doc": "The modulepreload links: the queued modules' static dependencies not\nqueued themselves, each after its own (depth first, in queue order).",
                     "shapes": [],
                     "params": [],
-                    "line": 217,
-                    "end": 228
+                    "line": 215,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -153595,8 +153616,8 @@
                     "doc": "The head's module tags.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 234
+                    "line": 230,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -153607,8 +153628,8 @@
                     "doc": "The footer's module tags.",
                     "shapes": [],
                     "params": [],
-                    "line": 237,
-                    "end": 240
+                    "line": 236,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -153619,8 +153640,8 @@
                     "doc": "The script-module-data tags.",
                     "shapes": [],
                     "params": [],
-                    "line": 243,
-                    "end": 256
+                    "line": 242,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -153631,8 +153652,8 @@
                     "doc": "The a11y module's tag, once.",
                     "shapes": [],
                     "params": [],
-                    "line": 259,
-                    "end": 266
+                    "line": 258,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -153658,8 +153679,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 135
+                    "line": 123,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -153678,8 +153699,43 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
+                    "line": 267,
                     "end": 289
+                },
+                {
+                    "routes": [],
+                    "name": "tellMissing",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "tellMissing(): void",
+                    "doc": "A queued module whose dependencies are not all registered is told\nonce, as the page first prints its module tags or preloads, not as it\nregisters (a dependency may be registered later).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 296,
+                    "end": 308
+                },
+                {
+                    "routes": [],
+                    "name": "dependenciesFirst",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "dependenciesFirst(array $ids): array",
+                    "doc": "The modules' registered static dependencies, each after its own: depth\nfirst, in the order the modules and their dependencies are given.",
+                    "shapes": [
+                        "@param list<string> $ids",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "ids",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 317,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -153690,8 +153746,8 @@
                     "doc": "Queued modules that are registered with every dependency registered, in queue order.",
                     "shapes": [],
                     "params": [],
-                    "line": 292,
-                    "end": 301
+                    "line": 338,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -153719,8 +153775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 316
+                    "line": 350,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -153750,8 +153806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 345
+                    "line": 373,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -153770,8 +153826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 351
+                    "line": 394,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -153790,8 +153846,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 353,
-                    "end": 356
+                    "line": 399,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -153824,8 +153880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 361
+                    "line": 404,
+                    "end": 407
                 }
             ]
         },

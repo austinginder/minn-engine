@@ -11,40 +11,46 @@ class WP_Script_Modules
     {
         return self::$instance ??= new self();
     }
+    private ?Minn\Runtime\ScriptModules $minn_registry = null;
+    /** The registry this object keeps: the page's for wp_script_modules()'s, one of its own for any other (probe script-modules-printing). */
+    private function minn(): Minn\Runtime\ScriptModules
+    {
+        return $this === self::$instance ? Runtime::scriptModules() : $this->minn_registry ??= Runtime::newScriptModules();
+    }
 
     public function register(string $id, string $src, array $deps = [], $version = false, array $args = []): void
     {
-        Runtime::scriptModules()->register($id, $src, $deps, $version, $args);
+        $this->minn()->register($id, $src, $deps, $version, $args);
     }
 
     public function get_queue(): array
     {
-        return Runtime::scriptModules()->queue();
+        return $this->minn()->queue();
     }
 
     public function set_fetchpriority(string $id, string $priority): bool
     {
-        return Runtime::scriptModules()->setFetchpriority($id, $priority);
+        return $this->minn()->setFetchpriority($id, $priority);
     }
 
     public function set_in_footer(string $id, bool $in_footer): bool
     {
-        return $in_footer ? Runtime::scriptModules()->moveToFooter($id) : Runtime::scriptModules()->moveToHead($id);
+        return $in_footer ? $this->minn()->moveToFooter($id) : $this->minn()->moveToHead($id);
     }
 
     public function enqueue(string $id, string $src = '', array $deps = [], $version = false, array $args = []): void
     {
-        Runtime::scriptModules()->enqueue($id, $src, $deps, $version, $args);
+        $this->minn()->enqueue($id, $src, $deps, $version, $args);
     }
 
     public function dequeue(string $id): void
     {
-        Runtime::scriptModules()->dequeue($id);
+        $this->minn()->dequeue($id);
     }
 
     public function deregister(string $id): void
     {
-        Runtime::scriptModules()->deregister($id);
+        $this->minn()->deregister($id);
     }
 
     /** @var array<string, array{domain: string, path: string}> each module's translation domain and folder */
@@ -53,7 +59,7 @@ class WP_Script_Modules
     /** A registered module's translations domain and folder, kept; false for a module not registered (probe hollow-methods). */
     public function set_translations(string $id, string $domain = 'default', string $path = ''): bool
     {
-        if (Runtime::scriptModules()->registered($id) === null) {
+        if ($this->minn()->registered($id) === null) {
             return false;
         }
         $this->minn_translations[$id] = ['domain' => $domain, 'path' => $path];
@@ -83,52 +89,52 @@ class WP_Script_Modules
 
     public function print_head_enqueued_script_modules(): void
     {
-        echo Runtime::scriptModules()->printHead();
+        echo $this->minn()->printHead();
     }
 
     public function print_enqueued_script_modules(): void
     {
-        echo Runtime::scriptModules()->printFooter();
+        echo $this->minn()->printFooter();
     }
 
     public function print_script_module_preloads(): void
     {
-        echo Runtime::scriptModules()->printPreloads();
+        echo $this->minn()->printPreloads();
     }
 
     public function print_import_map(): void
     {
-        echo Runtime::scriptModules()->printImportMap();
+        echo $this->minn()->printImportMap();
     }
 
     public function get_registered(string $id): ?array
     {
-        return Runtime::scriptModules()->registered($id);
+        return $this->minn()->registered($id);
     }
 
     public function print_script_module_data(): void
     {
-        echo Runtime::scriptModules()->printData();
+        echo $this->minn()->printData();
     }
 
     public function print_a11y_script_module_html(): void
     {
-        echo Runtime::scriptModules()->printA11y();
+        echo $this->minn()->printA11y();
     }
 
     // Private in the reference too; plugins call them through reflection (Query Monitor's assets panel).
     private function get_marked_for_enqueue(): array
     {
-        return Runtime::scriptModules()->markedForEnqueue();
+        return $this->minn()->markedForEnqueue();
     }
 
     private function get_dependencies(array $ids, array $import_types = ['static', 'dynamic']): array
     {
-        return Runtime::scriptModules()->dependencyRecords($ids, $import_types);
+        return $this->minn()->dependencyRecords($ids, $import_types);
     }
 
     private function get_src(string $id): string
     {
-        return Runtime::scriptModules()->source($id);
+        return $this->minn()->source($id);
     }
 }

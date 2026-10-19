@@ -1,0 +1,80 @@
+[
+    [
+        "a new registry keeps its own",
+        {
+            "the first prints its module": true,
+            "a second new one does not know it": true,
+            "the page's does not know it": true,
+            "wp_script_modules() is one object": true
+        }
+    ],
+    [
+        "the missing dependency, told",
+        {
+            "after each step": {
+                "registered": 0,
+                "queued": 0,
+                "print_import_map (1)": [
+                    0,
+                    ""
+                ],
+                "print_head_enqueued_script_modules (1)": [
+                    1,
+                    ""
+                ],
+                "print_enqueued_script_modules (1)": [
+                    1,
+                    ""
+                ],
+                "print_script_module_preloads (1)": [
+                    1,
+                    ""
+                ],
+                "print_script_module_data (1)": [
+                    1,
+                    ""
+                ],
+                "print_import_map (2)": [
+                    1,
+                    ""
+                ],
+                "print_head_enqueued_script_modules (2)": [
+                    1,
+                    ""
+                ],
+                "print_enqueued_script_modules (2)": [
+                    1,
+                    ""
+                ],
+                "print_script_module_preloads (2)": [
+                    1,
+                    ""
+                ],
+                "print_script_module_data (2)": [
+                    1,
+                    ""
+                ]
+            },
+            "by": [
+                "WP_Script_Modules::register"
+            ]
+        }
+    ],
+    [
+        "the missing dependency, first told by",
+        {
+            "print_script_module_data": 0,
+            "print_enqueued_script_modules": 1,
+            "print_script_module_preloads": 1,
+            "two such modules, head then footer": 2,
+            "registered, never queued": 0
+        }
+    ],
+    [
+        "preloads",
+        {
+            "preloads": "<link rel=\"modulepreload\" href=\"/zz/leaf.js?ver={v}\" id=\"zz-leaf-js-modulepreload\">\n<link rel=\"modulepreload\" href=\"/zz/middle.js?ver={v}\" id=\"zz-middle-js-modulepreload\">\n<link rel=\"modulepreload\" href=\"/zz/shared.js?ver={v}\" id=\"zz-shared-js-modulepreload\">\n<link rel=\"modulepreload\" href=\"/zz/other.js?ver={v}\" id=\"zz-other-dep-js-modulepreload\">\n",
+            "import map": "<script id=\"wp-importmap\" type=\"importmap\">\n{\"imports\":{\"zz-shared\":\"/zz/shared.js?ver={v}\",\"zz-other-dep\":\"/zz/other.js?ver={v}\",\"zz-dynamic-only\":\"/zz/dynamic.js?ver={v}\",\"zz-middle\":\"/zz/middle.js?ver={v}\",\"zz-leaf\":\"/zz/leaf.js?ver={v}\"}}\n</script>\n"
+        }
+    ]
+]

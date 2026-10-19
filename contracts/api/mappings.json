@@ -2,14 +2,14 @@
     "generated": "2026-10-19",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 684,
+        "minn": 683,
         "composes": 2142,
-        "leaf": 1004,
-        "noop": 3152,
+        "leaf": 1005,
+        "noop": 3153,
         "placeholder": 0,
         "deadend": 1770,
-        "functions": 8674,
-        "minnMethods": 1403,
+        "functions": 8675,
+        "minnMethods": 1404,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -26492,72 +26492,56 @@
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::deregister": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::enqueue": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::get_dependencies": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::get_marked_for_enqueue": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::get_queue": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::get_registered": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::get_src": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::instance": {
@@ -26567,58 +26551,56 @@
             "minn": [],
             "composes": []
         },
-        "WP_Script_Modules::print_a11y_script_module_html": {
+        "WP_Script_Modules::minn": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
             "minn": [
+                "Minn\\Runtime\\Runtime::newScriptModules",
                 "Minn\\Runtime\\Runtime::scriptModules"
             ],
+            "composes": []
+        },
+        "WP_Script_Modules::print_a11y_script_module_html": {
+            "file": "classes/WP_Script_Modules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::print_enqueued_script_modules": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::print_head_enqueued_script_modules": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::print_import_map": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::print_script_module_data": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::print_script_module_preloads": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::print_script_module_translations": {
@@ -26632,36 +26614,28 @@
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::set_fetchpriority": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::set_in_footer": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "minn": [],
             "composes": []
         },
         "WP_Script_Modules::set_translations": {
             "file": "classes/WP_Script_Modules.php",
             "lines": 5,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::scriptModules"
-            ],
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Scripts::__construct": {
