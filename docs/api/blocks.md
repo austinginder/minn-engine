@@ -1055,7 +1055,7 @@ attributes are JSON with every character that could end the comment or
 open a tag spelled as an escape ("<" "<", "--" "--", a
 backslash "\"), so a value can never break out of its delimiter.
 
-Used by: `Minn\Support\Kses`
+Used by: `Minn\Runtime\TemplateFiles`, `Minn\Support\Kses`
 
 ### static `blocks(array $blocks): string`
 

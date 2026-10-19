@@ -30,6 +30,9 @@ final class UserStylesPost
             'orderby' => 'ID',
             'order' => 'DESC',
             'tax_query' => [['taxonomy' => 'wp_theme', 'field' => 'slug', 'terms' => $stylesheet]],
+            // As the reference's lookup asks: the post's meta and terms are not read with it.
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
         ]);
         if ($found !== []) {
             return get_object_vars($found[0]);

@@ -13,7 +13,7 @@ shared SQL fragments
 | [`PostOrder`](#postorder) | final class | 122 | WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the |
 | [`PostSearch`](#postsearch) | final class | 118 | WP_Query's search as the reference writes it (probe wp-query-sql): the |
 | [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
-| [`TaxSql`](#taxsql) | final class | 197 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
+| [`TaxSql`](#taxsql) | final class | 200 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
 
 ## AuthorPostsSql
 
@@ -544,7 +544,7 @@ nobody has yields "0 = 1".
 ```php
 __construct(string $relationships, string $termTaxonomy, string $primaryTable, string $primaryId, Closure $termTaxonomyIds)
 ```
-- `@param Closure(string, string, list<mixed>, bool): list<int> $termTaxonomyIds taxonomy, field, terms, include children`
+- `@param Closure(array<string, mixed>, string): (list<int>|null) $termTaxonomyIds a clause and its operator: the clause's term_taxonomy_ids, null when an AND clause names a term there is not`
 
 
 ### static `sanitize(array $queries): array`
@@ -602,5 +602,5 @@ or joins anew, and keeps that alias. A term nobody has yields "0 = 1"
 
 The alias of an IN sibling the clause can share under OR (find_compatible_table_alias), or false.
 
-Internals: `operator()` (private, line 194), `inClause()` (private, line 201)
+Internals: `operator()` (private, line 197), `inClause()` (private, line 204)
 

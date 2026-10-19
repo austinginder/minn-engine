@@ -32,7 +32,8 @@ final class TermQueryTree
     {
         $terms = [];
         foreach ($rows as $key => $row) {
-            $term = Records::term(is_object($row) && property_exists($row, 'term_id') ? $row->term_id : $row);
+            // A row the engine answered from what it read names its taxonomy, so the term it kept is read back.
+            $term = Records::term(is_object($row) && property_exists($row, 'term_id') ? $row->term_id : $row, is_object($row) && property_exists($row, 'taxonomy') ? $row->taxonomy : '');
             if (!$term instanceof Term) {
                 continue;
             }

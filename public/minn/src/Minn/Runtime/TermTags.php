@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\RowCache;
+use Minn\I18n\Gettext;
 use Minn\Front\TermLists;
 use Minn\Objects\Term;
 
@@ -28,20 +29,41 @@ final class TermTags
     {
         $cached = Handoff::cacheGet((int) $id, 'minn_object_terms');
         if (is_array($cached) && array_key_exists((string) $taxonomy, $cached)) {
-            return $cached[(string) $taxonomy];
+            $ids = array_map(static fn (mixed $term): int => (int) (is_object($term) ? $term->term_id : $term), (array) $cached[(string) $taxonomy]);
+        } else {
+            $primed = RowCache::peek('post_terms', (int) $id . ':' . $taxonomy);
+            if (!is_array($primed)) {
+                return false;
+            }
+            $ids = array_map(static fn (array $row): int => (int) $row[0], $primed);
         }
-        $primed = RowCache::peek('post_terms', (int) $id . ':' . $taxonomy);
-        if (!is_array($primed)) {
-            return false;
+        // As the reference answers from its cache: the terms' meta queued to load together, each term read through get_term.
+        if ($ids !== []) {
+            Handoff::lazyloadTermMeta($ids);
         }
         $terms = [];
-        foreach ($primed as [$termId]) {
-            $term = Records::term((int) $termId, (string) $taxonomy);
+        foreach ($ids as $termId) {
+            $term = Records::term($termId, (string) $taxonomy);
             if ($term instanceof Term) {
                 $terms[] = $term;
             }
         }
         return $terms;
+    }
+
+    /**
+     * The post formats' names (get_post_format_strings), in the site's
+     * language, by slug.
+     *
+     * @return array<string, string>
+     */
+    public static function formatStrings(): array
+    {
+        $names = [];
+        foreach (['standard' => 'Standard', 'aside' => 'Aside', 'chat' => 'Chat', 'gallery' => 'Gallery', 'link' => 'Link', 'image' => 'Image', 'quote' => 'Quote', 'status' => 'Status', 'video' => 'Video', 'audio' => 'Audio'] as $slug => $name) {
+            $names[$slug] = Gettext::inContext($name, 'Post format');
+        }
+        return $names;
     }
 
     /** A post's terms of a taxonomy (get_the_terms), as get_the_terms leaves them; false for none or no post. */
@@ -54,6 +76,10 @@ final class TermTags
         $terms = self::cached($post->ID, $taxonomy);
         if ($terms === false) {
             $terms = TermLookup::objectTerms($post->ID, $taxonomy);
+            // Kept, as the reference keeps them, so the post's next read of these terms is answered.
+            if (is_array($terms)) {
+                RowCache::put('post_terms', (int) $post->ID . ':' . $taxonomy, array_values(array_map(static fn (mixed $term): array => [(int) $term->term_id], array_filter($terms, 'is_object'))));
+            }
         }
         if (Records::isError($terms)) {
             return $terms;

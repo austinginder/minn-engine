@@ -17,12 +17,23 @@ use Minn\I18n\Gettext;
  * order (suppress_filters keeps the ones it keeps), the request split into
  * an id query when that is cheaper, the count, a single post's status check
  * and preview, sticky posts on the home listing, and the results filters.
+ * A lookup the engine can answer from what it has read (QueryAnswers) runs
+ * every filter and no SQL, unless a plugin changes it.
  */
 final class PostQuery
 {
+    /** The hooks that shape the request: an engine answer stands only while none of them has a listener. */
+    private const SHAPING = [
+        'parse_query', 'parse_tax_query', 'posts_search', 'posts_search_orderby', 'posts_where', 'posts_join', 'posts_where_paged', 'posts_groupby', 'posts_join_paged',
+        'posts_orderby', 'posts_distinct', 'post_limits', 'posts_fields', 'posts_clauses', 'posts_where_request', 'posts_groupby_request', 'posts_join_request',
+        'posts_orderby_request', 'posts_distinct_request', 'posts_fields_request', 'post_limits_request', 'posts_clauses_request', 'posts_request', 'posts_pre_query',
+        'split_the_query', 'posts_request_ids',
+    ];
+
     private Query $query;
     private object $wpdb;
     private PostQueryParts $parts;
+    private ?\Closure $answer = null;
 
     public function __construct(private readonly Db $db)
     {
@@ -40,6 +51,7 @@ final class PostQuery
         $this->query = $query;
         $this->wpdb = $wpdb;
         $this->parts = new PostQueryParts($this->db->table('posts'));
+        $this->answer = QueryAnswers::take($query);
         $this->prepare();
         $q = &$query->query_vars;
         $this->defaults($q);
@@ -53,7 +65,11 @@ final class PostQuery
     {
         $query = $this->query;
         $query->parse_query();
+        $before = $this->answer === null ? null : serialize($query->query_vars);
         Runtime::hooks()->actionRefArray('pre_get_posts', [&$query]);
+        if ($before !== null && serialize($query->query_vars) !== $before) {
+            $this->answer = null;
+        }
         $query->query_vars = $query->fill_query_vars($query->query_vars);
         $query->allow_query_attachment_by_filename = Runtime::hooks()->filter('wp_allow_query_attachment_by_filename', [false]);
         Runtime::hooks()->removeAll('wp_allow_query_attachment_by_filename', false);
@@ -385,12 +401,33 @@ final class PostQuery
             return;
         }
         $query->request = Runtime::hooks()->filter('posts_request_ids', [$this->parts->request($foundRows, "{$t}.ID"), $query]);
-        $ids = $this->wpdb->get_col($query->request);
+        $ids = $this->answered($q) ?? $this->wpdb->get_col($query->request);
         $query->posts = $ids ?: [];
         if ($ids) {
             $this->foundPosts($q);
             PostReads::prime($ids, $q['update_post_term_cache'], $q['update_post_meta_cache']);
         }
+    }
+
+    /**
+     * The ids an engine answer gives, when the query is still the one the
+     * engine wrote; null when it is not, or it has none.
+     *
+     * @param array<string, mixed> $q
+     * @return list<int>|null
+     */
+    private function answered(array $q): ?array
+    {
+        if ($this->answer === null) {
+            return null;
+        }
+        foreach (self::SHAPING as $hook) {
+            if (Runtime::hooks()->has($hook)) {
+                return null;
+            }
+        }
+        $ids = ($this->answer)($q);
+        return is_array($ids) ? array_values(array_map('intval', $ids)) : null;
     }
 
     /** found_posts (from FOUND_ROWS() when the query paged, else the posts' count) and max_num_pages. @param array<string, mixed> $q */

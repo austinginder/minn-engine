@@ -273,6 +273,17 @@ final class Theme
         return null;
     }
 
+    /** The area theme.json declares for a template part, or null when it declares none. */
+    public function declaredPartArea(string $slug): ?string
+    {
+        foreach ((array) ($this->json()['templateParts'] ?? []) as $part) {
+            if (($part['name'] ?? '') === $slug) {
+                return isset($part['area']) ? (string) $part['area'] : null;
+            }
+        }
+        return null;
+    }
+
     /** The template-part area declared in theme.json (header, footer, or uncategorized). */
     public function partArea(string $slug): string
     {

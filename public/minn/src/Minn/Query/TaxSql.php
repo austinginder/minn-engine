@@ -20,7 +20,7 @@ final class TaxSql
     private int $aliasCount = 0;
 
     /**
-     * @param Closure(string, string, list<mixed>, bool): list<int> $termTaxonomyIds taxonomy, field, terms, include children
+     * @param Closure(array<string, mixed>, string): (list<int>|null) $termTaxonomyIds a clause and its operator: the clause's term_taxonomy_ids, null when an AND clause names a term there is not
      */
     public function __construct(
         private readonly string $relationships,
@@ -160,7 +160,10 @@ final class TaxSql
             // The reference's own layout, tabs and all (probe query-clauses).
             return ['where' => [$operator . " (\n\t\t\t\t\tSELECT 1\n\t\t\t\t\tFROM {$this->relationships}\n\t\t\t\t\tINNER JOIN {$this->termTaxonomy}\n\t\t\t\t\tON {$this->termTaxonomy}.term_taxonomy_id = {$this->relationships}.term_taxonomy_id\n\t\t\t\t\tWHERE {$this->termTaxonomy}.taxonomy = " . Sql::quote((string) $clause['taxonomy']) . "\n\t\t\t\t\tAND {$this->relationships}.object_id = {$object}\n\t\t\t\t)"], 'join' => []];
         }
-        $ids = ($this->termTaxonomyIds)((string) $clause['taxonomy'], (string) $clause['field'], array_values(array_unique((array) $clause['terms'])), (bool) $clause['include_children'] && $operator !== 'AND');
+        $ids = ($this->termTaxonomyIds)($clause, $operator);
+        if ($ids === null) {
+            return ['where' => ['0 = 1'], 'join' => []];
+        }
         sort($ids, SORT_NUMERIC);
         if ($clause['terms'] !== []) {
             $clause['terms'] = $ids;

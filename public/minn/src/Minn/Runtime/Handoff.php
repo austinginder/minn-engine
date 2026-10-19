@@ -520,6 +520,18 @@ final class Handoff
         return self::answer('queryTemplate', ...$args);
     }
 
+    /** Terms queued so the first read of one's meta loads them all (wp_lazyload_term_meta). @param list<int> $ids */
+    public static function lazyloadTermMeta(array $ids): void
+    {
+        self::answer('lazyloadTermMeta', $ids);
+    }
+
+    /** Text smilies as their emoji or images (convert_smilies). */
+    public static function convertSmilies(mixed $text): mixed
+    {
+        return self::answer('convertSmilies', $text);
+    }
+
     /** The block templates a query finds, the theme's and the ones plugins registered (get_block_templates). */
     public static function blockTemplates(mixed ...$args): mixed
     {

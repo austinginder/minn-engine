@@ -166,10 +166,31 @@ final class Kses
     {
         $content = self::normalizeEntities(self::withoutControls($content));
         $content = (string) Runtime::hooks()->filter('pre_kses', [$content, $allowedHtml, $protocols]);
-        $tags = is_string($allowedHtml) ? ($tagsFor === null ? [] : $tagsFor($allowedHtml)) : $allowedHtml;
+        $tags = is_string($allowedHtml) ? self::tagsAsked($content, $allowedHtml, $tagsFor) : $allowedHtml;
         $opens = preg_match_all('/<([a-zA-Z][a-zA-Z0-9:-]*)/', $content, $found) > 0
             && array_filter(array_unique(array_map('strtolower', $found[1])), static fn (string $tag): bool => !empty($tags[$tag])) !== [];
         return self::filter($content, KsesPolicy::fromAllowlist($tags, array_values((array) $protocols), $opens ? (array) self::uriAttributes() : []));
+    }
+
+    /**
+     * The HTML a context allows, asked as the reference asks it (probe
+     * kses-allowed-asks): once for each element tag the content holds,
+     * opening or closing; never for text, comments or a lone bracket. The
+     * first answer stands for them all.
+     *
+     * @return array<string, mixed>
+     */
+    private static function tagsAsked(string $content, string $context, ?Closure $tagsFor): array
+    {
+        if ($tagsFor === null || preg_match_all('/<!--.*?(?:-->|$)|(<\s*\/?\s*[a-zA-Z0-9][^>]*>)/s', $content, $found) === 0) {
+            return [];
+        }
+        $tags = null;
+        foreach (array_filter($found[1], static fn (string $tag): bool => $tag !== '') as $ignored) {
+            $answer = (array) $tagsFor($context);
+            $tags ??= $answer;
+        }
+        return $tags ?? [];
     }
 
     /** The attributes judged as URIs, through wp_kses_uri_attributes (its answer as given). */

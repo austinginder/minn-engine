@@ -16,6 +16,7 @@ use Minn\Content\Posts;
 use Minn\Content\Terms;
 use Minn\Db;
 use Minn\Objects\RenderedBlock;
+use Minn\Runtime\BlockHooks;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Pages;
 use Minn\Runtime\Runtime;
@@ -104,11 +105,12 @@ final readonly class Navigation
         if ($items === []) {
             $ref = (int) $block->attr('ref', 0);
             [$menu, $named] = $this->menuPost($ref);
-            $menuKey = $menu === null ? null : 'menu:' . (int) $menu['ID'];
+            $menuId = $menu === null ? 0 : (int) $menu['ID'];
+            $menuKey = $menu === null ? null : 'menu:' . $menuId;
             if ($menuKey !== null && !$renderer->state()->enter($menuKey)) {
                 return '';
             }
-            $items = $menu !== null ? Parser::parse((string) $menu['post_content']) : ($ref > 0 ? [] : $this->classicItems());
+            $items = $menu !== null ? Parser::parse(BlockHooks::forNavigation((string) $menu['post_content'], $menuId)) : ($ref > 0 ? [] : $this->classicItems());
             // The menu's title labels the nav only when the block names the menu and that menu is the one shown.
             $label = $named ? (string) ($menu['post_title'] ?? '') : '';
         }
@@ -455,10 +457,11 @@ final readonly class Navigation
 
     private function pageList(Block $block, Renderer $renderer): string
     {
-        // The reference's pages for the list: get_pages in menu order, then title.
+        // The reference's pages for the list: get_pages in menu order, then title; their own fields only (to_array would
+        // read each page's template and terms, which the reference's list never asks for).
         $tree = [];
         foreach (Pages::get(['sort_column' => 'menu_order,post_title', 'sort_order' => 'ASC']) as $page) {
-            $tree[(int) $page->post_parent][] = $page->to_array();
+            $tree[(int) $page->post_parent][] = get_object_vars($page);
         }
         // The reference compares the queried object's id to page ids without
         // regard to type, so a term or author archive can light up a page too.

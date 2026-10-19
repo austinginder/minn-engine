@@ -1573,16 +1573,10 @@ function gallery_shortcode($attr)
     foreach (_minn_gallery_attachments($atts) as $attachment) {
         $items[] = _minn_gallery_item($attachment, $atts);
     }
-    $args = [
-        'itemtag' => (string) $atts['itemtag'],
-        'icontag' => (string) $atts['icontag'],
-        'captiontag' => (string) $atts['captiontag'],
-        'columns' => (int) $atts['columns'],
-        'size' => (string) $atts['size'],
-    ];
     if ($items === []) {
         return '';
     }
+    $args = Minn\Runtime\KsesRules::galleryTags($atts) + ['columns' => (int) $atts['columns'], 'size' => (string) $atts['size']];
     // The opening (the default style when use_default_gallery_style asks for it, then the element) through gallery_style (probe filter-inputs-3).
     $style = apply_filters('use_default_gallery_style', !current_theme_supports('html5', 'gallery')) ? Minn\Media\Gallery::defaultStyle($instance, $args['columns']) : '';
     $opening = (string) apply_filters('gallery_style', $style . Minn\Media\Gallery::opening($args, $instance, (int) $atts['id']));

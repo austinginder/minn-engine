@@ -27,6 +27,8 @@ final class RowCache
         'comments' => ['comments'],
         'comment_queries' => ['comments', 'commentmeta'],
         'term_rows' => ['terms', 'term_taxonomy'],
+        'term_queries' => ['terms', 'term_taxonomy', 'term_relationships', 'termmeta'],
+        'term_lookups' => ['terms', 'term_taxonomy'],
         'post_meta' => ['postmeta'],
         'user_meta' => ['usermeta'],
         'term_meta' => ['termmeta'],

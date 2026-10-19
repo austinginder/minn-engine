@@ -10,14 +10,14 @@ escaping, serialized readers, small helpers
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
 | [`Entities`](#entities) | final class | 89 | HTML special-character encoding with the reference's quote styles and its |
-| [`Escape`](#escape) | final class | 78 | Text made safe the way WordPress's escapers make it, each ending in the |
+| [`Escape`](#escape) | final class | 84 | Text made safe the way WordPress's escapers make it, each ending in the |
 | [`FileHeaders`](#fileheaders) | final class | 27 | Header values from a plugin or theme file. The labels (Plugin Name, |
 | [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
 | [`Files`](#files) | final class | 66 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Kses`](#kses) | final class | 515 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 536 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
@@ -185,7 +185,7 @@ encoded; for a textarea, everything encoded; for an inline script, a
 single-quoted string's specials; and an address (esc_url) cleaned, its
 protocol checked against the allowed ones.
 
-Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -194,6 +194,10 @@ Text for an element's content.
 ### static `attr(mixed $text): string`
 
 Text for an attribute's value.
+
+### static `tag(mixed $tagName): mixed`
+
+A tag name (tag_escape): letters, digits, hyphens, underscores and colons, lowercased, as tag_escape leaves it.
 
 ### static `textarea(mixed $text): string`
 
@@ -221,7 +225,7 @@ The specials encoded in the given quote style (_wp_specialchars),
 references already present normalised the way kses normalises them
 rather than encoded again.
 
-Internals: `encoded()` (private, line 92)
+Internals: `encoded()` (private, line 98)
 
 
 ## FileHeaders
@@ -373,7 +377,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\KsesRules`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\KsesRules`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
 
 ### static `post(string $html): string`
 
@@ -504,7 +508,7 @@ Whether a URL may be an object's data in post content: an http or https
 URL on the uploads host and port, no credentials, query or fragment,
 whose path ends in ".pdf".
 
-Internals: `cleanValue()` (private, line 138), `run()` (private, line 219), `htmlComment()` (private, line 247), `deepDecode()` (private, line 359), `visible()` (private, line 372), `normalizeText()` (private, line 387), `normalizeAttribute()` (private, line 410), `named()` (private, line 430), `codePoint()` (private, line 437), `attributes()` (private, line 462), `rendered()` (private, line 487), `srcset()` (private, line 525)
+Internals: `cleanValue()` (private, line 138), `tagsAsked()` (private, line 183), `run()` (private, line 240), `htmlComment()` (private, line 268), `deepDecode()` (private, line 380), `visible()` (private, line 393), `normalizeText()` (private, line 408), `normalizeAttribute()` (private, line 431), `named()` (private, line 451), `codePoint()` (private, line 458), `attributes()` (private, line 483), `rendered()` (private, line 508), `srcset()` (private, line 546)
 
 
 ## KsesAttributes

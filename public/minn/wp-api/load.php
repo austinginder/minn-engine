@@ -831,6 +831,8 @@ Minn\Runtime\Handoff::bind([
     },
     'queryTemplate' => static fn (...$args) => get_query_template(...$args),
     'blockTemplates' => static fn (...$args) => get_block_templates(...$args),
+    'lazyloadTermMeta' => static fn (array $ids) => wp_lazyload_term_meta($ids),
+    'convertSmilies' => static fn ($text) => convert_smilies($text),
     'blockHooks' => static fn (...$args) => apply_block_hooks_to_content(...$args),
     'blockHooksForPost' => static fn ($content, $post, $callback, &$ignored) => apply_block_hooks_to_content_from_post_object($content, $post, $callback, $ignored),
 ]);

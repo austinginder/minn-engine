@@ -1,0 +1,1910 @@
+[
+    [
+        "clause: flat slugs",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 2,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-t1",
+                        "zz-t2"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt T1},{tt T2}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "zz-t1",
+                    "zz-t2"
+                ],
+                "field": "slug",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tf": {
+                    "terms": [
+                        "zz-t1",
+                        "zz-t2"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: flat slugs repeated",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 2,
+                    "fields": "all",
+                    "name": "",
+                    "slug": {
+                        "0": "zz-t1",
+                        "2": "zz-t2"
+                    },
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt T1},{tt T2}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "zz-t1",
+                    "zz-t1",
+                    "zz-t2"
+                ],
+                "field": "slug",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tf": {
+                    "terms": [
+                        "zz-t1",
+                        "zz-t1",
+                        "zz-t2"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: flat slug and a missing one",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 2,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-t1",
+                        "zz-none"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt T1}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "zz-t1",
+                    "zz-none"
+                ],
+                "field": "slug",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tf": {
+                    "terms": [
+                        "zz-t1",
+                        "zz-none"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: flat names",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 1,
+                    "fields": "all",
+                    "name": [
+                        "Zz T2"
+                    ],
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt T2}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "Zz T2"
+                ],
+                "field": "name",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tf": {
+                    "terms": [
+                        "Zz T2"
+                    ],
+                    "field": "name"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: flat ids",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{T2}",
+                        "{T1}"
+                    ],
+                    "number": 2,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt T1},{tt T2}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "{tt T2}",
+                    "{tt T1}"
+                ],
+                "field": "term_id",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tf": {
+                    "terms": [
+                        "{T2}",
+                        "{T1}"
+                    ],
+                    "field": "term_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: flat term_taxonomy_ids",
+        {
+            "term queries": [],
+            "hierarchy reads": 0,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt T1}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "{tt T1}"
+                ],
+                "field": "term_taxonomy_id",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tf": {
+                    "terms": [
+                        "{tt T1}"
+                    ],
+                    "field": "term_taxonomy_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: flat ids, all of",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{T1}",
+                        "{T2}"
+                    ],
+                    "number": 2,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( ( SELECT COUNT(1) FROM wp_term_relationships WHERE term_taxonomy_id IN ({tt T1},{tt T2}) AND object_id = wp_posts.ID ) = 2 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "{tt T1}",
+                    "{tt T2}"
+                ],
+                "field": "term_id",
+                "operator": "AND",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tf": {
+                    "terms": [
+                        "{T1}",
+                        "{T2}"
+                    ],
+                    "field": "term_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: flat slugs repeated, all of",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 2,
+                    "fields": "all",
+                    "name": "",
+                    "slug": {
+                        "0": "zz-t1",
+                        "2": "zz-t2"
+                    },
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( ( SELECT COUNT(1) FROM wp_term_relationships WHERE term_taxonomy_id IN ({tt T1},{tt T2}) AND object_id = wp_posts.ID ) = 2 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "zz-t1",
+                    "zz-t1",
+                    "zz-t2"
+                ],
+                "field": "slug",
+                "operator": "AND",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tf": {
+                    "terms": [
+                        "zz-t1",
+                        "zz-t1",
+                        "zz-t2"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: flat slugs, all of, one missing",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 2,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-t1",
+                        "zz-none"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( 0 = 1 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "zz-t1",
+                    "zz-none"
+                ],
+                "field": "slug",
+                "operator": "AND",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tf": {
+                    "terms": [
+                        "zz-t1",
+                        "zz-none"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": [
+                "Inexistent terms."
+            ]
+        }
+    ],
+    [
+        "clause: flat ids, none of",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{T1}"
+                    ],
+                    "number": 1,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( wp_posts.ID NOT IN ( SELECT object_id FROM wp_term_relationships WHERE term_taxonomy_id IN ({tt T1}) ) )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tf",
+                "terms": [
+                    "{tt T1}"
+                ],
+                "field": "term_id",
+                "operator": "NOT IN",
+                "include_children": true
+            },
+            "queried": [],
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree slug",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-p"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                },
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{C1}",
+                        "{C2}",
+                        "{C3}",
+                        "{G1}",
+                        "{H1}",
+                        "{G2}",
+                        "{P}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 4,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt P},{tt C1},{tt C2},{tt G1},{tt G2},{tt H1},{tt C3}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "zz-p"
+                ],
+                "field": "slug",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "zz-p"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree slug, children left out",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-p"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt P}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "zz-p"
+                ],
+                "field": "slug",
+                "operator": "IN",
+                "include_children": false
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "zz-p"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree slugs overlapping",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-c2",
+                        "zz-p"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                },
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": {
+                        "0": "{G2}",
+                        "1": "{C2}",
+                        "2": "{C1}",
+                        "4": "{C3}",
+                        "5": "{G1}",
+                        "6": "{H1}",
+                        "8": "{P}"
+                    },
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 5,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt P},{tt C1},{tt C2},{tt G1},{tt G2},{tt H1},{tt C3}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "zz-c2",
+                    "zz-p"
+                ],
+                "field": "slug",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "zz-c2",
+                        "zz-p"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree name",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": [
+                        "Zz C1"
+                    ],
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                },
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{G1}",
+                        "{H1}",
+                        "{C1}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 2,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt C1},{tt G1},{tt H1}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "Zz C1"
+                ],
+                "field": "name",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "Zz C1"
+                    ],
+                    "field": "name"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree id deep",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{G1}",
+                        "{H1}",
+                        "{C1}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 2,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt C1},{tt G1},{tt H1}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "{tt C1}"
+                ],
+                "field": "term_id",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "{C1}"
+                    ],
+                    "field": "term_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree ids",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{C3}",
+                        "{G2}",
+                        "{C2}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 2,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt C2},{tt G2},{tt C3}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "{tt C3}",
+                    "{tt C2}"
+                ],
+                "field": "term_id",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "{C3}",
+                        "{C2}"
+                    ],
+                    "field": "term_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree term_taxonomy_id",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": [
+                        "{C2}"
+                    ],
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                },
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{G2}",
+                        "{C2}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 1,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt C2},{tt G2}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "{tt C2}"
+                ],
+                "field": "term_taxonomy_id",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "{tt C2}"
+                    ],
+                    "field": "term_taxonomy_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree term_taxonomy_id, children left out",
+        {
+            "term queries": [],
+            "hierarchy reads": 0,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt C2}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "{tt C2}"
+                ],
+                "field": "term_taxonomy_id",
+                "operator": "IN",
+                "include_children": false
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "{tt C2}"
+                    ],
+                    "field": "term_taxonomy_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree missing slug",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-none"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( 0 = 1 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "zz-none"
+                ],
+                "field": "slug",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "zz-none"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree slug and a missing one",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-c3",
+                        "zz-none"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                },
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{C3}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 1,
+            "where": "AND ( wp_term_relationships.term_taxonomy_id IN ({tt C3}) )",
+            "join": "LEFT JOIN wp_term_relationships ON (wp_posts.ID = wp_term_relationships.object_id)",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "zz-c3",
+                    "zz-none"
+                ],
+                "field": "slug",
+                "operator": "IN",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "zz-c3",
+                        "zz-none"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree id, all of",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{G2}",
+                        "{C2}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 1,
+            "where": "AND ( ( SELECT COUNT(1) FROM wp_term_relationships WHERE term_taxonomy_id IN ({tt C2},{tt G2}) AND object_id = wp_posts.ID ) = 2 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "{tt C2}"
+                ],
+                "field": "term_id",
+                "operator": "AND",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "{C2}"
+                    ],
+                    "field": "term_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree siblings, all of",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{C3}",
+                        "{G2}",
+                        "{C2}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 2,
+            "where": "AND ( ( SELECT COUNT(1) FROM wp_term_relationships WHERE term_taxonomy_id IN ({tt C2},{tt G2},{tt C3}) AND object_id = wp_posts.ID ) = 3 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "{tt C3}",
+                    "{tt C2}"
+                ],
+                "field": "term_id",
+                "operator": "AND",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "{C3}",
+                        "{C2}"
+                    ],
+                    "field": "term_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree overlapping, all of",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": {
+                        "0": "{G2}",
+                        "1": "{C2}",
+                        "2": "{C1}",
+                        "4": "{C3}",
+                        "5": "{G1}",
+                        "6": "{H1}",
+                        "8": "{P}"
+                    },
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 5,
+            "where": "AND ( 0 = 1 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "{tt C2}",
+                    "{tt P}"
+                ],
+                "field": "term_id",
+                "operator": "AND",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "{C2}",
+                        "{P}"
+                    ],
+                    "field": "term_id"
+                }
+            },
+            "messages": [
+                "Inexistent terms."
+            ]
+        }
+    ],
+    [
+        "clause: tree overlapping, all of, children left out",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{C2}",
+                        "{P}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( ( SELECT COUNT(1) FROM wp_term_relationships WHERE term_taxonomy_id IN ({tt P},{tt C2}) AND object_id = wp_posts.ID ) = 2 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "{tt C2}",
+                    "{tt P}"
+                ],
+                "field": "term_id",
+                "operator": "AND",
+                "include_children": false
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "{C2}",
+                        "{P}"
+                    ],
+                    "field": "term_id"
+                }
+            },
+            "messages": []
+        }
+    ],
+    [
+        "clause: tree slug and a missing one, all of",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-c3",
+                        "zz-none"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( 0 = 1 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "zz-c3",
+                    "zz-none"
+                ],
+                "field": "slug",
+                "operator": "AND",
+                "include_children": true
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "zz-c3",
+                        "zz-none"
+                    ],
+                    "field": "slug"
+                }
+            },
+            "messages": [
+                "Inexistent terms."
+            ]
+        }
+    ],
+    [
+        "clause: tree id and a missing one, all of",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{C3}",
+                        999999999
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "where": "AND ( 0 = 1 )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "{tt C3}",
+                    999999999
+                ],
+                "field": "term_id",
+                "operator": "AND",
+                "include_children": false
+            },
+            "queried": {
+                "zz_tt": {
+                    "terms": [
+                        "{C3}",
+                        999999999
+                    ],
+                    "field": "term_id"
+                }
+            },
+            "messages": [
+                "Inexistent terms."
+            ]
+        }
+    ],
+    [
+        "clause: tree slug, none of",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-c1"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                },
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{G1}",
+                        "{H1}",
+                        "{C1}"
+                    ],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 2,
+            "where": "AND ( wp_posts.ID NOT IN ( SELECT object_id FROM wp_term_relationships WHERE term_taxonomy_id IN ({tt C1},{tt G1},{tt H1}) ) )",
+            "join": "",
+            "clause": {
+                "taxonomy": "zz_tt",
+                "terms": [
+                    "zz-c1"
+                ],
+                "field": "slug",
+                "operator": "NOT IN",
+                "include_children": true
+            },
+            "queried": [],
+            "messages": []
+        }
+    ],
+    [
+        "transform: slug to term_taxonomy_id, children",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-c2"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "clause": [
+                "{tt C2}"
+            ],
+            "field": "term_taxonomy_id",
+            "messages": []
+        }
+    ],
+    [
+        "transform: slug to term_id",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tt"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 0,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-c2",
+                        "zz-c3"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "clause": [
+                "{C2}",
+                "{C3}"
+            ],
+            "field": "term_id",
+            "messages": []
+        }
+    ],
+    [
+        "transform: flat names to slug",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 2,
+                    "fields": "all",
+                    "name": [
+                        "Zz T1",
+                        "Zz T2"
+                    ],
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "clause": [
+                "zz-t1",
+                "zz-t2"
+            ],
+            "field": "slug",
+            "messages": []
+        }
+    ],
+    [
+        "transform: flat ids to term_taxonomy_id",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [
+                        "{T1}"
+                    ],
+                    "number": 1,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "clause": [
+                "{tt T1}"
+            ],
+            "field": "term_taxonomy_id",
+            "messages": []
+        }
+    ],
+    [
+        "transform: already there",
+        {
+            "term queries": [],
+            "hierarchy reads": 0,
+            "clause": [
+                "zz-t1"
+            ],
+            "field": "slug",
+            "messages": []
+        }
+    ],
+    [
+        "transform: missing",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 1,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-none"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "hierarchy reads": 0,
+            "clause": [],
+            "field": "term_taxonomy_id",
+            "messages": []
+        }
+    ],
+    [
+        "transform: all of, one missing",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 2,
+                    "fields": "all",
+                    "name": "",
+                    "slug": [
+                        "zz-t1",
+                        "zz-none"
+                    ],
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "error": [
+                "inexistent_terms",
+                "Inexistent terms."
+            ],
+            "messages": [
+                "Inexistent terms."
+            ]
+        }
+    ],
+    [
+        "transform: nothing to turn",
+        {
+            "term queries": [],
+            "hierarchy reads": 0,
+            "clause": [],
+            "field": "slug",
+            "messages": []
+        }
+    ],
+    [
+        "get_term_by: by name",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 1,
+                    "fields": "all",
+                    "name": "Zz T1",
+                    "slug": "",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "term": "{T1}"
+        }
+    ],
+    [
+        "get_term_by: by slug",
+        {
+            "term queries": [
+                {
+                    "taxonomy": [
+                        "zz_tf"
+                    ],
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 1,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "zz-t1",
+                    "term_taxonomy_id": "",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "term": "{T1}"
+        }
+    ],
+    [
+        "get_term_by: by name, no taxonomy",
+        {
+            "term queries": [],
+            "term": false
+        }
+    ],
+    [
+        "get_term_by: by slug, a taxonomy there is not",
+        {
+            "term queries": [],
+            "term": false
+        }
+    ],
+    [
+        "get_term_by: by name, empty",
+        {
+            "term queries": [],
+            "term": false
+        }
+    ],
+    [
+        "get_term_by: by a field there is not",
+        {
+            "term queries": [],
+            "term": false
+        }
+    ],
+    [
+        "get_term_by: by term_taxonomy_id, no taxonomy",
+        {
+            "term queries": [
+                {
+                    "taxonomy": null,
+                    "orderby": "none",
+                    "order": "ASC",
+                    "hide_empty": 0,
+                    "include": [],
+                    "number": 1,
+                    "fields": "all",
+                    "name": "",
+                    "slug": "",
+                    "term_taxonomy_id": "{T1}",
+                    "hierarchical": false,
+                    "get": "all",
+                    "child_of": 0,
+                    "parent": "",
+                    "childless": false,
+                    "update_term_meta_cache": false
+                }
+            ],
+            "term": "{T1}"
+        }
+    ],
+    [
+        "get_term_by: by id",
+        {
+            "term queries": [],
+            "term": "{T2}"
+        }
+    ],
+    [
+        "get_term_by: by ID, another taxonomy",
+        {
+            "term queries": [],
+            "term": false
+        }
+    ],
+    [
+        "children: P",
+        {
+            "term queries": [],
+            "hierarchy reads": 4,
+            "children": [
+                "{C1}",
+                "{C2}",
+                "{C3}",
+                "{G1}",
+                "{H1}",
+                "{G2}"
+            ]
+        }
+    ],
+    [
+        "children: C1",
+        {
+            "term queries": [],
+            "hierarchy reads": 2,
+            "children": [
+                "{G1}",
+                "{H1}"
+            ]
+        }
+    ],
+    [
+        "children: C3",
+        {
+            "term queries": [],
+            "hierarchy reads": 1,
+            "children": []
+        }
+    ],
+    [
+        "children: T1",
+        {
+            "term queries": [],
+            "hierarchy reads": 0,
+            "children": []
+        }
+    ]
+]

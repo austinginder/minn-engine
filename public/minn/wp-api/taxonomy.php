@@ -919,34 +919,6 @@ function _minn_tag_cloud_row($tag, array $args): array
     return ['id' => $tag->id ?? null, 'scaled' => call_user_func($args['topic_count_scale_callback'], $count), 'text' => (string) $text, 'link' => esc_url((string) ($tag->link ?? ''))] + (array) $tag;
 }
 
-/** @internal the term_taxonomy ids a tax clause names, children of hierarchical terms included when asked */
-function _minn_term_taxonomy_ids(string $taxonomy, string $field, array $terms, bool $children): array
-{
-    if ($terms === []) {
-        return [];
-    }
-    $ids = [];
-    $parents = [];
-    foreach ($terms as $value) {
-        $term = match ($field) {
-            'slug', 'name' => get_term_by($field, (string) $value, $taxonomy),
-            'term_taxonomy_id' => get_term_by('term_taxonomy_id', (int) $value, $taxonomy),
-            default => get_term((int) $value, $taxonomy),
-        };
-        if ($term instanceof WP_Term) {
-            $ids[] = (int) $term->term_taxonomy_id;
-            $parents[] = (int) $term->term_id;
-        }
-    }
-    if ($children && $parents !== [] && is_taxonomy_hierarchical($taxonomy)) {
-        foreach ($parents as $parent) {
-            foreach (get_terms(['taxonomy' => $taxonomy, 'child_of' => $parent, 'hide_empty' => false]) ?: [] as $child) {
-                $ids[] = (int) $child->term_taxonomy_id;
-            }
-        }
-    }
-    return array_values(array_unique($ids));
-}
 
 /**
  * The category select (probe plugin-queue4): the "all" and none choices

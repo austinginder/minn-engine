@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Auth\Can;
 use Minn\Content\Posts;
+use Minn\Content\RowCache;
 use Minn\Objects\Post;
 use Minn\Query\AuthorPostsSql;
 use Minn\Query\MimeWhere;
@@ -268,7 +269,45 @@ final class PostReads
             foreach (array_keys(array_filter($types, static fn (mixed $on, mixed $type): bool => $type !== '', ARRAY_FILTER_USE_BOTH)) as $type) {
                 $taxonomies = [...$taxonomies, ...Registered::objectTaxonomies((string) $type)];
             }
-            $store->primeTerms($ids, array_values(array_unique($taxonomies)));
+            $taxonomies = array_values(array_unique($taxonomies));
+            $read = $store->primeTerms($ids, $taxonomies);
+            if ($read !== null && $taxonomies !== []) {
+                self::termsPrimed($read['ids'], $taxonomies, $read['rows']);
+            }
+        }
+    }
+
+    /**
+     * The posts' terms as the reference primes them (update_object_term_cache):
+     * one wp_get_object_terms for every post and taxonomy, by name, answered
+     * from the rows just read unless a plugin shapes the terms query; the
+     * posts' terms are kept as it leaves them.
+     *
+     * @param list<int> $ids
+     * @param list<string> $taxonomies
+     * @param list<array{0: int, 1: int, 2: string}> $rows term, post and taxonomy, by name
+     */
+    private static function termsPrimed(array $ids, array $taxonomies, array $rows): void
+    {
+        $answer = static fn (): array => array_map(static fn (array $row): object => (object) ['term_id' => (string) $row[0], 'object_id' => (string) $row[1], 'taxonomy' => $row[2]], $rows);
+        $terms = TermLookup::objectTerms($ids, $taxonomies, ['fields' => 'all_with_object_id', 'orderby' => 'name', 'update_term_meta_cache' => false], $answer);
+        if (!is_array($terms)) {
+            return;
+        }
+        $kept = [];
+        foreach ($ids as $id) {
+            foreach ($taxonomies as $taxonomy) {
+                $kept["{$id}:{$taxonomy}"] = [];
+            }
+        }
+        foreach ($terms as $term) {
+            $key = is_object($term) ? ((int) ($term->object_id ?? 0)) . ':' . ($term->taxonomy ?? '') : '';
+            if (isset($kept[$key])) {
+                $kept[$key][] = [(int) $term->term_id, (string) $term->slug];
+            }
+        }
+        foreach ($kept as $key => $list) {
+            RowCache::put('post_terms', $key, $list);
         }
     }
 

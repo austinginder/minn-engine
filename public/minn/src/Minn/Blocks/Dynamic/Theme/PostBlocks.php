@@ -21,7 +21,7 @@ use Minn\Content\Texturize;
 use Minn\Content\Users;
 use Minn\Front\Permalinks;
 use Minn\Html;
-use Minn\Support\Kses;
+use Minn\Runtime\KsesRules;
 use Minn\Content\PasswordGate;
 use Minn\Content\Reader;
 use Minn\Extension\Extensions;
@@ -226,14 +226,15 @@ final readonly class PostBlocks
             $links[] = '<a href="' . Html::attr($this->permalinks->forTerm($term)) . '" rel="tag">' . Html::esc((string) $term['name']) . '</a>';
         }
         $separator = '<span class="wp-block-post-terms__separator">' . Html::esc((string) $block->attr('separator', ', ')) . '</span>';
-        // A prefix and a suffix wrap the links in spans of their own, their markup as post content may hold it.
+        // A prefix and a suffix wrap the links in spans of their own. As the reference passes them, what comes before the
+        // links (the wrapper and the prefix) and what comes after (the suffix and the wrapper's end) each go through
+        // wp_kses_post, its hooks heard; the links do not.
         $prefix = (string) $block->attr('prefix', '');
         $suffix = (string) $block->attr('suffix', '');
-        return self::open('div', ['taxonomy-' . $taxonomy, 'wp-block-post-terms', ...Styles::classes($block->attrs)], $block, styleFirst: true)
-            . ($prefix === '' ? '' : '<span class="wp-block-post-terms__prefix">' . Kses::post($prefix) . '</span>')
+        return KsesRules::post(self::open('div', ['taxonomy-' . $taxonomy, 'wp-block-post-terms', ...Styles::classes($block->attrs)], $block, styleFirst: true)
+                . ($prefix === '' ? '' : '<span class="wp-block-post-terms__prefix">' . $prefix . '</span>'))
             . implode($separator, $links)
-            . ($suffix === '' ? '' : '<span class="wp-block-post-terms__suffix">' . Kses::post($suffix) . '</span>')
-            . '</div>';
+            . KsesRules::post(($suffix === '' ? '' : '<span class="wp-block-post-terms__suffix">' . $suffix . '</span>') . '</div>');
     }
 
     /** Off a single post or page there is no neighbour to link: nothing at all. */

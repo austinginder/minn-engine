@@ -99,15 +99,15 @@ final class PostLinks
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $structure = (string) Runtime::hooks()->filter('pre_post_link', [(string) Runtime::options()->filtered('permalink_structure'), $post, $leavename]);
         if ($structure !== '' && !self::plain($post, $flags)) {
-            $link = SiteUrls::trailing(SiteUrls::home(strtr($structure, self::tokens($post, $flags))), 'single');
+            $link = SiteUrls::trailing(SiteUrls::home(strtr($structure, self::tokens($post, $flags, $structure))), 'single');
         } else {
             $link = SiteUrls::home('?p=' . $post->ID);
         }
         return (string) Runtime::hooks()->filter('post_link', [$link, $post, $leavename]);
     }
 
-    /** What each structure tag of a post stands for; the name stays a tag when it is left. */
-    private static function tokens(Post $post, int $flags): array
+    /** What each structure tag of a post stands for; the name stays a tag when it is left, and the author is read only for a structure that names it. */
+    private static function tokens(Post $post, int $flags, string $structure): array
     {
         $time = strtotime((string) $post->post_date) ?: time();
         $tokens = [
@@ -118,7 +118,7 @@ final class PostLinks
         if (!($flags & self::LEAVE_NAME)) {
             $tokens += ['%postname%' => (string) $post->post_name, '%pagename%' => (string) $post->post_name];
         }
-        $author = Handoff::user((int) $post->post_author);
+        $author = str_contains($structure, '%author%') ? Handoff::user((int) $post->post_author) : null;
         $tokens['%author%'] = $author ? (string) $author->user_nicename : '';
         $tokens['%category%'] = str_contains((string) Runtime::options()->filtered('permalink_structure'), '%category%') ? self::category($post) : '';
         return $tokens;

@@ -43,14 +43,16 @@ final class Themes
     public static function stylesheetDirectory(): mixed
     {
         $stylesheet = self::stylesheet();
-        return Runtime::hooks()->filter('stylesheet_directory', [self::root($stylesheet) . '/' . $stylesheet, $stylesheet, self::root($stylesheet)]);
+        $root = self::root($stylesheet);
+        return Runtime::hooks()->filter('stylesheet_directory', [$root . '/' . $stylesheet, $stylesheet, $root]);
     }
 
     /** The active parent theme's folder on disk (get_template_directory). */
     public static function templateDirectory(): mixed
     {
         $template = self::template();
-        return Runtime::hooks()->filter('template_directory', [self::root($template) . '/' . $template, $template, self::root($template)]);
+        $root = self::root($template);
+        return Runtime::hooks()->filter('template_directory', [$root . '/' . $template, $template, $root]);
     }
 
     /** The active theme's folder address (get_stylesheet_directory_uri). */

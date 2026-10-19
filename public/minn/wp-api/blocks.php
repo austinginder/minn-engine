@@ -1322,11 +1322,7 @@ function _minn_registered_block_template(array $row): WP_Block_Template
 /** @internal the site's templates and parts, theme files and saved rows alike */
 function _minn_template_index(): ?Minn\Theme\TemplateIndex
 {
-    $theme = Runtime::current()->get('theme');
-    $db = Minn\Db::shared();
-    return $theme === null
-        ? null
-        : new Minn\Theme\TemplateIndex($db, $theme, new Minn\Content\Site($db), Runtime::blockTemplates());
+    return Minn\Runtime\TemplateFiles::templateIndex();
 }
 
 /** @internal */
@@ -1362,13 +1358,10 @@ function _minn_block_template_from(Minn\Theme\TemplateRecord $record, Minn\Theme
     return $template;
 }
 
-/** One theme template file, described (Theme\TemplateIndex::fileInfo); null when the theme has none or the type is neither. */
+/** One theme template file, described, the theme's names and folders read first (Runtime\TemplateFiles::file); null when the theme has none or the type is neither. */
 function _get_block_template_file($template_type, $slug)
 {
-    if ($template_type !== 'wp_template' && $template_type !== 'wp_template_part') {
-        return null;
-    }
-    return _minn_template_index()?->fileInfo((string) $template_type, (string) $slug);
+    return Minn\Runtime\TemplateFiles::file($template_type, $slug);
 }
 
 /** The theme's template files of a type, in the directory's order, that match slug__in, slug__not_in, area and post_type; null for neither type. */
@@ -1391,49 +1384,16 @@ function _get_block_templates_files($template_type, $query = [])
     return $files;
 }
 
-/**
- * A template built from a file as _get_block_template_file describes one:
- * its markup with the theme named on every template part; the default
- * template types' title and description for the slugs they name (which
- * are not custom); a part's area; a custom template's post types.
- */
+/** A template built from a file as _get_block_template_file describes one (Runtime\TemplateFiles::fromFile). */
 function _build_block_template_result_from_file($template_file, $template_type)
 {
-    $file = (array) $template_file;
-    $known = $template_type === 'wp_template' ? (get_default_block_template_types()[$file['slug']] ?? null) : null;
-    $template = new WP_Block_Template();
-    $template->id = $file['theme'] . '//' . $file['slug'];
-    $template->theme = $file['theme'];
-    $template->content = Minn\Theme\TemplatePartTheme::apply((string) file_get_contents((string) $file['path']), (string) $file['theme']);
-    $template->slug = $file['slug'];
-    $template->source = 'theme';
-    $template->type = $template_type;
-    $template->title = $known['title'] ?? ($file['title'] ?? $file['slug']);
-    $template->description = $known['description'] ?? '';
-    $template->status = 'publish';
-    $template->has_theme_file = true;
-    $template->is_custom = $known === null;
-    $template->post_types = $file['postTypes'] ?? null;
-    $template->area = $template_type === 'wp_template_part' ? ($file['area'] ?? null) : null;
-    return $template;
+    return Minn\Runtime\TemplateFiles::fromFile($template_file, $template_type);
 }
 
-/** A saved template or part as a template, under the theme its wp_theme term names; an error when it names none. */
+/** A saved template or part as a template, under the theme its wp_theme term names; an error when it names none (Runtime\TemplateFiles::fromPost). */
 function _build_block_template_result_from_post($post)
 {
-    $post = get_post($post);
-    $terms = $post ? get_the_terms($post, 'wp_theme') : false;
-    if (is_wp_error($terms)) {
-        return $terms;
-    }
-    $index = _minn_template_index();
-    if (!$post || !$terms || $index === null) {
-        return new WP_Error('template_missing_theme', __('No theme is defined for this template.'));
-    }
-    $template = _minn_block_template_from($index->postRecord(get_object_vars($post)), $index);
-    $template->theme = $terms[0]->name;
-    $template->id = $template->theme . '//' . $post->post_name;
-    return $template;
+    return Minn\Runtime\TemplateFiles::fromPost($post);
 }
 
 /**
@@ -1569,17 +1529,10 @@ function _block_template_render_without_post_block_context($context)
     return $context;
 }
 
-/** A theme file's own template by id, past whatever the site saved over it; pre_get_block_file_template may answer first. */
+/** A theme file's own template by id, past whatever the site saved over it; pre_get_block_file_template may answer first (Runtime\TemplateFiles::fileTemplate). */
 function get_block_file_template($id, $template_type = 'wp_template')
 {
-    $template = apply_filters('pre_get_block_file_template', null, $id, $template_type);
-    if ($template !== null) {
-        return $template;
-    }
-    $parts = explode('//', (string) $id, 2);
-    $file = count($parts) === 2 && $parts[0] === get_stylesheet() ? _get_block_template_file($template_type, $parts[1]) : null;
-    $template = $file === null ? null : _build_block_template_result_from_file($file, $template_type);
-    return apply_filters('get_block_file_template', $template, $id, $template_type);
+    return Minn\Runtime\TemplateFiles::fileTemplate($id, $template_type);
 }
 
 /** The first template the hierarchy names (file extensions dropped) that the site has, saved or the theme's; null for none. */
@@ -2254,11 +2207,7 @@ function _add_block_template_part_area_info($template_info)
 /** A template part area that is one of the allowed areas, else uncategorized (with a notice). */
 function _filter_block_template_part_area($type)
 {
-    if (in_array($type, array_column(get_allowed_block_template_part_areas(), 'area'), true)) {
-        return $type;
-    }
-    wp_trigger_error(__FUNCTION__, sprintf(__('"%1$s" is not a supported wp_template_part area value and has been added as "%2$s".'), $type, WP_TEMPLATE_PART_AREA_UNCATEGORIZED), E_USER_NOTICE);
-    return WP_TEMPLATE_PART_AREA_UNCATEGORIZED;
+    return Minn\Runtime\TemplateFiles::partArea($type);
 }
 
 /** Every .html file under a folder, however deep; none for a folder that is not there. */

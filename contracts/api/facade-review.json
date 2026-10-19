@@ -1196,31 +1196,11 @@
                 "doubt": "A saved customization of a plugin-registered template does not take the registration's plugin, origin, title and description, which WP (6.7+) fills in.",
                 "body": "89c5f53ecf26"
             },
-            "_build_block_template_result_from_file": {
-                "verdict": "move",
-                "to": "Minn\\Theme\\TemplateIndex",
-                "why": "Reads the file, applies the part theme and sets title, description, custom flag, post types and area by rule, what TemplateIndex's file record already computes, leaving only the object fill.",
-                "doubt": "No hooked blocks are applied to the file's content; WP runs the Block Hooks here (a part wrapped in core/template-part for its first and last child).",
-                "body": "2d94cb5a78a5"
-            },
-            "_build_block_template_result_from_post": {
-                "verdict": "keep",
-                "reason": "shape",
-                "why": "Resolves the post and its wp_theme term through the public API, a WP_Error when there is none, and shapes the engine's postRecord with the term's theme and id.",
-                "doubt": "No hooked blocks are applied to the saved content, which WP does here as it does for theme files.",
-                "body": "0f0e648bde6e"
-            },
             "_excerpt_render_inner_blocks": {
                 "verdict": "move",
                 "to": "Minn\\Content\\Excerpt",
                 "why": "The recursive half of the excerpt walk, rendering only the innermost allowed blocks; it moves with the rest of the excerpt rules.",
                 "body": "b5f7839e7d4c"
-            },
-            "_filter_block_template_part_area": {
-                "verdict": "keep",
-                "reason": "compose",
-                "why": "Checks the area against get_allowed_block_template_part_areas and notices through wp_trigger_error when it falls back.",
-                "body": "949a3b0ddd9e"
             },
             "_flatten_blocks": {
                 "verdict": "move",
@@ -1230,12 +1210,6 @@
                 ],
                 "why": "Breadth-first flattening of a block tree into references into the caller's list, a tree algorithm for a new Blocks class.",
                 "body": "c6845a7610de"
-            },
-            "_get_block_template_file": {
-                "verdict": "keep",
-                "reason": "shape",
-                "why": "Null for a type that is neither template nor part, otherwise TemplateIndex::fileInfo as it answers.",
-                "body": "768555b7e91f"
             },
             "_get_block_templates_files": {
                 "verdict": "move",
@@ -1390,15 +1364,6 @@
                 "why": "The recursive core/pattern expansion: loop guard, unknown slugs kept, trimmed markup parsed, single-block patterns named in metadata; TemplatePatterns already expands patterns in markup and should own the block-array form too.",
                 "doubt": "A pattern nested in a block that expands to several blocks, or is dropped as recursive, leaves the parent's innerContent null slots unchanged so they no longer match innerBlocks; WP splices the nulls to fit.",
                 "body": "283bc6e189e3"
-            },
-            "_minn_template_index": {
-                "verdict": "move",
-                "to": "Minn\\Theme\\TemplateIndex",
-                "gates": [
-                    "unprobed"
-                ],
-                "why": "Wires a TemplateIndex from the runtime's theme, the shared database, a new Site and the registered templates on each call: a factory TemplateIndex should own.",
-                "body": "49fb9605501c"
             },
             "_minn_traverse_block": {
                 "verdict": "move",
@@ -1608,12 +1573,6 @@
                 "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "why": "Assembles the featured image's border style object by rule (a preset colour, per-side values) before the style engine call; the featured image block's rules live in PostBlocks.",
                 "body": "b8d90842da1d"
-            },
-            "get_block_file_template": {
-                "verdict": "keep",
-                "reason": "compose",
-                "why": "pre_get_block_file_template, then _get_block_template_file and _build_block_template_result_from_file for an active theme id, then get_block_file_template: public functions and filters by name.",
-                "body": "59f61bad406a"
             },
             "get_block_template": {
                 "verdict": "move",
@@ -9918,8 +9877,8 @@
             "WP_Tax_Query::builder": {
                 "verdict": "keep",
                 "reason": "shape",
-                "why": "the engine's TaxSql over the site tables and the term id resolution",
-                "body": "96a05119c36d"
+                "why": "the engine's TaxSql over the site tables, its terms found by Runtime\\TaxTerms as the reference finds them",
+                "body": "ab987a0ad0c6"
             },
             "WP_Tax_Query::get_sql": {
                 "verdict": "delegate",
@@ -9932,15 +9891,6 @@
                 "to": "Minn\\Query\\TaxSql::sqlClauses",
                 "why": "the engine builds the clauses",
                 "body": "0d17fc895a35"
-            },
-            "WP_Tax_Query::transform_query": {
-                "verdict": "move",
-                "to": "Minn\\Query\\TaxSql",
-                "gates": [
-                    "refs"
-                ],
-                "why": "turns a clause's terms into another field through their term_taxonomy ids",
-                "body": "3b70c5ff36dc"
             }
         },
         "classes/WP_Term_Query.php": {
@@ -13006,8 +12956,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "builds the trail with Home, filters it, renders the list with the current item and the separator property, swapping WP_Block_Supports::$block_to_render for the wrapper; the breadcrumbs renderer",
-                "body": "1ae932fd0f1e"
+                "why": "builds the trail with Home, filters it, renders the list with the current item (each crumb through wp_kses_post) and the separator property, swapping WP_Block_Supports::$block_to_render for the wrapper; the breadcrumbs renderer",
+                "body": "fb8ebcf11d65"
             },
             "_minn_block_calendar": {
                 "verdict": "move",
@@ -15115,13 +15065,6 @@
                 "why": "deprecated: the notice, then a UTF-8 test its own pattern repeats; Utf8::isValid, behind wp_is_valid_utf8, already makes it",
                 "body": "7359c3f40119"
             },
-            "shortcode_unautop": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\Shortcodes",
-                "why": "builds the standalone-shortcode pattern from the registry's names and unwraps it from its paragraph; a rule beside Shortcodes::pattern",
-                "doubt": "WordPress allows wp_spaces_regexp() spaces (a no-break space, &nbsp;) between the paragraph and the shortcode; \\s here does not match them",
-                "body": "b2a7ae39553a"
-            },
             "smilies_init": {
                 "verdict": "move",
                 "to": "Minn\\Content\\TextFilters",
@@ -17187,9 +17130,9 @@
             "gallery_shortcode": {
                 "verdict": "move",
                 "to": "Minn\\Content\\MediaShortcodes",
-                "why": "the [gallery] shortcode: ids, attributes, post_gallery, the attachment query, items and style before Gallery::render; shortcode behaviour beside [video] and [audio]",
+                "why": "the [gallery] shortcode: ids, attributes, post_gallery, the attachment query, items, the tags a post may hold (KsesRules::galleryTags) and style before Gallery::render; shortcode behaviour beside [video] and [audio]",
                 "doubt": "no is_feed branch, shortcode_atts_gallery fires before post_gallery, caption ids count per item instead of using the gallery's instance, and images get no aria-describedby",
-                "body": "c52a403336b3"
+                "body": "20bfe67ecdeb"
             },
             "get_adjacent_image_link": {
                 "verdict": "move",
@@ -20333,13 +20276,6 @@
                 "to": "Minn\\Runtime\\Records::termNumbers",
                 "why": "an exact copy of the private Records::termNumbers (the same five fields cast to integers); open that method and call it from WP_Term::get_instance",
                 "body": "fb4b4962903e"
-            },
-            "_minn_term_taxonomy_ids": {
-                "verdict": "move",
-                "to": "Minn\\Query\\TaxSql",
-                "why": "resolves a tax clause's terms to term_taxonomy ids by field, with children for a hierarchical taxonomy; the resolution TaxSql takes as a closure belongs inside the query builder",
-                "doubt": "a name held by several terms under different parents resolves to one term through get_term_by, where the API's term query takes every term with that name",
-                "body": "aa45376923cb"
             },
             "_nav_menu_item_id_use_once": {
                 "verdict": "move",

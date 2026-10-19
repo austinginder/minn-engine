@@ -46,9 +46,14 @@ final class MetaData
         }
         $found = false;
         $cache = Handoff::cacheGet($objectId, $type . '_meta', false, $found);
-        if (!$found) {
-            $cache = self::store()->all((string) $type, $objectId);
-            Handoff::cacheSet($objectId, $cache, $type . '_meta');
+        // An object's meta not cached, or cached empty, is read as the reference reads it: through
+        // update_{type}_metadata_cache, which a plugin may answer first (then there is none to read).
+        if (!$found || $cache === []) {
+            $check = Runtime::hooks()->filter("update_{$type}_metadata_cache", [null, [$objectId]]);
+            if (!$found) {
+                $cache = $check === null ? self::store()->all((string) $type, $objectId) : [];
+                Handoff::cacheSet($objectId, $cache, $type . '_meta');
+            }
         }
         if ($key === '' || $key === null) {
             return $cache;

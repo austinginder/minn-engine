@@ -1,0 +1,335 @@
+[
+    [
+        "plain",
+        {
+            "asks": [
+                0,
+                0,
+                0
+            ],
+            "out": [
+                "plain",
+                "plain",
+                "plain"
+            ]
+        }
+    ],
+    [
+        "a > b",
+        {
+            "asks": [
+                0,
+                0,
+                0
+            ],
+            "out": [
+                "a &gt; b",
+                "a &gt; b",
+                "a &gt; b"
+            ]
+        }
+    ],
+    [
+        "a < b",
+        {
+            "asks": [
+                0,
+                0,
+                0
+            ],
+            "out": [
+                "a &lt; b",
+                "a &lt; b",
+                "a &lt; b"
+            ]
+        }
+    ],
+    [
+        "a <b",
+        {
+            "asks": [
+                0,
+                0,
+                0
+            ],
+            "out": [
+                "a &lt;b",
+                "a &lt;b",
+                "a &lt;b"
+            ]
+        }
+    ],
+    [
+        "<b>x</b>",
+        {
+            "asks": [
+                2,
+                2,
+                0
+            ],
+            "out": [
+                "<b>x</b>",
+                "<b>x</b>",
+                "<b>x</b>"
+            ]
+        }
+    ],
+    [
+        "</b>",
+        {
+            "asks": [
+                1,
+                1,
+                0
+            ],
+            "out": [
+                "</b>",
+                "</b>",
+                "</b>"
+            ]
+        }
+    ],
+    [
+        "<b>a</b><i>b</i>",
+        {
+            "asks": [
+                4,
+                4,
+                0
+            ],
+            "out": [
+                "<b>a</b><i>b</i>",
+                "<b>a</b><i>b</i>",
+                "<b>a</b>b"
+            ]
+        }
+    ],
+    [
+        "<!-- c -->",
+        {
+            "asks": [
+                0,
+                0,
+                0
+            ],
+            "out": [
+                "<!-- c -->",
+                "<!-- c -->",
+                "<!-- c -->"
+            ]
+        }
+    ],
+    [
+        "x &amp; y",
+        {
+            "asks": [
+                0,
+                0,
+                0
+            ],
+            "out": [
+                "x &amp; y",
+                "x &amp; y",
+                "x &amp; y"
+            ]
+        }
+    ],
+    [
+        "<1>",
+        {
+            "asks": [
+                1,
+                1,
+                0
+            ],
+            "out": [
+                "",
+                "",
+                ""
+            ]
+        }
+    ],
+    [
+        "< b>",
+        {
+            "asks": [
+                1,
+                1,
+                0
+            ],
+            "out": [
+                "<b>",
+                "<b>",
+                "<b>"
+            ]
+        }
+    ],
+    [
+        "<a title=\"x>y\">z</a>",
+        {
+            "asks": [
+                2,
+                2,
+                0
+            ],
+            "out": [
+                "<a>y\\\"&gt;z</a>",
+                "<a>y\"&gt;z</a>",
+                "y\"&gt;z"
+            ]
+        }
+    ],
+    [
+        "<b",
+        {
+            "asks": [
+                0,
+                0,
+                0
+            ],
+            "out": [
+                "&lt;b",
+                "&lt;b",
+                "&lt;b"
+            ]
+        }
+    ],
+    [
+        "<p>\n<br />\n</p>",
+        {
+            "asks": [
+                3,
+                3,
+                0
+            ],
+            "out": [
+                "\n\n",
+                "<p>\n<br />\n</p>",
+                "\n\n"
+            ]
+        }
+    ],
+    [
+        "a term name for the database",
+        {
+            "asks": 0,
+            "out": "Zz Name &amp; more"
+        }
+    ],
+    [
+        "gallery: unsafe and unknown tags",
+        {
+            "asks": 1,
+            "escaped": [
+                "script",
+                "section",
+                "zzx"
+            ],
+            "tags": [
+                "div",
+                "dl",
+                "dt",
+                "a",
+                "img",
+                "/a",
+                "/dt",
+                "section",
+                "/section",
+                "/dl",
+                "/div"
+            ],
+            "empty": ""
+        }
+    ],
+    [
+        "gallery: tags a post holds",
+        {
+            "asks": 1,
+            "escaped": [
+                "li",
+                "p",
+                "span"
+            ],
+            "tags": [
+                "div",
+                "li",
+                "span",
+                "a",
+                "img",
+                "/a",
+                "/span",
+                "p",
+                "/p",
+                "/li",
+                "/div"
+            ],
+            "empty": ""
+        }
+    ],
+    [
+        "gallery: tags escaped first",
+        {
+            "asks": 1,
+            "escaped": [
+                "Div",
+                "",
+                "b r"
+            ],
+            "tags": [
+                "div",
+                "br",
+                "a",
+                "img",
+                "/a",
+                "/br",
+                "dd",
+                "/dd",
+                "/div"
+            ],
+            "empty": ""
+        }
+    ],
+    [
+        "gallery: tags the list no longer holds",
+        {
+            "asks": 1,
+            "escaped": [
+                "li",
+                "p",
+                "span"
+            ],
+            "tags": [
+                "div",
+                "dl",
+                "span",
+                "a",
+                "img",
+                "/a",
+                "/span",
+                "dd",
+                "/dd",
+                "/dl",
+                "/div"
+            ],
+            "empty": ""
+        }
+    ],
+    [
+        "gallery: post_gallery answers first",
+        {
+            "asks": 0
+        }
+    ],
+    [
+        "widget note",
+        "</textarea>\n\t\t\t</p>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<# if ( data.codeEditorDisabled ) { #>\n\t\t\t\t\t\t<p>\n\t\t\t\t\t\t\tSome HTML tags are not permitted, including:\t\t\t\t\t\t\t<code>script</code>, <code>iframe</code>, <code>form</code>, <code>input</code>, <code>style</code>\n\t\t\t\t\t\t</p>\n\t\t\t\t\t<# } #>\n\t\t\t\t\t\t\t\n\t\t\t<div class=\""
+    ],
+    [
+        "widget note: some unsafe tags allowed",
+        "</textarea>\n\t\t\t</p>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<# if ( data.codeEditorDisabled ) { #>\n\t\t\t\t\t\t<p>\n\t\t\t\t\t\t\tSome HTML tags are not permitted, including:\t\t\t\t\t\t\t<code>iframe</code>, <code>input</code>, <code>style</code>\n\t\t\t\t\t\t</p>\n\t\t\t\t\t<# } #>\n\t\t\t\t\t\t\t\n\t\t\t<div class=\""
+    ],
+    [
+        "widget note: every unsafe tag allowed",
+        "</textarea>\n\t\t\t</p>\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t<div class=\""
+    ]
+]

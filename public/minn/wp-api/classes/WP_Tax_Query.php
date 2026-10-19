@@ -71,28 +71,11 @@ class WP_Tax_Query
     private function builder(): TaxSql
     {
         $db = Runtime::current()->db;
-        return $this->builder ??= new TaxSql($db->table('term_relationships'), $db->table('term_taxonomy'), (string) $this->primary_table, (string) $this->primary_id_column, static fn (string $taxonomy, string $field, array $terms, bool $children): array => _minn_term_taxonomy_ids($taxonomy, $field, $terms, $children));
+        return $this->builder ??= new TaxSql($db->table('term_relationships'), $db->table('term_taxonomy'), (string) $this->primary_table, (string) $this->primary_id_column, static fn (array $clause, string $operator): ?array => Minn\Runtime\TaxTerms::ids($clause, $operator));
     }
 
     public function transform_query(&$query, $resulting_field)
     {
-        if (empty($query['terms']) || $query['field'] === $resulting_field) {
-            return;
-        }
-        $ids = _minn_term_taxonomy_ids((string) $query['taxonomy'], (string) $query['field'], (array) $query['terms'], false);
-        if ($resulting_field === 'term_taxonomy_id') {
-            $query['terms'] = $ids;
-            $query['field'] = 'term_taxonomy_id';
-            return;
-        }
-        $terms = [];
-        foreach ($ids as $id) {
-            $term = get_term_by('term_taxonomy_id', $id, (string) $query['taxonomy']);
-            if ($term) {
-                $terms[] = $term->{$resulting_field};
-            }
-        }
-        $query['terms'] = $terms;
-        $query['field'] = $resulting_field;
+        Minn\Runtime\TaxTerms::transform($query, $resulting_field);
     }
 }

@@ -158,7 +158,7 @@ function get_comment_type($comment_id = 0)
 
 function get_post_format_strings()
 {
-    return ['standard' => 'Standard', 'aside' => 'Aside', 'chat' => 'Chat', 'gallery' => 'Gallery', 'link' => 'Link', 'image' => 'Image', 'quote' => 'Quote', 'status' => 'Status', 'video' => 'Video', 'audio' => 'Audio'];
+    return Minn\Runtime\TermTags::formatStrings();
 }
 
 function get_post_format_slugs()

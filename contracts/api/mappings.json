@@ -2,14 +2,14 @@
     "generated": "2026-10-19",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 684,
-        "composes": 2141,
+        "minn": 682,
+        "composes": 2134,
         "leaf": 1005,
-        "noop": 3156,
+        "noop": 3164,
         "placeholder": 0,
         "deadend": 1767,
-        "functions": 8675,
-        "minnMethods": 1409,
+        "functions": 8674,
+        "minnMethods": 1419,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -28550,11 +28550,10 @@
                 "Minn\\Query\\TaxSql::__construct",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::db",
-                "Minn\\Runtime\\Runtime::table"
+                "Minn\\Runtime\\Runtime::table",
+                "Minn\\Runtime\\TaxTerms::ids"
             ],
-            "composes": [
-                "_minn_term_taxonomy_ids"
-            ]
+            "composes": []
         },
         "WP_Tax_Query::find_compatible_table_alias": {
             "file": "classes/WP_Tax_Query.php",
@@ -28618,13 +28617,12 @@
         },
         "WP_Tax_Query::transform_query": {
             "file": "classes/WP_Tax_Query.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_term_taxonomy_ids",
-                "get_term_by"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TaxTerms::transform"
+            ],
+            "composes": []
         },
         "WP_Taxonomy::__construct": {
             "file": "classes/WP_Taxonomy.php",
@@ -34405,28 +34403,21 @@
         },
         "_build_block_template_result_from_file": {
             "file": "blocks.php",
-            "lines": 17,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Theme\\TemplatePartTheme::apply"
+                "Minn\\Runtime\\TemplateFiles::fromFile"
             ],
-            "composes": [
-                "get_default_block_template_types"
-            ]
+            "composes": []
         },
         "_build_block_template_result_from_post": {
             "file": "blocks.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_minn_block_template_from",
-                "_minn_template_index",
-                "get_post",
-                "get_the_terms",
-                "is_wp_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TemplateFiles::fromPost"
+            ],
+            "composes": []
         },
         "_c": {
             "file": "l10n.php",
@@ -34836,14 +34827,12 @@
         },
         "_filter_block_template_part_area": {
             "file": "blocks.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "get_allowed_block_template_part_areas",
-                "wp_trigger_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TemplateFiles::partArea"
+            ],
+            "composes": []
         },
         "_filter_do_shortcode_context": {
             "file": "shortcodes.php",
@@ -34939,12 +34928,12 @@
         },
         "_get_block_template_file": {
             "file": "blocks.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_template_index"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TemplateFiles::file"
+            ],
+            "composes": []
         },
         "_get_block_templates_files": {
             "file": "blocks.php",
@@ -35837,7 +35826,7 @@
         },
         "_minn_block_breadcrumbs": {
             "file": "core-blocks.php",
-            "lines": 30,
+            "lines": 31,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -35850,7 +35839,8 @@
                 "home_url",
                 "is_404",
                 "is_front_page",
-                "is_home"
+                "is_home",
+                "wp_kses_post"
             ]
         },
         "_minn_block_calendar": {
@@ -38414,15 +38404,10 @@
         },
         "_minn_template_index": {
             "file": "blocks.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Site::__construct",
-                "Minn\\Db::shared",
-                "Minn\\Runtime\\Runtime::blockTemplates",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Theme\\TemplateIndex::__construct"
+                "Minn\\Runtime\\TemplateFiles::templateIndex"
             ],
             "composes": []
         },
@@ -38488,18 +38473,6 @@
             ],
             "composes": [
                 "_minn_term_query"
-            ]
-        },
-        "_minn_term_taxonomy_ids": {
-            "file": "taxonomy.php",
-            "lines": 24,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_term",
-                "get_term_by",
-                "get_terms",
-                "is_taxonomy_hierarchical"
             ]
         },
         "_minn_term_template_terms": {
@@ -46453,12 +46426,13 @@
         },
         "gallery_shortcode": {
             "file": "media.php",
-            "lines": 35,
+            "lines": 29,
             "kind": "minn",
             "minn": [
                 "Minn\\Media\\Gallery::defaultStyle",
                 "Minn\\Media\\Gallery::opening",
-                "Minn\\Media\\Gallery::render"
+                "Minn\\Media\\Gallery::render",
+                "Minn\\Runtime\\KsesRules::galleryTags"
             ],
             "composes": [
                 "_minn_av_instance",
@@ -47245,15 +47219,12 @@
         },
         "get_block_file_template": {
             "file": "blocks.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_build_block_template_result_from_file",
-                "_get_block_template_file",
-                "apply_filters",
-                "get_stylesheet"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TemplateFiles::fileTemplate"
+            ],
+            "composes": []
         },
         "get_block_metadata_i18n_schema": {
             "file": "blocks.php",
@@ -47278,8 +47249,10 @@
         "get_block_templates": {
             "file": "blocks.php",
             "lines": 26,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\TemplateFiles::all"
+            ],
             "composes": [
                 "_minn_block_template_from",
                 "_minn_block_template_matches",
@@ -49781,7 +49754,9 @@
             "file": "misc.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\TermTags::formatStrings"
+            ],
             "composes": []
         },
         "get_post_galleries": {
@@ -60419,8 +60394,8 @@
         },
         "shortcode_unautop": {
             "file": "formatting.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
                 "Minn\\Runtime\\Runtime::shortcodes"
             ],
@@ -60789,10 +60764,10 @@
             "file": "functions.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Support\\Escape::tag"
+            ],
+            "composes": []
         },
         "tag_exists": {
             "file": "taxonomy.php",

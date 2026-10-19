@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Widgets;
 
+use Minn\Runtime\KsesRules;
+
 /**
  * The Underscore templates the Text and Custom HTML widgets print for their
  * controls (render_control_template_scripts), as the reference prints them
@@ -16,13 +18,8 @@ final class WidgetTemplates
 {
     private const CLOSE = "\t\t</script>\n\t\t";
 
-    /** The note a user who may not post unfiltered HTML sees, when the code editor is off. */
-    private const REFUSED_TAGS = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<# if ( data.codeEditorDisabled ) { #>\n"
-        . "\t\t\t\t\t\t<p>\n"
-        . "\t\t\t\t\t\t\tSome HTML tags are not permitted, including:\t\t\t\t\t\t\t<code>script</code>, <code>iframe</code>, <code>form</code>, <code>input</code>, <code>style</code>\n"
-        . "\t\t\t\t\t\t</p>\n"
-        . "\t\t\t\t\t<# } #>\n"
-        . "\t\t\t\t\t\t\t\n";
+    /** The tags the note on refused tags names, those a post may hold aside. */
+    private const UNSAFE_TAGS = ['script', 'iframe', 'form', 'input', 'style'];
 
     /** The Text widget's template: title, the two pointers, the content area. */
     public static function text(): string
@@ -43,10 +40,23 @@ final class WidgetTemplates
         return self::customHtmlWith("\t\t\t\n");
     }
 
-    /** The Custom HTML widget's template for a user who may not, with the note on refused tags. */
+    /**
+     * The Custom HTML widget's template for a user who may not, with the
+     * note (shown when the code editor is off) naming the unsafe tags a post
+     * may not hold (wp_kses_allowed_html); no note when it may hold them all.
+     */
     public static function customHtmlRestricted(): string
     {
-        return self::customHtmlWith(self::REFUSED_TAGS);
+        $refused = array_diff(self::UNSAFE_TAGS, array_keys((array) KsesRules::allowedHtml('post')));
+        if ($refused === []) {
+            return self::customHtmlWith(str_repeat("\t", 14) . "\n");
+        }
+        return self::customHtmlWith(str_repeat("\t", 16) . "<# if ( data.codeEditorDisabled ) { #>\n"
+            . "\t\t\t\t\t\t<p>\n"
+            . "\t\t\t\t\t\t\tSome HTML tags are not permitted, including:\t\t\t\t\t\t\t" . implode(', ', array_map(static fn (string $tag): string => "<code>{$tag}</code>", $refused)) . "\n"
+            . "\t\t\t\t\t\t</p>\n"
+            . "\t\t\t\t\t<# } #>\n"
+            . "\t\t\t\t\t\t\t\n");
     }
 
     private static function customHtmlWith(string $note): string

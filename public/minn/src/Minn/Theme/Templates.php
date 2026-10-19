@@ -13,6 +13,7 @@ use Minn\Json;
 use Minn\Runtime\BlockTemplates;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\TermLookup;
 
 /**
  * Which template renders a resolution, and where its markup comes from:
@@ -183,7 +184,9 @@ final readonly class Templates
 
     /**
      * Every published template, part and global styles post saved for the
-     * theme, newest first by type: read in one query once a request.
+     * theme, newest first by type: read in one query once a request, with
+     * the theme's own wp_theme term (by name, as the reference finds it), so
+     * the term lookups the template queries make need no query of their own.
      *
      * @return array<string, list<array<string, mixed>>>
      */
@@ -191,19 +194,47 @@ final readonly class Templates
     {
         return RowCache::remember('theme_templates', $this->theme->slug, function (): array {
             $byType = [];
+            $terms = [];
             foreach ($this->db->rows(
-                "SELECT p.ID, p.post_type AS kind, p.post_name, p.post_content FROM {$this->db->table('posts')} p
-                 JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID
-                 JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
-                 JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
-                 WHERE p.post_type IN ('wp_template', 'wp_template_part', 'wp_global_styles') AND p.post_status = 'publish'
-                   AND tt.taxonomy = 'wp_theme' AND t.slug = ? ORDER BY p.ID DESC",
+                "SELECT t.term_id, t.name, t.slug, t.term_group, tt.term_taxonomy_id, tt.taxonomy, tt.description, tt.parent, tt.count,
+                        p.ID, p.post_type AS kind, p.post_name, p.post_content
+                 FROM {$this->db->table('terms')} t
+                 JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id AND tt.taxonomy = 'wp_theme'
+                 LEFT JOIN {$this->db->table('term_relationships')} tr ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                 LEFT JOIN {$this->db->table('posts')} p ON p.ID = tr.object_id
+                   AND p.post_type IN ('wp_template', 'wp_template_part', 'wp_global_styles') AND p.post_status = 'publish'
+                 WHERE t.name = ? ORDER BY p.ID DESC",
                 [$this->theme->slug],
             ) as $row) {
-                $byType[(string) $row['kind']][] = $row;
+                $terms[(int) $row['term_id']] = array_intersect_key($row, array_flip(['term_id', 'name', 'slug', 'term_group', 'term_taxonomy_id', 'taxonomy', 'description', 'parent', 'count']));
+                if ($row['ID'] !== null) {
+                    $byType[(string) $row['kind']][] = array_intersect_key($row, array_flip(['ID', 'kind', 'post_name', 'post_content']));
+                }
+            }
+            // A name two theme terms share is left to the database, which picks between them.
+            if (count($terms) < 2) {
+                TermLookup::knownByName('wp_theme', $this->theme->slug, $terms === [] ? null : reset($terms));
             }
             return $byType;
         });
+    }
+
+    /** Has the theme's saved templates (and its term) read, if they are not yet: the template-part lookup answers from them. */
+    public function load(): void
+    {
+        $this->savedOfTheme();
+    }
+
+    /**
+     * The ids the template-part lookup finds for a slug: the newest saved
+     * part of the theme by that name, or none.
+     *
+     * @return list<int>
+     */
+    public function savedPartIds(string $slug): array
+    {
+        $row = $this->savedRow('wp_template_part', $slug);
+        return $row === null ? [] : [(int) $row['ID']];
     }
 
     /** A page's chosen custom template, from _wp_page_template meta. */

@@ -30,6 +30,12 @@ final class Escape
         return (string) Runtime::hooks()->filter('attribute_escape', [self::encoded((string) $text), $text]);
     }
 
+    /** A tag name (tag_escape): letters, digits, hyphens, underscores and colons, lowercased, as tag_escape leaves it. */
+    public static function tag(mixed $tagName): mixed
+    {
+        return Runtime::hooks()->filter('tag_escape', [strtolower((string) preg_replace('/[^a-zA-Z0-9-_:]/', '', (string) $tagName)), $tagName]);
+    }
+
     /** Text for a textarea (esc_textarea): every special and quote encoded, references included. */
     public static function textarea(mixed $text): string
     {

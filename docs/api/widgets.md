@@ -5,7 +5,7 @@
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`WidgetForms`](#widgetforms) | final class | 203 | The core widgets' settings forms, the markup a widget's form() prints and |
-| [`WidgetTemplates`](#widgettemplates) | final class | 77 | The Underscore templates the Text and Custom HTML widgets print for their |
+| [`WidgetTemplates`](#widgettemplates) | final class | 85 | The Underscore templates the Text and Custom HTML widgets print for their |
 
 ## WidgetForms
 
@@ -96,7 +96,7 @@ HTML, the note on the tags the code editor refuses. The whitespace is the
 reference's own and is part of the answer.
 
 - const `CLOSE` = `'		</script> 		'`
-- const `REFUSED_TAGS` = `'																<# if ( data.codeEditorDisabled ) { #> 						<p> 							Some HTML tags are not permitted, including:							<code>script</code>, <code>iframe</code>, <code>form</code>, <code>input</code>, <code>style</code> 						</p> 					<# } #> 							 '` — The note a user who may not post unfiltered HTML sees, when the code editor is off.
+- const `UNSAFE_TAGS` = `array (   0 => 'script',   1 => 'iframe',   2 => 'form',   3 => 'input',   4 => 'style', )` — The tags the note on refused tags names, those a post may hold aside.
 
 ### static `text(): string`
 
@@ -108,7 +108,9 @@ The Custom HTML widget's template for a user who may post unfiltered HTML.
 
 ### static `customHtmlRestricted(): string`
 
-The Custom HTML widget's template for a user who may not, with the note on refused tags.
+The Custom HTML widget's template for a user who may not, with the
+note (shown when the code editor is off) naming the unsafe tags a post
+may not hold (wp_kses_allowed_html); no note when it may hold them all.
 
-Internals: `customHtmlWith()` (private, line 52), `open()` (private, line 65), `pointer()` (private, line 76)
+Internals: `customHtmlWith()` (private, line 62), `open()` (private, line 75), `pointer()` (private, line 86)
 

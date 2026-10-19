@@ -31,10 +31,10 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 503 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 556 | Reads over the posts table. A post comes back as a PostRecord; a listing |
+| [`Posts`](#posts) | final readonly class | 561 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
-| [`RowCache`](#rowcache) | final class | 100 | Rows read once a request: posts, their terms, users, and every object's |
+| [`RowCache`](#rowcache) | final class | 102 | Rows read once a request: posts, their terms, users, and every object's |
 | [`Site`](#site) | final readonly class | 114 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
@@ -1437,13 +1437,15 @@ Reads the meta of the posts whose meta is not read yet, in one query (update_pos
 
 - `@param list<int> $ids`
 
-### `primeTerms(array $ids, array $taxonomies): void`
+### `primeTerms(array $ids, array $taxonomies): ?array`
 
 Reads the posts' terms in the given taxonomies, in one query, for the
-posts some of whose taxonomies are not read yet.
+posts some of whose taxonomies are not read yet: those posts and the
+rows read (term, post and taxonomy, by name), or null when none needed reading.
 
 - `@param list<int> $ids`
 - `@param list<string> $taxonomies`
+- `@return array{ids: list<int>, rows: list<array{0: int, 1: int, 2: string}>}|null`
 
 ### `findByName(string $name, array $types): ?Minn\Content\PostRecord`
 
@@ -1607,7 +1609,7 @@ The newest autosave of a post (by date, then id), by one author or, given 0, any
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 21), `ids()` (private, line 137), `byName()` (private, line 159), `byPath()` (private, line 234), `readTerms()` (private, line 323), `revisions()` (private, line 359), `readRevisions()` (private, line 370), `weekMode()` (private, line 459), `monthBeside()` (private, line 536)
+Internals: `record()` (private, line 21), `ids()` (private, line 142), `byName()` (private, line 164), `byPath()` (private, line 239), `readTerms()` (private, line 328), `revisions()` (private, line 364), `readRevisions()` (private, line 375), `weekMode()` (private, line 464), `monthBeside()` (private, line 541)
 
 
 ## Reader
@@ -1705,9 +1707,9 @@ drops everything kept from it (Db::wrote, through the engine's own door
 or the facade's wpdb), as does a rolled-back transaction, so a read after
 a write finds the row as it now is. Nothing outlives the request.
 
-- const `SOURCES` = `array (   'posts' =>    array (     0 => 'posts',   ),   'post_terms' =>    array (     0 => 'term_relationships',     1 => 'term_taxonomy',     2 => 'terms',   ),   'revisions' =>    array (     0 => 'posts',   ),   'theme_templates' =>    array (     0 => 'posts',     1 => 'term_relationships',     2 => 'term_taxonomy',     3 => 'terms',   ),   'users' =>    array (     0 => 'users',   ),   'comments' =>    array (     0 => 'comments',   ),   'comment_queries' =>    array (     0 => 'comments',     1 => 'commentmeta',   ),   'term_rows' =>    array (     0 => 'terms',     1 => 'term_taxonomy',   ),   'post_meta' =>    array (     0 => 'postmeta',   ),   'user_meta' =>    array (     0 => 'usermeta',   ),   'term_meta' =>    array (     0 => 'termmeta',   ),   'comment_meta' =>    array (     0 => 'commentmeta',   ), )` — The tables each kind of entry is read from.
+- const `SOURCES` = `array (   'posts' =>    array (     0 => 'posts',   ),   'post_terms' =>    array (     0 => 'term_relationships',     1 => 'term_taxonomy',     2 => 'terms',   ),   'revisions' =>    array (     0 => 'posts',   ),   'theme_templates' =>    array (     0 => 'posts',     1 => 'term_relationships',     2 => 'term_taxonomy',     3 => 'terms',   ),   'users' =>    array (     0 => 'users',   ),   'comments' =>    array (     0 => 'comments',   ),   'comment_queries' =>    array (     0 => 'comments',     1 => 'commentmeta',   ),   'term_rows' =>    array (     0 => 'terms',     1 => 'term_taxonomy',   ),   'term_queries' =>    array (     0 => 'terms',     1 => 'term_taxonomy',     2 => 'term_relationships',     3 => 'termmeta',   ),   'term_lookups' =>    array (     0 => 'terms',     1 => 'term_taxonomy',   ),   'post_meta' =>    array (     0 => 'postmeta',   ),   'user_meta' =>    array (     0 => 'usermeta',   ),   'term_meta' =>    array (     0 => 'termmeta',   ),   'comment_meta' =>    array (     0 => 'commentmeta',   ), )` — The tables each kind of entry is read from.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Posts`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Meta`, `Minn\Runtime\PostCaches`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermTags`, `Minn\Runtime\UserWrites`, `Minn\Theme\TemplateIndex`, `Minn\Theme\Templates`
+Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Posts`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Meta`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostReads`, `Minn\Runtime\Runtime`, `Minn\Runtime\TaxTerms`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermTags`, `Minn\Runtime\UserWrites`, `Minn\Theme\TemplateIndex`, `Minn\Theme\Templates`
 
 
 ### static `remember(string $kind, string|int $key, Closure $load): mixed`
@@ -1740,7 +1742,7 @@ Drops one kept value, or every one of a kind.
 
 Drops everything kept.
 
-Internals: `listen()` (private, line 103)
+Internals: `listen()` (private, line 105)
 
 
 ## Site
@@ -1749,7 +1751,7 @@ Internals: `listen()` (private, line 103)
 
 Site-wide options and the site's clock.
 
-Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Ops\Changelog`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Ops\Changelog`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Runtime\TemplateFiles`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -2153,7 +2155,7 @@ texturize battery post; anything beyond it is a documented gap.
 
 - const `SKIP` = `array (   0 => 'pre',   1 => 'code',   2 => 'kbd',   3 => 'style',   4 => 'script',   5 => 'tt', )`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\PluginFiles`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\PluginFiles`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
 
 ### static `enabled(): bool`

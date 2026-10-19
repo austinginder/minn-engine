@@ -43,26 +43,6 @@ final class BlockHooks
     }
 
     /**
-     * A template part's markup with its hooked blocks inserted. The context
-     * is the part itself: a plugin reads its area to tell a header from a
-     * footer, and its content to see whether its block is already there.
-     */
-    public static function forPart(string $markup, string $slug, string $area): string
-    {
-        if (!self::active()) {
-            return $markup;
-        }
-        $template = Handoff::newBlockTemplate();
-        $template->id = Themes::stylesheet() . '//' . $slug;
-        $template->theme = Themes::stylesheet();
-        $template->slug = $slug;
-        $template->type = 'wp_template_part';
-        $template->area = $area;
-        $template->content = $markup;
-        return _minn_apply_hooks_to_template_part($markup, $template);
-    }
-
-    /**
      * A plugin-registered pattern's content, hooks already applied by the
      * registry, for a slug the theme does not carry. Null when the runtime
      * is not up or nothing registered that name.
@@ -98,5 +78,20 @@ final class BlockHooks
             'categories' => $categories,
         ];
         return (string) Handoff::blockHooks($markup, $context, 'insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata');
+    }
+
+    /**
+     * A navigation post's blocks with the blocks hooked to them, as the
+     * reference reads one (apply_block_hooks_to_content_from_post_object):
+     * the hooked blocks the post says to leave out left out; as stored with
+     * no WordPress layer to ask.
+     */
+    public static function forNavigation(string $content, int $postId): string
+    {
+        if (!Handoff::bound('blockHooksForPost')) {
+            return $content;
+        }
+        $ignored = null;
+        return (string) Handoff::blockHooksForPost($content, $postId, 'insert_hooked_blocks', $ignored);
     }
 }

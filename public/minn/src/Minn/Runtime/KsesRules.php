@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Json;
+use Minn\Support\Escape;
 use Minn\Support\Kses;
 use Minn\Support\KsesAttributes;
 use Minn\Support\KsesPolicy;
@@ -64,6 +65,25 @@ final class KsesRules
     {
         $allowedHtml = is_scalar($allowedHtml) && !is_string($allowedHtml) ? (string) $allowedHtml : $allowedHtml;
         return Kses::allowing((string) $content, $allowedHtml, $allowedProtocols === [] ? KsesProtocols::allowed() : $allowedProtocols, static fn (string $context): array => (array) self::allowedHtml($context));
+    }
+
+    /**
+     * A gallery's item, caption and icon tags (gallery_shortcode): each
+     * through tag_escape, and one a post may not hold (wp_kses_allowed_html,
+     * asked once) replaced by the classic list's dl, dd and dt.
+     *
+     * @param array<string, mixed> $atts
+     * @return array{itemtag: string, captiontag: string, icontag: string}
+     */
+    public static function galleryTags(array $atts): array
+    {
+        $valid = (array) self::allowedHtml('post');
+        $tags = [];
+        foreach (['itemtag' => 'dl', 'captiontag' => 'dd', 'icontag' => 'dt'] as $key => $fallback) {
+            $tag = (string) Escape::tag($atts[$key] ?? '');
+            $tags[$key] = isset($valid[$tag]) ? $tag : $fallback;
+        }
+        return $tags;
     }
 
     /** Content filtered to what a post may hold (wp_kses_post). */

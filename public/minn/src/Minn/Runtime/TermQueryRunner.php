@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Closure;
+use Minn\Content\RowCache;
 use Minn\Objects\TermsQuery;
 use Minn\Query\Sql;
 use Minn\Support\Lists;
@@ -18,13 +20,21 @@ use Minn\Support\Sanitize;
  * the order through get_terms_orderby, the fields through get_terms_fields,
  * all of it through terms_clauses, terms_pre_query, and the results shaped
  * by TermQueryTree (children, padded counts, the empty hidden, the page).
+ * A request's rows are kept for the rest of the request, as the reference
+ * keeps them in its object cache, until a term table is written; a lookup
+ * the engine can answer from what it has read (QueryAnswers) runs no SQL.
  */
 final class TermQueryRunner
 {
+    /** The filters that shape the request: an engine answer stands only while none of them has a listener. */
+    private const SHAPING = ['get_terms_defaults', 'parse_term_query', 'get_terms_args', 'get_terms_orderby', 'list_terms_exclusions', 'get_terms_fields', 'terms_clauses', 'terms_pre_query'];
+
     private TermsQuery $query;
     private object $wpdb;
     /** @var array<string, string> */
     private array $where = [];
+    /** Whether saving's sanitising changed a name the query looks up (the answer then no longer fits it). */
+    private bool $renamed = false;
 
     /**
      * Runs a term query object's variables: its terms in the shape the
@@ -36,11 +46,16 @@ final class TermQueryRunner
     {
         $this->query = $query;
         $this->wpdb = $wpdb;
+        $answer = QueryAnswers::take($query);
         $query->parse_query($query->query_vars);
         $args = &$query->query_vars;
         $query->meta_query = Handoff::newMetaQuery();
         $query->meta_query->parse_query_vars($args);
+        $before = $answer === null ? null : serialize($args);
         Runtime::hooks()->actionRefArray('pre_get_terms', [&$query]);
+        if ($before !== null && serialize($query->query_vars) !== $before) {
+            $answer = null;
+        }
         $taxonomies = (array) $args['taxonomy'];
         $args = $this->settle($args, $taxonomies);
         $parent = $args['child_of'] ?: $args['parent'];
@@ -55,16 +70,50 @@ final class TermQueryRunner
         if ($query->terms !== null) {
             return $query->terms;
         }
+        $kept = ($args['cache_results'] ?? true) !== false;
         if ($args['fields'] === 'count') {
-            return $this->wpdb->get_var($query->request);
+            return $kept ? $this->kept('count', fn (): mixed => $this->wpdb->get_var($query->request)) : $this->wpdb->get_var($query->request);
         }
-        $rows = $this->wpdb->get_results($query->request);
+        $rows = $this->answered($answer);
+        $rows ??= $kept ? $this->kept('rows', fn (): mixed => $this->wpdb->get_results($query->request)) : $this->wpdb->get_results($query->request);
         if (empty($rows)) {
             return $query->terms = [];
         }
         $tree = new TermQueryTree($taxonomies);
         $terms = $tree->settle(TermQueryTree::populate($rows), $args);
         return $query->terms = TermQueryTree::format($terms, (string) $args['fields']);
+    }
+
+    /**
+     * The rows an engine answer gives (term ids as rows), when the query is
+     * still the one the engine wrote; null when it is not, or it has none.
+     *
+     * @return list<object>|null
+     */
+    private function answered(?Closure $answer): ?array
+    {
+        if ($answer === null || $this->renamed) {
+            return null;
+        }
+        foreach (self::SHAPING as $hook) {
+            if (Runtime::hooks()->has($hook)) {
+                return null;
+            }
+        }
+        $rows = $answer();
+        return is_array($rows) ? array_values($rows) : null;
+    }
+
+    /**
+     * A request's answer read once a request: rows (each a copy, so a
+     * caller's changes stay its own) or a count.
+     *
+     * @param Closure(): mixed $read
+     */
+    private function kept(string $kind, Closure $read): mixed
+    {
+        $value = RowCache::remember('term_queries', $kind . ':' . md5($this->query->request), $read);
+        return is_array($value) ? array_map(static fn (mixed $row): mixed => is_object($row) ? clone $row : $row, $value) : $value;
     }
 
     /**
@@ -191,6 +240,7 @@ final class TermQueryRunner
     {
         if (!empty($args['name']) || (is_string($args['name']) && $args['name'] !== '')) {
             $names = array_map(static fn ($name) => stripslashes((string) TermFields::field('name', $name, 0, reset($taxonomies), 'db')), (array) $args['name']);
+            $this->renamed = $names !== array_map(static fn ($name): string => (string) $name, (array) $args['name']);
             $this->where['name'] = "t.name IN ('" . implode("', '", array_map(static fn (mixed $value): mixed => Handoff::escSql($value), $names)) . "')";
         }
         if (!empty($args['slug']) || (is_string($args['slug']) && $args['slug'] !== '')) {

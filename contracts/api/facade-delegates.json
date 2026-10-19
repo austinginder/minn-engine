@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1609
+        "delegates": 1616
     },
     "functions": {
         "__": {
@@ -55,6 +55,14 @@
         "_block_template_viewport_meta_tag": {
             "file": "blocks.php",
             "statement": "echo '<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />' . \"\\n\";"
+        },
+        "_build_block_template_result_from_file": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\TemplateFiles::fromFile($template_file, $template_type);"
+        },
+        "_build_block_template_result_from_post": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\TemplateFiles::fromPost($post);"
         },
         "_cleanup_header_comment": {
             "file": "formatting.php",
@@ -120,9 +128,17 @@
             "file": "blocks.php",
             "statement": "return '<!--' . rtrim($matches[1], '-') . '-->';"
         },
+        "_filter_block_template_part_area": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\TemplateFiles::partArea($type);"
+        },
         "_filter_do_shortcode_context": {
             "file": "shortcodes.php",
             "statement": "return 'do_shortcode';"
+        },
+        "_get_block_template_file": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\TemplateFiles::file($template_type, $slug);"
         },
         "_get_cron_array": {
             "file": "cron.php",
@@ -479,6 +495,10 @@
         "_minn_tell_api_fetch": {
             "file": "script-loader.php",
             "statement": "// Added on the registry itself, as the reference's registry adds it as it is made: no \"too early\" notice.\n    $GLOBALS['wp_scripts']->add_inline_script(\n        'wp-api-fetch',\n        sprintf('wp.apiFetch.use( wp.apiFetch.createRootURLMiddleware( \"%s\" ) );', esc_url_raw(get_rest_url())) . \"\\n\"\n        . sprintf('wp.apiFetch.nonceMiddleware = wp.apiFetch.createNonceMiddleware( \"%s\" );', wp_create_nonce('wp_rest')) . \"\\n\"\n        . 'wp.apiFetch.use( wp.apiFetch.nonceMiddleware );' . \"\\n\"\n        . 'wp.apiFetch.use( wp.apiFetch.mediaUploadMiddleware );' . \"\\n\"\n        . sprintf('wp.apiFetch.nonceEndpoint = \"%s\";', admin_url('admin-ajax.php?action=rest-nonce')),\n        'after'\n    );"
+        },
+        "_minn_template_index": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\TemplateFiles::templateIndex();"
         },
         "_minn_term_item": {
             "file": "core-blocks.php",
@@ -1652,6 +1672,10 @@
             "file": "core-blocks-content.php",
             "statement": "return get_block_core_post_featured_image_border_attributes($attributes);"
         },
+        "get_block_file_template": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\TemplateFiles::fileTemplate($id, $template_type);"
+        },
         "get_block_metadata_i18n_schema": {
             "file": "blocks.php",
             "statement": "return (object) ['title' => 'block title', 'description' => 'block description', 'keywords' => ['block keyword'], 'styles' => [['label' => 'block style label']], 'variations' => [['title' => 'block variation title', 'description' => 'block variation description', 'keywords' => ['block variation keyword']]]];"
@@ -2058,7 +2082,7 @@
         },
         "get_post_format_strings": {
             "file": "misc.php",
-            "statement": "return ['standard' => 'Standard', 'aside' => 'Aside', 'chat' => 'Chat', 'gallery' => 'Gallery', 'link' => 'Link', 'image' => 'Image', 'quote' => 'Quote', 'status' => 'Status', 'video' => 'Video', 'audio' => 'Audio'];"
+            "statement": "return Minn\\Runtime\\TermTags::formatStrings();"
         },
         "get_post_meta": {
             "file": "meta.php",
@@ -4172,6 +4196,10 @@
             "file": "shortcodes.php",
             "statement": "return Minn\\Runtime\\Shortcodes::parse((string) $text);"
         },
+        "shortcode_unautop": {
+            "file": "formatting.php",
+            "statement": "return Runtime::shortcodes()->unautop($text);"
+        },
         "single_cat_title": {
             "file": "taxonomy.php",
             "statement": "return single_term_title($prefix, $display);"
@@ -4250,7 +4278,7 @@
         },
         "tag_escape": {
             "file": "functions.php",
-            "statement": "return apply_filters('tag_escape', strtolower(preg_replace('/[^a-zA-Z0-9-_:]/', '', (string) $tag_name)), $tag_name);"
+            "statement": "return Minn\\Support\\Escape::tag($tag_name);"
         },
         "tag_exists": {
             "file": "taxonomy.php",

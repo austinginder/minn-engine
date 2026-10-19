@@ -38,8 +38,8 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 220 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
+| [`Templates`](#templates) | final readonly class | 250 | Which template renders a resolution, and where its markup comes from: |
+| [`Theme`](#theme) | final class | 358 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`TreeStyles`](#treestyles) | final readonly class | 259 | The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree |
@@ -1093,7 +1093,7 @@ be restored by deleting the row.
 - const `TEMPLATE` = `'wp_template'`
 - const `PART` = `'wp_template_part'`
 
-Used by: `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Theme\TemplateWriter`
+Used by: `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Runtime\TemplateFiles`, `Minn\Theme\TemplateWriter`
 
 ```php
 __construct(Minn\Db $db, Minn\Theme\Theme $theme, Minn\Content\Site $site, ?Minn\Runtime\BlockTemplates $registered = NULL)
@@ -1343,11 +1343,22 @@ The site editor's saved global styles for the active theme, when any.
 An emptied node is stored as [] and reads as nothing, the way the
 reference reads it; a list where a map belongs is dropped the same way.
 
+### `load(): void`
+
+Has the theme's saved templates (and its term) read, if they are not yet: the template-part lookup answers from them.
+
+### `savedPartIds(string $slug): array`
+
+The ids the template-part lookup finds for a slug: the newest saved
+part of the theme by that name, or none.
+
+- `@return list<int>`
+
 ### `customTemplate(int $pageId): ?string`
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `found()` (private, line 57), `filtered()` (private, line 120), `groups()` (private, line 138), `savedOfTheme()` (private, line 190), `saved()` (private, line 219), `savedRow()` (private, line 232)
+Internals: `found()` (private, line 58), `filtered()` (private, line 121), `groups()` (private, line 139), `savedOfTheme()` (private, line 193), `saved()` (private, line 250), `savedRow()` (private, line 263)
 
 
 ## Theme
@@ -1361,7 +1372,7 @@ merges the same way, with the child's preset lists replacing the
 parent's whole. The engine reads the site's installed theme the way it
 reads the site's database; it never runs the theme's PHP.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Runtime\Themes`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\ThemeStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Rest\Services`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\Themes`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\ThemeStyles`
 
 ```php
 __construct(string $slug, string $dir, string $uri, ?Minn\Theme\Theme $parent = NULL)
@@ -1441,6 +1452,10 @@ A template title and description the theme declares for a custom template slug.
 
 The title theme.json gives a template part, when it names one.
 
+### `declaredPartArea(string $slug): ?string`
+
+The area theme.json declares for a template part, or null when it declares none.
+
 ### `partArea(string $slug): string`
 
 The template-part area declared in theme.json (header, footer, or uncategorized).
@@ -1468,7 +1483,7 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 62), `rawJson()` (private, line 83), `withStylePartials()` (private, line 99), `partialFiles()` (private, line 135), `safe()` (private, line 166), `htmlFiles()` (private, line 243), `patternIndex()` (private, line 355)
+Internals: `at()` (private, line 62), `rawJson()` (private, line 83), `withStylePartials()` (private, line 99), `partialFiles()` (private, line 135), `safe()` (private, line 166), `htmlFiles()` (private, line 243), `patternIndex()` (private, line 366)
 
 
 ## ThemeJsonData

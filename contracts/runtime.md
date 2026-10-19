@@ -17491,6 +17491,120 @@ unreadable files, built ID3 tags, the LAME, MPEG-4, wave, AVI, Vorbis and Flash 
 two helpers) and `media-cover`; unit `media-av`. The corpus is `tests/fixtures/media`, built by
 `tests/tools/media-corpus.sh`.
 
+## A template part found as the reference finds it (2026-10-19)
+
+The template-part block now looks its part up the way the reference does, and every
+template function on the way reads what the reference reads (probe `template-part-lookup`),
+with no SQL statement more on any page measured.
+
+- **Only the active theme's parts.** The stylesheet is read for every part, and once more for
+  the lookup when the block names no theme. A part that names another theme, or no slug,
+  renders nothing and is announced to nobody.
+- **The saved part, through WP_Query.** The lookup is the reference's query (the part's
+  post type and name, published, the theme's `wp_theme` term by name, one post, no found
+  rows), so `pre_get_posts` can steer it and `loop_no_results` hears a miss. The engine
+  answers it from the saved templates it has already read (`Runtime\QueryAnswers`), while
+  its variables are as written and no plugin shapes its SQL; otherwise the SQL runs.
+- **Then the file.** A saved part's template is built from its post and announced with
+  `render_block_core_template_part_post`. Without one, `get_block_file_template` is asked,
+  the file looked for again (`_get_block_template_file`), and the part announced with
+  `render_block_core_template_part_file` and its path, or `_none`.
+- **The area and the tag.** A saved part's area is its `wp_template_part_area` term's, and it
+  has none without one (so a div), not the area the theme declares for its slug. The areas
+  core knows are asked for every part rendered, for the area's tag. `tagName` goes through
+  `tag_escape` and `esc_attr`, and stands only when it names a tag the engine allows.
+- **The part's content.** Its shortcodes run before its blocks render (`shortcode_unautop`,
+  `do_shortcode`); its blocks are parsed by the parser `block_parser_class` names; the
+  result is texturized, its smilies converted and its images and iframes fitted out for
+  `template_part_{area}`. A part rendered alone (a plugin's `do_blocks`, the block renderer)
+  kept its straight quotes and its shortcodes before, and a full page ran no shortcodes in
+  its parts at all.
+- **Hooked blocks** are inserted as the template is built, from the file or from the post: a
+  part's markup wrapped in a template-part block so blocks hooked as its first or last child
+  land, with the hooked blocks its post's `_wp_ignored_hooked_blocks` names left out. They
+  are not inserted a second time as the part renders.
+
+The template functions, each pinned alone by the same probe:
+
+- `_get_block_template_file` reads the stylesheet, its folder, the template and its folder;
+  for a file found, the stylesheet again and, for a part theme.json declares, its area
+  through `_filter_block_template_part_area` (a part it does not declare is uncategorized,
+  unchecked).
+- `_build_block_template_result_from_file` reads the default template types for a part too,
+  and passes the markup through `apply_block_hooks_to_content`, which names the theme on each
+  template part inside.
+- `_build_block_template_result_from_post` reads the post's theme and (for a part) area
+  terms, its `origin` and `is_wp_suggestion` meta, the default types, whether the theme has
+  the file, and a part's ignored hooked blocks, then passes the markup through the hooks.
+- `get_block_file_template` builds only for the active theme's id, between its two filters.
+- `get_allowed_block_template_part_areas`, `get_default_block_template_types` and
+  `get_post_format_strings` translate each name and description (contexts "template part
+  area", "Template name", "Post format"); `get_stylesheet_directory` and
+  `get_template_directory` ask `theme_root` once.
+
+A taxonomy query's terms (probe `tax-terms`), which the lookup's theme term goes through:
+
+- A clause's terms are made unique (their keys kept) and turned in one terms query a turn: by
+  the field, every term at once (`include` for term ids), as many as there are terms (all of
+  them in a hierarchical taxonomy), in no order. Terms already given as term_taxonomy_ids
+  are not queried. Under a hierarchical taxonomy that includes children they become term ids
+  first, each followed by its children and then itself, repeats kept.
+- An AND clause fails when a turn finds fewer terms than it has, "Inexistent terms." asked:
+  so terms that overlap (a parent and its own child) match nothing under AND, as on the
+  reference. AND counted no children before; it counts them now.
+- `transform_query` called by a plugin adds no children, and an AND clause naming a term
+  there is not becomes the `inexistent_terms` error. `get_term_children` reads the stored
+  hierarchy (a term's own children, then each child's that has any), with no SQL.
+- Answered without the database: the theme's term by name once its templates are read; the
+  second turn when the first found terms with no children; a later `get_term_by` of a slug
+  a turn found.
+
+Found and fixed on the way, each compared with the reference:
+
+- `get_term_by` refuses a name or slug lookup without a taxonomy that exists, and any empty
+  value, and finds a term through one unordered terms query (probe `tax-terms`).
+- `get_the_terms` keeps what it finds, and an object's cached terms are answered as the
+  reference answers them: their meta queued to load together, each term through `get_term`.
+- WP_Query primes its posts' terms through `wp_get_object_terms` (with
+  `all_with_object_id`, by name) and its hooks, answered from the engine's one priming read.
+  The global styles lookup primes neither meta nor terms, as the reference's does not.
+- A meta read of an object not cached, or cached empty, goes through
+  `update_{type}_metadata_cache`.
+- kses asks `wp_kses_allowed_html` once for each element tag it meets, opening or closing,
+  and never for text (probe `kses-allowed-asks`). Before, it asked once for every call, so
+  every term name sanitized on its way into a query asked.
+- `gallery_shortcode` keeps an item, caption or icon tag only when a post may hold it
+  (`tag_escape` first), else `dl`, `dd` or `dt`: the engine printed `[gallery
+  itemtag="script"]` as script elements. The Custom HTML widget's note names the unsafe
+  tags a post may not hold, and is left out when it may hold them all.
+- The breadcrumbs block passes each crumb through `wp_kses_post`, and post-terms what comes
+  before its links and after them (its wrapper, prefix and suffix).
+- A navigation post's blocks get their hooked blocks
+  (`apply_block_hooks_to_content_from_post_object`), the ones its meta names left out.
+- A post's permalink reads its author only for a structure with `%author%`, and the page
+  list reads its pages' own fields (`to_array` read each page's template meta).
+
+Kept on purpose: `tagName` stays one of the tags the engine enumerates (security review
+2026-08-28, finding 4). The reference prints any tag, guarding the attribute when a post is
+saved instead.
+
+Left:
+
+- `wp_filter_content_tags` decides lazy loading as for `the_content` whatever its context:
+  it asks `wp_lazy_loading_enabled` only for images, and a header part's images are lazy
+  where the reference gives the first `fetchpriority`. The reference also asks for iframes
+  first, in every context.
+- The engine's renderer fires no `get_block_type_uses_context`, and no `block_parser_class`
+  for the inner content it parses (patterns, post content); a navigation's inner blocks hear
+  fewer hooks than the reference's. The hook battery holds each.
+- The global styles lookup is not the reference's query: `get_posts`, by ID and slug,
+  filters suppressed, where the reference runs WP_Query by date and theme name.
+- `sanitize_key` on the column names in term and meta queries, and kses's pass over block
+  attributes outside the block parser. The hook battery holds both.
+
+Pinned: probes `template-part-lookup` (38 rows), `tax-terms` (48) and `kses-allowed-asks`
+(23), each in the hook battery too.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17556,7 +17670,7 @@ rows that are `open` or `austin`.
 | 16832 | Query Monitor's reflection (10-15) | the missing-dependency notice comes at registration, not once at the first tags or preloads | done | 2026-10-18: "Script modules printed, and registries of their own" (probe `script-modules-printing`) |
 | 16832 | Query Monitor's reflection (10-15) | preload order and fetchpriority (dependencies first; the highest priority of the queued modules that pull it in) | open | order done 2026-10-18; the raised priority is observed ("Script modules printed") but one case on the page's registry does not follow it, so it is not built |
 | 16832 | Query Monitor's reflection (10-15) | `new WP_Script_Modules()` shares the page's registry | done | 2026-10-18: each new one keeps its own (probe `script-modules-printing`) |
-| 16876 | The loop, as a block template walks it (10-15) | the template-part block's saved-part lookup through WP_Query (`loop_no_results`, `pre_get_posts`) | austin | tried 2026-10-18: the query can be answered from the templates the engine reads (no posts SELECT), but its theme-term lookup by name costs a SELECT per part (the engine caches no term lookups), 2 or 3 a page, over the SQL ceilings; accept, or build a term-lookup cache first |
+| 16876 | The loop, as a block template walks it (10-15) | the template-part block's saved-part lookup through WP_Query (`loop_no_results`, `pre_get_posts`) | done | 2026-10-19: "A template part found as the reference finds it" (probes `template-part-lookup`, `tax-terms`); the lookup and its theme term are answered from what the engine has read, no SELECT more |
 | 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | done | "The front's template chosen through get_block_templates (2026-10-16)"; the template-part lookup is still the row above |
 | 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | done | 2026-10-18: "The latest-posts block, whole" (probe `latest-posts`) |
 | 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | done | "A product's head link and its post terms (2026-10-16)": the route rest_get_queried_resource_route gives |
@@ -17565,3 +17679,7 @@ rows that are `open` or `austin`.
 | 17101 | Methods keep the reference's shape (10-18) | `WP_Theme_JSON_Resolver::get_theme_data()` ignores `with_supports => false` | done | "Three owed rows settled": the theme's own layer over its supports (probe `theme-data-supports`) |
 | 17101 | The $current_user global (10-18) | the `setup_userdata` globals (`$user_ID`, `$userdata`, `$user_login`, ...) | done | "Three owed rows settled" (probe `user-globals`) |
 | 17483 | Audio and video metadata (10-19) | MP3 and AC-3 inside a WAV, MP2 in Matroska, H.264 in Flash video: the reference's own readers for these, not followed | austin | rare as uploads, and the engine describes them by its other rules; accept, or owe them (each is a further reader of the reference's to learn from patched files) |
+| 17591 | A template part found as the reference finds it (10-19) | `wp_filter_content_tags` decides lazy loading as for `the_content` whatever its context (a header part's images lazy, iframes not asked about first) | open | the content-image rules are `Blocks\ImageTags`'; the context-aware ones already in `Runtime\AttachmentImages` (`wp_get_loading_optimization_attributes`) are the model |
+| 17591 | A template part found as the reference finds it (10-19) | the renderer fires no `get_block_type_uses_context`, no `block_parser_class` for inner content; a navigation's inner blocks hear fewer hooks | open | the hook battery holds each difference |
+| 17591 | A template part found as the reference finds it (10-19) | the global styles lookup's query shape (`get_posts`, ID order, slug, filters suppressed) | open | the reference runs WP_Query by date and the theme's name; outputs agree (probes `global-styles-unfiltered`, `theme-json-resolver`) |
+| 17591 | A template part found as the reference finds it (10-19) | `sanitize_key` on query column names; kses's block-attribute pass outside the block parser | open | the hook battery holds both |

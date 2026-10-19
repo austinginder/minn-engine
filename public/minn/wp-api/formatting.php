@@ -798,13 +798,7 @@ function iso8601_timezone_to_offset($timezone)
 /** Unwraps a paragraph that holds nothing but one registered shortcode (with its closing tag). */
 function shortcode_unautop($text)
 {
-    $pattern = Runtime::shortcodes()->pattern();
-    if ($pattern === null) {
-        return $text;
-    }
-    $tags = implode('|', array_map('preg_quote', Runtime::shortcodes()->names()));
-    $open = '\[(' . $tags . ')(?![\w-])[^\]\/]*(?:\/(?!\])[^\]\/]*)*?(?:\/\]|\](?:[^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+\[\/\2\])?)';
-    return (string) preg_replace('/<p>\s*+(' . $open . ')\s*+<\/p>/s', '$1', (string) $text);
+    return Runtime::shortcodes()->unautop($text);
 }
 
 function sanitize_title_for_query($title)

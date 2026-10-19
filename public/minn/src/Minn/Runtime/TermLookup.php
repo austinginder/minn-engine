@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Closure;
 use Minn\Content\RowCache;
 use Minn\Content\TermRecord;
 use Minn\I18n\Gettext;
@@ -24,11 +25,15 @@ final class TermLookup
     /**
      * Terms by query arguments (get_terms), or the old ($taxonomy, $args)
      * shape; an error for an unknown taxonomy; get_terms filters the list
-     * unless suppressed (a count never).
+     * unless suppressed (a count never). The engine may hand an answer for
+     * the query it writes (QueryAnswers).
      */
-    public static function terms(mixed $args = [], mixed $deprecated = ''): mixed
+    public static function terms(mixed $args = [], mixed $deprecated = '', ?Closure $answer = null): mixed
     {
         $query = Handoff::newTermQuery();
+        if ($answer !== null) {
+            QueryAnswers::expect($query, $answer);
+        }
         // The legacy shape ($taxonomy, $args): a second argument, or a first that shares no key with the defaults.
         $parsed = Lists::args($args);
         $legacy = $deprecated || array_intersect_key($query->query_var_defaults, (array) $parsed) === [];
@@ -55,17 +60,57 @@ final class TermLookup
         return Runtime::hooks()->filter('get_terms', [$terms, $query->query_vars['taxonomy'], $query->query_vars, $query]);
     }
 
-    /** A term by slug, name, id or term_taxonomy_id (get_term_by), or false. */
+    /**
+     * A term by slug, name, id or term_taxonomy_id (get_term_by), or false.
+     * As the reference finds one (probe term-lookup): by id through get_term;
+     * by the other three through a terms query of one result in no order
+     * (the taxonomy left out for a term_taxonomy_id), and the term it finds
+     * through get_term again; a slug or name needs a taxonomy that exists and
+     * a value. The theme's own term, once its templates are read, and a slug
+     * a taxonomy query has just found are answered without the database.
+     */
     public static function by(mixed $field, mixed $value, mixed $taxonomy = '', mixed $output = 'OBJECT', mixed $filter = 'raw'): mixed
     {
-        if ($taxonomy !== '' && !Registered::taxonomyExists($taxonomy) && $field !== 'term_taxonomy_id') {
+        $field = (string) $field;
+        if (in_array($field, ['id', 'ID', 'term_id'], true)) {
+            $term = Records::term((int) $value, $taxonomy, $output, $filter);
+            return $term === null || Records::isError($term) ? false : $term;
+        }
+        if (!in_array($field, ['slug', 'name', 'term_taxonomy_id'], true) || ($field !== 'term_taxonomy_id' && !Registered::taxonomyExists($taxonomy)) || empty($value)) {
             return false;
         }
-        if ($field === 'name') {
-            $value = Slashes::strip((string) TermFields::field('name', $value, 0, $taxonomy === '' ? false : (string) $taxonomy, 'db'));
+        $args = ['get' => 'all', 'number' => 1, 'update_term_meta_cache' => false, 'orderby' => 'none', $field => $field === 'term_taxonomy_id' ? (int) $value : $value];
+        if ($field !== 'term_taxonomy_id') {
+            $args['taxonomy'] = (string) $taxonomy;
         }
-        $found = self::query()->find((string) $field, $value, $taxonomy === '' ? null : (string) $taxonomy);
-        return $found === null ? false : Records::term($found['term_id'], $found['taxonomy'], $output, $filter);
+        $query = Handoff::newTermQuery();
+        if (($field === 'name' || $field === 'slug') && is_string($value)) {
+            $key = "{$taxonomy}|{$field}|{$value}";
+            QueryAnswers::expect($query, static fn (): ?array => RowCache::peek('term_lookups', $key));
+        }
+        $terms = $query->query($args);
+        if (!is_array($terms) || $terms === []) {
+            return false;
+        }
+        $term = reset($terms);
+        $term = Records::term($term, $field === 'term_taxonomy_id' ? (string) $term->taxonomy : $taxonomy, $output, $filter);
+        return $term === null || Records::isError($term) ? false : $term;
+    }
+
+    /**
+     * A taxonomy's term by name as the engine has read it elsewhere (its row,
+     * or none when there is no such term), kept so get_term_by answers its
+     * lookup for that name without the database.
+     *
+     * @param array<string, mixed>|null $row
+     */
+    public static function knownByName(string $taxonomy, string $name, ?array $row): void
+    {
+        if ($row !== null) {
+            TermQuery::keep($row);
+            RowCache::put('term_rows', 'row:' . (int) $row['term_id'] . ':', $row);
+        }
+        RowCache::put('term_lookups', "{$taxonomy}|name|{$name}", $row === null ? [] : [(object) ['term_id' => (string) $row['term_id']]]);
     }
 
     /**
@@ -163,21 +208,50 @@ final class TermLookup
         return $list;
     }
 
-    /** Every term below a term (get_term_children), an error for an unknown taxonomy. */
+    /**
+     * Every term below a term (get_term_children), an error for an unknown
+     * taxonomy. As the reference walks the stored hierarchy (probe
+     * tax-terms): a term's own children, then those of each child that has
+     * any, the hierarchy read again for each term walked.
+     */
     public static function children(mixed $termId, mixed $taxonomy): mixed
     {
         if (!Registered::taxonomyExists($taxonomy)) {
             return Handoff::newError('invalid_taxonomy', Gettext::text('Invalid taxonomy.'));
         }
-        return self::query()->children((int) $termId, (string) $taxonomy);
+        return self::below((int) $termId, (string) $taxonomy, []);
+    }
+
+    /**
+     * The terms below a term in the stored hierarchy, a term already walked
+     * not walked again.
+     *
+     * @param array<int, true> $walked
+     * @return list<int>
+     */
+    private static function below(int $termId, string $taxonomy, array $walked): array
+    {
+        $hierarchy = self::hierarchy($taxonomy);
+        if (!isset($hierarchy[$termId])) {
+            return [];
+        }
+        $walked[$termId] = true;
+        $children = array_map('intval', $hierarchy[$termId]);
+        foreach ($children as $child) {
+            if (!isset($walked[$child]) && isset($hierarchy[$child])) {
+                $children = array_merge($children, self::below($child, $taxonomy, $walked));
+            }
+        }
+        return $children;
     }
 
     /**
      * The terms of objects in taxonomies (wp_get_object_terms), as
      * wp_get_object_terms_args shapes the query and get_object_terms and
-     * wp_get_object_terms leave the list.
+     * wp_get_object_terms leave the list; the engine may hand an answer for
+     * its terms query.
      */
-    public static function objectTerms(mixed $objectIds, mixed $taxonomies, mixed $args = []): mixed
+    public static function objectTerms(mixed $objectIds, mixed $taxonomies, mixed $args = [], ?Closure $answer = null): mixed
     {
         if (empty($objectIds) || empty($taxonomies)) {
             return [];
@@ -192,7 +266,7 @@ final class TermLookup
         $args = Runtime::hooks()->filter('wp_get_object_terms_args', [Lists::args($args, ['update_term_meta_cache' => false]), $objectIds, $taxonomies]);
         [$terms, $taxonomies, $args] = ObjectTerms::byTaxonomyArgs($objectIds, $taxonomies, $args);
         if ($taxonomies !== []) {
-            $rest = self::terms($args);
+            $rest = self::terms($args, '', $answer);
             $terms = !empty($args['fields']) && str_starts_with((string) $args['fields'], 'id=>') ? $terms + (array) $rest : array_merge($terms, (array) $rest);
         }
         $terms = Runtime::hooks()->filter('get_object_terms', [$terms, $objectIds, $taxonomies, $args]);

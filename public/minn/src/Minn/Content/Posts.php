@@ -94,12 +94,14 @@ final readonly class Posts
 
     /**
      * Reads the posts' terms in the given taxonomies, in one query, for the
-     * posts some of whose taxonomies are not read yet.
+     * posts some of whose taxonomies are not read yet: those posts and the
+     * rows read (term, post and taxonomy, by name), or null when none needed reading.
      *
      * @param list<int> $ids
      * @param list<string> $taxonomies
+     * @return array{ids: list<int>, rows: list<array{0: int, 1: int, 2: string}>}|null
      */
-    public function primeTerms(array $ids, array $taxonomies): void
+    public function primeTerms(array $ids, array $taxonomies): ?array
     {
         $ids = array_values(array_filter(self::ids($ids), static function (int $id) use ($taxonomies): bool {
             foreach ($taxonomies as $taxonomy) {
@@ -110,9 +112,10 @@ final readonly class Posts
             return false;
         }));
         if ($ids === []) {
-            return;
+            return null;
         }
         $terms = [];
+        $read = [];
         // The terms come whole, as get_term reads them, so asking for one of them later needs no query of its own.
         foreach ($this->db->rows(
             'SELECT tr.object_id, ' . TermQuery::COLUMNS . " FROM {$this->db->table('term_relationships')} tr
@@ -123,6 +126,7 @@ final readonly class Posts
             [$ids, array_values($taxonomies)],
         ) as $row) {
             $terms[(int) $row['object_id']][(string) $row['taxonomy']][] = [(int) $row['term_id'], (string) $row['slug']];
+            $read[] = [(int) $row['term_id'], (int) $row['object_id'], (string) $row['taxonomy']];
             unset($row['object_id']);
             TermQuery::keep($row);
         }
@@ -131,6 +135,7 @@ final readonly class Posts
                 RowCache::put('post_terms', "{$id}:{$taxonomy}", $terms[$id][$taxonomy] ?? []);
             }
         }
+        return ['ids' => $ids, 'rows' => $read];
     }
 
     /** @param list<int> $ids @return list<int> the positive ids, once each */

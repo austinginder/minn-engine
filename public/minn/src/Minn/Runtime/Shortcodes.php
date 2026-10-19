@@ -107,6 +107,17 @@ final class Shortcodes
         return array_keys($this->tags);
     }
 
+    /** Text with each shortcode that stands alone in a paragraph let out of it (shortcode_unautop); as given with none registered. */
+    public function unautop(mixed $text): mixed
+    {
+        if ($this->tags === []) {
+            return $text;
+        }
+        $names = implode('|', array_map('preg_quote', array_keys($this->tags)));
+        $open = '\[(' . $names . ')(?![\w-])[^\]\/]*(?:\/(?!\])[^\]\/]*)*?(?:\/\]|\](?:[^\[]*+(?:\[(?!\/\2\])[^\[]*+)*+\[\/\2\])?)';
+        return (string) preg_replace('/<p>\s*+(' . $open . ')\s*+<\/p>/s', '$1', (string) $text);
+    }
+
     /** The regex matching the registered shortcodes, or null for none. */
     public function pattern(?array $tags = null): ?string
     {

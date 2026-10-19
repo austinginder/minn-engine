@@ -1973,14 +1973,15 @@ function _minn_block_breadcrumbs(MinnBlock $block, MinnRenderer $renderer): stri
         return '';
     }
     $current = array_pop($items);
-    $html = '';
+    $crumbs = [];
     foreach ($items as $item) {
         $label = !empty($item['allow_html']) ? (string) $item['label'] : esc_html((string) $item['label']);
-        $html .= isset($item['url']) ? '<li><a href="' . esc_url($item['url']) . '">' . $label . '</a></li>' : '<li><span>' . $label . '</span></li>';
+        $crumbs[] = isset($item['url']) ? '<li><a href="' . esc_url($item['url']) . '">' . $label . '</a></li>' : '<li><span>' . $label . '</span></li>';
     }
     if ($block->attr('showCurrentItem', true)) {
-        $html .= '<li><span aria-current="page">' . (!empty($current['allow_html']) ? (string) $current['label'] : esc_html((string) $current['label'])) . '</span></li>';
+        $crumbs[] = '<li><span aria-current="page">' . (!empty($current['allow_html']) ? (string) $current['label'] : esc_html((string) $current['label'])) . '</span></li>';
     }
+    $html = implode('', array_map(static fn (string $crumb): string => wp_kses_post($crumb), $crumbs));
     if ($html === '') {
         return '';
     }
