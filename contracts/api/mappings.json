@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 681,
-        "composes": 2131,
+        "composes": 2128,
         "leaf": 1007,
-        "noop": 3167,
+        "noop": 3169,
         "placeholder": 0,
         "deadend": 1767,
-        "functions": 8675,
-        "minnMethods": 1420,
+        "functions": 8674,
+        "minnMethods": 1422,
         "leafLinesOver15": 11
     },
     "functions": {
@@ -36993,15 +36993,6 @@
             "minn": [],
             "composes": []
         },
-        "_minn_hooked_block_types": {
-            "file": "blocks.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
-        },
         "_minn_http_transport_answer": {
             "file": "http.php",
             "lines": 10,
@@ -41962,15 +41953,21 @@
         },
         "apply_block_hooks_to_content_from_post_object": {
             "file": "blocks.php",
-            "lines": 12,
+            "lines": 22,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_traverse_block",
                 "apply_block_hooks_to_content",
                 "get_comment_delimited_block_content",
+                "get_hooked_blocks",
                 "get_post",
                 "get_post_meta",
-                "parse_blocks"
+                "has_blocks",
+                "make_after_block_visitor",
+                "make_before_block_visitor",
+                "parse_blocks",
+                "remove_serialized_parent_block"
             ]
         },
         "apply_filters": {
@@ -52819,14 +52816,12 @@
         },
         "insert_hooked_blocks": {
             "file": "blocks.php",
-            "lines": 15,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_hooked_block_types",
-                "apply_filters",
-                "serialize_block"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\BlockHooks::insert"
+            ],
+            "composes": []
         },
         "insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata": {
             "file": "blocks.php",
@@ -60186,12 +60181,12 @@
         },
         "set_ignored_hooked_blocks_metadata": {
             "file": "blocks.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_hooked_block_types"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\BlockHooks::markIgnored"
+            ],
+            "composes": []
         },
         "set_multiple": {
             "file": "classes/WP_Object_Cache.php",

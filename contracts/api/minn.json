@@ -12623,6 +12623,7 @@
                 "Minn\\Extension\\SeamRunner",
                 "Minn\\Extension\\Seams",
                 "Minn\\Runtime\\BlockFilters",
+                "Minn\\Runtime\\BlockHooks",
                 "Minn\\Support\\Kses",
                 "Minn\\Theme\\TemplatePatterns"
             ],
@@ -14764,6 +14765,7 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Db",
                 "Minn\\Runtime\\BlockFilters",
+                "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\Handoff"
             ],
             "usedBy": [
@@ -14783,8 +14785,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 18,
-                "end": 20
+                "line": 19,
+                "end": 21
             },
             "cases": [],
             "constants": [],
@@ -14824,8 +14826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 23,
-                    "end": 47
+                    "line": 24,
+                    "end": 48
                 }
             ]
         },
@@ -21979,6 +21981,7 @@
                 "Minn\\Json"
             ],
             "usedBy": [
+                "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\TemplateFiles",
                 "Minn\\Support\\Kses"
             ],
@@ -128211,15 +128214,18 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/BlockHooks.php",
-            "lines": 81,
+            "lines": 146,
             "doc": "The Block Hooks API on the engine's own front end: a plugin asks for its\nblock to be inserted next to an anchor block in a template part or a\npattern (WooCommerce puts the mini-cart after the navigation in a\nheader), and the markup the renderer reads carries those insertions.\n\nThe facade owns the traversal (wp-api/blocks.php); this is the seam the\ntheme blocks call, and it stays inert until a plugin actually hooks\nsomething, so a site without such a plugin parses nothing extra.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Blocks\\Block",
+                "Minn\\Blocks\\Serializer",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Blocks\\Dynamic\\SyncedPattern",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure"
             ],
@@ -128239,8 +128245,8 @@
                         "@return array<string, array<string, list<string>>>"
                     ],
                     "params": [],
-                    "line": 25,
-                    "end": 34
+                    "line": 28,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -128251,8 +128257,96 @@
                     "doc": "Whether block hooks are registered (the runtime's functions are there only once it is up).",
                     "shapes": [],
                     "params": [],
-                    "line": 37,
-                    "end": 43
+                    "line": 40,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "insert",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "insert(array $anchor, string $position, array $hooked, mixed $context): string",
+                    "doc": "The blocks hooked to an anchor at a position (insert_hooked_blocks),\neach as the filters leave it, serialized; a type a filter suppresses,\nor one the anchor lists as ignored, goes in nothing (probe\npost-block-hooks).",
+                    "shapes": [
+                        "@param array<string, mixed> $anchor",
+                        "@param array<string, array<string, list<string>>> $hooked"
+                    ],
+                    "params": [
+                        {
+                            "name": "anchor",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "position",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hooked",
+                            "type": "array",
+                            "shape": "array<string, array<string, list<string>>>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "markIgnored",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "markIgnored(array $anchor, string $position, array $hooked, mixed $context): string",
+                    "doc": "The anchor's ignoredHookedBlocks with the types hooked to it at a\nposition added (set_ignored_hooked_blocks_metadata): those a filter\nleaves standing, the list keeping the keys it had (probe\npost-block-hooks). Nothing is inserted: the markup is empty.",
+                    "shapes": [
+                        "@param array<string, mixed> $anchor",
+                        "@param array<string, array<string, list<string>>> $hooked"
+                    ],
+                    "params": [
+                        {
+                            "name": "anchor",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "position",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hooked",
+                            "type": "array",
+                            "shape": "array<string, array<string, list<string>>>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -128271,8 +128365,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 58
+                    "line": 117,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -128315,16 +128409,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 81
+                    "line": 135,
+                    "end": 148
                 },
                 {
                     "routes": [],
-                    "name": "forNavigation",
+                    "name": "forPost",
                     "static": true,
                     "visibility": "public",
-                    "signature": "forNavigation(string $content, int $postId): string",
-                    "doc": "A navigation post's blocks with the blocks hooked to them, as the\nreference reads one (apply_block_hooks_to_content_from_post_object):\nthe hooked blocks the post says to leave out left out; as stored with\nno WordPress layer to ask.",
+                    "signature": "forPost(string $content, int $postId): string",
+                    "doc": "A post's blocks with the blocks hooked to them, as the reference reads\na navigation's or a synced pattern's\n(apply_block_hooks_to_content_from_post_object): the hooked blocks the\npost says to leave out left out; as stored with no WordPress layer to\nask.",
                     "shapes": [],
                     "params": [
                         {
@@ -128342,8 +128436,53 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 96
+                    "line": 157,
+                    "end": 164
+                },
+                {
+                    "routes": [],
+                    "name": "filtered",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "filtered(array $anchor, string $position, array $hooked, mixed $context): array",
+                    "doc": "The types hooked_block_types names for an anchor at a position, each\nwith the block hooked_block and hooked_block_{type} make of it (null\nwhen one suppresses it).",
+                    "shapes": [
+                        "@param array<string, mixed> $anchor",
+                        "@param array<string, array<string, list<string>>> $hooked",
+                        "@return list<array{0: string, 1: mixed}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "anchor",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "position",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hooked",
+                            "type": "array",
+                            "shape": "array<string, array<string, list<string>>>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 110
                 }
             ]
         },
@@ -156475,7 +156614,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 467,
+            "lines": 469,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -157334,7 +157473,7 @@
                         }
                     ],
                     "line": 296,
-                    "end": 305
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -157353,8 +157492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 311
+                    "line": 310,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -157365,8 +157504,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 314,
-                    "end": 317
+                    "line": 316,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -157377,8 +157516,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 320,
-                    "end": 323
+                    "line": 322,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -157389,8 +157528,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 326,
-                    "end": 329
+                    "line": 328,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -157401,8 +157540,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 332,
-                    "end": 335
+                    "line": 334,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -157413,8 +157552,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 338,
-                    "end": 341
+                    "line": 340,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -157425,8 +157564,8 @@
                     "doc": "A script modules registry of its own, as each new WP_Script_Modules keeps (probe script-modules-printing).",
                     "shapes": [],
                     "params": [],
-                    "line": 344,
-                    "end": 350
+                    "line": 346,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -157437,8 +157576,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 353,
-                    "end": 356
+                    "line": 355,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -157449,8 +157588,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 359,
-                    "end": 362
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -157461,8 +157600,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 365,
-                    "end": 368
+                    "line": 367,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -157473,8 +157612,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 371,
-                    "end": 374
+                    "line": 373,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -157500,8 +157639,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 380
+                    "line": 379,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -157527,8 +157666,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 386
+                    "line": 385,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -157539,8 +157678,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 389,
-                    "end": 392
+                    "line": 391,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -157551,8 +157690,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 395,
-                    "end": 398
+                    "line": 397,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -157563,8 +157702,8 @@
                     "doc": "Whether the facade's functions and classes are defined yet.",
                     "shapes": [],
                     "params": [],
-                    "line": 401,
-                    "end": 404
+                    "line": 403,
+                    "end": 406
                 },
                 {
                     "routes": [],
@@ -157583,8 +157722,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 407,
-                    "end": 434
+                    "line": 409,
+                    "end": 436
                 },
                 {
                     "routes": [],
@@ -157595,8 +157734,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 466,
-                    "end": 469
+                    "line": 468,
+                    "end": 471
                 },
                 {
                     "routes": [],
@@ -157607,8 +157746,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 472,
-                    "end": 489
+                    "line": 474,
+                    "end": 491
                 },
                 {
                     "routes": [],
@@ -157627,8 +157766,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 444,
-                    "end": 458
+                    "line": 446,
+                    "end": 460
                 }
             ]
         },

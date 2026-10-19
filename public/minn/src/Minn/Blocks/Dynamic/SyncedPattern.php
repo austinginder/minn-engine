@@ -10,6 +10,7 @@ use Minn\Blocks\Renderer;
 use Minn\Db;
 use Minn\Blocks\RenderState;
 use Minn\Runtime\BlockFilters;
+use Minn\Runtime\BlockHooks;
 use Minn\Runtime\Handoff;
 
 /** core/block: a synced pattern, rendered from the wp_block post it references. */
@@ -33,7 +34,7 @@ final readonly class SyncedPattern
         if ($row === null || !$renderer->state()->enter('block:' . $ref)) {
             return '';
         }
-        $blocks = Parser::named((string) $row['post_content']);
+        $blocks = Parser::named(BlockHooks::forPost((string) $row['post_content'], $ref));
         // As the reference's does, the block takes the pattern's blocks as its own inner blocks and renders them
         // through render_block once before its own render ends there too (probe block-instances).
         $instance = $renderer->ownInstance();

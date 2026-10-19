@@ -17737,6 +17737,32 @@ Left:
   page list; the reference makes a menu post from them first (unless
   `wp_navigation_should_create_fallback` says not), during the render.
 
+## Block hooks over a post's content (2026-10-19)
+
+A post's content gets the blocks hooked to it as the reference gives them (probe
+`post-block-hooks`, 43 rows), on a page and wherever plugins ask:
+
+- **The wrapper.** `apply_block_hooks_to_content_from_post_object` wraps the content in the
+  block that stands for its post: `core/block` for a synced pattern, `core/navigation` for a
+  menu, `core/post-content` for any other (a template, a part, an attachment too), carrying
+  the post's stored `_wp_ignored_hooked_blocks`. Its first_child and last_child hooks apply;
+  its own before and after are asked as positions nothing is hooked to. Content without
+  blocks is wrapped in a freeform block first, so a classic post or an empty one still gets
+  them. The ignored list the wrapper ends with comes back only once it has one. Without a
+  post, the content's own blocks get their hooks, the given value as the context. Before,
+  only a menu had a wrapper, and it handed back an empty list where the reference hands
+  back none.
+- **Inserting and marking** (`Runtime\BlockHooks::insert`, `markIgnored`): each type
+  `hooked_block_types` names goes through `hooked_block` and `hooked_block_{type}`. One a
+  filter suppresses goes in nothing and is not marked ignored; one the anchor already ignores
+  is filtered, then left out. The ignored list keeps the keys it had, as `array_unique`
+  leaves them. The engine had marked every listed type and filtered none of them.
+- **On the page.** Block content runs the post's hooks in their place on `the_content`, where
+  the engine had counted the step as done; a synced pattern's blocks get theirs
+  (`BlockHooks::forPost`) before they render.
+
+No SELECT more; page times level with the commit before.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17819,7 +17845,7 @@ rows that are `open` or `austin`.
 | 17714 | The template part's four rows (10-19) | the reference asks `get_block_type_uses_context` and `block_parser_class` more often (blocks walked before rendering, block hooks' parses) | accepted | which types are asked and which documents a swapped-in parser reads agree (probe `block-instances`); the extra asks are the reference's own internals |
 | 17714 | The template part's four rows (10-19) | a navigation's inner blocks rendered once through the block filters and dropped, then again; a submenu's links through `render_block` twice | accepted | the dropped render changes nothing a visitor sees, and rendering the items twice would cost every page with a navigation; the render that counts hears what the reference's does (probe `block-instances`) |
 | 17714 | The template part's four rows (10-19) | the comments block through `render_block` twice; its comment template's context carrying `postType` | open | the reference's comments block renders its blocks the way the post template does; observe it with comments to render |
-| 17714 | The template part's four rows (10-19) | a synced pattern's and a post's content get no first-child or last-child hooked blocks | open | `apply_block_hooks_to_content_from_post_object` wraps only a navigation's content; the reference wraps a `wp_block`'s in `core/block` and any other post's in `core/post-content` |
+| 17714 | The template part's four rows (10-19) | a synced pattern's and a post's content get no first-child or last-child hooked blocks | done | 2026-10-19: "Block hooks over a post's content" (probe `post-block-hooks`) |
 | 17714 | The template part's four rows (10-19) | the session store writes `session_tokens` without the meta API (no `added_user_meta` / `updated_user_meta`) | open | `Auth\Sessions` writes the serialized blob itself so stored data is never executed; the actions want the value unserialized, so the store needs a safe way to hand it over |
 | 17714 | The template part's four rows (10-19) | `WP_Theme::get` returns a header as written, where the reference's sanitizes it as read | open | `Theme\ThemeHeaders` sanitizes what `display` shows; `get` would do the same once a theme object, read by everything that reads a theme |
 | 17714 | The template part's four rows (10-19) | text domains load when `load_*_textdomain` is called, not at the first translation; a domain nobody named is looked for | open | `Runtime\Translations::fromFolder` loads a file that is there at once; the reference notes the folder and waits (probe `theme-headers` holds the load a header triggers) |

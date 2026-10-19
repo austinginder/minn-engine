@@ -114,7 +114,7 @@ final readonly class Navigation
             if ($menuKey !== null && !$renderer->state()->enter($menuKey)) {
                 return '';
             }
-            $items = $menu !== null ? Parser::named(BlockHooks::forNavigation((string) $menu['post_content'], $menuId)) : ($ref > 0 ? [] : $this->classicItems());
+            $items = $menu !== null ? Parser::named(BlockHooks::forPost((string) $menu['post_content'], $menuId)) : ($ref > 0 ? [] : $this->classicItems());
             // A navigation that names no menu renders its fallback as block_core_navigation_render_fallback leaves it (probe block-instances).
             $items = $ref > 0 ? $items : array_map(static fn (mixed $parsed): Block => Block::fromArray((array) $parsed), array_values((array) Runtime::hooks()->filter('block_core_navigation_render_fallback', [array_map(static fn (Block $item): array => $item->toArray(), $items)])));
             // The menu's title labels the nav only when the block names the menu and that menu is the one shown.

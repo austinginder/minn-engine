@@ -1297,15 +1297,6 @@
                 "why": "The top-level keep rule of the excerpt walk (wrappers opened, a block kept only when its children are plain allowed blocks), which moves with excerpt_remove_blocks.",
                 "body": "41448db92f98"
             },
-            "_minn_hooked_block_types": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\BlockHooks",
-                "gates": [
-                    "unprobed"
-                ],
-                "why": "Reads the hooked types for an anchor and position and fires hooked_block_types on them, the Block Hooks lookup BlockHooks::hooked already starts.",
-                "body": "79a1cc6f259c"
-            },
             "_minn_pagination_arrow": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
@@ -1449,12 +1440,8 @@
             "apply_block_hooks_to_content_from_post_object": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\BlockHooks",
-                "gates": [
-                    "refs"
-                ],
-                "why": "Reads a navigation's stored ignored list from meta, wraps its items in a core/navigation block for root hooks and unwraps them, handing the root list back by reference: Block Hooks behaviour the engine reaches through Handoff::blockHooksForPost.",
-                "doubt": "Only a navigation is wrapped: WP (6.8) wraps every post's content (core/post-content, core/block for wp_block) with its stored list, and still applies hooks for a non-post context instead of returning the content.",
-                "body": "01d409404c6f"
+                "why": "a post's content wrapped in the block that stands for its post (core/block, core/navigation, else core/post-content) with its stored ignored list, freeform when it has no blocks; the wrapper's own positions asked as empty, its ignored list handed back once it has one, unwrapped (probe post-block-hooks)",
+                "body": "868a921ab6de"
             },
             "block_core_calendar_has_published_posts": {
                 "verdict": "keep",
@@ -1626,16 +1613,6 @@
                 "doubt": "Passing $deprecated raises no _deprecated_argument notice, and an existing template is built from its saved row rather than with the pending changes merged in as WP does.",
                 "body": "68af5131cd52"
             },
-            "insert_hooked_blocks": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\BlockHooks",
-                "gates": [
-                    "refs"
-                ],
-                "why": "Builds each hooked block, fires hooked_block and its per-type filter, skips ignored or nulled ones and serializes the rest: the Block Hooks insertion algorithm for BlockHooks, the anchor still passed by reference.",
-                "doubt": "The ignoredHookedBlocks test runs before the hooked_block filters, so they never fire for an ignored type; WP filters first and then skips it (and its parsed block has no innerHTML key).",
-                "body": "50b76c8e556b"
-            },
             "insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata": {
                 "verdict": "keep",
                 "reason": "compose",
@@ -1747,16 +1724,6 @@
                 "to": "Minn\\Blocks\\Serializer::block",
                 "why": "Serializes a parsed block and its inner blocks through their innerContent slots, which Serializer::block does on the value object; the array converts with Block::fromArray.",
                 "body": "986b3db6075f"
-            },
-            "set_ignored_hooked_blocks_metadata": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\BlockHooks",
-                "gates": [
-                    "refs"
-                ],
-                "why": "Merges the hooked types into the anchor's ignoredHookedBlocks metadata, part of the Block Hooks algorithm for BlockHooks.",
-                "doubt": "hooked_block and hooked_block_{type} are never asked, so a type a filter suppresses with null is still recorded as ignored; WP (6.6+) drops those first.",
-                "body": "170bbd6a3b9e"
             },
             "strip_core_block_namespace": {
                 "verdict": "move",

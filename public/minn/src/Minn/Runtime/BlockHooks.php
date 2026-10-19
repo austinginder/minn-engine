@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Blocks\Block;
+use Minn\Blocks\Serializer;
+
 /**
  * The Block Hooks API on the engine's own front end: a plugin asks for its
  * block to be inserted next to an anchor block in a template part or a
@@ -40,6 +43,70 @@ final class BlockHooks
             return false;
         }
         return self::hooked() !== [] || Runtime::hooks()->has('hooked_block_types');
+    }
+
+    /**
+     * The blocks hooked to an anchor at a position (insert_hooked_blocks),
+     * each as the filters leave it, serialized; a type a filter suppresses,
+     * or one the anchor lists as ignored, goes in nothing (probe
+     * post-block-hooks).
+     *
+     * @param array<string, mixed> $anchor
+     * @param array<string, array<string, list<string>>> $hooked
+     */
+    public static function insert(array $anchor, string $position, array $hooked, mixed $context): string
+    {
+        $ignored = (array) ($anchor['attrs']['metadata']['ignoredHookedBlocks'] ?? []);
+        $markup = '';
+        foreach (self::filtered($anchor, $position, $hooked, $context) as [$type, $parsed]) {
+            $markup .= $parsed === null || in_array($type, $ignored, true) ? '' : Serializer::block(Block::fromArray((array) $parsed));
+        }
+        return $markup;
+    }
+
+    /**
+     * The anchor's ignoredHookedBlocks with the types hooked to it at a
+     * position added (set_ignored_hooked_blocks_metadata): those a filter
+     * leaves standing, the list keeping the keys it had (probe
+     * post-block-hooks). Nothing is inserted: the markup is empty.
+     *
+     * @param array<string, mixed> $anchor
+     * @param array<string, array<string, list<string>>> $hooked
+     */
+    public static function markIgnored(array &$anchor, string $position, array $hooked, mixed $context): string
+    {
+        $types = [];
+        foreach (self::filtered($anchor, $position, $hooked, $context) as [$type, $parsed]) {
+            if ($parsed !== null) {
+                $types[] = $type;
+            }
+        }
+        if ($types !== []) {
+            $anchor['attrs']['metadata']['ignoredHookedBlocks'] = array_unique(array_merge((array) ($anchor['attrs']['metadata']['ignoredHookedBlocks'] ?? []), $types));
+        }
+        return '';
+    }
+
+    /**
+     * The types hooked_block_types names for an anchor at a position, each
+     * with the block hooked_block and hooked_block_{type} make of it (null
+     * when one suppresses it).
+     *
+     * @param array<string, mixed> $anchor
+     * @param array<string, array<string, list<string>>> $hooked
+     * @return list<array{0: string, 1: mixed}>
+     */
+    private static function filtered(array $anchor, string $position, array $hooked, mixed $context): array
+    {
+        $name = (string) ($anchor['blockName'] ?? '');
+        $hooks = Runtime::hooks();
+        $out = [];
+        foreach ((array) $hooks->filter('hooked_block_types', [$hooked[$name][$position] ?? [], $position, $name, $context]) as $type) {
+            $type = (string) $type;
+            $parsed = $hooks->filter('hooked_block', [['blockName' => $type, 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []], $type, $position, $anchor, $context]);
+            $out[] = [$type, $hooks->filter("hooked_block_{$type}", [$parsed, $type, $position, $anchor, $context])];
+        }
+        return $out;
     }
 
     /**
@@ -81,12 +148,13 @@ final class BlockHooks
     }
 
     /**
-     * A navigation post's blocks with the blocks hooked to them, as the
-     * reference reads one (apply_block_hooks_to_content_from_post_object):
-     * the hooked blocks the post says to leave out left out; as stored with
-     * no WordPress layer to ask.
+     * A post's blocks with the blocks hooked to them, as the reference reads
+     * a navigation's or a synced pattern's
+     * (apply_block_hooks_to_content_from_post_object): the hooked blocks the
+     * post says to leave out left out; as stored with no WordPress layer to
+     * ask.
      */
-    public static function forNavigation(string $content, int $postId): string
+    public static function forPost(string $content, int $postId): string
     {
         if (!Handoff::bound('blockHooksForPost')) {
             return $content;

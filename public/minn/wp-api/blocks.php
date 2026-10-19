@@ -1084,44 +1084,16 @@ function wp_migrate_old_typography_shape($metadata)
     return $metadata;
 }
 
-/** The hooked block types for an anchor and position, as the filter leaves them. */
-function _minn_hooked_block_types(array $anchor, string $position, array $hooked_blocks, $context): array
-{
-    $name = (string) ($anchor['blockName'] ?? '');
-    $types = $hooked_blocks[$name][$position] ?? [];
-    return (array) apply_filters('hooked_block_types', $types, $position, $name, $context);
-}
-
-/** Serialized markup for the blocks hooked to an anchor at a position, skipping any the anchor lists as ignored. */
+/** Serialized markup for the blocks hooked to an anchor at a position (Minn\Runtime\BlockHooks::insert). */
 function insert_hooked_blocks(&$parsed_anchor_block, $relative_position, $hooked_blocks, $context)
 {
-    $markup = '';
-    $ignored = (array) ($parsed_anchor_block['attrs']['metadata']['ignoredHookedBlocks'] ?? []);
-    foreach (_minn_hooked_block_types($parsed_anchor_block, (string) $relative_position, $hooked_blocks, $context) as $type) {
-        if (in_array($type, $ignored, true)) {
-            continue;
-        }
-        $parsed = ['blockName' => $type, 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []];
-        $parsed = apply_filters('hooked_block', $parsed, $type, $relative_position, $parsed_anchor_block, $context);
-        $parsed = apply_filters("hooked_block_{$type}", $parsed, $type, $relative_position, $parsed_anchor_block, $context);
-        if ($parsed === null) {
-            continue;
-        }
-        $markup .= serialize_block($parsed);
-    }
-    return $markup;
+    return Minn\Runtime\BlockHooks::insert((array) $parsed_anchor_block, (string) $relative_position, (array) $hooked_blocks, $context);
 }
 
-/** Records the hooked types on the anchor's ignoredHookedBlocks metadata; nothing is inserted. */
+/** Records the hooked types on the anchor's ignoredHookedBlocks metadata; nothing is inserted (Minn\Runtime\BlockHooks::markIgnored). */
 function set_ignored_hooked_blocks_metadata(&$parsed_anchor_block, $relative_position, $hooked_blocks, $context)
 {
-    $types = _minn_hooked_block_types($parsed_anchor_block, (string) $relative_position, $hooked_blocks, $context);
-    if ($types === []) {
-        return '';
-    }
-    $ignored = (array) ($parsed_anchor_block['attrs']['metadata']['ignoredHookedBlocks'] ?? []);
-    $parsed_anchor_block['attrs']['metadata']['ignoredHookedBlocks'] = array_values(array_unique(array_merge($ignored, $types)));
-    return '';
+    return Minn\Runtime\BlockHooks::markIgnored($parsed_anchor_block, (string) $relative_position, (array) $hooked_blocks, $context);
 }
 
 /**
@@ -1773,25 +1745,39 @@ function block_core_calendar_update_has_published_post_on_delete($post_id)
 
 /**
  * The block hooks applied to a post's content, the post as the anchor's
- * context. A navigation's items are its root: they are wrapped in a
- * navigation block carrying the post's stored ignored list, so its
- * first_child and last_child hooks apply, and the list that block ends
- * with comes back in $ignored_hooked_blocks_at_root (probe block-hooks-rest).
+ * context (probe post-block-hooks). The content is wrapped in the block
+ * that stands for its post (a navigation's, a synced pattern's, any other
+ * post's content), carrying the post's stored ignored list, so that
+ * block's first_child and last_child hooks apply; its own before and after
+ * are asked and nothing goes there. Content without blocks is wrapped in a
+ * freeform block first. The list the wrapper ends with comes back in
+ * $ignored_hooked_blocks_at_root when it has one. Without a post the
+ * content's own blocks get their hooks.
  */
 function apply_block_hooks_to_content_from_post_object($content, $post = null, $callback = 'insert_hooked_blocks', &$ignored_hooked_blocks_at_root = null)
 {
+    $given = $post;
     $post = get_post($post);
     if ($post === null) {
-        return $content;
+        return apply_block_hooks_to_content((string) $content, $given, $callback);
     }
-    if ($post->post_type !== 'wp_navigation') {
-        return apply_block_hooks_to_content((string) $content, $post, $callback);
-    }
+    $name = ['wp_navigation' => 'core/navigation', 'wp_block' => 'core/block'][$post->post_type] ?? 'core/post-content';
     $stored = json_decode((string) get_post_meta($post->ID, '_wp_ignored_hooked_blocks', true), true);
-    $attrs = is_array($stored) && $stored !== [] ? ['metadata' => ['ignoredHookedBlocks' => $stored]] : [];
-    $wrapped = parse_blocks(apply_block_hooks_to_content(get_comment_delimited_block_content('core/navigation', $attrs, (string) $content), $post, $callback))[0] ?? null;
-    $ignored_hooked_blocks_at_root = (array) ($wrapped['attrs']['metadata']['ignoredHookedBlocks'] ?? []);
-    return $wrapped === null ? (string) $content : implode('', array_map('serialize_block', (array) $wrapped['innerBlocks']));
+    $classic = !has_blocks((string) $content);
+    $inner = $classic ? get_comment_delimited_block_content('core/freeform', [], (string) $content) : (string) $content;
+    $wrapper = parse_blocks(get_comment_delimited_block_content($name, is_array($stored) && $stored !== [] ? ['metadata' => ['ignoredHookedBlocks' => $stored]] : [], $inner))[0];
+    $hooked = get_hooked_blocks();
+    // The wrapper's own before and after are asked as positions nothing is hooked to.
+    $own = $hooked;
+    unset($own[$name]['before'], $own[$name]['after']);
+    [$asked, $none] = [$wrapper, null];
+    make_before_block_visitor($own, $post, $callback)($asked, $none, null) . make_after_block_visitor($own, $post, $callback)($asked, $none, null);
+    $serialized = _minn_traverse_block($wrapper, make_before_block_visitor($hooked, $post, $callback), make_after_block_visitor($hooked, $post, $callback), $none);
+    if (isset($wrapper['attrs']['metadata']['ignoredHookedBlocks'])) {
+        $ignored_hooked_blocks_at_root = $wrapper['attrs']['metadata']['ignoredHookedBlocks'];
+    }
+    $content = remove_serialized_parent_block($serialized);
+    return $classic ? (string) preg_replace('#<!-- /?wp:freeform(?: \{.*?\})? /?-->#', '', $content) : $content;
 }
 
 /** A REST answer's raw content given its hooked blocks (rendered again from it), and a navigation's root ignored list put in its meta. */

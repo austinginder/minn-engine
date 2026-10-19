@@ -301,7 +301,9 @@ final class Runtime
             RenderState::current()->renderedInFilter($html);
             return $html;
         };
-        return (string) RenderState::current()->filteringContent($content, static fn () => self::hooks()->filterWithout('the_content', [$content], ['do_blocks' => [9, $render]] + self::CONTENT_DONE));
+        // The post's block hooks run in their place (probe post-block-hooks); the rest of the defaults are done.
+        $done = array_diff_key(['do_blocks' => [9, $render]] + self::CONTENT_DONE, ['apply_block_hooks_to_content_from_post_object' => true]);
+        return (string) RenderState::current()->filteringContent($content, static fn () => self::hooks()->filterWithout('the_content', [$content], $done));
     }
 
     /** Content the engine rendered itself, through the_content for everything else hooked there. */

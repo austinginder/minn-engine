@@ -24,7 +24,7 @@ the WordPress runtime plugins load against
 | [`AvMetadata`](#avmetadata) | final class | 236 | An audio or video file's metadata as WordPress's media readers keep it |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 181 | The block-level filters plugin code hooks (pre_render_block, |
-| [`BlockHooks`](#blockhooks) | final class | 81 | The Block Hooks API on the engine's own front end: a plugin asks for its |
+| [`BlockHooks`](#blockhooks) | final class | 146 | The Block Hooks API on the engine's own front end: a plugin asks for its |
 | [`BlockMetadata`](#blockmetadata) | final class | 95 | block.json to the settings a block type registers with: the property |
 | [`BlockQueries`](#blockqueries) | final class | 62 | The query arguments the query and comments blocks run, as WordPress's |
 | [`BlockTemplates`](#blocktemplates) | final class | 67 | Block templates plugins register at runtime, by their namespaced name |
@@ -123,7 +123,7 @@ the WordPress runtime plugins load against
 | [`Registry`](#registry) | final class | 512 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RequestHeaders`](#requestheaders) | final class | 82 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 374 | The rewrite rules WordPress makes from its structures, as the reference |
-| [`Runtime`](#runtime) | final class | 467 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 469 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 393 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
@@ -1329,7 +1329,7 @@ The facade owns the traversal (wp-api/blocks.php); this is the seam the
 theme blocks call, and it stays inert until a plugin actually hooks
 something, so a site without such a plugin parses nothing extra.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`
+Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`
 
 ### static `hooked(): array`
 
@@ -1341,6 +1341,26 @@ the registered block types' block_hooks name them.
 ### static `active(): bool`
 
 Whether block hooks are registered (the runtime's functions are there only once it is up).
+
+### static `insert(array $anchor, string $position, array $hooked, mixed $context): string`
+
+The blocks hooked to an anchor at a position (insert_hooked_blocks),
+each as the filters leave it, serialized; a type a filter suppresses,
+or one the anchor lists as ignored, goes in nothing (probe
+post-block-hooks).
+
+- `@param array<string, mixed> $anchor`
+- `@param array<string, array<string, list<string>>> $hooked`
+
+### static `markIgnored(array $anchor, string $position, array $hooked, mixed $context): string`
+
+The anchor's ignoredHookedBlocks with the types hooked to it at a
+position added (set_ignored_hooked_blocks_metadata): those a filter
+leaves standing, the list keeping the keys it had (probe
+post-block-hooks). Nothing is inserted: the markup is empty.
+
+- `@param array<string, mixed> $anchor`
+- `@param array<string, array<string, list<string>>> $hooked`
 
 ### static `registeredPattern(string $slug): ?string`
 
@@ -1357,12 +1377,15 @@ plugin recognises a header pattern).
 - `@param list<string> $blockTypes`
 - `@param list<string> $categories`
 
-### static `forNavigation(string $content, int $postId): string`
+### static `forPost(string $content, int $postId): string`
 
-A navigation post's blocks with the blocks hooked to them, as the
-reference reads one (apply_block_hooks_to_content_from_post_object):
-the hooked blocks the post says to leave out left out; as stored with
-no WordPress layer to ask.
+A post's blocks with the blocks hooked to them, as the reference reads
+a navigation's or a synced pattern's
+(apply_block_hooks_to_content_from_post_object): the hooked blocks the
+post says to leave out left out; as stored with no WordPress layer to
+ask.
+
+Internals: `filtered()` (private, line 99)
 
 
 ## BlockMetadata
@@ -7082,7 +7105,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 444)
+Internals: `loadObjectCacheDropin()` (private, line 446)
 
 
 ## ScriptLoading

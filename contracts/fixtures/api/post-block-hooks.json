@@ -1,0 +1,2308 @@
+[
+    [
+        "post: insert_hooked_blocks",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": "unset",
+            "asked": [
+                "before core/post-content post",
+                "after core/post-content post",
+                "first_child core/post-content post",
+                "before core/paragraph post",
+                "after core/paragraph post",
+                "last_child core/post-content post"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ]
+            ]
+        }
+    ],
+    [
+        "post: set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph -->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content post",
+                "after core/post-content post",
+                "first_child core/post-content post",
+                "before core/paragraph post",
+                "after core/paragraph post",
+                "last_child core/post-content post"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "post: insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content post",
+                "before core/post-content post",
+                "after core/post-content post",
+                "after core/post-content post",
+                "first_child core/post-content post",
+                "first_child core/post-content post",
+                "before core/paragraph post",
+                "before core/paragraph post",
+                "after core/paragraph post",
+                "after core/paragraph post",
+                "last_child core/post-content post",
+                "last_child core/post-content post"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "post: an ignored list stored",
+        [
+            "<!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            [
+                "zz-post-hooks/first"
+            ]
+        ]
+    ],
+    [
+        "page: insert_hooked_blocks",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": "unset",
+            "asked": [
+                "before core/post-content page",
+                "after core/post-content page",
+                "first_child core/post-content page",
+                "before core/paragraph page",
+                "after core/paragraph page",
+                "last_child core/post-content page"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ]
+            ]
+        }
+    ],
+    [
+        "page: set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph -->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content page",
+                "after core/post-content page",
+                "first_child core/post-content page",
+                "before core/paragraph page",
+                "after core/paragraph page",
+                "last_child core/post-content page"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "page: insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content page",
+                "before core/post-content page",
+                "after core/post-content page",
+                "after core/post-content page",
+                "first_child core/post-content page",
+                "first_child core/post-content page",
+                "before core/paragraph page",
+                "before core/paragraph page",
+                "after core/paragraph page",
+                "after core/paragraph page",
+                "last_child core/post-content page",
+                "last_child core/post-content page"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "page: an ignored list stored",
+        [
+            "<!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            [
+                "zz-post-hooks/first"
+            ]
+        ]
+    ],
+    [
+        "wp_block: insert_hooked_blocks",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": "unset",
+            "asked": [
+                "before core/block wp_block",
+                "after core/block wp_block",
+                "first_child core/block wp_block",
+                "before core/paragraph wp_block",
+                "after core/paragraph wp_block",
+                "last_child core/block wp_block"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/block",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/block",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_block: set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph -->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/block wp_block",
+                "after core/block wp_block",
+                "first_child core/block wp_block",
+                "before core/paragraph wp_block",
+                "after core/paragraph wp_block",
+                "last_child core/block wp_block"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/block",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/block",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_block: insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/block wp_block",
+                "before core/block wp_block",
+                "after core/block wp_block",
+                "after core/block wp_block",
+                "first_child core/block wp_block",
+                "first_child core/block wp_block",
+                "before core/paragraph wp_block",
+                "before core/paragraph wp_block",
+                "after core/paragraph wp_block",
+                "after core/paragraph wp_block",
+                "last_child core/block wp_block",
+                "last_child core/block wp_block"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/block",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/block",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/block",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/block",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_block: an ignored list stored",
+        [
+            "<!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            [
+                "zz-post-hooks/first"
+            ]
+        ]
+    ],
+    [
+        "wp_navigation: insert_hooked_blocks",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": "unset",
+            "asked": [
+                "before core/navigation wp_navigation",
+                "after core/navigation wp_navigation",
+                "first_child core/navigation wp_navigation",
+                "before core/paragraph wp_navigation",
+                "after core/paragraph wp_navigation",
+                "last_child core/navigation wp_navigation"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/navigation",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/navigation",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_navigation: set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph -->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/navigation wp_navigation",
+                "after core/navigation wp_navigation",
+                "first_child core/navigation wp_navigation",
+                "before core/paragraph wp_navigation",
+                "after core/paragraph wp_navigation",
+                "last_child core/navigation wp_navigation"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/navigation",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/navigation",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_navigation: insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/navigation wp_navigation",
+                "before core/navigation wp_navigation",
+                "after core/navigation wp_navigation",
+                "after core/navigation wp_navigation",
+                "first_child core/navigation wp_navigation",
+                "first_child core/navigation wp_navigation",
+                "before core/paragraph wp_navigation",
+                "before core/paragraph wp_navigation",
+                "after core/paragraph wp_navigation",
+                "after core/paragraph wp_navigation",
+                "last_child core/navigation wp_navigation",
+                "last_child core/navigation wp_navigation"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/navigation",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/navigation",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/navigation",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/navigation",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_navigation: an ignored list stored",
+        [
+            "<!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            [
+                "zz-post-hooks/first"
+            ]
+        ]
+    ],
+    [
+        "wp_template: insert_hooked_blocks",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": "unset",
+            "asked": [
+                "before core/post-content wp_template",
+                "after core/post-content wp_template",
+                "first_child core/post-content wp_template",
+                "before core/paragraph wp_template",
+                "after core/paragraph wp_template",
+                "last_child core/post-content wp_template"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_template: set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph -->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content wp_template",
+                "after core/post-content wp_template",
+                "first_child core/post-content wp_template",
+                "before core/paragraph wp_template",
+                "after core/paragraph wp_template",
+                "last_child core/post-content wp_template"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_template: insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content wp_template",
+                "before core/post-content wp_template",
+                "after core/post-content wp_template",
+                "after core/post-content wp_template",
+                "first_child core/post-content wp_template",
+                "first_child core/post-content wp_template",
+                "before core/paragraph wp_template",
+                "before core/paragraph wp_template",
+                "after core/paragraph wp_template",
+                "after core/paragraph wp_template",
+                "last_child core/post-content wp_template",
+                "last_child core/post-content wp_template"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_template: an ignored list stored",
+        [
+            "<!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            [
+                "zz-post-hooks/first"
+            ]
+        ]
+    ],
+    [
+        "wp_template_part: insert_hooked_blocks",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": "unset",
+            "asked": [
+                "before core/post-content wp_template_part",
+                "after core/post-content wp_template_part",
+                "first_child core/post-content wp_template_part",
+                "before core/paragraph wp_template_part",
+                "after core/paragraph wp_template_part",
+                "last_child core/post-content wp_template_part"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_template_part: set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph -->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content wp_template_part",
+                "after core/post-content wp_template_part",
+                "first_child core/post-content wp_template_part",
+                "before core/paragraph wp_template_part",
+                "after core/paragraph wp_template_part",
+                "last_child core/post-content wp_template_part"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_template_part: insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content wp_template_part",
+                "before core/post-content wp_template_part",
+                "after core/post-content wp_template_part",
+                "after core/post-content wp_template_part",
+                "first_child core/post-content wp_template_part",
+                "first_child core/post-content wp_template_part",
+                "before core/paragraph wp_template_part",
+                "before core/paragraph wp_template_part",
+                "after core/paragraph wp_template_part",
+                "after core/paragraph wp_template_part",
+                "last_child core/post-content wp_template_part",
+                "last_child core/post-content wp_template_part"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_template_part: an ignored list stored",
+        [
+            "<!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            [
+                "zz-post-hooks/first"
+            ]
+        ]
+    ],
+    [
+        "attachment: insert_hooked_blocks",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": "unset",
+            "asked": [
+                "before core/post-content attachment",
+                "after core/post-content attachment",
+                "first_child core/post-content attachment",
+                "before core/paragraph attachment",
+                "after core/paragraph attachment",
+                "last_child core/post-content attachment"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ]
+            ]
+        }
+    ],
+    [
+        "attachment: set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph -->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content attachment",
+                "after core/post-content attachment",
+                "first_child core/post-content attachment",
+                "before core/paragraph attachment",
+                "after core/paragraph attachment",
+                "last_child core/post-content attachment"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "attachment: insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content attachment",
+                "before core/post-content attachment",
+                "after core/post-content attachment",
+                "after core/post-content attachment",
+                "first_child core/post-content attachment",
+                "first_child core/post-content attachment",
+                "before core/paragraph attachment",
+                "before core/paragraph attachment",
+                "after core/paragraph attachment",
+                "after core/paragraph attachment",
+                "last_child core/post-content attachment",
+                "last_child core/post-content attachment"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "attachment: an ignored list stored",
+        [
+            "<!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            [
+                "zz-post-hooks/first"
+            ]
+        ]
+    ],
+    [
+        "a post's content: two paragraphs",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>b</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content post",
+                "before core/post-content post",
+                "after core/post-content post",
+                "after core/post-content post",
+                "first_child core/post-content post",
+                "first_child core/post-content post",
+                "before core/paragraph post",
+                "before core/paragraph post",
+                "after core/paragraph post",
+                "after core/paragraph post",
+                "before core/paragraph post",
+                "before core/paragraph post",
+                "after core/paragraph post",
+                "after core/paragraph post",
+                "last_child core/post-content post",
+                "last_child core/post-content post"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph",
+                        "core/paragraph"
+                    ],
+                    [
+                        null,
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph",
+                        "core/paragraph"
+                    ],
+                    [
+                        null,
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>b</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>b</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph",
+                        "core/paragraph"
+                    ],
+                    [
+                        null,
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph",
+                        "core/paragraph"
+                    ],
+                    [
+                        null,
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "a post's content: two with a gap",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /-->\n\n<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>b</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content post",
+                "before core/post-content post",
+                "after core/post-content post",
+                "after core/post-content post",
+                "first_child core/post-content post",
+                "first_child core/post-content post",
+                "before core/paragraph post",
+                "before core/paragraph post",
+                "after core/paragraph post",
+                "after core/paragraph post",
+                "before core/paragraph post",
+                "before core/paragraph post",
+                "after core/paragraph post",
+                "after core/paragraph post",
+                "last_child core/post-content post",
+                "last_child core/post-content post"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph",
+                        "core/paragraph"
+                    ],
+                    [
+                        null,
+                        "\n\n",
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph",
+                        "core/paragraph"
+                    ],
+                    [
+                        null,
+                        "\n\n",
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>b</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>b</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph",
+                        "core/paragraph"
+                    ],
+                    [
+                        null,
+                        "\n\n",
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph",
+                        "core/paragraph"
+                    ],
+                    [
+                        null,
+                        "\n\n",
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "a post's content: nothing",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /--><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content post",
+                "before core/post-content post",
+                "after core/post-content post",
+                "after core/post-content post",
+                "first_child core/post-content post",
+                "first_child core/post-content post",
+                "before core/freeform post",
+                "before core/freeform post",
+                "after core/freeform post",
+                "after core/freeform post",
+                "last_child core/post-content post",
+                "last_child core/post-content post"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/freeform"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/freeform"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/freeform"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/freeform"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "a post's content: classic text",
+        {
+            "result": "<!-- wp:zz-post-hooks/first /-->just <b>text</b><!-- wp:zz-post-hooks/last /-->",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content post",
+                "before core/post-content post",
+                "after core/post-content post",
+                "after core/post-content post",
+                "first_child core/post-content post",
+                "first_child core/post-content post",
+                "before core/freeform post",
+                "before core/freeform post",
+                "after core/freeform post",
+                "after core/freeform post",
+                "last_child core/post-content post",
+                "last_child core/post-content post"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/freeform"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/freeform"
+                    ],
+                    [
+                        null
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/freeform"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/freeform"
+                    ],
+                    [
+                        null
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "a post's content: text around a block",
+        {
+            "result": "hi <!-- wp:zz-post-hooks/first /--><!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zz-post-hooks/para\"]}} --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /--><!-- wp:zz-post-hooks/last /--> bye",
+            "root": [
+                "zz-post-hooks/first",
+                "zz-post-hooks/last"
+            ],
+            "asked": [
+                "before core/post-content post",
+                "before core/post-content post",
+                "after core/post-content post",
+                "after core/post-content post",
+                "first_child core/post-content post",
+                "first_child core/post-content post",
+                "before core/paragraph post",
+                "before core/paragraph post",
+                "after core/paragraph post",
+                "after core/paragraph post",
+                "last_child core/post-content post",
+                "last_child core/post-content post"
+            ],
+            "anchors": [
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        "hi ",
+                        null,
+                        " bye"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/first",
+                    "first_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        "hi ",
+                        null,
+                        " bye"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/para",
+                    "after",
+                    "core/paragraph",
+                    [],
+                    [
+                        "<p>a</p>"
+                    ],
+                    []
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        "hi ",
+                        null,
+                        " bye"
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "zz-post-hooks/last",
+                    "last_child",
+                    "core/post-content",
+                    [
+                        "core/paragraph"
+                    ],
+                    [
+                        "hi ",
+                        null,
+                        " bye"
+                    ],
+                    {
+                        "metadata": {
+                            "ignoredHookedBlocks": [
+                                "zz-post-hooks/first"
+                            ]
+                        }
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "no post",
+        [
+            "<!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:zz-post-hooks/para /-->",
+            [
+                "before core/paragraph integer",
+                "after core/paragraph integer"
+            ]
+        ]
+    ],
+    [
+        "insert_hooked_blocks, no ignored list",
+        {
+            "markup": "<!-- wp:zz/a /--><!-- wp:zz/c {\"x\":1} /-->",
+            "attrs": [],
+            "calls": [
+                "hooked_block zz/a",
+                "a",
+                "hooked_block zz/b",
+                "b",
+                "hooked_block zz/c",
+                "c"
+            ]
+        }
+    ],
+    [
+        "insert_hooked_blocks, a ignored",
+        {
+            "markup": "<!-- wp:zz/c {\"x\":1} /-->",
+            "attrs": {
+                "metadata": {
+                    "ignoredHookedBlocks": [
+                        "zz/a"
+                    ]
+                }
+            },
+            "calls": [
+                "hooked_block zz/a",
+                "a",
+                "hooked_block zz/b",
+                "b",
+                "hooked_block zz/c",
+                "c"
+            ]
+        }
+    ],
+    [
+        "set_ignored_hooked_blocks_metadata, no ignored list",
+        {
+            "markup": "",
+            "attrs": {
+                "metadata": {
+                    "ignoredHookedBlocks": [
+                        "zz/a",
+                        "zz/c"
+                    ]
+                }
+            },
+            "calls": [
+                "hooked_block zz/a",
+                "a",
+                "hooked_block zz/b",
+                "b",
+                "hooked_block zz/c",
+                "c"
+            ]
+        }
+    ],
+    [
+        "set_ignored_hooked_blocks_metadata, a ignored",
+        {
+            "markup": "",
+            "attrs": {
+                "metadata": {
+                    "ignoredHookedBlocks": {
+                        "0": "zz/a",
+                        "2": "zz/c"
+                    }
+                }
+            },
+            "calls": [
+                "hooked_block zz/a",
+                "a",
+                "hooked_block zz/b",
+                "b",
+                "hooked_block zz/c",
+                "c"
+            ]
+        }
+    ],
+    [
+        "insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata, no ignored list",
+        {
+            "markup": "<!-- wp:zz/a /--><!-- wp:zz/c {\"x\":1} /-->",
+            "attrs": {
+                "metadata": {
+                    "ignoredHookedBlocks": [
+                        "zz/a",
+                        "zz/c"
+                    ]
+                }
+            },
+            "calls": [
+                "hooked_block zz/a",
+                "a",
+                "hooked_block zz/b",
+                "b",
+                "hooked_block zz/c",
+                "c",
+                "hooked_block zz/a",
+                "a",
+                "hooked_block zz/b",
+                "b",
+                "hooked_block zz/c",
+                "c"
+            ]
+        }
+    ],
+    [
+        "insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata, a ignored",
+        {
+            "markup": "<!-- wp:zz/c {\"x\":1} /-->",
+            "attrs": {
+                "metadata": {
+                    "ignoredHookedBlocks": {
+                        "0": "zz/a",
+                        "2": "zz/c"
+                    }
+                }
+            },
+            "calls": [
+                "hooked_block zz/a",
+                "a",
+                "hooked_block zz/b",
+                "b",
+                "hooked_block zz/c",
+                "c",
+                "hooked_block zz/a",
+                "a",
+                "hooked_block zz/b",
+                "b",
+                "hooked_block zz/c",
+                "c"
+            ]
+        }
+    ],
+    [
+        "the_content",
+        "<i>first</i><p class=\"wp-block-paragraph\">a</p><i>para</i><i>last</i>"
+    ],
+    [
+        "a post-content block",
+        "<div class=\"wp-block-query is-layout-flow wp-block-query-is-layout-flow\"><ul class=\"wp-block-post-template is-layout-flow wp-block-post-template-is-layout-flow\"><li class=\"wp-block-post post-{id} post type-post status-publish format-standard hentry category-uncategorized tag-engine tag-parity\"><div class=\"entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow\"><i>first</i>\n<h2 class=\"wp-block-heading\">Why contracts first</h2>\n\n\n\n<p class=\"wp-block-paragraph\">The compatibility contract is the product. Fixtures from a reference site define done.</p>\n<i>para</i>\n\n\n<ul class=\"wp-block-list\"><li>schema</li><li>rest</li><li>cli</li></ul>\n<i>last</i></div></li><li class=\"wp-block-post post-{id} post type-post status-publish format-standard hentry category-uncategorized\"><div class=\"entry-content wp-block-post-content is-layout-flow wp-block-post-content-is-layout-flow\"><i>first</i><p class=\"wp-block-paragraph\">a</p><i>para</i><i>last</i></div></li></ul></div>"
+    ],
+    [
+        "a synced pattern",
+        "<i>first</i><p class=\"wp-block-paragraph\">a</p><i>para</i><i>last</i>"
+    ]
+]

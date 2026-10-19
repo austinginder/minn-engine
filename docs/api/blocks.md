@@ -97,7 +97,7 @@ One parsed block. A null name is freeform HTML between blocks. The
 innerContent list holds the block's own HTML chunks in order, with a
 null placeholder wherever an inner block sits.
 
-Used by: `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Serializer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Content\Menus`, `Minn\Extension\SeamRunner`, `Minn\Extension\Seams`, `Minn\Runtime\BlockFilters`, `Minn\Support\Kses`, `Minn\Theme\TemplatePatterns`
+Used by: `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Serializer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Content\Menus`, `Minn\Extension\SeamRunner`, `Minn\Extension\Seams`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Support\Kses`, `Minn\Theme\TemplatePatterns`
 
 ```php
 __construct(?string $name, array $attrs, array $innerBlocks, string $innerHtml, array $innerContent)
@@ -1122,7 +1122,7 @@ attributes are JSON with every character that could end the comment or
 open a tag spelled as an escape ("<" "<", "--" "--", a
 backslash "\"), so a value can never break out of its delimiter.
 
-Used by: `Minn\Runtime\TemplateFiles`, `Minn\Support\Kses`
+Used by: `Minn\Runtime\BlockHooks`, `Minn\Runtime\TemplateFiles`, `Minn\Support\Kses`
 
 ### static `blocks(array $blocks): string`
 

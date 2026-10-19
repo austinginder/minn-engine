@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1619
+        "delegates": 1621
     },
     "functions": {
         "__": {
@@ -2580,6 +2580,10 @@
             "file": "link-template.php",
             "statement": "return SiteUrls::includes($path, $scheme);"
         },
+        "insert_hooked_blocks": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\BlockHooks::insert((array) $parsed_anchor_block, (string) $relative_position, (array) $hooked_blocks, $context);"
+        },
         "insert_with_markers": {
             "file": "misc.php",
             "statement": "return \\Minn\\Support\\Markers::write((string) $filename, (string) $marker, array_map('strval', (array) $insertion));"
@@ -4155,6 +4159,10 @@
         "serialize_blocks": {
             "file": "blocks.php",
             "statement": "return implode('', array_map('serialize_block', $blocks));"
+        },
+        "set_ignored_hooked_blocks_metadata": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\BlockHooks::markIgnored($parsed_anchor_block, (string) $relative_position, (array) $hooked_blocks, $context);"
         },
         "set_post_thumbnail_size": {
             "file": "media.php",
