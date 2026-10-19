@@ -1,0 +1,17 @@
+{
+    "method": "tests/tools/side-effects.php sets these differences aside: each rule's match is a regular expression over a row's name (made rows as table#n), with the reason it is settled.",
+    "rules": [
+        {
+            "match": "^options:_site_transient(_timeout)?_theme_roots$",
+            "reason": "the reference keeps its scan of the themes root in a site transient; the engine reads the folder each time (contracts/runtime.md register, row 17811, accepted)"
+        },
+        {
+            "match": "^options:_site_transient(_timeout)?_wp_theme_files_patterns-<hash>$",
+            "reason": "the reference keeps its theme's pattern file headers in a site transient; the engine reads the pattern files each time, as it does the themes root (row 17811)"
+        },
+        {
+            "match": "^options:minn_",
+            "reason": "the engine's own state (its runtime symbol cache and the like), which WordPress has no part in"
+        }
+    ]
+}

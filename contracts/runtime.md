@@ -17886,6 +17886,50 @@ says so (`wp_get_nav_menus`).
 
 No SELECT more on the pages measured.
 
+## What each probe writes, compared (2026-10-19)
+
+A new check beside the api fixtures and the hook battery: `tests/tools/side-effects.php` runs
+every api probe on the reference (`wp eval-file --skip-plugins`, so WordPress alone, as the
+engine's probe runner loads no plugins) and on the engine, and compares what each wrote to the
+database. For the pass it puts a trigger on every table of the shared `cove_minn_` database
+that records each row inserted, updated or deleted by the probe's own connection (marked by
+`side-effects-tag.php` and `side-effects-runner.php`; a request to the site meanwhile is not
+counted), a row made and deleted again within the probe included. After each run it puts every
+row back and reads each one again to check, so both stacks start from the same database; the
+triggers come off at the end (`--uninstall` after a crash). Rows a run makes are named by table
+and order (`posts#n`), and so are the ids pointing at them anywhere in a value; dates,
+timestamps, hashes, UUIDs and password hashes are masked; serialized values are compared
+decoded. A row "ends otherwise" when its final state differs, and "passes otherwise" when one
+stack puts it in a state the other never does; differing only in order or repetition does not
+count. `contracts/fixtures/effects/divergences.json` holds what differs (511 differences in 175
+of 403 probes at the first snapshot) and only shrinks; `accepted.json` sets aside the theme
+caches settled by row 17811 and the engine's own `minn_` options. Four passes agreed but for a
+cron event that falls due and the oEmbed caches' names, so a probe that differs anew runs once
+more and only what differs both times counts. A pass takes about ten minutes.
+
+Left: what the first pass found, by how often.
+
+- Pings and enclosures: on publish the reference marks a post `_pingme` and `_encloseme` (293
+  probes) and schedules `do_pings`; a trackback adds `_trackbackme`. The engine writes none:
+  pings are a dead end, enclosures (`do_enclose`) are not listed as one.
+- A new user gets an empty `dismissed_wp_pointers` meta on the reference (108 probes).
+- Posts: trashing renames the slug in a write of its own before the status changes, and a
+  second post trashed under the same slug becomes `__trashed-2` (the engine reuses
+  `__trashed`); publishing a draft without a GMT date keeps it zero on the reference; a custom
+  CSS save makes a revision; `revision-upgrade-{id}` is written as a lock when revisions are
+  saved; trashing through the REST registry probe keeps `_wp_trash_meta_*` and
+  `_wp_desired_post_slug`; the engine makes autosave posts the reference does not (3); the
+  order of slug and GUID writes differs on insert (states only, 77).
+- Options: saving menus writes `theme_mods_*` (menu locations) on the reference (11); the
+  rewrite rules are deleted and made again on the engine where the reference updates them; the
+  reference keeps `_transient_wp_styles_for_blocks`, `update_comment_type.lock` and
+  `_transient_wp_generating_att_{id}`; oEmbed caches are kept under different keys; the engine
+  keeps a URL details response the reference does not.
+- Comments and users: the engine writes a comment's IP in an update of its own (14), writes a
+  user's row twice where the reference writes it once, and records no `last_ip` for an
+  application password a probe uses with `REMOTE_ADDR` set; user 1's `locale` meta is written
+  only on the reference (3); a term relationship of a deleted post stays on the reference.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17974,4 +18018,9 @@ rows that are `open` or `austin`.
 | 17714 | The template part's four rows (10-19) | text domains load when `load_*_textdomain` is called, not at the first translation; a domain nobody named is looked for | done | "Text domains read at their first translation (2026-10-19)": the folder is only named and read at the first translation, by locale alone inside the active theme's folder (probe `text-domain-timing`); a domain nobody named asks only the locale on both stacks |
 | 17811 | Themes as WordPress reads them (10-19) | the themes root's scan kept in the `theme_roots` site transient | accepted | the engine reads the folder each time it lists themes, a few directory reads; what is listed agrees, so nothing a visitor or plugin sees differs |
 | 17853 | Text domains at their first translation (10-19) | `get_locale` takes `pre_determine_locale`'s answer, which the reference's does not | austin | fixed alone, the hook battery refuses it: the reference asks `pre_determine_locale` in 40 probe scenarios only to build MediaElement's `mejsL10n`, and the engine registers no MediaElement player; build the player scripts (MIT library, the engine's own skin and init) or accept the native player, then fix `I18n\SiteLanguage::locale` |
+| 17910 | What each probe writes (10-19) | pings and enclosures: `_pingme`, `_encloseme`, `_trackbackme` and the `do_pings` event, which the engine never writes | austin | pings are a dead end; enclosures are not listed as one: accept both as one dead end, or write the marks (the engine would also have to clear them, as the reference's cron does) |
+| 17910 | What each probe writes (10-19) | a new user's empty `dismissed_wp_pointers` meta | open | probe the reference's `wp_insert_user` meta defaults (`tests/tools/side-effects.php --only=blocks --show`) |
+| 17910 | What each probe writes (10-19) | posts: the trash suffix written first and made unique (`__trashed-2`), a draft's zero GMT date kept on publish, the custom CSS revision, the `revision-upgrade-{id}` lock, the REST trash meta, autosaves the engine makes alone | open | each from `divergences.json`; the stored slug and the GMT date change what readers get |
+| 17910 | What each probe writes (10-19) | options: menu locations in `theme_mods_*` on a menu save, the rewrite rules deleted and remade, the reference's block styles, comment type and attachment locks, oEmbed cache keys, the URL details cache | open | from `divergences.json` |
+| 17910 | What each probe writes (10-19) | comments and users: a comment's IP in an update of its own, a user's row written twice, no `last_ip` for an application password used with `REMOTE_ADDR`, user 1's `locale` meta, a deleted post's term relationship kept on the reference | open | from `divergences.json` |
 | 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | done | "A navigation's fallback menu, made during the render (2026-10-19)": the renderer asks `WP_Navigation_Fallback::get_fallback` through `Handoff::navigationFallback` (probe `navigation-fallback`) |
