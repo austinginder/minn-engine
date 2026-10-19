@@ -3,10 +3,10 @@
     "summary": {
         "functions": 3493,
         "methods": 3806,
-        "delegates": 3443,
+        "delegates": 3445,
         "logicFunctions": 1827,
-        "logicMethods": 2029,
-        "logicLines": 30295,
+        "logicMethods": 2027,
+        "logicLines": 30292,
         "kept": 0
     },
     "byFile": {
@@ -228,7 +228,7 @@
         },
         "classes/WP_Block.php": {
             "logic": 14,
-            "lines": 154
+            "lines": 155
         },
         "classes/WP_Theme.php": {
             "logic": 18,
@@ -302,10 +302,6 @@
             "logic": 17,
             "lines": 115
         },
-        "classes/POMO.php": {
-            "logic": 22,
-            "lines": 112
-        },
         "classes/WP_Block_Type.php": {
             "logic": 15,
             "lines": 112
@@ -317,6 +313,10 @@
         "simplepie/Parts.php": {
             "logic": 22,
             "lines": 112
+        },
+        "classes/POMO.php": {
+            "logic": 20,
+            "lines": 108
         },
         "classes/WP_Theme_JSON_Resolver.php": {
             "logic": 15,
@@ -1358,31 +1358,19 @@
         },
         "Gettext_Translations::make_headers": {
             "file": "classes/POMO.php",
-            "line": 198,
+            "line": 196,
             "statements": 3,
             "lines": 8
         },
-        "Gettext_Translations::make_plural_form_function": {
-            "file": "classes/POMO.php",
-            "line": 185,
-            "statements": 2,
-            "lines": 2
-        },
-        "Gettext_Translations::nplurals_and_expression_from_header": {
-            "file": "classes/POMO.php",
-            "line": 179,
-            "statements": 2,
-            "lines": 2
-        },
         "Gettext_Translations::parenthesize_plural_exression": {
             "file": "classes/POMO.php",
-            "line": 192,
+            "line": 190,
             "statements": 2,
             "lines": 2
         },
         "Gettext_Translations::set_header": {
             "file": "classes/POMO.php",
-            "line": 210,
+            "line": 208,
             "statements": 2,
             "lines": 6
         },
@@ -1634,31 +1622,31 @@
         },
         "MO::export": {
             "file": "classes/POMO.php",
-            "line": 250,
+            "line": 248,
             "statements": 3,
             "lines": 5
         },
         "MO::export_headers": {
             "file": "classes/POMO.php",
-            "line": 280,
+            "line": 278,
             "statements": 3,
             "lines": 5
         },
         "MO::export_original": {
             "file": "classes/POMO.php",
-            "line": 269,
+            "line": 267,
             "statements": 2,
             "lines": 2
         },
         "MO::import_from_file": {
             "file": "classes/POMO.php",
-            "line": 231,
+            "line": 229,
             "statements": 6,
             "lines": 10
         },
         "MO::make_entry": {
             "file": "classes/POMO.php",
-            "line": 303,
+            "line": 301,
             "statements": 4,
             "lines": 4
         },
@@ -3710,49 +3698,49 @@
         },
         "WP_Block::__construct": {
             "file": "classes/WP_Block.php",
-            "line": 22,
+            "line": 23,
             "statements": 7,
             "lines": 9
         },
         "WP_Block::__get": {
             "file": "classes/WP_Block.php",
-            "line": 69,
+            "line": 70,
             "statements": 2,
             "lines": 8
         },
         "WP_Block::enqueue_assets": {
             "file": "classes/WP_Block.php",
-            "line": 175,
+            "line": 178,
             "statements": 4,
             "lines": 12
         },
         "WP_Block::refresh_context_dependents": {
             "file": "classes/WP_Block.php",
-            "line": 35,
+            "line": 36,
             "statements": 3,
             "lines": 9
         },
         "WP_Block::refresh_parsed_block_dependents": {
             "file": "classes/WP_Block.php",
-            "line": 48,
+            "line": 49,
             "statements": 3,
             "lines": 17
         },
         "WP_Block::render": {
             "file": "classes/WP_Block.php",
-            "line": 87,
-            "statements": 12,
-            "lines": 32
+            "line": 88,
+            "statements": 13,
+            "lines": 33
         },
         "WP_Block::render_inner_blocks": {
             "file": "classes/WP_Block.php",
-            "line": 149,
+            "line": 152,
             "statements": 4,
             "lines": 22
         },
         "WP_Block::rendered_by_engine": {
             "file": "classes/WP_Block.php",
-            "line": 134,
+            "line": 137,
             "statements": 2,
             "lines": 4
         },
@@ -3794,19 +3782,19 @@
         },
         "WP_Block_List::__construct": {
             "file": "classes/WP_Block.php",
-            "line": 200,
+            "line": 203,
             "statements": 4,
             "lines": 6
         },
         "WP_Block_List::offsetGet": {
             "file": "classes/WP_Block.php",
-            "line": 215,
+            "line": 218,
             "statements": 3,
             "lines": 6
         },
         "WP_Block_List::offsetSet": {
             "file": "classes/WP_Block.php",
-            "line": 225,
+            "line": 228,
             "statements": 1,
             "lines": 5
         },
@@ -4022,19 +4010,19 @@
         },
         "WP_Block_Supports::apply_block_supports": {
             "file": "classes/WP_Block.php",
-            "line": 303,
+            "line": 306,
             "statements": 7,
             "lines": 13
         },
         "WP_Block_Supports::get_instance": {
             "file": "classes/WP_Block.php",
-            "line": 278,
+            "line": 281,
             "statements": 2,
             "lines": 4
         },
         "WP_Block_Supports::register_attributes": {
             "file": "classes/WP_Block.php",
-            "line": 321,
+            "line": 324,
             "statements": 1,
             "lines": 7
         },

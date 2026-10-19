@@ -6,7 +6,6 @@ namespace Minn\Theme;
 
 use Minn\Content\Autop;
 use Minn\Content\PostRecord;
-use Minn\Content\Blocks;
 use Minn\Content\PasswordGate;
 use Minn\Content\Texturize;
 use Minn\Extension\Extensions;
@@ -16,10 +15,11 @@ use Minn\Runtime\Runtime;
 use Minn\Html;
 
 /**
- * What a classic theme's the_content() prints: the engine's block pipeline
- * (render, password gate, the more-tag teaser in listings), the cached
- * embeds, then the_content's filters (shortcodes in do_shortcode's place
- * among them) so plugin code sees the same hook order the reference runs.
+ * What a classic theme's the_content() prints: the content as written (the
+ * more-tag teaser in listings, the password gate's form in its place) through
+ * the_content, the engine's block renderer in do_blocks's place for block
+ * content and core's own defaults for classic content, so plugin code is
+ * handed what the reference hands it, in the same hook order.
  */
 final class ClassicContent
 {
@@ -39,31 +39,26 @@ final class ClassicContent
         // Nothing written still goes through the_content, as on the reference: a page builder answers an
         // empty post (Elementor's editor preview, Brizy's editor frame under a classic theme).
         $more = strpos($raw, '<!--more-->');
-        // Classic content goes through the_content as written, as the reference hands it; its embeds, paragraphs and images come from the filter's own callbacks.
-        $classic = !str_contains($raw, '<!-- wp:');
         // The teaser stops at the more tag unless the whole text is wanted: a single post or page, or a feed ($more, as setup_postdata leaves it).
         if (!MainQuery::current()->is_singular() && empty($GLOBALS['more']) && $more !== false) {
             $label = $moreLinkText ?? \Minn\I18n\Gettext::text('(more&hellip;)');
-            $moreLink = ' <a href="' . Html::attr($link() . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . $label . '</span></a>';
-            $content = $classic ? substr($raw, 0, $more) . $moreLink : rtrim(Blocks::render(substr($raw, 0, $more))) . "\n" . $moreLink;
+            $content = substr($raw, 0, $more) . ' <a href="' . Html::attr($link() . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . $label . '</span></a>';
         } else {
-            $whole = str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw);
-            $content = $classic ? $whole : Blocks::render($whole);
+            $content = str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw);
         }
-        if ($classic) {
-            $content = Runtime::classicContentFilter($content);
-            $seams = Extensions::runner();
-            return $seams === null ? $content : $seams->filterContent($content, $post);
-        }
+        // Embeds are the content filter's own (WP_Embed at 8), cached by this post.
         $embed = $GLOBALS['wp_embed'] ?? null;
-        if (is_object($embed) && method_exists($embed, 'autoembed')) {
+        if (is_object($embed) && property_exists($embed, 'post_ID')) {
             $embed->post_ID = $post->id;
-            $content = (string) $embed->autoembed($content);
         }
+        // Through the_content as written, as the reference hands it: classic content with core's defaults in their
+        // places, block content rendered in do_blocks's place.
         $seams = Extensions::runner();
-        if ($seams !== null) {
-            $content = $seams->filterContent($content, $post);
+        $seamed = $seams === null ? null : static fn (string $html): string => $seams->filterContent($html, $post);
+        if (str_contains($raw, '<!-- wp:')) {
+            return Runtime::blockContentFilter($content, $seamed);
         }
-        return Runtime::contentFilter($content);
+        $content = Runtime::classicContentFilter($content);
+        return $seamed === null ? $content : $seamed($content);
     }
 }

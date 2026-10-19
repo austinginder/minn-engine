@@ -204,6 +204,19 @@ final class RenderState
         return $parse(substr($content, 0, $at)) . $rendered . $parse(substr($content, $at + strlen($rendered)));
     }
 
+    /**
+     * The engine rendered the content being filtered in do_blocks's place
+     * (Runtime::blockContentFilter): its images count as fitted out from
+     * here on, as those of content rendered before the filter began do.
+     */
+    public function renderedInFilter(string $html): void
+    {
+        if ($this->contentImages !== []) {
+            $this->contentImages[array_key_last($this->contentImages)] = preg_match_all('/<img\s[^>]*>/i', $html, $m) > 0 ? $m[0] : [];
+            $this->contentRendered[array_key_last($this->contentRendered)] = $html;
+        }
+    }
+
     /** Whether an image tag is one the content being filtered held when the filter began. */
     public function fittedImage(string $tag): bool
     {

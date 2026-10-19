@@ -121,7 +121,7 @@ the WordPress runtime plugins load against
 | [`Registry`](#registry) | final class | 512 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RequestHeaders`](#requestheaders) | final class | 82 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 374 | The rewrite rules WordPress makes from its structures, as the reference |
-| [`Runtime`](#runtime) | final class | 439 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 461 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 347 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
@@ -6837,6 +6837,18 @@ texturize, paragraphs, shortcodes, images) in their places, so a filter
 before them is handed the stored text and what it adds is formatted
 with the rest (runtime suite, "plain text a filter adds").
 
+### static `blockContentFilter(string $content, ?Closure $rendered = NULL): string`
+
+Block content through the_content as the reference runs it: handed as
+written, so a filter before do_blocks is handed the stored block
+markup; the engine's renderer in do_blocks's place, rendering what those
+filters added with the rest and never parsing its own output again
+(comment text a comments block prints stays text); then the rest of
+the_content, the defaults the renderer has done left out. $rendered,
+when given, takes the rendering at once (the engine's extension seams).
+
+- `@param \Closure(string): string|null $rendered`
+
 ### static `contentFilter(string $content): string`
 
 Content the engine rendered itself, through the_content for everything else hooked there.
@@ -6912,7 +6924,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 416)
+Internals: `loadObjectCacheDropin()` (private, line 438)
 
 
 ## ScriptLoading

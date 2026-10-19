@@ -80,13 +80,13 @@ foreach (['1' => 'a block that renders nothing gives back what its render enqueu
 // What a plugin adds in the_content before core's defaults run is treated as the reference treats it.
 $ordered = static fn (string $html): ?string => preg_match('/<!--minn-order-->(.*?)<!--\/minn-order-->/s', $html, $m) === 1 ? $m[1] : null;
 // Plain text a the_content filter adds before core's defaults: on a classic post texturized and given paragraphs
-// with the rest, the filter handed the stored text; on a block post texturized, with no paragraphs.
+// with the rest; on a block post texturized, with no paragraphs. Either way the filter is handed the content as stored.
 $classicPost = wp_insert_post(['post_title' => 'zz classic plain text', 'post_status' => 'publish', 'post_content' => "A classic post's first line.\n\nIts second paragraph."]);
 if (is_int($classicPost) && $classicPost > 1) {
     $plain = static fn (string $html): ?string => preg_match('/<!--minn-plain-->(.*?)<!--\/minn-plain-->/s', $html, $m) === 1 ? $m[1] : null;
     $classicPath = (string) parse_url((string) get_permalink($classicPost), PHP_URL_PATH);
     $plainCases = [];
-    foreach ([$classicPath => ['paragraph', 'inline', 'before', 'handed'], '/hello-world/' => ['paragraph', 'inline', 'before']] as $path => $cases) {
+    foreach ([$classicPath => ['paragraph', 'inline', 'before', 'handed'], '/hello-world/' => ['paragraph', 'inline', 'before', 'handed']] as $path => $cases) {
         foreach ($cases as $case) {
             [, $mine] = minn_test_fetch($base . $path . '?minn-test-content-plain=' . $case);
             [, $theirs] = minn_test_fetch(minn_test_reference_url() . $path . '?minn-test-content-plain=' . $case);

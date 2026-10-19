@@ -178,14 +178,12 @@ class Gettext_Translations extends Translations
 
     public function nplurals_and_expression_from_header($header)
     {
-        $rule = PluralRule::fromHeader((string) $header === '' ? null : (string) $header);
-        return [$rule->count, $rule->expression];
+        return PluralRule::fromHeader((string) $header === '' ? null : (string) $header)->pair();
     }
 
     public function make_plural_form_function($nplurals, $expression)
     {
-        $rule = PluralRule::fromExpression((int) $nplurals, (string) $expression);
-        return static fn ($n): int => $rule->index((int) $n);
+        return PluralRule::fromExpression((int) $nplurals, (string) $expression)->chooser();
     }
 
     /** An expression with each ternary's branches parenthesized, as the reference writes it: "?" becomes " ? (", ":" becomes ") : (", the parentheses closed at the end. */

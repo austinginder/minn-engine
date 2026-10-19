@@ -282,6 +282,28 @@ final class Runtime
         return (string) RenderState::current()->filteringContent($content, static fn () => self::hooks()->filter('the_content', [$content]));
     }
 
+    /**
+     * Block content through the_content as the reference runs it: handed as
+     * written, so a filter before do_blocks is handed the stored block
+     * markup; the engine's renderer in do_blocks's place, rendering what those
+     * filters added with the rest and never parsing its own output again
+     * (comment text a comments block prints stays text); then the rest of
+     * the_content, the defaults the renderer has done left out. $rendered,
+     * when given, takes the rendering at once (the engine's extension seams).
+     *
+     * @param \Closure(string): string|null $rendered
+     */
+    public static function blockContentFilter(string $content, ?\Closure $rendered = null): string
+    {
+        $render = static function ($markup) use ($rendered): string {
+            $html = \Minn\Content\Blocks::render((string) $markup);
+            $html = $rendered === null ? $html : $rendered($html);
+            RenderState::current()->renderedInFilter($html);
+            return $html;
+        };
+        return (string) RenderState::current()->filteringContent($content, static fn () => self::hooks()->filterWithout('the_content', [$content], ['do_blocks' => [9, $render]] + self::CONTENT_DONE));
+    }
+
     /** Content the engine rendered itself, through the_content for everything else hooked there. */
     public static function contentFilter(string $content): string
     {

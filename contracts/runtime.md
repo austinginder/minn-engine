@@ -17324,6 +17324,28 @@ The sweep is `docs/security-review-2026-10-18.md`. What it changed in how the en
 - **`get_current_user_id()`** is a number; a reply to a spam or trashed comment is refused; a
   cancelled comment redirect is a blank page.
 
+## the_content handed the content as written (2026-10-18)
+
+The engine rendered a post's content first and ran `the_content` over its rendering, the defaults it had done left
+out, so a filter before core's defaults was handed markup it never sees on the reference: rendered blocks where the
+reference hands the stored block markup, paragraphs where it hands classic text. Observed on the reference with a
+filter at priority 5 (runtime suite, "plain text a the_content filter adds"): it is handed the content as stored,
+and what it adds is formatted with the rest.
+
+Now `the_content` is handed the content as written on all three paths (a block theme's post-content block, a classic
+theme's `the_content()`, REST's `content.rendered`):
+
+- **Block content** runs with the engine's renderer in `do_blocks`'s place at 9 (`Runtime::blockContentFilter`): it
+  renders what earlier filters added with the rest, in one pass, so its own output is never parsed again (comment
+  text a comments block prints stays text, the sweep's finding 1, now by construction). The images it fitted count as
+  fitted for `wp_content_img_tag` at 12 (`RenderState::renderedInFilter`). The engine's extension seams take the
+  rendering at once, in the same place.
+- **Classic content** runs the whole chain, core's defaults in their places (`Runtime::classicContentFilter`).
+- The more-tag teaser hands the cut text and its link together, as `get_the_content()` does; embeds are the chain's
+  own (`WP_Embed` at 8), cached by the post.
+
+A password-protected post's form is still the engine's own markup through the rest of `the_content`.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

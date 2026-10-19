@@ -91,23 +91,25 @@ final readonly class PostBlocks
         $more = strpos($raw, '<!--more-->');
         // Classic content goes through the_content as written, as the reference hands it.
         $classic = $booted && !PasswordGate::is($post) && !str_contains($raw, '<!-- wp:');
+        // Through the_content as written, as the reference hands it: classic content with core's defaults in their
+        // places, block content rendered in do_blocks's place. A password form is the engine's own markup.
+        $asWritten = $booted && !PasswordGate::is($post);
         if ($context->inLoop() && $more !== false) {
             $raw = substr($raw, 0, $more);
             $link = ' <a href="' . Html::attr($this->permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . \Minn\I18n\Gettext::text('(more&hellip;)') . '</span></a>';
-            $content = $classic ? $raw . $link : rtrim(Blocks::render($raw)) . "\n" . $link;
+            $content = $asWritten ? $raw . $link : rtrim(Blocks::render($raw)) . "\n" . $link;
         } else {
             $whole = str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw);
-            $content = $classic ? $whole : Blocks::render($whole);
+            $content = $asWritten ? $whole : Blocks::render($whole);
         }
         $seams = Extensions::runner();
-        if ($classic) {
-            $content = Runtime::classicContentFilter($content);
-        }
-        if ($seams !== null) {
-            $content = $seams->filterContent($content, $post);
-        }
-        if ($booted && !$classic) {
-            $content = Runtime::contentFilter($content);
+        $seamed = $seams === null ? null : static fn (string $html): string => $seams->filterContent($html, $post);
+        if ($asWritten) {
+            $content = str_contains($raw, '<!-- wp:') ? Runtime::blockContentFilter($content, $seamed) : Runtime::classicContentFilter($content);
+            $content = $seamed !== null && !str_contains($raw, '<!-- wp:') ? $seamed($content) : $content;
+        } else {
+            $content = $seamed !== null ? $seamed($content) : $content;
+            $content = $booted ? Runtime::contentFilter($content) : $content;
         }
         if ($content === '' || $content === '0') {
             return '';

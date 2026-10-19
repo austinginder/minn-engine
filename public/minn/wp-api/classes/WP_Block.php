@@ -1,6 +1,7 @@
 <?php
 
 use Minn\Blocks\Block as MinnBlock;
+use Minn\Blocks\RenderState as MinnRenderState;
 use Minn\Content\Blocks as MinnBlocks;
 use Minn\Runtime\BlockFilters;
 use Minn\Runtime\Runtime;
@@ -100,6 +101,8 @@ class WP_Block implements \Minn\Objects\RenderedBlock
             }
             return $options['minn_filters'] === false ? $block_content : BlockFilters::rendered($block_content, (array) $this->parsed_block, $this, BlockFilters::NATIVE_RENDER_DONE);
         }
+        // Every block, freeform text too, is asked whether its directives are processed, as the engine's renderer asks (probe hook-inputs-2).
+        MinnRenderState::current()->processesDirectives((bool) apply_filters('interactivity_process_directives', true));
         $is_dynamic = $options['dynamic'] && $this->name && $this->block_type !== null && $this->block_type->is_dynamic();
         // The engine's renderer binds a static core block itself; this one binds the rest.
         $bound = $is_dynamic || !str_starts_with((string) $this->name, 'core/') ? $this->process_block_bindings() : [];

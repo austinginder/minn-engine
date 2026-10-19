@@ -2620,26 +2620,6 @@
                 "why": "splits a header block into trimmed name and value pairs, which MoFile's private header reader already does; the literal backslash-n replacement would join it",
                 "body": "82b2c39dcb21"
             },
-            "Gettext_Translations::make_plural_form_function": {
-                "verdict": "delegate",
-                "to": "Minn\\I18n\\PluralRule::fromExpression",
-                "gates": [
-                    "subclass"
-                ],
-                "why": "wraps PluralRule's evaluator for the expression in a closure over the count",
-                "doubt": "the reference wraps the legacy Plural_Forms evaluator (LegacyPluralForms here) as an array callable and falls back to n != 1 when it refuses an expression; PluralRule accepts more and sends a bad one to form 0",
-                "body": "6a966fa36ac0"
-            },
-            "Gettext_Translations::nplurals_and_expression_from_header": {
-                "verdict": "delegate",
-                "to": "Minn\\I18n\\PluralRule::fromHeader",
-                "gates": [
-                    "subclass"
-                ],
-                "why": "PluralRule::fromHeader already reads the count and the expression; returning them as a pair is result conversion",
-                "doubt": "fromHeader accepts headers the reference's anchored pattern (wanting whitespace after the semicolon) sends to the 2 and n != 1 default, and raises nplurals=0 to 1",
-                "body": "866cd2adfee6"
-            },
             "Gettext_Translations::parenthesize_plural_exression": {
                 "verdict": "keep",
                 "reason": "library",
@@ -3001,8 +2981,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "the render pipeline: engine-rendered core blocks, bindings, inner blocks, the dynamic callback with the supports block and global post kept, assets (given back when the block rendered nothing) and the render filters",
-                "body": "d7aad28cfbd5"
+                "why": "the render pipeline: engine-rendered core blocks, bindings, inner blocks, the dynamic callback with the supports block and global post kept, assets (given back when the block rendered nothing) and the render filters; a block the engine does not render itself asks interactivity_process_directives as the engine's renderer does (probe hook-inputs-2)",
+                "body": "b32600ffc378"
             },
             "WP_Block::render_inner_blocks": {
                 "verdict": "move",

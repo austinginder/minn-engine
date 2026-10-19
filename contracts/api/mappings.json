@@ -2,10 +2,10 @@
     "generated": "2026-10-19",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 686,
+        "minn": 684,
         "composes": 2142,
         "leaf": 1004,
-        "noop": 3150,
+        "noop": 3152,
         "placeholder": 0,
         "deadend": 1770,
         "functions": 8674,
@@ -1220,18 +1220,17 @@
         },
         "Gettext_Translations::make_plural_form_function": {
             "file": "classes/POMO.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\I18n\\PluralRule::fromExpression",
-                "Minn\\I18n\\PluralRule::index"
+                "Minn\\I18n\\PluralRule::fromExpression"
             ],
             "composes": []
         },
         "Gettext_Translations::nplurals_and_expression_from_header": {
             "file": "classes/POMO.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
                 "Minn\\I18n\\PluralRule::fromHeader"
             ],
@@ -7731,10 +7730,11 @@
         },
         "WP_Block::render": {
             "file": "classes/WP_Block.php",
-            "lines": 38,
+            "lines": 40,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\Bindings::html",
+                "Minn\\Blocks\\RenderState::current",
                 "Minn\\Content\\Blocks::renderer",
                 "Minn\\Runtime\\AssetQueue::settleBlock",
                 "Minn\\Runtime\\AssetQueue::snapshot",
@@ -7742,6 +7742,7 @@
             ],
             "composes": [
                 "_minn_render_core_block",
+                "apply_filters",
                 "wp_parse_args"
             ]
         },

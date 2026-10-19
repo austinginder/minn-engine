@@ -45,4 +45,16 @@ final readonly class PluralRule
     {
         return $this->tree === null ? 0 : PluralExpression::evaluate($this->tree, $n);
     }
+
+    /** The form count and the expression, as nplurals_and_expression_from_header() answers them. @return array{0: int, 1: string} */
+    public function pair(): array
+    {
+        return [$this->count, $this->expression];
+    }
+
+    /** The form a number takes, as the function make_plural_form_function() hands back. @return \Closure(mixed): int */
+    public function chooser(): \Closure
+    {
+        return fn ($n): int => $this->index((int) $n);
+    }
 }

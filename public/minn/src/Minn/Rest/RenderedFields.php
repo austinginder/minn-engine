@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Closure;
-use Minn\Content\Blocks;
 use Minn\Content\PostRecord;
 use Minn\Objects\Post;
 use Minn\Runtime\Handoff;
@@ -32,12 +31,8 @@ final class RenderedFields
     /** The rendered content. */
     public static function content(PostRecord $p): string
     {
-        // Classic content goes through the_content as written, as the reference hands it.
-        if (!str_contains($p->content, '<!-- wp:')) {
-            return (string) self::withPost($p, static fn () => Runtime::classicContentFilter($p->content));
-        }
-        $html = Blocks::render($p->content);
-        return (string) self::withPost($p, static fn () => Runtime::contentFilter($html));
+        // Through the_content as written, as the reference hands it.
+        return (string) self::withPost($p, static fn () => str_contains($p->content, '<!-- wp:') ? Runtime::blockContentFilter($p->content) : Runtime::classicContentFilter($p->content));
     }
 
     /** The rendered excerpt. */
