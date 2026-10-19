@@ -17,7 +17,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Links`](#links) | final readonly class | 102 | The links manager's table, as get_bookmarks and wp_insert_link read and |
 | [`MediaShortcodes`](#mediashortcodes) | final class | 187 | The [video] and [audio] shortcodes as the reference prints them: a |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
-| [`Menus`](#menus) | final readonly class | 511 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
+| [`Menus`](#menus) | final readonly class | 476 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`NoteMarkers`](#notemarkers) | final class | 34 | The markers the block editor's notes leave in content: a mark element |
 | [`ObjectLabels`](#objectlabels) | final class | 24 | A post type's or taxonomy's labels from its own and the defaults |
@@ -664,7 +664,7 @@ Classic nav_menu terms and nav_menu_item posts. The front uses these
 when a navigation block has no inner blocks and no wp_navigation post;
 REST serves the same rows as wp/v2/menus and menu-items.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\Services`, `Minn\Runtime\MenuEvents`
+Used by: `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\Services`, `Minn\Runtime\MenuEvents`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, ?Minn\Content\PostWriter $writer = NULL, ?Minn\Content\Site $site = NULL)
@@ -690,17 +690,6 @@ The id of the menu with exactly this name, or null.
 The items of one menu, or of every menu, in menu order.
 
 - `@return list<MenuItem>`
-
-### `fallbackBlocks(): array`
-
-Navigation-link blocks for the first classic menu. Empty when the
-site has no nav_menu terms with items.
-
-- `@return list<Block>`
-
-### `toBlock(Minn\Content\MenuItem $item): Minn\Blocks\Block`
-
-A menu item as the navigation block it renders through (its classes: its own, then the menu item ones).
 
 ### static `linkAttributes(array $item): array`
 
@@ -776,7 +765,7 @@ The ids of the menu items, in any menu or none, that point at an object of a kin
 
 Adds a page to the end of a menu, titled by the page itself, as a menu set to add new pages takes it.
 
-Internals: `hydrate()` (private, line 211), `meta()` (private, line 270), `menuIdOf()` (private, line 283), `classList()` (private, line 295), `xfnList()` (private, line 305), `writeMeta()` (private, line 489), `originalParent()` (private, line 499), `content()` (private, line 509), `writer()` (private, line 514), `site()` (private, line 522)
+Internals: `hydrate()` (private, line 175), `meta()` (private, line 234), `menuIdOf()` (private, line 247), `classList()` (private, line 259), `xfnList()` (private, line 269), `writeMeta()` (private, line 453), `originalParent()` (private, line 463), `content()` (private, line 473), `writer()` (private, line 478), `site()` (private, line 486)
 
 
 ## MoreTag
@@ -1981,7 +1970,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Terms` · `public/minn/src/Minn/Content/Terms.php`
 
-Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)

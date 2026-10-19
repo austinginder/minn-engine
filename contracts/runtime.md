@@ -17863,6 +17863,29 @@ Left:
   library is MIT; WordPress's skin and its init script would be the engine's own), or
   Austin accepting the native player.
 
+## A navigation's fallback menu, made during the render (2026-10-19)
+
+Probe `navigation-fallback`, from the register row at 17714. The probe keeps the site's own
+navigation menus out of the lookup (`pre_get_posts`), and its classic menus too where a case
+says so (`wp_get_nav_menus`).
+
+- A navigation that names no menu, or names one that is not published, shows the fallback
+  menu, which the engine now asks the facade for (`WP_Navigation_Fallback::get_fallback`,
+  through `Handoff::navigationFallback`): the newest published navigation menu, found through
+  `get_posts`; when there is none, unless `wp_navigation_should_create_fallback` says not, a
+  published menu is made during the render, from the classic menu (titled and slugged after
+  it, its items as navigation links) or else titled "Navigation" with a page list, and that is
+  shown. A second render finds it and makes no other. The engine had read the newest menu
+  with its own query, which plugins could not steer, fired the filter only to be heard, and
+  made nothing, so a site without a navigation menu never got one.
+- Told not to make one, the fallback is a page list, whether or not a classic menu exists
+  (the engine had listed the classic menu's items, `Menus::fallbackBlocks`, now gone).
+- What a fallback shows goes through `block_core_navigation_render_fallback`, a draft
+  menu's stand-in included; a navigation naming a menu that is not there shows nothing and
+  asks nothing.
+
+No SELECT more on the pages measured.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17951,4 +17974,4 @@ rows that are `open` or `austin`.
 | 17714 | The template part's four rows (10-19) | text domains load when `load_*_textdomain` is called, not at the first translation; a domain nobody named is looked for | done | "Text domains read at their first translation (2026-10-19)": the folder is only named and read at the first translation, by locale alone inside the active theme's folder (probe `text-domain-timing`); a domain nobody named asks only the locale on both stacks |
 | 17811 | Themes as WordPress reads them (10-19) | the themes root's scan kept in the `theme_roots` site transient | accepted | the engine reads the folder each time it lists themes, a few directory reads; what is listed agrees, so nothing a visitor or plugin sees differs |
 | 17853 | Text domains at their first translation (10-19) | `get_locale` takes `pre_determine_locale`'s answer, which the reference's does not | austin | fixed alone, the hook battery refuses it: the reference asks `pre_determine_locale` in 40 probe scenarios only to build MediaElement's `mejsL10n`, and the engine registers no MediaElement player; build the player scripts (MIT library, the engine's own skin and init) or accept the native player, then fix `I18n\SiteLanguage::locale` |
-| 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | open | the reference's fallback lookup makes one from the classic menu or a page list unless `wp_navigation_should_create_fallback` says not; the engine renders the same items without writing (`Navigation::classicItems`) |
+| 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | done | "A navigation's fallback menu, made during the render (2026-10-19)": the renderer asks `WP_Navigation_Fallback::get_fallback` through `Handoff::navigationFallback` (probe `navigation-fallback`) |

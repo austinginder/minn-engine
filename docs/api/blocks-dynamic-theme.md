@@ -5,7 +5,7 @@ the template blocks a block theme composes with
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 305 | comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. |
-| [`Navigation`](#navigation) | final readonly class | 561 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`Navigation`](#navigation) | final readonly class | 554 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 281 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 333 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 177 | template-part, pattern, site-title, site-tagline, site-logo. |
@@ -47,10 +47,9 @@ Internals: `comments()` (private, line 61), `legacy()` (private, line 89), `titl
 `final readonly class Minn\Blocks\Dynamic\Theme\Navigation` · `public/minn/src/Minn/Blocks/Dynamic/Theme/Navigation.php`
 
 navigation, navigation-link, page-list. A navigation block's items come
-from its inner blocks, the wp_navigation post it references, the newest
-published wp_navigation post, or (when none of those exist) the first
-classic nav_menu; a block naming a menu that is gone has none, and no
-list. A responsive menu wraps them in the overlay markup the reference
+from its inner blocks, the wp_navigation post it references, or the
+fallback menu (the newest published one, made when there is none), else
+a page list; a block naming a menu that is gone has none, and no list. A responsive menu wraps them in the overlay markup the reference
 emits. The nav is labelled by the block's aria label, or the menu's
 title, made unique in the request; the list carries the aria label as
 given (probe loose-classes).
@@ -62,7 +61,7 @@ given (probe loose-classes).
 - const `CLOSE_ICON` = `'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M13 11.8l6.1-6.3-1.1-1-6.1 6.2-6.1-6.2-1.1 1 6.1 6.3-6.5 6.7 1.1 1 6.5-6.6 6.5 6.6 1.1-1z" /></svg>'`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, ?Minn\Content\Menus $menus = NULL)
+__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks)
 ```
 
 
@@ -78,7 +77,7 @@ that opens on hover, the init watcher, and its tab index.
 
 Registers this family's blocks with the renderer.
 
-Internals: `wiring()` (private, line 72), `navigation()` (private, line 99), `responsive()` (private, line 188), `items()` (private, line 225), `groups()` (private, line 247), `filteredItems()` (private, line 274), `linkedPosts()` (private, line 296), `weighLinks()` (private, line 309), `linkable()` (private, line 324), `presetClasses()` (private, line 335), `overlay()` (private, line 367), `link()` (private, line 384), `submenu()` (private, line 419), `overlayClose()` (private, line 448), `classicItems()` (private, line 459), `pageList()` (private, line 465), `submenuColours()` (private, line 486), `ancestorsOf()` (private, line 502), `pageItems()` (private, line 529), `navParent()` (private, line 560), `menuPost()` (private, line 578), `enqueueView()` (private, line 593)
+Internals: `wiring()` (private, line 69), `navigation()` (private, line 95), `responsive()` (private, line 182), `items()` (private, line 219), `groups()` (private, line 241), `filteredItems()` (private, line 268), `linkedPosts()` (private, line 290), `weighLinks()` (private, line 303), `linkable()` (private, line 318), `presetClasses()` (private, line 329), `overlay()` (private, line 361), `link()` (private, line 378), `submenu()` (private, line 413), `overlayClose()` (private, line 442), `pageList()` (private, line 452), `submenuColours()` (private, line 473), `ancestorsOf()` (private, line 489), `pageItems()` (private, line 516), `navParent()` (private, line 547), `menuPost()` (private, line 568), `enqueueView()` (private, line 583)
 
 
 ## PostBlocks

@@ -59,7 +59,7 @@ the WordPress runtime plugins load against
 | [`FileNames`](#filenames) | final class | 119 | Files as WordPress's file functions name and remove them: a name made |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 548 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 554 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 426 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
@@ -2970,6 +2970,10 @@ A term object made from a row (new WP_Term).
 
 A comment object made from a row (new WP_Comment).
 
+### static `navigationFallback(): ?array`
+
+The menu a navigation naming none falls back to, as a row, made when there is none (WP_Navigation_Fallback::get_fallback).
+
 ### static `commentInstance(mixed $id): mixed`
 
 The comment object for an id, or false (WP_Comment::get_instance).
@@ -3182,7 +3186,7 @@ ignored list filled in.
 
 A theme by its folder and root (new WP_Theme).
 
-Internals: `answer()` (private, line 586)
+Internals: `answer()` (private, line 592)
 
 
 ## Heartbeat

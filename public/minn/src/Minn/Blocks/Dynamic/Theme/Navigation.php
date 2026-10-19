@@ -11,9 +11,7 @@ use Minn\Blocks\Parser;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\RenderState;
 use Minn\Blocks\Styles;
-use Minn\Content\Menus;
 use Minn\Content\Posts;
-use Minn\Content\Terms;
 use Minn\Db;
 use Minn\Objects\RenderedBlock;
 use Minn\Runtime\BlockHooks;
@@ -28,10 +26,9 @@ use Minn\Support\KsesCss;
 
 /**
  * navigation, navigation-link, page-list. A navigation block's items come
- * from its inner blocks, the wp_navigation post it references, the newest
- * published wp_navigation post, or (when none of those exist) the first
- * classic nav_menu; a block naming a menu that is gone has none, and no
- * list. A responsive menu wraps them in the overlay markup the reference
+ * from its inner blocks, the wp_navigation post it references, or the
+ * fallback menu (the newest published one, made when there is none), else
+ * a page list; a block naming a menu that is gone has none, and no list. A responsive menu wraps them in the overlay markup the reference
  * emits. The nav is labelled by the block's aria label, or the menu's
  * title, made unique in the request; the list carries the aria label as
  * given (probe loose-classes).
@@ -82,7 +79,6 @@ final readonly class Navigation
         private Db $db,
         private Posts $posts,
         private Permalinks $permalinks,
-        private ?Menus $menus = null,
     ) {
     }
 
@@ -104,19 +100,17 @@ final readonly class Navigation
         $menuKey = null;
         if ($items === []) {
             $ref = (int) $block->attr('ref', 0);
-            // One that names no menu asks first whether a fallback menu may be made, as the reference's lookup does.
-            if ($ref <= 0) {
-                Runtime::hooks()->filter('wp_navigation_should_create_fallback', [true]);
-            }
-            [$menu, $named] = $this->menuPost($ref);
+            [$menu, $named, $fallback] = $this->menuPost($ref);
             $menuId = $menu === null ? 0 : (int) $menu['ID'];
             $menuKey = $menu === null ? null : 'menu:' . $menuId;
             if ($menuKey !== null && !$renderer->state()->enter($menuKey)) {
                 return '';
             }
-            $items = $menu !== null ? Parser::named(BlockHooks::forPost((string) $menu['post_content'], $menuId)) : ($ref > 0 ? [] : $this->classicItems());
-            // A navigation that names no menu renders its fallback as block_core_navigation_render_fallback leaves it (probe block-instances).
-            $items = $ref > 0 ? $items : array_map(static fn (mixed $parsed): Block => Block::fromArray((array) $parsed), array_values((array) Runtime::hooks()->filter('block_core_navigation_render_fallback', [array_map(static fn (Block $item): array => $item->toArray(), $items)])));
+            $items = $menu !== null ? Parser::named(BlockHooks::forPost((string) $menu['post_content'], $menuId)) : [];
+            // With no fallback menu, or an empty one, the fallback lists the site's pages.
+            $items = $fallback && $items === [] ? [new Block('core/page-list', [], [], '', [])] : $items;
+            // A fallback renders as block_core_navigation_render_fallback leaves it (probes block-instances, navigation-fallback).
+            $items = !$fallback ? $items : array_map(static fn (mixed $parsed): Block => Block::fromArray((array) $parsed), array_values((array) Runtime::hooks()->filter('block_core_navigation_render_fallback', [array_map(static fn (Block $item): array => $item->toArray(), $items)])));
             // The menu's title labels the nav only when the block names the menu and that menu is the one shown.
             $label = $named ? (string) ($menu['post_title'] ?? '') : '';
         }
@@ -455,13 +449,6 @@ final readonly class Navigation
         return '<button class="wp-block-navigation-overlay-close" type="button" ' . ($mode === 'icon' ? 'aria-label="' . Html::attr($text) . '"' : '') . ' >' . $inner . '</button>';
     }
 
-    /** @return list<Block> */
-    private function classicItems(): array
-    {
-        $menus = $this->menus ?? new Menus($this->db, $this->posts, new Terms($this->db), $this->permalinks);
-        return $menus->fallbackBlocks();
-    }
-
     private function pageList(Block $block, Renderer $renderer): string
     {
         // The reference's pages for the list: get_pages in menu order, then title; their own fields only (to_array would
@@ -570,23 +557,26 @@ final readonly class Navigation
      * The menu a navigation shows, and whether it is the one the block names.
      * Only a published menu shows, as on the reference: a named menu that
      * is not published (a draft, private or trashed one) gives way to the
-     * latest published menu, unlabelled; a named menu that does not exist
-     * shows nothing; with none named, the latest published menu.
+     * fallback, unlabelled; a named menu that does not exist shows nothing;
+     * with none named, the fallback: the latest published menu, made during
+     * the render from a classic menu or a page list when there is none and
+     * wp_navigation_should_create_fallback allows it (probe
+     * navigation-fallback).
      *
-     * @return array{0: array<string, mixed>|null, 1: bool}
+     * @return array{0: array<string, mixed>|null, 1: bool, 2: bool} the menu, whether it is the named one, whether it is the fallback
      */
     private function menuPost(int $ref): array
     {
         $table = $this->db->table('posts');
-        $latest = fn (): ?array => $this->db->row("SELECT * FROM {$table} WHERE post_type = 'wp_navigation' AND post_status = 'publish' ORDER BY post_date DESC LIMIT 1");
+        $latest = fn (): ?array => Handoff::bound('navigationFallback') ? Handoff::navigationFallback() : $this->db->row("SELECT * FROM {$table} WHERE post_type = 'wp_navigation' AND post_status = 'publish' ORDER BY post_date DESC LIMIT 1");
         if ($ref <= 0) {
-            return [$latest(), false];
+            return [$latest(), false, true];
         }
         $named = $this->db->row("SELECT * FROM {$table} WHERE ID = ? AND post_type = 'wp_navigation' LIMIT 1", [$ref]);
         if ($named === null) {
-            return [null, false];
+            return [null, false, false];
         }
-        return ($named['post_status'] ?? '') === 'publish' ? [$named, true] : [$latest(), false];
+        return ($named['post_status'] ?? '') === 'publish' ? [$named, true, false] : [$latest(), false, true];
     }
 
     /** Interactive navigation markup brings the block's view module with it, as on the reference. */

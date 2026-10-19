@@ -266,6 +266,12 @@ final class Handoff
         return self::answer('newComment', $comment);
     }
 
+    /** The menu a navigation naming none falls back to, as a row, made when there is none (WP_Navigation_Fallback::get_fallback). */
+    public static function navigationFallback(): ?array
+    {
+        return self::answer('navigationFallback');
+    }
+
     /** The comment object for an id, or false (WP_Comment::get_instance). */
     public static function commentInstance(mixed $id): mixed
     {

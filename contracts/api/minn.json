@@ -12619,7 +12619,6 @@
                 "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\ContentScan",
                 "Minn\\Content\\Excerpt",
-                "Minn\\Content\\Menus",
                 "Minn\\Extension\\SeamRunner",
                 "Minn\\Extension\\Seams",
                 "Minn\\Runtime\\BlockFilters",
@@ -15553,8 +15552,8 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Navigation.php",
-            "lines": 561,
-            "doc": "navigation, navigation-link, page-list. A navigation block's items come\nfrom its inner blocks, the wp_navigation post it references, the newest\npublished wp_navigation post, or (when none of those exist) the first\nclassic nav_menu; a block naming a menu that is gone has none, and no\nlist. A responsive menu wraps them in the overlay markup the reference\nemits. The nav is labelled by the block's aria label, or the menu's\ntitle, made unique in the request; the list carries the aria label as\ngiven (probe loose-classes).",
+            "lines": 554,
+            "doc": "navigation, navigation-link, page-list. A navigation block's items come\nfrom its inner blocks, the wp_navigation post it references, or the\nfallback menu (the newest published one, made when there is none), else\na page list; a block naming a menu that is gone has none, and no list. A responsive menu wraps them in the overlay markup the reference\nemits. The nav is labelled by the block's aria label, or the menu's\ntitle, made unique in the request; the list carries the aria label as\ngiven (probe loose-classes).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -15564,10 +15563,8 @@
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Styles",
-                "Minn\\Content\\Menus",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
-                "Minn\\Content\\Terms",
                 "Minn\\Db",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
@@ -15584,7 +15581,7 @@
             ],
             "usedBy": [],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, ?Minn\\Content\\Menus $menus = NULL)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -15608,18 +15605,11 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
-                    },
-                    {
-                        "name": "menus",
-                        "type": "?Minn\\Content\\Menus",
-                        "shape": "",
-                        "default": "NULL",
-                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 81,
-                "end": 87
+                "line": 78,
+                "end": 83
             },
             "cases": [],
             "constants": [
@@ -15681,15 +15671,6 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
-                },
-                {
-                    "name": "menus",
-                    "type": "?Minn\\Content\\Menus",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
                 }
             ],
             "methods": [
@@ -15712,8 +15693,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 69
+                    "line": 55,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -15732,8 +15713,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 97
+                    "line": 86,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -15752,8 +15733,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 79
+                    "line": 69,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -15779,8 +15760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 180
+                    "line": 95,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -15836,8 +15817,8 @@
                             "doc": "the overlay's classes and declarations (overlay())"
                         }
                     ],
-                    "line": 188,
-                    "end": 217
+                    "line": 182,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -15865,8 +15846,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 235
+                    "line": 219,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -15901,8 +15882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 265
+                    "line": 241,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -15924,8 +15905,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 287
+                    "line": 268,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -15947,8 +15928,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 306
+                    "line": 290,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -15969,8 +15950,8 @@
                             "doc": "each link to a post among them, submenus' too, through linkable()"
                         }
                     ],
-                    "line": 309,
-                    "end": 317
+                    "line": 303,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -15996,8 +15977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 332
+                    "line": 318,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -16018,8 +15999,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 354
+                    "line": 329,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -16048,8 +16029,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 367,
-                    "end": 382
+                    "line": 361,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -16075,8 +16056,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 384,
-                    "end": 411
+                    "line": 378,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -16102,8 +16083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 419,
-                    "end": 445
+                    "line": 413,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -16122,22 +16103,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 448,
-                    "end": 456
-                },
-                {
-                    "routes": [],
-                    "name": "classicItems",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "classicItems(): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<Block>"
-                    ],
-                    "params": [],
-                    "line": 459,
-                    "end": 463
+                    "line": 442,
+                    "end": 450
                 },
                 {
                     "routes": [],
@@ -16163,8 +16130,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 465,
-                    "end": 477
+                    "line": 452,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -16186,8 +16153,8 @@
                             "doc": "the navigation's context"
                         }
                     ],
-                    "line": 486,
-                    "end": 499
+                    "line": 473,
+                    "end": 486
                 },
                 {
                     "routes": [],
@@ -16215,8 +16182,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 502,
-                    "end": 517
+                    "line": 489,
+                    "end": 504
                 },
                 {
                     "routes": [],
@@ -16265,8 +16232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 529,
-                    "end": 557
+                    "line": 516,
+                    "end": 544
                 },
                 {
                     "routes": [],
@@ -16315,8 +16282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 560,
-                    "end": 567
+                    "line": 547,
+                    "end": 554
                 },
                 {
                     "routes": [],
@@ -16324,9 +16291,9 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "menuPost(int $ref): array",
-                    "doc": "The menu a navigation shows, and whether it is the one the block names.\nOnly a published menu shows, as on the reference: a named menu that\nis not published (a draft, private or trashed one) gives way to the\nlatest published menu, unlabelled; a named menu that does not exist\nshows nothing; with none named, the latest published menu.",
+                    "doc": "The menu a navigation shows, and whether it is the one the block names.\nOnly a published menu shows, as on the reference: a named menu that\nis not published (a draft, private or trashed one) gives way to the\nfallback, unlabelled; a named menu that does not exist shows nothing;\nwith none named, the fallback: the latest published menu, made during\nthe render from a classic menu or a page list when there is none and\nwp_navigation_should_create_fallback allows it (probe\nnavigation-fallback).",
                     "shapes": [
-                        "@return array{0: array<string, mixed>|null, 1: bool}"
+                        "@return array{0: array<string, mixed>|null, 1: bool, 2: bool} the menu, whether it is the named one, whether it is the fallback"
                     ],
                     "params": [
                         {
@@ -16337,8 +16304,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 578,
-                    "end": 590
+                    "line": 568,
+                    "end": 580
                 },
                 {
                     "routes": [],
@@ -16349,8 +16316,8 @@
                     "doc": "Interactive navigation markup brings the block's view module with it, as on the reference.",
                     "shapes": [],
                     "params": [],
-                    "line": 593,
-                    "end": 598
+                    "line": 583,
+                    "end": 588
                 }
             ]
         },
@@ -31454,12 +31421,11 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Menus.php",
-            "lines": 511,
+            "lines": 476,
             "doc": "Classic nav_menu terms and nav_menu_item posts. The front uses these\nwhen a navigation block has no inner blocks and no wp_navigation post;\nREST serves the same rows as wp/v2/menus and menu-items.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Blocks\\Block",
                 "Minn\\Content\\MenuItem",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Posts",
@@ -31473,7 +31439,6 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
-                "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\Services",
@@ -31528,8 +31493,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 29
+                "line": 20,
+                "end": 28
             },
             "cases": [],
             "constants": [],
@@ -31601,8 +31566,8 @@
                         "@return list<TermRecord>"
                     ],
                     "params": [],
-                    "line": 37,
-                    "end": 45
+                    "line": 36,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -31621,8 +31586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 51
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -31641,8 +31606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 57
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -31663,42 +31628,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 87
-                },
-                {
-                    "routes": [],
-                    "name": "fallbackBlocks",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "fallbackBlocks(): array",
-                    "doc": "Navigation-link blocks for the first classic menu. Empty when the\nsite has no nav_menu terms with items.",
-                    "shapes": [
-                        "@return list<Block>"
-                    ],
-                    "params": [],
-                    "line": 95,
-                    "end": 105
-                },
-                {
-                    "routes": [],
-                    "name": "toBlock",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "toBlock(Minn\\Content\\MenuItem $item): Minn\\Blocks\\Block",
-                    "doc": "A menu item as the navigation block it renders through (its classes: its own, then the menu item ones).",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "item",
-                            "type": "Minn\\Content\\MenuItem",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 108,
-                    "end": 122
+                    "line": 63,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -31720,8 +31651,8 @@
                             "doc": "a menu item's fields, by their WordPress names"
                         }
                     ],
-                    "line": 134,
-                    "end": 154
+                    "line": 98,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -31740,8 +31671,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 170
+                    "line": 121,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -31762,8 +31693,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 186
+                    "line": 141,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -31776,8 +31707,8 @@
                         "@return array<string, int> location => menu term id"
                     ],
                     "params": [],
-                    "line": 193,
-                    "end": 208
+                    "line": 157,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -31796,8 +31727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 326
+                    "line": 282,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -31823,8 +31754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 347
+                    "line": 297,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -31845,8 +31776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 368,
-                    "end": 414
+                    "line": 332,
+                    "end": 378
                 },
                 {
                     "routes": [],
@@ -31874,8 +31805,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 453
+                    "line": 385,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -31903,8 +31834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 456,
-                    "end": 467
+                    "line": 420,
+                    "end": 431
                 },
                 {
                     "routes": [],
@@ -31937,8 +31868,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 470,
-                    "end": 481
+                    "line": 434,
+                    "end": 445
                 },
                 {
                     "routes": [],
@@ -31966,8 +31897,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 267
+                    "line": 175,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -31988,8 +31919,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 281
+                    "line": 234,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -32008,8 +31939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 292
+                    "line": 247,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -32030,8 +31961,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 302
+                    "line": 259,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -32052,8 +31983,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 315
+                    "line": 269,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -32081,8 +32012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 489,
-                    "end": 496
+                    "line": 453,
+                    "end": 460
                 },
                 {
                     "routes": [],
@@ -32115,8 +32046,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 499,
-                    "end": 506
+                    "line": 463,
+                    "end": 470
                 },
                 {
                     "routes": [],
@@ -32149,8 +32080,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 509,
-                    "end": 512
+                    "line": 473,
+                    "end": 476
                 },
                 {
                     "routes": [],
@@ -32161,8 +32092,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 514,
-                    "end": 520
+                    "line": 478,
+                    "end": 484
                 },
                 {
                     "routes": [],
@@ -32173,8 +32104,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 522,
-                    "end": 528
+                    "line": 486,
+                    "end": 492
                 }
             ]
         },
@@ -38543,7 +38474,6 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
-                "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Blocks\\Renderer",
@@ -135073,7 +135003,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 548,
+            "lines": 554,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -135943,6 +135873,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "navigationFallback",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "navigationFallback(): ?array",
+                    "doc": "The menu a navigation naming none falls back to, as a row, made when there is none (WP_Navigation_Fallback::get_fallback).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 270,
+                    "end": 273
+                },
+                {
+                    "routes": [],
                     "name": "commentInstance",
                     "static": true,
                     "visibility": "public",
@@ -135958,8 +135900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 273
+                    "line": 276,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -135978,8 +135920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 279
+                    "line": 282,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -135998,8 +135940,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 285
+                    "line": 288,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -136018,8 +135960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 291
+                    "line": 294,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -136038,8 +135980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 297
+                    "line": 300,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -136058,8 +136000,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 300,
-                    "end": 303
+                    "line": 306,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -136078,8 +136020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 309
+                    "line": 312,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -136098,8 +136040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 315
+                    "line": 318,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -136118,8 +136060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 321
+                    "line": 324,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -136138,8 +136080,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 327
+                    "line": 330,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -136158,8 +136100,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 330,
-                    "end": 333
+                    "line": 336,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -136185,8 +136127,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 339
+                    "line": 342,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -136197,8 +136139,8 @@
                     "doc": "A post type's object with nothing set yet, for the registry to fill (WP_Post_Type, built without its constructor).",
                     "shapes": [],
                     "params": [],
-                    "line": 342,
-                    "end": 345
+                    "line": 348,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -136209,8 +136151,8 @@
                     "doc": "A taxonomy's object with nothing set yet, for the registry to fill (WP_Taxonomy, built without its constructor).",
                     "shapes": [],
                     "params": [],
-                    "line": 348,
-                    "end": 351
+                    "line": 354,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -136229,8 +136171,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 354,
-                    "end": 357
+                    "line": 360,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -136241,8 +136183,8 @@
                     "doc": "The site's locale: its names, number format and direction (new WP_Locale).",
                     "shapes": [],
                     "params": [],
-                    "line": 360,
-                    "end": 363
+                    "line": 366,
+                    "end": 369
                 },
                 {
                     "routes": [],
@@ -136253,8 +136195,8 @@
                     "doc": "Where each text domain's translations are found (new WP_Textdomain_Registry).",
                     "shapes": [],
                     "params": [],
-                    "line": 366,
-                    "end": 369
+                    "line": 372,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -136280,8 +136222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 372,
-                    "end": 375
+                    "line": 378,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -136300,8 +136242,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 378,
-                    "end": 381
+                    "line": 384,
+                    "end": 387
                 },
                 {
                     "routes": [],
@@ -136320,8 +136262,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 384,
-                    "end": 387
+                    "line": 390,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -136340,8 +136282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 390,
-                    "end": 393
+                    "line": 396,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -136374,8 +136316,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 396,
-                    "end": 399
+                    "line": 402,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -136394,8 +136336,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 405
+                    "line": 408,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -136414,8 +136356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 408,
-                    "end": 411
+                    "line": 414,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -136434,8 +136376,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 417
+                    "line": 420,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -136454,8 +136396,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 420,
-                    "end": 423
+                    "line": 426,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -136474,8 +136416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 429
+                    "line": 432,
+                    "end": 435
                 },
                 {
                     "routes": [],
@@ -136494,8 +136436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 432,
-                    "end": 435
+                    "line": 438,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -136514,8 +136456,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 438,
-                    "end": 441
+                    "line": 444,
+                    "end": 447
                 },
                 {
                     "routes": [],
@@ -136534,8 +136476,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 444,
-                    "end": 447
+                    "line": 450,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -136554,8 +136496,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 450,
-                    "end": 453
+                    "line": 456,
+                    "end": 459
                 },
                 {
                     "routes": [],
@@ -136574,8 +136516,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 456,
-                    "end": 459
+                    "line": 462,
+                    "end": 465
                 },
                 {
                     "routes": [],
@@ -136594,8 +136536,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 462,
-                    "end": 465
+                    "line": 468,
+                    "end": 471
                 },
                 {
                     "routes": [],
@@ -136614,8 +136556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 468,
-                    "end": 471
+                    "line": 474,
+                    "end": 477
                 },
                 {
                     "routes": [],
@@ -136626,8 +136568,8 @@
                     "doc": "The site's roles object (wp_roles), made the first time it is asked for.",
                     "shapes": [],
                     "params": [],
-                    "line": 474,
-                    "end": 477
+                    "line": 480,
+                    "end": 483
                 },
                 {
                     "routes": [],
@@ -136638,8 +136580,8 @@
                     "doc": "The content filters set again for the current user (kses_remove_filters, then kses_init_filters), by the names plugins remove them by.",
                     "shapes": [],
                     "params": [],
-                    "line": 480,
-                    "end": 483
+                    "line": 486,
+                    "end": 489
                 },
                 {
                     "routes": [],
@@ -136658,8 +136600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 486,
-                    "end": 489
+                    "line": 492,
+                    "end": 495
                 },
                 {
                     "routes": [],
@@ -136670,8 +136612,8 @@
                     "doc": "The object that loads translation files and looks translations up (WP_Translation_Controller::get_instance).",
                     "shapes": [],
                     "params": [],
-                    "line": 492,
-                    "end": 495
+                    "line": 498,
+                    "end": 501
                 },
                 {
                     "routes": [],
@@ -136682,8 +136624,8 @@
                     "doc": "The rewrite object ($wp_rewrite), with the request's environment ($wp), made the first time they are asked for.",
                     "shapes": [],
                     "params": [],
-                    "line": 498,
-                    "end": 501
+                    "line": 504,
+                    "end": 507
                 },
                 {
                     "routes": [],
@@ -136694,8 +136636,8 @@
                     "doc": "The widget factory ($wp_widget_factory) the registered widgets live in.",
                     "shapes": [],
                     "params": [],
-                    "line": 504,
-                    "end": 507
+                    "line": 510,
+                    "end": 513
                 },
                 {
                     "routes": [],
@@ -136706,8 +136648,8 @@
                     "doc": "The sitemap server, started the first time it is asked for (wp_sitemaps_get_server).",
                     "shapes": [],
                     "params": [],
-                    "line": 510,
-                    "end": 513
+                    "line": 516,
+                    "end": 519
                 },
                 {
                     "routes": [],
@@ -136718,8 +136660,8 @@
                     "doc": "The walker a menu is printed with when its arguments name none (new Walker_Nav_Menu).",
                     "shapes": [],
                     "params": [],
-                    "line": 516,
-                    "end": 519
+                    "line": 522,
+                    "end": 525
                 },
                 {
                     "routes": [],
@@ -136745,8 +136687,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 522,
-                    "end": 525
+                    "line": 528,
+                    "end": 531
                 },
                 {
                     "routes": [],
@@ -136772,8 +136714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 528,
-                    "end": 531
+                    "line": 534,
+                    "end": 537
                 },
                 {
                     "routes": [],
@@ -136784,8 +136726,8 @@
                     "doc": "The meta core and Minn Admin register on init, registered by the layer that holds their callbacks by name.",
                     "shapes": [],
                     "params": [],
-                    "line": 534,
-                    "end": 537
+                    "line": 540,
+                    "end": 543
                 },
                 {
                     "routes": [],
@@ -136804,8 +136746,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 540,
-                    "end": 543
+                    "line": 546,
+                    "end": 549
                 },
                 {
                     "routes": [],
@@ -136826,8 +136768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 546,
-                    "end": 549
+                    "line": 552,
+                    "end": 555
                 },
                 {
                     "routes": [],
@@ -136846,8 +136788,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 552,
-                    "end": 555
+                    "line": 558,
+                    "end": 561
                 },
                 {
                     "routes": [],
@@ -136866,8 +136808,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 558,
-                    "end": 561
+                    "line": 564,
+                    "end": 567
                 },
                 {
                     "routes": [],
@@ -136886,8 +136828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 564,
-                    "end": 567
+                    "line": 570,
+                    "end": 573
                 },
                 {
                     "routes": [],
@@ -136927,8 +136869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 574,
-                    "end": 578
+                    "line": 580,
+                    "end": 584
                 },
                 {
                     "routes": [],
@@ -136947,8 +136889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 581,
-                    "end": 584
+                    "line": 587,
+                    "end": 590
                 },
                 {
                     "routes": [],
@@ -136974,8 +136916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 586,
-                    "end": 590
+                    "line": 592,
+                    "end": 596
                 }
             ]
         },

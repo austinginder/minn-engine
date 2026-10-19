@@ -807,6 +807,9 @@ Minn\Runtime\Handoff::bind(['commentTag' => static fn (string $tag, ...$args) =>
     'open' => comments_open(...$args),
 }]);
 
+// The menu a navigation naming none falls back to, made when there is none, handed over through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind(['navigationFallback' => static fn () => ($menu = WP_Navigation_Fallback::get_fallback()) instanceof WP_Post ? $menu->to_array() : null]);
+
 // The site's roles object, handed over through Minn\Runtime\Handoff.
 Minn\Runtime\Handoff::bind(['roles' => static fn () => wp_roles()]);
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
-use Minn\Blocks\Block;
 use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Runtime\Refusal;
@@ -84,41 +83,6 @@ final readonly class Menus
             }
         }
         return $out;
-    }
-
-    /**
-     * Navigation-link blocks for the first classic menu. Empty when the
-     * site has no nav_menu terms with items.
-     *
-     * @return list<Block>
-     */
-    public function fallbackBlocks(): array
-    {
-        $menus = $this->all();
-        if ($menus === []) {
-            return [];
-        }
-        return array_map(
-            $this->toBlock(...),
-            $this->items((int) $menus[0]['term_id']),
-        );
-    }
-
-    /** A menu item as the navigation block it renders through (its classes: its own, then the menu item ones). */
-    public function toBlock(MenuItem $item): Block
-    {
-        return new Block('core/navigation-link', self::linkAttributes([
-            'classes' => [...$item->classes, 'menu-item', 'menu-item-type-' . $item->type, 'menu-item-object-' . $item->object],
-            'description' => $item->description,
-            'object_id' => $item->objectId,
-            'type' => $item->type,
-            'object' => $item->object,
-            'title' => $item->title,
-            'target' => $item->target,
-            'xfn' => implode(' ', $item->xfn),
-            'attr_title' => $item->attrTitle,
-            'url' => $item->url,
-        ]), [], '', []);
     }
 
     /**

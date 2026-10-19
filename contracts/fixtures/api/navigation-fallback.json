@@ -1,0 +1,176 @@
+[
+    [
+        "told not to make one, no classic menu",
+        {
+            "made": [],
+            "heard": [
+                [
+                    "wp_navigation_should_create_fallback",
+                    false
+                ],
+                [
+                    "block_core_navigation_render_fallback",
+                    [
+                        "core/page-list"
+                    ]
+                ]
+            ],
+            "html": "<nav class=\"is-responsive wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" \n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'><button aria-haspopup=\"dialog\" aria-label=\"Open menu\" class=\"wp-block-navigation__responsive-container-open\" \n\t\t\t\tdata-wp-on--click=\"actions.openMenuOnClick\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t><svg width=\"24\" height=\"24\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M4 7.5h16v1.5H4z\"></path><path d=\"M4 15h16v1.5H4z\"></path></svg></button>\n\t\t\t\t<div class=\"wp-block-navigation__responsive-container\"  id=\"modal-1\" \n\t\t\t\tdata-wp-class--has-modal-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-class--is-menu-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-watch=\"callbacks.initMenu\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t\tdata-wp-on--focusout=\"actions.handleMenuFocusout\"\n\t\t\t\ttabindex=\"-1\"\n\t\t\t>\n\t\t\t\t\t<div class=\"wp-block-navigation__responsive-close\" tabindex=\"-1\">\n\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-dialog\" \n\t\t\t\tdata-wp-bind--aria-modal=\"state.ariaModal\"\n\t\t\t\tdata-wp-bind--aria-label=\"state.ariaLabel\"\n\t\t\t\tdata-wp-bind--role=\"state.roleAttribute\"\n\t\t\t>\n\t\t\t\t\t\t\t<button aria-label=\"Close menu\" class=\"wp-block-navigation__responsive-container-close\" \n\t\t\t\tdata-wp-on--click=\"actions.closeMenuOnClick\"\n\t\t\t><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z\"></path></svg></button>\n\t\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-container-content\" \n\t\t\t\tdata-wp-watch=\"callbacks.focusFirstElement\"\n\t\t\t id=\"modal-1-content\">\n\t\t\t\t\t\t\t\t<ul class=\"wp-block-navigation__container is-responsive wp-block-navigation\"><ul class=\"wp-block-page-list\"><li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-pages-list__item has-child wp-block-navigation-item open-on-hover-click\"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/\">Sample Page</a><button data-wp-bind--aria-expanded=\"state.isSubmenuOpen\" data-wp-on--click=\"actions.toggleMenuOnClick\" aria-label=\"Sample Page submenu\" class=\"wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle\" ><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 12 12\" fill=\"none\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M1.50002 4L6.00002 8L10.5 4\" stroke-width=\"1.5\"></path></svg></button><ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container\"><li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-hover-click \"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li></ul></li></ul></ul>\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div></nav>"
+        }
+    ],
+    [
+        "told not to make one, a classic menu",
+        {
+            "made": [],
+            "heard": [
+                [
+                    "wp_navigation_should_create_fallback",
+                    false
+                ],
+                [
+                    "block_core_navigation_render_fallback",
+                    [
+                        "core/page-list"
+                    ]
+                ]
+            ],
+            "html": "<nav class=\"is-responsive wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" 2\" \n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'><button aria-haspopup=\"dialog\" aria-label=\"Open menu\" class=\"wp-block-navigation__responsive-container-open\" \n\t\t\t\tdata-wp-on--click=\"actions.openMenuOnClick\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t><svg width=\"24\" height=\"24\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M4 7.5h16v1.5H4z\"></path><path d=\"M4 15h16v1.5H4z\"></path></svg></button>\n\t\t\t\t<div class=\"wp-block-navigation__responsive-container\"  id=\"modal-2\" \n\t\t\t\tdata-wp-class--has-modal-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-class--is-menu-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-watch=\"callbacks.initMenu\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t\tdata-wp-on--focusout=\"actions.handleMenuFocusout\"\n\t\t\t\ttabindex=\"-1\"\n\t\t\t>\n\t\t\t\t\t<div class=\"wp-block-navigation__responsive-close\" tabindex=\"-1\">\n\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-dialog\" \n\t\t\t\tdata-wp-bind--aria-modal=\"state.ariaModal\"\n\t\t\t\tdata-wp-bind--aria-label=\"state.ariaLabel\"\n\t\t\t\tdata-wp-bind--role=\"state.roleAttribute\"\n\t\t\t>\n\t\t\t\t\t\t\t<button aria-label=\"Close menu\" class=\"wp-block-navigation__responsive-container-close\" \n\t\t\t\tdata-wp-on--click=\"actions.closeMenuOnClick\"\n\t\t\t><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z\"></path></svg></button>\n\t\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-container-content\" \n\t\t\t\tdata-wp-watch=\"callbacks.focusFirstElement\"\n\t\t\t id=\"modal-2-content\">\n\t\t\t\t\t\t\t\t<ul class=\"wp-block-navigation__container is-responsive wp-block-navigation\"><ul class=\"wp-block-page-list\"><li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-pages-list__item has-child wp-block-navigation-item open-on-hover-click\"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/\">Sample Page</a><button data-wp-bind--aria-expanded=\"state.isSubmenuOpen\" data-wp-on--click=\"actions.toggleMenuOnClick\" aria-label=\"Sample Page submenu\" class=\"wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle\" ><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 12 12\" fill=\"none\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M1.50002 4L6.00002 8L10.5 4\" stroke-width=\"1.5\"></path></svg></button><ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container\"><li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-hover-click \"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li></ul></li></ul></ul>\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div></nav>"
+        }
+    ],
+    [
+        "no classic menu: a page list made",
+        {
+            "made": [
+                {
+                    "title": "Navigation",
+                    "name": "navigation-2",
+                    "status": "publish",
+                    "content": "<!-- wp:page-list /-->"
+                }
+            ],
+            "heard": [
+                [
+                    "wp_navigation_should_create_fallback",
+                    true
+                ],
+                [
+                    "transition_post_status",
+                    "publish",
+                    "new"
+                ],
+                [
+                    "save_post_wp_navigation",
+                    "Navigation",
+                    false
+                ],
+                [
+                    "block_core_navigation_render_fallback",
+                    [
+                        "core/page-list"
+                    ]
+                ]
+            ],
+            "html": "<nav class=\"is-responsive wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" 3\" \n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'><button aria-haspopup=\"dialog\" aria-label=\"Open menu\" class=\"wp-block-navigation__responsive-container-open\" \n\t\t\t\tdata-wp-on--click=\"actions.openMenuOnClick\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t><svg width=\"24\" height=\"24\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M4 7.5h16v1.5H4z\"></path><path d=\"M4 15h16v1.5H4z\"></path></svg></button>\n\t\t\t\t<div class=\"wp-block-navigation__responsive-container\"  id=\"modal-3\" \n\t\t\t\tdata-wp-class--has-modal-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-class--is-menu-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-watch=\"callbacks.initMenu\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t\tdata-wp-on--focusout=\"actions.handleMenuFocusout\"\n\t\t\t\ttabindex=\"-1\"\n\t\t\t>\n\t\t\t\t\t<div class=\"wp-block-navigation__responsive-close\" tabindex=\"-1\">\n\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-dialog\" \n\t\t\t\tdata-wp-bind--aria-modal=\"state.ariaModal\"\n\t\t\t\tdata-wp-bind--aria-label=\"state.ariaLabel\"\n\t\t\t\tdata-wp-bind--role=\"state.roleAttribute\"\n\t\t\t>\n\t\t\t\t\t\t\t<button aria-label=\"Close menu\" class=\"wp-block-navigation__responsive-container-close\" \n\t\t\t\tdata-wp-on--click=\"actions.closeMenuOnClick\"\n\t\t\t><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z\"></path></svg></button>\n\t\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-container-content\" \n\t\t\t\tdata-wp-watch=\"callbacks.focusFirstElement\"\n\t\t\t id=\"modal-3-content\">\n\t\t\t\t\t\t\t\t<ul class=\"wp-block-navigation__container is-responsive wp-block-navigation\"><ul class=\"wp-block-page-list\"><li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-pages-list__item has-child wp-block-navigation-item open-on-hover-click\"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/\">Sample Page</a><button data-wp-bind--aria-expanded=\"state.isSubmenuOpen\" data-wp-on--click=\"actions.toggleMenuOnClick\" aria-label=\"Sample Page submenu\" class=\"wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle\" ><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 12 12\" fill=\"none\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M1.50002 4L6.00002 8L10.5 4\" stroke-width=\"1.5\"></path></svg></button><ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container\"><li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-hover-click \"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li></ul></li></ul></ul>\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div></nav>"
+        }
+    ],
+    [
+        "rendered again",
+        {
+            "made": [],
+            "heard": [
+                [
+                    "wp_navigation_should_create_fallback",
+                    true
+                ],
+                [
+                    "block_core_navigation_render_fallback",
+                    [
+                        "core/page-list"
+                    ]
+                ]
+            ],
+            "html": "<nav class=\"is-responsive wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" 4\" \n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'><button aria-haspopup=\"dialog\" aria-label=\"Open menu\" class=\"wp-block-navigation__responsive-container-open\" \n\t\t\t\tdata-wp-on--click=\"actions.openMenuOnClick\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t><svg width=\"24\" height=\"24\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M4 7.5h16v1.5H4z\"></path><path d=\"M4 15h16v1.5H4z\"></path></svg></button>\n\t\t\t\t<div class=\"wp-block-navigation__responsive-container\"  id=\"modal-4\" \n\t\t\t\tdata-wp-class--has-modal-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-class--is-menu-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-watch=\"callbacks.initMenu\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t\tdata-wp-on--focusout=\"actions.handleMenuFocusout\"\n\t\t\t\ttabindex=\"-1\"\n\t\t\t>\n\t\t\t\t\t<div class=\"wp-block-navigation__responsive-close\" tabindex=\"-1\">\n\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-dialog\" \n\t\t\t\tdata-wp-bind--aria-modal=\"state.ariaModal\"\n\t\t\t\tdata-wp-bind--aria-label=\"state.ariaLabel\"\n\t\t\t\tdata-wp-bind--role=\"state.roleAttribute\"\n\t\t\t>\n\t\t\t\t\t\t\t<button aria-label=\"Close menu\" class=\"wp-block-navigation__responsive-container-close\" \n\t\t\t\tdata-wp-on--click=\"actions.closeMenuOnClick\"\n\t\t\t><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z\"></path></svg></button>\n\t\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-container-content\" \n\t\t\t\tdata-wp-watch=\"callbacks.focusFirstElement\"\n\t\t\t id=\"modal-4-content\">\n\t\t\t\t\t\t\t\t<ul class=\"wp-block-navigation__container is-responsive wp-block-navigation\"><ul class=\"wp-block-page-list\"><li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-pages-list__item has-child wp-block-navigation-item open-on-hover-click\"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/\">Sample Page</a><button data-wp-bind--aria-expanded=\"state.isSubmenuOpen\" data-wp-on--click=\"actions.toggleMenuOnClick\" aria-label=\"Sample Page submenu\" class=\"wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle\" ><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 12 12\" fill=\"none\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M1.50002 4L6.00002 8L10.5 4\" stroke-width=\"1.5\"></path></svg></button><ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container\"><li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-hover-click \"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li></ul></li></ul></ul>\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div></nav>"
+        }
+    ],
+    [
+        "a classic menu: made from it",
+        {
+            "made": [
+                {
+                    "title": "zz-minn-menu",
+                    "name": "zz-minn-menu",
+                    "status": "publish",
+                    "content": "<!-- wp:navigation-link {\"className\":\" menu-item menu-item-type-post_type menu-item-object-page\",\"description\":\"\",\"id\":\"2\",\"kind\":\"post-type\",\"label\":\"Sample Page\",\"opensInNewTab\":false,\"rel\":null,\"title\":\"\",\"type\":\"page\",\"url\":\"https://minn.localhost/sample-page/\"} /--><!-- wp:navigation-link {\"className\":\" menu-item menu-item-type-taxonomy menu-item-object-category\",\"description\":\"\",\"id\":\"1\",\"kind\":\"taxonomy\",\"label\":\"Uncategorized\",\"opensInNewTab\":false,\"rel\":null,\"title\":\"\",\"type\":\"category\",\"url\":\"https://minn.localhost/category/uncategorized/\"} /-->"
+                }
+            ],
+            "heard": [
+                [
+                    "wp_navigation_should_create_fallback",
+                    true
+                ],
+                [
+                    "transition_post_status",
+                    "publish",
+                    "new"
+                ],
+                [
+                    "save_post_wp_navigation",
+                    "zz-minn-menu",
+                    false
+                ],
+                [
+                    "block_core_navigation_render_fallback",
+                    [
+                        "core/navigation-link",
+                        "core/navigation-link"
+                    ]
+                ]
+            ],
+            "html": "<nav class=\"is-responsive wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" 5\" \n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'><button aria-haspopup=\"dialog\" aria-label=\"Open menu\" class=\"wp-block-navigation__responsive-container-open\" \n\t\t\t\tdata-wp-on--click=\"actions.openMenuOnClick\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t><svg width=\"24\" height=\"24\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M4 7.5h16v1.5H4z\"></path><path d=\"M4 15h16v1.5H4z\"></path></svg></button>\n\t\t\t\t<div class=\"wp-block-navigation__responsive-container\"  id=\"modal-5\" \n\t\t\t\tdata-wp-class--has-modal-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-class--is-menu-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-watch=\"callbacks.initMenu\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t\tdata-wp-on--focusout=\"actions.handleMenuFocusout\"\n\t\t\t\ttabindex=\"-1\"\n\t\t\t>\n\t\t\t\t\t<div class=\"wp-block-navigation__responsive-close\" tabindex=\"-1\">\n\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-dialog\" \n\t\t\t\tdata-wp-bind--aria-modal=\"state.ariaModal\"\n\t\t\t\tdata-wp-bind--aria-label=\"state.ariaLabel\"\n\t\t\t\tdata-wp-bind--role=\"state.roleAttribute\"\n\t\t\t>\n\t\t\t\t\t\t\t<button aria-label=\"Close menu\" class=\"wp-block-navigation__responsive-container-close\" \n\t\t\t\tdata-wp-on--click=\"actions.closeMenuOnClick\"\n\t\t\t><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z\"></path></svg></button>\n\t\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-container-content\" \n\t\t\t\tdata-wp-watch=\"callbacks.focusFirstElement\"\n\t\t\t id=\"modal-5-content\">\n\t\t\t\t\t\t\t\t<ul class=\"wp-block-navigation__container is-responsive wp-block-navigation\"><li class=\"wp-block-navigation-item menu-item menu-item-type-post_type menu-item-object-page wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://minn.localhost/sample-page/\" title=\"\"><span class=\"wp-block-navigation-item__label\">Sample Page</span></a></li><li class=\"wp-block-navigation-item menu-item menu-item-type-taxonomy menu-item-object-category wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://minn.localhost/category/uncategorized/\" title=\"\"><span class=\"wp-block-navigation-item__label\">Uncategorized</span></a></li></ul>\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div></nav>"
+        }
+    ],
+    [
+        "naming a menu that is not there",
+        {
+            "made": [],
+            "heard": [],
+            "html": "<nav class=\"is-responsive wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" 6\" \n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'><button aria-haspopup=\"dialog\" aria-label=\"Open menu\" class=\"wp-block-navigation__responsive-container-open\" \n\t\t\t\tdata-wp-on--click=\"actions.openMenuOnClick\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t><svg width=\"24\" height=\"24\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M4 7.5h16v1.5H4z\"></path><path d=\"M4 15h16v1.5H4z\"></path></svg></button>\n\t\t\t\t<div class=\"wp-block-navigation__responsive-container\"  id=\"modal-6\" \n\t\t\t\tdata-wp-class--has-modal-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-class--is-menu-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-watch=\"callbacks.initMenu\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t\tdata-wp-on--focusout=\"actions.handleMenuFocusout\"\n\t\t\t\ttabindex=\"-1\"\n\t\t\t>\n\t\t\t\t\t<div class=\"wp-block-navigation__responsive-close\" tabindex=\"-1\">\n\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-dialog\" \n\t\t\t\tdata-wp-bind--aria-modal=\"state.ariaModal\"\n\t\t\t\tdata-wp-bind--aria-label=\"state.ariaLabel\"\n\t\t\t\tdata-wp-bind--role=\"state.roleAttribute\"\n\t\t\t>\n\t\t\t\t\t\t\t<button aria-label=\"Close menu\" class=\"wp-block-navigation__responsive-container-close\" \n\t\t\t\tdata-wp-on--click=\"actions.closeMenuOnClick\"\n\t\t\t><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z\"></path></svg></button>\n\t\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-container-content\" \n\t\t\t\tdata-wp-watch=\"callbacks.focusFirstElement\"\n\t\t\t id=\"modal-6-content\">\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div></nav>"
+        }
+    ],
+    [
+        "naming a draft menu",
+        {
+            "made": [
+                {
+                    "title": "Navigation",
+                    "name": "navigation-2",
+                    "status": "publish",
+                    "content": "<!-- wp:page-list /-->"
+                }
+            ],
+            "heard": [
+                [
+                    "wp_navigation_should_create_fallback",
+                    true
+                ],
+                [
+                    "transition_post_status",
+                    "publish",
+                    "new"
+                ],
+                [
+                    "save_post_wp_navigation",
+                    "Navigation",
+                    false
+                ],
+                [
+                    "block_core_navigation_render_fallback",
+                    [
+                        "core/page-list"
+                    ]
+                ]
+            ],
+            "html": "<nav class=\"is-responsive wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" 7\" \n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'><button aria-haspopup=\"dialog\" aria-label=\"Open menu\" class=\"wp-block-navigation__responsive-container-open\" \n\t\t\t\tdata-wp-on--click=\"actions.openMenuOnClick\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t><svg width=\"24\" height=\"24\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M4 7.5h16v1.5H4z\"></path><path d=\"M4 15h16v1.5H4z\"></path></svg></button>\n\t\t\t\t<div class=\"wp-block-navigation__responsive-container\"  id=\"modal-7\" \n\t\t\t\tdata-wp-class--has-modal-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-class--is-menu-open=\"state.isMenuOpen\"\n\t\t\t\tdata-wp-watch=\"callbacks.initMenu\"\n\t\t\t\tdata-wp-on--keydown=\"actions.handleMenuKeydown\"\n\t\t\t\tdata-wp-on--focusout=\"actions.handleMenuFocusout\"\n\t\t\t\ttabindex=\"-1\"\n\t\t\t>\n\t\t\t\t\t<div class=\"wp-block-navigation__responsive-close\" tabindex=\"-1\">\n\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-dialog\" \n\t\t\t\tdata-wp-bind--aria-modal=\"state.ariaModal\"\n\t\t\t\tdata-wp-bind--aria-label=\"state.ariaLabel\"\n\t\t\t\tdata-wp-bind--role=\"state.roleAttribute\"\n\t\t\t>\n\t\t\t\t\t\t\t<button aria-label=\"Close menu\" class=\"wp-block-navigation__responsive-container-close\" \n\t\t\t\tdata-wp-on--click=\"actions.closeMenuOnClick\"\n\t\t\t><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z\"></path></svg></button>\n\t\t\t\t\t\t\t<div class=\"wp-block-navigation__responsive-container-content\" \n\t\t\t\tdata-wp-watch=\"callbacks.focusFirstElement\"\n\t\t\t id=\"modal-7-content\">\n\t\t\t\t\t\t\t\t<ul class=\"wp-block-navigation__container is-responsive wp-block-navigation\"><ul class=\"wp-block-page-list\"><li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-pages-list__item has-child wp-block-navigation-item open-on-hover-click\"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/\">Sample Page</a><button data-wp-bind--aria-expanded=\"state.isSubmenuOpen\" data-wp-on--click=\"actions.toggleMenuOnClick\" aria-label=\"Sample Page submenu\" class=\"wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle\" ><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 12 12\" fill=\"none\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M1.50002 4L6.00002 8L10.5 4\" stroke-width=\"1.5\"></path></svg></button><ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container\"><li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-hover-click \"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://minn.localhost/sample-page/docs/\">Docs</a></li></ul></li></ul></ul>\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div></nav>"
+        }
+    ]
+]
