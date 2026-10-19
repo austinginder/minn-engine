@@ -131,6 +131,24 @@ $check('wp-cron.php fired the due event', str_contains($log3, '"event":"once"'),
 [$gone2] = $engine('cron event list --hook=minn_test_cron_once --format=count');
 $check('wp-cron.php removed the single event after firing', trim($gone2) === '0', $gone2);
 
+// A host that sets DISABLE_WP_CRON and calls wp-cron.php from its own scheduler: the call still runs what is due,
+// and a front request does not, on both stacks (found running UpdraftPlus on a host-style lab, 2026-10-18).
+$offRuns = [];
+foreach (['engine' => $ENGINE, 'reference' => minn_test_reference_url()] as $stack => $base) {
+    foreach (['wp-cron.php' => '/wp-cron.php', 'a front request' => '/'] as $how => $path) {
+        $engine('option delete minn_test_cron_log');
+        $engine('option delete minn_cron_lock');
+        $engine('transient delete doing_cron');
+        $engine("cron event schedule minn_test_cron_once now");
+        minn_test_fetch($base . $path . '?minn-test-cron-off=1', 10);
+        usleep(500000);
+        [$heard] = $engine('option get minn_test_cron_log --format=json');
+        $offRuns["{$stack}, {$how}"] = str_contains($heard, '"event":"once"');
+        $engine('cron event delete minn_test_cron_once');
+    }
+}
+$check('with DISABLE_WP_CRON, wp-cron.php still runs what is due and a front request does not, as on the reference', $offRuns === ['engine, wp-cron.php' => true, 'engine, a front request' => false, 'reference, wp-cron.php' => true, 'reference, a front request' => false], json_encode($offRuns));
+
 // DOING_CRON travels with the run: the reference's cron request declares it, and a callback may ask.
 $check('wp-cron.php fires the event under DOING_CRON', str_contains($log3, '"cron":true'), $log3);
 $check('wp minn cron fires the event under DOING_CRON', str_contains($log2, '"cron":true'), $log2);

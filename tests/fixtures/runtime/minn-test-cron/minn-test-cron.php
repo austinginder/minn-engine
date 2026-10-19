@@ -9,6 +9,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// A host that switches WP-Cron's spawning off and calls wp-cron.php from its own scheduler (?minn-test-cron-off).
+if (isset($_GET['minn-test-cron-off']) && !defined('DISABLE_WP_CRON')) {
+    define('DISABLE_WP_CRON', true);
+}
+
 add_filter('cron_schedules', static function ($schedules) {
     $schedules['minn_five_minutes'] = ['interval' => 300, 'display' => 'Every Five Minutes'];
     return $schedules;

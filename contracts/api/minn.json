@@ -50479,7 +50479,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/ProbeController.php",
-            "lines": 68,
+            "lines": 72,
             "doc": "The surface monitors, crawlers, and hosting checks hit that is not a\npage: robots.txt, the XML-RPC and cron endpoints, the admin entry point,\nand the favicon. Feeds and sitemaps have controllers of their own.",
             "implements": [],
             "extends": null,
@@ -50649,7 +50649,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "cron(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "wp-cron.php: runs what is due.",
+                    "doc": "wp-cron.php: runs what is due. DISABLE_WP_CRON stops only the runs page\nloads start; a host that sets it calls this from its own scheduler, and\nthe call still runs, as on the reference (cron suite).",
                     "shapes": [],
                     "params": [
                         {
@@ -50660,8 +50660,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 72
+                    "line": 70,
+                    "end": 76
                 },
                 {
                     "routes": [
@@ -50683,8 +50683,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 81,
+                    "end": 84
                 },
                 {
                     "routes": [
@@ -50705,8 +50705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 90
+                    "line": 88,
+                    "end": 94
                 }
             ]
         },

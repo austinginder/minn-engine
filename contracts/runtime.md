@@ -17346,6 +17346,33 @@ theme's `the_content()`, REST's `content.rendered`):
 
 A password-protected post's form is still the engine's own markup through the rest of `the_content`.
 
+## Hosting tools on a Minn site, and wp-cron.php under DISABLE_WP_CRON (2026-10-18)
+
+Two of the four hosting tools the definition of done names were run against the hunt lab (an engine site with
+WordPress on the same database), the files and database compared with the live site:
+
+- **Disembark 2.8.0** (its plugin on the site, its CLI on this machine). A backup of the webroot (plugins and themes
+  left out, 10,474 files, 367 MB) holds every file on disk, all but three byte for byte (git packs a running session
+  rewrote), and its database dump imported into a scratch database matches the live one table for table (Disembark's
+  own scan-stats row aside). A database restore through `disembark restore` ran on Minn (312 statements, the tables
+  as they were) and its rollback too, the site serving on both stacks after. Files were not restored: the lab's
+  `minn/` is a link into the engine repo, which a restore would write through.
+- **UpdraftPlus 1.26.10**, started from Minn Admin's Back up now (its adapter schedules UpdraftPlus's own cron event)
+  and from `wp cron event run --due-now`, ran to "The backup succeeded" on Minn; its database dump matches the one
+  WordPress makes of the same site row for row (host, paths, times and the counters of rows written between the two
+  aside). Its restore lives on its wp-admin screen and was not driven.
+
+The run found one engine bug: the lab sets `DISABLE_WP_CRON`, as hosts that run WP-Cron from their own scheduler do,
+and the engine's `wp-cron.php` then ran nothing, where the reference's runs what is due (the constant stops only the
+runs page loads start). So a host's system cron calling `wp-cron.php` never ran a Minn site's events, and UpdraftPlus's
+Back up now never started. `wp-cron.php` now runs regardless; a front request still respects the constant (cron suite,
+"with DISABLE_WP_CRON").
+
+Two findings that are not Minn's: this machine's web server refuses `.sql` files, so Disembark falls back to its stream
+API, and with an application-password connection the CLI's stream fallback sends no credentials and is refused, on
+WordPress as on Minn (a token connection works). Kinsta and CaptainCore were not run here: minn.run already runs the
+engine on Kinsta, and CaptainCore needs a real environment on its manager.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

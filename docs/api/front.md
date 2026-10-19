@@ -29,7 +29,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PostEmbed`](#postembed) | final class | 112 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
-| [`ProbeController`](#probecontroller) | final readonly class | 68 | The surface monitors, crawlers, and hosting checks hit that is not a |
+| [`ProbeController`](#probecontroller) | final readonly class | 72 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`QueryMoves`](#querymoves) | final readonly class | 119 | Where the root's archive query forms move under pretty permalinks, as |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 90 | The interim public theme: one clean template until the block-theme |
@@ -966,7 +966,9 @@ XML-RPC is not served; GET answers the way the reference does, POST is refused o
 
 Route: `* /wp-cron.php (public)`
 
-wp-cron.php: runs what is due.
+wp-cron.php: runs what is due. DISABLE_WP_CRON stops only the runs page
+loads start; a host that sets it calls this from its own scheduler, and
+the call still runs, as on the reference (cron suite).
 
 ### `admin(Minn\Http\Request $request): Minn\Http\Response`
 

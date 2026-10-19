@@ -61,11 +61,15 @@ final readonly class ProbeController
         return new Response(405, ['Content-Type' => 'text/plain;charset=UTF-8', 'Allow' => 'POST'], 'XML-RPC server accepts POST requests only.');
     }
 
-    /** wp-cron.php: runs what is due. */
+    /**
+     * wp-cron.php: runs what is due. DISABLE_WP_CRON stops only the runs page
+     * loads start; a host that sets it calls this from its own scheduler, and
+     * the call still runs, as on the reference (cron suite).
+     */
     #[Route(Method::Any, '/wp-cron.php', policy: new Policy(Access::Public))]
     public function cron(Request $request): Response
     {
-        if ($this->cron !== null && !(defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) && !$this->cron->idle()) {
+        if ($this->cron !== null && !$this->cron->idle()) {
             $this->cron->run();
         }
         return Response::html('');
