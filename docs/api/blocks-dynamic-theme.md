@@ -7,7 +7,7 @@ the template blocks a block theme composes with
 | [`Comments`](#comments) | final readonly class | 296 | comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. |
 | [`Navigation`](#navigation) | final readonly class | 552 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 280 | The post-* blocks: they render the context's current post. |
-| [`QueryBlocks`](#queryblocks) | final class | 281 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
+| [`QueryBlocks`](#queryblocks) | final class | 328 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
 | [`TermBlocks`](#termblocks) | final readonly class | 71 | term-name, term-count and term-description: the term a block's context |
 
@@ -116,7 +116,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 55), `queried()` (private, line 77), `page()` (private, line 86), `loop()` (private, line 102), `current()` (private, line 122), `total()` (private, line 135), `postTemplate()` (private, line 159), `queryTitle()` (private, line 197), `noResults()` (private, line 217), `pagination()` (private, line 231), `paginationBase()` (private, line 277), `numbers()` (private, line 292), `archiveTitle()` (private, line 304)
+Internals: `query()` (private, line 57), `queried()` (private, line 79), `page()` (private, line 88), `loop()` (private, line 104), `current()` (private, line 125), `total()` (private, line 138), `postTemplate()` (private, line 162), `queryTitle()` (private, line 200), `noResults()` (private, line 220), `pagination()` (private, line 241), `paginationBase()` (private, line 313), `numbers()` (private, line 333), `archiveTitle()` (private, line 353)
 
 
 ## Structure

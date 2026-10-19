@@ -20,15 +20,17 @@ use Minn\Objects\Post;
 use Minn\Objects\Query;
 use Minn\Runtime\BlockQueries;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\QueryArgs;
 use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Front\Permalinks;
 use Minn\Html;
+use Minn\Support\Escape;
 
 /** query, post-template, query-title, query-no-results, query-pagination, query-total. */
 final class QueryBlocks
 {
-    /** @var list<array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int}> the loops being rendered, innermost last */
+    /** @var list<array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int, id: int}> the loops being rendered, innermost last */
     private array $queries = [];
 
     public function __construct(
@@ -97,10 +99,11 @@ final class QueryBlocks
      * the main query's posts rather than finding that loop already under way.
      *
      * @param array<string, mixed> $attrs the block's query
-     * @return array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int}
+     * @return array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int, id: int}
      */
     private function loop(Block $block, array $attrs, Renderer $renderer): array
     {
+        $id = (int) ($block->attrs['queryId'] ?? 0);
         $context = $renderer->context();
         $perPage = (int) ($this->site->option('posts_per_page') ?? 10) ?: 10;
         if (!empty($attrs['inherit'])) {
@@ -108,14 +111,14 @@ final class QueryBlocks
             if ($main->in_the_loop) {
                 $query = clone $main;
                 $query->rewind_posts();
-                return ['page' => self::page($query), 'query' => $query, 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage];
+                return ['page' => self::page($query), 'query' => $query, 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage, 'id' => $id];
             }
-            return ['page' => new Page($context->posts, $context->total), 'query' => $main, 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage];
+            return ['page' => new Page($context->posts, $context->total), 'query' => $main, 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage, 'id' => $id];
         }
         $queryId = $block->attrs['queryId'] ?? null;
         $paged = (int) (Runtime::current()->request?->query[$queryId === null ? 'query-page' : "query-{$queryId}-page"] ?? 0) ?: 1;
         [$page, $query] = self::queried($block, $attrs, $paged);
-        return ['page' => $page, 'query' => $query, 'inherit' => false, 'paged' => $paged, 'perPage' => (int) ($attrs['perPage'] ?? 0) ?: $perPage];
+        return ['page' => $page, 'query' => $query, 'inherit' => false, 'paged' => $paged, 'perPage' => (int) ($attrs['perPage'] ?? 0) ?: $perPage, 'id' => $id];
     }
 
     /** The innermost loop being rendered; outside one, the loop a block's context provides (a post template called by its render callback). */
@@ -126,7 +129,7 @@ final class QueryBlocks
         }
         $provided = $renderer?->blockContext() ?? [];
         if ($renderer === null || !is_array($provided['query'] ?? null)) {
-            return ['page' => Page::empty(), 'query' => null, 'inherit' => false, 'paged' => 1, 'perPage' => 10];
+            return ['page' => Page::empty(), 'query' => null, 'inherit' => false, 'paged' => 1, 'perPage' => 10, 'id' => 0];
         }
         return $this->loop(new Block('core/query', ['queryId' => $provided['queryId'] ?? null], [], '', []), $provided['query'], $renderer);
     }
@@ -227,18 +230,43 @@ final class QueryBlocks
         return $out;
     }
 
-    /** Pagination renders only when the loop it belongs to has more than one page. */
+    /**
+     * Pagination renders only when the loop it belongs to has more than one
+     * page: the main query's pages for an inheriting loop, its own query's
+     * (as many as the block's page limit allows) for any other, paged by
+     * query-{id}-page. The links keep the address's other arguments; the
+     * numbers show the first and last page and those around the current one,
+     * dots between (probe query-pagination-custom).
+     */
     private function pagination(Block $block, Renderer $renderer): string
     {
         $query = $this->current($renderer);
         $context = $renderer->context();
-        if (!$query['inherit'] || $context->totalPages() <= 1) {
+        $request = (array) (Runtime::current()->request?->query ?? []);
+        if ($query['inherit']) {
+            $paged = $context->paged();
+            $pages = $context->totalPages();
+            $base = $this->paginationBase($renderer);
+            $kept = array_diff_key($request, ['paged' => true]);
+            $link = fn (int $page): string => QueryArgs::add($kept, $this->permalinks->forPaged($base, $page));
+            $number = $link;
+        } else {
+            $key = 'query-' . $query['id'] . '-page';
+            $paged = $query['paged'];
+            $limit = (int) ($renderer->blockContext()['query']['pages'] ?? 0);
+            $pages = (int) ($query['query']->max_num_pages ?? 0);
+            $pages = $limit > 0 ? min($limit, $pages) : $pages;
+            $here = (string) (Runtime::current()->request?->path ?? '/');
+            // Previous and next replace the page in the address, or add it after the rest.
+            $link = static fn (int $page): string => $here . '?' . http_build_query(array_key_exists($key, $request) ? array_replace($request, [$key => $page]) : $request + [$key => $page]);
+            $others = array_diff_key($request, [$key => true]);
+            $rest = $others === [] ? '' : '&' . http_build_query($others);
+            // The numbers are addresses relative to the page; past the first page they carry cst, as the reference's do.
+            $number = static fn (int $page): string => '?' . ($page === 1 ? 'cst' : $key . '=' . $page . ($paged > 1 ? '&cst' : '')) . $rest;
+        }
+        if ($pages <= 1) {
             return '';
         }
-        $paged = $context->paged();
-        $pages = $context->totalPages();
-        $base = $this->paginationBase($renderer);
-        $link = fn (int $page): string => $this->permalinks->forPaged($base, $page);
         $arrow = (string) $block->attr('paginationArrow', 'none');
         if (!in_array($arrow, ['none', 'arrow', 'chevron'], true)) {
             $arrow = 'none';
@@ -248,29 +276,37 @@ final class QueryBlocks
             'chevron' => $next ? '»' : '«',
             default => '',
         };
-        $parts = [];
-        foreach ($block->innerBlocks as $inner) {
-            $parts[] = match ($inner->name) {
+        // The parts in the markup's own order, the whitespace between them as written.
+        $parts = '';
+        $index = 0;
+        foreach ($block->innerContent as $chunk) {
+            if ($chunk !== null) {
+                $parts .= $chunk;
+                continue;
+            }
+            $inner = $block->innerBlocks[$index++];
+            $parts .= match ($inner->name) {
                 'core/query-pagination-previous' => $paged > 1
-                    ? '<a href="' . Html::attr($link($paged - 1)) . '" class="wp-block-query-pagination-previous">'
-                        . ($arrow === 'none' ? '' : '<span class="wp-block-query-pagination-previous-arrow is-arrow-' . $arrow . '" aria-hidden="true">' . $glyph(false) . '</span>')
+                    ? '<a href="' . Escape::url($link($paged - 1)) . '" class="wp-block-query-pagination-previous">'
+                        . ($arrow === 'none' ? '' : "<span class='wp-block-query-pagination-previous-arrow is-arrow-{$arrow}' aria-hidden='true'>" . $glyph(false) . '</span>')
                         . 'Previous Page</a>'
                     : '',
                 'core/query-pagination-next' => $paged < $pages
-                    ? '<a href="' . Html::attr($link($paged + 1)) . '" class="wp-block-query-pagination-next">Next Page'
-                        . ($arrow === 'none' ? '' : '<span class="wp-block-query-pagination-next-arrow is-arrow-' . $arrow . '" aria-hidden="true">' . $glyph(true) . '</span>')
+                    ? '<a href="' . Escape::url($link($paged + 1)) . '" class="wp-block-query-pagination-next">Next Page'
+                        . ($arrow === 'none' ? '' : "<span class='wp-block-query-pagination-next-arrow is-arrow-{$arrow}' aria-hidden='true'>" . $glyph(true) . '</span>')
                         . '</a>'
                     : '',
-                'core/query-pagination-numbers' => $this->numbers($paged, $pages, $link),
+                'core/query-pagination-numbers' => $this->numbers($paged, $pages, $number, (int) $inner->attr('midSize', 2)),
                 default => '',
             };
         }
         $classes = array_values(array_filter([
-            'wp-block-query-pagination',
             Styles::align($block->attrs),
+            $block->className(),
+            'wp-block-query-pagination',
             ...Layout::classes('core/query-pagination', $block->attrs),
         ]));
-        return '<nav class="' . implode(' ', $classes) . '" aria-label="Pagination">' . implode("\n", array_filter($parts)) . '</nav>';
+        return '<nav class="' . Html::attr(implode(' ', $classes)) . '" aria-label="Pagination">' . $parts . '</nav>';
     }
 
     /** The current listing's own URL, without a page number. */
@@ -288,14 +324,27 @@ final class QueryBlocks
         };
     }
 
-    /** @param callable(int): string $link */
-    private function numbers(int $paged, int $pages, callable $link): string
+    /**
+     * The page numbers: the first and last page, and those within $around of
+     * the current one, with dots where pages are left out.
+     *
+     * @param callable(int): string $link
+     */
+    private function numbers(int $paged, int $pages, callable $link, int $around): string
     {
         $items = [];
+        $dots = false;
         for ($page = 1; $page <= $pages; $page++) {
-            $items[] = $page === $paged
-                ? '<span aria-current="page" class="page-numbers current">' . $page . '</span>'
-                : '<a class="page-numbers" href="' . Html::attr($link($page)) . '">' . $page . '</a>';
+            if ($page === $paged) {
+                $items[] = '<span aria-current="page" class="page-numbers current">' . $page . '</span>';
+                $dots = true;
+            } elseif ($page === 1 || $page === $pages || abs($page - $paged) <= $around) {
+                $items[] = '<a class="page-numbers" href="' . Escape::url($link($page)) . '">' . $page . '</a>';
+                $dots = true;
+            } elseif ($dots) {
+                $items[] = '<span class="page-numbers dots">&hellip;</span>';
+                $dots = false;
+            }
         }
         return '<div class="wp-block-query-pagination-numbers">' . implode("\n", $items) . '</div>';
     }

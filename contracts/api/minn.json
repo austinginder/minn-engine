@@ -16865,7 +16865,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/QueryBlocks.php",
-            "lines": 281,
+            "lines": 328,
             "doc": "query, post-template, query-title, query-no-results, query-pagination, query-total.",
             "implements": [],
             "extends": null,
@@ -16889,7 +16889,9 @@
                 "Minn\\Runtime\\BlockQueries",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MainQuery",
+                "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Escape",
                 "Minn\\Theme\\ArchiveTitle"
             ],
             "usedBy": [
@@ -16916,8 +16918,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 38
+                "line": 36,
+                "end": 40
             },
             "cases": [],
             "constants": [],
@@ -16968,8 +16970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 52
+                    "line": 43,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -16995,8 +16997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 65
+                    "line": 57,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -17032,8 +17034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 83
+                    "line": 79,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -17052,8 +17054,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -17064,7 +17066,7 @@
                     "doc": "A loop as the query block sets it: the main query's page when it\ninherits, else its own query for the page its query-{id}-page asks for.\nAn inheriting loop inside the main query's loop (a singular page's\ntemplate, a post's content in a listing) walks a copy of the main query\nfrom its start, as the reference does (no query runs again), so it shows\nthe main query's posts rather than finding that loop already under way.",
                     "shapes": [
                         "@param array<string, mixed> $attrs the block's query",
-                        "@return array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int}"
+                        "@return array{page: Page, query: ?Query, inherit: bool, paged: int, perPage: int, id: int}"
                     ],
                     "params": [
                         {
@@ -17089,8 +17091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 119
+                    "line": 104,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -17109,8 +17111,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 132
+                    "line": 125,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -17136,8 +17138,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 149
+                    "line": 138,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -17163,8 +17165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 195
+                    "line": 162,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -17190,8 +17192,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 215
+                    "line": 200,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -17217,8 +17219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 228
+                    "line": 220,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -17226,7 +17228,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "pagination(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
-                    "doc": "Pagination renders only when the loop it belongs to has more than one page.",
+                    "doc": "Pagination renders only when the loop it belongs to has more than one\npage: the main query's pages for an inheriting loop, its own query's\n(as many as the block's page limit allows) for any other, paged by\nquery-{id}-page. The links keep the address's other arguments; the\nnumbers show the first and last page and those around the current one,\ndots between (probe query-pagination-custom).",
                     "shapes": [],
                     "params": [
                         {
@@ -17244,8 +17246,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 274
+                    "line": 241,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -17264,16 +17266,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 289
+                    "line": 313,
+                    "end": 325
                 },
                 {
                     "routes": [],
                     "name": "numbers",
                     "static": false,
                     "visibility": "private",
-                    "signature": "numbers(int $paged, int $pages, callable $link): string",
-                    "doc": "",
+                    "signature": "numbers(int $paged, int $pages, callable $link, int $around): string",
+                    "doc": "The page numbers: the first and last page, and those within $around of\nthe current one, with dots where pages are left out.",
                     "shapes": [
                         "@param callable(int): string $link"
                     ],
@@ -17298,10 +17300,17 @@
                             "shape": "callable(int): string",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "around",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 301
+                    "line": 333,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -17320,8 +17329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 308
+                    "line": 353,
+                    "end": 357
                 }
             ]
         },
@@ -148312,6 +148321,7 @@
                 "Minn\\Support\\Url"
             ],
             "usedBy": [
+                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Content\\MediaShortcodes",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedTags",
@@ -166554,6 +166564,7 @@
                 "Minn\\Support\\Url"
             ],
             "usedBy": [
+                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Content\\MediaShortcodes",
                 "Minn\\Content\\TextFilters",
                 "Minn\\Front\\CustomLogo",

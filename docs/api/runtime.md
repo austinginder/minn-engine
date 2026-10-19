@@ -6016,7 +6016,7 @@ Query arguments added to and taken from an address the way WordPress's
 add_query_arg() and remove_query_arg() do, the current request's address
 when none is given, and an action's nonce added to one.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\EditLinks`, `Minn\Runtime\PostLinks`, `Minn\Runtime\SiteUrls`
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\MediaShortcodes`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\EditLinks`, `Minn\Runtime\PostLinks`, `Minn\Runtime\SiteUrls`
 
 ### static `add(mixed ...$args): string`
 

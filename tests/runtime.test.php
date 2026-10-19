@@ -255,6 +255,21 @@ if ($referenceUp) {
     foreach ($postCases as $label => [$body, $cookie]) {
         $postAnswers[$label] = $posted($base, $body, $cookie) === $posted($reference, $body, $cookie) ? 'same' : [$posted($base, $body, $cookie), $posted($reference, $body, $cookie)];
     }
+    // A query loop of its own, paged by query-{id}-page: its pagination on every page, other arguments kept, the
+    // numbers windowed, as on the reference (the layout hash is engine-defined and masked, as the suites do).
+    $pagesPage = wp_insert_post(['post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'zz custom query pages', 'post_content' => '<!-- wp:query {"queryId":91,"query":{"perPage":2,"postType":"post","inherit":false,"order":"desc","orderBy":"date"}} --><div class="wp-block-query"><!-- wp:post-template --><!-- wp:post-title /--><!-- /wp:post-template --><!-- wp:query-pagination {"align":"wide","className":"zz-pages","paginationArrow":"arrow","layout":{"type":"flex","justifyContent":"space-between"}} --><!-- wp:query-pagination-previous /--><!-- wp:query-pagination-numbers /--><!-- wp:query-pagination-next /--><!-- /wp:query-pagination --></div><!-- /wp:query -->']);
+    $paginated = [];
+    if (is_int($pagesPage) && $pagesPage > 1) {
+        $pagesPath = (string) parse_url((string) get_permalink($pagesPage), PHP_URL_PATH);
+        $nav = static fn (string $html): ?string => preg_match('#<nav[^>]*wp-block-query-pagination.*?</nav>#s', $html, $m) === 1 ? (string) preg_replace('/is-layout-[0-9a-f]{8}/', 'is-layout-{hash}', $m[0]) : null;
+        foreach (['', '?query-91-page=2', '?query-91-page=3', '?query-91-page=2&zz=1', '?zz=1', '?query-91-page=5'] as $state) {
+            [, $mine] = minn_test_fetch($base . $pagesPath . $state);
+            [, $theirs] = minn_test_fetch($reference . $pagesPath . $state);
+            $paginated[$state === '' ? 'page 1' : $state] = $nav($mine) !== null && $nav($mine) === $nav($theirs) ? 'same' : [$nav($mine), $nav($theirs)];
+        }
+        wp_delete_post($pagesPage, true);
+    }
+    $check('a query loop of its own paginates as on the reference, its other arguments kept', $paginated !== [] && array_filter($paginated, static fn ($answer): bool => $answer !== 'same') === [], json_encode($paginated, JSON_UNESCAPED_SLASHES));
     $check('admin-post.php answers forms as the reference does, signed out and signed in', $signedIn !== '' && array_filter($postAnswers, static fn ($answer): bool => $answer !== 'same') === [], json_encode($postAnswers, JSON_UNESCAPED_SLASHES));
 } else {
     echo "  --  reference not reachable; header rows skipped\n";

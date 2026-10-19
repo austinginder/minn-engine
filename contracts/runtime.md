@@ -17417,6 +17417,24 @@ cookie or the visitors' hook otherwise (`admin_post` or `admin_post_nopriv` when
 nobody handles is WordPress's own 400 page; what a handler prints is the page and a handler's redirect is sent. The
 engine answers the same (`AdminActionController::post`; runtime suite, "admin-post.php", eight cases on both stacks).
 
+## A query loop's own pagination (2026-10-18)
+
+The query-pagination block rendered only for a loop that inherits the main query, so a query loop of its own (a
+posts section on a page, paged by `query-{id}-page`) had no pagination at all. Observed on the reference with such a
+loop over five pages (runtime suite, "a query loop of its own paginates"), and now rendered the same:
+
+- **Pages**: the loop's own query's, at most as many as the block's page limit (`query.pages`) allows.
+- **Previous and next** link the page's address with `query-{id}-page` replaced where it is, or added after the other
+  arguments.
+- **The numbers** are relative addresses (`?query-91-page=3`), the first page's carrying no page; past the first page
+  every number carries `cst` after the page, as the reference's do. Both kinds of loop now show the first and last
+  page and those within `midSize` (2) of the current one, with dots between, where the engine printed every page; an
+  inheriting loop's links keep the address's other arguments too.
+- The parts keep the whitespace the markup puts between them, the arrows are written with single-quoted attributes,
+  and the wrapper's alignment and class name come before `wp-block-query-pagination`.
+
+The layout container hash stays engine-defined, as before.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
