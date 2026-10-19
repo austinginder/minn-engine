@@ -30,7 +30,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostRecord`](#postrecord) | final readonly class | 162 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 405 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 406 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 561 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
@@ -45,7 +45,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 297 |  |
+| [`Users`](#users) | final readonly class | 311 |  |
 
 ## Autop
 
@@ -96,7 +96,7 @@ Internals: `stashPre()` (private, line 76), `spaceBlocks()` (private, line 102),
 The content pipeline's front door: block markup goes through the block
 renderer (Minn\Blocks), classic content rides the paragraph pipeline.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\FeedController`, `Minn\Front\Renderer`, `Minn\Rest\RevisionsController`, `Minn\Runtime\Runtime`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\FeedController`, `Minn\Front\Renderer`, `Minn\Rest\RevisionsController`, `Minn\Runtime\Runtime`, `Minn\Theme\PageRenderer`
 
 
 ### static `render(string $raw): string`
@@ -1367,7 +1367,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `fit()` (private, line 183), `announceSticky()` (private, line 284), `saveSticky()` (private, line 292)
+Internals: `fit()` (private, line 187), `announceSticky()` (private, line 288), `saveSticky()` (private, line 296)
 
 
 ## Posts
@@ -1688,7 +1688,7 @@ a write finds the row as it now is. Nothing outlives the request.
 
 - const `SOURCES` = `array (   'posts' =>    array (     0 => 'posts',   ),   'post_terms' =>    array (     0 => 'term_relationships',     1 => 'term_taxonomy',     2 => 'terms',   ),   'revisions' =>    array (     0 => 'posts',   ),   'theme_templates' =>    array (     0 => 'posts',     1 => 'term_relationships',     2 => 'term_taxonomy',     3 => 'terms',   ),   'users' =>    array (     0 => 'users',   ),   'comments' =>    array (     0 => 'comments',   ),   'comment_queries' =>    array (     0 => 'comments',     1 => 'commentmeta',   ),   'term_rows' =>    array (     0 => 'terms',     1 => 'term_taxonomy',   ),   'term_queries' =>    array (     0 => 'terms',     1 => 'term_taxonomy',     2 => 'term_relationships',     3 => 'termmeta',   ),   'term_lookups' =>    array (     0 => 'terms',     1 => 'term_taxonomy',   ),   'post_meta' =>    array (     0 => 'postmeta',   ),   'user_meta' =>    array (     0 => 'usermeta',   ),   'term_meta' =>    array (     0 => 'termmeta',   ),   'comment_meta' =>    array (     0 => 'commentmeta',   ), )` — The tables each kind of entry is read from.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Posts`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Meta`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostReads`, `Minn\Runtime\Runtime`, `Minn\Runtime\TaxTerms`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermTags`, `Minn\Runtime\UserWrites`, `Minn\Theme\TemplateIndex`, `Minn\Theme\Templates`
+Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Posts`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Meta`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostReads`, `Minn\Runtime\Records`, `Minn\Runtime\Runtime`, `Minn\Runtime\TaxTerms`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermTags`, `Minn\Runtime\UserWrites`, `Minn\Theme\TemplateIndex`, `Minn\Theme\Templates`
 
 
 ### static `remember(string $kind, string|int $key, Closure $load): mixed`
@@ -2405,7 +2405,7 @@ The newest users registered since a site-local time, up to the limit.
 
 ### `deleteMeta(int $userId, string $key): void`
 
-Removes one meta key from a user.
+Removes one meta key from a user: through the meta API once the runtime is up (delete_user_meta's hooks), else directly.
 
 ### `withCapabilities(string $capabilitiesKey): array`
 
@@ -2423,7 +2423,9 @@ The ids of users whose capabilities row names none of the roles (a pattern of th
 
 ### `meta(int $userId, string $key): ?string`
 
-One usermeta value, raw. Serialized blobs come back as stored.
+One usermeta value, raw: serialized blobs come back serialized. Once the
+runtime is up it is read as get_user_meta reads it, through its filter
+and the cache (probe user-meta-writes); before it, from the table.
 
 ### `setMeta(int $userId, string $key, string $value): void`
 
@@ -2431,5 +2433,5 @@ Replaces one usermeta row. The (user_id, meta_key) pair carries no
 unique index on the stock schema, so this is a delete plus insert
 rather than an upsert.
 
-Internals: `record()` (private, line 20), `refreshCount()` (private, line 108), `writeAccount()` (private, line 120)
+Internals: `record()` (private, line 23), `refreshCount()` (private, line 111), `writeAccount()` (private, line 123)
 

@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Content\Comments;
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
+use Minn\Content\RowCache;
 use Minn\I18n\Gettext;
 use Minn\Objects\Comment;
 use Minn\Objects\Errors;
@@ -101,7 +102,8 @@ final class Records
      * A comment (get_comment): the one being read for any empty id; a
      * comment object as given; one made from an object with a comment_ID;
      * else by id, its fields text as the database hands them over (null when
-     * there is none). Then get_comment.
+     * there is none), the row read once a request as a comment query keeps
+     * it. Then get_comment.
      */
     public static function comment(mixed $comment = null, mixed $output = 'OBJECT'): mixed
     {
@@ -113,11 +115,15 @@ final class Records
         } elseif (is_object($comment) && isset($comment->comment_ID)) {
             $object = Handoff::newComment($comment);
         } else {
-            $row = (int) $comment > 0 ? (new Comments(Runtime::current()->db))->find((int) $comment) : null;
+            $id = (int) $comment;
+            $row = $id > 0 ? RowCache::remember('comments', $id, static function () use ($id): ?object {
+                $found = (new Comments(Runtime::current()->db))->find($id);
+                return $found === null ? null : (object) array_map(static fn (mixed $value): mixed => is_int($value) || is_float($value) ? (string) $value : $value, $found->row());
+            }) : null;
             if ($row === null) {
                 return null;
             }
-            $object = Handoff::newComment((object) array_map(static fn (mixed $value): mixed => is_int($value) || is_float($value) ? (string) $value : $value, $row->row()));
+            $object = Handoff::newComment($row);
         }
         return self::shaped(Runtime::hooks()->filter('get_comment', [$object]), $output);
     }

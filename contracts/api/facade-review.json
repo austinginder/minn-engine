@@ -12193,8 +12193,8 @@
             "get_comment_reply_link": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentTags",
-                "why": "the depth and open checks, comment_reply_link_args, the login or reply anchor with its data attributes and page link, then comment_reply_link; markup by rules",
-                "body": "20257df5835e"
+                "why": "the depth and open checks, comment_reply_link_args, the login or reply anchor with its data attributes, to the post's link as it is or at the comment page shown (probe comment-blocks), then comment_reply_link; markup by rules",
+                "body": "185dbd8b5af7"
             },
             "get_comment_text": {
                 "verdict": "move",
@@ -18216,9 +18216,8 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "finds the user, makes a session when no token is given, mints with AuthCookies::mint and filters auth_cookie",
-                "doubt": "a missing token is made by Sessions::create directly, so session_token_manager and attach_session_information are not heard, unlike AuthCookies::settle",
-                "body": "d9cf983d80d9"
+                "why": "reads the user as get_userdata does, makes a session through the session manager when no token is given (session_token_manager, attach_session_information), mints with AuthCookies::mint and filters auth_cookie (probe user-meta-writes)",
+                "body": "1839e51ee111"
             },
             "wp_generate_password": {
                 "verdict": "move",

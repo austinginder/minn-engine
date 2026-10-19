@@ -59,7 +59,7 @@ the WordPress runtime plugins load against
 | [`FileNames`](#filenames) | final class | 119 | Files as WordPress's file functions name and remove them: a name made |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 538 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 548 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 426 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
@@ -115,7 +115,7 @@ the WordPress runtime plugins load against
 | [`QueryAnswers`](#queryanswers) | final class | 23 | Answers for queries the engine writes itself and already knows the result |
 | [`QueryArgs`](#queryargs) | final class | 54 | Query arguments added to and taken from an address the way WordPress's |
 | [`QueryFlags`](#queryflags) | final readonly class | 201 | The conditional flags a set of query variables implies (is_single, is_archive, |
-| [`Records`](#records) | final class | 133 | Posts, terms and comments as WordPress hands them to plugins: found by |
+| [`Records`](#records) | final class | 138 | Posts, terms and comments as WordPress hands them to plugins: found by |
 | [`Recovery`](#recovery) | final readonly class | 240 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registered`](#registered) | final class | 188 | What is registered, looked up the way WordPress's lookups answer: post |
@@ -153,7 +153,7 @@ the WordPress runtime plugins load against
 | [`ThemeMods`](#thememods) | final class | 57 | The active theme's settings (theme_mods_{stylesheet}) as WordPress keeps |
 | [`ThemeSupports`](#themesupports) | final class | 263 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
-| [`Themes`](#themes) | final class | 118 | The site's themes as WordPress names and finds them: the active |
+| [`Themes`](#themes) | final class | 125 | The site's themes as WordPress names and finds them: the active |
 | [`Transients`](#transients) | final class | 142 | Values kept for a while, as WordPress keeps them in options: the site's |
 | [`Translations`](#translations) | final class | 128 | The translations a request loads, as WordPress's l10n functions load |
 | [`TreeWalk`](#treewalk) | final class | 182 | The Walker contract's traversal: elements keyed by the walker's |
@@ -1245,7 +1245,7 @@ only the ones it registered.
 classes, the layout's container classes (a child's own layout left to a
 stand-in), the paragraph's class.
 
-Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`
+Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Renderer`
 
 
 ### static `active(): bool`
@@ -2818,7 +2818,7 @@ plugins have had their chance), so a plugin's version answers the engine
 as it answers WordPress. Arguments pass as given, so each answer's own
 defaults hold.
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Can`, `Minn\Auth\Salts`, `Minn\Auth\SignIn`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\PasswordGate`, `Minn\Content\PostWriter`, `Minn\Content\Users`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\MediaModal`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteSchema`, `Minn\Rest\TemplatesController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AdminActionController`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\AssetView`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\AvMetadata`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\BlockQueries`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\EditLinks`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\Runtime`, `Minn\Runtime\TaxTerms`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Themes`, `Minn\Runtime\Translations`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserStylesPost`, `Minn\Runtime\UserWrites`, `Minn\Runtime\WidgetAreas`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\ThemeJsonData`
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Can`, `Minn\Auth\Salts`, `Minn\Auth\SignIn`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\PasswordGate`, `Minn\Content\PostWriter`, `Minn\Content\Users`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\MediaModal`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteSchema`, `Minn\Rest\TemplatesController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AdminActionController`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\AssetView`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\AvMetadata`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\BlockQueries`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentThreads`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\EditLinks`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\Meta`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Pages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\Runtime`, `Minn\Runtime\TaxTerms`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Themes`, `Minn\Runtime\Translations`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserStylesPost`, `Minn\Runtime\UserWrites`, `Minn\Runtime\WidgetAreas`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\ThemeJsonData`
 
 
 ### static `bind(array $answers): void`
@@ -2907,6 +2907,12 @@ A post's excerpt, through get_the_excerpt (and the excerpt_length and excerpt_mo
 ### static `postThumbnail(mixed ...$args): mixed`
 
 A post's featured image as an img tag, or '' (get_the_post_thumbnail).
+
+### static `commentTag(string $tag, mixed ...$args): mixed`
+
+A comment block's template tag, as its render callback asks it: the
+comment's author, author URL, text through comment_text, date, link,
+reply link, classes, or whether the post takes comments.
 
 ### static `avatar(mixed ...$args): mixed`
 
@@ -3176,7 +3182,7 @@ ignored list filled in.
 
 A theme by its folder and root (new WP_Theme).
 
-Internals: `answer()` (private, line 576)
+Internals: `answer()` (private, line 586)
 
 
 ## Heartbeat
@@ -3884,7 +3890,7 @@ written and removed with the filters that may answer first and the actions
 around each change (post meta also told as postmeta), values sanitized and
 stored serialized.
 
-Used by: `Minn\Front\CustomLogo`, `Minn\Front\FeedTags`, `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\Attachments`, `Minn\Runtime\AvMetadata`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\TermWrites`, `Minn\Runtime\Translations`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Content\PostWriter`, `Minn\Content\Users`, `Minn\Front\CustomLogo`, `Minn\Front\FeedTags`, `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\Attachments`, `Minn\Runtime\AvMetadata`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\TermWrites`, `Minn\Runtime\Translations`, `Minn\Runtime\UserWrites`
 
 ### static `get(mixed $type, mixed $objectId, mixed $key = '', mixed $single = false): mixed`
 
@@ -4417,7 +4423,7 @@ migration flag, and the post types and taxonomies Minn Admin keeps
 and registers as it loads): read together as a request begins, as one
 read rather than one each.
 
-Used by: `Minn\Admin\AdminPlugin`, `Minn\Cli\OptionCommand`, `Minn\Engine`, `Minn\Ops\Directory`, `Minn\Runtime\AjaxController`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Cli\OptionCommand`, `Minn\Content\PostWriter`, `Minn\Content\Users`, `Minn\Engine`, `Minn\Ops\Directory`, `Minn\Runtime\AjaxController`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
 
 ```php
 __construct(Minn\Db $db)
@@ -6279,13 +6285,14 @@ the caller handed in.
 A comment (get_comment): the one being read for any empty id; a
 comment object as given; one made from an object with a comment_ID;
 else by id, its fields text as the database hands them over (null when
-there is none). Then get_comment.
+there is none), the row read once a request as a comment query keeps
+it. Then get_comment.
 
 ### static `isError(mixed $thing): bool`
 
 Whether a value is a list of errors (is_wp_error); one that is is told to is_wp_error_instance.
 
-Internals: `termNumbers()` (private, line 136), `shaped()` (private, line 145)
+Internals: `termNumbers()` (private, line 142), `shaped()` (private, line 151)
 
 
 ## Recovery

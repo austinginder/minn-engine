@@ -14,7 +14,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`EmbedRenderer`](#embedrenderer) | final readonly class | 33 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
 | [`FeatureSelectors`](#featureselectors) | final class | 33 | A block's styles split between the selectors its metadata gives its |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
-| [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
+| [`Folder`](#folder) | final readonly class | 99 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 110 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
@@ -40,7 +40,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 250 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 358 | The active block theme on disk, read as data: theme.json, the templates |
-| [`ThemeHeaders`](#themeheaders) | final class | 67 | A theme's headers as the reference's WP_Theme shows them (probe |
+| [`ThemeHeaders`](#themeheaders) | final class | 98 | A theme's headers as the reference's WP_Theme reads and shows them |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`TreeStyles`](#treestyles) | final readonly class | 259 | The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree |
@@ -322,6 +322,15 @@ A theme folder with its style.css headers.
 
 - `@param array<string, string> $labels key => the style.css header label`
 - `@param Closure(string, array<string, string>): array<string, string>|null $reader the header reader (the facade's, so header filters apply); the engine's own by default`
+
+### `problem(): ?array`
+
+What keeps the folder from being a whole theme, as the reference names
+it (probe theme-headers): no folder; no stylesheet; itself named as
+its parent; a parent that is not there; or, standing alone, no
+index.php and no templates/index.html. Null for a whole theme.
+
+- `@return array{0: string, 1: string}|null the error code and message`
 
 ### `dir(): string`
 
@@ -1491,20 +1500,30 @@ Internals: `at()` (private, line 62), `rawJson()` (private, line 83), `withStyle
 
 `final class Minn\Theme\ThemeHeaders` · `public/minn/src/Minn/Theme/ThemeHeaders.php`
 
-A theme's headers as the reference's WP_Theme shows them (probe
-theme-headers): sanitized as read, in the theme's language, and with
-markup.
+A theme's headers as the reference's WP_Theme reads and shows them
+(probe theme-headers): sanitized as read, in the theme's language, and
+with markup.
 
-- const `ALLOWED` = `array (   'a' =>    array (     'title' => true,     'href' => true,   ),   'abbr' =>    array (     'title' => true,   ),   'acronym' =>    array (     'title' => true,   ),   'code' =>    array (   ),   'em' =>    array (   ),   'strong' =>    array (   ), )` — The tags a name, description or author may keep.
+- const `PLAIN` = `array (   'abbr' =>    array (     'title' => true,   ),   'acronym' =>    array (     'title' => true,   ),   'code' =>    array (   ),   'em' =>    array (   ),   'strong' =>    array (   ), )` — The tags a name or a status may keep.
+- const `ALLOWED` = `array (   'a' =>    array (     'title' => true,     'href' => true,   ),   'abbr' =>    array (     'title' => true,   ),   'acronym' =>    array (     'title' => true,   ),   'code' =>    array (   ),   'em' =>    array (   ),   'strong' =>    array (   ), )` — The tags a description or an author may keep: those, and links.
 
+
+### static `read(object $theme, string $header, mixed $raw): mixed`
+
+A header as WP_Theme::get reads it, once for its theme object (probe
+theme-headers): Tags as a list; a value sanitized (the name and status
+through kses, the description and author too with links, the addresses
+as URLs, the version and requirements, and each tag, without tags; the
+rest as written); Status "publish" when an existing theme leaves it
+out.
 
 ### static `shown(string $header, mixed $value, mixed $markup, mixed $translate, string $domain, Closure $loadDomain, Closure $plain): mixed`
 
-A header's value as shown: the name, description and author through
-kses, the addresses as URLs; then, unless asked not to, in the theme's
-language (any header with a value, its text domain loaded first); then
-with markup a list joined, the author linked to their address (shown
-the same way), the addresses escaped and the description texturized.
+A header's value as shown, sanitized as read (read()): unless asked
+not to, in the theme's language (any header with a value, its text
+domain loaded first); then with markup a list joined, the author linked
+to their address (shown the same way), the addresses escaped and the
+description texturized.
 
 - `@param Closure(): mixed $loadDomain loads the theme's text domain, once for its theme object`
 - `@param Closure(string): mixed $plain another header of the theme, shown without markup`
@@ -1513,7 +1532,7 @@ the same way), the addresses escaped and the description texturized.
 
 A theme object's text domain (WP_Theme::load_textdomain), loaded once for it.
 
-Internals: `loadDomain()` (private, line 77)
+Internals: `sanitized()` (private, line 50), `loadDomain()` (private, line 108)
 
 
 ## ThemeJsonData

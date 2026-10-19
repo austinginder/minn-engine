@@ -502,14 +502,15 @@ if (!function_exists('wp_generate_auth_cookie')) :
 /** A cookie under the named scheme's salt; an empty token gets a fresh session, the reference's shape. */
 function wp_generate_auth_cookie($user_id, $expiration, $scheme = 'auth', $token = '')
 {
+    // The user is read as get_userdata reads one (its meta cached first, probe user-meta-writes).
     $runtime = Runtime::current();
-    $user = (new Users($runtime->db))->find((int) $user_id);
+    $user = get_userdata((int) $user_id) ? (new Users($runtime->db))->find((int) $user_id) : null;
     if ($user === null) {
         return '';
     }
     if ((string) $token === '') {
-        $request = $runtime->request;
-        $token = (new Sessions(new Users($runtime->db)))->create((int) $user_id, (int) $expiration, (string) ($request?->remoteAddress ?? ''), (string) ($request?->header('user-agent') ?? ''));
+        // Made as WordPress makes it, so session_token_manager and attach_session_information have their say.
+        $token = WP_Session_Tokens::get_instance((int) $user_id)->create((int) $expiration);
     }
     $cookie = AuthCookies::mint($user, (int) $expiration, (string) $token, (string) $scheme);
     return apply_filters('auth_cookie', $cookie, (int) $user_id, (int) $expiration, (string) $scheme, (string) $token);

@@ -1,0 +1,111 @@
+[
+    [
+        "author name",
+        {
+            "heard": [
+                "comments_open",
+                "get_comment_author",
+                "get_comment_author_url",
+                "comment_class"
+            ],
+            "html": "<li id=\"comment-N\" class=\"comment even thread-even depth-1\"><div class=\"wp-block-comment-author-name\"><a rel=\"external nofollow ugc\" href=\"https://example.com/zz\" target=\"_self\" >Zz Author</a></div></li>"
+        }
+    ],
+    [
+        "author name, not linked",
+        {
+            "heard": [
+                "comments_open",
+                "get_comment_author",
+                "get_comment_author_url",
+                "comment_class"
+            ],
+            "html": "<li id=\"comment-N\" class=\"comment odd alt thread-odd thread-alt depth-1\"><div class=\"wp-block-comment-author-name\">Zz Author</div></li>"
+        }
+    ],
+    [
+        "content",
+        {
+            "heard": [
+                "comments_open",
+                "get_comment_text",
+                "comment_text",
+                "comment_class"
+            ],
+            "html": "<li id=\"comment-N\" class=\"comment even thread-even depth-1\"><div class=\"wp-block-comment-content\"><p>zz text with a <a href=\"https://example.com\" rel=\"nofollow ugc\">https://example.com</a> link</p>\n<p>and a second paragraph</p>\n</div></li>"
+        }
+    ],
+    [
+        "date",
+        {
+            "heard": [
+                "comments_open",
+                "get_comment_date",
+                "get_comment_link",
+                "comment_class"
+            ],
+            "html": "<li id=\"comment-N\" class=\"comment odd alt thread-odd thread-alt depth-1\"><div class=\"wp-block-comment-date\"><time datetime=\"2026-01-01T10:00:00+00:00\"><a href=\"https://minn.localhost/?p=N/#comment-N\">January 1, 2026</a></time></div></li>"
+        }
+    ],
+    [
+        "date, linked",
+        {
+            "heard": [
+                "comments_open",
+                "get_comment_date",
+                "get_comment_link",
+                "comment_class"
+            ],
+            "html": "<li id=\"comment-N\" class=\"comment even thread-even depth-1\"><div class=\"wp-block-comment-date\"><time datetime=\"2026-01-01T10:00:00+00:00\"><a href=\"https://minn.localhost/?p=N/#comment-N\">January 1, 2026</a></time></div></li>"
+        }
+    ],
+    [
+        "reply link",
+        {
+            "heard": [
+                "comments_open",
+                "comment_reply_link_args",
+                "get_comment_author",
+                "comment_reply_link",
+                "comment_class"
+            ],
+            "html": "<li id=\"comment-N\" class=\"comment odd alt thread-odd thread-alt depth-1\"><div class=\"wp-block-comment-reply-link\"><a rel=\"nofollow\" class=\"comment-reply-link\" href=\"https://minn.localhost/?p=N&#038;replytocom=N#respond\" data-commentid=\"N\" data-postid=\"N\" data-belowelement=\"comment-N\" data-respondelement=\"respond\" data-replyto=\"Reply to Zz Author\" aria-label=\"Reply to Zz Author\">Reply</a></div></li>"
+        }
+    ],
+    [
+        "edit link",
+        {
+            "heard": [
+                "comments_open",
+                "comment_class"
+            ],
+            "html": "<li id=\"comment-N\" class=\"comment even thread-even depth-1\"></li>"
+        }
+    ],
+    [
+        "avatar",
+        {
+            "heard": [
+                "comments_open",
+                "pre_get_avatar",
+                "get_comment_type",
+                "get_avatar_url",
+                "get_avatar",
+                "comment_class"
+            ],
+            "html": "<li id=\"comment-N\" class=\"comment odd alt thread-odd thread-alt depth-1\"><div class=\"wp-block-avatar\"><img alt='Zz Author Avatar' src='https://secure.gravatar.com/avatar/614c61574d91d31693851cae6f6caef370e4e666e1115ef3603f6d69220f5244?s=96&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/614c61574d91d31693851cae6f6caef370e4e666e1115ef3603f6d69220f5244?s=192&#038;d=mm&#038;r=g 2x' class='avatar avatar-96 photo wp-block-avatar__image' height='96' width='96' loading='lazy' decoding='async'/></div></li>"
+        }
+    ],
+    [
+        "filtered",
+        "<ol class=\"wp-block-comment-template\"><li id=\"comment-N\" class=\"comment even thread-even depth-1 zz-class\"><div class=\"wp-block-comment-author-name\"><a rel=\"external nofollow ugc\" href=\"https://example.com/zz%20%5Bzz%5D\" target=\"_self\" >Zz Author [zz]</a></div><div class=\"wp-block-comment-content\"><p>zz text with a <a href=\"https://example.com\" rel=\"nofollow ugc\">https://example.com</a> link</p>\n<p>and a second paragraph [zz]</p>\n</div><div class=\"wp-block-comment-date\"><time datetime=\"2026-01-01T10:00:00+00:00 [zz]\"><a href=\"https://minn.localhost/?p=N/#comment-N\">January 1, 2026 [zz]</a></time></div><div class=\"wp-block-comment-reply-link\"><a rel=\"nofollow\" class=\"comment-reply-link\" href=\"https://minn.localhost/?p=N&#038;replytocom=N#respond\" data-commentid=\"N\" data-postid=\"N\" data-belowelement=\"comment-N\" data-respondelement=\"respond\" data-replyto=\"Reply to Zz Author [zz]\" aria-label=\"Reply to Zz Author [zz]\">Reply</a> [zz]</div></li></ol>"
+    ],
+    [
+        "threaded",
+        "<div class=\"wp-block-comments\"><ol class=\"wp-block-comment-template\"><li id=\"comment-N\" class=\"comment odd alt thread-odd thread-alt depth-1\"><div class=\"wp-block-comment-author-name\"><a rel=\"external nofollow ugc\" href=\"https://example.com/zz\" target=\"_self\" >Zz Author</a></div><div class=\"wp-block-comment-reply-link\"><a rel=\"nofollow\" class=\"comment-reply-link\" href=\"https://minn.localhost/?p=N&#038;replytocom=N#respond\" data-commentid=\"N\" data-postid=\"N\" data-belowelement=\"comment-N\" data-respondelement=\"respond\" data-replyto=\"Reply to Zz Author\" aria-label=\"Reply to Zz Author\">Reply</a></div><ol><li id=\"comment-N\" class=\"comment even depth-2\"><div class=\"wp-block-comment-author-name\">Zz & <b>Bold</b></div><div class=\"wp-block-comment-reply-link\"><a rel=\"nofollow\" class=\"comment-reply-link\" href=\"https://minn.localhost/?p=N&#038;replytocom=N#respond\" data-commentid=\"N\" data-postid=\"N\" data-belowelement=\"comment-N\" data-respondelement=\"respond\" data-replyto=\"Reply to Zz &amp; &lt;b&gt;Bold&lt;/b&gt;\" aria-label=\"Reply to Zz &amp; &lt;b&gt;Bold&lt;/b&gt;\">Reply</a></div></li></ol></li></ol></div>"
+    ],
+    [
+        "not threaded",
+        "<div class=\"wp-block-comments\"><ol class=\"wp-block-comment-template\"><li id=\"comment-N\" class=\"comment odd alt thread-even depth-1\"><div class=\"wp-block-comment-author-name\"><a rel=\"external nofollow ugc\" href=\"https://example.com/zz\" target=\"_self\" >Zz Author</a></div></li><li id=\"comment-N\" class=\"comment even thread-odd thread-alt depth-1\"><div class=\"wp-block-comment-author-name\">Zz & <b>Bold</b></div></li></ol></div>"
+    ]
+]

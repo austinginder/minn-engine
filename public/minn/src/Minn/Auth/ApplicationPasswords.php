@@ -107,7 +107,8 @@ final readonly class ApplicationPasswords
     public function deleteAll(int $userId): int
     {
         $count = count($this->all($userId));
-        $this->users->deleteMeta($userId, self::META);
+        // An empty list is written, as the reference writes it (probe user-meta-writes).
+        $this->save($userId, []);
         return $count;
     }
 

@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic\Theme;
 
+use Minn\Runtime\BlockFilters;
 use Minn\Admin\Format;
 use Minn\Content\CommentRecord;
 use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
-use Minn\Blocks\Dynamic\Dates;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\Styles;
 use Minn\Blocks\Wrapper;
-use Minn\Content\Blocks;
 use Minn\Content\Posts;
 use Minn\Content\RowCache;
 use Minn\I18n\Gettext;
@@ -24,7 +23,7 @@ use Minn\Html;
 use Minn\Objects\CommentsQuery;
 use Minn\Runtime\BlockQueries;
 use Minn\Runtime\Handoff;
-use Minn\Support\Kses;
+use Minn\Support\Escape;
 use Minn\Content\PasswordGate;
 use Minn\Runtime\Avatar;
 use Minn\Runtime\Runtime;
@@ -32,6 +31,9 @@ use Minn\Runtime\Runtime;
 /** comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. */
 final readonly class Comments
 {
+    /** The global the comment loop's depth is kept in, as get_comment_class and the reply link read it. */
+    private const DEPTH = 'comment_depth';
+
     public function __construct(
         private Site $site,
         private Permalinks $permalinks,
@@ -65,12 +67,14 @@ final readonly class Comments
         if ($post === null || PasswordGate::is($post) || ($post->commentStatus !== 'open' && self::count($post) === 0)) {
             return '';
         }
+        $instance = $renderer->ownInstance();
         $out = '';
         $inner = 0;
         foreach ($block->innerContent as $chunk) {
             $out .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$inner++]);
         }
-        return $out;
+        // It goes through render_block once as it renders, and again as its render ends (probe block-instances).
+        return $instance === null ? $out : BlockFilters::rendered($out, (array) $instance->parsed_block, $instance);
     }
 
     /**
@@ -143,6 +147,8 @@ final readonly class Comments
         }
         // The reference's comment query for a template (build_comment_query_vars_from_block): approved ones and
         // the reader's own held ones, oldest first, threaded and paged as the site says.
+        // Whether the post takes comments is asked as the template renders.
+        Handoff::commentTag('open', $post->id);
         $vars = BlockQueries::comments((object) ['context' => ['postId' => $post->id]]);
         $comments = (array) self::query($vars)->comments;
         // Newest first, when the site lists them so, is the top level reversed; replies keep their order.
@@ -181,30 +187,29 @@ final readonly class Comments
     {
         $context = $renderer->context();
         $items = '';
-        $position = 0;
         foreach ($all as $comment) {
             if ($comment->parentId !== $parent) {
                 continue;
             }
-            $position++;
             $context->withComment($comment);
-            $inner = '';
-            $index = 0;
-            foreach ($block->innerContent as $chunk) {
-                $inner .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$index++]);
-            }
+            $GLOBALS[self::DEPTH] = $depth;
+            // Inside a comment template of the comment's own, its id all the context it has (probe block-instances).
+            $inner = $renderer->renderItem($block->toArray(), ['commentId' => $comment->id], static function () use ($block, $renderer): string {
+                $inner = '';
+                $index = 0;
+                foreach ($block->innerContent as $chunk) {
+                    $inner .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$index++]);
+                }
+                return $inner;
+            });
+            // Its classes through get_comment_class, whose odd and even run on across the request.
+            $classes = (array) Handoff::commentTag('class', '', $comment->id);
             $context->withComment(null);
-            // The reference counts from zero: the first is even, and an odd one is "alt" as well.
-            $odd = $position % 2 === 0;
-            $classes = ['comment', ...($odd ? ['odd', 'alt'] : ['even'])];
-            if ($depth === 1) {
-                array_push($classes, ...($odd ? ['thread-odd', 'thread-alt'] : ['thread-even']));
-            }
-            $classes[] = 'depth-' . $depth;
             $children = $this->list($all, $comment->id, $depth + 1, $block, $renderer);
             $items .= '<li id="comment-' . $comment->id . '" class="' . implode(' ', $classes) . '">' . $inner . $children . '</li>';
         }
-        return $items === '' ? '' : '<ol class="wp-block-comment-template">' . $items . '</ol>';
+        // Replies sit in a plain list inside their parent's item (probe comment-blocks).
+        return $items === '' ? '' : ($depth === 1 ? '<ol class="wp-block-comment-template">' : '<ol>') . $items . '</ol>';
     }
 
     /** The comment author's avatar in a comment loop; elsewhere the post author's, linked to their posts when asked. */
@@ -215,9 +220,9 @@ final readonly class Comments
         if ($comment === null) {
             return $this->authorAvatar($block, $renderer, $size);
         }
-        $hash = hash('sha256', strtolower(trim($comment->authorEmail)));
-        $author = Html::attr(sprintf(Gettext::text('%s Avatar'), $comment->author));
-        return '<div class="wp-block-avatar"><img alt=\'' . $author . '\' src=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . $size . '&#038;d=mm&#038;r=g\' srcset=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . ($size * 2) . '&#038;d=mm&#038;r=g 2x\' class=\'avatar avatar-' . $size . ' photo wp-block-avatar__image\' height=\'' . $size . '\' width=\'' . $size . '\' decoding=\'async\'/></div>';
+        // Through get_avatar for the comment, as the reference's render callback asks it (probe comment-blocks).
+        $img = Handoff::avatar(Handoff::commentInstance($comment->id), $size, '', sprintf(Gettext::text('%s Avatar'), $comment->author), ['class' => 'wp-block-avatar__image']);
+        return '<div class="wp-block-avatar">' . (is_string($img) ? $img : '') . '</div>';
     }
 
     private function authorAvatar(Block $block, Renderer $renderer, int $size): string
@@ -243,12 +248,12 @@ final readonly class Comments
         if ($comment === null || $post === null) {
             return '';
         }
-        $local = $comment->date;
-        $text = Dates::format($this->site, $local, (string) $block->attr('format', ''));
+        // Through get_comment_date and get_comment_link (probe comment-blocks).
+        $text = (string) Handoff::commentTag('date', (string) $block->attr('format', ''), $comment->id);
         if ((bool) $block->attr('isLink', true)) {
-            $text = '<a href="' . Html::attr($this->permalinks->forPost($post) . '#comment-' . $comment->id) . '">' . $text . '</a>';
+            $text = '<a href="' . Html::attr(Escape::url((string) Handoff::commentTag('link', $comment->id))) . '">' . $text . '</a>';
         }
-        return '<div class="wp-block-comment-date"><time datetime="' . Dates::iso($this->site, $local) . '">' . $text . '</time></div>';
+        return '<div class="wp-block-comment-date"><time datetime="' . Html::attr((string) Handoff::commentTag('date', 'c', $comment->id)) . '">' . $text . '</time></div>';
     }
 
     /** The post a comment belongs to: the loop's, or looked up when the comment came by itself (a comment block's render callback). */
@@ -264,10 +269,11 @@ final readonly class Comments
         if ($comment === null) {
             return '';
         }
-        $name = Html::esc($comment->author);
-        $url = Kses::url($comment->authorUrl);
-        if ($url !== '') {
-            $name = '<a rel="external nofollow ugc" href="' . Html::attr($url) . '" target="_self" >' . $name . '</a>';
+        // Read through get_comment_author and get_comment_author_url, linked unless isLink is off (probe comment-blocks).
+        $name = (string) Handoff::commentTag('author', $comment->id);
+        $url = (string) Handoff::commentTag('authorUrl', $comment->id);
+        if ($url !== '' && (bool) $block->attr('isLink', true)) {
+            $name = '<a rel="external nofollow ugc" href="' . Html::attr(Escape::url($url)) . '" target="' . Html::attr((string) $block->attr('linkTarget', '_self')) . '" >' . $name . '</a>';
         }
         return '<div class="wp-block-comment-author-name">' . $name . '</div>';
     }
@@ -280,20 +286,22 @@ final readonly class Comments
         }
         // A held comment, shown only to its author, says so first.
         $held = $comment->approved === '0' ? '<p><em class="comment-awaiting-moderation">Your comment is awaiting moderation.</em></p>' : '';
-        return '<div class="wp-block-comment-content">' . $held . Blocks::paragraphs($comment->content) . '</div>';
+        // The text through get_comment_text and comment_text, its defaults with it (links made, paragraphs).
+        return '<div class="wp-block-comment-content">' . $held . (string) Handoff::commentTag('text', $comment->id) . '</div>';
     }
 
     private function replyLink(Block $block, Renderer $renderer): string
     {
         $comment = $renderer->context()->comment();
-        $post = $comment === null ? null : $this->commentPost($comment, $renderer);
-        if ($comment === null || $post === null || $post->commentStatus !== 'open') {
+        if ($comment === null) {
             return '';
         }
-        $id = $comment->id;
-        $replyTo = Html::attr(sprintf(Gettext::text('Reply to %s'), $comment->author));
-        $href = $this->permalinks->forPost($post) . '?replytocom=' . $id . '#respond';
-        return '<div class="wp-block-comment-reply-link"><a rel="nofollow" class="comment-reply-link" href="' . Html::attr($href) . '" data-commentid="' . $id . '" data-postid="' . $post->id . '" data-belowelement="comment-' . $id . '" data-respondelement="respond" data-replyto="' . $replyTo . '" aria-label="' . $replyTo . '">' . Gettext::inContext('Reply', 'verb') . '</a></div>';
+        // Through get_comment_reply_link, at the comment's depth, as deep as the site threads, and not at all when it
+        // does not thread (probe comment-blocks).
+        $options = Runtime::options();
+        $deepest = $options->filtered('thread_comments') ? (int) $options->filtered('thread_comments_depth') : -1;
+        $link = (string) Handoff::commentTag('replyLink', ['depth' => max(1, (int) ($GLOBALS[self::DEPTH] ?? 1)), 'max_depth' => $deepest], $comment->id);
+        return $link === '' ? '' : '<div class="wp-block-comment-reply-link">' . $link . '</div>';
     }
 
     private function form(Block $block, Renderer $renderer): string

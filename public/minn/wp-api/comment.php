@@ -604,7 +604,11 @@ function get_comments_pagenum_link($pagenum = 1, $max_page = 0)
     return apply_filters('get_comments_pagenum_link', $result . '#comments');
 }
 
-/** The reply link for a comment, within the depth allowed and while comments stay open. */
+/**
+ * The reply link for a comment, within the depth allowed and while comments
+ * stay open: to the post's link as it is, at a page of its comments only
+ * when one is shown (probe comment-blocks).
+ */
 function get_comment_reply_link($args = [], $comment = null, $post = null)
 {
     $args = wp_parse_args($args, ['add_below' => 'comment', 'respond_id' => 'respond', 'reply_text' => _x('Reply', 'verb'), 'reply_to_text' => __('Reply to %s'), 'login_text' => __('Log in to Reply'), 'max_depth' => 0, 'depth' => 0, 'before' => '', 'after' => '', 'show_reply_to_text' => false]);
@@ -622,7 +626,7 @@ function get_comment_reply_link($args = [], $comment = null, $post = null)
     } else {
         $author = get_comment_author($comment);
         $label = sprintf($args['reply_to_text'], $author);
-        $page = Minn\Runtime\CommentPages::link((string) get_permalink($post->ID), Minn\Runtime\CommentPages::shown(get_query_var('cpage')));
+        $page = ($shown = Minn\Runtime\CommentPages::shown(get_query_var('cpage'))) ? Minn\Runtime\CommentPages::link((string) get_permalink($post->ID), $shown) : (string) get_permalink($post->ID);
         $href = esc_url(add_query_arg(['replytocom' => $comment->comment_ID, 'unapproved' => false, 'moderation-hash' => false], $page)) . '#' . $args['respond_id'];
         $link = sprintf('<a rel="nofollow" class="comment-reply-link" href="%s" data-commentid="%d" data-postid="%d" data-belowelement="%s" data-respondelement="%s" data-replyto="%s" aria-label="%s">%s</a>', $href, $comment->comment_ID, $post->ID, $args['add_below'] . '-' . $comment->comment_ID, $args['respond_id'], esc_attr($label), esc_attr($label), $args['show_reply_to_text'] ? $label : $args['reply_text']);
     }

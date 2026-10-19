@@ -6,8 +6,11 @@ namespace Minn\Content;
 
 use Minn\Db;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\MetaData;
+use Minn\Runtime\Options;
 use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
+use Minn\Support\Slashes;
 
 /**
  * Every write to the posts table and its satellites: rows, meta, term
@@ -85,14 +88,15 @@ final readonly class PostWriter
     /** Sets one meta value, inserting the row when the key is new. */
     public function setMeta(int $id, string $key, string $value): void
     {
+        // Once the runtime is up, as update_post_meta writes it (Users::setMeta).
+        if (Handoff::bound('cacheDelete')) {
+            MetaData::updatePost($id, $key, Slashes::add(Options::fromStorage($value)));
+            return;
+        }
         $table = $this->db->table('postmeta');
         $updated = $this->db->execute("UPDATE {$table} SET meta_value = ? WHERE post_id = ? AND meta_key = ?", [$value, $id, $key]);
         if ($updated === 0 && (int) $this->db->value("SELECT COUNT(*) FROM {$table} WHERE post_id = ? AND meta_key = ?", [$id, $key]) === 0) {
             $this->db->execute("INSERT INTO {$table} (post_id, meta_key, meta_value) VALUES (?, ?, ?)", [$id, $key, $value]);
-        }
-        // What a reader cached of the post's meta goes with it, as a meta write lets it go (Users::setMeta).
-        if (Handoff::bound('cacheDelete')) {
-            Handoff::cacheDelete($id, 'post_meta');
         }
     }
 

@@ -185,7 +185,7 @@ encoded; for a textarea, everything encoded; for an inline script, a
 single-quoted string's specials; and an address (esc_url) cleaned, its
 protocol checked against the allowed ones.
 
-Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -377,7 +377,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\KsesRules`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\KsesRules`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
 
 
 ### static `post(string $html): string`
@@ -1093,7 +1093,7 @@ Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash):
 added to or stripped from every string inside a value, arrays and
 objects walked all the way down, anything else left as it is.
 
-Used by: `Minn\Rest\GlobalStylesController`, `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Content\PostWriter`, `Minn\Content\Users`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
 
 ### static `add(mixed $value): mixed`
 

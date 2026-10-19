@@ -17763,6 +17763,58 @@ A post's content gets the blocks hooked to it as the reference gives them (probe
 
 No SELECT more; page times level with the commit before.
 
+## Themes as WordPress reads them, user meta through its API, the comment blocks through the comment tags (2026-10-19)
+
+Three more rows of "The template part's four rows" settled, and what the hook battery showed
+behind them:
+
+- **`WP_Theme::get` reads a header sanitized** (probe `theme-headers`), once a theme object,
+  as the reference does (`Theme\ThemeHeaders::read`): the name and status through kses
+  keeping `abbr`, `acronym`, `code`, `em` and `strong`; the description and author keeping
+  links too; the addresses as URLs (a `javascript:` address is empty); the version, the
+  requirements and each tag without tags; Template, Text Domain, Domain Path and Update URI
+  as written. `display` shows what `get` read. A theme's name with a script in it came
+  back with the script.
+- **A folder that is not a whole theme says why** (probe `theme-headers`,
+  `Theme\Folder::problem`): no stylesheet (`theme_no_stylesheet`), no index.php and no
+  templates/index.html (`theme_no_index`), a parent that is not there (`theme_no_parent`), or
+  itself as its parent (`theme_child_invalid`); each still exists, as only a missing folder
+  (`theme_not_found`) does not. `wp_get_themes` lists every folder of the themes root in the
+  order of its path with a slash after it, and by default only whole themes: `errors` true
+  lists the others, null all. The engine had listed everything whatever was asked.
+- **User meta through its API** (probe `user-meta-writes`): once the runtime is up the
+  engine's user meta door (`Users::meta`, `setMeta`, `deleteMeta`) reads and writes as
+  `get_user_meta` and `update_user_meta` do, filters, actions and cache, and so does the
+  post meta it writes for an edit lock. Sessions, application passwords and Minn Admin's own
+  settings now tell plugins what they store; deleting every application password writes an
+  empty list, as the reference does. `wp_generate_auth_cookie` with no token makes its
+  session through the session manager (`session_token_manager`,
+  `attach_session_information`), the user read as `get_userdata` reads one; a store left
+  with no session is deleted. `update_metadata` reads the stored value before it looks for
+  rows, as the reference does.
+- **The comment blocks through the comment tags** (probe `comment-blocks`): an author name
+  through `get_comment_author` and `get_comment_author_url` (linked unless `isLink` is off),
+  the text through `get_comment_text` and `comment_text` with its defaults (links made), a
+  date through `get_comment_date` and `get_comment_link`, a reply link through
+  `get_comment_reply_link` (none when the site does not thread), an avatar through
+  `get_avatar`, each item's classes through `get_comment_class`, whose odd and even run on
+  across the request. A plugin's comment filters never reached a block theme's comments
+  before, a URL in a comment stayed text, an unlinked author was linked, and a reply link on
+  a query-string permalink gained a second `?`. Replies sit in a plain list. A comment read
+  by id (`get_comment`) is read once a request, as a comment query keeps its rows, so the
+  tags asking for it one after another add no SELECT.
+- **Comments in templates of their own** (probe `block-instances`): each comment renders
+  inside a comment template of its own (`Renderer::renderItem`, as a post template's post
+  does), its id all the context it has, which goes through `render_block`; the comments
+  block goes through `render_block` once as it renders and again as its render ends.
+
+No SELECT more on the pages measured.
+
+Left:
+
+- The reference keeps its scan of the themes root in the `theme_roots` site transient and for
+  the request; the engine reads the folder each time it lists themes.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17844,9 +17896,10 @@ rows that are `open` or `austin`.
 | 17714 | The template part's four rows (10-19) | sequence only: the parse-time `sanitize_key` of a post type before `parse_tax_query`; the content image pass of `the_content` without the reference's composition hooks around each tag | accepted | the same keys, tags and output; only the order the hooks are heard in differs (probes `query-keys`, `content-tags`) |
 | 17714 | The template part's four rows (10-19) | the reference asks `get_block_type_uses_context` and `block_parser_class` more often (blocks walked before rendering, block hooks' parses) | accepted | which types are asked and which documents a swapped-in parser reads agree (probe `block-instances`); the extra asks are the reference's own internals |
 | 17714 | The template part's four rows (10-19) | a navigation's inner blocks rendered once through the block filters and dropped, then again; a submenu's links through `render_block` twice | accepted | the dropped render changes nothing a visitor sees, and rendering the items twice would cost every page with a navigation; the render that counts hears what the reference's does (probe `block-instances`) |
-| 17714 | The template part's four rows (10-19) | the comments block through `render_block` twice; its comment template's context carrying `postType` | open | the reference's comments block renders its blocks the way the post template does; observe it with comments to render |
+| 17714 | The template part's four rows (10-19) | the comments block through `render_block` twice; its comment template's context carrying `postType` | done | 2026-10-19: "Themes as WordPress reads them, user meta through its API, the comment blocks through the comment tags" (probe `block-instances`) |
 | 17714 | The template part's four rows (10-19) | a synced pattern's and a post's content get no first-child or last-child hooked blocks | done | 2026-10-19: "Block hooks over a post's content" (probe `post-block-hooks`) |
-| 17714 | The template part's four rows (10-19) | the session store writes `session_tokens` without the meta API (no `added_user_meta` / `updated_user_meta`) | open | `Auth\Sessions` writes the serialized blob itself so stored data is never executed; the actions want the value unserialized, so the store needs a safe way to hand it over |
-| 17714 | The template part's four rows (10-19) | `WP_Theme::get` returns a header as written, where the reference's sanitizes it as read | open | `Theme\ThemeHeaders` sanitizes what `display` shows; `get` would do the same once a theme object, read by everything that reads a theme |
+| 17714 | The template part's four rows (10-19) | the session store writes `session_tokens` without the meta API (no `added_user_meta` / `updated_user_meta`) | done | 2026-10-19: as above (probe `user-meta-writes`); the store still reads its blob by shape before the runtime is up |
+| 17714 | The template part's four rows (10-19) | `WP_Theme::get` returns a header as written, where the reference's sanitizes it as read | done | 2026-10-19: as above (probe `theme-headers`) |
 | 17714 | The template part's four rows (10-19) | text domains load when `load_*_textdomain` is called, not at the first translation; a domain nobody named is looked for | open | `Runtime\Translations::fromFolder` loads a file that is there at once; the reference notes the folder and waits (probe `theme-headers` holds the load a header triggers) |
+| 17811 | Themes as WordPress reads them (10-19) | the themes root's scan kept in the `theme_roots` site transient | accepted | the engine reads the folder each time it lists themes, a few directory reads; what is listed agrees, so nothing a visitor or plugin sees differs |
 | 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | open | the reference's fallback lookup makes one from the classic menu or a page list unless `wp_navigation_should_create_fallback` says not; the engine renders the same items without writing (`Navigation::classicItems`) |

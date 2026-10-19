@@ -171,6 +171,16 @@ final class Handoff
         return self::answer('postThumbnail', ...$args);
     }
 
+    /**
+     * A comment block's template tag, as its render callback asks it: the
+     * comment's author, author URL, text through comment_text, date, link,
+     * reply link, classes, or whether the post takes comments.
+     */
+    public static function commentTag(string $tag, mixed ...$args): mixed
+    {
+        return self::answer('commentTag', $tag, ...$args);
+    }
+
     /** A user's or address's avatar image, or false (get_avatar). */
     public static function avatar(mixed ...$args): mixed
     {

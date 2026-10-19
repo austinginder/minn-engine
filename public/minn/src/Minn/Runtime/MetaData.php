@@ -135,17 +135,17 @@ final class MetaData
         if ($check !== null) {
             return (bool) $check;
         }
-        $rows = self::store()->matching((string) $type, $objectId, (string) $key);
-        if ($rows === []) {
-            return self::add($type, $objectId, $rawKey, $passed);
-        }
-        // With no previous value named, the stored one is read as get_metadata_raw reads it (its hooks heard): one
-        // value, the same as the new, changes nothing.
+        // With no previous value named, the stored one is read as get_metadata_raw reads it (its hooks heard), before
+        // the rows are looked for: one value, the same as the new, changes nothing (probe user-meta-writes).
         if ($previous === '' || $previous === null || $previous === false) {
             $old = self::raw($type, $objectId, $key);
             if (is_array($old) && count($old) === 1 && $old[0] === $value) {
                 return false;
             }
+        }
+        $rows = self::store()->matching((string) $type, $objectId, (string) $key);
+        if ($rows === []) {
+            return self::add($type, $objectId, $rawKey, $passed);
         }
         $stored = Options::toStorage($value);
         $ids = Meta::idsToUpdate($rows, $stored, $previous === '' ? null : Options::toStorage($previous));

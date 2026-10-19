@@ -1,0 +1,186 @@
+[
+    [
+        "a cookie with a new session",
+        {
+            "hooks": [
+                "update_user_metadata_cache",
+                "session_token_manager",
+                "attach_session_information",
+                "get_user_metadata",
+                "sanitize_user_meta_session_tokens",
+                "update_user_metadata",
+                "get_user_metadata",
+                "sanitize_user_meta_session_tokens",
+                "add_user_metadata",
+                "add_user_meta",
+                "added_user_meta",
+                "auth_cookie"
+            ],
+            "value": "a cookie"
+        }
+    ],
+    [
+        "another",
+        {
+            "hooks": [
+                "update_user_metadata_cache",
+                "session_token_manager",
+                "attach_session_information",
+                "get_user_metadata",
+                "sanitize_user_meta_session_tokens",
+                "update_user_metadata",
+                "get_user_metadata",
+                "update_user_meta",
+                "updated_user_meta",
+                "auth_cookie"
+            ],
+            "value": "a cookie"
+        }
+    ],
+    [
+        "count",
+        {
+            "hooks": [
+                "session_token_manager",
+                "get_user_metadata",
+                "update_user_metadata_cache"
+            ],
+            "value": 2
+        }
+    ],
+    [
+        "destroy one",
+        {
+            "hooks": [
+                "session_token_manager",
+                "get_user_metadata",
+                "sanitize_user_meta_session_tokens",
+                "update_user_metadata",
+                "get_user_metadata",
+                "update_user_meta",
+                "updated_user_meta",
+                "session_token_manager",
+                "get_user_metadata",
+                "update_user_metadata_cache"
+            ],
+            "value": 1
+        }
+    ],
+    [
+        "destroy all",
+        {
+            "hooks": [
+                "session_token_manager",
+                "delete_user_metadata",
+                "delete_user_meta",
+                "deleted_user_meta",
+                "get_user_metadata",
+                "update_user_metadata_cache"
+            ],
+            "value": ""
+        }
+    ],
+    [
+        "a cookie after all were destroyed",
+        {
+            "hooks": [
+                "session_token_manager",
+                "attach_session_information",
+                "get_user_metadata",
+                "sanitize_user_meta_session_tokens",
+                "update_user_metadata",
+                "get_user_metadata",
+                "sanitize_user_meta_session_tokens",
+                "add_user_metadata",
+                "add_user_meta",
+                "added_user_meta",
+                "auth_cookie"
+            ],
+            "value": "a cookie"
+        }
+    ],
+    [
+        "an application password",
+        {
+            "hooks": [
+                "get_user_metadata (app)",
+                "update_user_metadata_cache",
+                "update_user_metadata (app)",
+                "get_user_metadata (app)",
+                "add_user_metadata (app)",
+                "add_user_meta (app)",
+                "added_user_meta (app)"
+            ],
+            "value": true
+        }
+    ],
+    [
+        "its use recorded",
+        {
+            "hooks": [
+                "get_user_metadata (app)",
+                "update_user_metadata_cache",
+                "update_user_metadata (app)",
+                "get_user_metadata (app)",
+                "update_user_meta (app)",
+                "updated_user_meta (app)"
+            ],
+            "value": true
+        }
+    ],
+    [
+        "it renamed",
+        {
+            "hooks": [
+                "get_user_metadata (app)",
+                "update_user_metadata_cache",
+                "update_user_metadata (app)",
+                "get_user_metadata (app)",
+                "update_user_meta (app)",
+                "updated_user_meta (app)"
+            ],
+            "value": true
+        }
+    ],
+    [
+        "it deleted",
+        {
+            "hooks": [
+                "get_user_metadata (app)",
+                "update_user_metadata_cache",
+                "update_user_metadata (app)",
+                "get_user_metadata (app)",
+                "update_user_meta (app)",
+                "updated_user_meta (app)"
+            ],
+            "value": true
+        }
+    ],
+    [
+        "every one deleted",
+        {
+            "hooks": [
+                "get_user_metadata (app)",
+                "update_user_metadata_cache",
+                "update_user_metadata (app)",
+                "update_user_meta (app)",
+                "updated_user_meta (app)"
+            ],
+            "value": [
+                2,
+                "a:0:{}"
+            ]
+        }
+    ],
+    [
+        "stored",
+        [
+            [
+                "expiration",
+                "ip",
+                "ua",
+                "login"
+            ]
+        ]
+    ]
+]

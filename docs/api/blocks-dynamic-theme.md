@@ -4,10 +4,10 @@ the template blocks a block theme composes with
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Comments`](#comments) | final readonly class | 296 | comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. |
+| [`Comments`](#comments) | final readonly class | 305 | comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. |
 | [`Navigation`](#navigation) | final readonly class | 561 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 281 | The post-* blocks: they render the context's current post. |
-| [`QueryBlocks`](#queryblocks) | final class | 349 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
+| [`QueryBlocks`](#queryblocks) | final class | 333 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 177 | template-part, pattern, site-title, site-tagline, site-logo. |
 | [`TermBlocks`](#termblocks) | final readonly class | 71 | term-name, term-count and term-description: the term a block's context |
 
@@ -16,6 +16,8 @@ the template blocks a block theme composes with
 `final readonly class Minn\Blocks\Dynamic\Theme\Comments` · `public/minn/src/Minn/Blocks/Dynamic/Theme/Comments.php`
 
 comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments.
+
+- const `DEPTH` = `'comment_depth'` — The global the comment loop's depth is kept in, as get_comment_class and the reply link read it.
 
 Used by: `Minn\Blocks\Renderer`
 
@@ -37,7 +39,7 @@ drops it (RowCache).
 
 - `@param array<string, mixed> $vars`
 
-Internals: `comments()` (private, line 59), `legacy()` (private, line 85), `title()` (private, line 97), `template()` (private, line 137), `records()` (private, line 161), `count()` (private, line 174), `list()` (private, line 180), `avatar()` (private, line 211), `authorAvatar()` (private, line 223), `date()` (private, line 239), `commentPost()` (private, line 255), `authorName()` (private, line 261), `content()` (private, line 275), `replyLink()` (private, line 286), `form()` (private, line 299), `commentForm()` (private, line 314)
+Internals: `comments()` (private, line 61), `legacy()` (private, line 89), `title()` (private, line 101), `template()` (private, line 141), `records()` (private, line 167), `count()` (private, line 180), `list()` (private, line 186), `avatar()` (private, line 216), `authorAvatar()` (private, line 228), `date()` (private, line 244), `commentPost()` (private, line 260), `authorName()` (private, line 266), `content()` (private, line 281), `replyLink()` (private, line 293), `form()` (private, line 307), `commentForm()` (private, line 322)
 
 
 ## Navigation
@@ -116,7 +118,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 58), `queried()` (private, line 80), `page()` (private, line 89), `loop()` (private, line 105), `current()` (private, line 126), `total()` (private, line 139), `postTemplate()` (private, line 163), `item()` (private, line 212), `queryTitle()` (private, line 222), `noResults()` (private, line 242), `pagination()` (private, line 263), `paginationBase()` (private, line 335), `numbers()` (private, line 355), `archiveTitle()` (private, line 375)
+Internals: `query()` (private, line 57), `queried()` (private, line 79), `page()` (private, line 88), `loop()` (private, line 104), `current()` (private, line 125), `total()` (private, line 138), `postTemplate()` (private, line 162), `queryTitle()` (private, line 205), `noResults()` (private, line 225), `pagination()` (private, line 246), `paginationBase()` (private, line 318), `numbers()` (private, line 338), `archiveTitle()` (private, line 358)
 
 
 ## Structure

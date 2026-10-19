@@ -26,11 +26,11 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
         $this->stylesheet = $folder->slug;
         $this->headersData = $folder->headers;
         $this->template = $folder->template;
-        if (!$folder->exists) {
-            $this->errors = new WP_Error('theme_not_found', 'The theme directory "' . $this->stylesheet . '" does not exist.');
-            return;
+        $problem = $folder->problem();
+        if ($problem !== null) {
+            $this->errors = new WP_Error($problem[0], $problem[1]);
         }
-        if ($this->template !== $this->stylesheet) {
+        if ($folder->exists && $this->template !== $this->stylesheet) {
             $this->parent = new WP_Theme($this->template, $this->theme_root, $this);
         }
     }
@@ -67,7 +67,7 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
 
     public function errors()
     {
-        return $this->errors ?? false;
+        return is_wp_error($this->errors) ? $this->errors : false;
     }
 
     /** The folders the theme keeps block templates and parts in: the old block-templates and block-template-parts when it has either, else templates and parts. */
@@ -80,9 +80,10 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
         return ['wp_template' => 'templates', 'wp_template_part' => 'parts'];
     }
 
+    /** Whether the theme's folder is there; a theme with any other problem still exists (Minn\Theme\Folder::problem). */
     public function exists()
     {
-        return $this->errors === null;
+        return $this->errors === null || $this->errors->get_error_code() !== 'theme_not_found';
     }
 
     public function parent()
@@ -90,20 +91,13 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
         return $this->parent ?? false;
     }
 
-    /** A header as written; Tags as a list, and Status "publish" when an existing theme leaves it out. A theme that is not there has only its Name (its folder). */
+    /** A header as read, sanitized (Minn\Theme\ThemeHeaders::read). A theme that is not there has only its Name (its folder). */
     public function get($header)
     {
         if (!$this->exists() && $header !== 'Name') {
             return false;
         }
-        $value = $this->headersData[$header] ?? false;
-        if ($header === 'Tags' && is_string($value)) {
-            return $value === '' ? [] : array_map('trim', explode(',', $value));
-        }
-        if ($header === 'Status' && $value === '' && $this->exists()) {
-            return 'publish';
-        }
-        return $value;
+        return Minn\Theme\ThemeHeaders::read($this, (string) $header, $this->headersData[$header] ?? false);
     }
 
     /** A header as shown (Minn\Theme\ThemeHeaders); feature tags read as their names in the admin. */

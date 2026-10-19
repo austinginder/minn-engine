@@ -3,23 +3,26 @@
  * The WP_Block each block renders as, and the hooks around it (probe
  * block-instances): a document's top block asked pre_render_block,
  * render_block_data and render_block_context with no parent, then made; an
- * inner one made from what its parent gives its inner blocks (its type asked
- * get_block_type_uses_context, twice when it uses any), then asked the three
- * with its parent WP_Block, the context filter handed the context its type
- * uses; what a changed block or context becomes (eight cases); render_block's
- * instance and its context; a short-circuit before priority 10 dropped
- * (_wp_add_block_level_preset_styles answers null); a pattern's, a template
- * part's and a post's content beginning documents of their own; a synced
- * pattern's blocks inside its block; a post template's items inside a block
- * of no type (core/null) carrying the post; a navigation's own items made
- * without the filters before them, a submenu's with, and one naming no menu
- * rendering its fallback as block_core_navigation_render_fallback leaves it; a social link list's
- * links as blocks; a plugin block's provided context reaching a plugin block
- * inside a core one; the global post as it was after a query loop; and which
- * inner documents a parser block_parser_class swaps in reads. Uses counts
- * past the twice rule, block_parser_class counts and block hooks are not
- * compared (see contracts/runtime.md). Same protocol as api-probe.php; the
- * posts, part and registrations the probe makes are removed at the end.
+ * inner one made from what its parent gives its inner blocks (its type
+ * asked get_block_type_uses_context, twice when it uses any), then asked
+ * the three with its parent WP_Block, the context filter handed the context
+ * its type uses; what a changed block or context becomes (eight cases);
+ * render_block's instance and its context; a short-circuit before priority
+ * 10 dropped (_wp_add_block_level_preset_styles answers null); a pattern's,
+ * a template part's and a post's content beginning documents of their own;
+ * a synced pattern's blocks inside its block; a post template's items
+ * inside a block of no type (core/null) carrying the post; a navigation's
+ * own items made without the filters before them, a submenu's with, and one
+ * naming no menu rendering its fallback as
+ * block_core_navigation_render_fallback leaves it; a social link list's
+ * links as blocks; a comments block's comments each inside a comment
+ * template of their own; a plugin block's provided context reaching a
+ * plugin block inside a core one; the global post as it was after a query
+ * loop; and which inner documents a parser block_parser_class swaps in
+ * reads. Uses counts past the twice rule, block_parser_class counts and
+ * block hooks are not compared (see contracts/runtime.md). Same protocol as
+ * api-probe.php; the posts, part and registrations the probe makes are
+ * removed at the end.
  */
 
 $log = [];
@@ -184,8 +187,9 @@ wp_cache_set_last_changed('posts');
 $say('a template part', $traced(static fn () => do_blocks('<!-- wp:group --><div class="wp-block-group"><!-- wp:template-part {"slug":"zz-instances-part"} /--></div><!-- /wp:group -->')));
 
 // A post template's items, inside a block of no type that carries the post; the global post after.
-$post = $make(['post_type' => 'post', 'post_status' => 'publish', 'post_title' => 'Zz instances', 'post_content' => '<!-- wp:paragraph --><p>content</p><!-- /wp:paragraph -->']);
-$loop = static fn (int $id, string $inner) => '<!-- wp:query {"queryId":' . (900 + $id % 50) . ',"query":{"perPage":1,"postType":"post","include":[' . $id . '],"inherit":false}} --><div class="wp-block-query"><!-- wp:post-template -->' . $inner . '<!-- /wp:post-template --></div><!-- /wp:query -->';
+// A page, which schedules no pings as a published post does (the hook battery's capture would hang on the cron's state).
+$post = $make(['post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'Zz instances', 'post_content' => '<!-- wp:paragraph --><p>content</p><!-- /wp:paragraph -->']);
+$loop = static fn (int $id, string $inner) => '<!-- wp:query {"queryId":' . (900 + $id % 50) . ',"query":{"perPage":1,"postType":"page","include":[' . $id . '],"inherit":false}} --><div class="wp-block-query"><!-- wp:post-template -->' . $inner . '<!-- /wp:post-template --></div><!-- /wp:query -->';
 wp_cache_set_last_changed('posts');
 $say('a query loop', $traced(static fn () => do_blocks($loop($post, '<!-- wp:post-title /-->'))));
 $say('the global post after a query loop', get_post() === null);
@@ -228,6 +232,26 @@ $emptied = $items(do_blocks('<!-- wp:navigation /-->'));
 remove_filter('block_core_navigation_render_fallback', $none);
 $say('a navigation that names no menu', ['asked with' => $asked, 'items' => $found, 'items with an empty fallback' => $emptied]);
 $say('social links', $traced(static fn () => do_blocks('<!-- wp:social-links {"openInNewTab":true} --><ul class="wp-block-social-links"><!-- wp:social-link {"url":"https://example.com","service":"wordpress"} /--></ul><!-- /wp:social-links -->')));
+
+// A comments block with comments: each rendered inside a comment template of its own, the comment's id all the
+// context it has; the comments block through render_block twice.
+$commented = $make(['post_type' => 'post', 'post_status' => 'private', 'post_title' => 'Zz instances comments', 'post_content' => 'x', 'comment_status' => 'open']);
+foreach (['one', 'two'] as $i => $text) {
+    wp_insert_comment(['comment_post_ID' => $commented, 'comment_content' => "zz {$text}", 'comment_author' => 'Zz', 'comment_approved' => 1, 'comment_date' => '2026-01-0' . ($i + 1) . ' 10:00:00']);
+}
+$comments = '<!-- wp:comments --><div class="wp-block-comments"><!-- wp:comment-template --><!-- wp:comment-author-name /--><!-- wp:comment-content /--><!-- /wp:comment-template --></div><!-- /wp:comments -->';
+$GLOBALS['post'] = get_post($commented);
+setup_postdata($GLOBALS['post']);
+$traced_comments = $traced(static fn () => do_blocks($comments));
+$traced_comments['html'] = preg_replace('/comment-\d+/', 'comment-{id}', (string) $traced_comments['html']);
+$say('comments with comments', $traced_comments);
+$wrap = static fn ($html) => '<div class="zz-wrap">' . $html . '</div>';
+add_filter('render_block_core/comments', $wrap);
+add_filter('render_block_core/comment-template', $wrap);
+$say('comments with comments, each block wrapped', preg_replace('/comment-\d+/', 'comment-{id}', do_blocks($comments)));
+remove_filter('render_block_core/comments', $wrap);
+remove_filter('render_block_core/comment-template', $wrap);
+wp_reset_postdata();
 
 // The inner documents a swapped-in parser reads.
 if (!class_exists('Zz_Instances_Parser')) {

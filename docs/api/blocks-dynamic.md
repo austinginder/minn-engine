@@ -37,7 +37,7 @@ The block's HTML.
 
 Site-local dates the way the dynamic blocks print them.
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\PostBlocks`
 
 ### static `iso(Minn\Content\Site $site, string $local): string`
 

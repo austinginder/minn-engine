@@ -105,10 +105,17 @@ final class Themes
      */
     public static function all(mixed $args = []): array
     {
+        // Every folder of the themes root, in the order of its path with a slash after it, as the reference lists them;
+        // by default those that are whole themes, with "errors" true those that are not, with null all (probe theme-headers).
+        $errors = array_key_exists('errors', (array) $args) ? ((array) $args)['errors'] : false;
+        $slugs = array_map('basename', glob(self::root() . '/*', GLOB_ONLYDIR) ?: []);
+        usort($slugs, static fn (string $a, string $b): int => strcmp($a . '/', $b . '/'));
         $out = [];
-        foreach (glob(self::root() . '/*/style.css') ?: [] as $file) {
-            $slug = basename(dirname($file));
-            $out[$slug] = Handoff::newTheme($slug, self::root());
+        foreach ($slugs as $slug) {
+            $theme = Handoff::newTheme($slug, self::root());
+            if ($errors === null || (bool) $theme->errors() === (bool) $errors) {
+                $out[$slug] = $theme;
+            }
         }
         return $out;
     }

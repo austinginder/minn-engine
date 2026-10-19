@@ -4,7 +4,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 153 | Application passwords as the reference stores them: a serialized list in |
+| [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 154 | Application passwords as the reference stores them: a serialized list in |
 | [`AuthCookies`](#authcookies) | final readonly class | 107 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 26 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
@@ -21,7 +21,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`RegisteredCaps`](#registeredcaps) | final class | 24 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 83 | The site's own secret material, read from the constants wp-config.php |
-| [`Sessions`](#sessions) | final readonly class | 173 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
+| [`Sessions`](#sessions) | final readonly class | 178 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
 | [`SignIn`](#signin) | final readonly class | 65 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
 
@@ -92,7 +92,7 @@ Twenty-four letters and digits.
 
 The plaintext as shown once: groups of four, space separated.
 
-Internals: `change()` (private, line 144), `save()` (private, line 159), `uuid()` (private, line 164)
+Internals: `change()` (private, line 145), `save()` (private, line 160), `uuid()` (private, line 165)
 
 
 ## AuthCookies
@@ -844,7 +844,7 @@ plugin attached to them.
 
 The map in PHP's serialized form: stored entries as they were read, new ones key by key in the order given.
 
-Internals: `parseEntry()` (private, line 133), `prune()` (private, line 151), `write()` (private, line 157), `entry()` (private, line 173), `string()` (private, line 182)
+Internals: `parseEntry()` (private, line 133), `prune()` (private, line 151), `write()` (private, line 158), `entry()` (private, line 178), `string()` (private, line 187)
 
 
 ## SignIn

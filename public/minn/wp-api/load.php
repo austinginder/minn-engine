@@ -795,6 +795,18 @@ Minn\Runtime\Handoff::bind([
     'abilityCategories' => static fn () => WP_Ability_Categories_Registry::get_instance(),
 ]);
 
+// A comment block's template tags, as the engine's comment blocks ask them through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind(['commentTag' => static fn (string $tag, ...$args) => match ($tag) {
+    'author' => get_comment_author(...$args),
+    'authorUrl' => get_comment_author_url(...$args),
+    'text' => apply_filters('comment_text', get_comment_text(...$args), get_comment($args[0] ?? null), $args[1] ?? []),
+    'date' => get_comment_date(...$args),
+    'link' => get_comment_link(...$args),
+    'replyLink' => get_comment_reply_link(...$args),
+    'class' => get_comment_class(...$args),
+    'open' => comments_open(...$args),
+}]);
+
 // The site's roles object, handed over through Minn\Runtime\Handoff.
 Minn\Runtime\Handoff::bind(['roles' => static fn () => wp_roles()]);
 

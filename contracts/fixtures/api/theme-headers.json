@@ -866,5 +866,246 @@
             true,
             false
         ]
+    ],
+    [
+        "get Name",
+        {
+            "read": "Zz <em>Get</em> x n <code>c</code> <abbr title=\"t\">ab</abbr> <strong>s</strong>",
+            "heard": [
+                "pre_kses"
+            ],
+            "heard again": []
+        }
+    ],
+    [
+        "get ThemeURI",
+        {
+            "read": "",
+            "heard": [],
+            "heard again": []
+        }
+    ],
+    [
+        "get Description",
+        {
+            "read": "A \"d\" bold  <a href=\"https://e.com\">l</a>",
+            "heard": [
+                "pre_kses"
+            ],
+            "heard again": []
+        }
+    ],
+    [
+        "get Author",
+        {
+            "read": "Zz <strong>A</strong> i",
+            "heard": [
+                "pre_kses"
+            ],
+            "heard again": []
+        }
+    ],
+    [
+        "get AuthorURI",
+        {
+            "read": "https://example.com/a%20b?x=1",
+            "heard": [
+                "clean_url"
+            ],
+            "heard again": []
+        }
+    ],
+    [
+        "get Version",
+        {
+            "read": "1.0 v &amp; e",
+            "heard": [],
+            "heard again": []
+        }
+    ],
+    [
+        "get Template",
+        {
+            "read": "twentytwentyfive<b>",
+            "heard": [],
+            "heard again": []
+        }
+    ],
+    [
+        "get Status",
+        {
+            "read": "<em>pub</em>lish <strong>s</strong>",
+            "heard": [
+                "pre_kses"
+            ],
+            "heard again": []
+        }
+    ],
+    [
+        "get Tags",
+        {
+            "read": [
+                "one",
+                "two",
+                "three"
+            ],
+            "heard": [],
+            "heard again": []
+        }
+    ],
+    [
+        "get TextDomain",
+        {
+            "read": "zz-<b>tg",
+            "heard": [],
+            "heard again": []
+        }
+    ],
+    [
+        "get DomainPath",
+        {
+            "read": "/lang<b>",
+            "heard": [],
+            "heard again": []
+        }
+    ],
+    [
+        "get RequiresWP",
+        {
+            "read": "6.0",
+            "heard": [],
+            "heard again": []
+        }
+    ],
+    [
+        "get RequiresPHP",
+        {
+            "read": "7.4",
+            "heard": [],
+            "heard again": []
+        }
+    ],
+    [
+        "get UpdateURI",
+        {
+            "read": "javascript:void(0)",
+            "heard": [],
+            "heard again": []
+        }
+    ],
+    [
+        "the name as a property, by offset, shown plain",
+        [
+            "Zz <em>Get</em> x n <code>c</code> <abbr title=\"t\">ab</abbr> <strong>s</strong>",
+            "Zz <em>Get</em> x n <code>c</code> <abbr title=\"t\">ab</abbr> <strong>s</strong>",
+            "Zz <em>Get</em> x n <code>c</code> <abbr title=\"t\">ab</abbr> <strong>s</strong>"
+        ]
+    ],
+    [
+        "a folder: zz-broken-empty",
+        {
+            "exists": true,
+            "error": [
+                "theme_no_stylesheet",
+                "Stylesheet is missing."
+            ],
+            "name": "zz-broken-empty",
+            "parent": false
+        }
+    ],
+    [
+        "a folder: zz-broken-no-index",
+        {
+            "exists": true,
+            "error": [
+                "theme_no_index",
+                "Template is missing. Standalone themes need to have a <code>templates/index.html</code> or <code>index.php</code> template file. <a href=\"https://developer.wordpress.org/themes/advanced-topics/child-themes/\">Child themes</a> need to have a <code>Template</code> header in the <code>style.css</code> stylesheet."
+            ],
+            "name": "Zz No Index",
+            "parent": false
+        }
+    ],
+    [
+        "a folder: zz-broken-classic",
+        {
+            "exists": true,
+            "error": false,
+            "name": "Zz Classic",
+            "parent": false
+        }
+    ],
+    [
+        "a folder: zz-broken-block",
+        {
+            "exists": true,
+            "error": false,
+            "name": "Zz Block",
+            "parent": false
+        }
+    ],
+    [
+        "a folder: zz-broken-orphan",
+        {
+            "exists": true,
+            "error": [
+                "theme_no_parent",
+                "The parent theme is missing. Please install the \"zz-no-such-parent\" parent theme."
+            ],
+            "name": "Zz Orphan",
+            "parent": "zz-no-such-parent"
+        }
+    ],
+    [
+        "a folder: zz-broken-child",
+        {
+            "exists": true,
+            "error": false,
+            "name": "Zz Child",
+            "parent": "twentytwentyfive"
+        }
+    ],
+    [
+        "a folder: zz-broken-self",
+        {
+            "exists": true,
+            "error": [
+                "theme_child_invalid",
+                "The theme defines itself as its parent theme. Please check the <code>Template</code> header."
+            ],
+            "name": "Zz Self",
+            "parent": false
+        }
+    ],
+    [
+        "a folder: zz-broken-nameless",
+        {
+            "exists": true,
+            "error": false,
+            "name": "",
+            "parent": false
+        }
+    ],
+    [
+        "a folder: zz-broken",
+        {
+            "exists": true,
+            "error": [
+                "theme_no_stylesheet",
+                "Stylesheet is missing."
+            ],
+            "name": "zz-broken",
+            "parent": false
+        }
+    ],
+    [
+        "no folder",
+        {
+            "exists": false,
+            "error": [
+                "theme_not_found",
+                "The theme directory \"zz-no-such-theme\" does not exist."
+            ],
+            "name": "zz-no-such-theme"
+        }
     ]
 ]

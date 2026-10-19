@@ -154,8 +154,13 @@ final readonly class Sessions
         return array_filter($sessions, static fn (array $entry) => ($entry['expiration'] ?? 0) >= $now);
     }
 
+    /** The store written back; with no session left it goes, as the reference's does. */
     private function write(int $userId, array $sessions): void
     {
+        if ($sessions === []) {
+            $this->users->deleteMeta($userId, 'session_tokens');
+            return;
+        }
         $this->users->setMeta($userId, 'session_tokens', self::serialize($sessions));
     }
 

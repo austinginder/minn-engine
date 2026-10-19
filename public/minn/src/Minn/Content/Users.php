@@ -8,7 +8,10 @@ use Minn\Auth\Password;
 use Minn\Auth\Roles;
 use Minn\Db;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\MetaData;
+use Minn\Runtime\Options;
 use Minn\Support\Kses;
+use Minn\Support\Slashes;
 
 final readonly class Users
 {
@@ -250,9 +253,13 @@ final readonly class Users
         ));
     }
 
-    /** Removes one meta key from a user. */
+    /** Removes one meta key from a user: through the meta API once the runtime is up (delete_user_meta's hooks), else directly. */
     public function deleteMeta(int $userId, string $key): void
     {
+        if (Handoff::bound('cacheDelete')) {
+            MetaData::delete('user', $userId, $key);
+            return;
+        }
         $this->db->execute("DELETE FROM {$this->db->table('usermeta')} WHERE user_id = ? AND meta_key = ?", [$userId, $key]);
     }
 
@@ -280,9 +287,17 @@ final readonly class Users
         ));
     }
 
-    /** One usermeta value, raw. Serialized blobs come back as stored. */
+    /**
+     * One usermeta value, raw: serialized blobs come back serialized. Once the
+     * runtime is up it is read as get_user_meta reads it, through its filter
+     * and the cache (probe user-meta-writes); before it, from the table.
+     */
     public function meta(int $userId, string $key): ?string
     {
+        if (Handoff::bound('cacheGet')) {
+            $values = MetaData::raw('user', $userId, $key);
+            return is_array($values) && $values !== [] ? Options::toStorage($values[0]) : null;
+        }
         $value = $this->db->value(
             "SELECT meta_value FROM {$this->db->table('usermeta')} WHERE user_id = ? AND meta_key = ? LIMIT 1",
             [$userId, $key],
@@ -297,13 +312,15 @@ final readonly class Users
      */
     public function setMeta(int $userId, string $key, string $value): void
     {
+        // Once the runtime is up the value is written as update_user_meta writes it, its filters and actions heard
+        // and the cache let go (probe user-meta-writes): the session store, application passwords and Minn Admin's
+        // own settings write here. Before it, directly.
+        if (Handoff::bound('cacheDelete')) {
+            MetaData::update('user', $userId, $key, Slashes::add(Options::fromStorage($value)));
+            return;
+        }
         $table = $this->db->table('usermeta');
         $this->db->execute("DELETE FROM {$table} WHERE user_id = ? AND meta_key = ?", [$userId, $key]);
         $this->db->execute("INSERT INTO {$table} (user_id, meta_key, meta_value) VALUES (?, ?, ?)", [$userId, $key, $value]);
-        // What a reader cached of the user's meta goes with it, as a meta write lets it go: the session store
-        // writes here, and get_user_meta must see the session it made or destroyed (probe auth-cookies).
-        if (Handoff::bound('cacheDelete')) {
-            Handoff::cacheDelete($userId, 'user_meta');
-        }
     }
 }

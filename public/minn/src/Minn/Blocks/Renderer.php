@@ -27,6 +27,7 @@ use Minn\Front\Permalinks;
 use Minn\Media\Uploads;
 use Minn\Objects\RenderedBlock;
 use Minn\Runtime\BlockFilters;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\AssetQueue;
 use Minn\Runtime\Runtime;
 use Minn\Html;
@@ -341,6 +342,25 @@ final class Renderer
     }
 
     /**
+     * One item of a loop rendered as the reference renders it (a post
+     * template's post, a comment template's comment): inside a WP_Block of
+     * its own, made from the parsed block given with the context given as
+     * all it has, which goes through render_block itself (probe
+     * block-instances).
+     *
+     * @param array<string, mixed> $parsed
+     * @param array<string, mixed> $context
+     */
+    public function renderItem(array $parsed, array $context, \Closure $render): string
+    {
+        if (!BlockFilters::active() || !Handoff::bound('newBlock')) {
+            return (string) $render();
+        }
+        $instance = Handoff::newBlock($parsed, $context);
+        return BlockFilters::rendered($this->under($instance, $render), $parsed, $instance);
+    }
+
+    /**
      * A block as the reference renders an item of a block list its parent
      * walks itself (a navigation's own items): made from what the parent
      * gives its inner blocks, without pre_render_block, render_block_data
@@ -381,7 +401,7 @@ final class Renderer
         $this->handed = null;
         $instance = $unfiltered ? $this->handedInstance : null;
         $this->handedInstance = null;
-        $this->ownInstance = null;
+        $this->ownInstance = $instance;
         // Every block, freeform text too, is asked whether its directives are processed (probe hook-inputs-2).
         $this->state->processesDirectives((bool) Runtime::hooks()->filter('interactivity_process_directives', [true]));
         if ($block->name === null) {

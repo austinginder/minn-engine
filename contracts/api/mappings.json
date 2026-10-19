@@ -2,14 +2,14 @@
     "generated": "2026-10-19",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 681,
+        "minn": 682,
         "composes": 2128,
-        "leaf": 1007,
+        "leaf": 1006,
         "noop": 3169,
         "placeholder": 0,
         "deadend": 1767,
         "functions": 8674,
-        "minnMethods": 1422,
+        "minnMethods": 1424,
         "leafLinesOver15": 11
     },
     "functions": {
@@ -28945,6 +28945,7 @@
             "lines": 15,
             "kind": "minn",
             "minn": [
+                "Minn\\Theme\\Folder::problem",
                 "Minn\\Theme\\Folder::read"
             ],
             "composes": [
@@ -29024,7 +29025,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "is_wp_error"
+            ]
         },
         "WP_Theme::exists": {
             "file": "classes/WP_Theme.php",
@@ -29035,9 +29038,11 @@
         },
         "WP_Theme::get": {
             "file": "classes/WP_Theme.php",
-            "lines": 11,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\ThemeHeaders::read"
+            ],
             "composes": []
         },
         "WP_Theme::get_allowed": {
@@ -67669,16 +67674,16 @@
         },
         "wp_generate_auth_cookie": {
             "file": "pluggable.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\AuthCookies::mint",
-                "Minn\\Auth\\Sessions::__construct",
                 "Minn\\Content\\Users::__construct",
                 "Minn\\Runtime\\Runtime::current"
             ],
             "composes": [
-                "apply_filters"
+                "apply_filters",
+                "get_userdata"
             ]
         },
         "wp_generate_block_templates_export_file": {
