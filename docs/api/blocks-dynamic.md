@@ -7,7 +7,7 @@ dynamic core blocks that render from data
 | [`Archives`](#archives) | final readonly class | 29 | core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts). |
 | [`Dates`](#dates) | final class | 15 | Site-local dates the way the dynamic blocks print them. |
 | [`LatestComments`](#latestcomments) | final readonly class | 71 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
-| [`LatestPosts`](#latestposts) | final readonly class | 68 | core/latest-posts: the newest published posts as a list, optionally dated. |
+| [`LatestPosts`](#latestposts) | final readonly class | 143 | core/latest-posts: the newest published posts as a list or a grid, each with |
 | [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
 | [`SocialLinks`](#sociallinks) | final class | 79 | core/social-links and core/social-link. The list keeps its stored |
 | [`SyncedPattern`](#syncedpattern) | final readonly class | 26 | core/block: a synced pattern, rendered from the wp_block post it references. |
@@ -72,12 +72,14 @@ Internals: `excerpt()` (private, line 81)
 
 `final readonly class Minn\Blocks\Dynamic\LatestPosts` · `public/minn/src/Minn/Blocks/Dynamic/LatestPosts.php`
 
-core/latest-posts: the newest published posts as a list, optionally dated.
+core/latest-posts: the newest published posts as a list or a grid, each with
+its featured image, title, author, date and excerpt or whole content as the
+block asks (probe latest-posts).
 
 Used by: `Minn\Blocks\Renderer`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Content\Users $users)
 ```
 
 
@@ -89,7 +91,7 @@ as the reference walks them: the_post for each (loop_start and loop_end
 around them, loop_no_results when there are none), and the main
 query's post set up again after, found or not.
 
-Internals: `args()` (private, line 65)
+Internals: `featuredImage()` (private, line 92), `words()` (private, line 117), `args()` (private, line 150)
 
 
 ## Search

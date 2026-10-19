@@ -1581,7 +1581,12 @@ function get_post_class($css_class = '', $post = null)
 }
 
 // A query loop's items take their classes from here, through Minn\Runtime\Handoff.
-Minn\Runtime\Handoff::bind(['postClass' => static fn (...$args) => get_post_class(...$args)]);
+Minn\Runtime\Handoff::bind([
+    'postClass' => static fn (...$args) => get_post_class(...$args),
+    // The latest-posts block's excerpts and featured images.
+    'excerpt' => static fn (...$args) => get_the_excerpt(...$args),
+    'postThumbnail' => static fn (...$args) => get_the_post_thumbnail(...$args),
+]);
 
 /** The body's class list: the tokens the classic renderer stood for this page, the caller's extras, then the body_class filter. */
 /**

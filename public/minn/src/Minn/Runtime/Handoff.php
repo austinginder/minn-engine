@@ -159,6 +159,18 @@ final class Handoff
         return self::answer('postClass', ...$args);
     }
 
+    /** A post's excerpt, through get_the_excerpt (and the excerpt_length and excerpt_more it asks). */
+    public static function excerpt(mixed ...$args): mixed
+    {
+        return self::answer('excerpt', ...$args);
+    }
+
+    /** A post's featured image as an img tag, or '' (get_the_post_thumbnail). */
+    public static function postThumbnail(mixed ...$args): mixed
+    {
+        return self::answer('postThumbnail', ...$args);
+    }
+
     /** A user's or address's avatar image, or false (get_avatar). */
     public static function avatar(mixed ...$args): mixed
     {

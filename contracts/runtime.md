@@ -17373,6 +17373,19 @@ API, and with an application-password connection the CLI's stream fallback sends
 WordPress as on Minn (a token connection works). Kinsta and CaptainCore were not run here: minn.run already runs the
 engine on Kinsta, and CaptainCore needs a real environment on its manager.
 
+## The latest-posts block, whole (2026-10-18)
+
+The block printed a list of titles and dates only. It now renders every attribute as the reference does (probe
+`latest-posts`, sixteen cases over two posts of its own): the grid (`is-grid`, and `columns-N` only when the block
+names a column count), the author ("by" and the display name, `has-author`), the featured image in its own div (the
+size the block names, `thumbnail` by default; its alignment; its width and height as `max-width`/`max-height` on the
+image; a link with the title as its label when asked), and the excerpt or the whole content. The excerpt is the post's
+own through `get_the_excerpt`, with the block's length as `excerpt_length` (at 20, while the item renders): a hand
+excerpt prints whole, a generated one that was cut has its ` [&hellip;]` replaced by "…" and a Read more link, unless
+an `excerpt_length` filter asks for more words than the block. The whole content goes through `the_content` as written,
+and a post's content never renders inside itself. The list's own classes (and the block's alignment and class name)
+come before the block's wrapper classes, as on the reference.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17440,7 +17453,7 @@ rows that are `open` or `austin`.
 | 16832 | Query Monitor's reflection (10-15) | `new WP_Script_Modules()` shares the page's registry | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | the template-part block's saved-part lookup through WP_Query (`loop_no_results`, `pre_get_posts`) | open | engine work owed |
 | 16876 | The loop, as a block template walks it (10-15) | the front's template choice runs no `pre_get_block_templates` / `get_block_templates` (WooCommerce's single-product wrapper and body classes) | done | "The front's template chosen through get_block_templates (2026-10-16)"; the template-part lookup is still the row above |
-| 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | open | engine work owed |
+| 16876 | The loop, as a block template walks it (10-15) | latest-posts: grid, author, excerpt, content and featured image | done | 2026-10-18: "The latest-posts block, whole" (probe `latest-posts`) |
 | 16876 | The loop, as a block template walks it (10-15) | a custom post type's REST alternate link names `wp/v2/posts/<id>` | done | "A product's head link and its post terms (2026-10-16)": the route rest_get_queried_resource_route gives |
 | 16961 | What the_content adds before core's defaults (10-16) | plain text a filter adds before priority 10 is not texturized or given paragraphs | done | 2026-10-18: classic content goes through the_content as written (runtime suite, "plain text a the_content filter adds") |
 | 17101 | Preset slugs in kebab case (10-18) | core's default font sizes printed when the theme no longer has their slugs (`defaultFontSizes: false`) | done | "Three owed rows settled" (probe `default-presets`) |

@@ -139,7 +139,7 @@ final class Renderer
         // A block theme writes block gaps unless its settings switch them off with null.
         $spacing = (array) ($theme?->json()['settings']['spacing'] ?? []);
         $renderer->state()->useBlockGap($theme !== null && (!array_key_exists('blockGap', $spacing) || $spacing['blockGap'] !== null));
-        $renderer->registerDynamic('core/latest-posts', (new LatestPosts($site, $permalinks))->render(...));
+        $renderer->registerDynamic('core/latest-posts', (new LatestPosts($site, $permalinks, new Users($db)))->render(...));
         $renderer->registerDynamic('core/archives', (new Archives($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/search', (new Search($permalinks))->render(...));
         $renderer->registerDynamic('core/tag-cloud', (new TagCloud($db, $permalinks))->render(...));
