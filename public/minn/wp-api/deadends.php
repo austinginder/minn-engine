@@ -2449,12 +2449,6 @@ function wp_add_editor_classic_theme_styles($editor_settings)
     return null;
 }
 
-function wp_add_id3_tag_data(&$metadata, $data)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_add_id3_tag_data');
-    return null;
-}
-
 function wp_add_iframed_editor_assets_html()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_add_iframed_editor_assets_html');
@@ -4040,18 +4034,6 @@ function wp_privacy_send_personal_data_export_email($request_id)
 function wp_quicktags()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_quicktags');
-    return null;
-}
-
-function wp_read_audio_metadata($file)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_read_audio_metadata');
-    return null;
-}
-
-function wp_read_video_metadata($file)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_read_video_metadata');
     return null;
 }
 

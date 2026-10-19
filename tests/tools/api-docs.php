@@ -417,7 +417,13 @@ foreach ($byNamespace as $namespace => $entries) {
 }
 $files['README.md'] = $index;
 
-$json = json_encode(['generated' => 'php tests/tools/api-docs.php', 'classes' => $model], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+$json = json_encode(['generated' => 'php tests/tools/api-docs.php', 'classes' => $model], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+if ($json === false) {
+    // A constant holding bytes that are not UTF-8 stops the encode; an empty minn.json would pass for current.
+    fwrite(STDERR, 'api-docs: the model does not encode as JSON (' . json_last_error_msg() . ")\n");
+    exit(1);
+}
+$json .= "\n";
 
 $stale = !is_dir($out);
 foreach ($files as $name => $content) {

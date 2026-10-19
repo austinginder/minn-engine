@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1606
+        "delegates": 1609
     },
     "functions": {
         "__": {
@@ -4624,6 +4624,10 @@
             "file": "deprecated.php",
             "statement": "_deprecated_function(__FUNCTION__, '6.3.0');"
         },
+        "wp_add_id3_tag_data": {
+            "file": "media.php",
+            "statement": "$metadata = Minn\\Runtime\\AvMetadata::withTags((array) $metadata, $data);"
+        },
         "wp_add_object_terms": {
             "file": "taxonomy.php",
             "statement": "return wp_set_object_terms($object_id, $terms, $taxonomy, true);"
@@ -5246,7 +5250,7 @@
         },
         "wp_get_media_creation_timestamp": {
             "file": "media.php",
-            "statement": "return false;"
+            "statement": "return Minn\\Runtime\\AvMetadata::creationTimestamp($metadata);"
         },
         "wp_get_mime_types": {
             "file": "functions.php",
@@ -5872,9 +5876,17 @@
             "file": "post.php",
             "statement": "Minn\\Runtime\\PostWrites::publish($post);"
         },
+        "wp_read_audio_metadata": {
+            "file": "media.php",
+            "statement": "return Minn\\Runtime\\AvMetadata::audio($file);"
+        },
         "wp_read_image_metadata": {
             "file": "media.php",
             "statement": "return Minn\\Runtime\\Attachments::readImageMetadata($file);"
+        },
+        "wp_read_video_metadata": {
+            "file": "media.php",
+            "statement": "return Minn\\Runtime\\AvMetadata::video($file);"
         },
         "wp_readonly": {
             "file": "formatting.php",

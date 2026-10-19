@@ -5,11 +5,11 @@
         "minn": 683,
         "composes": 2142,
         "leaf": 1005,
-        "noop": 3153,
+        "noop": 3156,
         "placeholder": 0,
-        "deadend": 1770,
+        "deadend": 1767,
         "functions": 8675,
-        "minnMethods": 1404,
+        "minnMethods": 1408,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -63482,10 +63482,12 @@
             ]
         },
         "wp_add_id3_tag_data": {
-            "file": "deadends.php",
-            "lines": 2,
-            "kind": "deadend",
-            "minn": [],
+            "file": "media.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AvMetadata::withTags"
+            ],
             "composes": [],
             "deadend": "admin"
         },
@@ -68762,7 +68764,9 @@
             "file": "media.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\AvMetadata::creationTimestamp"
+            ],
             "composes": [],
             "deadend": "admin"
         },
@@ -73046,10 +73050,12 @@
             "composes": []
         },
         "wp_read_audio_metadata": {
-            "file": "deadends.php",
-            "lines": 2,
-            "kind": "deadend",
-            "minn": [],
+            "file": "media.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AvMetadata::audio"
+            ],
             "composes": [],
             "deadend": "admin"
         },
@@ -73064,10 +73070,12 @@
             "deadend": "admin"
         },
         "wp_read_video_metadata": {
-            "file": "deadends.php",
-            "lines": 2,
-            "kind": "deadend",
-            "minn": [],
+            "file": "media.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AvMetadata::video"
+            ],
             "composes": [],
             "deadend": "admin"
         },

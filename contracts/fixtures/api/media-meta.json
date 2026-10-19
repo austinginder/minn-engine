@@ -1,0 +1,1338 @@
+[
+    [
+        "a01-cbr-tags.mp3",
+        {
+            "dataformat": "mp3",
+            "channels": 2,
+            "sample_rate": 44100,
+            "bitrate": 128000,
+            "channelmode": "stereo",
+            "bitrate_mode": "cbr",
+            "codec": "LAME",
+            "encoder": "LAME4.0",
+            "lossless": false,
+            "encoder_options": "CBR128",
+            "compression_ratio": "(float) 0.09070294784580499",
+            "fileformat": "mp3",
+            "filesize": 43302,
+            "mime_type": "audio/mpeg",
+            "length": 3,
+            "length_formatted": "0:03",
+            "encoder_settings": "LAME 64bits version 4.0 (https://lame.sourceforge.io)",
+            "title": "Tone One",
+            "artist": "Minn Test Band",
+            "album": "Probe Album",
+            "year": "2021",
+            "genre": "Electronic",
+            "track_number": "2",
+            "comment": "a comment",
+            "totaltracks": "9",
+            "image": {
+                "data": {
+                    "bytes": 229,
+                    "sha1": "8226d560ec72436050c2fe43734a7dd9f7e22852"
+                },
+                "mime": "image/jpeg",
+                "width": 32,
+                "height": 32
+            }
+        }
+    ],
+    [
+        "a02-vbr-v2.mp3",
+        {
+            "dataformat": "mp3",
+            "channels": 2,
+            "sample_rate": 44100,
+            "bitrate": "(float) 99079.28427419355",
+            "channelmode": "joint stereo",
+            "bitrate_mode": "vbr",
+            "codec": "LAME",
+            "encoder": "LAME4.0",
+            "lossless": false,
+            "encoder_options": "--preset fast standard -b32 --lowpass 18500",
+            "compression_ratio": "(float) 0.07020924339157705",
+            "fileformat": "mp3",
+            "filesize": 40360,
+            "mime_type": "audio/mpeg",
+            "length": 3,
+            "length_formatted": "0:03",
+            "encoder_settings": "LAME 64bits version 4.0 (https://lame.sourceforge.io)",
+            "title": "Café Ñandú",
+            "artist": "Ünïcödé Ärtist",
+            "album": "Ålbum",
+            "year": "1999",
+            "genre": "Jazz",
+            "track_number": "3",
+            "totaltracks": "12"
+        }
+    ],
+    [
+        "a03-mono-v1.mp3",
+        {
+            "dataformat": "mp3",
+            "channels": 1,
+            "sample_rate": 22050,
+            "bitrate": 64000,
+            "channelmode": "mono",
+            "bitrate_mode": "cbr",
+            "codec": "LAME",
+            "encoder": "LAME4.0",
+            "lossless": false,
+            "encoder_options": "--alt-preset cbr 64",
+            "compression_ratio": "(float) 0.18140589569160998",
+            "fileformat": "mp3",
+            "filesize": 12038,
+            "mime_type": "audio/mpeg",
+            "length": 1,
+            "length_formatted": "0:01",
+            "title": "Mono V1",
+            "artist": "Old Tagger",
+            "album": "V1 Album",
+            "year": "1987",
+            "comment": "",
+            "track_number": "7",
+            "genre": "Rock"
+        }
+    ],
+    [
+        "a04-plain.mp3",
+        {
+            "dataformat": "mp3",
+            "channels": 2,
+            "sample_rate": 48000,
+            "bitrate": 192000,
+            "channelmode": "joint stereo",
+            "bitrate_mode": "cbr",
+            "lossless": false,
+            "encoder_options": "CBR192",
+            "compression_ratio": "(float) 0.125",
+            "fileformat": "mp3",
+            "filesize": 48960,
+            "mime_type": "audio/mpeg",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
+        "a05-long.mp3",
+        {
+            "dataformat": "mp3",
+            "channels": 1,
+            "sample_rate": 8000,
+            "bitrate": 8000,
+            "channelmode": "mono",
+            "bitrate_mode": "cbr",
+            "lossless": false,
+            "encoder_options": "CBR8",
+            "compression_ratio": "(float) 0.0625",
+            "fileformat": "mp3",
+            "filesize": 61953,
+            "mime_type": "audio/mpeg",
+            "length": 62,
+            "length_formatted": "1:02",
+            "encoder_settings": "LAME 64bits version 4.0 (https://lame.sourceforge.io)",
+            "title": "Long Tone"
+        }
+    ],
+    [
+        "a06-aac.m4a",
+        {
+            "dataformat": "mp4",
+            "bitrate": 95023,
+            "codec": "ISO/IEC 14496-3 AAC",
+            "sample_rate": "(float) 44100.0",
+            "channels": 2,
+            "bits_per_sample": 16,
+            "lossless": false,
+            "channelmode": "stereo",
+            "compression_ratio": "(float) 0.06733489229024943",
+            "fileformat": "mp4",
+            "filesize": 29554,
+            "mime_type": "audio/mp4",
+            "length": 2,
+            "length_formatted": "0:02",
+            "created_timestamp": -2082844800,
+            "image": {
+                "data": {
+                    "bytes": 500,
+                    "sha1": "7a012c6b3802222ea8adcf02bca42aeb60c3db55"
+                },
+                "mime": "image/png"
+            }
+        }
+    ],
+    [
+        "a07-alac.m4a",
+        {
+            "bitrate": "(float) 249293.33333333334",
+            "fileformat": "quicktime",
+            "filesize": 37438,
+            "mime_type": "video/quicktime",
+            "length": 1,
+            "length_formatted": "0:01",
+            "created_timestamp": -2082844800
+        }
+    ],
+    [
+        "a08-pcm16.wav",
+        {
+            "dataformat": "wav",
+            "bitrate_mode": "cbr",
+            "wformattag": 1,
+            "codec": "Pulse Code Modulation (PCM)",
+            "channels": 2,
+            "sample_rate": 44100,
+            "bitrate": 1411200,
+            "bits_per_sample": 16,
+            "lossless": true,
+            "channelmode": "stereo",
+            "compression_ratio": 1,
+            "fileformat": "wav",
+            "filesize": 105884,
+            "mime_type": "audio/wav",
+            "length": 1,
+            "length_formatted": "0:01"
+        }
+    ],
+    [
+        "a09-pcm24-info.wav",
+        {
+            "dataformat": "wav",
+            "bitrate_mode": "cbr",
+            "wformattag": 65534,
+            "codec": "WAVE_FORMAT_EXTENSIBLE",
+            "channels": 1,
+            "sample_rate": 48000,
+            "bitrate": 1152000,
+            "bits_per_sample": 24,
+            "lossless": false,
+            "channelmode": "mono",
+            "compression_ratio": 1,
+            "fileformat": "wav",
+            "filesize": 57756,
+            "mime_type": "audio/wav",
+            "length": 0,
+            "length_formatted": "0:00"
+        }
+    ],
+    [
+        "a10-vorbis.ogg",
+        {
+            "dataformat": "vorbis",
+            "lossless": false,
+            "channels": 2,
+            "sample_rate": 44100,
+            "bitrate_mode": "vbr",
+            "bitrate": "(float) 29152.727272727272",
+            "encoder": "Xiph.Org libVorbis I 20200704 (Reducing Environment)",
+            "encoder_options": "-q 3",
+            "channelmode": "stereo",
+            "compression_ratio": "(float) 0.0206581117295403",
+            "fileformat": "ogg",
+            "filesize": 11590,
+            "mime_type": "application/ogg",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
+        "a11-opus.ogg",
+        {
+            "dataformat": "opus",
+            "bitrate_mode": "vbr",
+            "lossless": false,
+            "channels": 2,
+            "sample_rate_input": 48000,
+            "sample_rate": 48000,
+            "bitrate": "(float) 47508.44173816773",
+            "encoder": "Lavf63.1.102",
+            "channelmode": "stereo",
+            "compression_ratio": "(float) 0.030929975089952946",
+            "fileformat": "ogg",
+            "filesize": 20331,
+            "mime_type": "audio/ogg; codecs=opus",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
+        "a12-flac.flac",
+        {
+            "dataformat": "flac",
+            "bitrate_mode": "vbr",
+            "lossless": true,
+            "sample_rate": 44100,
+            "channels": 2,
+            "bits_per_sample": 16,
+            "bitrate": "(float) 304075.0",
+            "encoder": "Lavf63.1.102",
+            "channelmode": "stereo",
+            "compression_ratio": "(float) 0.21547264739229025",
+            "fileformat": "flac",
+            "filesize": 60815,
+            "mime_type": "audio/flac",
+            "length": 2,
+            "length_formatted": "0:02",
+            "image": {
+                "data": {
+                    "bytes": 229,
+                    "sha1": "8226d560ec72436050c2fe43734a7dd9f7e22852"
+                },
+                "mime": "image/jpeg"
+            }
+        }
+    ],
+    [
+        "a13-adts.aac",
+        {
+            "filesize": 21005,
+            "mime_type": "audio/aac"
+        }
+    ],
+    [
+        "v01-h264-aac.mp4",
+        {
+            "bitrate": 131164,
+            "filesize": 58842,
+            "mime_type": "video/mp4",
+            "length": 2,
+            "length_formatted": "0:02",
+            "width": 160,
+            "height": 90,
+            "fileformat": "mp4",
+            "dataformat": "quicktime",
+            "codec": "H.264/MPEG-4 AVC",
+            "audio": {
+                "dataformat": "mp4",
+                "bitrate": 64816,
+                "codec": "ISO/IEC 14496-3 AAC",
+                "sample_rate": "(float) 44100.0",
+                "channels": 1,
+                "bits_per_sample": 16,
+                "lossless": false,
+                "channelmode": "mono",
+                "compression_ratio": "(float) 0.091859410430839"
+            },
+            "created_timestamp": 1714979289
+        }
+    ],
+    [
+        "v02-h264-silent.mp4",
+        {
+            "bitrate": 67160,
+            "filesize": 9534,
+            "mime_type": "video/quicktime",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 96,
+            "height": 64,
+            "fileformat": "mp4",
+            "dataformat": "quicktime",
+            "codec": "H.264/MPEG-4 AVC",
+            "created_timestamp": -2082844800
+        }
+    ],
+    [
+        "v03-quicktime.mov",
+        {
+            "lossless": false,
+            "filesize": 33215,
+            "mime_type": "video/mp4",
+            "length": 2,
+            "length_formatted": "0:02",
+            "width": 128,
+            "height": 72,
+            "fileformat": "mp4",
+            "dataformat": "quicktime",
+            "codec": "Lavc63.1.102 libx264",
+            "audio": {
+                "dataformat": "mp4",
+                "codec": "ISO/IEC 14496-3 AAC",
+                "sample_rate": "(float) 44100.0",
+                "channels": 1,
+                "bits_per_sample": 16,
+                "lossless": false,
+                "channelmode": "mono"
+            },
+            "created_timestamp": 1672628645
+        }
+    ],
+    [
+        "v04-vp9-opus.webm",
+        {
+            "filesize": 28892,
+            "mime_type": "video/webm",
+            "length": 2,
+            "length_formatted": "0:02",
+            "width": 120,
+            "height": 80,
+            "fileformat": "webm",
+            "dataformat": "V_VP9",
+            "audio": {
+                "dataformat": "A_OPUS",
+                "sample_rate": "(float) 48000.0",
+                "channels": 1,
+                "language": "und",
+                "bits_per_sample": 16,
+                "channelmode": "mono"
+            }
+        }
+    ],
+    [
+        "v05-vp8-silent.webm",
+        {
+            "bitrate": 30133,
+            "filesize": 4520,
+            "mime_type": "video/webm",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 64,
+            "height": 48,
+            "fileformat": "webm",
+            "dataformat": "vp8"
+        }
+    ],
+    [
+        "v06-ipod.m4v",
+        {
+            "bitrate": 111006,
+            "filesize": 22523,
+            "mime_type": "video/mp4",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 112,
+            "height": 64,
+            "fileformat": "mp4",
+            "dataformat": "quicktime",
+            "codec": "H.264/MPEG-4 AVC",
+            "audio": {
+                "dataformat": "mp4",
+                "bitrate": 49529,
+                "codec": "ISO/IEC 14496-3 AAC",
+                "sample_rate": "(float) 44100.0",
+                "channels": 1,
+                "bits_per_sample": 16,
+                "lossless": false,
+                "channelmode": "mono",
+                "compression_ratio": "(float) 0.07019416099773243"
+            },
+            "created_timestamp": -2082844800
+        }
+    ],
+    [
+        "v07-mpeg4.avi",
+        {
+            "lossless": false,
+            "bitrate": 89806,
+            "bitrate_mode": "vbr",
+            "filesize": 35096,
+            "mime_type": "video/avi",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 80,
+            "height": 60,
+            "fileformat": "avi",
+            "dataformat": "avi",
+            "audio": {
+                "dataformat": "mp3",
+                "channels": 1,
+                "sample_rate": 44100,
+                "bitrate": 64000,
+                "channelmode": "mono",
+                "bitrate_mode": "cbr",
+                "wformattag": 85,
+                "codec": "MPEG Layer-3",
+                "lossless": false,
+                "encoder_options": "CBR64",
+                "compression_ratio": "(float) 0.09070294784580499"
+            }
+        }
+    ],
+    [
+        "v08-flash.flv",
+        {
+            "lossless": false,
+            "bitrate": 195,
+            "filesize": 23429,
+            "mime_type": "video/x-flv",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 80,
+            "height": 60,
+            "fileformat": "flv",
+            "dataformat": "flv",
+            "codec": "Sorenson H.263",
+            "audio": {
+                "dataformat": "flv",
+                "bitrate": 62500,
+                "codec": "mp3",
+                "sample_rate": 44100,
+                "bits_per_sample": 16,
+                "channels": 1,
+                "lossless": false,
+                "channelmode": "mono",
+                "compression_ratio": "(float) 0.08857709750566893"
+            }
+        }
+    ],
+    [
+        "v09-matroska.mkv",
+        {
+            "filesize": 30578,
+            "mime_type": "video/x-matroska",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 64,
+            "height": 64,
+            "fileformat": "matroska",
+            "dataformat": "h264",
+            "audio": {
+                "dataformat": "flac",
+                "sample_rate": 44100,
+                "channels": 1,
+                "language": "und",
+                "bits_per_sample": 16,
+                "bitrate_mode": "vbr",
+                "lossless": true,
+                "channelmode": "mono"
+            }
+        }
+    ],
+    [
+        "v10-rotated.mp4",
+        {
+            "bitrate": 51384,
+            "filesize": 6471,
+            "mime_type": "video/quicktime",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 96,
+            "height": 48,
+            "fileformat": "mp4",
+            "dataformat": "quicktime",
+            "codec": "H.264/MPEG-4 AVC",
+            "created_timestamp": -2082844800
+        }
+    ],
+    [
+        "v11-windows.wmv",
+        {
+            "lossless": false,
+            "bitrate": 327587,
+            "bitrate_mode": "cbr",
+            "filesize": 52191,
+            "mime_type": "video/x-ms-wmv",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 80,
+            "height": 64,
+            "fileformat": "asf",
+            "dataformat": "wmv",
+            "encoder": "wmv2",
+            "audio": {
+                "codec": "Windows Media Audio V8",
+                "channels": 1,
+                "sample_rate": 44100,
+                "bitrate": 64000,
+                "bits_per_sample": 16,
+                "dataformat": "wma",
+                "bitrate_mode": "cbr",
+                "lossless": false,
+                "encoder": "Windows Media Audio V8",
+                "channelmode": "mono",
+                "compression_ratio": "(float) 0.09070294784580499"
+            },
+            "created_timestamp": 0
+        }
+    ],
+    [
+        "video reader: a01-cbr-tags.mp3",
+        {
+            "filesize": 43302,
+            "mime_type": "audio/mpeg",
+            "length": 3,
+            "length_formatted": "0:03",
+            "fileformat": "mp3",
+            "audio": {
+                "dataformat": "mp3",
+                "channels": 2,
+                "sample_rate": 44100,
+                "bitrate": 128000,
+                "channelmode": "stereo",
+                "bitrate_mode": "cbr",
+                "codec": "LAME",
+                "encoder": "LAME4.0",
+                "lossless": false,
+                "encoder_options": "CBR128",
+                "compression_ratio": "(float) 0.09070294784580499"
+            },
+            "encoder_settings": "LAME 64bits version 4.0 (https://lame.sourceforge.io)",
+            "title": "Tone One",
+            "artist": "Minn Test Band",
+            "album": "Probe Album",
+            "year": "2021",
+            "genre": "Electronic",
+            "track_number": "2",
+            "comment": "a comment",
+            "totaltracks": "9",
+            "image": {
+                "data": {
+                    "bytes": 229,
+                    "sha1": "8226d560ec72436050c2fe43734a7dd9f7e22852"
+                },
+                "mime": "image/jpeg",
+                "width": 32,
+                "height": 32
+            }
+        }
+    ],
+    [
+        "video reader: a06-aac.m4a",
+        {
+            "filesize": 29554,
+            "mime_type": "audio/mp4",
+            "length": 2,
+            "length_formatted": "0:02",
+            "fileformat": "mp4",
+            "audio": {
+                "dataformat": "mp4",
+                "bitrate": 95023,
+                "codec": "ISO/IEC 14496-3 AAC",
+                "sample_rate": "(float) 44100.0",
+                "channels": 2,
+                "bits_per_sample": 16,
+                "lossless": false,
+                "channelmode": "stereo",
+                "compression_ratio": "(float) 0.06733489229024943"
+            },
+            "created_timestamp": -2082844800,
+            "image": {
+                "data": {
+                    "bytes": 500,
+                    "sha1": "7a012c6b3802222ea8adcf02bca42aeb60c3db55"
+                },
+                "mime": "image/png"
+            }
+        }
+    ],
+    [
+        "video reader: a12-flac.flac",
+        {
+            "filesize": 60815,
+            "mime_type": "audio/flac",
+            "length": 2,
+            "length_formatted": "0:02",
+            "fileformat": "flac",
+            "audio": {
+                "dataformat": "flac",
+                "bitrate_mode": "vbr",
+                "lossless": true,
+                "sample_rate": 44100,
+                "channels": 2,
+                "bits_per_sample": 16,
+                "bitrate": "(float) 304075.0",
+                "encoder": "Lavf63.1.102",
+                "channelmode": "stereo",
+                "compression_ratio": "(float) 0.21547264739229025"
+            },
+            "image": {
+                "data": {
+                    "bytes": 229,
+                    "sha1": "8226d560ec72436050c2fe43734a7dd9f7e22852"
+                },
+                "mime": "image/jpeg"
+            }
+        }
+    ],
+    [
+        "audio reader: v01-h264-aac.mp4",
+        {
+            "dataformat": "mp4",
+            "bitrate": 64816,
+            "codec": "ISO/IEC 14496-3 AAC",
+            "sample_rate": "(float) 44100.0",
+            "channels": 1,
+            "bits_per_sample": 16,
+            "lossless": false,
+            "channelmode": "mono",
+            "compression_ratio": "(float) 0.091859410430839",
+            "fileformat": "mp4",
+            "filesize": 58842,
+            "mime_type": "video/mp4",
+            "length": 2,
+            "length_formatted": "0:02",
+            "created_timestamp": 1714979289
+        }
+    ],
+    [
+        "audio reader: v04-vp9-opus.webm",
+        {
+            "dataformat": "A_OPUS",
+            "sample_rate": "(float) 48000.0",
+            "channels": 1,
+            "language": "und",
+            "bits_per_sample": 16,
+            "channelmode": "mono",
+            "fileformat": "webm",
+            "filesize": 28892,
+            "mime_type": "video/webm",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
+        "audio reader: v07-mpeg4.avi",
+        {
+            "dataformat": "mp3",
+            "channels": 1,
+            "sample_rate": 44100,
+            "bitrate": 64000,
+            "channelmode": "mono",
+            "bitrate_mode": "cbr",
+            "wformattag": 85,
+            "codec": "MPEG Layer-3",
+            "lossless": false,
+            "encoder_options": "CBR64",
+            "compression_ratio": "(float) 0.09070294784580499",
+            "fileformat": "avi",
+            "filesize": 35096,
+            "mime_type": "video/avi",
+            "length": 1,
+            "length_formatted": "0:01"
+        }
+    ],
+    [
+        "unreadable empty.mp3",
+        {
+            "audio": [],
+            "video": []
+        }
+    ],
+    [
+        "unreadable text.mp3",
+        {
+            "audio": {
+                "filesize": 600,
+                "mime_type": "audio/mpeg"
+            },
+            "video": {
+                "filesize": 600,
+                "mime_type": "audio/mpeg"
+            }
+        }
+    ],
+    [
+        "unreadable text.wav",
+        {
+            "audio": {
+                "filesize": 600
+            },
+            "video": {
+                "filesize": 600
+            }
+        }
+    ],
+    [
+        "unreadable text.mp4",
+        {
+            "audio": {
+                "filesize": 600
+            },
+            "video": {
+                "filesize": 600
+            }
+        }
+    ],
+    [
+        "unreadable text.zz",
+        {
+            "audio": {
+                "filesize": 600
+            },
+            "video": {
+                "filesize": 600
+            }
+        }
+    ],
+    [
+        "unreadable cut.mp4",
+        {
+            "audio": {
+                "fileformat": "quicktime",
+                "filesize": 2000,
+                "mime_type": "video/quicktime"
+            },
+            "video": {
+                "filesize": 2000,
+                "mime_type": "video/quicktime",
+                "fileformat": "quicktime"
+            }
+        }
+    ],
+    [
+        "unreadable cut.flac",
+        {
+            "audio": {
+                "dataformat": "flac",
+                "bitrate_mode": "vbr",
+                "lossless": true,
+                "sample_rate": 44100,
+                "channels": 2,
+                "bits_per_sample": 16,
+                "bitrate": "(float) 1500.0",
+                "channelmode": "stereo",
+                "compression_ratio": "(float) 0.0010629251700680273",
+                "fileformat": "flac",
+                "filesize": 300,
+                "mime_type": "audio/flac",
+                "length": 2,
+                "length_formatted": "0:02"
+            },
+            "video": {
+                "filesize": 300,
+                "mime_type": "audio/flac",
+                "length": 2,
+                "length_formatted": "0:02",
+                "fileformat": "flac",
+                "audio": {
+                    "dataformat": "flac",
+                    "bitrate_mode": "vbr",
+                    "lossless": true,
+                    "sample_rate": 44100,
+                    "channels": 2,
+                    "bits_per_sample": 16,
+                    "bitrate": "(float) 1500.0",
+                    "channelmode": "stereo",
+                    "compression_ratio": "(float) 0.0010629251700680273"
+                }
+            }
+        }
+    ],
+    [
+        "no such file",
+        [
+            false,
+            false
+        ]
+    ],
+    [
+        "ID3: v2.3 frames a tagger writes",
+        {
+            "filesize": 50167,
+            "title": "Latin Title",
+            "artist": "Latin Artist",
+            "album": "Latin Album",
+            "year": "2004",
+            "genre": "Rock",
+            "track_number": "05",
+            "part_of_a_set": "1/2",
+            "band": "Band Name",
+            "composer": "A Composer",
+            "encoded_by": "An Encoder",
+            "copyright_message": "2004 Someone",
+            "bpm": "120",
+            "publisher": "A Label",
+            "content_group_description": "Grouping",
+            "subtitle": "Subtitle",
+            "lyricist": "Lyricist",
+            "conductor": "Conductor",
+            "remixer": "Remixer",
+            "initial_key": "Am",
+            "language": "eng",
+            "media_type": "CD",
+            "original_album": "Orig Album",
+            "original_artist": "Orig Artist",
+            "original_year": "1990",
+            "isrc": "USRC17607839",
+            "encoder_settings": "Settings",
+            "file_owner": "Owner",
+            "internet_radio_station_name": "Radio",
+            "file_type": "MPG/3",
+            "date": "0506",
+            "time": "1230",
+            "size": "1000",
+            "original_filename": "orig.mp3",
+            "original_lyricist": "Orig Lyricist",
+            "comment": "The comment text",
+            "text": "My Value",
+            "url_user": "https://example.com/x",
+            "url_artist": "https://example.com/artist",
+            "commercial_information": "https://example.com/buy",
+            "unsynchronised_lyric": "Line one\nLine two",
+            "totaltracks": "11",
+            "image": {
+                "data": {
+                    "bytes": 74,
+                    "sha1": "8ea3279342171d9028f8487ea20879e0175b4d0b"
+                },
+                "mime": "image/png",
+                "width": 2,
+                "height": 3
+            }
+        }
+    ],
+    [
+        "ID3: v2.4 UTF-8, several values",
+        {
+            "filesize": 49467,
+            "title": "Ünï Title",
+            "artist": "Ärtist One",
+            "album": "Älbum",
+            "recording_time": "2003-05-06",
+            "genre": "Rock",
+            "track_number": "7",
+            "performer_sort_order": "Sort Artist",
+            "album_sort_order": "Sort Album",
+            "title_sort_order": "Sort Title",
+            "album_artist_sort_order": "Sort Album Artist",
+            "mood": "Calm",
+            "produced_notice": "Produced",
+            "set_subtitle": "Set Subtitle",
+            "release_time": "2003",
+            "encoding_time": "2003-01-01",
+            "involved_people_list": "producer",
+            "musician_credits_list": "guitar",
+            "comment": "UTF-8 comment",
+            "year": "2003",
+            "image": {
+                "data": {
+                    "bytes": 74,
+                    "sha1": "8ea3279342171d9028f8487ea20879e0175b4d0b"
+                },
+                "mime": "image/png",
+                "width": 2,
+                "height": 3
+            }
+        }
+    ],
+    [
+        "ID3: v2.4 UTF-16 big-endian",
+        {
+            "filesize": 49018,
+            "title": "Big Énd",
+            "artist": "Ärtist"
+        }
+    ],
+    [
+        "ID3: v2.3 UTF-16",
+        {
+            "filesize": 49126,
+            "title": "Wide Tïtle",
+            "artist": "Wide Ärtist",
+            "genre": "Jazz",
+            "comment": "Wide comment",
+            "track_number": "3"
+        }
+    ],
+    [
+        "ID3: v2.3 Latin-1 high bytes",
+        {
+            "filesize": 49010,
+            "title": "Café Ñandú",
+            "artist": "Ångström"
+        }
+    ],
+    [
+        "ID3: v2.2",
+        {
+            "filesize": 49181,
+            "title": "Old Title",
+            "artist": "Old Artist",
+            "album": "Old Album",
+            "year": "1995",
+            "genre": "Rock",
+            "track_number": "2",
+            "comment": "Old comment",
+            "encoded_by": "Old Encoder",
+            "totaltracks": "5",
+            "image": {
+                "data": {
+                    "bytes": 74,
+                    "sha1": "8ea3279342171d9028f8487ea20879e0175b4d0b"
+                },
+                "mime": "image/png"
+            }
+        }
+    ],
+    [
+        "ID3: an ID3v1 tag beside an ID3v2 one",
+        {
+            "filesize": 49136,
+            "title": "V2 Title",
+            "album": "V2 Album"
+        }
+    ],
+    [
+        "ID3: ID3v1 alone, no track or genre",
+        {
+            "filesize": 49088,
+            "title": "Only V1",
+            "artist": "Someone",
+            "album": "",
+            "year": "",
+            "comment": ""
+        }
+    ],
+    [
+        "ID3: ID3v1.1, Latin-1",
+        {
+            "filesize": 49088,
+            "title": "(bytes) 436166e9",
+            "artist": "Band",
+            "album": "Alb",
+            "year": "2001",
+            "comment": "note",
+            "track_number": "12",
+            "genre": "Folk"
+        }
+    ],
+    [
+        "ID3: markup in values",
+        {
+            "filesize": 49088,
+            "title": "<b>Bold</b> alert(1) &amp; <a href=\"x\">l</a>",
+            "artist": "Tab\tNew\nline",
+            "genre": "Unknown"
+        }
+    ],
+    [
+        "ID3: genres by number, refinement and name",
+        {
+            "filesize": 49006,
+            "genre": "(RX)(CR)",
+            "title": "Genres"
+        }
+    ],
+    [
+        "ID3: genre as a bare number",
+        {
+            "filesize": 48983,
+            "genre": "Electronic"
+        }
+    ],
+    [
+        "ID3: genre number then name",
+        {
+            "filesize": 48991,
+            "genre": "Trance"
+        }
+    ],
+    [
+        "ID3: an empty picture",
+        {
+            "filesize": 49015,
+            "title": "No Picture"
+        }
+    ],
+    [
+        "filter calls (file, format, data is an array)",
+        [
+            [
+                "a01-cbr-tags.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "a02-vbr-v2.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "a03-mono-v1.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "a04-plain.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "a05-long.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "a06-aac.m4a",
+                "mp4",
+                true
+            ],
+            [
+                "a07-alac.m4a",
+                "quicktime",
+                true
+            ],
+            [
+                "a08-pcm16.wav",
+                "wav",
+                true
+            ],
+            [
+                "a09-pcm24-info.wav",
+                "wav",
+                true
+            ],
+            [
+                "a10-vorbis.ogg",
+                "ogg",
+                true
+            ],
+            [
+                "a11-opus.ogg",
+                "ogg",
+                true
+            ],
+            [
+                "a12-flac.flac",
+                "flac",
+                true
+            ],
+            [
+                "a13-adts.aac",
+                null,
+                true
+            ],
+            [
+                "v01-h264-aac.mp4",
+                "mp4",
+                true
+            ],
+            [
+                "v02-h264-silent.mp4",
+                "mp4",
+                true
+            ],
+            [
+                "v03-quicktime.mov",
+                "mp4",
+                true
+            ],
+            [
+                "v04-vp9-opus.webm",
+                "webm",
+                true
+            ],
+            [
+                "v05-vp8-silent.webm",
+                "webm",
+                true
+            ],
+            [
+                "v06-ipod.m4v",
+                "mp4",
+                true
+            ],
+            [
+                "v07-mpeg4.avi",
+                "avi",
+                true
+            ],
+            [
+                "v08-flash.flv",
+                "flv",
+                true
+            ],
+            [
+                "v09-matroska.mkv",
+                "matroska",
+                true
+            ],
+            [
+                "v10-rotated.mp4",
+                "mp4",
+                true
+            ],
+            [
+                "v11-windows.wmv",
+                "asf",
+                true
+            ],
+            [
+                "a01-cbr-tags.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "a06-aac.m4a",
+                "mp4",
+                true
+            ],
+            [
+                "a12-flac.flac",
+                "flac",
+                true
+            ],
+            [
+                "v01-h264-aac.mp4",
+                "mp4",
+                true
+            ],
+            [
+                "v04-vp9-opus.webm",
+                "webm",
+                true
+            ],
+            [
+                "v07-mpeg4.avi",
+                "avi",
+                true
+            ],
+            [
+                "empty.mp3",
+                null,
+                true
+            ],
+            [
+                "empty.mp3",
+                null,
+                true
+            ],
+            [
+                "text.mp3",
+                null,
+                true
+            ],
+            [
+                "text.mp3",
+                null,
+                true
+            ],
+            [
+                "text.wav",
+                null,
+                true
+            ],
+            [
+                "text.wav",
+                null,
+                true
+            ],
+            [
+                "text.mp4",
+                null,
+                true
+            ],
+            [
+                "text.mp4",
+                null,
+                true
+            ],
+            [
+                "text.zz",
+                null,
+                true
+            ],
+            [
+                "text.zz",
+                null,
+                true
+            ],
+            [
+                "cut.mp4",
+                "quicktime",
+                true
+            ],
+            [
+                "cut.mp4",
+                "quicktime",
+                true
+            ],
+            [
+                "cut.flac",
+                "flac",
+                true
+            ],
+            [
+                "cut.flac",
+                "flac",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ],
+            [
+                "id3.mp3",
+                "mp3",
+                true
+            ]
+        ]
+    ],
+    [
+        "the filters answer",
+        [
+            {
+                "zz_added": true,
+                "dataformat": "wav",
+                "bitrate_mode": "cbr"
+            },
+            {
+                "zz_added": true,
+                "bitrate": 30133,
+                "filesize": 4520
+            }
+        ]
+    ]
+]

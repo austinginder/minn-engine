@@ -1034,6 +1034,32 @@ function wp_read_image_metadata($file)
     return Minn\Runtime\Attachments::readImageMetadata($file);
 }
 
+/**
+ * An audio file's metadata, read by the engine's own media reader
+ * (Runtime\AvMetadata, Media\Av): its stream, size, type, playing time,
+ * ID3 tags and cover, through wp_read_audio_metadata; false when there is
+ * no such file.
+ */
+function wp_read_audio_metadata($file)
+{
+    return Minn\Runtime\AvMetadata::audio($file);
+}
+
+/**
+ * A video file's metadata, read by the engine's own media reader: its
+ * size, format, codec and audio, through wp_read_video_metadata; false when
+ * there is no such file.
+ */
+function wp_read_video_metadata($file)
+{
+    return Minn\Runtime\AvMetadata::video($file);
+}
+
+function wp_add_id3_tag_data(&$metadata, $data)
+{
+    $metadata = Minn\Runtime\AvMetadata::withTags((array) $metadata, $data);
+}
+
 function wp_getimagesize($filename, &$image_info = null)
 {
     $info = @getimagesize((string) $filename, $image_info);
@@ -1241,7 +1267,7 @@ function wp_get_attachment_id3_keys($attachment, $context = 'display')
 
 function wp_get_media_creation_timestamp($metadata)
 {
-    return false;
+    return Minn\Runtime\AvMetadata::creationTimestamp($metadata);
 }
 
 function _wp_get_attachment_relative_path($file)
