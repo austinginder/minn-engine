@@ -2,7 +2,7 @@
 
 Who the engine is for, what an agent needs from a web platform, and how Minn becomes that platform without asking anyone to leave WordPress.
 
-*Working draft, September 2026. Companion to `docs/vision.md` (the thesis) and `docs/architecture-review-2026-09-02.md` (what the code has to change first).*
+*Working draft, September 2026; figures and the status of each surface refreshed October 2026 (section 10). Companion to `docs/vision.md` (the thesis) and `docs/architecture-review-2026-09-02.md` (what the code has to change first).*
 
 ## 1. Who Minn is really for
 
@@ -22,7 +22,7 @@ Minn is for whoever operates the site, and increasingly that is not a person. In
 
 The question behind this document was whether lean, well-thought-out code has effects that compound past what WordPress's codebase can reach. It does, but the mechanism is not the one usually named. Better code does not attract better humans. What compounds is that a small codebase can be held to a contract corpus completely, and a large one cannot.
 
-Fast-forward both projects. WordPress's contributor is a human, its backward-compatibility promise is total, and its runtime is 1.8 million lines that nobody holds in context. Every change is archaeology. Minn's contributor is an agent gated by fifty-one suites and several thousand pinned facts, and the whole engine with its facade is about 80,000 lines, which a frontier model reads in one sitting. A WordPress change costs a person days of reading. A Minn change costs a capture, an implementation and a proof, and the proof is the one anyone would have demanded anyway.
+Fast-forward both projects. WordPress's contributor is a human, its backward-compatibility promise is total, and its release is about 1.8 million lines of PHP, JavaScript and CSS (about 620,000 of them PHP) that nobody holds in context. Every change is archaeology. Minn's contributor is an agent gated by ninety-one suites and about twenty-seven thousand checks. The engine with its facade is about 194,000 lines of PHP, a third of WordPress's: too much for one sitting, but no class passes six hundred lines, the API reference is generated from the code, and an agent reads the namespace it is changing rather than the whole tree. A WordPress change costs a person days of reading. A Minn change costs a capture, an implementation and a proof, and the proof is the one anyone would have demanded anyway.
 
 That is also the customer-control argument made concrete. On WordPress the exit is "find another freelancer". On Minn it is "point any coding agent at the contracts", and the contracts are fixtures, not prose.
 
@@ -32,10 +32,10 @@ Five properties. Each is stated so it can be checked, with where WordPress and M
 
 | Property | WordPress | Minn today | Minn after the work below |
 |---|---|---|---|
-| **A catalogue.** Every action has a name, an input schema, an output schema and a permission, in one document. | The REST index lists args. Authorization lives in handler bodies. The Abilities API (6.9) is a registry plugins fill; core's own abilities are read-only and few. | 228 routes carry a policy attribute (144 declared, 84 still bare); args are declared on 15 and enforced on none; `wp-abilities/v1` is served with three abilities. No route has a name or an output schema. | Every route is an ability. One exporter writes OpenAPI and the abilities catalogue from the same typed table. |
+| **A catalogue.** Every action has a name, an input schema, an output schema and a permission, in one document. | The REST index lists args. Authorization lives in handler bodies. The Abilities API (6.9) is a registry plugins fill; core's own abilities are read-only and few. | 260 routes, 254 with a declared policy (`contracts/api/routes.json`, readable without a database); args declared on 33 and body sets on 22, checked before the policy; `wp-abilities/v1` serves WordPress's three core abilities. No route has a name of its own or an output schema. | Every route is an ability. One exporter writes OpenAPI and the abilities catalogue from the same typed table. |
 | **Least authority.** A caller holds only what it needs, and what it used is visible. | A user is their role. An application password carries the user's full capabilities. A plugin is the process. | Policy is data on the route. An application password is still the user. A plugin is still the process. | A `Grant` per caller: user, agent key, plugin, extension. Judged beside the policy. Plugins confined at the doors their calls already funnel through. |
 | **Try before apply.** Clone, change, diff, apply, or throw away. | Playground and wp-codebox, as separate products. | `minn install` / `eject` and a single-folder deploy unit. | SQLite behind `Db` and `minn clone`: a disposable copy in under a second, the parity suites as the diff. |
-| **A runtime small enough to reason about.** | 1.8 million lines. A fatal is a white screen. | 80,000 lines. Recovery mode names the plugin that failed. | The same, with the caller of every refused action named. |
+| **A runtime small enough to reason about.** | 1.8 million lines with its JavaScript. A fatal is a white screen. | 194,000 lines of PHP (106,000 engine, 88,000 facade). Recovery mode names the plugin that failed and pauses it. | The same, with the caller of every refused action named. |
 | **A ledger.** Every change attributable and reversible. | Revisions for posts. Nothing for options, roles, plugins, updates. | Revisions on REST post edits from the second edit on; transactions on five compound writes; the archive hash of each applied update, overwritten per folder. | An append-only journal of writes across options, roles, plugins and updates, per caller, with the revert beside each entry. |
 
 ## 3. The landscape, briefly
@@ -58,7 +58,7 @@ Speak the Abilities API; it is the seam to speak, not to invent. `wp-abilities/v
 
 The differentiator is one layer down. On Minn a route's authorization is a `Policy` on its attribute and its parameters are `Args` on the same attribute, so the engine's own surface can be exported as an ability catalogue mechanically: every route becomes `{name, description, input schema, output schema, permission}`. The same reflection that writes `docs/api/` writes an OpenAPI document and registers each engine route as an ability. An agent reads one document and knows everything Minn can do and what it takes to do it. WordPress cannot produce that document, because its authorization is scattered across handler bodies.
 
-What this asks of the engine: the route attribute gains a name, a body set and an output; the gate validates declared args before it judges the policy; the 84 bare routes state their policy or state the 404 they answer first; the route table reads without a database; and an exporter reads it. The review has the line numbers.
+What this asks of the engine: the route attribute gains a name, a body set and an output; the gate validates declared args before it judges the policy; the bare routes (84 then, 6 now) state their policy or state the 404 they answer first; the route table reads without a database; and an exporter reads it. The review has the line numbers.
 
 ### The grant
 
@@ -163,3 +163,23 @@ Then, additive: the catalogue exporter and route abilities, the agent key, the i
 - **Nobody may want confinement.** Hosts have shipped "any plugin, any authority" for twenty years and site owners rarely ask. The bet is that agents change that, because an agent's operator asks what the agent can do before letting it run, and the same question then gets asked of plugins.
 - **A Minn-native extension ecosystem may never form.** Anything targeting the WordPress API is a WordPress plugin. Extensions on `Seams` are the one place a new licence and a new permission model both apply, and it may stay a small place. The plan above does not depend on it.
 - **Bus factor.** The customer-control argument transfers only once someone other than the founder can maintain the engine. MIT, machine-readable contracts, exhaustive suites and agent legibility are the mitigation, and they deserve naming.
+
+## 10. Where it stands (October 2026)
+
+Measured at the 0.1.0 candidate. Built means in the engine and pinned by a suite.
+
+| Surface | Status | Where |
+|---|---|---|
+| Route policy as data | Built: 254 of 260 routes | `#[Route]` policies, `contracts/api/routes.json`, `Rest\Catalogue::scan()` |
+| Declared args checked before the policy | Built on 33 routes | `Rest\ArgCheck`, `contracts/rest/arguments.md` |
+| Route names, output schemas, an OpenAPI or ability export | Not built | |
+| Abilities API | Same as WordPress: the three core abilities | `wp-api/defaults/abilities.php` |
+| The WordPress MCP adapter on Minn | Not tried | |
+| Agent key (a scoped, expiring application password) | Not built | `Auth\ApplicationPasswords` carries the user's full authority, as on WordPress |
+| Extension grant (`needs`) | Partly: `needs.http` only; `Seams` still hands out `db` | `Extension\Manifest`, `Extension\Seams` |
+| SQLite and `minn clone` | Not built | `Db` takes a mysqli connection |
+| Journal of writes | Not built | |
+| Inferred plugin manifest | Not built: the symbol gate records the names a plugin calls, not the hosts, tables, roles and options it names | `Runtime\Symbols` |
+| Enforcement at the doors | Not built: one engine-wide list of guarded options | `Runtime\Options::GUARDED` |
+
+So an agent operating a Minn site today has what it has on WordPress 7.1 (wp/v2, WP-CLI, application passwords, the core abilities), plus route permissions it can read as data, the `Allow` header, recovery that names and pauses a failing plugin, and preflight and eject. The rest of this document is the order to build in. The smallest steps that make the claim demonstrable: run the WordPress MCP adapter on a Minn site under a suite, export the catalogue from `Rest\Catalogue::scan()`, then print the inferred manifest in preflight.

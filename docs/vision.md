@@ -83,7 +83,7 @@ Phase one and resumability answer different people. Phase one is the hosting sta
 
 ## 4. The engine
 
-**It stays PHP.** The temptation is Go or Rust, and it is wrong for this strategy: the moat being inherited is PHP hosting. Modern PHP on FrankenPHP-class runtimes is fast, and the infrastructure already speaks it. Target PHP 8.4+, minimal dependencies, no framework baggage, no build step.
+**It stays PHP.** The temptation is Go or Rust, and it is wrong for this strategy: the moat being inherited is PHP hosting. Modern PHP on FrankenPHP-class runtimes is fast, and the infrastructure already speaks it. Target PHP 8.3+, minimal dependencies, no framework baggage, no build step.
 
 **It is layered on purpose.** A small core (router, entities over the wp schema, REST layer, capabilities, a template engine, block rendering, cron, mail) written as modern namespaced PHP, and above it the WordPress runtime facade: the procedural functions, classes, globals and hooks plugin code calls, each a thin delegation into the core. The core stays legible and suite-gated; the facade is wide by necessity and generated from the interface inventory where it can be.
 
@@ -131,7 +131,7 @@ What this does not change: directory code still starts on wordpress.org, and the
 - **Lossless means touching less.** An engine that rewrites a row it only half understands (a serialized option re-encoded, meta normalized, block markup reflowed) breaks the first resumability guarantee silently. The engine writes the fields an operation names and nothing else, and the round trip is what proves it.
 - **Serialized PHP is forever.** Reading real WordPress databases means tolerating serialized-PHP blobs in options and postmeta indefinitely. Greenfield sites keep it out of new data; migrated sites drag the long tail in. Design greenfield-first.
 - **The runtime is the long road.** Front-end plugins work once the hook engine and the content API exist. A plugin's own settings screen is never hosted: Minn Admin adapters own that UI. Editor plugins need the block editor globals. Each layer is measured by the reference test suite and by real plugins. "Any plugin" means front end and data, reached layer by layer, not declared.
-- **WooCommerce-shaped sites are out of scope for years.** A large share of real small-business sites are brochure, forms, and content, which is exactly the tractable slice.
+- **WooCommerce-shaped sites are the long road.** A store's shop, cart and checkout run on the engine and a guest checkout matches WordPress step by step (`tests/woo.test.php`), but running a store is screens: orders, refunds, gateways, shipping and tax each need a Minn Admin adapter. A large share of real small-business sites are brochure, forms, and content, which is exactly the tractable slice.
 - **Bus factor.** The customer-control argument only transfers once someone other than the founder can maintain the engine. MIT plus machine-readable contracts plus exhaustive suites is the mitigation, and agent legibility is the honest answer, but it deserves naming.
 
 ## 7. Sequencing: a strangler fig, not a big bang
@@ -140,5 +140,7 @@ What this does not change: directory code still starts on wordpress.org, and the
 - **Phase 1 (next)** — the engine serves greenfield sites on our own hosting. Front end plus REST for new sites where the whole stack is ours to verify. Minn Admin boots unmodified. The compatibility suite runs the fleet tooling against it until the hosting layer cannot tell.
 - **Phase 2** — the WordPress runtime: plugins load unmodified, layer by layer (front end, admin registrations, editor, long tail), measured against the reference test suite. There is no wp-admin; Minn Admin is the admin.
 - **Phase 3 (earned)** — existing sites switch over, gated by the round trip in section 3: a site moves when it passes the gates and its scores clear the floor, with the serialized-PHP and dynamic-block caveats enforced honestly by the tooling itself.
+
+**Where the phases stand (October 2026).** Phase 0 shipped. Phase 1 as written, greenfield sites on our own hosting, was skipped: once the round trip made swapping in and out safe, the engine went to existing sites first, and a site created on Minn with no WordPress behind it is still to come. Phase 2 reached its first mark with 0.1.0: every function, class, method and hook in WordPress 7.1.3 is accounted for, and the plugins on two real-site copies load. Phase 3's gates (the round trip, preflight, eject) are built, and 0.1.0 is offered for content sites that clear them.
 
 Minnow wanted to be a clean break. Minn Engine wants the opposite: indistinguishable at the seams, and radically simpler inside.

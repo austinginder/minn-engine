@@ -2,7 +2,7 @@
 
 Indistinguishable at the seams. Radically simpler inside.
 
-Minn Engine is a from-scratch, MIT-licensed engine that speaks WordPress's operational contracts (the `wp_*` database schema, the file layout, the `wp/v2` REST surface, the WP-CLI ops verbs) so precisely that hosting infrastructure cannot tell the difference. It pairs with [Minn Admin](https://github.com/austinginder/minn-admin) as its native interface, and it is built agent-first from day one.
+Minn Engine is a from-scratch, MIT-licensed engine that speaks WordPress's operational contracts (the `wp_*` database schema, the file layout, the `wp/v2` REST surface, the WP-CLI ops verbs) so precisely that hosting, backup and migration tools operate a Minn site the way they operate a WordPress site. It pairs with [Minn Admin](https://github.com/austinginder/minn-admin) as its native interface, and it was built with coding agents from the first commit, every change gated by suites that compare it with a running WordPress.
 
 It is not a fork. No WordPress code appears in this repository, which is what makes the MIT license possible. See `docs/vision.md` for the full thesis, including the two-tier compatibility model and the license analysis, and `CLAUDE.md` for the ground rules every contribution follows.
 
@@ -16,8 +16,33 @@ Measured against WordPress 7.1.3 on the same database:
 - **Every hook WordPress fires is accounted for**, 2,543 of them.
 - **No page runs more database queries than WordPress** on the five pages measured: the front page, a post, an archive, a search, and the REST posts list.
 - **91 test suites, about 26,700 checks**, most of them comparing Minn's answer with a running WordPress on the same database. 87.6% of the engine's lines run under them.
-- **A security sweep before the release**: 30 findings, each fixed and pinned by a test. Reporting a vulnerability: `security.md`.
+- **Two security sweeps before the release** (October 13 and 18): 43 findings, each fixed and pinned by a test, and four design questions left open on purpose, listed in `docs/security-review-2026-10-18.md`. Reporting a vulnerability: `security.md`.
 - **Never contacts wordpress.org.** Update checks, directory search, translations and downloads go to updates.minn.run, Minn's update service.
+- **Signed updates.** The installer and the engine's own updater install only a release carrying an Ed25519 signature from a key built into the engine.
+- **Reversible.** `minn eject` gives WordPress back its files byte for byte. A round-trip suite gives WordPress and Minn the same day of work on copies of real sites and compares every row each leaves behind (`contracts/round-trip.md`).
+- **About a third of the size.** The engine (`src/Minn`, about 106,000 lines) and the WordPress-shaped facade plugins call (`wp-api`, about 88,000) come to about 194,000 lines of PHP, against about 618,000 in WordPress 7.1.3 with its admin and bundled libraries.
+
+### Who it is for today
+
+A content site (pages, posts, forms, a classic PHP theme or a block theme) whose operator wants an MIT engine, signed updates and no contact with wordpress.org, and who already runs [Minn Admin](https://github.com/austinginder/minn-admin) on WordPress. Preflight names what will and will not load before anything changes, and the swap is one command each way.
+
+### Not yet
+
+Said plainly, so nobody finds out the hard way:
+
+- **No new sites without WordPress.** Minn runs an existing WordPress site: it needs the `wp-config.php` and the database WordPress created. There is no installer that creates the tables.
+- **Not faster than WordPress.** Pages run fewer queries than WordPress's on the five measured, but every request loads the whole facade, so a request takes longer overall: about a quarter longer on the last local benchmark, most of it at boot.
+- **No wp-admin, block editor or Customizer.** Minn Admin is the only admin. A plugin's own settings screen exists on Minn only when Minn Admin has an adapter for it.
+- **Stores and page builders are limited.** A WooCommerce store's shop, cart and checkout run, but running the store needs Minn Admin adapters. Elementor, Brizy, Beaver Builder and Bricks open their editors with the separate Minn Legacy Pack; Divi 5, Oxygen 4 and Etch do not yet.
+- **Native extensions are front-end only.** A `minn.json` extension can shape what a page renders (`contracts/extensions.md`). Routes, settings, cron and CLI verbs still mean writing a WordPress plugin.
+- **The agent surfaces in `docs/agent-first.md` are a plan.** Route policies are machine-readable today (`contracts/api/routes.json`); scoped agent keys, a write journal, a catalogue export and a disposable clone are not built.
+
+## Requirements
+
+- PHP 8.3 or newer, with `mysqli`, `mbstring` and `sodium`.
+- MySQL or MariaDB, the database WordPress already uses.
+- Recommended, as for WordPress: `curl` (outgoing requests), `gd` or `imagick` (image sizes), `zip` (installing plugins and themes), `exif`, `fileinfo`, `intl`, and OPcache.
+- A web server that blocks `/minn/` except `minn/assets/`, and `MINN_TRUSTED_PROXIES` behind a CDN or load balancer (`docs/hardening.md`).
 
 ## Install
 
@@ -58,6 +83,18 @@ public/
 Everything else in this repository (`tests/`, `contracts/`, `docs/`, `scripts/`, the changelog, and `site/`, the block theme behind the project's own site) is development only and never ships. `php scripts/build-release.php` builds the release archive: the engine as committed plus the latest Minn Admin release, whole, at `minn/admin`, signed with the release key. On a development site `public/minn` can be a symlink into this repository so several sites run the same code.
 
 Every surface is pinned by two suites: fixtures captured from a reference WordPress, and a live parity diff that treats a running WordPress on the same database as the oracle. Run them with `tests/run-all.sh`. Contract notes and known gaps live in `contracts/`. The whole engine follows `docs/style.md` (modern namespaced PHP under `public/minn/src/Minn/`, enforced by `tests/style.test.php`).
+
+Most suites need a reference WordPress serving the same database as the engine, and today that setup is the maintainer's local one. On a fresh clone, `php tests/unit.test.php` (pure classes, no database, under a second) and `php tests/style.test.php` (the code's shape and ratchets) run as they are. `CONTRIBUTING.md` says what the rest need.
+
+## Stability
+
+What a site, a plugin or an extension can rely on across 0.x releases:
+
+- the WordPress contracts Minn speaks: the database, the file layout, `wp/v2`, WP-CLI, and the functions, classes and hooks plugins call (`wp-api/`);
+- the `minn.json` manifest, `Minn\Extension\Extension` and `Minn\Extension\Seams`;
+- `bin/minn` and the `wp minn` verbs.
+
+Everything else under `src/Minn/` is the engine's own inside and can change in any release, including a minor one. `docs/api/` documents it so it can be read, not so it can be built on. A part that is promised later will say so in its docs.
 
 ## License
 

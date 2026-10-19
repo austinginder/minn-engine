@@ -7,8 +7,9 @@ all of them. `docs/style.md` is the law; this is the tour.
 
 Every behaviour in the engine came from the same loop.
 
-1. **Boot the oracle**: a parked WordPress on the same database.
-   `cd wp-reference && php -S 127.0.0.1:8123 router.php`
+1. **Reach the oracle**: a parked WordPress in the site's `wp-reference/`, on
+   the same database, answering as the site (`https://ref.minn.localhost` by
+   default, `MINN_TEST_REF` otherwise; `CONTRIBUTING.md`, What runs where).
 2. **Capture** what it does, with curl or wp-cli, into `contracts/fixtures/` or
    a sentence in the matching `contracts/*.md`. What you captured is data.
 3. **Implement** from the capture. Never from WordPress source: not a function,

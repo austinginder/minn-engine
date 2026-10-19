@@ -67,7 +67,12 @@ reports, each line GREEN, AMBER, or RED:
   the child or parent) is GREEN, a classic PHP theme (`index.php` in the parent)
   is GREEN, a theme with neither is RED. Leftover PHP templates on a block
   theme are AMBER (those files do not run);
-- active plugins and mu-plugins: AMBER, each named, because none of them will run;
+- active plugins and mu-plugins, each named and judged the way the engine's symbol
+  gate will judge it at load: GREEN when it runs (with the calls that answer with
+  nothing on Minn, such as wp-admin screens, listed), AMBER when it will not load
+  (the functions or classes it needs that Minn lacks, a function it declares that
+  Minn already defines, or its file missing). A plugin a `minn.json` extension
+  replaces is reported as provided by that extension;
 - shortcodes in `post`, `page`, `wp_block`, `wp_template`, `wp_template_part`,
   and `wp_navigation` content: GREEN when a `minn.json` lists the tag under
   `shortcodes`, AMBER otherwise;
