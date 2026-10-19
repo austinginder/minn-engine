@@ -8,7 +8,6 @@ use Minn\Auth\Can;
 use Minn\Objects\PostType;
 use Minn\Objects\Query;
 use Minn\Query\Sql;
-use Minn\Support\Sanitize;
 
 /**
  * WP_Query's post type and status clause as the reference writes it (probe
@@ -71,12 +70,12 @@ final class PostQueryStatus
             $searchable = Registered::postTypes(['exclude_from_search' => false]);
             return $searchable === [] ? [' AND 1=0 ', true] : [" AND {$t}.post_type IN ('" . implode("', '", array_map(static fn (mixed $value): mixed => Handoff::escSql($value), $searchable)) . "')", false];
         }
+        // The types as parse_query left them (sanitized there), or as pre_get_posts set them since: not sanitized again (probe query-keys).
         if (!empty($type) && is_array($type)) {
-            $this->parts->postType = array_map(static fn (mixed $key): string => Sanitize::key($key), $type);
-            return [" AND {$t}.post_type IN ('" . implode("', '", Handoff::escSql($this->parts->postType)) . "')", false];
+            return [" AND {$t}.post_type IN ('" . implode("', '", Handoff::escSql($type)) . "')", false];
         }
         $type = match (true) {
-            !empty($type) => Sanitize::key((string) $type),
+            !empty($type) => (string) $type,
             $this->query->is_attachment => 'attachment',
             $this->query->is_page => 'page',
             default => 'post',

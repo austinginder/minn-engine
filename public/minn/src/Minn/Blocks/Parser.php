@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Blocks;
 
 use Minn\Json;
+use Minn\Runtime\Runtime;
 
 /**
  * Parses block markup into a tree. The grammar is the delimiter comment:
@@ -15,6 +16,39 @@ use Minn\Json;
 final class Parser
 {
     private const TOKEN = '/<!--\s+(?P<closer>\/)?wp:(?P<namespace>[a-z][a-z0-9_-]*\/)?(?P<name>[a-z][a-z0-9_-]*)\s+(?P<attrs>\{(?:(?!\}\s+\/?-->).)*+\}\s+)?(?P<void>\/)?-->/s';
+
+    /**
+     * The parser class block_parser_class names when a plugin swaps its own
+     * in for WP_Block_Parser; null for the engine's own.
+     */
+    public static function swapped(): ?string
+    {
+        $class = Runtime::hooks()->filter('block_parser_class', ['WP_Block_Parser']);
+        return $class === 'WP_Block_Parser' || !is_string($class) || !class_exists($class) ? null : $class;
+    }
+
+    /**
+     * A document's blocks as do_blocks reads them: by the parser
+     * block_parser_class names, the engine's own unless a plugin swaps
+     * its own in.
+     *
+     * @return list<Block>
+     */
+    public static function named(string $markup): array
+    {
+        $class = self::swapped();
+        return $class === null ? self::parse($markup) : self::withClass($class, $markup);
+    }
+
+    /**
+     * Block markup as a parser class of a plugin's reads it.
+     *
+     * @return list<Block>
+     */
+    public static function withClass(string $class, string $markup): array
+    {
+        return array_values(array_map(static fn (mixed $parsed): Block => Block::fromArray((array) $parsed), (array) (new $class())->parse($markup)));
+    }
 
     /**
      * Block markup as a tree of blocks.

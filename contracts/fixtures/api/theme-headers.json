@@ -1,0 +1,870 @@
+[
+    [
+        "twentytwentyfive Name",
+        [
+            "Twenty Twenty-Five",
+            [
+                [
+                    "kses",
+                    "Twenty Twenty-Five"
+                ],
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Twenty Twenty-Five"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Name, no markup",
+        [
+            "Twenty Twenty-Five",
+            [
+                [
+                    "kses",
+                    "Twenty Twenty-Five"
+                ],
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Twenty Twenty-Five"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Name, not translated",
+        [
+            "Twenty Twenty-Five",
+            [
+                [
+                    "kses",
+                    "Twenty Twenty-Five"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive ThemeURI",
+        [
+            "https://wordpress.org/themes/twentytwentyfive/",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "https://wordpress.org/themes/twentytwentyfive/"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive ThemeURI, no markup",
+        [
+            "https://wordpress.org/themes/twentytwentyfive/",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "https://wordpress.org/themes/twentytwentyfive/"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive ThemeURI, not translated",
+        [
+            "https://wordpress.org/themes/twentytwentyfive/",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive Description",
+        [
+            "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide.",
+            [
+                [
+                    "kses",
+                    "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide."
+                ],
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide."
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Description, no markup",
+        [
+            "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide.",
+            [
+                [
+                    "kses",
+                    "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide."
+                ],
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide."
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Description, not translated",
+        [
+            "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide.",
+            [
+                [
+                    "kses",
+                    "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide."
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Author",
+        [
+            "<a href=\"https://wordpress.org\">the WordPress team</a>",
+            [
+                [
+                    "kses",
+                    "the WordPress team"
+                ],
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "the WordPress team"
+                ],
+                [
+                    "translated",
+                    "https://wordpress.org"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Author, no markup",
+        [
+            "the WordPress team",
+            [
+                [
+                    "kses",
+                    "the WordPress team"
+                ],
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "the WordPress team"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Author, not translated",
+        [
+            "<a href=\"https://wordpress.org\">the WordPress team</a>",
+            [
+                [
+                    "kses",
+                    "the WordPress team"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive AuthorURI",
+        [
+            "https://wordpress.org",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "https://wordpress.org"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive AuthorURI, no markup",
+        [
+            "https://wordpress.org",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "https://wordpress.org"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive AuthorURI, not translated",
+        [
+            "https://wordpress.org",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive Version",
+        [
+            "1.5",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "1.5"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Version, no markup",
+        [
+            "1.5",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "1.5"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Version, not translated",
+        [
+            "1.5",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive Status",
+        [
+            "publish",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "publish"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Status, no markup",
+        [
+            "publish",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "publish"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive Status, not translated",
+        [
+            "publish",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive TextDomain",
+        [
+            "twentytwentyfive",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "twentytwentyfive"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive TextDomain, no markup",
+        [
+            "twentytwentyfive",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "twentytwentyfive"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive TextDomain, not translated",
+        [
+            "twentytwentyfive",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive RequiresWP",
+        [
+            "6.7",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "6.7"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive RequiresWP, no markup",
+        [
+            "6.7",
+            [
+                [
+                    "mofile",
+                    "twentytwentyfive",
+                    "{themes}/twentytwentyfive/languages/en_US.mo"
+                ],
+                [
+                    "translated",
+                    "6.7"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentyfive RequiresWP, not translated",
+        [
+            "6.7",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive Template",
+        [
+            "",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive Template, no markup",
+        [
+            "",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive Template, not translated",
+        [
+            "",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive UpdateURI",
+        [
+            "",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive UpdateURI, no markup",
+        [
+            "",
+            []
+        ]
+    ],
+    [
+        "twentytwentyfive UpdateURI, not translated",
+        [
+            "",
+            []
+        ]
+    ],
+    [
+        "twentytwentythree Name",
+        [
+            "Twenty Twenty-Three",
+            [
+                [
+                    "kses",
+                    "Twenty Twenty-Three"
+                ],
+                [
+                    "mofile",
+                    "twentytwentythree",
+                    "{themes}/twentytwentythree/languages/twentytwentythree-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Twenty Twenty-Three"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentythree Name, no markup",
+        [
+            "Twenty Twenty-Three",
+            [
+                [
+                    "kses",
+                    "Twenty Twenty-Three"
+                ],
+                [
+                    "mofile",
+                    "twentytwentythree",
+                    "{themes}/twentytwentythree/languages/twentytwentythree-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Twenty Twenty-Three"
+                ]
+            ]
+        ]
+    ],
+    [
+        "twentytwentythree Name, not translated",
+        [
+            "Twenty Twenty-Three",
+            [
+                [
+                    "kses",
+                    "Twenty Twenty-Three"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Name",
+        [
+            "Zz Theme <em>Headers</em>",
+            [
+                [
+                    "kses",
+                    "Zz Theme <em>Headers</em>"
+                ],
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Zz Theme <em>Headers</em>"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Name, no markup",
+        [
+            "Zz Theme <em>Headers</em>",
+            [
+                [
+                    "kses",
+                    "Zz Theme <em>Headers</em>"
+                ],
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Zz Theme <em>Headers</em>"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Name, not translated",
+        [
+            "Zz Theme <em>Headers</em>",
+            [
+                [
+                    "kses",
+                    "Zz Theme <em>Headers</em>"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Description",
+        [
+            "A &#8220;quoted&#8221; x test",
+            [
+                [
+                    "kses",
+                    "A \"quoted\" <script>x</script> test"
+                ],
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "A \"quoted\" x test"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Description, no markup",
+        [
+            "A \"quoted\" x test",
+            [
+                [
+                    "kses",
+                    "A \"quoted\" <script>x</script> test"
+                ],
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "A \"quoted\" x test"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Description, not translated",
+        [
+            "A &#8220;quoted&#8221; x test",
+            [
+                [
+                    "kses",
+                    "A \"quoted\" <script>x</script> test"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Author",
+        [
+            "<a href=\"https://example.com/author\">Zz <strong>Author</strong></a>",
+            [
+                [
+                    "kses",
+                    "Zz <strong>Author</strong>"
+                ],
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Zz <strong>Author</strong>"
+                ],
+                [
+                    "translated",
+                    "https://example.com/author"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Author, no markup",
+        [
+            "Zz <strong>Author</strong>",
+            [
+                [
+                    "kses",
+                    "Zz <strong>Author</strong>"
+                ],
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "Zz <strong>Author</strong>"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Author, not translated",
+        [
+            "<a href=\"https://example.com/author\">Zz <strong>Author</strong></a>",
+            [
+                [
+                    "kses",
+                    "Zz <strong>Author</strong>"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Template",
+        [
+            "twentytwentyfive",
+            [
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "twentytwentyfive"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Template, no markup",
+        [
+            "twentytwentyfive",
+            [
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "twentytwentyfive"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Template, not translated",
+        [
+            "twentytwentyfive",
+            []
+        ]
+    ],
+    [
+        "zz-theme-headers UpdateURI",
+        [
+            "https://example.com/zz",
+            [
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "https://example.com/zz"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers UpdateURI, no markup",
+        [
+            "https://example.com/zz",
+            [
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "https://example.com/zz"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers UpdateURI, not translated",
+        [
+            "https://example.com/zz",
+            []
+        ]
+    ],
+    [
+        "zz-theme-headers DomainPath",
+        [
+            "/lang",
+            [
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "/lang"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers DomainPath, no markup",
+        [
+            "/lang",
+            [
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "/lang"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers DomainPath, not translated",
+        [
+            "/lang",
+            []
+        ]
+    ],
+    [
+        "zz-theme-headers Version",
+        [
+            "1.0",
+            [
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "1.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Version, no markup",
+        [
+            "1.0",
+            [
+                [
+                    "mofile",
+                    "zz-theme-headers",
+                    "{themes}/zz-theme-headers/lang/zz-theme-headers-en_US.mo"
+                ],
+                [
+                    "translated",
+                    "1.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "zz-theme-headers Version, not translated",
+        [
+            "1.0",
+            []
+        ]
+    ],
+    [
+        "two headers of one theme object",
+        [
+            [
+                "kses",
+                "Twenty Twenty-Five"
+            ],
+            [
+                "mofile",
+                "twentytwentyfive",
+                "{themes}/twentytwentyfive/languages/en_US.mo"
+            ],
+            [
+                "translated",
+                "Twenty Twenty-Five"
+            ],
+            [
+                "translated",
+                "1.5"
+            ]
+        ]
+    ],
+    [
+        "load_textdomain",
+        [
+            true,
+            true,
+            false
+        ]
+    ]
+]

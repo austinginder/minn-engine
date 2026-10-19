@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 
 /**
@@ -49,6 +50,7 @@ final class MetaData
         // An object's meta not cached, or cached empty, is read as the reference reads it: through
         // update_{type}_metadata_cache, which a plugin may answer first (then there is none to read).
         if (!$found || $cache === []) {
+            self::column((string) $type);
             $check = Runtime::hooks()->filter("update_{$type}_metadata_cache", [null, [$objectId]]);
             if (!$found) {
                 $cache = $check === null ? self::store()->all((string) $type, $objectId) : [];
@@ -95,6 +97,7 @@ final class MetaData
         if ($spec === null || $objectId <= 0 || (string) $key === '') {
             return false;
         }
+        self::column((string) $type);
         $key = Slashes::strip($key);
         $value = Slashes::strip($value);
         $value = self::sanitize($key, $value, $type, MetaKeys::subtype((string) $type, $objectId));
@@ -124,6 +127,7 @@ final class MetaData
         if ($spec === null || $objectId <= 0 || (string) $key === '') {
             return false;
         }
+        self::column((string) $type);
         [$rawKey, $passed] = [$key, $value];
         $key = Slashes::strip($key);
         $value = self::sanitize($key, Slashes::strip($value), $type, MetaKeys::subtype((string) $type, $objectId));
@@ -134,6 +138,14 @@ final class MetaData
         $rows = self::store()->matching((string) $type, $objectId, (string) $key);
         if ($rows === []) {
             return self::add($type, $objectId, $rawKey, $passed);
+        }
+        // With no previous value named, the stored one is read as get_metadata_raw reads it (its hooks heard): one
+        // value, the same as the new, changes nothing.
+        if ($previous === '' || $previous === null || $previous === false) {
+            $old = self::raw($type, $objectId, $key);
+            if (is_array($old) && count($old) === 1 && $old[0] === $value) {
+                return false;
+            }
         }
         $stored = Options::toStorage($value);
         $ids = Meta::idsToUpdate($rows, $stored, $previous === '' ? null : Options::toStorage($previous));
@@ -159,6 +171,7 @@ final class MetaData
         if ($spec === null || ($objectId <= 0 && !$all) || (string) $key === '') {
             return false;
         }
+        self::column((string) $type);
         $key = Slashes::strip($key);
         $value = Slashes::strip($value);
         $check = Runtime::hooks()->filter("delete_{$type}_metadata", [null, $objectId, $key, $value, $all]);
@@ -255,6 +268,34 @@ final class MetaData
     }
 
     /**
+     * One meta row rewritten by its id (update_metadata_by_mid), its key too
+     * when one is given, with the update actions for that row, unless
+     * update_{type}_metadata_by_mid answers first.
+     */
+    public static function updateByMid(mixed $type, mixed $metaId, mixed $value, mixed $key = false): bool
+    {
+        $meta = self::byMid($type, $metaId);
+        if ($meta === false) {
+            return false;
+        }
+        self::column((string) $type);
+        $check = Runtime::hooks()->filter("update_{$type}_metadata_by_mid", [null, $metaId, $value, $key]);
+        if ($check !== null) {
+            return (bool) $check;
+        }
+        [$column] = self::rows()->columns((string) $type);
+        $objectId = (int) $meta->{$column};
+        $key = $key === false ? (string) $meta->meta_key : (string) $key;
+        $value = self::sanitize($key, Slashes::strip($value), $type, MetaKeys::subtype((string) $type, $objectId));
+        $args = [(int) $metaId, $objectId, $key, $value];
+        self::announce('update', (string) $type, $args, $args);
+        self::rows()->rewrite((string) $type, (int) $metaId, $key, Options::toStorage($value));
+        Handoff::cacheDelete($objectId, $type . '_meta');
+        self::announce('updated', (string) $type, $args, $args);
+        return true;
+    }
+
+    /**
      * One meta row removed by its id (delete_metadata_by_mid), with the
      * delete actions for that row (posts and comments also told by their
      * older names, with the row id alone), unless
@@ -266,6 +307,7 @@ final class MetaData
         if ($meta === false) {
             return false;
         }
+        self::column((string) $type);
         $hooks = Runtime::hooks();
         $check = $hooks->filter("delete_{$type}_metadata_by_mid", [null, $metaId]);
         if ($check !== null) {
@@ -311,6 +353,41 @@ final class MetaData
     public static function postCustom(mixed $postId = 0): mixed
     {
         return self::get('post', (int) ($postId ?: PostTags::id()));
+    }
+
+    /**
+     * Objects' meta read into the cache together (update_meta_cache): their
+     * column asked of sanitize_key, then update_{type}_metadata_cache, which
+     * a plugin may answer first; false for no type or no ids.
+     */
+    public static function primeCache(mixed $type, mixed $objectIds): mixed
+    {
+        if (!$type || !$objectIds || !Meta::knows((string) $type)) {
+            return false;
+        }
+        $ids = array_map('intval', is_array($objectIds) ? $objectIds : explode(',', (string) preg_replace('|[^0-9,]|', '', (string) $objectIds)));
+        $check = self::primeCheck((string) $type, $ids);
+        return $check === null ? self::store()->prime((string) $type, $ids) : (bool) $check;
+    }
+
+    /**
+     * What update_{type}_metadata_cache answers before objects' meta is read
+     * into the cache, as update_meta_cache asks it (the column through
+     * sanitize_key first): null to read it; any other answer stands for the
+     * read.
+     *
+     * @param list<int> $ids
+     */
+    public static function primeCheck(string $type, array $ids): mixed
+    {
+        self::column($type);
+        return Runtime::hooks()->filter("update_{$type}_metadata_cache", [null, $ids]);
+    }
+
+    /** An object type's meta column, asked of sanitize_key as the reference asks it ({type}_id). */
+    private static function column(string $type): string
+    {
+        return Sanitize::key($type . '_id');
     }
 
     private static function store(): Meta

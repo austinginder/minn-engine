@@ -17605,6 +17605,138 @@ Left:
 Pinned: probes `template-part-lookup` (38 rows), `tax-terms` (48) and `kses-allowed-asks`
 (23), each in the hook battery too.
 
+## The template part's four rows, settled (2026-10-19)
+
+The four rows the template-part work left open (register line 17591) are the reference's
+now, each pinned by a probe and held in the hook battery, with no SELECT more on any page
+measured (27/38/31/24/29) and page times level with the commit before (bench against HEAD,
+100%).
+
+**Content tags by context** (probe `content-tags`, 31 rows). `wp_filter_content_tags` works
+for the context it is given:
+
+- `wp_lazy_loading_enabled` is asked for iframes first, in every context. Each distinct tag
+  is fitted out once, however often it appears.
+- An image's loading, decoding and priority come from
+  `wp_get_loading_optimization_attributes`: a header part's images are in view (its first
+  large one fetched first, `wp_min_priority_img_pixels` asked as the reference asks it), a
+  template's get none, and any other context's are lazy past the threshold.
+- `wp_img_tag_add_loading_attr` may answer `lazy` or `eager` as given. Any other true
+  answer keeps the loading the context earned; a false one gives none. Decoding goes
+  through `wp_img_tag_add_decoding_attr`, then "auto" sizes, then `wp_content_img_tag`.
+- An image gets none of it unless its source is written `src="..."`, and only a width and a
+  height written `width="..."` `height="..."` (whatever they hold) ask for a loading.
+  Attributes are read after a space and in lower case (`src` in any case); an iframe's width
+  and height count only in double quotes.
+- Image blocks inside a template part are fitted for the part's context
+  (`RenderState::within`), and `wp_img_tag_add_loading_optimization_attrs` is
+  `Blocks\ImageTags::optimized`.
+
+**The global styles lookup** (probe `global-styles-lookup`, 8 rows). The user styles post
+is found with the reference's WP_Query: `pre_get_posts` sees `wp_global_styles`, newest
+first, the theme's `wp_theme` term by name, one post, no found rows, no caches primed. A
+plugin steering the query steers the answer. A post made when asked carries the term as
+`tax_input`, so it is set only for a user who may assign it (without one the post is not
+found again, as on the reference). Its name is the stylesheet URL-encoded.
+
+**Column names through `sanitize_key`** (probe `query-keys`, 56 rows):
+
+- A meta function's `{type}_id` column is asked as it starts and again as it reads or adds
+  on the way: add, update, delete, by meta id, and the cache fill. `update_meta_cache` asks
+  even when the objects are cached.
+- A meta query asks in `get_sql`, even an empty one.
+- WP_Query's post types are asked as `parse_query` keeps them (a list sorted), and so are
+  its short orderby names. A type `pre_get_posts` sets after reaches the SQL as given.
+  `transform_query` asks for the field it turns terms to.
+- `update_metadata` with no previous value named reads the stored value as
+  `get_metadata_raw` does, and one value equal to the new changes nothing (false, no
+  write). `update_meta_cache` and `update_metadata_by_mid` are `Runtime\MetaData`'s.
+
+**Kses and the block parser** (probe `kses-allowed-asks`, 33 rows).
+`wp_pre_kses_block_attributes` and `filter_block_content` parse with the parser
+`block_parser_class` names when a plugin swaps one in, and write its blocks back as it read
+them. An HTML comment's body passes kses before its `--` runs collapse.
+
+**Each block as a WP_Block** (probe `block-instances`, 30 rows):
+
+- A document's top block is asked `pre_render_block`, `render_block_data` and
+  `render_block_context` with no parent, then made a WP_Block with the global post's
+  context (`get_post`'s, not the runtime's last).
+- An inner block is made from what its parent gives its inner blocks first. Its type is
+  asked `get_block_type_uses_context`, and asked again for the names when it uses any.
+  Then come the three filters with the parent WP_Block, the context filter handed the
+  block's own context (what its type uses), not all that is available.
+- A changed block becomes the block's parsed block. A changed context joins what the block
+  was given: the type is asked again, and the block's context is what it uses of that,
+  with the changed context over it (eight cases). `render_block` is handed that WP_Block.
+- The engine's renderer keeps a stack of these (`Renderer::under`). A pattern's, a template
+  part's and a post's content begin documents of their own (`renderRoots`, no parent),
+  parsed by the parser `block_parser_class` names (`Parser::named`), as the template is.
+- A navigation's own items are made without the filters before them (`renderMade`), as the
+  reference's list makes them; a submenu's links get them. One that names no menu asks
+  `wp_navigation_should_create_fallback` and renders its fallback (the latest menu's blocks,
+  else the classic menu or a page list) as `block_core_navigation_render_fallback` leaves it;
+  the engine ignored that filter.
+- A post template's items render inside a block of no type, `core/null`, carrying the post
+  as context, and go through `render_block` themselves.
+- A synced pattern's blocks take its block as their parent, which goes through
+  `render_block` once inside and once more as it ends, as on the reference.
+- A social links list's links are blocks of their own, with the block filters around each.
+
+Found on the way:
+
+- `_wp_add_block_level_preset_styles` answers null whatever it is handed, so a
+  `pre_render_block` short-circuit before priority 10 is dropped, as on the reference.
+- A plugin block's provided context now reaches a plugin block inside a core one; it was
+  lost at the core block (`<i>warm</i>` where the engine printed `<i>-</i>`).
+- The global post is put back after a dynamic block the engine renders, as `WP_Block::render`
+  does; a query loop left it on its last post.
+- The session store and the engine's other direct user and post meta writes
+  (`Users::setMeta`, `PostWriter::setMeta`) let the object cache go. Before, a session made
+  behind the cache could not be destroyed through `WP_Session_Tokens`, because the write
+  compared against the stale value (probes `auth-cookies`, `rest-app-passwords-class`).
+- A theme's headers are shown in its language (probe `theme-headers`, `Theme\ThemeHeaders`):
+  `WP_Theme::display` sanitizes a header, translates any header with a value through the
+  theme's text domain (loaded once a theme object, from its Domain Path or its languages
+  folder; the active theme's file named by the locale alone), texturizes the description and
+  links the author to their translated address. The engine showed headers untranslated.
+- A global styles save over REST is a post update (`wp_update_post`), as the reference's
+  controller makes it: the post's hooks, its save filters and its revision.
+- An empty `page_template` leaves the stored template as it is (probe `page-template-save`);
+  the engine deleted it on every update that named none.
+
+The hook battery showed each of the last four only once a coincidence went: HEAD's global
+styles lookup ran a term query that asked the locale and a WP_Query by name that asked
+`sanitize_title`. The `kses-allowed-asks` scenario was captured again with a pings event
+queued, as its first capture was: the reference schedules one when none is queued, and the
+engine sends no pings (a dead end).
+
+Left:
+
+- Sequence only: the parse-time `sanitize_key` of a post type comes before
+  `parse_tax_query` (after it on the reference); the content image pass of `the_content` is
+  still the engine's own, without the reference's composition hooks around each tag.
+- Counts only: the reference asks `get_block_type_uses_context` more often (it walks a query
+  loop's and a comments block's blocks before rendering them) and `block_parser_class` more
+  often (block hooks parse and print again).
+- A navigation with inner blocks of its own: the reference renders them once through the
+  block filters and drops the result, then renders its items again; the engine renders
+  once, the second way. A submenu's links go through `render_block` twice there.
+- The comments block goes through `render_block` twice on the reference, and its comment
+  template's context carries `postType`.
+- A synced pattern's and a post's content get no first-child or last-child hooked blocks:
+  `apply_block_hooks_to_content_from_post_object` wraps only a navigation's.
+- The session store writes `session_tokens` without the meta API, so `added_user_meta`
+  and `updated_user_meta` are not heard for a sign-in's session (the reference fires them).
+- `WP_Theme::get` returns a header as written; the reference's sanitizes it as read (kses for
+  the name, description and author, URLs for the addresses).
+- A theme's or plugin's text domain loads when `load_*_textdomain` is called; the reference
+  only notes the folder then and loads at the first translation, and it attempts no load for
+  a domain nobody named.
+- A navigation that names no menu, on a site with none, gets a classic menu's items or a
+  page list; the reference makes a menu post from them first (unless
+  `wp_navigation_should_create_fallback` says not), during the render.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -17679,7 +17811,16 @@ rows that are `open` or `austin`.
 | 17101 | Methods keep the reference's shape (10-18) | `WP_Theme_JSON_Resolver::get_theme_data()` ignores `with_supports => false` | done | "Three owed rows settled": the theme's own layer over its supports (probe `theme-data-supports`) |
 | 17101 | The $current_user global (10-18) | the `setup_userdata` globals (`$user_ID`, `$userdata`, `$user_login`, ...) | done | "Three owed rows settled" (probe `user-globals`) |
 | 17483 | Audio and video metadata (10-19) | MP3 and AC-3 inside a WAV, MP2 in Matroska, H.264 in Flash video: the reference's own readers for these, not followed | austin | rare as uploads, and the engine describes them by its other rules; accept, or owe them (each is a further reader of the reference's to learn from patched files) |
-| 17591 | A template part found as the reference finds it (10-19) | `wp_filter_content_tags` decides lazy loading as for `the_content` whatever its context (a header part's images lazy, iframes not asked about first) | open | the content-image rules are `Blocks\ImageTags`'; the context-aware ones already in `Runtime\AttachmentImages` (`wp_get_loading_optimization_attributes`) are the model |
-| 17591 | A template part found as the reference finds it (10-19) | the renderer fires no `get_block_type_uses_context`, no `block_parser_class` for inner content; a navigation's inner blocks hear fewer hooks | open | the hook battery holds each difference |
-| 17591 | A template part found as the reference finds it (10-19) | the global styles lookup's query shape (`get_posts`, ID order, slug, filters suppressed) | open | the reference runs WP_Query by date and the theme's name; outputs agree (probes `global-styles-unfiltered`, `theme-json-resolver`) |
-| 17591 | A template part found as the reference finds it (10-19) | `sanitize_key` on query column names; kses's block-attribute pass outside the block parser | open | the hook battery holds both |
+| 17591 | A template part found as the reference finds it (10-19) | `wp_filter_content_tags` decides lazy loading as for `the_content` whatever its context (a header part's images lazy, iframes not asked about first) | done | 2026-10-19: "The template part's four rows, settled" (probe `content-tags`) |
+| 17591 | A template part found as the reference finds it (10-19) | the renderer fires no `get_block_type_uses_context`, no `block_parser_class` for inner content; a navigation's inner blocks hear fewer hooks | done | 2026-10-19: "The template part's four rows, settled": each block a WP_Block with its parent (probe `block-instances`); what is left has rows of its own there |
+| 17591 | A template part found as the reference finds it (10-19) | the global styles lookup's query shape (`get_posts`, ID order, slug, filters suppressed) | done | 2026-10-19: "The template part's four rows, settled" (probe `global-styles-lookup`) |
+| 17591 | A template part found as the reference finds it (10-19) | `sanitize_key` on query column names; kses's block-attribute pass outside the block parser | done | 2026-10-19: "The template part's four rows, settled" (probes `query-keys`, `kses-allowed-asks`) |
+| 17714 | The template part's four rows (10-19) | sequence only: the parse-time `sanitize_key` of a post type before `parse_tax_query`; the content image pass of `the_content` without the reference's composition hooks around each tag | accepted | the same keys, tags and output; only the order the hooks are heard in differs (probes `query-keys`, `content-tags`) |
+| 17714 | The template part's four rows (10-19) | the reference asks `get_block_type_uses_context` and `block_parser_class` more often (blocks walked before rendering, block hooks' parses) | accepted | which types are asked and which documents a swapped-in parser reads agree (probe `block-instances`); the extra asks are the reference's own internals |
+| 17714 | The template part's four rows (10-19) | a navigation's inner blocks rendered once through the block filters and dropped, then again; a submenu's links through `render_block` twice | accepted | the dropped render changes nothing a visitor sees, and rendering the items twice would cost every page with a navigation; the render that counts hears what the reference's does (probe `block-instances`) |
+| 17714 | The template part's four rows (10-19) | the comments block through `render_block` twice; its comment template's context carrying `postType` | open | the reference's comments block renders its blocks the way the post template does; observe it with comments to render |
+| 17714 | The template part's four rows (10-19) | a synced pattern's and a post's content get no first-child or last-child hooked blocks | open | `apply_block_hooks_to_content_from_post_object` wraps only a navigation's content; the reference wraps a `wp_block`'s in `core/block` and any other post's in `core/post-content` |
+| 17714 | The template part's four rows (10-19) | the session store writes `session_tokens` without the meta API (no `added_user_meta` / `updated_user_meta`) | open | `Auth\Sessions` writes the serialized blob itself so stored data is never executed; the actions want the value unserialized, so the store needs a safe way to hand it over |
+| 17714 | The template part's four rows (10-19) | `WP_Theme::get` returns a header as written, where the reference's sanitizes it as read | open | `Theme\ThemeHeaders` sanitizes what `display` shows; `get` would do the same once a theme object, read by everything that reads a theme |
+| 17714 | The template part's four rows (10-19) | text domains load when `load_*_textdomain` is called, not at the first translation; a domain nobody named is looked for | open | `Runtime\Translations::fromFolder` loads a file that is there at once; the reference notes the folder and waits (probe `theme-headers` holds the load a header triggers) |
+| 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | open | the reference's fallback lookup makes one from the classic menu or a page list unless `wp_navigation_should_create_fallback` says not; the engine renders the same items without writing (`Navigation::classicItems`) |

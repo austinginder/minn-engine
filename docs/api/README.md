@@ -30,5 +30,5 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Rest`](rest.md) | 87 | the wp/v2 surface: shapes and controllers |
 | [`Minn\Runtime`](runtime.md) | 166 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 36 | escaping, serialized readers, small helpers |
-| [`Minn\Theme`](theme.md) | 41 | the block-theme reader, templates, global styles and the page renderer |
+| [`Minn\Theme`](theme.md) | 42 | the block-theme reader, templates, global styles and the page renderer |
 | [`Minn\Widgets`](widgets.md) | 2 |  |

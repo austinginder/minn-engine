@@ -1,0 +1,395 @@
+[
+    [
+        "add_post_meta",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "get_post_meta, not cached",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "get_post_meta, cached",
+        []
+    ],
+    [
+        "update_post_meta, a new value",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "update_post_meta, the same value",
+        [
+            "post_id",
+            "post_id"
+        ]
+    ],
+    [
+        "update_post_meta, a new key",
+        [
+            "post_id",
+            "post_id"
+        ]
+    ],
+    [
+        "metadata_exists",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "get_metadata_by_mid",
+        []
+    ],
+    [
+        "update_metadata_by_mid",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "delete_post_meta",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "delete_metadata_by_mid",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "delete_metadata for every object",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "update_meta_cache, not cached",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "update_meta_cache, cached",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "add_user_meta",
+        [
+            "user_id",
+            "user_id"
+        ]
+    ],
+    [
+        "delete_user_meta",
+        [
+            "user_id"
+        ]
+    ],
+    [
+        "meta query",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "meta query, empty",
+        [
+            "post_id"
+        ]
+    ],
+    [
+        "meta query, a type there is not",
+        []
+    ],
+    [
+        "term query",
+        [
+            "term_id"
+        ]
+    ],
+    [
+        "term query, by term_taxonomy_id",
+        [
+            "term_id"
+        ]
+    ],
+    [
+        "comment query",
+        []
+    ],
+    [
+        "comment query, by meta",
+        [
+            "comment_id"
+        ]
+    ],
+    [
+        "user query, ids",
+        []
+    ],
+    [
+        "user query, whole",
+        [
+            "user_id"
+        ]
+    ],
+    [
+        "post query by name",
+        [
+            "post",
+            "name"
+        ]
+    ],
+    [
+        "post query by author",
+        [
+            "post",
+            "author"
+        ]
+    ],
+    [
+        "post query by date",
+        [
+            "post",
+            "date"
+        ]
+    ],
+    [
+        "post query by title",
+        [
+            "post",
+            "title"
+        ]
+    ],
+    [
+        "post query by modified",
+        [
+            "post",
+            "modified"
+        ]
+    ],
+    [
+        "post query by parent",
+        [
+            "post",
+            "parent"
+        ]
+    ],
+    [
+        "post query by type",
+        [
+            "post",
+            "type"
+        ]
+    ],
+    [
+        "post query by ID",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by menu_order",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by rand",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by none",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by post__in",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by comment_count",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by relevance",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by post_title",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by Title",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by zzunknown",
+        [
+            "post"
+        ]
+    ],
+    [
+        "post query by menu_order title",
+        [
+            "post",
+            "title"
+        ]
+    ],
+    [
+        "post query by two names",
+        [
+            "post",
+            "title",
+            "date"
+        ]
+    ],
+    [
+        "post query of a type",
+        {
+            "keys": [
+                "Post"
+            ],
+            "where": "= 'post'",
+            "kept": "post"
+        }
+    ],
+    [
+        "post query of types",
+        {
+            "keys": [
+                "Post",
+                "PAGE"
+            ],
+            "where": "= 'page'",
+            "kept": [
+                "page",
+                "post"
+            ]
+        }
+    ],
+    [
+        "post query of a spaced type",
+        {
+            "keys": [
+                "po st"
+            ],
+            "where": "= 'post'",
+            "kept": "post"
+        }
+    ],
+    [
+        "post query of any type",
+        {
+            "keys": [
+                "any"
+            ],
+            "where": "= 'attachment'",
+            "kept": "any"
+        }
+    ],
+    [
+        "post query of no type",
+        {
+            "keys": [],
+            "where": "= 'post'",
+            "kept": ""
+        }
+    ],
+    [
+        "post query of a type pre_get_posts sets",
+        {
+            "keys": [
+                "post"
+            ],
+            "where": "= 'PAGE'",
+            "kept": "PAGE"
+        }
+    ],
+    [
+        "post query of types pre_get_posts sets",
+        {
+            "keys": [
+                "post"
+            ],
+            "where": "= 'PAGE'",
+            "kept": [
+                "Post",
+                "PAGE"
+            ]
+        }
+    ],
+    [
+        "transform_query to term_id",
+        {
+            "keys": [
+                "term_id",
+                "term_id"
+            ],
+            "terms": [
+                1
+            ],
+            "field": "term_id"
+        }
+    ],
+    [
+        "transform_query to Slug",
+        {
+            "keys": [
+                "Slug",
+                "term_id"
+            ],
+            "terms": [
+                "uncategorized"
+            ],
+            "field": "slug"
+        }
+    ],
+    [
+        "transform_query to the field it has",
+        {
+            "keys": [],
+            "terms": [
+                1
+            ],
+            "field": "term_taxonomy_id"
+        }
+    ],
+    [
+        "transform_query with no terms",
+        {
+            "keys": [],
+            "terms": [],
+            "field": "slug"
+        }
+    ],
+    [
+        "a tax query by id",
+        [
+            "term_taxonomy_id",
+            "term_id"
+        ]
+    ]
+]

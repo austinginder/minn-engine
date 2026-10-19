@@ -9,8 +9,8 @@ dynamic core blocks that render from data
 | [`LatestComments`](#latestcomments) | final readonly class | 71 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
 | [`LatestPosts`](#latestposts) | final readonly class | 143 | core/latest-posts: the newest published posts as a list or a grid, each with |
 | [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
-| [`SocialLinks`](#sociallinks) | final class | 79 | core/social-links and core/social-link. The list keeps its stored |
-| [`SyncedPattern`](#syncedpattern) | final readonly class | 26 | core/block: a synced pattern, rendered from the wp_block post it references. |
+| [`SocialLinks`](#sociallinks) | final class | 78 | core/social-links and core/social-link. The list keeps its stored |
+| [`SyncedPattern`](#syncedpattern) | final readonly class | 33 | core/block: a synced pattern, rendered from the wp_block post it references. |
 | [`TagCloud`](#tagcloud) | final readonly class | 36 | core/tag-cloud: non-empty tags by name, sized from 8pt to 22pt in |
 
 ## Archives
@@ -140,7 +140,7 @@ __construct(string $iconsFile)
 
 Registers the block and its links with the renderer.
 
-Internals: `list()` (private, line 42), `link()` (private, line 57), `icons()` (private, line 96)
+Internals: `list()` (private, line 43), `link()` (private, line 56), `icons()` (private, line 95)
 
 
 ## SyncedPattern

@@ -70,7 +70,7 @@ final readonly class Structure
         [$markup, $area] = $found;
         $areaTag = self::areaTag($area);
         $markup = Runtime::shortcodes()->apply((string) Runtime::shortcodes()->unautop($markup), 'run');
-        $inner = $renderer->renderBlocks(self::blocksOf($markup));
+        $inner = $renderer->state()->within("template_part_{$area}", fn (): string => $renderer->renderRoots(Parser::named($markup)));
         $renderer->state()->leave('part:' . $slug);
         $inner = (string) Handoff::convertSmilies(Texturize::apply($inner));
         $inner = $renderer->images()->content($inner, "template_part_{$area}");
@@ -79,22 +79,6 @@ final readonly class Structure
         $tag = in_array($tag, self::PART_TAGS, true) ? $tag : $areaTag;
         $classes = trim($block->className() . ' wp-block-template-part');
         return '<' . $tag . ' class="' . Escape::attr($classes) . '">' . $inner . '</' . $tag . '>';
-    }
-
-    /**
-     * A part's blocks, parsed as do_blocks parses them: by the parser
-     * block_parser_class names, the engine's own unless a plugin swaps in
-     * another.
-     *
-     * @return list<Block>
-     */
-    private static function blocksOf(string $markup): array
-    {
-        $class = Runtime::hooks()->filter('block_parser_class', ['WP_Block_Parser']);
-        if ($class === 'WP_Block_Parser' || !is_string($class) || !class_exists($class)) {
-            return Parser::parse($markup);
-        }
-        return array_values(array_map(static fn (mixed $parsed): Block => Block::fromArray((array) $parsed), (array) (new $class())->parse($markup)));
     }
 
     /** The tag an area's parts are wrapped in, from the areas core knows; a div for any other. */
@@ -117,7 +101,7 @@ final readonly class Structure
             return '';
         }
         $area = (string) $block->attr('area', $this->theme->partArea($slug));
-        $inner = $renderer->renderBlocks(Parser::parse($markup));
+        $inner = $renderer->renderRoots(Parser::parse($markup));
         $renderer->state()->leave('part:' . $slug);
         $tag = (string) $block->attr('tagName', match ($area) { 'header' => 'header', 'footer' => 'footer', default => 'div' });
         $tag = in_array($tag, self::PART_TAGS, true) ? $tag : 'div';
@@ -186,7 +170,7 @@ final readonly class Structure
         }
         $meta = $this->theme->patternMeta($slug);
         $markup = $registered !== null ? $markup : BlockHooks::forPattern($markup, $slug, $meta['blockTypes'], $meta['categories']);
-        $out = $renderer->renderBlocks(Parser::parse($markup));
+        $out = $renderer->renderRoots(Parser::named($markup));
         $renderer->state()->leave('pattern:' . $slug);
         return $out;
     }

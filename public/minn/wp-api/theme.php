@@ -659,7 +659,8 @@ function validate_theme_requirements($stylesheet)
     $theme = wp_get_theme($stylesheet);
     $wp = is_wp_version_compatible((string) $theme->get('RequiresWP'));
     $php = is_php_version_compatible((string) $theme->get('RequiresPHP'));
-    $name = $theme->display('Name');
+    // The name as read, not translated (probe template-loading).
+    $name = $theme->display('Name', true, false);
     return match (true) {
         !$wp && !$php => new WP_Error('theme_wp_php_incompatible', sprintf(__('<strong>Error:</strong> Current WordPress and PHP versions do not meet minimum requirements for %s.'), $name)),
         !$php => new WP_Error('theme_php_incompatible', sprintf(__('<strong>Error:</strong> Current PHP version does not meet minimum requirements for %s.'), $name)),

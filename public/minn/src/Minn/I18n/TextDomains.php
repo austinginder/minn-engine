@@ -154,7 +154,9 @@ final class TextDomains
     /** Records the folder a plugin or theme named for its domain; files there are "{domain}-{locale}". */
     public function rememberFolder(string $domain, string $folder): void
     {
-        $this->folders[$domain] = [rtrim($folder, '/'), false];
+        $folder = rtrim($folder, '/');
+        // The active theme's own folder keeps its files named by locale alone, whoever names it again (probe theme-headers).
+        $this->folders[$domain] = [$folder, ($this->folders[$domain] ?? null) === [$folder, true]];
         $this->lookAgainUnlessLoaded($domain);
     }
 

@@ -50,22 +50,146 @@ final readonly class ImageTags
 
     /**
      * Every <img> and <iframe> of a content fragment as the reference's
-     * wp_filter_content_tags leaves it: an attachment's image is enriched as
-     * above (a loading it already has is kept, and an eager large one is
-     * fetched first); any other image is decoded asynchronously and, when its
-     * size is known, loaded lazily or by the page's budget; an iframe with a
-     * size is loaded lazily.
+     * wp_filter_content_tags leaves it for the context named (probe
+     * content-tags): whether iframes may load lazily asked first; each tag
+     * fitted out once, however often it appears. An attachment's image
+     * (a wp-image class) is given the width and height it lacks and its
+     * srcset and sizes; every image the loading, decoding and priority its
+     * context earns (wp_get_loading_optimization_attributes), "auto" sizes
+     * when lazy, then wp_content_img_tag. An iframe that names no loading of
+     * its own is given its loading, while iframes may load lazily.
      */
     public function content(string $html, mixed $context = null): string
     {
-        // A template's images get their srcset but no loading attributes, and its iframes stay as they are (probe tail-helpers).
-        $template = $context === 'template';
-        return (string) preg_replace_callback('/<(img|iframe)\s[^>]*>/i', function (array $m) use ($context, $template): string {
-            if (strtolower($m[1]) === 'iframe') {
-                return $template ? $m[0] : self::lazyFrame($m[0]);
+        $frames = (bool) AttachmentImages::lazyLoading('iframe', $context);
+        if (preg_match_all('/<(img|iframe)\s[^>]+>/i', $html, $found) === 0) {
+            return $html;
+        }
+        $fitted = [];
+        foreach ($found[0] as $i => $tag) {
+            if (isset($fitted[$tag])) {
+                continue;
             }
-            return (string) Runtime::hooks()->filter('wp_content_img_tag', [$template ? self::autoSizedWhenLazy($this->sized($m[0])) : $this->fit($m[0]), $context, self::attachmentOf($m[0])]);
-        }, $html);
+            if (strtolower($found[1][$i]) === 'img') {
+                $fitted[$tag] = $this->contentImage($tag, $context);
+            } elseif ($frames && !str_contains($tag, ' loading=')) {
+                $fitted[$tag] = self::frame($tag, $context);
+            }
+        }
+        return strtr($html, $fitted);
+    }
+
+    /**
+     * An <img> given what it lacks of decoding, loading and fetchpriority, as
+     * the context earns them (wp_img_tag_add_loading_optimization_attrs):
+     * an image with no source given none of them; decoding through
+     * wp_img_tag_add_decoding_attr; for an image that writes a width and a
+     * height, lazy loading asked, then a loading through
+     * wp_img_tag_add_loading_attr (lazy or eager as given, any other
+     * answer keeping the loading the context earned, a false one none); then
+     * a high priority. Each is placed
+     * straight after "<img", so the last added reads first.
+     */
+    public static function optimized(string $image, mixed $context): string
+    {
+        $attr = ['src' => self::attributeOf($image, 'src')] + self::sizeOf($image) + ['loading' => self::attributeOf($image, 'loading'), 'fetchpriority' => self::attributeOf($image, 'fetchpriority'), 'decoding' => self::attributeOf($image, 'decoding')];
+        $optimization = (array) AttachmentImages::loadingAttributes('img', $attr, $context);
+        // An image whose source is not written src="..." is given nothing (probe content-tags).
+        if (!str_contains($image, ' src="')) {
+            return $image;
+        }
+        $hooks = Runtime::hooks();
+        if ($attr['decoding'] === null) {
+            $decoding = $hooks->filter('wp_img_tag_add_decoding_attr', [$optimization['decoding'] ?? false, $image, $context]);
+            if (in_array($decoding, ['async', 'sync', 'auto'], true)) {
+                $image = (string) preg_replace('/<img\b/i', '<img decoding="' . $decoding . '"', $image, 1);
+            }
+        }
+        // Only a width and a height written width="..." height="..." ask for a loading, whatever they hold.
+        if (str_contains($image, ' width="') && str_contains($image, ' height="')) {
+            AttachmentImages::lazyLoading('img', $context);
+            if ($attr['loading'] === null) {
+                // lazy or eager is taken as given and nothing drops it; any other answer keeps the loading the context earned.
+                $loading = $hooks->filter('wp_img_tag_add_loading_attr', [$optimization['loading'] ?? false, $image, $context]);
+                $loading = in_array($loading, ['lazy', 'eager'], true) ? $loading : ($loading ? ($optimization['loading'] ?? null) : null);
+                if ($loading !== null) {
+                    $image = (string) preg_replace('/<img\b/i', '<img loading="' . $loading . '"', $image, 1);
+                }
+            }
+        }
+        if ($attr['fetchpriority'] === null && ($optimization['fetchpriority'] ?? null) === 'high') {
+            $image = (string) preg_replace('/<img\b/i', '<img fetchpriority="high"', $image, 1);
+        }
+        return $image;
+    }
+
+    /** One content image fitted out as wp_filter_content_tags fits it, then through wp_content_img_tag. */
+    private function contentImage(string $tag, mixed $context): string
+    {
+        $id = self::attachmentOf($tag);
+        if ($id > 0 && preg_match('/\sclass="[^"]*\bwp-image-\d+\b/', $tag) === 1) {
+            $hooks = Runtime::hooks();
+            $size = self::sizeOf($tag);
+            if (($size['width'] === null || $size['height'] === null) && $hooks->filter('wp_img_tag_add_width_and_height_attr', [true, $tag, $context, $id])) {
+                $tag = $this->dimensioned($tag, $id);
+            }
+            if (!str_contains($tag, ' srcset=') && $hooks->filter('wp_img_tag_add_srcset_and_sizes_attr', [true, $tag, $context, $id]) === true) {
+                $tag = $this->sized($tag);
+            }
+        }
+        $tag = self::optimized($tag, $context);
+        if (Runtime::hooks()->filter('wp_img_tag_add_auto_sizes', [true])) {
+            $tag = self::lazySizes($tag);
+        }
+        return (string) Runtime::hooks()->filter('wp_content_img_tag', [$tag, $context, $id]);
+    }
+
+    /** An iframe given the loading its context earns (wp_iframe_tag_add_loading_attr), when it has a width and a height. */
+    private static function frame(string $iframe, mixed $context): string
+    {
+        $has = static fn (string $name): ?int => str_contains($iframe, ' ' . $name . '="') ? 100 : null;
+        $attr = ['width' => $has('width'), 'height' => $has('height'), 'loading' => null];
+        $optimization = (array) AttachmentImages::loadingAttributes('iframe', $attr, $context);
+        if ($attr['width'] === null || $attr['height'] === null) {
+            return $iframe;
+        }
+        $loading = Runtime::hooks()->filter('wp_iframe_tag_add_loading_attr', [$optimization['loading'] ?? false, $iframe, $context]);
+        return $loading ? (string) preg_replace('/<iframe\b/i', '<iframe loading="' . (in_array($loading, ['lazy', 'eager'], true) ? $loading : 'lazy') . '"', $iframe, 1) : $iframe;
+    }
+
+    /** An attachment's image given the width and height its source names, when it is one of the attachment's files. */
+    private function dimensioned(string $tag, int $id): string
+    {
+        $found = $this->candidates($tag, $id);
+        return $found === null ? $tag : (string) preg_replace('/^<img\s/i', '<img width="' . $found[1] . '" height="' . $found[2] . '" ', $tag, 1);
+    }
+
+    /** A lazy image's sizes led by "auto", unless they already are. */
+    private static function lazySizes(string $tag): string
+    {
+        if (preg_match('/\sloading=["\']?lazy\b/i', $tag) !== 1 || preg_match('/\ssizes="([^"]*)"/', $tag, $m) !== 1 || preg_match('/^\s*auto\s*(,|$)/i', $m[1]) === 1) {
+            return $tag;
+        }
+        return str_replace($m[0], ' sizes="auto, ' . $m[1] . '"', $tag);
+    }
+
+    /**
+     * An attribute's value as written after a space, or null: its name in
+     * lower case (any case for src), as the reference reads it.
+     */
+    private static function attributeOf(string $tag, string $name): ?string
+    {
+        return preg_match('/ ' . $name . '=(?:"([^"]*)"|\'([^\']*)\'|([^\s>]+))/' . ($name === 'src' ? 'i' : ''), $tag, $m) === 1 ? (string) ($m[3] ?? $m[2] ?? $m[1] ?? '') : null;
+    }
+
+    /** An image's width and height, each as a whole number when it is written as one. @return array{width: ?int, height: ?int} */
+    private static function sizeOf(string $tag): array
+    {
+        $size = [];
+        foreach (['width', 'height'] as $name) {
+            $size[$name] = preg_match('/ ' . $name . '=["\']([0-9]+)["\']/', $tag, $m) === 1 ? (int) $m[1] : null;
+        }
+        return $size;
     }
 
     /** A template's image: an attachment's gets its srcset and sizes in place, nothing more; any other is left as it is. */
@@ -145,15 +269,6 @@ final readonly class ImageTags
         return preg_match('/\sloading=["\']?lazy\b/i', $tag) === 1 ? self::autoSized($tag) : $tag;
     }
 
-    /** An iframe with a width and a height, and no loading of its own, loads lazily. */
-    private static function lazyFrame(string $tag): string
-    {
-        if (str_contains($tag, ' loading=') || preg_match('/\swidth=/', $tag) !== 1 || preg_match('/\sheight=/', $tag) !== 1 || !self::lazyAllowed('iframe')) {
-            return $tag;
-        }
-        return (string) preg_replace('/^<iframe\s/i', '<iframe loading="lazy" ', $tag, 1);
-    }
-
     private function rewrite(string $html, bool $withDataId, bool $autoSizes): string
     {
         return preg_replace_callback(
@@ -224,8 +339,13 @@ final readonly class ImageTags
             return $tag;
         }
         [$candidates, $width, $height, $meta, $src] = $found;
-        [$loading, $auto] = preg_match('/\sloading="(\w+)"/', $tag, $given) === 1 ? $this->givenLoading($given[1], $width, $height) : $this->loadingPrefix($width, $height);
-        $prefix = $loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : '');
+        // In a template part the part's own content pass gives its images their loading, for the part's context, as the reference does.
+        [$loading, $auto] = match (true) {
+            str_starts_with((string) RenderState::current()->contentContext(), 'template_part_') => ['', false],
+            preg_match('/\sloading="(\w+)"/', $tag, $given) === 1 => $this->givenLoading($given[1], $width, $height),
+            default => $this->loadingPrefix($width, $height),
+        };
+        $prefix = ltrim($loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : ''));
         $tag = preg_replace('/^<img\s/', '<img ' . $prefix . ' ', $tag, 1);
         $srcset = self::srcsetAttributes($candidates, $width, $auto && $autoSizes, $attachmentId, $meta, $src, $height);
         return $srcset === '' ? $tag : preg_replace('/\s*\/?>$/', $srcset . ' />', $tag, 1);

@@ -162,7 +162,7 @@ A block being rendered as the WordPress layer hands it to plugins
 engine knows these objects by this mark and makes them through
 Runtime\Handoff, so it never names the WordPress layer's class.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Runtime\Handoff`
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Renderer`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\Handoff`
 
 
 ## RestRequest

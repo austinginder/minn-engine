@@ -106,7 +106,7 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
         return $value;
     }
 
-    /** A header as shown: feature tags by name in the admin, and with markup tags joined, the author linked to their address, addresses escaped. */
+    /** A header as shown (Minn\Theme\ThemeHeaders); feature tags read as their names in the admin. */
     public function display($header, $markup = true, $translate = true)
     {
         $value = $this->get($header);
@@ -117,19 +117,7 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
             $names ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/theme-tags.json'), true);
             $value = array_map(static fn ($tag) => $names[$tag] ?? $tag, $value);
         }
-        if (!$markup || !is_string($value) && !is_array($value)) {
-            return $value;
-        }
-        if (is_array($value)) {
-            return implode(', ', $value);
-        }
-        $value = wp_kses($value, ['a' => ['href' => true, 'title' => true], 'abbr' => ['title' => true], 'acronym' => ['title' => true], 'code' => [], 'em' => [], 'strong' => []]);
-        $authorUri = (string) $this->get('AuthorURI');
-        return match (true) {
-            $header === 'Author' && $value !== '' && $authorUri !== '' => sprintf('<a href="%1$s">%2$s</a>', esc_url($authorUri), $value),
-            $header === 'AuthorURI', $header === 'ThemeURI' => esc_url($value),
-            default => $value,
-        };
+        return Minn\Theme\ThemeHeaders::shown((string) $header, $value, $markup, $translate, (string) $this->get('TextDomain'), $this->load_textdomain(...), fn ($name) => $this->display($name, false, $translate));
     }
 
     public function get_stylesheet()
@@ -283,10 +271,10 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
         return array_values($byName);
     }
 
-    /** The theme's translations loaded under its Text Domain; false for a theme that names none. */
+    /** The theme's translations loaded under its Text Domain, once for this object (Minn\Theme\ThemeHeaders::loadFor). */
     public function load_textdomain()
     {
-        return (bool) $this->get('TextDomain');
+        return Minn\Theme\ThemeHeaders::loadFor($this);
     }
 
     public function is_allowed($check = 'both', $blog_id = null)

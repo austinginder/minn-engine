@@ -7,6 +7,7 @@ namespace Minn\Content;
 use Minn\Auth\Password;
 use Minn\Auth\Roles;
 use Minn\Db;
+use Minn\Runtime\Handoff;
 use Minn\Support\Kses;
 
 final readonly class Users
@@ -299,5 +300,10 @@ final readonly class Users
         $table = $this->db->table('usermeta');
         $this->db->execute("DELETE FROM {$table} WHERE user_id = ? AND meta_key = ?", [$userId, $key]);
         $this->db->execute("INSERT INTO {$table} (user_id, meta_key, meta_value) VALUES (?, ?, ?)", [$userId, $key, $value]);
+        // What a reader cached of the user's meta goes with it, as a meta write lets it go: the session store
+        // writes here, and get_user_meta must see the session it made or destroyed (probe auth-cookies).
+        if (Handoff::bound('cacheDelete')) {
+            Handoff::cacheDelete($userId, 'user_meta');
+        }
     }
 }

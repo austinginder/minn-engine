@@ -88,29 +88,6 @@ final class PostSave
         return self::changed($columns, $data, $before);
     }
 
-    /**
-     * A direct save's changed columns through every column's db context,
-     * as an update runs them over the whole post (pre_post_* and
-     * *_save_pre, where kses and the global styles strip sit): a global
-     * styles save writes its post this way (probe global-styles-unfiltered).
-     * Without a booted runtime the changes are as given.
-     *
-     * @param array<string, string> $changes column => value
-     * @return array<string, string>
-     */
-    public static function throughSaveFilters(int $id, array $changes): array
-    {
-        if (!Runtime::booted()) {
-            return $changes;
-        }
-        $sanitized = self::sanitized(Slashes::add($changes + self::stored($id)));
-        $out = [];
-        foreach (array_keys($changes) as $column) {
-            $out[$column] = (string) Slashes::strip($sanitized[$column] ?? '');
-        }
-        return $out;
-    }
-
     /** The post as stored, its columns by name. @return array<string, mixed> */
     private static function stored(int $id): array
     {

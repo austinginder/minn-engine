@@ -179,8 +179,8 @@ $check("facade map: leaf functions over fifteen lines stay at or under {$leafCei
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-logic.php') . ' --check', $ignored, $facadeLogicStale);
 $check('facade logic: contracts/api/facade-logic.json is current', $facadeLogicStale === 0, 'run php tests/tools/facade-logic.php');
 $facadeLogic = (array) ((json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/facade-logic.json'), true) ?: [])['summary'] ?? []);
-$facadeLogicCeiling = 3845;
-$facadeLogicLinesCeiling = 30186;
+$facadeLogicCeiling = 3843;
+$facadeLogicLinesCeiling = 30132;
 $facadeLogicCount = (int) ($facadeLogic['logicFunctions'] ?? PHP_INT_MAX) + (int) ($facadeLogic['logicMethods'] ?? 0);
 $check("facade logic: functions and methods holding logic stay at or under {$facadeLogicCeiling}", $facadeLogicCount <= $facadeLogicCeiling, (string) $facadeLogicCount);
 $check("facade logic: their body lines stay at or under {$facadeLogicLinesCeiling}", (int) ($facadeLogic['logicLines'] ?? PHP_INT_MAX) <= $facadeLogicLinesCeiling, (string) ($facadeLogic['logicLines'] ?? '?'));
@@ -330,7 +330,7 @@ $check("engine: classes over six hundred lines stay at or under {$bigClassCeilin
 // WordPress-named function (the hook API aside) is the facade reached from
 // underneath. Both counts only fall; lower a ceiling when you remove some,
 // never raise one.
-$bootedCeiling = 72;
+$bootedCeiling = 71;
 $wordpressCallCeiling = 0;
 // The hook API from src/Minn goes through Runtime::hooks() too: \apply_filters() and \do_action() are the facade's names for it.
 $hookApiCeiling = 0;

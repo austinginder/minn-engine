@@ -30,7 +30,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostRecord`](#postrecord) | final readonly class | 162 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 503 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 405 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 561 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
@@ -45,7 +45,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 292 |  |
+| [`Users`](#users) | final readonly class | 297 |  |
 
 ## Autop
 
@@ -1349,27 +1349,6 @@ categories, each only when the body has the field.
 - `@param array<string, string>|null $map REST field => taxonomy; the core taxonomies when null`
 - `@return array<string, list<int>>`
 
-### `maybeSaveRevision(int $id, int $userId): void`
-
-Snapshots the post's NEW state as a revision exactly when the
-reference would: compared against the latest revision, identical
-content-bearing fields add nothing, and the first update always
-snapshots.
-
-### `revisionColumns(int $id, int $userId): ?array`
-
-The row of the revision a post's current state calls for, or null
-when it calls for none (an unrevisioned type, or nothing changed
-since the latest revision).
-
-- `@return array<string, mixed>|null`
-
-### `insertRevision(array $columns): int`
-
-Writes a revision row and gives it its guid; returns its id. @param array<string, mixed> $columns
-
-- `@param array<string, mixed> $columns`
-
 ### `reparentChildren(int $id, int $parent, array $types): void`
 
 Moves a deleted post's children of the given types to another parent, the way the reference keeps pages and attachments attached. @param list<string> $types
@@ -1388,7 +1367,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `fit()` (private, line 178), `announceSticky()` (private, line 279), `saveSticky()` (private, line 287), `revisionsToKeep()` (private, line 395), `pruneRevisions()` (private, line 402)
+Internals: `fit()` (private, line 183), `announceSticky()` (private, line 284), `saveSticky()` (private, line 292)
 
 
 ## Posts
@@ -2155,7 +2134,7 @@ texturize battery post; anything beyond it is a documented gap.
 
 - const `SKIP` = `array (   0 => 'pre',   1 => 'code',   2 => 'kbd',   3 => 'style',   4 => 'script',   5 => 'tt', )`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\PluginFiles`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\PluginFiles`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`, `Minn\Theme\ThemeHeaders`
 
 
 ### static `enabled(): bool`
@@ -2307,7 +2286,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Users` · `public/minn/src/Minn/Content/Users.php`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\UserWrites`
 
 ```php
 __construct(Minn\Db $db)
@@ -2452,5 +2431,5 @@ Replaces one usermeta row. The (user_id, meta_key) pair carries no
 unique index on the stock schema, so this is a delete plus insert
 rather than an upsert.
 
-Internals: `record()` (private, line 19), `refreshCount()` (private, line 107), `writeAccount()` (private, line 119)
+Internals: `record()` (private, line 20), `refreshCount()` (private, line 108), `writeAccount()` (private, line 120)
 

@@ -19,6 +19,7 @@ use Minn\Front\Kind;
 use Minn\Objects\Post;
 use Minn\Objects\Query;
 use Minn\Runtime\BlockQueries;
+use Minn\Runtime\BlockFilters;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\MainQuery;
@@ -174,11 +175,14 @@ final class QueryBlocks
             }
             $post = PostRecord::fromPost($loop->post);
             $context->pushPost($post);
-            $inner = '';
-            $index = 0;
-            foreach ($block->innerContent as $chunk) {
-                $inner .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$index++]);
-            }
+            $inner = self::item($block, $post, $renderer, static function () use ($block, $renderer): string {
+                $inner = '';
+                $index = 0;
+                foreach ($block->innerContent as $chunk) {
+                    $inner .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$index++]);
+                }
+                return $inner;
+            });
             $context->popPost();
             // Its classes are asked for once its blocks are rendered, through post_class, as the reference asks,
             // for the item's own post: a loop inside its blocks has set the main query's post up again.
@@ -195,6 +199,24 @@ final class QueryBlocks
             trailingClasses: Layout::classes('core/post-template', $block->attrs),
         );
         return $open . $items . '</ul>';
+    }
+
+    /**
+     * One post's blocks, rendered as the reference renders them: inside a
+     * block of no type (core/null) that carries the post as the context its
+     * blocks are made with, and goes through render_block itself (probe
+     * block-instances).
+     *
+     * @param \Closure(): string $render
+     */
+    private static function item(Block $block, PostRecord $post, Renderer $renderer, \Closure $render): string
+    {
+        if (!BlockFilters::active() || !Handoff::bound('newBlock')) {
+            return $render();
+        }
+        $parsed = ['blockName' => 'core/null', 'attrs' => [], 'innerBlocks' => array_map(static fn (Block $inner): array => $inner->toArray(), $block->innerBlocks), 'innerHTML' => $block->innerHtml, 'innerContent' => $block->innerContent];
+        $instance = Handoff::newBlock($parsed, ['postType' => $post->type, 'postId' => $post->id]);
+        return BlockFilters::rendered($renderer->under($instance, $render), $parsed, $instance);
     }
 
     private function queryTitle(Block $block, Renderer $renderer): string

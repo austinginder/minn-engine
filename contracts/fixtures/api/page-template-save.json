@@ -1,0 +1,98 @@
+[
+    [
+        "post: no template",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": ""
+        }
+    ],
+    [
+        "post: an empty one",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": ""
+        }
+    ],
+    [
+        "post: default",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": "default"
+        }
+    ],
+    [
+        "post: an empty one over a stored one",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": "default"
+        }
+    ],
+    [
+        "page: no template",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": ""
+        }
+    ],
+    [
+        "page: an empty one",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": ""
+        }
+    ],
+    [
+        "page: default",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": "default"
+        }
+    ],
+    [
+        "page: an empty one over a stored one",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": "default"
+        }
+    ],
+    [
+        "wp_global_styles: no template",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": ""
+        }
+    ],
+    [
+        "wp_global_styles: an empty one",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": ""
+        }
+    ],
+    [
+        "wp_global_styles: default",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": "default"
+        }
+    ],
+    [
+        "wp_global_styles: an empty one over a stored one",
+        {
+            "saved": true,
+            "deleted": [],
+            "template": "default"
+        }
+    ]
+]

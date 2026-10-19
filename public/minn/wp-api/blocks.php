@@ -150,8 +150,13 @@ function _minn_render_core_block(WP_Block $block, string $content = '', bool $fi
 function _minn_bridge_dynamic_block(string $name): void
 {
     MinnBlocks::renderer()->bridge($name, static function (MinnBlock $block): string {
-        // The engine's BlockFilters already ran pre_render_block, render_block_data and render_block around this
-        // call; the block object gets the context render_block() would build, and renders once.
+        // The engine's BlockFilters already ran pre_render_block, render_block_data, render_block_context and
+        // render_block around this call and made the block object, which renders once; without them, the block
+        // object gets the context render_block() would build.
+        $instance = MinnBlocks::renderer()->ownInstance();
+        if ($instance instanceof WP_Block) {
+            return $instance->render(['minn_filters' => false]);
+        }
         $parsed = _minn_block_to_array($block);
         $context = [];
         $post = get_post();
@@ -653,7 +658,7 @@ function filter_block_kses_value($value, $allowed_html, $allowed_protocols = [],
 
 function filter_block_content($text, $allowed_html = 'post', $allowed_protocols = [])
 {
-    return Kses::blockAttributes((string) $text, static fn (string $value): string => wp_kses($value, $allowed_html, (array) $allowed_protocols));
+    return Kses::blockAttributesParsed((string) $text, static fn (string $value): string => wp_kses($value, $allowed_html, (array) $allowed_protocols));
 }
 
 function _filter_block_content_callback($matches)

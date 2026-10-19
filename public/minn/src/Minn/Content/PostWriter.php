@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Minn\Db;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
 
@@ -88,6 +89,10 @@ final readonly class PostWriter
         $updated = $this->db->execute("UPDATE {$table} SET meta_value = ? WHERE post_id = ? AND meta_key = ?", [$value, $id, $key]);
         if ($updated === 0 && (int) $this->db->value("SELECT COUNT(*) FROM {$table} WHERE post_id = ? AND meta_key = ?", [$id, $key]) === 0) {
             $this->db->execute("INSERT INTO {$table} (post_id, meta_key, meta_value) VALUES (?, ?, ?)", [$id, $key, $value]);
+        }
+        // What a reader cached of the post's meta goes with it, as a meta write lets it go (Users::setMeta).
+        if (Handoff::bound('cacheDelete')) {
+            Handoff::cacheDelete($id, 'post_meta');
         }
     }
 
@@ -373,108 +378,6 @@ final readonly class PostWriter
             }
         }
         return $out;
-    }
-
-    /**
-     * Snapshots the post's NEW state as a revision exactly when the
-     * reference would: compared against the latest revision, identical
-     * content-bearing fields add nothing, and the first update always
-     * snapshots.
-     */
-    public function maybeSaveRevision(int $id, int $userId): void
-    {
-        $keep = self::revisionsToKeep();
-        $columns = $keep === 0 ? null : $this->revisionColumns($id, $userId);
-        if ($columns !== null) {
-            $this->insertRevision($columns);
-            $this->pruneRevisions($id, $keep);
-        }
-    }
-
-    /** How many revisions a post keeps without plugins: WP_POST_REVISIONS, all (-1) when unset or true. */
-    private static function revisionsToKeep(): int
-    {
-        $keep = defined('WP_POST_REVISIONS') ? WP_POST_REVISIONS : true;
-        return $keep === true ? -1 : (int) $keep;
-    }
-
-    /** The oldest revisions past the limit removed, with their meta; autosaves stay. */
-    private function pruneRevisions(int $id, int $keep): void
-    {
-        if ($keep < 0) {
-            return;
-        }
-        $ids = array_map('intval', array_column($this->db->rows(
-            "SELECT ID FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'revision' AND post_status = 'inherit' ORDER BY post_date ASC, ID ASC",
-            [$id],
-        ), 'ID'));
-        $autosave = $id . '-autosave';
-        foreach (array_slice($ids, 0, max(0, count($ids) - $keep)) as $revisionId) {
-            $name = (string) $this->db->value("SELECT post_name FROM {$this->db->table('posts')} WHERE ID = ?", [$revisionId]);
-            if (!str_starts_with($name, $autosave)) {
-                $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ?", [$revisionId]);
-                $this->db->execute("DELETE FROM {$this->db->table('posts')} WHERE ID = ?", [$revisionId]);
-            }
-        }
-    }
-
-    /**
-     * The row of the revision a post's current state calls for, or null
-     * when it calls for none (an unrevisioned type, or nothing changed
-     * since the latest revision).
-     *
-     * @return array<string, mixed>|null
-     */
-    public function revisionColumns(int $id, int $userId): ?array
-    {
-        $post = $this->posts->find($id);
-        if ($post === null || !in_array($post['post_type'], ['post', 'page', 'wp_global_styles'], true)) {
-            return null;
-        }
-        $latest = $this->db->row(
-            "SELECT post_title, post_content, post_excerpt FROM {$this->db->table('posts')}
-             WHERE post_parent = ? AND post_type = 'revision' AND post_name NOT LIKE ?
-             ORDER BY ID DESC LIMIT 1",
-            [$id, $id . '-autosave%'],
-        );
-        if ($latest !== null
-            && $latest['post_title'] === $post['post_title']
-            && $latest['post_content'] === $post['post_content']
-            && $latest['post_excerpt'] === $post['post_excerpt']) {
-            return null;
-        }
-        return [
-            'post_author' => $userId,
-            'post_date' => $post['post_modified'],
-            'post_date_gmt' => $post['post_modified_gmt'],
-            'post_content' => $post['post_content'],
-            'post_title' => $post['post_title'],
-            'post_excerpt' => $post['post_excerpt'],
-            'post_status' => 'inherit',
-            'comment_status' => 'closed',
-            'ping_status' => 'closed',
-            'post_password' => '',
-            'post_name' => $id . '-revision-v1',
-            'to_ping' => '',
-            'pinged' => '',
-            'post_modified' => $post['post_modified'],
-            'post_modified_gmt' => $post['post_modified_gmt'],
-            'post_content_filtered' => '',
-            'post_parent' => $id,
-            'guid' => '',
-            'menu_order' => 0,
-            'post_type' => 'revision',
-            'post_mime_type' => '',
-            'comment_count' => 0,
-        ];
-    }
-
-    /** Writes a revision row and gives it its guid; returns its id. @param array<string, mixed> $columns */
-    public function insertRevision(array $columns): int
-    {
-        $revisionId = $this->insert($columns);
-        $this->update($revisionId, ['guid' => rtrim($this->site->option('home') ?? '', '/') . '/?p=' . $revisionId]);
-        return $revisionId;
     }
 
     /** Removes a post, its revisions, term links, and meta. */

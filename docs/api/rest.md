@@ -25,7 +25,7 @@ the wp/v2 surface: shapes and controllers
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`ExistingPost`](#existingpost) | final class | 10 | A post created with an id names one that exists: refused with |
 | [`Fields`](#fields) | final readonly class | 106 | The _fields response filter. Dot paths descend ("title.rendered"); the |
-| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 159 | wp/v2/global-styles: the site editor's saved styles (one post per |
+| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 161 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
 | [`IndexController`](#indexcontroller) | final readonly class | 56 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 141 | wp/v2/themes as the reference answers it (probe rest-themes): the |
@@ -1133,7 +1133,7 @@ Route: `GET /wp/v2/global-styles/{parent:[\d]+}/revisions/{id:[\d]+} (cap edit_t
 
 One revision of the saved styles.
 
-Internals: `refuseIllegalCss()` (private, line 79), `post()` (private, line 136), `requireTheme()` (private, line 142), `requireParent()` (private, line 150), `title()` (private, line 163), `node()` (private, line 172)
+Internals: `refuseIllegalCss()` (private, line 82), `post()` (private, line 139), `requireTheme()` (private, line 145), `requireParent()` (private, line 153), `title()` (private, line 166), `node()` (private, line 175)
 
 
 ## GlobalStylesObject

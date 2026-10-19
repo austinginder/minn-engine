@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Content\RowCache;
 use Minn\I18n\Gettext;
+use Minn\Support\Sanitize;
 
 /**
  * The terms a taxonomy query's clause names, found as the reference finds
@@ -83,6 +84,7 @@ final class TaxTerms
         if ($terms === [] || $field === $to) {
             return true;
         }
+        $to = Sanitize::key($to);
         $taxonomy = (string) ($clause['taxonomy'] ?? '');
         $args = ['taxonomy' => [$taxonomy], 'orderby' => 'none', 'number' => Registered::hierarchicalTaxonomy($taxonomy) ? 0 : count($terms), 'get' => 'all', 'update_term_meta_cache' => false];
         $args[in_array($field, ['slug', 'name', 'term_taxonomy_id'], true) ? $field : 'include'] = array_unique($terms);

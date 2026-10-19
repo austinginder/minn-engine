@@ -50,6 +50,8 @@ final class RenderState
     private array $contentRendered = [];
     /** @var array<int, true> the posts a post-content block is rendering the content of */
     private array $contentPosts = [];
+    /** @var list<string> the contexts content is rendered in, innermost last */
+    private array $contexts = [];
 
     /**
      * The state of the request being rendered, which its runtime holds, so
@@ -177,10 +179,31 @@ final class RenderState
         }
         $this->contentPosts[$id] = true;
         try {
-            return $render();
+            return $this->within('the_content', $render);
         } finally {
             unset($this->contentPosts[$id]);
         }
+    }
+
+    /**
+     * Renders inside the context the content's images are fitted out for (a
+     * template part's template_part_{area}, a post's the_content), the
+     * innermost one standing.
+     */
+    public function within(string $context, \Closure $render): mixed
+    {
+        $this->contexts[] = $context;
+        try {
+            return $render();
+        } finally {
+            array_pop($this->contexts);
+        }
+    }
+
+    /** The context content is rendered in now (within), or null outside any. */
+    public function contentContext(): ?string
+    {
+        return $this->contexts === [] ? null : $this->contexts[array_key_last($this->contexts)];
     }
 
     /**

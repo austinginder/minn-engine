@@ -35,22 +35,21 @@ final class SocialLinks
     public function register(Renderer $renderer): void
     {
         $renderer->registerDynamic('core/social-links', $this->list(...));
-        // On its own (its render callback, or outside a list) a link takes the list's settings from its context.
+        // A link takes the list's settings from its context (a list provides them; its render callback hands them).
         $renderer->registerDynamic('core/social-link', fn (Block $block, Renderer $renderer): string => $this->link($block, new Block('core/social-links', array_intersect_key($renderer->blockContext(), self::PARENT_SETTINGS), [], '', [])));
     }
 
+    /** The list's links render as blocks of their own (the block filters around each, probe block-instances), its settings their context. */
     private function list(Block $block, Renderer $renderer): string
     {
-        $out = '';
-        $inner = 0;
-        foreach ($block->innerContent as $chunk) {
-            if ($chunk !== null) {
-                $out .= $chunk;
-                continue;
+        $out = $renderer->providing(array_intersect_key($block->attrs, self::PARENT_SETTINGS), static function () use ($block, $renderer): string {
+            $out = '';
+            $inner = 0;
+            foreach ($block->innerContent as $chunk) {
+                $out .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$inner++]);
             }
-            $child = $block->innerBlocks[$inner++];
-            $out .= $child->name === 'core/social-link' ? $this->link($child, $block) : $renderer->renderBlock($child);
-        }
+            return $out;
+        });
         return Html::addClasses($out, Layout::classes('core/social-links', $block->attrs));
     }
 

@@ -2,15 +2,15 @@
     "generated": "2026-10-19",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 682,
-        "composes": 2134,
-        "leaf": 1005,
-        "noop": 3164,
+        "minn": 681,
+        "composes": 2131,
+        "leaf": 1007,
+        "noop": 3167,
         "placeholder": 0,
         "deadend": 1767,
-        "functions": 8674,
-        "minnMethods": 1419,
-        "leafLinesOver15": 12
+        "functions": 8675,
+        "minnMethods": 1420,
+        "leafLinesOver15": 11
     },
     "functions": {
         "Author::__construct": {
@@ -7693,6 +7693,20 @@
             "minn": [],
             "composes": []
         },
+        "WP_Block::adopt": {
+            "file": "classes/WP_Block.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block::child_context": {
+            "file": "classes/WP_Block.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Block::enqueue_assets": {
             "file": "classes/WP_Block.php",
             "lines": 12,
@@ -7716,14 +7730,14 @@
         },
         "WP_Block::refresh_context_dependents": {
             "file": "classes/WP_Block.php",
-            "lines": 9,
+            "lines": 10,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Block::refresh_parsed_block_dependents": {
             "file": "classes/WP_Block.php",
-            "lines": 17,
+            "lines": 9,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -7748,7 +7762,7 @@
         },
         "WP_Block::render_inner_blocks": {
             "file": "classes/WP_Block.php",
-            "lines": 22,
+            "lines": 19,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\BlockFilters::data"
@@ -15980,7 +15994,8 @@
             "minn": [
                 "Minn\\Query\\MetaSql::hasOr",
                 "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db->table"
+                "Minn\\Runtime\\Runtime::db->table",
+                "Minn\\Support\\Sanitize::key"
             ],
             "composes": [
                 "apply_filters_ref_array"
@@ -28995,13 +29010,13 @@
         },
         "WP_Theme::display": {
             "file": "classes/WP_Theme.php",
-            "lines": 21,
-            "kind": "composes",
-            "minn": [],
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\ThemeHeaders::shown"
+            ],
             "composes": [
-                "esc_url",
-                "is_admin",
-                "wp_kses"
+                "is_admin"
             ]
         },
         "WP_Theme::errors": {
@@ -29213,7 +29228,9 @@
             "file": "classes/WP_Theme.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Theme\\ThemeHeaders::loadFor"
+            ],
             "composes": []
         },
         "WP_Theme::network_disable_theme": {
@@ -36255,9 +36272,10 @@
         },
         "_minn_bridge_dynamic_block": {
             "file": "blocks.php",
-            "lines": 13,
+            "lines": 18,
             "kind": "minn",
             "minn": [
+                "Minn\\Content\\Blocks::render",
                 "Minn\\Content\\Blocks::renderer"
             ],
             "composes": [
@@ -37397,15 +37415,6 @@
                 "Minn\\Runtime\\Runtime::db"
             ],
             "composes": []
-        },
-        "_minn_meta_action": {
-            "file": "meta.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "do_action"
-            ]
         },
         "_minn_meta_table": {
             "file": "meta.php",
@@ -45609,7 +45618,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Kses::blockAttributes"
+                "Minn\\Support\\Kses::blockAttributesParsed"
             ],
             "composes": [
                 "wp_kses"
@@ -62246,16 +62255,12 @@
         },
         "update_meta_cache": {
             "file": "meta.php",
-            "lines": 9,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Meta::knows",
-                "Minn\\Runtime\\Meta::prime"
+                "Minn\\Runtime\\MetaData::primeCache"
             ],
-            "composes": [
-                "_minn_meta",
-                "apply_filters"
-            ]
+            "composes": []
         },
         "update_metadata": {
             "file": "meta.php",
@@ -62268,23 +62273,12 @@
         },
         "update_metadata_by_mid": {
             "file": "meta.php",
-            "lines": 18,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Meta::columns",
-                "Minn\\Runtime\\Meta::rewrite",
-                "Minn\\Runtime\\Options::toStorage"
+                "Minn\\Runtime\\MetaData::updateByMid"
             ],
-            "composes": [
-                "_minn_meta",
-                "_minn_meta_action",
-                "apply_filters",
-                "get_metadata_by_mid",
-                "get_object_subtype",
-                "sanitize_meta",
-                "wp_cache_delete",
-                "wp_unslash"
-            ]
+            "composes": []
         },
         "update_nag": {
             "file": "deadends.php",
@@ -63255,7 +63249,7 @@
         },
         "validate_theme_requirements": {
             "file": "theme.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -69992,15 +69986,12 @@
         },
         "wp_img_tag_add_loading_optimization_attrs": {
             "file": "media.php",
-            "lines": 19,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_tag_attribute",
-                "apply_filters",
-                "esc_attr",
-                "wp_get_loading_optimization_attributes"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\ImageTags::optimized"
+            ],
+            "composes": []
         },
         "wp_img_tag_add_srcset_and_sizes_attr": {
             "file": "media.php",
@@ -72564,7 +72555,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Kses::blockAttributes"
+                "Minn\\Support\\Kses::blockAttributesParsed"
             ],
             "composes": [
                 "wp_kses"

@@ -15,7 +15,8 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Html;
-use Minn\Runtime\PostSave;
+use Minn\Runtime\PostWrites;
+use Minn\Support\Slashes;
 use Minn\Theme\ThemeStyles;
 use Minn\Theme\UserStyles;
 
@@ -66,8 +67,10 @@ final readonly class GlobalStylesController
         $body = $request->json();
         $styles = self::node($body, 'styles');
         self::refuseIllegalCss($styles['css'] ?? null);
-        // The content goes through the save filters a post update runs, where kses strips what a user without unfiltered_html may not save.
-        $this->styles->save($post->id, $this->caller->id(), self::title($body['title'] ?? null), self::node($body, 'settings'), $styles, static fn (array $changes): array => PostSave::throughSaveFilters($post->id, $changes));
+        // Saved as a post update, as the reference's controller saves it: the save filters (where kses strips what a
+        // user without unfiltered_html may not save), the post's hooks, and its revision (probe global-styles-unfiltered).
+        $changes = (array) $this->styles->changes($post->id, self::title($body['title'] ?? null), self::node($body, 'settings'), $styles);
+        PostWrites::update(Slashes::add(['ID' => $post->id] + $changes));
         return Reply::answer($request, $this->object->item($this->post($post->id), Context::Edit));
     }
 

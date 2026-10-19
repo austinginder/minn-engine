@@ -36,8 +36,9 @@ class WP_Block implements \Minn\Objects\RenderedBlock
     public function refresh_context_dependents()
     {
         $this->context = [];
-        if (!empty($this->block_type->uses_context)) {
-            foreach ($this->block_type->uses_context as $context_name) {
+        // The type is asked what context it uses, and asked again for the names when it uses any (probe block-instances).
+        if ($this->block_type !== null && !empty($this->block_type->get_uses_context())) {
+            foreach ($this->block_type->get_uses_context() as $context_name) {
                 if (array_key_exists($context_name, $this->available_context)) {
                     $this->context[$context_name] = $this->available_context[$context_name];
                 }
@@ -49,21 +50,52 @@ class WP_Block implements \Minn\Objects\RenderedBlock
     public function refresh_parsed_block_dependents()
     {
         if (!empty($this->parsed_block['innerBlocks'])) {
-            $child_context = $this->available_context;
-            if (!empty($this->block_type->provides_context)) {
-                foreach ($this->block_type->provides_context as $context_name => $attribute_name) {
-                    if (array_key_exists($attribute_name, $this->attributes)) {
-                        $child_context[$context_name] = $this->attributes[$attribute_name];
-                    }
-                }
-            }
-            $this->inner_blocks = new WP_Block_List($this->parsed_block['innerBlocks'], $child_context, $this->registry);
+            $this->inner_blocks = new WP_Block_List($this->parsed_block['innerBlocks'], $this->child_context(), $this->registry);
         }
         if (!empty($this->parsed_block['innerHTML'])) {
             $this->inner_html = $this->parsed_block['innerHTML'];
         }
         if (!empty($this->parsed_block['innerContent'])) {
             $this->inner_content = $this->parsed_block['innerContent'];
+        }
+    }
+
+    /**
+     * The context this block's inner blocks are made with: what it was given,
+     * and what its type provides from its attributes (the engine's renderer
+     * makes the inner blocks it renders with it, Runtime\Handoff::blockChildContext).
+     */
+    private function child_context(): array
+    {
+        $child_context = $this->available_context;
+        if (!empty($this->block_type->provides_context)) {
+            foreach ($this->block_type->provides_context as $context_name => $attribute_name) {
+                if (array_key_exists($attribute_name, $this->attributes)) {
+                    $child_context[$context_name] = $this->attributes[$attribute_name];
+                }
+            }
+        }
+        return $child_context;
+    }
+
+    /**
+     * What render_block_data and render_block_context made of this block as
+     * its parent begins it (probe block-instances): a changed block is its
+     * parsed block from then on; a changed context joins what the block was
+     * given, its type is asked again what it uses, and its context is that
+     * part of it with the changed context over it.
+     */
+    private function adopt(array $parsed, array $context): void
+    {
+        if ($parsed !== $this->parsed_block) {
+            $this->parsed_block = $parsed;
+            unset($this->attributes);
+            $this->refresh_parsed_block_dependents();
+        }
+        if ($context !== $this->context) {
+            $this->available_context = array_merge((array) $this->available_context, $context);
+            $this->refresh_context_dependents();
+            $this->context = array_merge($this->context, $context);
         }
     }
 
@@ -93,7 +125,7 @@ class WP_Block implements \Minn\Objects\RenderedBlock
             // applies itself); the block's own render_block filters run once, after it, as on the reference.
             // render_block_context has already given this block its context: the engine's renderer reads it rather than asking again.
             $block_content = MinnBlocks::renderer()->providing((array) $this->available_context, function (): string {
-                MinnBlocks::renderer()->handContext((array) $this->available_context);
+                MinnBlocks::renderer()->handContext((array) $this->available_context, $this);
                 return _minn_render_core_block($this, '', false);
             });
             if ($this->block_type->is_dynamic()) {
@@ -147,7 +179,8 @@ class WP_Block implements \Minn\Objects\RenderedBlock
      * blocks go, in order. Each inner block's context passes through the
      * render_block_context filter before it renders (the reference does this
      * for every nesting level; it is how a query loop hands postId down),
-     * and a changed context rebuilds the inner block so it cascades.
+     * and the block adopts what the filters made of it, so a changed
+     * context cascades.
      */
     private function render_inner_blocks(): string
     {
@@ -165,11 +198,8 @@ class WP_Block implements \Minn\Objects\RenderedBlock
                 continue;
             }
             $parsed = BlockFilters::data((array) $inner->parsed_block, $this, _minn_renders_natively($inner->name) ? BlockFilters::NATIVE_DATA_DONE : []);
-            $context = apply_filters('render_block_context', $inner->available_context, $parsed, $this);
-            $context = is_array($context) ? $context : $inner->available_context;
-            if ($parsed !== $inner->parsed_block || $context !== $inner->available_context) {
-                $inner = new self($parsed, $context, $this->registry);
-            }
+            $context = apply_filters('render_block_context', $inner->context, $parsed, $this);
+            $inner->adopt(is_array($parsed) ? $parsed : $inner->parsed_block, is_array($context) ? $context : $inner->context);
             $content .= $inner->render();
         }
         return $content;

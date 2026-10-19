@@ -453,11 +453,10 @@ final class PostWrites
         foreach (is_array($postarr['meta_input'] ?? null) ? $postarr['meta_input'] : [] as $key => $value) {
             MetaData::updatePost($id, (string) $key, $value);
         }
-        if (isset($postarr['page_template'])) {
+        // An empty template leaves the stored one as it is (probe page-template-save).
+        if (!empty($postarr['page_template'])) {
             $template = (string) $postarr['page_template'];
-            if ($template === '') {
-                MetaData::delete('post', $id, '_wp_page_template');
-            } elseif ($template === 'default' || array_key_exists($template, Themes::theme()->get_page_templates(Records::post($id)))) {
+            if ($template === 'default' || array_key_exists($template, Themes::theme()->get_page_templates(Records::post($id)))) {
                 MetaData::updatePost($id, '_wp_page_template', $template);
             } else {
                 return false;

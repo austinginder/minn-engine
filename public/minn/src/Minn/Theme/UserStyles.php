@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
-use Closure;
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
@@ -101,18 +100,18 @@ final readonly class UserStyles
     }
 
     /**
-     * Replaces what the caller names (null keeps the stored value), stamps
-     * the modified time, and snapshots a revision when anything changed. A
-     * filter, when given, has the last word on the content and title written
-     * (the save filters a REST save runs them through).
+     * What a save changes, as columns: the content with what the caller
+     * names replaced (null keeps the stored value), and the title when one
+     * is given; null for no such post. The REST controller saves it as a
+     * post update.
      *
-     * @param null|Closure(array<string, string>): array<string, string> $filter
+     * @return array<string, string>|null
      */
-    public function save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles, ?Closure $filter = null): void
+    public function changes(int $id, ?string $title, ?array $settings, ?array $styles): ?array
     {
         $post = $this->find($id);
         if ($post === null) {
-            return;
+            return null;
         }
         $current = self::decode($post->content);
         $body = Json::encode([
@@ -121,12 +120,6 @@ final readonly class UserStyles
             'isGlobalStylesUserThemeJSON' => true,
             'version' => 3,
         ], Json::ESCAPED);
-        $changes = ['post_content' => $body] + ($title === null ? [] : ['post_title' => $title]);
-        $changes = $filter === null ? $changes : $filter($changes);
-        $this->writer->update($id, $changes + [
-            'post_modified' => $this->site->localNow(),
-            'post_modified_gmt' => gmdate('Y-m-d H:i:s'),
-        ]);
-        $this->writer->maybeSaveRevision($id, $userId);
+        return ['post_content' => $body] + ($title === null ? [] : ['post_title' => $title]);
     }
 }

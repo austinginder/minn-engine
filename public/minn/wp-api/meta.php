@@ -127,18 +127,10 @@ function _minn_registered_meta($object_type, $meta_key, $object_subtype = '')
     return MetaKeys::of((string) $object_type, (string) $object_subtype)[$meta_key] ?? MetaKeys::of((string) $object_type)[$meta_key] ?? null;
 }
 
-/** Objects' meta read into the cache at once (Runtime\Meta::prime), and answered by id; false for no type or no ids. */
+/** Objects' meta read into the cache at once (Runtime\MetaData::primeCache), and answered by id; false for no type or no ids. */
 function update_meta_cache($meta_type, $object_ids)
 {
-    if (!$meta_type || !$object_ids || !Meta::knows((string) $meta_type)) {
-        return false;
-    }
-    $ids = array_map('intval', is_array($object_ids) ? $object_ids : explode(',', (string) preg_replace('|[^0-9,]|', '', (string) $object_ids)));
-    $check = apply_filters("update_{$meta_type}_metadata_cache", null, $ids);
-    if ($check !== null) {
-        return (bool) $check;
-    }
-    return _minn_meta()->prime((string) $meta_type, $ids);
+    return Minn\Runtime\MetaData::primeCache($meta_type, $object_ids);
 }
 
 /** The one metadata lazyloader, made on first use. */
@@ -208,20 +200,6 @@ function delete_comment_meta($comment_id, $meta_key, $meta_value = '')
 {
     return delete_metadata('comment', $comment_id, $meta_key, $meta_value);
 }
-
-/**
- * @internal A meta write's action, {verb}_{type}_meta, and for post meta the
- * older {verb}_postmeta the reference still fires beside it, each with
- * its own arguments.
- */
-function _minn_meta_action(string $verb, string $meta_type, array $args, array $legacy): void
-{
-    do_action("{$verb}_{$meta_type}_meta", ...$args);
-    if ($meta_type === 'post') {
-        do_action("{$verb}_postmeta", ...$legacy);
-    }
-}
-
 /** One meta row by its id: an object under the table's own column names, the value decoded; false when there is none. */
 function get_metadata_by_mid($meta_type, $meta_id)
 {
@@ -231,24 +209,7 @@ function get_metadata_by_mid($meta_type, $meta_id)
 /** Rewrites one meta row by its id, its key too when one is given, with the update actions for that row. */
 function update_metadata_by_mid($meta_type, $meta_id, $meta_value, $meta_key = false)
 {
-    $meta = get_metadata_by_mid($meta_type, $meta_id);
-    if ($meta === false) {
-        return false;
-    }
-    $check = apply_filters("update_{$meta_type}_metadata_by_mid", null, $meta_id, $meta_value, $meta_key);
-    if ($check !== null) {
-        return (bool) $check;
-    }
-    [$column] = _minn_meta()->columns((string) $meta_type);
-    $object_id = (int) $meta->{$column};
-    $key = $meta_key === false ? $meta->meta_key : (string) $meta_key;
-    $value = sanitize_meta($key, wp_unslash($meta_value), $meta_type, get_object_subtype($meta_type, $object_id));
-    $args = [(int) $meta_id, $object_id, $key, $value];
-    _minn_meta_action('update', (string) $meta_type, $args, $args);
-    _minn_meta()->rewrite((string) $meta_type, (int) $meta_id, $key, Options::toStorage($value));
-    wp_cache_delete($object_id, $meta_type . '_meta');
-    _minn_meta_action('updated', (string) $meta_type, $args, $args);
-    return true;
+    return Minn\Runtime\MetaData::updateByMid($meta_type, $meta_id, $meta_value, $meta_key);
 }
 
 /** Removes one meta row by its id, with the delete actions for that row. */

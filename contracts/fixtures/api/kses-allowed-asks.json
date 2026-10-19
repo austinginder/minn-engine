@@ -217,6 +217,110 @@
         }
     ],
     [
+        "passes: plain",
+        {
+            "passes": [
+                "pre_kses: plain",
+                "parser"
+            ],
+            "out": "plain"
+        }
+    ],
+    [
+        "passes: <!-- c -->",
+        {
+            "passes": [
+                "pre_kses: <!-- c -->",
+                "parser",
+                "pre_kses:  c ",
+                "parser"
+            ],
+            "out": "<!-- c -->"
+        }
+    ],
+    [
+        "passes: <!-- wp:paragraph {\"x\":\"<b>y</b>\"} --><p>z</p><!-- /wp:paragraph -->",
+        {
+            "passes": [
+                "pre_kses: <!-- wp:paragraph {\"x\":\"<b>y</b>\"} --><p>z</p><!-- /wp:paragraph -->",
+                "parser",
+                "pre_kses:  /wp:paragraph ",
+                "parser"
+            ],
+            "out": "&lt;!-- wp:paragraph {&quot;x&quot;:&quot;<b>y</b>\"} --&gt;<p>z</p><!-- /wp:paragraph -->"
+        }
+    ],
+    [
+        "passes: <!-- wp:paragraph --><p>z</p><!-- /wp:paragraph -->",
+        {
+            "passes": [
+                "pre_kses: <!-- wp:paragraph --><p>z</p><!-- /wp:paragraph -->",
+                "parser",
+                "pre_kses:  wp:paragraph ",
+                "parser",
+                "pre_kses:  /wp:paragraph ",
+                "parser"
+            ],
+            "out": "<!-- wp:paragraph --><p>z</p><!-- /wp:paragraph -->"
+        }
+    ],
+    [
+        "passes: a <!-- x <b>y</b> --> b",
+        {
+            "passes": [
+                "pre_kses: a <!-- x <b>y</b> --> b",
+                "parser"
+            ],
+            "out": "a &lt;!-- x <b>y</b> --&gt; b"
+        }
+    ],
+    [
+        "passes: <!-- <script>alert(1)</script> <b>ok</b> -->",
+        {
+            "passes": [
+                "pre_kses: <!-- <script>alert(1)</script> <b>ok</b> -->",
+                "parser"
+            ],
+            "out": "&lt;!-- alert(1) <b>ok</b> --&gt;"
+        }
+    ],
+    [
+        "passes: <!-- a -- b -->",
+        {
+            "passes": [
+                "pre_kses: <!-- a -- b -->",
+                "parser",
+                "pre_kses:  a -- b ",
+                "parser"
+            ],
+            "out": "<!-- a - b -->"
+        }
+    ],
+    [
+        "a swapped parser: <!-- wp:paragraph {\"a\":\"b\"} --><p>z</p><!-- /wp:paragraph -->",
+        [
+            "<!-- wp:paragraph {\"a\":\"b\",\"zzAdded\":\"yes\"} --><p>z</p><!-- /wp:paragraph -->",
+            "<!-- wp:paragraph {\"a\":\"b\",\"zzAdded\":\"yes\"} --><p>z</p><!-- /wp:paragraph -->",
+            "<!-- wp:paragraph {\"a\":\"b\",\"zzAdded\":\"yes\"} --><p>z</p><!-- /wp:paragraph -->"
+        ]
+    ],
+    [
+        "a swapped parser: plain <b>x</b>",
+        [
+            "plain <b>x</b>",
+            "plain <b>x</b>",
+            "plain <b>x</b>"
+        ]
+    ],
+    [
+        "a swapped parser: a\n\n<!-- wp:separator /-->\n\nb",
+        [
+            "a\n\n<!-- wp:separator {\"zzAdded\":\"yes\"} /-->\n\nb",
+            "a\n\n<!-- wp:separator {\"zzAdded\":\"yes\"} /-->\n\nb",
+            "a\n\n<!-- wp:separator {\"zzAdded\":\"yes\"} /-->\n\nb"
+        ]
+    ],
+    [
         "gallery: unsafe and unknown tags",
         {
             "asks": 1,

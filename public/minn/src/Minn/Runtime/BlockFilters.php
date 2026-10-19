@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Blocks\Block;
+use Minn\Objects\RenderedBlock;
 
 /**
  * The block-level filters plugin code hooks (pre_render_block,
@@ -54,6 +55,8 @@ final class BlockFilters
 
     /** @var array<int, array<string, mixed>> the parsed array render_block_data produced, by block object id */
     private static array $parsedFor = [];
+    /** @var array<int, array{0: RenderedBlock|null, 1: array<string, mixed>|null}> the WP_Block each block began as and the context render_block_context gave it, by block object id */
+    private static array $begun = [];
 
     /** The data filters the engine's renderer does itself for a block it renders natively: element styles, style variations, a gallery's image ids. */
     public const NATIVE_DATA_DONE = ['wp_render_elements_support_styles' => 10, 'wp_render_block_style_variation_support_styles' => 10, 'block_core_gallery_data_id_backcompatibility' => 10];
@@ -94,29 +97,69 @@ final class BlockFilters
     }
 
     /**
-     * A short-circuit from pre_render_block, or the block as render_block_data left it.
+     * A block about to render, begun as the reference begins it (probe
+     * block-instances): one with no parent block (a document's, a part's, a
+     * pattern's) is asked pre_render_block, render_block_data and
+     * render_block_context with none, then made a WP_Block with the post's
+     * context; an inner one is made a WP_Block from what its parent gives its
+     * inner blocks first (its type asked get_block_type_uses_context), then
+     * asked the three with its parent (the context filter handed the
+     * context its type uses), and adopts what they made of it.
+     * A short-circuit from pre_render_block, or the block as
+     * render_block_data left it.
      *
      * @param array<string, int|array{0: int, 1: string}> $done the data filters done already
      */
-    public static function before(Block $block, array $done = []): string|Block
+    public static function before(Block $block, ?RenderedBlock $parent, array $done = []): string|Block
     {
         $parsed = self::toArray($block);
-        $pre = Runtime::hooks()->filter('pre_render_block', [null, $parsed, null]);
+        $made = Handoff::bound('newBlock');
+        $instance = $parent === null || !$made ? null : Handoff::newBlock($parsed, Handoff::blockChildContext($parent));
+        // An inner block's filter is handed the context its type uses; a document's top block, the post's.
+        $given = $instance === null ? self::context() : (array) $instance->context;
+        $hooks = Runtime::hooks();
+        $pre = $hooks->filter('pre_render_block', [null, $parsed, $parent]);
         if ($pre !== null) {
             return (string) $pre;
         }
-        $filtered = self::data($parsed, null, $done);
-        if (!is_array($filtered)) {
-            return $block;
+        $filtered = self::data($parsed, $parent, $done);
+        $filtered = is_array($filtered) ? $filtered : $parsed;
+        $context = $hooks->filter('render_block_context', [$given, $filtered, $parent]);
+        $context = is_array($context) ? $context : $given;
+        if ($instance !== null) {
+            Handoff::adoptBlock($instance, $filtered, $context);
+        } elseif ($made) {
+            $instance = Handoff::newBlock($filtered, $context);
         }
         // Keys a filter added ride along to render_block, as they do on the reference.
-        $block = self::fromArray($filtered);
-        self::$parsedFor[spl_object_id($block)] = $filtered;
-        return $block;
+        return self::begin(self::fromArray($filtered), $filtered, $instance, $context);
     }
 
     /**
-     * A rendered block through render_block and its per-name filter.
+     * A block begun as the reference's block list makes one its parent
+     * renders without asking the block filters first (a navigation's own
+     * items): its WP_Block, with what the parent gives its inner blocks.
+     */
+    public static function made(Block $block, ?RenderedBlock $parent): Block
+    {
+        $parsed = self::toArray($block);
+        $context = $parent === null ? self::context() : Handoff::blockChildContext($parent);
+        return self::begin($block, $parsed, Handoff::bound('newBlock') ? Handoff::newBlock($parsed, $context) : null, $context);
+    }
+
+    /**
+     * The WP_Block a block began as and the context render_block_context gave it.
+     *
+     * @return array{0: RenderedBlock|null, 1: array<string, mixed>|null}
+     */
+    public static function begun(Block $block): array
+    {
+        return self::$begun[spl_object_id($block)] ?? [null, null];
+    }
+
+    /**
+     * A rendered block through render_block and its per-name filter, with
+     * the WP_Block it began as.
      *
      * @param array<string, int|array{0: int, 1: string}> $done the render filters done already
      */
@@ -124,15 +167,27 @@ final class BlockFilters
     {
         $id = spl_object_id($block);
         $parsed = self::$parsedFor[$id] ?? self::toArray($block);
-        unset(self::$parsedFor[$id]);
-        $instance = Handoff::bound('newBlock') ? Handoff::newBlock($parsed, self::context()) : null;
+        $instance = self::$begun[$id][0] ?? (Handoff::bound('newBlock') ? Handoff::newBlock($parsed, self::context()) : null);
+        unset(self::$parsedFor[$id], self::$begun[$id]);
         return self::rendered($html, $parsed, $instance, $done);
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @param array<string, mixed> $parsed
+     * @param array<string, mixed>|null $context
+     */
+    private static function begin(Block $block, array $parsed, ?RenderedBlock $instance, ?array $context): Block
+    {
+        $id = spl_object_id($block);
+        self::$parsedFor[$id] = $parsed;
+        self::$begun[$id] = [$instance, $context];
+        return $block;
+    }
+
+    /** @return array<string, mixed> the context render_block() gives a document's top block: the global post's, as get_post() reads it */
     private static function context(): array
     {
-        $post = $GLOBALS['post'] ?? Runtime::current()->get('post');
+        $post = Records::post(null);
         if (is_object($post) && isset($post->ID)) {
             return ['postId' => (int) $post->ID, 'postType' => (string) $post->post_type];
         }

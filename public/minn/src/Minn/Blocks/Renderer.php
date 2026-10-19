@@ -25,6 +25,7 @@ use Minn\Db;
 use Minn\Extension\Extensions;
 use Minn\Front\Permalinks;
 use Minn\Media\Uploads;
+use Minn\Objects\RenderedBlock;
 use Minn\Runtime\BlockFilters;
 use Minn\Runtime\AssetQueue;
 use Minn\Runtime\Runtime;
@@ -86,6 +87,14 @@ final class Renderer
     private ?array $handed = null;
     /** @var array<string, mixed>|null that context, for the block that has just started to render (ownContext()) */
     private ?array $own = null;
+    /** The WP_Block the facade renders the next block as (handContext()). */
+    private ?RenderedBlock $handedInstance = null;
+    /** The WP_Block the block that has just started to render began as (ownInstance()). */
+    private ?RenderedBlock $ownInstance = null;
+    /** Whether the next block is made as its parent's list makes it, without the block filters before it (renderMade()). */
+    private bool $made = false;
+    /** @var list<RenderedBlock|null> the WP_Block of each block rendering, innermost last; null where a document of its own begins */
+    private array $parents = [];
     /** @var list<array<string, mixed>> context enclosing blocks provide to those inside */
     private array $provided = [];
     private Context $context;
@@ -225,10 +234,10 @@ final class Renderer
         }
     }
 
-    /** Block markup as HTML, texturized. */
+    /** Block markup as HTML, texturized: a document of its own (renderRoots()). */
     public function render(string $markup): string
     {
-        return Texturize::html($this->renderBlocks(Parser::parse($markup)));
+        return Texturize::html($this->renderRoots(Parser::named($markup)));
     }
 
     /**
@@ -292,13 +301,59 @@ final class Renderer
      * The context render_block_context already gave the next block, when
      * render_block() or a WP_Block renders it: a block that provides its
      * own context (a tabs block's id) reads it with ownContext() rather
-     * than asking again.
+     * than asking again. The WP_Block is the parent its inner blocks are
+     * begun with.
      *
      * @param array<string, mixed> $context
      */
-    public function handContext(array $context): void
+    public function handContext(array $context, ?RenderedBlock $instance = null): void
     {
         $this->handed = $context;
+        $this->handedInstance = $instance;
+    }
+
+    /** The WP_Block the block that has just begun to render was made as; null when the block filters did not begin it. */
+    public function ownInstance(): ?RenderedBlock
+    {
+        return $this->ownInstance;
+    }
+
+    /**
+     * Blocks that begin a document of their own (a pattern's, a part's, a
+     * post's content), as do_blocks renders them: no parent block.
+     *
+     * @param list<Block> $blocks
+     */
+    public function renderRoots(array $blocks): string
+    {
+        return $this->under(null, fn (): string => $this->renderBlocks($blocks));
+    }
+
+    /** Renders with a WP_Block of the renderer's making as the parent of the blocks inside (a synced pattern's, a post template's item). */
+    public function under(?RenderedBlock $parent, \Closure $render): string
+    {
+        $this->parents[] = $parent;
+        try {
+            return (string) $render();
+        } finally {
+            array_pop($this->parents);
+        }
+    }
+
+    /**
+     * A block as the reference renders an item of a block list its parent
+     * walks itself (a navigation's own items): made from what the parent
+     * gives its inner blocks, without pre_render_block, render_block_data
+     * or render_block_context before it.
+     */
+    public function renderMade(Block $block): string
+    {
+        $this->made = true;
+        try {
+            return $this->renderBlock($block);
+        } finally {
+            $this->made = false;
+        }
     }
 
     /**
@@ -320,12 +375,17 @@ final class Renderer
         $this->unfiltered = false;
         $asCallback = $this->asCallback;
         $this->asCallback = false;
+        $made = $this->made;
+        $this->made = false;
         $this->own = $this->handed;
         $this->handed = null;
+        $instance = $unfiltered ? $this->handedInstance : null;
+        $this->handedInstance = null;
+        $this->ownInstance = null;
         // Every block, freeform text too, is asked whether its directives are processed (probe hook-inputs-2).
         $this->state->processesDirectives((bool) Runtime::hooks()->filter('interactivity_process_directives', [true]));
         if ($block->name === null) {
-            return $block->innerHtml;
+            return $unfiltered || !BlockFilters::active() ? $block->innerHtml : $this->freeform($block);
         }
         if (!$this->state->descend()) {
             return '';
@@ -339,15 +399,18 @@ final class Renderer
             $filtered = !$unfiltered && BlockFilters::active();
             $native = $this->rendersNatively((string) $block->name);
             if ($filtered) {
-                $before = BlockFilters::before($block, $native ? BlockFilters::NATIVE_DATA_DONE : []);
+                $before = $made ? BlockFilters::made($block, $this->parent()) : BlockFilters::before($block, $this->parent(), $native ? BlockFilters::NATIVE_DATA_DONE : []);
                 if (is_string($before)) {
                     return $before;
                 }
                 $block = $before;
+                [$instance, $context] = BlockFilters::begun($block);
+                $this->own = $context;
+                $this->ownInstance = $instance;
             }
             $bound = Bindings::values($block, $this->blockContext());
             $queued = $asCallback || !$native ? null : AssetQueue::snapshot();
-            $html = $this->renderNamed($bound === [] ? $block : $block->withAttrs(array_merge($block->attrs, $bound)), $bound);
+            $html = $this->under($instance, fn (): string => $this->renderNamed($bound === [] ? $block : $block->withAttrs(array_merge($block->attrs, $bound)), $bound));
             // A block that renders nothing, or only whitespace, loads its assets only when
             // enqueue_empty_block_content_assets asks for them, asked while they are not loaded yet; what its render
             // enqueued is taken off the queues again, as the reference takes it. A plugin's block settles this in
@@ -370,6 +433,19 @@ final class Renderer
         } finally {
             $this->state->ascend();
         }
+    }
+
+    /** Text between blocks, through the block filters as do_blocks hands it them (probe block-instances). */
+    private function freeform(Block $block): string
+    {
+        $before = BlockFilters::before($block, $this->parent());
+        return is_string($before) ? $before : BlockFilters::after($before, $before->innerHtml);
+    }
+
+    /** The WP_Block of the block the next one renders inside; null at a document's top. */
+    private function parent(): ?RenderedBlock
+    {
+        return $this->parents === [] ? null : $this->parents[array_key_last($this->parents)];
     }
 
     /**
@@ -443,7 +519,10 @@ final class Renderer
             $outer = $this->state->setPendingElements($this->elementsClass($block));
             // So is its style variation: the reference numbers it, and prints its CSS, even for a block that renders nothing.
             $outerVariation = $this->state->setPendingVariation($this->rendersNatively((string) $block->name) ? self::numberedStyle((string) $block->name, $block->className()) : null);
+            // The global post is as it was once a dynamic block has rendered (a query loop's leaves it on its last post).
+            $global = $GLOBALS['post'] ?? null;
             $out = ($this->dynamic[$block->name])($block, $this);
+            $GLOBALS['post'] = $global;
             $this->state->setPendingElements($outer);
             $this->state->setPendingVariation($outerVariation);
             if (str_starts_with($block->name, 'core/')) {

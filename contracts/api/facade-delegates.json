@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1616
+        "delegates": 1619
     },
     "functions": {
         "__": {
@@ -254,7 +254,7 @@
         },
         "_minn_bridge_dynamic_block": {
             "file": "blocks.php",
-            "statement": "MinnBlocks::renderer()->bridge($name, static function (MinnBlock $block): string {\n        // The engine's BlockFilters already ran pre_render_block, render_block_data and render_block around this\n        // call; the block object gets the context render_block() would build, and renders once.\n        $parsed = _minn_block_to_array($block);\n        $context = [];\n        $post = get_post();\n        if ($post instanceof WP_Post) {\n            $context['postId'] = $post->ID;\n            $context['postType'] = $post->post_type;\n        }\n        $context = apply_filters('render_block_context', $context, $parsed, null);\n        return (new WP_Block($parsed, $context))->render(['minn_filters' => false]);\n    });"
+            "statement": "MinnBlocks::renderer()->bridge($name, static function (MinnBlock $block): string {\n        // The engine's BlockFilters already ran pre_render_block, render_block_data, render_block_context and\n        // render_block around this call and made the block object, which renders once; without them, the block\n        // object gets the context render_block() would build.\n        $instance = MinnBlocks::renderer()->ownInstance();\n        if ($instance instanceof WP_Block) {\n            return $instance->render(['minn_filters' => false]);\n        }\n        $parsed = _minn_block_to_array($block);\n        $context = [];\n        $post = get_post();\n        if ($post instanceof WP_Post) {\n            $context['postId'] = $post->ID;\n            $context['postType'] = $post->post_type;\n        }\n        $context = apply_filters('render_block_context', $context, $parsed, null);\n        return (new WP_Block($parsed, $context))->render(['minn_filters' => false]);\n    });"
         },
         "_minn_build_query": {
             "file": "formatting.php",
@@ -1550,7 +1550,7 @@
         },
         "filter_block_content": {
             "file": "blocks.php",
-            "statement": "return Kses::blockAttributes((string) $text, static fn (string $value): string => wp_kses($value, $allowed_html, (array) $allowed_protocols));"
+            "statement": "return Kses::blockAttributesParsed((string) $text, static fn (string $value): string => wp_kses($value, $allowed_html, (array) $allowed_protocols));"
         },
         "filter_default_metadata": {
             "file": "meta.php",
@@ -4536,9 +4536,17 @@
             "file": "meta.php",
             "statement": "return update_metadata('comment', $comment_id, $meta_key, $meta_value, $prev_value);"
         },
+        "update_meta_cache": {
+            "file": "meta.php",
+            "statement": "return Minn\\Runtime\\MetaData::primeCache($meta_type, $object_ids);"
+        },
         "update_metadata": {
             "file": "meta.php",
             "statement": "return Minn\\Runtime\\MetaData::update($meta_type, $object_id, $meta_key, $meta_value, $prev_value);"
+        },
+        "update_metadata_by_mid": {
+            "file": "meta.php",
+            "statement": "return Minn\\Runtime\\MetaData::updateByMid($meta_type, $meta_id, $meta_value, $meta_key);"
         },
         "update_network_option": {
             "file": "option.php",
@@ -5480,6 +5488,10 @@
             "file": "media.php",
             "statement": "return Minn\\Runtime\\AttachmentImages::matchesRatio($source_width, $source_height, $target_width, $target_height);"
         },
+        "wp_img_tag_add_loading_optimization_attrs": {
+            "file": "media.php",
+            "statement": "return Minn\\Blocks\\ImageTags::optimized((string) $image, $context);"
+        },
         "wp_increase_content_media_count": {
             "file": "media.php",
             "statement": "return RenderState::current()->countImages((int) $amount);"
@@ -5846,7 +5858,7 @@
         },
         "wp_pre_kses_block_attributes": {
             "file": "kses.php",
-            "statement": "return Kses::blockAttributes((string) $content, static fn (string $value): string => wp_kses($value, $allowed_html, $allowed_protocols));"
+            "statement": "return Kses::blockAttributesParsed((string) $content, static fn (string $value): string => wp_kses($value, $allowed_html, $allowed_protocols));"
         },
         "wp_pre_kses_less_than": {
             "file": "formatting.php",

@@ -57,7 +57,7 @@ final class Handoff
      * restController, newTheme, and the empty registered-type objects
      * blankPostType and blankTaxonomy, a user's sessionTokens, the locale's
      * newLocale and newTextdomainRegistry, newUpgrader and newUpgraderSkin, the
-     * blocks' newBlock, newBlockList, newBlockTemplate, newTagProcessor and
+     * blocks' newBlock, blockChildContext, adoptBlock, newBlockList, newBlockTemplate, newTagProcessor and
      * newThemeJsonData, newSitemapStylesheet, and the registries blockTypes,
      * blockPatterns, blockStyles, blockBindings, abilities and
      * abilityCategories.
@@ -374,6 +374,18 @@ final class Handoff
     public static function newBlock(mixed ...$args): RenderedBlock
     {
         return self::answer('newBlock', ...$args);
+    }
+
+    /** The context a block's inner blocks are made with: its own and what its type provides (WP_Block's, for its WP_Block_List). */
+    public static function blockChildContext(RenderedBlock $block): array
+    {
+        return (array) self::answer('blockChildContext', $block);
+    }
+
+    /** A block made inside its parent, given what render_block_data and render_block_context made of it (WP_Block's own, as its parent renders it). */
+    public static function adoptBlock(RenderedBlock $block, array $parsed, array $context): void
+    {
+        self::answer('adoptBlock', $block, $parsed, $context);
     }
 
     /** Blocks to render as one list (new WP_Block_List). */

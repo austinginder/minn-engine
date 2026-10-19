@@ -283,7 +283,7 @@ final class AttachmentImages
             if ($priority === 'low' || $priority === 'auto') {
                 $optimization['fetchpriority'] = $priority;
             }
-            $optimization = $priority === 'low' ? $optimization : (self::asked((string) $tagName, (array) $attr, $priority, $optimization) ?? self::byPlace((string) $tagName, (array) $attr, (string) $context, $optimization));
+            $optimization = $priority === 'low' ? $optimization : (self::asked((string) $tagName, (array) $attr, $priority, $optimization) ?? self::byPlace((string) $tagName, (array) $attr, $context, $optimization));
         }
         return $hooks->filter('wp_get_loading_optimization_attributes', [$optimization, $tagName, $attr, $context]);
     }
@@ -297,7 +297,7 @@ final class AttachmentImages
      */
     public static function earnedPriority(string $tagName, array $attr): array
     {
-        if ($tagName !== 'img') {
+        if ($tagName !== 'img' || !RenderState::current()->priorityAvailable()) {
             return [];
         }
         $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
@@ -426,11 +426,13 @@ final class AttachmentImages
      * @param array<string, mixed> $optimization
      * @return array<string, mixed>
      */
-    private static function byPlace(string $tagName, array $attr, string $context, array $optimization): array
+    private static function byPlace(string $tagName, array $attr, mixed $context, array $optimization): array
     {
         $header = Runtime::hooks()->filter('wp_loading_optimization_force_header_contexts', [['template_part_header' => true, 'get_header_image_tag' => true]]);
-        if (is_array($header) && isset($header[$context])) {
+        if (is_array($header) && is_scalar($context) && isset($header[(string) $context])) {
             RenderState::current()->nextImage();
+            // The threshold is asked once for any element in view, as the reference asks it (and again for an image while high priority is free).
+            Runtime::hooks()->filter('wp_min_priority_img_pixels', [50000]);
             return $optimization + self::earnedPriority($tagName, $attr);
         }
         $query = MainQuery::current();

@@ -115,7 +115,7 @@ final class PostOrder
             in_array($orderby, self::IN_GIVEN_ORDER, true) => self::field($orderby, $table, $q),
             array_key_exists($orderby, $metaClauses) => "CAST({$metaClauses[$orderby]['alias']}.meta_value AS {$metaClauses[$orderby]['cast']})",
             $seed !== null => $orderby,
-            default => "{$table}.post_" . $orderby,
+            default => "{$table}.post_" . Sanitize::key($orderby),
         };
     }
 

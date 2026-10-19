@@ -140,14 +140,18 @@ final readonly class QueryFlags
         if (!is_scalar($vars['s']) || ($vars['s'] !== '' && strlen((string) $vars['s']) > 1600)) {
             $vars['s'] = '';
         }
-        // Statuses keep only key characters (a comma list keeps its commas); types become keys.
+        // Statuses keep only key characters (a comma list keeps its commas); types become keys, a list of them sorted.
         ['post_status' => $statuses, 'post_type' => $types] = $vars + ['post_status' => null, 'post_type' => null];
         $clean = [];
         if (!empty($statuses)) {
             $clean += ['post_status' => is_array($statuses) ? array_map(static fn (mixed $key): string => Sanitize::key($key), $statuses) : preg_replace('|[^a-z0-9_,-]|', '', (string) $statuses)];
         }
-        if (!empty($types)) {
-            $clean += ['post_type' => is_array($types) ? array_map(static fn (mixed $key): string => Sanitize::key($key), $types) : Sanitize::key((string) $types)];
+        if (!empty($types) && is_array($types)) {
+            $types = array_map(static fn (mixed $key): string => Sanitize::key($key), $types);
+            sort($types);
+            $clean += ['post_type' => $types];
+        } elseif (!empty($types)) {
+            $clean += ['post_type' => Sanitize::key((string) $types)];
         }
         return array_replace($vars, $clean);
     }

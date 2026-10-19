@@ -365,25 +365,7 @@ function _minn_tag_attribute(string $tag, string $name): ?string
  */
 function wp_img_tag_add_loading_optimization_attrs($image, $context)
 {
-    $image = (string) $image;
-    $attr = array_filter(['width' => _minn_tag_attribute($image, 'width'), 'height' => _minn_tag_attribute($image, 'height'), 'loading' => _minn_tag_attribute($image, 'loading'), 'decoding' => _minn_tag_attribute($image, 'decoding'), 'fetchpriority' => _minn_tag_attribute($image, 'fetchpriority')], static fn ($v) => $v !== null);
-    $optimization = wp_get_loading_optimization_attributes('img', $attr, $context);
-    if (!isset($attr['decoding'])) {
-        $decoding = apply_filters('wp_img_tag_add_decoding_attr', $optimization['decoding'] ?? false, $image, $context);
-        if (in_array($decoding, ['async', 'sync', 'auto'], true)) {
-            $image = (string) preg_replace('/<img\b/i', '<img decoding="' . esc_attr($decoding) . '"', $image, 1);
-        }
-    }
-    if (!isset($attr['loading']) && isset($attr['width'], $attr['height'])) {
-        $loading = apply_filters('wp_img_tag_add_loading_attr', $optimization['loading'] ?? false, $image, $context);
-        if ($loading) {
-            $image = (string) preg_replace('/<img\b/i', '<img loading="' . esc_attr(in_array($loading, ['lazy', 'eager'], true) ? $loading : 'lazy') . '"', $image, 1);
-        }
-    }
-    if (!isset($attr['fetchpriority']) && ($optimization['fetchpriority'] ?? null) === 'high') {
-        $image = (string) preg_replace('/<img\b/i', '<img fetchpriority="high"', $image, 1);
-    }
-    return $image;
+    return Minn\Blocks\ImageTags::optimized((string) $image, $context);
 }
 
 /** An attachment's <img> given its width and height when it lacks either, from the size its source names. */

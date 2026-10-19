@@ -20,6 +20,9 @@ use Minn\Runtime\Runtime;
  */
 final class Kses
 {
+    /** @var (Closure(string): string)|null the hooked pass a comment's body takes, inside a hooked pass */
+    private static ?Closure $commentPass = null;
+
     /** @var array<string, list<string>> the smaller set for comments and descriptions */
     public const COMMENT = [
         'a' => ['href', 'title', 'rel'], 'abbr' => ['title'], 'acronym' => ['title'], 'b' => [],
@@ -128,10 +131,30 @@ final class Kses
         if (str_contains($html, '--->')) {
             $html = (string) preg_replace_callback('%<!--(.*?)--->%', static fn (array $m): string => '<!--' . rtrim($m[1], '-') . '-->', $html);
         }
-        $filter = static function (Block $block) use (&$filter, $clean): Block {
-            return new Block($block->name, self::cleanValue($block->attrs, $clean), array_map($filter, $block->innerBlocks), $block->innerHtml, $block->innerContent);
-        };
-        return Serializer::blocks(array_map($filter, Parser::parse($html)));
+        return Serializer::blocks(array_map(static fn (Block $block): Block => self::cleaned($block, $clean), Parser::parse($html)));
+    }
+
+    /**
+     * As blockAttributes, the blocks read by the parser block_parser_class
+     * names, as wp_pre_kses_block_attributes reads them (probe
+     * kses-allowed-asks): the engine's own, or one a plugin swaps in, whose
+     * blocks are written back as it read them.
+     *
+     * @param Closure(string): string $clean
+     */
+    public static function blockAttributesParsed(string $html, Closure $clean): string
+    {
+        $class = Parser::swapped();
+        if ($class === null) {
+            return self::blockAttributes($html, $clean);
+        }
+        return Serializer::blocks(array_map(static fn (Block $block): Block => self::cleaned($block, $clean), Parser::withClass($class, $html)));
+    }
+
+    /** @param Closure(string): string $clean */
+    private static function cleaned(Block $block, Closure $clean): Block
+    {
+        return new Block($block->name, self::cleanValue($block->attrs, $clean), array_map(static fn (Block $inner): Block => self::cleaned($inner, $clean), $block->innerBlocks), $block->innerHtml, $block->innerContent);
     }
 
     /** @param Closure(string): string $clean */
@@ -169,7 +192,14 @@ final class Kses
         $tags = is_string($allowedHtml) ? self::tagsAsked($content, $allowedHtml, $tagsFor) : $allowedHtml;
         $opens = preg_match_all('/<([a-zA-Z][a-zA-Z0-9:-]*)/', $content, $found) > 0
             && array_filter(array_unique(array_map('strtolower', $found[1])), static fn (string $tag): bool => !empty($tags[$tag])) !== [];
-        return self::filter($content, KsesPolicy::fromAllowlist($tags, array_values((array) $protocols), $opens ? (array) self::uriAttributes() : []));
+        // A comment the pass keeps has its body passed again whole, its hooks heard, as wp_kses passes it.
+        $outer = self::$commentPass;
+        self::$commentPass = static fn (string $body): string => self::allowing($body, $allowedHtml, $protocols, $tagsFor);
+        try {
+            return self::filter($content, KsesPolicy::fromAllowlist($tags, array_values((array) $protocols), $opens ? (array) self::uriAttributes() : []));
+        } finally {
+            self::$commentPass = $outer;
+        }
     }
 
     /**
@@ -262,18 +292,18 @@ final class Kses
 
     /**
      * A comment kept whole, its body run through the same pass (a ">" in it
-     * escaped, tags judged): no "--" inside, an empty one dropped, an
-     * unclosed one closed.
+     * escaped, tags judged), then no "--" left inside; an empty one dropped,
+     * an unclosed one closed.
      */
     private static function htmlComment(string $body, KsesPolicy $policy): string
     {
         if (str_ends_with($body, '-->')) {
             $body = substr($body, 0, -3);
         }
+        $body = self::$commentPass === null ? self::filter($body, $policy) : (self::$commentPass)($body);
         while (str_contains($body, '--')) {
             $body = str_replace('--', '-', $body);
         }
-        $body = self::filter($body, $policy);
         return $body === '' ? '' : '<!--' . $body . '-->';
     }
 

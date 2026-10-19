@@ -97,12 +97,8 @@ final class PostQuery
             $q['update_post_term_cache'] = true;
         }
         $q += ['update_post_meta_cache' => true, 'post_type' => $query->is_search ? 'any' : ''];
-        ['post_type' => $type] = $q;
-        if (is_array($type)) {
-            sort($type);
-            $q = array_replace($q, ['post_type' => $type]);
-        }
-        $this->parts->postType = $type;
+        // A list of types is in the order parse_query sorted it, or pre_get_posts gave it since.
+        ['post_type' => $this->parts->postType] = $q;
         $this->pageSize($q);
         if (!isset($q['comments_per_page']) || $q['comments_per_page'] == 0) {
             $q['comments_per_page'] = Runtime::options()->filtered('comments_per_page');

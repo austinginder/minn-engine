@@ -842,8 +842,8 @@
             "_wp_add_block_level_preset_styles": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\StylePresets",
-                "why": "a block's own presets as scoped properties and classes",
-                "body": "747ea1ad4497"
+                "why": "a block's own presets as scoped properties and classes; it answers null whatever it is handed, dropping an earlier short-circuit (probe block-instances)",
+                "body": "27c4d58589f8"
             },
             "_wp_add_block_level_presets_class": {
                 "verdict": "move",
@@ -2916,6 +2916,18 @@
                 "why": "the lazy attributes property, prepared by the type",
                 "body": "a5b82b897ff7"
             },
+            "WP_Block::adopt": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Context",
+                "why": "what render_block_data and render_block_context make of an inner block: a changed block its parsed block, a changed context joined to what it was given with the context over its uses (probe block-instances)",
+                "body": "6c31c4beec20"
+            },
+            "WP_Block::child_context": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Context",
+                "why": "what a block gives its inner blocks: its context and what its type provides from its attributes; the engine's renderer reads it through Handoff::blockChildContext",
+                "body": "1fb02abbdacc"
+            },
             "WP_Block::enqueue_assets": {
                 "verdict": "keep",
                 "reason": "compose",
@@ -2925,14 +2937,14 @@
             "WP_Block::refresh_context_dependents": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\Context",
-                "why": "the context a block takes from what is available by its type's uses_context",
-                "body": "249f3ca082cb"
+                "why": "the context a block takes from what is available by its type's uses_context, the type asked again for the names when it uses any (probe block-instances)",
+                "body": "da95d6dec5a6"
             },
             "WP_Block::refresh_parsed_block_dependents": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\Context",
-                "why": "the context a block provides its children by provides_context, and its inner blocks and content",
-                "body": "0866b533422d"
+                "why": "its inner blocks, made with what it gives them (child_context), and its inner content",
+                "body": "29fa4c2b3c08"
             },
             "WP_Block::render": {
                 "verdict": "move",
@@ -2940,14 +2952,14 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "the render pipeline: engine-rendered core blocks, bindings, inner blocks, the dynamic callback with the supports block and global post kept, assets (given back when the block rendered nothing) and the render filters; a block the engine does not render itself asks interactivity_process_directives as the engine's renderer does (probe hook-inputs-2)",
-                "body": "b32600ffc378"
+                "why": "the render pipeline: engine-rendered core blocks (handed this block as their inner blocks' parent), bindings, inner blocks, the dynamic callback with the supports block and global post kept, assets (given back when the block rendered nothing) and the render filters; a block the engine does not render itself asks interactivity_process_directives as the engine's renderer does (probe hook-inputs-2)",
+                "body": "b64718e0e2aa"
             },
             "WP_Block::render_inner_blocks": {
                 "verdict": "move",
-                "to": "Minn\\Blocks\\Renderer",
-                "why": "each inner block through pre_render_block, render_block_data and render_block_context, remade when they change it",
-                "body": "c2e9f6a3af5e"
+                "to": "Minn\\Runtime\\BlockFilters",
+                "why": "each inner block through pre_render_block, render_block_data and render_block_context (handed the block's own context), adopting what they made of it, as BlockFilters::before begins one for the engine's renderer",
+                "body": "bc0c14f9a00d"
             },
             "WP_Block::rendered_by_engine": {
                 "verdict": "move",
@@ -4777,8 +4789,8 @@
             "WP_Meta_Query::get_sql": {
                 "verdict": "move",
                 "to": "Minn\\Query\\MetaSql",
-                "why": "the meta table by type, the builder's SQL, the remembered clauses, the OR flag and get_meta_sql",
-                "body": "ab2b4b27fe9b"
+                "why": "the meta table by type, its id column through sanitize_key (probe query-keys), the builder's SQL, the remembered clauses, the OR flag and get_meta_sql",
+                "body": "01d43af97898"
             },
             "WP_Meta_Query::get_sql_clauses": {
                 "verdict": "delegate",
@@ -17506,12 +17518,6 @@
                 "why": "deprecated, but checks the tag's src and dimensions, filters the value and writes the loading attribute into the markup itself",
                 "body": "c1af200da6b8"
             },
-            "wp_img_tag_add_loading_optimization_attrs": {
-                "verdict": "move",
-                "to": "Minn\\Blocks\\ImageTags",
-                "why": "reads the tag's attributes, asks for the optimization, filters decoding and loading and splices each into the img; content tag rewriting ImageTags does",
-                "body": "20a3081760e5"
-            },
             "wp_img_tag_add_srcset_and_sizes_attr": {
                 "verdict": "keep",
                 "reason": "compose",
@@ -17621,12 +17627,6 @@
                 "why": "answers from the global $wpdb's table properties, which plugins and drop-ins may set",
                 "body": "0d696649bcc2"
             },
-            "_minn_meta_action": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\Meta",
-                "why": "fires a meta write's actions and the legacy postmeta ones; hook order around writes is the engine's",
-                "body": "4d0c6286e830"
-            },
             "get_registered_metadata": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\MetaKeys",
@@ -17638,18 +17638,6 @@
                 "reason": "compose",
                 "why": "names the taxonomy as the subtype and hands over to register_meta, whose filters run",
                 "body": "dc3e7f43c317"
-            },
-            "update_meta_cache": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\Meta",
-                "why": "normalises the ids, honours the short-circuit filter, then primes; the filter belongs with Meta::prime",
-                "body": "b153aef124c8"
-            },
-            "update_metadata_by_mid": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\Meta",
-                "why": "updates a meta row by id: its filter, sanitising, actions, the write and the cache; engine storage behaviour",
-                "body": "eb4332051b84"
             },
             "wp_metadata_lazyloader": {
                 "verdict": "keep",
@@ -21395,8 +21383,8 @@
             "validate_theme_requirements": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\Themes",
-                "why": "the WordPress and PHP requirement checks and which refusal applies, then its filter; the WP_Error shapes stay",
-                "body": "68236134e34b"
+                "why": "the WordPress and PHP requirement checks and which refusal applies, the theme named as read and not translated (probe template-loading), then its filter; the WP_Error shapes stay",
+                "body": "7d30d65a0138"
             },
             "wp_clean_theme_json_cache": {
                 "verdict": "move",

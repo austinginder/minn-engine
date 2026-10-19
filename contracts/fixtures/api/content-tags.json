@@ -1,0 +1,698 @@
+[
+    [
+        "tags: a header part",
+        {
+            "tags": [
+                "fetchpriority=\"high\" decoding=\"async\"",
+                "fetchpriority=\"high\" decoding=\"async\"",
+                ""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, template_part_header)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_min_priority_img_pixels(50000)",
+                "wp_min_priority_img_pixels(50000)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"fetchpriority\":\"high\"}, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template_part_header)",
+                "wp_lazy_loading_enabled(true, img, template_part_header)",
+                "wp_img_tag_add_loading_attr(false, <img decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template_part_header)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img fetchpriority=\"high\" decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template_part_header, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_min_priority_img_pixels(50000)",
+                "wp_get_loading_optimization_attributes([], iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_iframe_tag_add_loading_attr(false, <iframe src=\"https://example.com/\" width=\"10\" height=\"10\">, template_part_header)"
+            ]
+        }
+    ],
+    [
+        "tags: a footer part",
+        {
+            "tags": [
+                "loading=\"lazy\" decoding=\"async\"",
+                "loading=\"lazy\" decoding=\"async\"",
+                "decoding=\"async\"",
+                "loading=\"lazy\"",
+                ""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, template_part_footer)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, img, template_part_footer)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template_part_footer)",
+                "wp_lazy_loading_enabled(true, img, template_part_footer)",
+                "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template_part_footer)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template_part_footer, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/s.jpg\",\"width\":20,\"height\":20,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, img, template_part_footer)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"https://example.com/s.jpg\",\"width\":20,\"height\":20,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/s.jpg\" width=\"20\" height=\"20\">, template_part_footer)",
+                "wp_lazy_loading_enabled(true, img, template_part_footer)",
+                "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"https://example.com/s.jpg\" width=\"20\" height=\"20\">, template_part_footer)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"https://example.com/s.jpg\" width=\"20\" height=\"20\">, template_part_footer, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/n.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"https://example.com/n.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/n.jpg\">, template_part_footer)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img decoding=\"async\" src=\"https://example.com/n.jpg\">, template_part_footer, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, iframe, template_part_footer)",
+                "wp_get_loading_optimization_attributes({\"loading\":\"lazy\"}, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_iframe_tag_add_loading_attr(lazy, <iframe src=\"https://example.com/\" width=\"10\" height=\"10\">, template_part_footer)",
+                "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":null,\"height\":null,\"loading\":null})",
+                "wp_get_loading_optimization_attributes([], iframe, {\"width\":null,\"height\":null,\"loading\":null})"
+            ]
+        }
+    ],
+    [
+        "tags: a part with no media",
+        {
+            "tags": [],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, template_part_uncategorized)"
+            ]
+        }
+    ],
+    [
+        "tags: the template",
+        {
+            "tags": [
+                "",
+                ""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, template)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_get_loading_optimization_attributes([], img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(false, <img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template)",
+                "wp_lazy_loading_enabled(true, img, template)",
+                "wp_img_tag_add_loading_attr(false, <img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_get_loading_optimization_attributes([], iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_iframe_tag_add_loading_attr(false, <iframe src=\"https://example.com/\" width=\"10\" height=\"10\">, template)"
+            ]
+        }
+    ],
+    [
+        "tags: the_content",
+        {
+            "tags": [
+                "loading=\"lazy\" decoding=\"async\"",
+                "loading=\"lazy\" decoding=\"async\"",
+                "loading=\"lazy\" decoding=\"async\"",
+                "loading=\"lazy\" decoding=\"async\"",
+                "loading=\"lazy\""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, the_content)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, img, the_content)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, the_content)",
+                "wp_lazy_loading_enabled(true, img, the_content)",
+                "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, the_content)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, the_content, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/s.jpg\",\"width\":20,\"height\":20,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, img, the_content)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"https://example.com/s.jpg\",\"width\":20,\"height\":20,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/s.jpg\" width=\"20\" height=\"20\">, the_content)",
+                "wp_lazy_loading_enabled(true, img, the_content)",
+                "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"https://example.com/s.jpg\" width=\"20\" height=\"20\">, the_content)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"https://example.com/s.jpg\" width=\"20\" height=\"20\">, the_content, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, iframe, the_content)",
+                "wp_get_loading_optimization_attributes({\"loading\":\"lazy\"}, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_iframe_tag_add_loading_attr(lazy, <iframe src=\"https://example.com/\" width=\"10\" height=\"10\">, the_content)"
+            ]
+        }
+    ],
+    [
+        "tags: a widget",
+        {
+            "tags": [
+                "loading=\"lazy\" decoding=\"async\""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, widget_block_content)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, img, widget_block_content)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, widget_block_content)",
+                "wp_lazy_loading_enabled(true, img, widget_block_content)",
+                "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, widget_block_content)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, widget_block_content, 0)"
+            ]
+        }
+    ],
+    [
+        "tags: a context of its own",
+        {
+            "tags": [
+                "loading=\"lazy\" decoding=\"async\"",
+                "loading=\"lazy\""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, zz_context)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, img, zz_context)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, zz_context)",
+                "wp_lazy_loading_enabled(true, img, zz_context)",
+                "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, zz_context)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, zz_context, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, iframe, zz_context)",
+                "wp_get_loading_optimization_attributes({\"loading\":\"lazy\"}, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                "wp_iframe_tag_add_loading_attr(lazy, <iframe src=\"https://example.com/\" width=\"10\" height=\"10\">, zz_context)"
+            ]
+        }
+    ],
+    [
+        "tags: a header part again",
+        {
+            "tags": [
+                "decoding=\"async\"",
+                "decoding=\"async\""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, template_part_header)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/s.jpg\",\"width\":20,\"height\":20,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_min_priority_img_pixels(50000)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"https://example.com/s.jpg\",\"width\":20,\"height\":20,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/s.jpg\" width=\"20\" height=\"20\">, template_part_header)",
+                "wp_lazy_loading_enabled(true, img, template_part_header)",
+                "wp_img_tag_add_loading_attr(false, <img decoding=\"async\" src=\"https://example.com/s.jpg\" width=\"20\" height=\"20\">, template_part_header)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img decoding=\"async\" src=\"https://example.com/s.jpg\" width=\"20\" height=\"20\">, template_part_header, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_min_priority_img_pixels(50000)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template_part_header)",
+                "wp_lazy_loading_enabled(true, img, template_part_header)",
+                "wp_img_tag_add_loading_attr(false, <img decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template_part_header)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, template_part_header, 0)"
+            ]
+        }
+    ],
+    [
+        "tags: an image of its own loading",
+        {
+            "tags": [
+                "decoding=\"async\" loading=\"eager\""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, template_part_footer)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/c.jpg\",\"width\":900,\"height\":900,\"loading\":\"eager\",\"fetchpriority\":null,\"decoding\":null})",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"https://example.com/c.jpg\",\"width\":900,\"height\":900,\"loading\":\"eager\",\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img loading=\"eager\" src=\"https://example.com/c.jpg\" width=\"900\" height=\"900\">, template_part_footer)",
+                "wp_lazy_loading_enabled(true, img, template_part_footer)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img decoding=\"async\" loading=\"eager\" src=\"https://example.com/c.jpg\" width=\"900\" height=\"900\">, template_part_footer, 0)"
+            ]
+        }
+    ],
+    [
+        "tags: an image of its own sizes",
+        {
+            "tags": [
+                "loading=\"lazy\" decoding=\"async\" sizes=\"auto, 100vw\""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, template_part_footer)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/d.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, img, template_part_footer)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"https://example.com/d.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/d.jpg\" width=\"900\" height=\"900\" sizes=\"100vw\">, template_part_footer)",
+                "wp_lazy_loading_enabled(true, img, template_part_footer)",
+                "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"https://example.com/d.jpg\" width=\"900\" height=\"900\" sizes=\"100vw\">, template_part_footer)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"https://example.com/d.jpg\" width=\"900\" height=\"900\" sizes=\"auto, 100vw\">, template_part_footer, 0)"
+            ]
+        }
+    ],
+    [
+        "tags: values the arrays read",
+        {
+            "tags": [
+                "loading=\"eager\" decoding=\"sync\" fetchpriority=\"low\" class=\"x\"",
+                "",
+                "loading=\"eager\"",
+                "decoding=\"async\""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, zz_arrays)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/e.jpg\",\"width\":900,\"height\":600,\"loading\":\"eager\",\"fetchpriority\":\"low\",\"decoding\":\"sync\"})",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"sync\",\"fetchpriority\":\"low\"}, img, {\"src\":\"https://example.com/e.jpg\",\"width\":900,\"height\":600,\"loading\":\"eager\",\"fetchpriority\":\"low\",\"decoding\":\"sync\"})",
+                "wp_lazy_loading_enabled(true, img, zz_arrays)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img src=\"https://example.com/e.jpg\" width=\"900\" height=\"600\" loading=\"eager\" decoding=\"sync\" fetchpriority=\"low\" class=\"x\">, zz_arrays, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":null,\"width\":5,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":null,\"width\":5,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img width=\"5\">, zz_arrays, 0)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"c.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"c.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"c.jpg\" width=\"50%\" height=\"abc\">, zz_arrays)",
+                "wp_lazy_loading_enabled(true, img, zz_arrays)",
+                "wp_img_tag_add_loading_attr(false, <img decoding=\"async\" src=\"c.jpg\" width=\"50%\" height=\"abc\">, zz_arrays)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img decoding=\"async\" src=\"c.jpg\" width=\"50%\" height=\"abc\">, zz_arrays, 0)"
+            ]
+        }
+    ],
+    [
+        "tags: an image of high priority in the template",
+        {
+            "tags": [
+                "fetchpriority=\"high\" decoding=\"async\"/"
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, template)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/f.jpg\",\"width\":1140,\"height\":760,\"loading\":null,\"fetchpriority\":\"high\",\"decoding\":\"async\"})",
+                "wp_get_loading_optimization_attributes([], img, {\"src\":\"https://example.com/f.jpg\",\"width\":1140,\"height\":760,\"loading\":null,\"fetchpriority\":\"high\",\"decoding\":\"async\"})",
+                "wp_lazy_loading_enabled(true, img, template)",
+                "wp_img_tag_add_loading_attr(false, <img fetchpriority=\"high\" decoding=\"async\" width=\"1140\" height=\"760\" src=\"https://example.com/f.jpg\"/>, template)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img fetchpriority=\"high\" decoding=\"async\" width=\"1140\" height=\"760\" src=\"https://example.com/f.jpg\"/>, template, 0)"
+            ]
+        }
+    ],
+    [
+        "tags: with no context",
+        {
+            "tags": [
+                "loading=\"lazy\" decoding=\"async\""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(true, iframe, false)",
+                "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                "wp_lazy_loading_enabled(true, img, false)",
+                "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"https://example.com/a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                "wp_img_tag_add_decoding_attr(async, <img src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, false)",
+                "wp_lazy_loading_enabled(true, img, false)",
+                "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, false)",
+                "wp_img_tag_add_auto_sizes(true)",
+                "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"https://example.com/a.jpg\" width=\"900\" height=\"900\">, false, 0)"
+            ]
+        }
+    ],
+    [
+        "loading answered true in template",
+        [
+            "decoding=\"async\"/",
+            "loading=\"lazy\""
+        ]
+    ],
+    [
+        "loading answered true in the_content",
+        [
+            "loading=\"lazy\" decoding=\"async\"/",
+            "loading=\"lazy\""
+        ]
+    ],
+    [
+        "loading answered false in template",
+        [
+            "decoding=\"async\"/",
+            ""
+        ]
+    ],
+    [
+        "loading answered false in the_content",
+        [
+            "decoding=\"async\"/",
+            ""
+        ]
+    ],
+    [
+        "loading answered \"eager\" in template",
+        [
+            "loading=\"eager\" decoding=\"async\"/",
+            "loading=\"eager\""
+        ]
+    ],
+    [
+        "loading answered \"eager\" in the_content",
+        [
+            "loading=\"eager\" decoding=\"async\"/",
+            "loading=\"eager\""
+        ]
+    ],
+    [
+        "loading answered \"lazy\" in template",
+        [
+            "loading=\"lazy\" decoding=\"async\"/",
+            "loading=\"lazy\""
+        ]
+    ],
+    [
+        "loading answered \"lazy\" in the_content",
+        [
+            "loading=\"lazy\" decoding=\"async\"/",
+            "loading=\"lazy\""
+        ]
+    ],
+    [
+        "loading answered \"zz\" in template",
+        [
+            "decoding=\"async\"/",
+            "loading=\"lazy\""
+        ]
+    ],
+    [
+        "loading answered \"zz\" in the_content",
+        [
+            "loading=\"lazy\" decoding=\"async\"/",
+            "loading=\"lazy\""
+        ]
+    ],
+    [
+        "loading answered \"\" in template",
+        [
+            "decoding=\"async\"/",
+            ""
+        ]
+    ],
+    [
+        "loading answered \"\" in the_content",
+        [
+            "decoding=\"async\"/",
+            ""
+        ]
+    ],
+    [
+        "loading answered 1 in template",
+        [
+            "decoding=\"async\"/",
+            "loading=\"lazy\""
+        ]
+    ],
+    [
+        "loading answered 1 in the_content",
+        [
+            "loading=\"lazy\" decoding=\"async\"/",
+            "loading=\"lazy\""
+        ]
+    ],
+    [
+        "iframes that may not load lazily",
+        {
+            "tags": [
+                "",
+                ""
+            ],
+            "heard": [
+                "wp_lazy_loading_enabled(false, iframe, zz_no_lazy_frames)"
+            ]
+        }
+    ],
+    [
+        "attributes as read",
+        [
+            [
+                "<img src=\"a.jpg\" width=\"50\" height=\"50\">",
+                "<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"50\" height=\"50\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":50,\"height\":50,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"a.jpg\",\"width\":50,\"height\":50,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"a.jpg\" width=\"50\" height=\"50\">, zz_reading)",
+                    "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"a.jpg\" width=\"50\" height=\"50\">, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"50\" height=\"50\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src='a.jpg' width='50' height='50'>",
+                "<img src='a.jpg' width='50' height='50'>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":50,\"height\":50,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"a.jpg\",\"width\":50,\"height\":50,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img src='a.jpg' width='50' height='50'>, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"a.jpg\" width=50 height=50>",
+                "<img decoding=\"async\" src=\"a.jpg\" width=50 height=50>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"a.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"a.jpg\" width=50 height=50>, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img decoding=\"async\" src=\"a.jpg\" width=50 height=50>, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"a.jpg\" WIDTH=\"50\" HEIGHT=\"50\">",
+                "<img decoding=\"async\" src=\"a.jpg\" WIDTH=\"50\" HEIGHT=\"50\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"a.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"a.jpg\" WIDTH=\"50\" HEIGHT=\"50\">, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img decoding=\"async\" src=\"a.jpg\" WIDTH=\"50\" HEIGHT=\"50\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"a.jpg\"\twidth=\"50\"\theight=\"50\">",
+                "<img decoding=\"async\" src=\"a.jpg\"\twidth=\"50\"\theight=\"50\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"a.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"a.jpg\"\twidth=\"50\"\theight=\"50\">, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img decoding=\"async\" src=\"a.jpg\"\twidth=\"50\"\theight=\"50\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"a.jpg\" width=\"\" height=\"\">",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"\" height=\"\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"a.jpg\",\"width\":null,\"height\":null,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"a.jpg\" width=\"\" height=\"\">, zz_reading)",
+                    "wp_img_tag_add_loading_attr(false, <img decoding=\"async\" src=\"a.jpg\" width=\"\" height=\"\">, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img decoding=\"async\" src=\"a.jpg\" width=\"\" height=\"\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img alt='x' src='a.jpg' class='avatar' height='50' width='50' decoding='async'/>",
+                "<img alt='x' src='a.jpg' class='avatar' height='50' width='50' decoding='async'/>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":50,\"height\":50,\"loading\":null,\"fetchpriority\":null,\"decoding\":\"async\"})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"a.jpg\",\"width\":50,\"height\":50,\"loading\":null,\"fetchpriority\":null,\"decoding\":\"async\"})",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img alt='x' src='a.jpg' class='avatar' height='50' width='50' decoding='async'/>, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img SRC=\"a.jpg\" width=\"50\" height=\"50\">",
+                "<img SRC=\"a.jpg\" width=\"50\" height=\"50\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":50,\"height\":50,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"a.jpg\",\"width\":50,\"height\":50,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img SRC=\"a.jpg\" width=\"50\" height=\"50\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"a.jpg\" width=\"900\" height=\"900\" decoding='sync'>",
+                "<img loading=\"lazy\" src=\"a.jpg\" width=\"900\" height=\"900\" decoding='sync'>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":\"sync\"})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"sync\",\"loading\":\"lazy\"}, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":\"sync\"})",
+                    "wp_img_tag_add_loading_attr(lazy, <img src=\"a.jpg\" width=\"900\" height=\"900\" decoding='sync'>, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img loading=\"lazy\" src=\"a.jpg\" width=\"900\" height=\"900\" decoding='sync'>, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"a.jpg\" width=\"900\" height=\"900\" DECODING=\"sync\">",
+                "<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\" DECODING=\"sync\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"a.jpg\" width=\"900\" height=\"900\" DECODING=\"sync\">, zz_reading)",
+                    "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\" DECODING=\"sync\">, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\" DECODING=\"sync\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"a.jpg\" width=\"900\" height=\"900\"\tdecoding=\"sync\">",
+                "<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\"\tdecoding=\"sync\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"a.jpg\" width=\"900\" height=\"900\"\tdecoding=\"sync\">, zz_reading)",
+                    "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\"\tdecoding=\"sync\">, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\"\tdecoding=\"sync\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"a.jpg\" width=\"900\" height=\"900\" loading='eager'>",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\" loading='eager'>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":\"eager\",\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\"}, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":\"eager\",\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"a.jpg\" width=\"900\" height=\"900\" loading='eager'>, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\" loading='eager'>, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"a.jpg\" width=\"900\" height=\"900\" LOADING=\"eager\">",
+                "<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\" LOADING=\"eager\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"a.jpg\" width=\"900\" height=\"900\" LOADING=\"eager\">, zz_reading)",
+                    "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\" LOADING=\"eager\">, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"900\" height=\"900\" LOADING=\"eager\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img\tsrc=\"a.jpg\" width=\"900\" height=\"900\">",
+                "<img\tsrc=\"a.jpg\" width=\"900\" height=\"900\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":null,\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":null,\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img\tsrc=\"a.jpg\" width=\"900\" height=\"900\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img src=\"\" width=\"900\" height=\"900\">",
+                "<img loading=\"lazy\" decoding=\"async\" src=\"\" width=\"900\" height=\"900\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img src=\"\" width=\"900\" height=\"900\">, zz_reading)",
+                    "wp_img_tag_add_loading_attr(lazy, <img decoding=\"async\" src=\"\" width=\"900\" height=\"900\">, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img loading=\"lazy\" decoding=\"async\" src=\"\" width=\"900\" height=\"900\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<img alt=\"x\" src=\"a.jpg\" width='900' height=\"900\">",
+                "<img decoding=\"async\" alt=\"x\" src=\"a.jpg\" width='900' height=\"900\">",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"decoding\":\"async\",\"loading\":\"lazy\"}, img, {\"src\":\"a.jpg\",\"width\":900,\"height\":900,\"loading\":null,\"fetchpriority\":null,\"decoding\":null})",
+                    "wp_img_tag_add_decoding_attr(async, <img alt=\"x\" src=\"a.jpg\" width='900' height=\"900\">, zz_reading)",
+                    "wp_img_tag_add_auto_sizes(true)",
+                    "wp_content_img_tag(<img decoding=\"async\" alt=\"x\" src=\"a.jpg\" width='900' height=\"900\">, zz_reading, 0)"
+                ]
+            ],
+            [
+                "<iframe src='x' width='10' height='10'></iframe>",
+                "<iframe src='x' width='10' height='10'></iframe>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":null,\"height\":null,\"loading\":null})",
+                    "wp_get_loading_optimization_attributes([], iframe, {\"width\":null,\"height\":null,\"loading\":null})"
+                ]
+            ],
+            [
+                "<iframe src=\"x\" WIDTH=\"10\" HEIGHT=\"10\"></iframe>",
+                "<iframe src=\"x\" WIDTH=\"10\" HEIGHT=\"10\"></iframe>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":null,\"height\":null,\"loading\":null})",
+                    "wp_get_loading_optimization_attributes([], iframe, {\"width\":null,\"height\":null,\"loading\":null})"
+                ]
+            ],
+            [
+                "<iframe src=\"x\" width=\"\" height=\"\"></iframe>",
+                "<iframe loading=\"lazy\" src=\"x\" width=\"\" height=\"\"></iframe>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"loading\":\"lazy\"}, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                    "wp_iframe_tag_add_loading_attr(lazy, <iframe src=\"x\" width=\"\" height=\"\">, zz_reading)"
+                ]
+            ],
+            [
+                "<iframe src=\"x\" width=10 height=10></iframe>",
+                "<iframe src=\"x\" width=10 height=10></iframe>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":null,\"height\":null,\"loading\":null})",
+                    "wp_get_loading_optimization_attributes([], iframe, {\"width\":null,\"height\":null,\"loading\":null})"
+                ]
+            ],
+            [
+                "<iframe src=\"x\" width=\"10\" height=\"10\" loading='eager'></iframe>",
+                "<iframe src=\"x\" width=\"10\" height=\"10\" loading='eager'></iframe>",
+                []
+            ],
+            [
+                "<iframe src=\"x\" width=\"10\" height=\"10\" LOADING=\"eager\"></iframe>",
+                "<iframe loading=\"lazy\" src=\"x\" width=\"10\" height=\"10\" LOADING=\"eager\"></iframe>",
+                [
+                    "pre_wp_get_loading_optimization_attributes(false, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                    "wp_loading_optimization_force_header_contexts({\"template_part_header\":true,\"get_header_image_tag\":true})",
+                    "wp_get_loading_optimization_attributes({\"loading\":\"lazy\"}, iframe, {\"width\":100,\"height\":100,\"loading\":null})",
+                    "wp_iframe_tag_add_loading_attr(lazy, <iframe src=\"x\" width=\"10\" height=\"10\" LOADING=\"eager\">, zz_reading)"
+                ]
+            ]
+        ]
+    ],
+    [
+        "an image block in a header part",
+        [
+            "decoding=\"async\" width=\"300\" height=\"200\" ",
+            "decoding=\"async\" width=\"300\" height=\"200\" "
+        ]
+    ],
+    [
+        "an image block in a footer part",
+        [
+            "loading=\"lazy\" decoding=\"async\" width=\"300\" height=\"200\" ",
+            "loading=\"lazy\" decoding=\"async\" width=\"300\" height=\"200\" "
+        ]
+    ],
+    [
+        "an image block in a uncategorized part",
+        [
+            "loading=\"lazy\" decoding=\"async\" width=\"300\" height=\"200\" ",
+            "loading=\"lazy\" decoding=\"async\" width=\"300\" height=\"200\" "
+        ]
+    ]
+]

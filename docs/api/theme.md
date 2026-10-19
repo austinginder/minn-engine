@@ -40,11 +40,12 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 250 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 358 | The active block theme on disk, read as data: theme.json, the templates |
+| [`ThemeHeaders`](#themeheaders) | final class | 67 | A theme's headers as the reference's WP_Theme shows them (probe |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`TreeStyles`](#treestyles) | final readonly class | 259 | The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree |
 | [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
-| [`UserStyles`](#userstyles) | final readonly class | 111 | The site editor's saved global styles: one wp_global_styles post per |
+| [`UserStyles`](#userstyles) | final readonly class | 105 | The site editor's saved global styles: one wp_global_styles post per |
 
 ## ArchiveTitle
 
@@ -1486,6 +1487,35 @@ The theme's stylesheet URL when it ships one; a child's own, else nothing (the p
 Internals: `at()` (private, line 62), `rawJson()` (private, line 83), `withStylePartials()` (private, line 99), `partialFiles()` (private, line 135), `safe()` (private, line 166), `htmlFiles()` (private, line 243), `patternIndex()` (private, line 366)
 
 
+## ThemeHeaders
+
+`final class Minn\Theme\ThemeHeaders` · `public/minn/src/Minn/Theme/ThemeHeaders.php`
+
+A theme's headers as the reference's WP_Theme shows them (probe
+theme-headers): sanitized as read, in the theme's language, and with
+markup.
+
+- const `ALLOWED` = `array (   'a' =>    array (     'title' => true,     'href' => true,   ),   'abbr' =>    array (     'title' => true,   ),   'acronym' =>    array (     'title' => true,   ),   'code' =>    array (   ),   'em' =>    array (   ),   'strong' =>    array (   ), )` — The tags a name, description or author may keep.
+
+
+### static `shown(string $header, mixed $value, mixed $markup, mixed $translate, string $domain, Closure $loadDomain, Closure $plain): mixed`
+
+A header's value as shown: the name, description and author through
+kses, the addresses as URLs; then, unless asked not to, in the theme's
+language (any header with a value, its text domain loaded first); then
+with markup a list joined, the author linked to their address (shown
+the same way), the addresses escaped and the description texturized.
+
+- `@param Closure(): mixed $loadDomain loads the theme's text domain, once for its theme object`
+- `@param Closure(string): mixed $plain another header of the theme, shown without markup`
+
+### static `loadFor(object $theme): bool`
+
+A theme object's text domain (WP_Theme::load_textdomain), loaded once for it.
+
+Internals: `loadDomain()` (private, line 77)
+
+
 ## ThemeJsonData
 
 `final class Minn\Theme\ThemeJsonData` · `public/minn/src/Minn/Theme/ThemeJsonData.php`
@@ -1775,12 +1805,12 @@ node is empty, as the reference reads it.
 
 True when the body carries nothing at all under settings or styles, malformed or not.
 
-### `save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles, ?Closure $filter = NULL): void`
+### `changes(int $id, ?string $title, ?array $settings, ?array $styles): ?array`
 
-Replaces what the caller names (null keeps the stored value), stamps
-the modified time, and snapshots a revision when anything changed. A
-filter, when given, has the last word on the content and title written
-(the save filters a REST save runs them through).
+What a save changes, as columns: the content with what the caller
+names replaced (null keeps the stored value), and the title when one
+is given; null for no such post. The REST controller saves it as a
+post update.
 
-- `@param null|Closure(array<string, string>): array<string, string> $filter`
+- `@return array<string, string>|null`
 

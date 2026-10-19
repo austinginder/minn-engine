@@ -7,7 +7,8 @@
  * into a query, holds no tags, so it asks nothing. A gallery asks once it
  * has images, past post_gallery, and keeps an item, caption or icon tag only
  * when a post may hold it (tag_escape first), else dl, dd or dt. The Custom
- * HTML widget's note names the unsafe tags a post may not hold. Same
+ * HTML widget's note names the unsafe tags a post may not hold. Each pass
+ * asks for the block parser, and passes a kept comment's body again. Same
  * protocol as api-probe.php; the probe's post and attachment are removed at
  * the end.
  */
@@ -40,6 +41,36 @@ add_filter('wp_kses_allowed_html', $count);
 $name = sanitize_term_field('name', 'Zz <em>Name</em> & more', 0, 'category', 'db');
 remove_filter('wp_kses_allowed_html', $count);
 $log[] = ['a term name for the database', ['asks' => $asks, 'out' => $name]];
+
+// Each pass asks for the block parser (wp_pre_kses_block_attributes reads the blocks with it), and a comment kses
+// keeps has its body passed again, its own pre_kses and parser heard; a parser a plugin swaps in has its blocks
+// written back as it read them.
+foreach (['plain', '<!-- c -->', '<!-- wp:paragraph {"x":"<b>y</b>"} --><p>z</p><!-- /wp:paragraph -->', '<!-- wp:paragraph --><p>z</p><!-- /wp:paragraph -->', 'a <!-- x <b>y</b> --> b', '<!-- <script>alert(1)</script> <b>ok</b> -->', '<!-- a -- b -->'] as $content) {
+    $passes = [];
+    $parser = static function ($class) use (&$passes) {
+        $passes[] = 'parser';
+        return $class;
+    };
+    $pre = static function ($html) use (&$passes) {
+        $passes[] = 'pre_kses: ' . $html;
+        return $html;
+    };
+    add_filter('block_parser_class', $parser);
+    add_filter('pre_kses', $pre, 1);
+    $out = wp_kses($content, 'post');
+    remove_filter('pre_kses', $pre, 1);
+    remove_filter('block_parser_class', $parser);
+    $log[] = ["passes: {$content}", ['passes' => $passes, 'out' => $out]];
+}
+if (!class_exists('Zz_Kses_Asks_Parser')) {
+    eval('class Zz_Kses_Asks_Parser extends WP_Block_Parser { public function parse($document) { $blocks = parent::parse($document); foreach ($blocks as &$block) { if (!empty($block["blockName"])) { $block["attrs"]["zzAdded"] = "yes"; } } return $blocks; } }');
+}
+$swap = static fn () => 'Zz_Kses_Asks_Parser';
+add_filter('block_parser_class', $swap);
+foreach (['<!-- wp:paragraph {"a":"b"} --><p>z</p><!-- /wp:paragraph -->', 'plain <b>x</b>', "a\n\n<!-- wp:separator /-->\n\nb"] as $content) {
+    $log[] = ["a swapped parser: {$content}", [wp_kses($content, 'post'), wp_kses_post($content), filter_block_content($content)]];
+}
+remove_filter('block_parser_class', $swap);
 
 // Galleries.
 $post = wp_insert_post(['post_type' => 'post', 'post_title' => 'Zz kses gallery', 'post_status' => 'publish']);

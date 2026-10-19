@@ -82,6 +82,8 @@ final class Translations
     public static function fromFolder(string $domain, string $folder, string $file, string $locale): bool
     {
         $folder = rtrim($folder, '/');
+        // The active theme's own folder names its files by locale alone, whoever loads it.
+        $file = Runtime::textDomains()->folderFile($domain, $locale) === "{$folder}/{$locale}.mo" ? $locale : $file;
         $mofile = "{$folder}/{$file}.mo";
         if (!Runtime::textDomains()->closed($domain) && (is_readable($mofile) || is_readable("{$folder}/{$file}.l10n.php"))) {
             return self::load($domain, $mofile, $locale);

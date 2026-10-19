@@ -781,6 +781,8 @@ Minn\Runtime\Handoff::bind([
 Minn\Runtime\Handoff::bind([
     'newBlock' => static fn (...$args) => new WP_Block(...$args),
     'newBlockList' => static fn (...$args) => new WP_Block_List(...$args),
+    'blockChildContext' => static fn ($block) => Closure::bind(static fn (WP_Block $parent): array => $parent->child_context(), null, WP_Block::class)($block),
+    'adoptBlock' => static fn ($block, $parsed, $context) => Closure::bind(static fn (WP_Block $inner) => $inner->adopt($parsed, $context), null, WP_Block::class)($block),
     'newBlockTemplate' => static fn (...$args) => new WP_Block_Template(...$args),
     'newTagProcessor' => static fn (...$args) => new WP_HTML_Tag_Processor(...$args),
     'newThemeJsonData' => static fn (...$args) => new WP_Theme_JSON_Data(...$args),

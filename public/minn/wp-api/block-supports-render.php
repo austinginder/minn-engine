@@ -414,12 +414,14 @@ function _minn_block_level_presets(array $block): bool
  * A block's own presets, as custom properties and has-* classes under its
  * wp-settings-* class, printed in a <style> of their own; the render goes
  * on. A preset list counts keyed by origin (default, blocks, theme,
- * custom), as the editor saves it; a plain list does not.
+ * custom), as the editor saves it; a plain list does not. It answers null
+ * whatever it is handed, so a short-circuit an earlier callback gave is
+ * dropped (probe block-instances).
  */
 function _wp_add_block_level_preset_styles($pre_render, $block)
 {
     if (!_minn_block_level_presets((array) $block)) {
-        return $pre_render;
+        return null;
     }
     $settings = (array) $block['attrs']['settings'];
     $presets = [];
@@ -438,7 +440,7 @@ function _wp_add_block_level_preset_styles($pre_render, $block)
     if ($css !== '') {
         wp_enqueue_block_support_styles($css);
     }
-    return $pre_render;
+    return null;
 }
 
 /**

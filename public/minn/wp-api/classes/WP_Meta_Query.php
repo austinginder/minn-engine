@@ -57,7 +57,7 @@ class WP_Meta_Query
         }
         [$table, $column] = $tables[$type];
         $this->meta_table = Runtime::current()->db->table($table);
-        $this->meta_id_column = $column;
+        $this->meta_id_column = Minn\Support\Sanitize::key($type . '_id');
         $this->primary_table = $primary_table;
         $this->primary_id_column = $primary_id_column;
         $this->builder = null;

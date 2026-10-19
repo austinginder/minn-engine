@@ -166,7 +166,7 @@ final readonly class PageRenderer
         try {
             // Then, as the reference does with the whole template, each image is offered to wp_content_img_tag (in
             // the template's context), the content's images again among them.
-            $body = $this->renderer->images()->content(Texturize::html($this->renderer->renderBlocks(Parser::parse($template['markup']))), 'template');
+            $body = $this->renderer->images()->content(Texturize::html($this->renderer->renderRoots(Parser::named($template['markup']))), 'template');
         } finally {
             RenderState::current()->leave('template');
         }

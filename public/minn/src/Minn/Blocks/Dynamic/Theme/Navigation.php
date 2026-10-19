@@ -104,13 +104,19 @@ final readonly class Navigation
         $menuKey = null;
         if ($items === []) {
             $ref = (int) $block->attr('ref', 0);
+            // One that names no menu asks first whether a fallback menu may be made, as the reference's lookup does.
+            if ($ref <= 0) {
+                Runtime::hooks()->filter('wp_navigation_should_create_fallback', [true]);
+            }
             [$menu, $named] = $this->menuPost($ref);
             $menuId = $menu === null ? 0 : (int) $menu['ID'];
             $menuKey = $menu === null ? null : 'menu:' . $menuId;
             if ($menuKey !== null && !$renderer->state()->enter($menuKey)) {
                 return '';
             }
-            $items = $menu !== null ? Parser::parse(BlockHooks::forNavigation((string) $menu['post_content'], $menuId)) : ($ref > 0 ? [] : $this->classicItems());
+            $items = $menu !== null ? Parser::named(BlockHooks::forNavigation((string) $menu['post_content'], $menuId)) : ($ref > 0 ? [] : $this->classicItems());
+            // A navigation that names no menu renders its fallback as block_core_navigation_render_fallback leaves it (probe block-instances).
+            $items = $ref > 0 ? $items : array_map(static fn (mixed $parsed): Block => Block::fromArray((array) $parsed), array_values((array) Runtime::hooks()->filter('block_core_navigation_render_fallback', [array_map(static fn (Block $item): array => $item->toArray(), $items)])));
             // The menu's title labels the nav only when the block names the menu and that menu is the one shown.
             $label = $named ? (string) ($menu['post_title'] ?? '') : '';
         }
@@ -243,7 +249,8 @@ final readonly class Navigation
         $out = '';
         $run = '';
         foreach ($items as $item) {
-            $html = $renderer->renderBlock($item);
+            // Made as the reference's list makes them: no block filters before them (probe block-instances).
+            $html = $renderer->renderMade($item);
             if ($html !== '' && in_array($item->name, (array) Runtime::hooks()->filter('block_core_navigation_listable_blocks', [self::LISTABLE]), true)) {
                 $html = '<li class="wp-block-navigation-item">' . $html . '</li>';
             }

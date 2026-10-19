@@ -17,7 +17,7 @@ escaping, serialized readers, small helpers
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Kses`](#kses) | final class | 536 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 566 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
@@ -185,7 +185,7 @@ encoded; for a textarea, everything encoded; for an inline script, a
 single-quoted string's specials; and an address (esc_url) cleaned, its
 protocol checked against the allowed ones.
 
-Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -379,6 +379,7 @@ block delimiters are written back with their attribute values filtered.
 
 Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\KsesRules`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
 
+
 ### static `post(string $html): string`
 
 Post content as an author without unfiltered_html may store it.
@@ -423,6 +424,15 @@ Text escaped for HTML with references kept: invalid UTF-8 gives nothing, quotes 
 Block markup with every attribute key and string value passed through
 the same filter, and the delimiters written back in their canonical
 form ("--->" read as "-->"). Markup without a comment is left alone.
+
+- `@param Closure(string): string $clean`
+
+### static `blockAttributesParsed(string $html, Closure $clean): string`
+
+As blockAttributes, the blocks read by the parser block_parser_class
+names, as wp_pre_kses_block_attributes reads them (probe
+kses-allowed-asks): the engine's own, or one a plugin swaps in, whose
+blocks are written back as it read them.
 
 - `@param Closure(string): string $clean`
 
@@ -508,7 +518,7 @@ Whether a URL may be an object's data in post content: an http or https
 URL on the uploads host and port, no credentials, query or fragment,
 whose path ends in ".pdf".
 
-Internals: `cleanValue()` (private, line 138), `tagsAsked()` (private, line 183), `run()` (private, line 240), `htmlComment()` (private, line 268), `deepDecode()` (private, line 380), `visible()` (private, line 393), `normalizeText()` (private, line 408), `normalizeAttribute()` (private, line 431), `named()` (private, line 451), `codePoint()` (private, line 458), `attributes()` (private, line 483), `rendered()` (private, line 508), `srcset()` (private, line 546)
+Internals: `cleaned()` (private, line 155), `cleanValue()` (private, line 161), `tagsAsked()` (private, line 213), `run()` (private, line 270), `htmlComment()` (private, line 298), `deepDecode()` (private, line 410), `visible()` (private, line 423), `normalizeText()` (private, line 438), `normalizeAttribute()` (private, line 461), `named()` (private, line 481), `codePoint()` (private, line 488), `attributes()` (private, line 513), `rendered()` (private, line 538), `srcset()` (private, line 576)
 
 
 ## KsesAttributes
@@ -917,7 +927,7 @@ in the filter plugins hook there, handed the result and what was given: a
 title (accents gone when saving), a key, a line of plain text, a user name,
 an email address and the check of one.
 
-Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Login\LoginHooks`, `Minn\Query\PostOrder`, `Minn\Rest\MediaController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Login\LoginHooks`, `Minn\Query\PostOrder`, `Minn\Rest\MediaController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TaxTerms`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`
 
 ### static `title(mixed $title, mixed $fallback = '', mixed $context = 'save'): string`
 
@@ -1083,7 +1093,7 @@ Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash):
 added to or stripped from every string inside a value, arrays and
 objects walked all the way down, anything else left as it is.
 
-Used by: `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Rest\GlobalStylesController`, `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserWrites`
 
 ### static `add(mixed $value): mixed`
 

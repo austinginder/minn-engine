@@ -13,13 +13,13 @@ the block parser and renderer
 | [`CoreBlocks`](#coreblocks) | final class | 26 | The core block types' metadata as the reference registers them |
 | [`Duotone`](#duotone) | final class | 79 | Duotone filters (probe block-supports): a CSS color read into its red, |
 | [`Elements`](#elements) | final class | 121 | Per-block element styles (style.elements in a block's attributes, the |
-| [`ImageTags`](#imagetags) | final readonly class | 326 | The attributes the reference adds to an <img> that carries a |
+| [`ImageTags`](#imagetags) | final readonly class | 446 | The attributes the reference adds to an <img> that carries a |
 | [`Layout`](#layout) | final class | 167 | The layout support's classes and rules (wp_render_layout_support_flag, |
 | [`LayoutStyle`](#layoutstyle) | final class | 193 | The CSS rules a block's layout writes (wp_get_layout_style, probe |
-| [`Parser`](#parser) | final class | 114 | Parses block markup into a tree. The grammar is the delimiter comment: |
+| [`Parser`](#parser) | final class | 147 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
-| [`RenderState`](#renderstate) | final class | 411 | Per-request rendering state, owned by the renderer. The reference numbers |
-| [`Renderer`](#renderer) | final class | 454 | Renders a block tree the way the reference renders post_content: |
+| [`RenderState`](#renderstate) | final class | 434 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`Renderer`](#renderer) | final class | 532 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
@@ -453,11 +453,26 @@ The same for a plugin block's output, where the reference adds no sizes="auto".
 ### `content(string $html, mixed $context = NULL): string`
 
 Every <img> and <iframe> of a content fragment as the reference's
-wp_filter_content_tags leaves it: an attachment's image is enriched as
-above (a loading it already has is kept, and an eager large one is
-fetched first); any other image is decoded asynchronously and, when its
-size is known, loaded lazily or by the page's budget; an iframe with a
-size is loaded lazily.
+wp_filter_content_tags leaves it for the context named (probe
+content-tags): whether iframes may load lazily asked first; each tag
+fitted out once, however often it appears. An attachment's image
+(a wp-image class) is given the width and height it lacks and its
+srcset and sizes; every image the loading, decoding and priority its
+context earns (wp_get_loading_optimization_attributes), "auto" sizes
+when lazy, then wp_content_img_tag. An iframe that names no loading of
+its own is given its loading, while iframes may load lazily.
+
+### static `optimized(string $image, mixed $context): string`
+
+An <img> given what it lacks of decoding, loading and fetchpriority, as
+the context earns them (wp_img_tag_add_loading_optimization_attrs):
+an image with no source given none of them; decoding through
+wp_img_tag_add_decoding_attr; for an image that writes a width and a
+height, lazy loading asked, then a loading through
+wp_img_tag_add_loading_attr (lazy or eager as given, any other
+answer keeping the loading the context earned, a false one none); then
+a high priority. Each is placed
+straight after "<img", so the last added reads first.
 
 ### `finished(string $html, string $context): string`
 
@@ -473,7 +488,7 @@ A post's featured image at full size, in the reference's attribute
 order (dimensions, source, class, alt, style, then the loading
 attributes and the srcset). Empty when the attachment has no file.
 
-Internals: `sized()` (private, line 72), `fit()` (private, line 104), `attachmentOf()` (private, line 112), `plainImage()` (private, line 118), `autoSized()` (private, line 131), `autoSizedWhenLazy()` (private, line 143), `lazyFrame()` (private, line 149), `rewrite()` (private, line 157), `loadingPrefix()` (private, line 173), `givenLoading()` (private, line 192), `lazyAllowed()` (private, line 201), `minimumPriorityPixels()` (private, line 207), `enrichTag()` (private, line 213), `candidates()` (private, line 242), `srcsetAttributes()` (private, line 288)
+Internals: `contentImage()` (private, line 127), `frame()` (private, line 148), `dimensioned()` (private, line 161), `lazySizes()` (private, line 168), `attributeOf()` (private, line 180), `sizeOf()` (private, line 186), `sized()` (private, line 196), `fit()` (private, line 228), `attachmentOf()` (private, line 236), `plainImage()` (private, line 242), `autoSized()` (private, line 255), `autoSizedWhenLazy()` (private, line 267), `rewrite()` (private, line 272), `loadingPrefix()` (private, line 288), `givenLoading()` (private, line 307), `lazyAllowed()` (private, line 316), `minimumPriorityPixels()` (private, line 322), `enrichTag()` (private, line 328), `candidates()` (private, line 362), `srcsetAttributes()` (private, line 408)
 
 
 ## Layout
@@ -625,6 +640,25 @@ block is a freeform block that renders as-is.
 
 Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Support\Kses`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplatePatterns`
 
+### static `swapped(): ?string`
+
+The parser class block_parser_class names when a plugin swaps its own
+in for WP_Block_Parser; null for the engine's own.
+
+### static `named(string $markup): array`
+
+A document's blocks as do_blocks reads them: by the parser
+block_parser_class names, the engine's own unless a plugin swaps
+its own in.
+
+- `@return list<Block>`
+
+### static `withClass(string $class, string $markup): array`
+
+Block markup as a parser class of a plugin's reads it.
+
+- `@return list<Block>`
+
 ### static `parse(string $markup): array`
 
 Block markup as a tree of blocks.
@@ -752,6 +786,16 @@ prints nothing there, so a post that shows its own content (directly,
 or through an inheriting query loop) renders it once.
 
 - `@param \Closure(): string $render`
+
+### `within(string $context, Closure $render): mixed`
+
+Renders inside the context the content's images are fitted out for (a
+template part's template_part_{area}, a post's the_content), the
+innermost one standing.
+
+### `contentContext(): ?string`
+
+The context content is rendered in now (within), or null outside any.
 
 ### `renderAdded(string $content, Closure $render): string`
 
@@ -955,7 +999,7 @@ callback that calls the one it replaced does not call itself.
 
 ### `render(string $markup): string`
 
-Block markup as HTML, texturized.
+Block markup as HTML, texturized: a document of its own (renderRoots()).
 
 ### `renderBlocks(array $blocks): string`
 
@@ -984,14 +1028,37 @@ for one.
 
 - `@param callable(string, Block): string $finish`
 
-### `handContext(array $context): void`
+### `handContext(array $context, ?Minn\Objects\RenderedBlock $instance = NULL): void`
 
 The context render_block_context already gave the next block, when
 render_block() or a WP_Block renders it: a block that provides its
 own context (a tabs block's id) reads it with ownContext() rather
-than asking again.
+than asking again. The WP_Block is the parent its inner blocks are
+begun with.
 
 - `@param array<string, mixed> $context`
+
+### `ownInstance(): ?Minn\Objects\RenderedBlock`
+
+The WP_Block the block that has just begun to render was made as; null when the block filters did not begin it.
+
+### `renderRoots(array $blocks): string`
+
+Blocks that begin a document of their own (a pattern's, a part's, a
+post's content), as do_blocks renders them: no parent block.
+
+- `@param list<Block> $blocks`
+
+### `under(?Minn\Objects\RenderedBlock $parent, Closure $render): string`
+
+Renders with a WP_Block of the renderer's making as the parent of the blocks inside (a synced pattern's, a post template's item).
+
+### `renderMade(Minn\Blocks\Block $block): string`
+
+A block as the reference renders an item of a block list its parent
+walks itself (a navigation's own items): made from what the parent
+gives its inner blocks, without pre_render_block, render_block_data
+or render_block_context before it.
 
 ### `ownContext(): ?array`
 
@@ -1026,7 +1093,7 @@ plugin's callback took over. It applies the block supports it knows
 itself (layout, element styles); the facade's render_block filters do
 the rest, and all of them for any other block.
 
-Internals: `renderWith()` (private, line 219), `generatedClass()` (private, line 417), `elementsClass()` (private, line 432), `renderNamed()` (private, line 438), `decorate()` (private, line 466), `gallery()` (private, line 490)
+Internals: `renderWith()` (private, line 228), `freeform()` (private, line 439), `parent()` (private, line 446), `generatedClass()` (private, line 493), `elementsClass()` (private, line 508), `renderNamed()` (private, line 514), `decorate()` (private, line 545), `gallery()` (private, line 569)
 
 
 ## Selector
