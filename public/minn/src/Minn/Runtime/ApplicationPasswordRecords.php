@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Http\Request;
 use Minn\Auth\ApplicationPasswords;
 use Minn\Content\Users;
 use Minn\I18n\Gettext;
@@ -82,7 +83,8 @@ final class ApplicationPasswordRecords
     /** A use recorded, when and from where (record_application_password_usage): true, or the not-found error. */
     public static function recordUsage(mixed $userId, mixed $uuid): mixed
     {
-        $ip = (string) (Runtime::current()->request?->remoteAddress ?? '');
+        // The address the server variables hold now, which a plugin behind a proxy may have set (tests/tools/side-effects.php, user-meta-writes).
+        $ip = (string) (Request::serverVariable('REMOTE_ADDR') ?? '');
         return self::store()->touch((int) $userId, (string) $uuid, $ip) === null ? self::notFound() : true;
     }
 

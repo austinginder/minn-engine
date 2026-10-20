@@ -485,7 +485,7 @@ function wp_determine_option_autoload_value($option, $value, $serialized_value, 
 /** An option whose stored value is longer than wp_max_autoloaded_option_size (150000 bytes) is not autoloaded (on wp_default_autoload_value). */
 function wp_filter_default_autoload_value_via_option_size($autoload, $option, $value, $serialized_value)
 {
-    $max = (int) apply_filters('wp_max_autoloaded_option_size', 150000);
+    $max = (int) apply_filters('wp_max_autoloaded_option_size', 150000, $option);
     return strlen((string) $serialized_value) > $max ? false : $autoload;
 }
 

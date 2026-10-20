@@ -1,0 +1,1043 @@
+[
+    [
+        "stored 'on', none given",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'on', null",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'on', true",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'on', false",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'on', 'yes'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'on', 'no'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'on', 'on'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'on', 'off'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'on', 'auto'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'on', 'auto-on'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'on', 'auto-off'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'on', another word",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'off', none given",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'off', null",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'off', true",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'off', false",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'off', 'yes'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'off', 'no'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'off', 'on'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'off', 'off'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'off', 'auto'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'off', 'auto-on'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'off', 'auto-off'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'off', another word",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'yes', none given",
+        {
+            "updated": true,
+            "stored": "yes",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'yes', null",
+        {
+            "updated": true,
+            "stored": "yes",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'yes', true",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'yes', false",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'yes', 'yes'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'yes', 'no'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'yes', 'on'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'yes', 'off'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'yes', 'auto'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'yes', 'auto-on'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'yes', 'auto-off'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'yes', another word",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'no', none given",
+        {
+            "updated": true,
+            "stored": "no",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'no', null",
+        {
+            "updated": true,
+            "stored": "no",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'no', true",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'no', false",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'no', 'yes'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'no', 'no'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'no', 'on'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'no', 'off'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'no', 'auto'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'no', 'auto-on'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'no', 'auto-off'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'no', another word",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto', none given",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto', null",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto', true",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto', false",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto', 'yes'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto', 'no'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto', 'on'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto', 'off'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto', 'auto'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto', 'auto-on'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto', 'auto-off'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto', another word",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-on', none given",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-on', null",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-on', true",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-on', false",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-on', 'yes'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-on', 'no'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-on', 'on'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-on', 'off'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-on', 'auto'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-on', 'auto-on'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-on', 'auto-off'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-on', another word",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-off', none given",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-off', null",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-off', true",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-off', false",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-off', 'yes'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-off', 'no'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-off', 'on'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-off', 'off'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-off', 'auto'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-off', 'auto-on'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-off', 'auto-off'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto-off', another word",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored '', none given",
+        {
+            "updated": true,
+            "stored": "",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored '', null",
+        {
+            "updated": true,
+            "stored": "",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored '', true",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored '', false",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored '', 'yes'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored '', 'no'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored '', 'on'",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored '', 'off'",
+        {
+            "updated": true,
+            "stored": "off",
+            "autoloaded": false,
+            "heard": []
+        }
+    ],
+    [
+        "stored '', 'auto'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored '', 'auto-on'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored '', 'auto-off'",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored '', another word",
+        {
+            "updated": true,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto', a value past the size limit",
+        {
+            "updated": true,
+            "stored": "auto-off",
+            "autoloaded": false,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'on', a value past the size limit",
+        {
+            "updated": true,
+            "stored": "on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto', the default filter says true",
+        {
+            "updated": true,
+            "stored": "auto-on",
+            "autoloaded": true,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto', the default filter says false",
+        {
+            "updated": true,
+            "stored": "auto-off",
+            "autoloaded": false,
+            "heard": [
+                "wp_default_autoload_value",
+                "wp_max_autoloaded_option_size"
+            ]
+        }
+    ],
+    [
+        "stored 'auto', the same value",
+        {
+            "updated": false,
+            "stored": "auto",
+            "autoloaded": true,
+            "heard": []
+        }
+    ],
+    [
+        "stored 'auto-on', the same value, false given",
+        {
+            "updated": false,
+            "stored": "auto-on",
+            "autoloaded": true,
+            "heard": []
+        }
+    ]
+]

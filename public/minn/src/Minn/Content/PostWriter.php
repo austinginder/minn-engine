@@ -146,19 +146,27 @@ final readonly class PostWriter
 
     /**
      * The row of a post moving to the trash, as the reference writes it: the
-     * slug gains __trashed, the modified time moves, a floating draft's date
-     * settles, a post keeps a category, and the published counts follow. What
-     * the trash keeps for the way back (the status, the time, the slug it
-     * had) is meta the caller adds, and the revision comes from the save.
+     * slug gains __trashed (unless it has it already) and is made unique, as
+     * a trashed post's slug is (a second __trashed becomes __trashed-2;
+     * tests/tools/side-effects.php), the modified time moves, a floating
+     * draft's date settles (any other post's missing GMT date is its own
+     * date's), a post keeps a category, and the published
+     * counts follow. What the trash keeps for the way back (the status, the
+     * time, the slug it had) is meta the caller adds, and the revision comes
+     * from the save.
      */
     public function trash(PostRecord $post): void
     {
         $id = $post->id;
         $local = $this->site->localNow();
         $gmt = gmdate('Y-m-d H:i:s');
-        // A floating draft's date settles on now as it leaves for the trash.
-        $settled = self::floating($post) ? ['post_date' => $local, 'post_date_gmt' => $gmt] : [];
-        $this->update($id, ['post_status' => 'trash', 'post_name' => $post->slug . '__trashed'] + $settled + ['post_modified' => $local, 'post_modified_gmt' => $gmt]);
+        // A floating draft's date settles on now as it leaves for the trash; any other post without a GMT date takes its own date's.
+        $settled = match (true) {
+            self::floating($post) => ['post_date' => $local, 'post_date_gmt' => $gmt],
+            in_array($post->dateGmt, [self::ZERO_DATE, ''], true) => ['post_date_gmt' => $this->site->localDate($post->date)[1]],
+            default => [],
+        };
+        $this->update($id, ['post_status' => 'trash', 'post_name' => $this->trashedSlug($post)] + $settled + ['post_modified' => $local, 'post_modified_gmt' => $gmt]);
         if ($post->type === 'post') {
             $this->ensureCategory($id);
         }
@@ -169,6 +177,13 @@ final readonly class PostWriter
     public function deleteMeta(int $id, string $key): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ? AND meta_key = ?", [$id, $key]);
+    }
+
+    /** The slug a post takes in the trash: its own with __trashed (once), made unique. */
+    public function trashedSlug(PostRecord $post): string
+    {
+        $name = str_ends_with($post->slug, '__trashed') ? $post->slug : $post->slug . '__trashed';
+        return $this->uniqueSlug($name, $post->id, $post->type, $post->parentId);
     }
 
     /** A free slug for the desired text, sanitized first, in the type's scope (see PostSlugs). */

@@ -151,10 +151,11 @@ final class PostWrites
         $hooks->action('wp_trash_post', [$post->ID, $post->post_status]);
         MetaData::add('post', $post->ID, '_wp_trash_meta_status', $post->post_status);
         MetaData::add('post', $post->ID, '_wp_trash_meta_time', time());
-        MetaData::add('post', $post->ID, '_wp_desired_post_slug', $post->post_name);
-        PostCaches::clean($post->ID);
-        self::beforeSave(['post_status' => 'trash', 'post_name' => $post->post_name . '__trashed'] + $post->to_array(), $post->ID);
-        self::writer()->trash((new Posts(Runtime::current()->db))->find($post->ID));
+        // The slug takes its suffix in a write of its own first, then the save makes it unique (tests/tools/side-effects.php).
+        self::suffixTrashedPost($post);
+        $record = (new Posts(Runtime::current()->db))->find($post->ID);
+        self::beforeSave(['post_status' => 'trash', 'post_name' => self::writer()->trashedSlug($record)] + $post->to_array(), $post->ID);
+        self::writer()->trash($record);
         self::trashSaved($post);
         CommentWrites::trashPostComments($post->ID);
         $hooks->action('trashed_post', [$post->ID, $post->post_status]);
@@ -216,11 +217,8 @@ final class PostWrites
         if ($before === null || $before->post_status === 'publish') {
             return;
         }
-        $columns = ['post_status' => 'publish'];
-        if ($before->post_date_gmt === '0000-00-00 00:00:00') {
-            $columns = array_replace($columns, ['post_date_gmt' => SiteTime::toGmt($before->post_date)]);
-        }
-        self::writer()->update($before->ID, $columns);
+        // Only the status changes: a draft's zero GMT date stays as it is (tests/tools/side-effects.php, content).
+        self::writer()->update($before->ID, ['post_status' => 'publish']);
         PostCaches::clean($before);
         $post = Records::post($before->ID);
         self::transitionStatus('publish', $before->post_status, $post);
@@ -544,6 +542,8 @@ final class PostWrites
         $hooks->action("delete_post_{$post->post_type}", [$post->ID, $post]);
         $hooks->action('delete_post', [$post->ID, $post]);
         self::writer()->destroy($post->ID);
+        // A deleted post's scheduled publication goes with it, once its row is gone (tests/tools/side-effects.php, post-caps).
+        CronEvents::clearHook('publish_future_post', [$post->ID]);
         $hooks->action("deleted_post_{$post->post_type}", [$post->ID, $post]);
         $hooks->action('deleted_post', [$post->ID, $post]);
         PostCaches::clean($post);

@@ -9,7 +9,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Clickable`](#clickable) | final class | 64 | Bare addresses in text made links (make_clickable, probe |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 245 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 248 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Emoji`](#emoji) | final class | 68 | Emoji as the reference's mail and feeds carry them, from the list the |
 | [`Excerpt`](#excerpt) | final class | 90 | The reference's generated excerpt, as captured from probe posts: |
@@ -30,7 +30,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostRecord`](#postrecord) | final readonly class | 162 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 406 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 421 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 561 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
@@ -45,7 +45,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 311 |  |
+| [`Users`](#users) | final readonly class | 314 |  |
 
 ## Autop
 
@@ -299,7 +299,8 @@ Inserts a row from column => value pairs and returns the new id.
 
 ### `update(int $id, array $columns): void`
 
-Sets the given columns on one comment.
+Sets the given columns on one comment, in one write as the reference
+makes it (tests/tools/side-effects.php).
 
 - `@param array<string, mixed> $columns`
 
@@ -1266,14 +1267,22 @@ Gives a post the site's default category when it has none, as every save of a po
 ### `trash(Minn\Content\PostRecord $post): void`
 
 The row of a post moving to the trash, as the reference writes it: the
-slug gains __trashed, the modified time moves, a floating draft's date
-settles, a post keeps a category, and the published counts follow. What
-the trash keeps for the way back (the status, the time, the slug it
-had) is meta the caller adds, and the revision comes from the save.
+slug gains __trashed (unless it has it already) and is made unique, as
+a trashed post's slug is (a second __trashed becomes __trashed-2;
+tests/tools/side-effects.php), the modified time moves, a floating
+draft's date settles (any other post's missing GMT date is its own
+date's), a post keeps a category, and the published
+counts follow. What the trash keeps for the way back (the status, the
+time, the slug it had) is meta the caller adds, and the revision comes
+from the save.
 
 ### `deleteMeta(int $id, string $key): void`
 
 Removes every meta row with this key from a post.
+
+### `trashedSlug(Minn\Content\PostRecord $post): string`
+
+The slug a post takes in the trash: its own with __trashed (once), made unique.
 
 ### `uniqueSlug(string $desired, int $excludeId, string $type = 'post', int $parent = 0): string`
 
@@ -1356,7 +1365,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `fit()` (private, line 187), `announceSticky()` (private, line 288), `saveSticky()` (private, line 296)
+Internals: `fit()` (private, line 202), `announceSticky()` (private, line 303), `saveSticky()` (private, line 311)
 
 
 ## Posts
@@ -2364,7 +2373,8 @@ Inserts a users row from column => value pairs and returns the new id.
 
 ### `update(int $id, array $columns): void`
 
-Sets the given columns on one user.
+Sets the given columns on one user, in one write as the reference
+makes it (tests/tools/side-effects.php).
 
 - `@param array<string, mixed> $columns`
 

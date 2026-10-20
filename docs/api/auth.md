@@ -4,7 +4,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 154 | Application passwords as the reference stores them: a serialized list in |
+| [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 165 | Application passwords as the reference stores them: a serialized list in |
 | [`AuthCookies`](#authcookies) | final readonly class | 107 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 26 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
@@ -92,7 +92,7 @@ Twenty-four letters and digits.
 
 The plaintext as shown once: groups of four, space separated.
 
-Internals: `change()` (private, line 145), `save()` (private, line 160), `uuid()` (private, line 165)
+Internals: `stored()` (private, line 44), `change()` (private, line 156), `save()` (private, line 171), `uuid()` (private, line 176)
 
 
 ## AuthCookies

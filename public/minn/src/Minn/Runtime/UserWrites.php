@@ -195,8 +195,9 @@ final class UserWrites
         $hooks->action('delete_user', [$id, $reassign, $user]);
         $db = Runtime::current()->db;
         if ($reassign === null) {
+            // Each post goes as wp_delete_post sends it without force: a post or page to the trash (tests/tools/side-effects.php, rest-registry-controllers).
             foreach ((new PostLookup($db))->idsByAuthor($id) as $postId) {
-                PostWrites::delete($postId, true);
+                PostWrites::delete($postId);
             }
         } else {
             (new PostWriter($db, new Posts($db), Runtime::current()->site))->reassignAuthor($id, (int) $reassign);

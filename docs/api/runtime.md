@@ -11,7 +11,7 @@ the WordPress runtime plugins load against
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 86 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`ApplicationPasswordEvents`](#applicationpasswordevents) | final class | 46 | Application password changes made over REST, as the reference makes them |
-| [`ApplicationPasswordRecords`](#applicationpasswordrecords) | final class | 102 | A user's application passwords as WordPress's API keeps them |
+| [`ApplicationPasswordRecords`](#applicationpasswordrecords) | final class | 103 | A user's application passwords as WordPress's API keeps them |
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 85 | wp_authenticate_application_password as the reference answers it (probe |
 | [`ArchiveLinks`](#archivelinks) | final class | 41 | A post type's archive address and its feed, as the reference gives them |
 | [`AssetEdits`](#assetedits) | final class | 42 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
@@ -66,7 +66,7 @@ the WordPress runtime plugins load against
 | [`KsesRules`](#ksesrules) | final class | 114 | The HTML WordPress's kses functions let through: the elements and |
 | [`LegacyPack`](#legacypack) | final class | 310 | WordPress's own browser files, for the plugins whose screens are built on |
 | [`MainQuery`](#mainquery) | final class | 23 | The query the request answers ($wp_query), as WordPress keeps it: the |
-| [`MenuEvents`](#menuevents) | final readonly class | 225 | Menus and their items saved as the reference saves them, telling |
+| [`MenuEvents`](#menuevents) | final readonly class | 222 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
 | [`Meta`](#meta) | final readonly class | 242 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaData`](#metadata) | final class | 394 | Metadata as WordPress's meta functions read and write it, for posts, |
@@ -79,8 +79,8 @@ the WordPress runtime plugins load against
 | [`ObjectCache`](#objectcache) | final class | 63 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
-| [`OptionWrites`](#optionwrites) | final class | 131 | Options written the way add_option(), update_option() and delete_option() |
-| [`Options`](#options) | final class | 498 | Options as plugin code sees them, kept where the reference keeps them: |
+| [`OptionWrites`](#optionwrites) | final class | 133 | Options written the way add_option(), update_option() and delete_option() |
+| [`Options`](#options) | final class | 516 | Options as plugin code sees them, kept where the reference keeps them: |
 | [`OptionsGroup`](#optionsgroup) | final class | 57 | wp_cache's options group, where option reads are kept as the reference |
 | [`Pages`](#pages) | final class | 136 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
@@ -167,7 +167,7 @@ the WordPress runtime plugins load against
 | [`UserQueryRunner`](#userqueryrunner) | final class | 232 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
 | [`UserSave`](#usersave) | final class | 74 | An account's fields through the filters the reference's wp_insert_user |
 | [`UserStylesPost`](#userstylespost) | final class | 51 | A theme's user styles post as WordPress's theme.json resolver finds and |
-| [`UserWrites`](#userwrites) | final class | 354 | Accounts written as WordPress's user functions write them: an account |
+| [`UserWrites`](#userwrites) | final class | 355 | Accounts written as WordPress's user functions write them: an account |
 | [`VersionCheck`](#versioncheck) | final class | 27 | Whether the WordPress version Minn reports and the PHP it runs on meet a |
 | [`WidgetAreas`](#widgetareas) | final class | 271 | The widgets helper functions as the reference answers them (probe |
 
@@ -543,7 +543,7 @@ A password removed (delete_application_password): true, or the not-found error.
 
 Every password of the user removed, each told to wp_delete_application_password (delete_all_application_passwords); how many went.
 
-Internals: `notFound()` (private, line 111), `store()` (private, line 116)
+Internals: `notFound()` (private, line 113), `store()` (private, line 118)
 
 
 ## ApplicationPasswordSignIn
@@ -3719,7 +3719,7 @@ argument it isn't handed.
 
 - `@return array<string, mixed>`
 
-Internals: `prepared()` (private, line 181), `fields()` (private, line 228)
+Internals: `prepared()` (private, line 178), `fields()` (private, line 225)
 
 
 ## MenuItemMarks
@@ -4502,7 +4502,14 @@ the same value was already there.
 
 ### `update(string $name, mixed $value, ?string $autoload = NULL): bool`
 
-False when the value is unchanged, as the reference reports.
+False when the value is unchanged, as the reference reports. An
+autoload flag given is stored with the value, and the value moves
+between the autoloaded list and a key of its own when the flag says
+so.
+
+### `autoloadOf(string $name): ?string`
+
+The autoload flag a stored option carries, or null when there is no such row.
 
 ### `markAutoload(string $name): bool`
 
@@ -4539,7 +4546,7 @@ reads back as that string, other scalars as their string form.
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `listed()` (private, line 98), `missing()` (private, line 123), `lookup()` (private, line 140), `decode()` (private, line 165), `remember()` (private, line 361), `found()` (private, line 372), `holdsObject()` (private, line 382), `switchAutoload()` (private, line 413)
+Internals: `listed()` (private, line 98), `missing()` (private, line 123), `lookup()` (private, line 140), `decode()` (private, line 165), `remember()` (private, line 379), `found()` (private, line 390), `holdsObject()` (private, line 400), `switchAutoload()` (private, line 431)
 
 
 ## OptionsGroup
@@ -6136,7 +6143,7 @@ edit actions for an update, the save actions.
 
 Each meta row of a post removed by its id, with the hooks of each.
 
-Internals: `slugFromId()` (private, line 370), `stickies()` (private, line 381), `freeSlug()` (private, line 388), `templateRefusal()` (private, line 412), `inputs()` (private, line 430), `attachmentSaved()` (private, line 476), `trashSaved()` (private, line 518), `remove()` (private, line 541), `inserter()` (private, line 555), `writer()` (private, line 568)
+Internals: `slugFromId()` (private, line 368), `stickies()` (private, line 379), `freeSlug()` (private, line 386), `templateRefusal()` (private, line 410), `inputs()` (private, line 428), `attachmentSaved()` (private, line 474), `trashSaved()` (private, line 516), `remove()` (private, line 539), `inserter()` (private, line 555), `writer()` (private, line 568)
 
 
 ## QueriedObject
@@ -9577,7 +9584,7 @@ A user's cached rows and meta let go (clean_user_cache), plugins told.
 
 An account's row from an id, a login, a user object, or an object with an ID.
 
-Internals: `asArray()` (private, line 247), `insertAccount()` (private, line 267), `filteredRow()` (private, line 295), `updateProfile()` (private, line 318), `changeNotices()` (private, line 361)
+Internals: `asArray()` (private, line 248), `insertAccount()` (private, line 268), `filteredRow()` (private, line 296), `updateProfile()` (private, line 319), `changeNotices()` (private, line 362)
 
 
 ## VersionCheck

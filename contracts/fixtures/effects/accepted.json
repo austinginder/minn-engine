@@ -12,6 +12,18 @@
         {
             "match": "^options:minn_",
             "reason": "the engine's own state (its runtime symbol cache and the like), which WordPress has no part in"
+        },
+        {
+            "match": "^postmeta:posts#n\\|_(pingme|encloseme|trackbackme)$",
+            "reason": "the marks _publish_post_hook leaves for pings, enclosures and trackbacks, which tests/tools/deadends.php lists as dead ends (PINGS: _publish_post_hook, do_all_enclosures, do_trackbacks)"
+        },
+        {
+            "match": "^options:_site_transient(_timeout)?_available_translations$",
+            "reason": "the reference keeps wordpress.org's list of translations in a site transient and fetches it again when it expires; the engine makes no wordpress.org requests (the Track H ratchet in tests/style.test.php)"
+        },
+        {
+            "match": "^options:_transient(_timeout)?_doing_cron$",
+            "reason": "the reference spawns WP-Cron at the end of a run when an event has fallen due, its lock in the doing_cron transient; the engine's probe runner spawns none (the engine's cron runs on requests, wp-cron.php held to the reference by tests/cron.test.php), so this follows the clock, not the probe"
         }
     ]
 }

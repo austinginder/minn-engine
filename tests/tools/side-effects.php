@@ -19,7 +19,7 @@
  * rows whose histories differ are the probe's side-effect differences.
  *
  * Only the probe's own connection is recorded (it is marked: side-effects-
- * tag.php on the reference, side-effects-runner.php on the engine), so a
+ * reference.php on the reference, side-effects-runner.php on the engine), so a
  * request to the site while a probe runs is neither counted nor put back.
  *
  * The differences found are held to contracts/fixtures/effects/
@@ -34,16 +34,17 @@
  *
  *   php tests/tools/side-effects.php [--only=probe-a,probe-b] [--show] [--json=out.json] [--snapshot]
  *   php tests/tools/side-effects.php --from=out.json [--snapshot]   (a saved report, nothing run)
+ *   php tests/tools/side-effects.php --only=probe --events[=regex]   (each stack's writes in order)
  *   php tests/tools/side-effects.php --uninstall   (takes the triggers off after a crash)
  */
 
 require __DIR__ . '/../lib.php';
 
 const AUDIT = 'zz_side_effects';
-/** The session variable that marks a probe's connection (side-effects-tag.php, side-effects-runner.php). */
+/** The session variable that marks a probe's connection (side-effects-reference.php, side-effects-runner.php). */
 const TAG = '@zz_side_effects_probe';
 
-$options = getopt('', ['only:', 'show', 'json:', 'uninstall', 'snapshot', 'from:']);
+$options = getopt('', ['only:', 'show', 'json:', 'uninstall', 'snapshot', 'from:', 'events::']);
 $snapshotFile = dirname(__DIR__, 2) . '/contracts/fixtures/effects/divergences.json';
 $acceptedFile = dirname(__DIR__, 2) . '/contracts/fixtures/effects/accepted.json';
 $root = dirname(__DIR__, 2);
@@ -239,7 +240,7 @@ function fx_run(mysqli $db, string $stack, string $probe, string $root, string $
     touch($marker, time() - 1);
     [$code, $stderr] = $stack === 'reference'
         // WordPress alone: the engine's probe runner loads no plugins either (the must-use ones still load).
-        ? fx_exec('/opt/homebrew/bin/wp eval-file --skip-plugins --require=' . escapeshellarg("{$root}/tests/tools/side-effects-tag.php") . ' ' . escapeshellarg("{$root}/tests/tools/{$probe}"), "{$siteRoot}/wp-reference")
+        ? fx_exec('SIDE_EFFECTS_PROBE=' . escapeshellarg($probe) . ' /opt/homebrew/bin/wp eval-file --skip-plugins ' . escapeshellarg("{$root}/tests/tools/side-effects-reference.php"), "{$siteRoot}/wp-reference")
         : fx_exec('php ' . escapeshellarg("{$root}/tests/tools/side-effects-runner.php") . ' ' . escapeshellarg($probe), $root);
     $events = [];
     $connections = [];
@@ -348,8 +349,9 @@ function fx_mask_scalar(mixed $value, array $made): mixed
  *
  * @return array<string, list<mixed>>
  */
-function fx_histories(mysqli $db, array $events, string $prefix): array
+function fx_histories(mysqli $db, array $events, string $prefix, ?array &$trace = null): array
 {
+    $trace = [];
     // The rows this run made, named by table and order.
     $made = [];
     foreach ($events as $event) {
@@ -359,9 +361,9 @@ function fx_histories(mysqli $db, array $events, string $prefix): array
             $made[$short][(int) $event['new'][$auto]] ??= $short . '#' . (count($made[$short] ?? []) + 1);
         }
     }
-    // Made ids from 100 up stand for their rows anywhere in a value; where two tables made the same id, the first of these.
+    // Made objects' ids from 100 up stand for their rows anywhere in a value (a meta row's id is pointed at by nothing); where two tables made the same id, the first of these.
     $all = [];
-    foreach (['posts', 'terms', 'comments', 'users', 'term_taxonomy', 'links', ...array_keys($made)] as $table) {
+    foreach (['posts', 'terms', 'comments', 'users', 'term_taxonomy', 'links'] as $table) {
         foreach ($made[$table] ?? [] as $id => $token) {
             $all[$id] ??= $token;
         }
@@ -391,6 +393,11 @@ function fx_histories(mysqli $db, array $events, string $prefix): array
         $row = $new ?? $old;
         $keyColumns = FX_IDENTITY[$short] ?? ($shape['key'] !== [] ? $shape['key'] : array_keys($row));
         $identity = $short . ':' . implode('|', array_map(static fn (string $column): string => is_scalar($row[$column] ?? null) ? (string) $row[$column] : (string) json_encode($row[$column] ?? null), $keyColumns));
+        $trace[] = match ($event['op']) {
+            'i' => "insert {$identity} " . substr((string) json_encode($new, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), 0, 300),
+            'd' => "delete {$identity}",
+            default => "update {$identity}: " . implode('; ', fx_diff($old, $new, '', 4)),
+        };
         $history = $histories[$identity] ?? [$old];
         if (json_encode(end($history)) !== json_encode($new)) {
             $history[] = $new;
@@ -422,13 +429,34 @@ function fx_level(?array $ref, ?array $eng): ?string
 }
 
 /**
- * Rewrite rules without Minn Admin's own: the engine has it built in, and
- * the reference only from the plugin, which this pass does not load.
+ * A row without what is settled elsewhere: rewrite rules without Minn
+ * Admin's own (the engine has it built in, the reference only from the
+ * plugin, which this pass does not load), and the cron list without
+ * do_pings, a dead end (tests/tools/deadends.php).
  */
 function fx_without_admin_rule(?array $row): ?array
 {
     if (($row['option_name'] ?? null) === 'rewrite_rules' && is_array($row['option_value']['php'] ?? null)) {
         unset($row['option_value']['php']['^minn-admin(/.*)?$']);
+    }
+    if (($row['option_name'] ?? null) === 'cron' && is_array($row['option_value']['php'] ?? null)) {
+        // The cron list as its events, sorted (hook, arguments, schedule): its times are masked and its keys hashes of the arguments.
+        $events = [];
+        foreach ($row['option_value']['php'] as $time => $hooks) {
+            if (!is_array($hooks) || !str_starts_with((string) $time, '<time>')) {
+                continue;
+            }
+            foreach ($hooks as $hook => $instances) {
+                if ($hook === 'do_pings') {
+                    continue;
+                }
+                foreach ((array) $instances as $instance) {
+                    $events[] = $hook . ' ' . json_encode($instance['args'] ?? [], JSON_UNESCAPED_SLASHES) . ' ' . json_encode($instance['schedule'] ?? false);
+                }
+            }
+        }
+        sort($events);
+        $row['option_value'] = ['events' => $events];
     }
     return $row;
 }
@@ -524,10 +552,11 @@ $accepted = is_file($acceptedFile) ? (array) (json_decode((string) file_get_cont
 $compare = static function (string $probe, array $baseline) use ($db, $root, $siteRoot, $prefix, $accepted): array {
     $runs = [];
     $histories = [];
+    $traces = [];
     foreach (['reference', 'engine'] as $stack) {
         $runs[$stack] = fx_run($db, $stack, $probe, $root, $siteRoot);
         // What the stack writes only by starting is not the probe's.
-        $histories[$stack] = array_filter(fx_histories($db, $runs[$stack]['events'], $prefix), static fn (array $history, string $identity): bool => json_encode($baseline[$stack][$identity] ?? null) !== json_encode($history), ARRAY_FILTER_USE_BOTH);
+        $histories[$stack] = array_filter(fx_histories($db, $runs[$stack]['events'], $prefix, $traces[$stack]), static fn (array $history, string $identity): bool => json_encode($baseline[$stack][$identity] ?? null) !== json_encode($history), ARRAY_FILTER_USE_BOTH);
     }
     $differences = [];
     foreach (array_unique([...array_keys($histories['reference']), ...array_keys($histories['engine'])]) as $identity) {
@@ -559,7 +588,7 @@ $compare = static function (string $probe, array $baseline) use ($db, $root, $si
         $notes[] = $run['code'] !== 0 ? "{$stack} exited {$run['code']}" : null;
         $notes[] = $run['unrestored'] !== [] ? "{$stack} left " . implode(', ', $run['unrestored']) . ' changed after the put-back' : null;
     }
-    return ['rows' => ['reference' => count($histories['reference']), 'engine' => count($histories['engine'])], 'differences' => $differences, 'accepted' => $set, 'notes' => array_values(array_filter($notes)), 'stderr' => ['reference' => $runs['reference']['code'] !== 0 ? $runs['reference']['stderr'] : '', 'engine' => $runs['engine']['code'] !== 0 ? $runs['engine']['stderr'] : '']];
+    return ['rows' => ['reference' => count($histories['reference']), 'engine' => count($histories['engine'])], 'events' => $traces, 'differences' => $differences, 'accepted' => $set, 'notes' => array_values(array_filter($notes)), 'stderr' => ['reference' => $runs['reference']['code'] !== 0 ? $runs['reference']['stderr'] : '', 'engine' => $runs['engine']['code'] !== 0 ? $runs['engine']['stderr'] : '']];
 };
 
 if (isset($options['from'])) {
@@ -597,6 +626,17 @@ if (isset($options['from'])) {
                 echo "    {$identity} ({$level})\n" . fx_describe($ref, $eng);
             }
         }
+        if (isset($options['events'])) {
+            // Each stack's writes in order, those matching --events (a regular expression over the line; empty for all).
+            foreach ($result['events'] as $stack => $lines) {
+                echo "  {$stack}'s writes:\n";
+                foreach ($lines as $n => $line) {
+                    if ($options['events'] === false || $options['events'] === '' || preg_match('/' . str_replace('/', '\\/', (string) $options['events']) . '/', $line) === 1) {
+                        echo '    ' . str_pad((string) ($n + 1), 4) . $line . "\n";
+                    }
+                }
+            }
+        }
     }
     $differing = count(array_filter($report['probes'], static fn (array $result): bool => $result['differences'] !== []));
     $set = array_sum(array_map(static fn (array $result): int => $result['accepted'], $report['probes']));
@@ -612,6 +652,12 @@ foreach ($report['probes'] as $probe => ['differences' => $differences]) {
     $found[$probe] = [];
     foreach ($differences as $identity => ['level' => $level]) {
         $name = fx_named($identity);
+        // A report read again (--from) is held to the accepted list as it is now.
+        foreach ($accepted as $rule) {
+            if (preg_match('/' . str_replace('/', '\\/', (string) $rule['match']) . '/', $name) === 1) {
+                continue 2;
+            }
+        }
         $found[$probe][$name] = ($found[$probe][$name] ?? null) === 'net' ? 'net' : $level;
     }
     ksort($found[$probe]);

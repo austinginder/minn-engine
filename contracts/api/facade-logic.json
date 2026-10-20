@@ -6,7 +6,7 @@
         "delegates": 3463,
         "logicFunctions": 1810,
         "logicMethods": 2028,
-        "logicLines": 30104,
+        "logicLines": 30100,
         "kept": 0
     },
     "byFile": {
@@ -72,7 +72,7 @@
         },
         "misc.php": {
             "logic": 48,
-            "lines": 425
+            "lines": 422
         },
         "formatting.php": {
             "logic": 66,
@@ -134,15 +134,15 @@
             "logic": 32,
             "lines": 266
         },
-        "classes/WP_Rewrite.php": {
-            "logic": 34,
-            "lines": 259
-        },
         "widgets.php": {
             "logic": 26,
             "lines": 259
         },
         "classes/WP_Query.php": {
+            "logic": 34,
+            "lines": 258
+        },
+        "classes/WP_Rewrite.php": {
             "logic": 34,
             "lines": 258
         },
@@ -9711,8 +9711,8 @@
         "WP_Rewrite::flush_rules": {
             "file": "classes/WP_Rewrite.php",
             "line": 368,
-            "statements": 6,
-            "lines": 14
+            "statements": 5,
+            "lines": 13
         },
         "WP_Rewrite::get_author_permastruct": {
             "file": "classes/WP_Rewrite.php",
@@ -14732,7 +14732,7 @@
         },
         "_oembed_rest_pre_serve_request": {
             "file": "misc.php",
-            "line": 820,
+            "line": 818,
             "statements": 5,
             "lines": 9
         },
@@ -16106,7 +16106,7 @@
         },
         "calendar_week_mod": {
             "file": "misc.php",
-            "line": 616,
+            "line": 614,
             "statements": 2,
             "lines": 2
         },
@@ -16274,7 +16274,7 @@
         },
         "copy_dir": {
             "file": "misc.php",
-            "line": 675,
+            "line": 673,
             "statements": 2,
             "lines": 4
         },
@@ -17378,13 +17378,13 @@
         },
         "get_oembed_endpoint_url": {
             "file": "misc.php",
-            "line": 749,
+            "line": 747,
             "statements": 3,
             "lines": 5
         },
         "get_oembed_response_data_for_url": {
             "file": "misc.php",
-            "line": 782,
+            "line": 780,
             "statements": 2,
             "lines": 2
         },
@@ -18602,7 +18602,7 @@
         },
         "list_files": {
             "file": "misc.php",
-            "line": 683,
+            "line": 681,
             "statements": 2,
             "lines": 4
         },
@@ -18710,7 +18710,7 @@
         },
         "move_dir": {
             "file": "misc.php",
-            "line": 838,
+            "line": 836,
             "statements": 6,
             "lines": 21
         },
@@ -20216,7 +20216,7 @@
         },
         "verify_file_signature": {
             "file": "misc.php",
-            "line": 887,
+            "line": 885,
             "statements": 6,
             "lines": 18
         },
@@ -20246,7 +20246,7 @@
         },
         "win_is_writable": {
             "file": "misc.php",
-            "line": 691,
+            "line": 689,
             "statements": 2,
             "lines": 2
         },
@@ -20558,7 +20558,7 @@
         },
         "wp_check_jsonp_callback": {
             "file": "misc.php",
-            "line": 608,
+            "line": 606,
             "statements": 2,
             "lines": 4
         },
@@ -20582,7 +20582,7 @@
         },
         "wp_check_post_lock": {
             "file": "misc.php",
-            "line": 361,
+            "line": 359,
             "statements": 11,
             "lines": 19
         },
@@ -20720,7 +20720,7 @@
         },
         "wp_custom_css_cb": {
             "file": "misc.php",
-            "line": 875,
+            "line": 873,
             "statements": 2,
             "lines": 4
         },
@@ -20876,7 +20876,7 @@
         },
         "wp_embed_defaults": {
             "file": "misc.php",
-            "line": 541,
+            "line": 539,
             "statements": 3,
             "lines": 3
         },
@@ -21056,7 +21056,7 @@
         },
         "wp_filter_oembed_iframe_title_attribute": {
             "file": "misc.php",
-            "line": 801,
+            "line": 799,
             "statements": 6,
             "lines": 13
         },
@@ -21512,7 +21512,7 @@
         },
         "wp_get_mu_plugins": {
             "file": "misc.php",
-            "line": 700,
+            "line": 698,
             "statements": 5,
             "lines": 7
         },
@@ -21542,7 +21542,7 @@
         },
         "wp_get_pomo_file_data": {
             "file": "misc.php",
-            "line": 400,
+            "line": 398,
             "statements": 3,
             "lines": 5
         },
@@ -21962,7 +21962,7 @@
         },
         "wp_is_maintenance_mode": {
             "file": "misc.php",
-            "line": 647,
+            "line": 645,
             "statements": 6,
             "lines": 8
         },
@@ -22154,7 +22154,7 @@
         },
         "wp_list_post_revisions": {
             "file": "misc.php",
-            "line": 458,
+            "line": 456,
             "statements": 6,
             "lines": 13
         },
@@ -22430,7 +22430,7 @@
         },
         "wp_oembed_add_provider": {
             "file": "misc.php",
-            "line": 500,
+            "line": 498,
             "statements": 2,
             "lines": 5
         },
@@ -22442,7 +22442,7 @@
         },
         "wp_oembed_remove_provider": {
             "file": "misc.php",
-            "line": 510,
+            "line": 508,
             "statements": 5,
             "lines": 10
         },
@@ -22460,13 +22460,13 @@
         },
         "wp_opcache_invalidate": {
             "file": "misc.php",
-            "line": 711,
+            "line": 709,
             "statements": 5,
             "lines": 11
         },
         "wp_opcache_invalidate_directory": {
             "file": "misc.php",
-            "line": 864,
+            "line": 862,
             "statements": 2,
             "lines": 6
         },
@@ -22550,13 +22550,13 @@
         },
         "wp_post_revision_title": {
             "file": "misc.php",
-            "line": 409,
+            "line": 407,
             "statements": 8,
             "lines": 18
         },
         "wp_post_revision_title_expanded": {
             "file": "misc.php",
-            "line": 438,
+            "line": 436,
             "statements": 9,
             "lines": 15
         },
@@ -22664,7 +22664,7 @@
         },
         "wp_recursive_ksort": {
             "file": "misc.php",
-            "line": 624,
+            "line": 622,
             "statements": 3,
             "lines": 7
         },
@@ -23030,7 +23030,7 @@
         },
         "wp_reset_vars": {
             "file": "misc.php",
-            "line": 551,
+            "line": 549,
             "statements": 2,
             "lines": 5
         },
@@ -23294,7 +23294,7 @@
         },
         "wp_set_post_lock": {
             "file": "misc.php",
-            "line": 384,
+            "line": 382,
             "statements": 8,
             "lines": 12
         },
@@ -23444,7 +23444,7 @@
         },
         "wp_sprintf_l": {
             "file": "misc.php",
-            "line": 475,
+            "line": 473,
             "statements": 8,
             "lines": 20
         },
@@ -23552,7 +23552,7 @@
         },
         "wp_templating_constants": {
             "file": "misc.php",
-            "line": 583,
+            "line": 581,
             "statements": 3,
             "lines": 5
         },
@@ -23660,9 +23660,9 @@
         },
         "wp_update_custom_css_post": {
             "file": "misc.php",
-            "line": 339,
-            "statements": 8,
-            "lines": 18
+            "line": 340,
+            "statements": 9,
+            "lines": 15
         },
         "wp_update_https_detection_errors": {
             "file": "deprecated.php",

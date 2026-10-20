@@ -376,8 +376,8 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
         if (isset($hardLater)) {
             [$hard, $hardLater] = [$hardLater, null];
         }
-        delete_option('rewrite_rules');
-        $this->wp_rewrite_rules();
+        // The rules made again and stored over the old ones, in one write (tests/tools/side-effects.php, blocks).
+        $this->refresh_rewrite_rules();
         if ($hard) {
             apply_filters('flush_rewrite_rules_hard', true);
         }

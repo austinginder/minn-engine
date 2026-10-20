@@ -326,7 +326,12 @@ final class Options
         return $affected > 0;
     }
 
-    /** False when the value is unchanged, as the reference reports. */
+    /**
+     * False when the value is unchanged, as the reference reports. An
+     * autoload flag given is stored with the value, and the value moves
+     * between the autoloaded list and a key of its own when the flag says
+     * so.
+     */
     public function update(string $name, mixed $value, ?string $autoload = null): bool
     {
         $value = $value ?? '';
@@ -337,20 +342,33 @@ final class Options
         if ($old === $value || self::toStorage($old) === self::toStorage($value)) {
             return false;
         }
-        $this->db->execute("UPDATE {$this->db->table('options')} SET option_value = ? WHERE option_name = ?", [self::toStorage($value), $name]);
+        $this->db->execute("UPDATE {$this->db->table('options')} SET option_value = ?" . ($autoload === null ? '' : ', autoload = ?') . ' WHERE option_name = ?', $autoload === null ? [self::toStorage($value), $name] : [self::toStorage($value), $autoload, $name]);
         $held = $this->remember($name, $value);
         if (Runtime::installing()) {
             return true;
         }
         $list = $this->listed();
-        if (array_key_exists($name, $list)) {
+        $listed = $autoload === null ? array_key_exists($name, $list) : in_array($autoload, self::AUTOLOAD_VALUES, true);
+        if ($listed) {
             $list[$name] = $held;
             $this->group->set(self::ALL, $list);
+            $this->group->delete($name);
         } else {
+            if (array_key_exists($name, $list)) {
+                unset($list[$name]);
+                $this->group->set(self::ALL, $list);
+            }
             $this->group->set($name, $held);
         }
         $this->found($name);
         return true;
+    }
+
+    /** The autoload flag a stored option carries, or null when there is no such row. */
+    public function autoloadOf(string $name): ?string
+    {
+        $flag = $this->db->value("SELECT autoload FROM {$this->db->table('options')} WHERE option_name = ? LIMIT 1", [$name]);
+        return $flag === null ? null : (string) $flag;
     }
 
     /**

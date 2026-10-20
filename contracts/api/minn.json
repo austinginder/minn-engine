@@ -7767,7 +7767,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/ApplicationPasswords.php",
-            "lines": 154,
+            "lines": 165,
             "doc": "Application passwords as the reference stores them: a serialized list in\nthe user's _application_passwords meta, each entry uuid, app_id, name,\npassword (a hash), created, last_used, last_ip. New passwords are 24\ncharacters shown in groups of four; the stored hash is the reference's\nown ($generic$, FastHash), so a password made on either stack works on\nthe other. Older hashes still verify, as the reference verifies them:\nphpass (WordPress before 6.8, and the engine before this) and $wp$.",
             "implements": [],
             "extends": null,
@@ -7844,7 +7844,7 @@
                         }
                     ],
                     "line": 32,
-                    "end": 40
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -7872,8 +7872,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 55
+                    "line": 59,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -7908,8 +7908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 70
+                    "line": 74,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -7942,8 +7942,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 76
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -7976,8 +7976,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -8003,8 +8003,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 100
+                    "line": 97,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -8023,8 +8023,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 113
+                    "line": 118,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -8050,8 +8050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 126
+                    "line": 127,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -8062,8 +8062,8 @@
                     "doc": "Twenty-four letters and digits.",
                     "shapes": [],
                     "params": [],
-                    "line": 129,
-                    "end": 137
+                    "line": 140,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -8082,8 +8082,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 143
+                    "line": 151,
+                    "end": 154
+                },
+                {
+                    "routes": [],
+                    "name": "stored",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "stored(int $userId): array",
+                    "doc": "The list as stored, its keys kept: a deleted password leaves a gap and\nthe next one made goes after the highest key, as on the reference\n(tests/tools/side-effects.php, rest-app-passwords-class).",
+                    "shapes": [
+                        "@return array<int, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -8116,8 +8138,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 158
+                    "line": 156,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -8143,8 +8165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 163
+                    "line": 171,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -8155,8 +8177,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 165,
-                    "end": 171
+                    "line": 176,
+                    "end": 182
                 }
             ]
         },
@@ -29115,7 +29137,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Comments.php",
-            "lines": 245,
+            "lines": 248,
             "doc": "Reads and writes over the comments table.",
             "implements": [],
             "extends": null,
@@ -29471,7 +29493,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "update(int $id, array $columns): void",
-                    "doc": "Sets the given columns on one comment.",
+                    "doc": "Sets the given columns on one comment, in one write as the reference\nmakes it (tests/tools/side-effects.php).",
                     "shapes": [
                         "@param array<string, mixed> $columns"
                     ],
@@ -29491,8 +29513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 123
+                    "line": 119,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -29505,8 +29527,8 @@
                         "@return array<string, int>"
                     ],
                     "params": [],
-                    "line": 136,
-                    "end": 151
+                    "line": 139,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -29527,8 +29549,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 157
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -29549,8 +29571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 168
+                    "line": 163,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -29578,8 +29600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 177
+                    "line": 174,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -29605,8 +29627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 183
+                    "line": 183,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -29625,8 +29647,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 190
+                    "line": 189,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -29645,8 +29667,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 201
+                    "line": 196,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -29665,8 +29687,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 211
+                    "line": 207,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -29687,8 +29709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 227
+                    "line": 221,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -29718,8 +29740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 253
+                    "line": 240,
+                    "end": 256
                 }
             ]
         },
@@ -34192,7 +34214,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/PostWriter.php",
-            "lines": 406,
+            "lines": 421,
             "doc": "Every write to the posts table and its satellites: rows, meta, term\nlinks with the published counts the reference trusts on read, sticky\nand format side effects, and revision snapshots.",
             "implements": [],
             "extends": null,
@@ -34598,7 +34620,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "trash(Minn\\Content\\PostRecord $post): void",
-                    "doc": "The row of a post moving to the trash, as the reference writes it: the\nslug gains __trashed, the modified time moves, a floating draft's date\nsettles, a post keeps a category, and the published counts follow. What\nthe trash keeps for the way back (the status, the time, the slug it\nhad) is meta the caller adds, and the revision comes from the save.",
+                    "doc": "The row of a post moving to the trash, as the reference writes it: the\nslug gains __trashed (unless it has it already) and is made unique, as\na trashed post's slug is (a second __trashed becomes __trashed-2;\ntests/tools/side-effects.php), the modified time moves, a floating\ndraft's date settles (any other post's missing GMT date is its own\ndate's), a post keeps a category, and the published\ncounts follow. What the trash keeps for the way back (the status, the\ntime, the slug it had) is meta the caller adds, and the revision comes\nfrom the save.",
                     "shapes": [],
                     "params": [
                         {
@@ -34609,8 +34631,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 166
+                    "line": 158,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -34636,8 +34658,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 172
+                    "line": 177,
+                    "end": 180
+                },
+                {
+                    "routes": [],
+                    "name": "trashedSlug",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "trashedSlug(Minn\\Content\\PostRecord $post): string",
+                    "doc": "The slug a post takes in the trash: its own with __trashed (once), made unique.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 183,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -34677,8 +34719,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 178
+                    "line": 190,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -34689,8 +34731,8 @@
                     "doc": "The rules a live post's slug is settled by.",
                     "shapes": [],
                     "params": [],
-                    "line": 181,
-                    "end": 184
+                    "line": 196,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -34723,8 +34765,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 219
+                    "line": 213,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -34745,8 +34787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 235
+                    "line": 241,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -34765,8 +34807,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 243
+                    "line": 253,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -34785,8 +34827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 256
+                    "line": 261,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -34805,8 +34847,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 262
+                    "line": 274,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -34825,8 +34867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 274
+                    "line": 280,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -34845,8 +34887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 285
+                    "line": 292,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -34872,8 +34914,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 328
+                    "line": 321,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -34906,8 +34948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 347
+                    "line": 346,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -34940,8 +34982,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 358
+                    "line": 365,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -34967,8 +35009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 366
+                    "line": 376,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -34998,8 +35040,8 @@
                             "doc": "REST field => taxonomy; the core taxonomies when null"
                         }
                     ],
-                    "line": 376,
-                    "end": 385
+                    "line": 391,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -35034,8 +35076,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 389,
-                    "end": 394
+                    "line": 404,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -35061,8 +35103,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 400
+                    "line": 412,
+                    "end": 415
                 },
                 {
                     "routes": [],
@@ -35073,8 +35115,8 @@
                     "doc": "The database door this writer writes through, for a caller wrapping several of its verbs in one transaction.",
                     "shapes": [],
                     "params": [],
-                    "line": 403,
-                    "end": 406
+                    "line": 418,
+                    "end": 421
                 },
                 {
                     "routes": [],
@@ -35093,8 +35135,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 409,
-                    "end": 424
+                    "line": 424,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -35115,8 +35157,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 187,
-                    "end": 195
+                    "line": 202,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -35142,8 +35184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 293
+                    "line": 303,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -35164,8 +35206,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 303
+                    "line": 311,
+                    "end": 318
                 }
             ]
         },
@@ -40205,7 +40247,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Users.php",
-            "lines": 311,
+            "lines": 314,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -40578,7 +40620,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "update(int $id, array $columns): void",
-                    "doc": "Sets the given columns on one user.",
+                    "doc": "Sets the given columns on one user, in one write as the reference\nmakes it (tests/tools/side-effects.php).",
                     "shapes": [
                         "@param array<string, mixed> $columns"
                     ],
@@ -40598,8 +40640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 214
+                    "line": 210,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -40618,8 +40660,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 222
+                    "line": 220,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -40640,8 +40682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 228
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -40667,8 +40709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 234
+                    "line": 234,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -40679,8 +40721,8 @@
                     "doc": "How many users the site has.",
                     "shapes": [],
                     "params": [],
-                    "line": 237,
-                    "end": 240
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -40708,8 +40750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 254
+                    "line": 250,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -40735,8 +40777,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 264
+                    "line": 260,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -40757,8 +40799,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 279
+                    "line": 276,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -40786,8 +40828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 288
+                    "line": 285,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -40813,8 +40855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 306
+                    "line": 298,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -40847,8 +40889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 313,
-                    "end": 325
+                    "line": 316,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -69010,6 +69052,7 @@
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AdminActionController",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\EarlyRequest",
@@ -123956,13 +123999,14 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ApplicationPasswordRecords.php",
-            "lines": 102,
+            "lines": 103,
             "doc": "A user's application passwords as WordPress's API keeps them\n(WP_Application_Passwords), over the engine's store\n(Minn\\Auth\\ApplicationPasswords, the reference's format): made, found,\nrenamed, used, removed one by one or all together, with the reference's\nanswers and actions.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Auth\\ApplicationPasswords",
                 "Minn\\Content\\Users",
+                "Minn\\Http\\Request",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
@@ -123995,8 +124039,8 @@
                     "doc": "Whether any user has made an application password (is_in_use).",
                     "shapes": [],
                     "params": [],
-                    "line": 25,
-                    "end": 28
+                    "line": 26,
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -124022,8 +124066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 47
+                    "line": 35,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -124044,8 +124088,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 57
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -124071,8 +124115,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -124098,8 +124142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 69
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -124132,8 +124176,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 80
+                    "line": 73,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -124159,8 +124203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 87
+                    "line": 84,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -124186,8 +124230,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 98
+                    "line": 92,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -124206,8 +124250,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 109
+                    "line": 103,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -124218,8 +124262,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 111,
-                    "end": 114
+                    "line": 113,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -124230,8 +124274,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 116,
-                    "end": 119
+                    "line": 118,
+                    "end": 121
                 }
             ]
         },
@@ -139246,7 +139290,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/MenuEvents.php",
-            "lines": 225,
+            "lines": 222,
             "doc": "Menus and their items saved as the reference saves them, telling\nplugins what it tells them (probe rest-menu-save). A menu is a nav_menu\nterm: made or changed through wp_insert_term / wp_update_term (the term\nactions), then wp_create_nav_menu or wp_update_nav_menu; deleted, its\nitems go through wp_delete_post, the term through wp_delete_term, then\nwp_delete_nav_menu. An item is written by the engine, with the post\nsave actions around it, then wp_add_nav_menu_item (a new one) and\nwp_update_nav_menu_item, handed the reference's menu-item-* arguments.",
             "implements": [],
             "extends": null,
@@ -139371,7 +139415,7 @@
                         }
                     ],
                     "line": 72,
-                    "end": 84
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -139413,8 +139457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 124
+                    "line": 91,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -139449,8 +139493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 144
+                    "line": 131,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -139485,8 +139529,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 152
+                    "line": 144,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -139521,8 +139565,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 178
+                    "line": 160,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -139557,8 +139601,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 198
+                    "line": 188,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -139579,8 +139623,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 220
+                    "line": 204,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -139601,8 +139645,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 188
+                    "line": 178,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -139638,8 +139682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 248
+                    "line": 225,
+                    "end": 245
                 }
             ]
         },
@@ -143300,7 +143344,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/OptionWrites.php",
-            "lines": 131,
+            "lines": 133,
             "doc": "Options written the way add_option(), update_option() and delete_option()\nwrite them: the name trimmed, alloptions and notoptions stopped, the\nguarded ones refused, the value sanitized, and each change heard before\nand after by the actions plugins hook.",
             "implements": [],
             "extends": null,
@@ -143397,7 +143441,7 @@
                         }
                     ],
                     "line": 55,
-                    "end": 82
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -143416,8 +143460,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 102
+                    "line": 87,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -143436,8 +143480,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 110
+                    "line": 107,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -143477,8 +143521,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 130
+                    "line": 119,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -143499,8 +143543,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 146
+                    "line": 140,
+                    "end": 148
                 }
             ]
         },
@@ -143510,7 +143554,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Options.php",
-            "lines": 498,
+            "lines": 516,
             "doc": "Options as plugin code sees them, kept where the reference keeps them:\nwp_cache's options group (OptionsGroup) holds the autoloaded list, the\nnames known unset, and a key per option not autoloaded, so a plugin that\nreads, writes or drops those keys is heard. get_option() and\nwp_load_alloptions() pass the list through pre_wp_load_alloptions and\nalloptions. A value written this request is held as it was written (an\nint stays an int, true stays true), arrays and objects as stored. Each\nstored text is decoded once while it stays the same, except one holding\nan object, decoded afresh on every read as the reference does: a plugin\nthat changes the object it was handed and saves it must find the stored\ncopy still different, or its change is never written.",
             "implements": [],
             "extends": null,
@@ -143890,7 +143934,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "update(string $name, mixed $value, ?string $autoload = NULL): bool",
-                    "doc": "False when the value is unchanged, as the reference reports.",
+                    "doc": "False when the value is unchanged, as the reference reports. An\nautoload flag given is stored with the value, and the value moves\nbetween the autoloaded list and a key of its own when the flag says\nso.",
                     "shapes": [],
                     "params": [
                         {
@@ -143915,8 +143959,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 330,
-                    "end": 354
+                    "line": 335,
+                    "end": 365
+                },
+                {
+                    "routes": [],
+                    "name": "autoloadOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "autoloadOf(string $name): ?string",
+                    "doc": "The autoload flag a stored option carries, or null when there is no such row.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 368,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -143935,8 +143999,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 388,
-                    "end": 396
+                    "line": 406,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -143955,8 +144019,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 410
+                    "line": 417,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -143975,8 +144039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 424,
-                    "end": 445
+                    "line": 442,
+                    "end": 463
                 },
                 {
                     "routes": [],
@@ -144004,8 +144068,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 453,
-                    "end": 466
+                    "line": 471,
+                    "end": 484
                 },
                 {
                     "routes": [],
@@ -144024,8 +144088,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 473,
-                    "end": 491
+                    "line": 491,
+                    "end": 509
                 },
                 {
                     "routes": [],
@@ -144044,8 +144108,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 498,
-                    "end": 507
+                    "line": 516,
+                    "end": 525
                 },
                 {
                     "routes": [],
@@ -144064,8 +144128,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 510,
-                    "end": 519
+                    "line": 528,
+                    "end": 537
                 },
                 {
                     "routes": [],
@@ -144175,8 +144239,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 369
+                    "line": 379,
+                    "end": 387
                 },
                 {
                     "routes": [],
@@ -144195,8 +144259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 372,
-                    "end": 379
+                    "line": 390,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -144215,8 +144279,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 382,
-                    "end": 385
+                    "line": 400,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -144251,8 +144315,8 @@
                             "doc": "the stored values that already mean $wanted"
                         }
                     ],
-                    "line": 413,
-                    "end": 421
+                    "line": 431,
+                    "end": 439
                 }
             ]
         },
@@ -152157,7 +152221,7 @@
                         }
                     ],
                     "line": 139,
-                    "end": 162
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -152176,8 +152240,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 200
+                    "line": 170,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -152210,8 +152274,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 210
+                    "line": 204,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -152230,8 +152294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 234
+                    "line": 214,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -152250,8 +152314,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 250
+                    "line": 235,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -152284,8 +152348,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 270
+                    "line": 257,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -152318,8 +152382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 285
+                    "line": 274,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -152359,8 +152423,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 304
+                    "line": 286,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -152393,8 +152457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 307,
-                    "end": 310
+                    "line": 305,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -152413,8 +152477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 313,
-                    "end": 323
+                    "line": 311,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -152433,8 +152497,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 335
+                    "line": 324,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -152481,8 +152545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 338,
-                    "end": 344
+                    "line": 336,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -152508,8 +152572,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 352
+                    "line": 345,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -152528,8 +152592,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 355,
-                    "end": 367
+                    "line": 353,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -152557,8 +152621,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 398,
-                    "end": 405
+                    "line": 396,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -152591,8 +152655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 515
+                    "line": 495,
+                    "end": 513
                 },
                 {
                     "routes": [],
@@ -152611,8 +152675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 533,
-                    "end": 538
+                    "line": 531,
+                    "end": 536
                 },
                 {
                     "routes": [],
@@ -152647,8 +152711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 378
+                    "line": 368,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -152661,8 +152725,8 @@
                         "@return list<int> the sticky posts' ids"
                     ],
                     "params": [],
-                    "line": 381,
-                    "end": 385
+                    "line": 379,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -152690,8 +152754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 388,
-                    "end": 395
+                    "line": 386,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -152724,8 +152788,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 412,
-                    "end": 422
+                    "line": 410,
+                    "end": 420
                 },
                 {
                     "routes": [],
@@ -152774,8 +152838,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 430,
-                    "end": 466
+                    "line": 428,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -152810,8 +152874,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 476,
-                    "end": 490
+                    "line": 474,
+                    "end": 488
                 },
                 {
                     "routes": [],
@@ -152830,8 +152894,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 518,
-                    "end": 530
+                    "line": 516,
+                    "end": 528
                 },
                 {
                     "routes": [],
@@ -152850,7 +152914,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 541,
+                    "line": 539,
                     "end": 552
                 },
                 {
@@ -170311,7 +170375,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/UserWrites.php",
-            "lines": 354,
+            "lines": 355,
             "doc": "Accounts written as WordPress's user functions write them: an account\nmade, changed (its row, profile meta and role, with the notices a\nchanged password or email sends) and deleted (its posts deleted or\nhanded on), a reset key issued, the lookups that guard a new account,\nand the cached rows let go; each step with the actions and filters the\nreference fires in its order.",
             "implements": [],
             "extends": null,
@@ -170593,7 +170657,7 @@
                         }
                     ],
                     "line": 187,
-                    "end": 211
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -170612,8 +170676,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 231
+                    "line": 215,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -170632,8 +170696,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 244
+                    "line": 235,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -170654,8 +170718,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 256
+                    "line": 248,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -170684,8 +170748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 285
+                    "line": 268,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -170715,8 +170779,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 308
+                    "line": 296,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -170760,8 +170824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 352
+                    "line": 319,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -170790,8 +170854,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 381
+                    "line": 362,
+                    "end": 382
                 }
             ]
         },

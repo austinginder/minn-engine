@@ -336,24 +336,22 @@ function wp_get_custom_css($stylesheet = '')
     return apply_filters('wp_get_custom_css', $css, $stylesheet);
 }
 
+/** The site's stylesheet saved: its post updated or made (then named in the theme mods), a new one given its first revision (tests/tools/side-effects.php, blocks). */
 function wp_update_custom_css_post($css, $args = [])
 {
     $args = wp_parse_args($args, ['preprocessed' => '', 'stylesheet' => get_stylesheet()]);
-    $data = ['css' => $css, 'preprocessed' => $args['preprocessed']];
-    $data = apply_filters('update_custom_css_data', $data, array_merge($args, compact('css')));
+    $data = apply_filters('update_custom_css_data', ['css' => $css, 'preprocessed' => $args['preprocessed']], array_merge($args, compact('css')));
     $post_data = ['post_title' => $args['stylesheet'], 'post_name' => sanitize_title($args['stylesheet']), 'post_type' => 'custom_css', 'post_status' => 'publish', 'post_content' => $data['css'], 'post_content_filtered' => $data['preprocessed']];
     $post = wp_get_custom_css_post($args['stylesheet']);
-    if ($post !== null) {
-        $post_data['ID'] = $post->ID;
-        $r = wp_update_post(wp_slash($post_data), true);
-    } else {
-        $r = wp_insert_post(wp_slash($post_data), true);
-        if (!is_wp_error($r) && $args['stylesheet'] === get_stylesheet()) {
-            set_theme_mod('custom_css_post_id', $r);
-        }
-    }
+    $r = $post !== null ? wp_update_post(wp_slash($post_data + ['ID' => $post->ID]), true) : wp_insert_post(wp_slash($post_data), true);
     if (is_wp_error($r)) {
         return $r;
+    }
+    if ($post === null && $args['stylesheet'] === get_stylesheet()) {
+        set_theme_mod('custom_css_post_id', $r);
+    }
+    if ($post === null && wp_get_post_revisions($r, ['fields' => 'ids']) === []) {
+        wp_save_post_revision($r);
     }
     return get_post($r);
 }

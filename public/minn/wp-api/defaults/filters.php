@@ -531,6 +531,7 @@ add_action('publish_post', '_delete_option_fresh_site', 0);
 add_action('publish_page', '_delete_option_fresh_site', 0);
 add_action('future_post', '_future_post_hook', 5, 2);
 add_action('future_page', '_future_post_hook', 5, 2);
+add_action('future_attachment', '_future_post_hook', 5, 2);
 add_action('publish_future_post', 'check_and_publish_future_post', 10, 1);
 add_action('save_post', 'delete_get_calendar_cache');
 add_action('wp_trash_post', '_reset_front_page_settings_for_post');

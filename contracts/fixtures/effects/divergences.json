@@ -175,6 +175,7 @@
         "option-cache-probe.php",
         "option-more-probe.php",
         "option-remaining-probe.php",
+        "option-update-autoload-probe.php",
         "output-helpers-probe.php",
         "page-template-save-probe.php",
         "password-rehash-probe.php",
@@ -377,6 +378,7 @@
         "translations-early-after-init-probe.php",
         "translations-early-probe.php",
         "translations-early-wplang-probe.php",
+        "trash-dates-probe.php",
         "type-object-methods-probe.php",
         "type-object-sharing-probe.php",
         "unzip-file-probe.php",
@@ -406,440 +408,71 @@
         "wpdb-probe.php"
     ],
     "differences": {
-        "account-flows-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "admin-bar-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "admin-bar-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "api-probe.php": {
-            "options:rewrite_rules": "states"
-        },
-        "application-passwords-api-probe.php": {
-            "usermeta:1|_application_passwords": "states"
-        },
-        "audit-lows-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "posts:posts#n": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "auth-cookies-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states",
-            "usermeta:users#n|session_tokens": "states"
-        },
-        "block-bindings-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "block-renderers-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "block-renderers-rendered-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
         "block-supports-probe.php": {
             "options:_transient_wp_styles_for_blocks": "net"
         },
-        "block-template-helpers-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "blocks-probe.php": {
-            "options:cron": "net",
-            "options:rewrite_rules": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "posts:posts#n": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states",
-            "users:users#n": "states"
-        },
-        "boot-defaults-probe.php": {
-            "options:cron": "states"
-        },
         "breadcrumbs-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
         },
-        "builtin-type-caps-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "canonical-helpers-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "capabilities-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
         "category-menu-helpers-probe.php": {
-            "options:cron": "net",
-            "options:theme_mods_twentytwentyfive": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "terms:terms#n": "states"
         },
         "comment-blocks-probe.php": {
             "comments:comments#n": "states"
         },
         "comment-helpers-probe.php": {
-            "options:cron": "net",
             "options:update_comment_type.lock": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "posts:posts#n": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "comment-pages-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
+            "posts:posts#n": "states"
         },
         "comment-remaining-probe.php": {
-            "comments:comments#n": "states",
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "comment-template-more-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "comment-walker-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "comments-pagination-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "comments-template-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "connectors-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "content-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "posts:posts#n": "states"
-        },
-        "core-block-callbacks-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "core-block-helpers-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "core-blocks-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "core-objects-probe.php": {
-            "options:cron": "net",
-            "options:theme_mods_twentytwentyfive": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "deprecated-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states",
-            "usermeta:users#n|session_tokens": "states"
-        },
-        "deprecated-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
+            "comments:comments#n": "states"
         },
         "editor-styles-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
-        },
-        "embed-classes-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "embed-helpers-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "embed-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "excerpt-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "facade-stubs-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "feed-tags-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "feed-templates-more-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "feed-templates-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "filter-inputs-2-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "filter-inputs-3-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "filter-inputs-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
         },
         "fonts-probe.php": {
             "postmeta:posts#n|_wp_font_face_file": "states",
             "posts:posts#n": "states"
         },
-        "front-query-probe.php": {
-            "options:rewrite_rules": "states"
-        },
-        "general-template-more-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "general-template-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
         "hook-inputs-2-probe.php": {
-            "options:cron": "net",
-            "options:theme_mods_twentytwentyfive": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states",
-            "term_relationships:posts#n|1": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
+            "term_relationships:posts#n|1": "states"
         },
         "hook-inputs-probe.php": {
-            "options:cron": "net",
-            "options:theme_mods_twentytwentyfive": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states",
             "usermeta:1|locale": "net"
         },
-        "icon-term-template-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
         "icons-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states",
             "usermeta:users#n|nickname": "states",
             "users:users#n": "states"
-        },
-        "identity-internals-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "insert-defaults-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "posts:posts#n": "states"
-        },
-        "kses-allowed-asks-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "latest-posts-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "legacy-comments-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "link-template-remaining-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "link-template-tags-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "loose-functions-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:1|session_tokens": "states"
         },
         "media-cover-probe.php": {
             "posts:posts#n": "states"
         },
-        "media-remaining-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "media-tags-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "meta-registry-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
         "nav-menu-items-probe.php": {
-            "options:theme_mods_twentytwentyfive": "net",
             "posts:posts#n": "states"
         },
         "nav-menu-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
-        },
-        "notices-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
         },
         "oembed-probe.php": {
             "options:_transient_oembed_<hash>": "states",
             "options:_transient_timeout_oembed_<hash>": "states"
         },
-        "output-helpers-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
         "password-rehash-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states",
             "usermeta:users#n|nickname": "states",
             "users:users#n": "states"
         },
         "patch-security-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "posts:posts#n": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "permalinks-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
-        },
-        "placeholder-helpers-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "placeholders-a-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
         },
         "placeholders-admin-probe.php": {
-            "options:cron": "net",
-            "options:rewrite_rules": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
-        },
-        "pluggable-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "plugin-queue2-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states",
-            "usermeta:users#n|session_tokens": "states"
         },
         "plugin-queue3-probe.php": {
             "options:_transient_dirsize_cache": "states"
         },
         "plugin-queue4-probe.php": {
-            "options:cron": "net",
-            "options:theme_mods_twentytwentyfive": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "posts:posts#n": "states"
-        },
-        "plugin-queue5-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "plugin-queue8-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "postmeta:posts#n|_trackbackme": "states",
             "posts:posts#n": "states"
         },
         "plugin-surface-probe.php": {
@@ -848,164 +481,33 @@
         "plugin-symbols2-probe.php": {
             "term_relationships:posts#n|1": "net"
         },
-        "post-block-hooks-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "post-caps-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "posts:posts#n": "states"
-        },
-        "post-field-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "post-insert-filters-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "post-more-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
         "post-remaining-probe.php": {
-            "options:cron": "states",
-            "options:rewrite_rules": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
-        },
-        "post-template-more-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "post-template-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "preview-output-helpers-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "privacy-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "query-pagination-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "query-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "reset-key-changes-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states",
-            "users:users#n": "states"
-        },
-        "rest-app-passwords-class-probe.php": {
-            "usermeta:users#n|_application_passwords": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-application-password-hooks-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-attachments-controller-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-attachments-sideload-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
         },
         "rest-autosaves-probe.php": {
-            "options:cron": "net",
-            "options:theme_mods_twentytwentyfive": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
         },
         "rest-batch-probe.php": {
             "posts:posts#n": "states"
         },
-        "rest-block-controllers-probe.php": {
-            "options:cron": "states",
-            "options:theme_mods_twentytwentyfive": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-block-patterns-controller-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-comment-lists-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "rest-comment-save-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
         "rest-comments-controller-probe.php": {
-            "comments:comments#n": "states",
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
+            "comments:comments#n": "states"
         },
         "rest-embed-details-probe.php": {
-            "options:_site_transient_g_url_details_response_<hash>": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
+            "options:_site_transient_g_url_details_response_<hash>": "states"
         },
         "rest-fields-probe.php": {
-            "comments:comments#n": "states",
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
         },
-        "rest-media-lists-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "rest-menu-locations-probe.php": {
-            "options:theme_mods_twentytwentyfive": "net"
-        },
         "rest-menu-save-probe.php": {
-            "options:theme_mods_twentytwentyfive": "net",
             "posts:posts#n": "states"
         },
         "rest-menus-controller-probe.php": {
             "options:theme_mods_twentytwentyfive": "states",
-            "posts:posts#n": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-meta-fields-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
+            "posts:posts#n": "states"
         },
         "rest-meta-probe.php": {
             "options:category_children": "states",
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states",
             "usermeta:1|locale": "net"
         },
@@ -1015,207 +517,38 @@
         "rest-plugin-types-probe.php": {
             "posts:posts#n": "states"
         },
-        "rest-plugins-controller-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
         "rest-posts-write-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "posts:posts#n": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
+            "posts:posts#n": "states"
         },
         "rest-protected-comments-probe.php": {
-            "comments:comments#n": "states",
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-registry-controllers-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "postmeta:posts#n|_wp_desired_post_slug": "states",
-            "postmeta:posts#n|_wp_trash_meta_status": "states",
-            "postmeta:posts#n|_wp_trash_meta_time": "states",
-            "posts:posts#n": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-revisions-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "rest-search-handlers-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "rest-server-methods-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-settings-controller-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-sidebar-classes-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
+            "comments:comments#n": "states"
         },
         "rest-template-create-probe.php": {
             "posts:posts#n": "states"
         },
-        "rest-templates-controller-probe.php": {
-            "posts:posts#n": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-term-lists-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "rest-terms-controller-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-terms-for-post-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-themes-controller-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-user-lists-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-users-controller-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "rest-view-config-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
         "rest-widgets-class-probe.php": {
             "options:sidebars_widgets": "states",
             "options:widget_zz_widgets_plain": "states",
-            "options:widget_zz_widgets_probe": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
+            "options:widget_zz_widgets_probe": "states"
         },
         "revision-more-probe.php": {
-            "options:cron": "net",
-            "options:revision-upgrade-posts#n": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "revision-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "revisions-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "rewrite-flush-probe.php": {
-            "options:rewrite_rules": "states"
-        },
-        "robots-template-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
+            "options:revision-upgrade-posts#n": "states"
         },
         "runtime-internals-probe.php": {
             "options:_transient_wp_generating_att_posts#n": "states"
         },
-        "scheduled-delete-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
         "schema-and-menus-probe.php": {
-            "options:cron": "net",
-            "options:theme_mods_twentytwentyfive": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
         },
         "security-parity-probe.php": {
-            "comments:comments#n": "states",
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "session-tokens-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "sitemap-classes-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "small-classes-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "sweep-1018-probe.php": {
-            "usermeta:1|session_tokens": "states"
-        },
-        "tail-helpers-probe.php": {
-            "options:theme_mods_twentytwentyfive": "net"
-        },
-        "taxonomy-default-term-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "taxonomy-more-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "taxonomy-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "template-bindings-helpers-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
+            "comments:comments#n": "states"
         },
         "template-family-probe.php": {
-            "options:cron": "states",
-            "options:theme_mods_twentytwentyfive": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
             "posts:posts#n": "states"
-        },
-        "template-getters-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
         },
         "template-loader-more-probe.php": {
             "posts:posts#n": "states",
-            "term_relationships:posts#n|1460": "net",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "template-tags-remaining-probe.php": {
-            "options:cron": "states",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "the-content-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
+            "term_relationships:posts#n|1460": "net"
         },
         "theme-tags-probe.php": {
             "options:theme_mods_twentytwentyfive": "states"
@@ -1223,24 +556,6 @@
         "upgrader-probe.php": {
             "options:_site_transient_update_plugins": "states",
             "options:_site_transient_update_themes": "states"
-        },
-        "user-insert-filters-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "user-meta-writes-probe.php": {
-            "usermeta:users#n|_application_passwords": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
-        },
-        "user-more-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states",
-            "usermeta:users#n|session_tokens": "states"
-        },
-        "user-remaining-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states",
-            "usermeta:users#n|session_tokens": "states"
-        },
-        "user-requests-probe.php": {
-            "usermeta:users#n|dismissed_wp_pointers": "states"
         },
         "widget-classes-probe.php": {
             "options:widget_zz_probe": "states"
@@ -1250,22 +565,6 @@
         },
         "widgets-remaining-probe.php": {
             "options:sidebars_widgets": "states"
-        },
-        "wp-comment-query-sql-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "wp-request-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states"
-        },
-        "wp-user-query-sql-probe.php": {
-            "options:cron": "net",
-            "postmeta:posts#n|_encloseme": "states",
-            "postmeta:posts#n|_pingme": "states",
-            "usermeta:users#n|dismissed_wp_pointers": "states"
         }
     }
 }

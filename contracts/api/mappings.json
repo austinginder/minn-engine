@@ -1,5 +1,5 @@
 {
-    "generated": "2026-10-19",
+    "generated": "2026-10-20",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 683,
@@ -25942,7 +25942,6 @@
             "composes": [
                 "add_action",
                 "apply_filters",
-                "delete_option",
                 "did_action"
             ]
         },
@@ -76171,7 +76170,7 @@
         },
         "wp_update_custom_css_post": {
             "file": "misc.php",
-            "lines": 18,
+            "lines": 15,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -76182,8 +76181,10 @@
                 "sanitize_title",
                 "set_theme_mod",
                 "wp_get_custom_css_post",
+                "wp_get_post_revisions",
                 "wp_insert_post",
                 "wp_parse_args",
+                "wp_save_post_revision",
                 "wp_slash",
                 "wp_update_post"
             ]

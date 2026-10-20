@@ -9008,8 +9008,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "defers to wp_loaded remembering a hard flush in a static, then deletes and remakes the stored rules and asks flush_rewrite_rules_hard; the flush and its static state belong with RewriteRules::flush, which calls it today",
-                "body": "d9607d4c2d90"
+                "why": "defers to wp_loaded remembering a hard flush in a static, then makes the rules again and stores them over the old ones in one write, and asks flush_rewrite_rules_hard; the flush and its static state belong with RewriteRules::flush, which calls it today",
+                "body": "dee48232231c"
             },
             "WP_Rewrite::get_author_permastruct": {
                 "verdict": "keep",
@@ -17917,9 +17917,8 @@
             "wp_update_custom_css_post": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CustomCssPost",
-                "why": "filters the css data, then updates or inserts the theme's custom_css post and records the theme mod for the active theme; the WP_Error and WP_Post answers stay as shape",
-                "doubt": "WordPress saves a first revision of a newly inserted custom_css post (wp_save_post_revision when it has none); here no revision is made",
-                "body": "4131ece27367"
+                "why": "filters the css data, then updates or inserts the theme's custom_css post, records the theme mod for the active theme and saves a new post's first revision; the WP_Error and WP_Post answers stay as shape",
+                "body": "f73f30300ab7"
             }
         },
         "nav-menu-template.php": {
@@ -18052,8 +18051,8 @@
             "wp_filter_default_autoload_value_via_option_size": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Options",
-                "why": "the autoload size rule is the engine's; the function stays as the named callback plugins unhook",
-                "body": "85950df3f434"
+                "why": "the autoload size rule is the engine's (the limit asked of wp_max_autoloaded_option_size with the option's name, as the reference asks it); the function stays as the named callback plugins unhook",
+                "body": "f20a6affe7f2"
             },
             "wp_prime_option_caches": {
                 "verdict": "keep",

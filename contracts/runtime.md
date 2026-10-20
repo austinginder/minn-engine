@@ -17893,7 +17893,7 @@ every api probe on the reference (`wp eval-file --skip-plugins`, so WordPress al
 engine's probe runner loads no plugins) and on the engine, and compares what each wrote to the
 database. For the pass it puts a trigger on every table of the shared `cove_minn_` database
 that records each row inserted, updated or deleted by the probe's own connection (marked by
-`side-effects-tag.php` and `side-effects-runner.php`; a request to the site meanwhile is not
+`side-effects-reference.php` and `side-effects-runner.php`; a request to the site meanwhile is not
 counted), a row made and deleted again within the probe included. After each run it puts every
 row back and reads each one again to check, so both stacks start from the same database; the
 triggers come off at the end (`--uninstall` after a crash). Rows a run makes are named by table
@@ -17911,7 +17911,8 @@ Left: what the first pass found, by how often.
 
 - Pings and enclosures: on publish the reference marks a post `_pingme` and `_encloseme` (293
   probes) and schedules `do_pings`; a trackback adds `_trackbackme`. The engine writes none:
-  pings are a dead end, enclosures (`do_enclose`) are not listed as one.
+  `_publish_post_hook` and `do_all_enclosures` are dead ends (`tests/tools/deadends.php`), so
+  `accepted.json` sets the marks aside and the tool reads the cron list without `do_pings`.
 - A new user gets an empty `dismissed_wp_pointers` meta on the reference (108 probes).
 - Posts: trashing renames the slug in a write of its own before the status changes, and a
   second post trashed under the same slug becomes `__trashed-2` (the engine reuses
@@ -17929,6 +17930,70 @@ Left: what the first pass found, by how often.
   user's row twice where the reference writes it once, and records no `last_ip` for an
   application password a probe uses with `REMOTE_ADDR` set; user 1's `locale` meta is written
   only on the reference (3); a term relationship of a deleted post stays on the reference.
+
+## What the side-effect diff found, fixed (2026-10-19)
+
+The rows of "What each probe writes, compared", taken one by one with
+`tests/tools/side-effects.php --only=<probe> --events` (each stack's writes in order) and a
+scratch probe where the masked values hid the answer. The snapshot fell from 511 differences
+in 175 probes to 62 in 48. The suite now runs in `run-all.sh` (`side-effects`).
+
+- **A new user's `dismissed_wp_pointers`** was a false lead, kept here as a warning: the
+  reference writes it only because WP-CLI loads the admin's hooks
+  (`WP_Internal_Pointers::dismiss_pointers_for_new_users` on `user_register`); a REST user
+  creation on the reference writes none (`tests/hook-trace.test.php`, user-create). The engine
+  was right, and the tool now runs the reference through `side-effects-reference.php`, which takes
+  off every hooked callback defined under `wp-admin/`.
+- **One write per row**: `wp_update_user` and a comment update set their columns in one
+  `UPDATE` (`Content\Users::update`, `Content\Comments::update`), where the engine had written
+  each column on its own.
+- **The trash**: the slug takes `__trashed` in a write of its own first (with
+  `_wp_desired_post_slug`), then the trash save makes it unique, so a second post trashed under
+  the same slug is `__trashed-2` (the engine had kept a duplicate); a post that is no floating
+  draft and has no GMT date takes its own date's on the way to the trash.
+- **`wp_publish_post`** changes only the status: a draft's zero GMT date stays zero (the engine
+  had filled it in, from the facade's first version).
+- **A deleted post's `publish_future_post` event** is cleared once its row is gone, which the
+  engine never did (1,359 such events had built up in the test site's cron list, removed
+  2026-10-19 once nothing made more);
+  `future_attachment` is hooked to `_future_post_hook` as on the reference.
+- **Application passwords**: the stored list keeps its keys, so a deleted password leaves a gap
+  and the next goes after the highest key (the engine renumbered it); a use records the address
+  the server variables hold then, which a plugin behind a proxy may have set.
+- **Deleting a menu** writes the menu locations back whether or not it held one, so a theme
+  with none gains an empty list.
+- **`wp_delete_user` without a new owner** sends each post through `wp_delete_post` without
+  force, so posts and pages go to the trash; the engine had deleted them for good.
+- **`wp_update_custom_css_post`** gives a new stylesheet its first revision (the facade review
+  had doubted this).
+- **`flush_rewrite_rules`** makes the rules again and stores them over the old ones in one
+  write; the engine had deleted the option first, so for a moment there were none and the
+  delete and add hooks fired in place of the update ones.
+- **`update_option` stores its autoload flag** (probe `option-update-autoload`, found when the
+  rewrite fix took away the add that had asked `wp_default_autoload_value` by chance): a flag
+  given is settled as `add_option` settles one (true, yes and on store "on"; false, no and off
+  "off"; anything else goes to `wp_default_autoload_value` and the size limit), and with none
+  given a flag the site settled (`auto`, `auto-on`, `auto-off`) is settled again while any other
+  is kept. The engine had ignored the argument, so `update_option($name, $value, false)` left an
+  autoloaded option autoloaded. The cached copy moves between the autoloaded list and a key of
+  its own with the flag.
+- Probe `trash-dates` holds the dates a trashed draft and a published zero-date post keep.
+
+The tool learned on the way: the cron list is compared as its events (hook, arguments,
+schedule), its times and argument hashes being run by run; only the object tables' made ids
+are named inside values (a meta row's id collided with stale ids); the engine's runner sets the
+server variables WP-CLI sets (`REMOTE_ADDR` 127.0.0.1 and the rest); the reference runs through
+`side-effects-reference.php`, which takes off every hooked callback defined under `wp-admin/`
+(WP-CLI loads them; a front-end or REST request never has them: `update_home_siteurl`,
+`WP_Internal_Pointers`); the translations list the reference fetches from wordpress.org and the
+`doing_cron` lock of a WP-Cron spawn when an event falls due are accepted.
+
+No SELECT more on the pages measured.
+
+Left:
+
+- Order only (states): a REST batch's posts (their GUID written at insert or after), comments
+  and users written in another order, widget options and the update transients.
 
 ## Open items register (2026-10-12)
 
@@ -18018,9 +18083,10 @@ rows that are `open` or `austin`.
 | 17714 | The template part's four rows (10-19) | text domains load when `load_*_textdomain` is called, not at the first translation; a domain nobody named is looked for | done | "Text domains read at their first translation (2026-10-19)": the folder is only named and read at the first translation, by locale alone inside the active theme's folder (probe `text-domain-timing`); a domain nobody named asks only the locale on both stacks |
 | 17811 | Themes as WordPress reads them (10-19) | the themes root's scan kept in the `theme_roots` site transient | accepted | the engine reads the folder each time it lists themes, a few directory reads; what is listed agrees, so nothing a visitor or plugin sees differs |
 | 17853 | Text domains at their first translation (10-19) | `get_locale` takes `pre_determine_locale`'s answer, which the reference's does not | austin | fixed alone, the hook battery refuses it: the reference asks `pre_determine_locale` in 40 probe scenarios only to build MediaElement's `mejsL10n`, and the engine registers no MediaElement player; build the player scripts (MIT library, the engine's own skin and init) or accept the native player, then fix `I18n\SiteLanguage::locale` |
-| 17910 | What each probe writes (10-19) | pings and enclosures: `_pingme`, `_encloseme`, `_trackbackme` and the `do_pings` event, which the engine never writes | austin | pings are a dead end; enclosures are not listed as one: accept both as one dead end, or write the marks (the engine would also have to clear them, as the reference's cron does) |
-| 17910 | What each probe writes (10-19) | a new user's empty `dismissed_wp_pointers` meta | open | probe the reference's `wp_insert_user` meta defaults (`tests/tools/side-effects.php --only=blocks --show`) |
-| 17910 | What each probe writes (10-19) | posts: the trash suffix written first and made unique (`__trashed-2`), a draft's zero GMT date kept on publish, the custom CSS revision, the `revision-upgrade-{id}` lock, the REST trash meta, autosaves the engine makes alone | open | each from `divergences.json`; the stored slug and the GMT date change what readers get |
-| 17910 | What each probe writes (10-19) | options: menu locations in `theme_mods_*` on a menu save, the rewrite rules deleted and remade, the reference's block styles, comment type and attachment locks, oEmbed cache keys, the URL details cache | open | from `divergences.json` |
-| 17910 | What each probe writes (10-19) | comments and users: a comment's IP in an update of its own, a user's row written twice, no `last_ip` for an application password used with `REMOTE_ADDR`, user 1's `locale` meta, a deleted post's term relationship kept on the reference | open | from `divergences.json` |
+| 17910 | What each probe writes (10-19) | pings and enclosures: `_pingme`, `_encloseme`, `_trackbackme` and the `do_pings` event, which the engine never writes | accepted | `_publish_post_hook` and `do_all_enclosures` are dead ends (`tests/tools/deadends.php`, PINGS); `contracts/fixtures/effects/accepted.json` sets the marks aside and the cron list is read without `do_pings` |
+| 17910 | What each probe writes (10-19) | a new user's empty `dismissed_wp_pointers` meta | accepted | an admin hook WP-CLI loads (`WP_Internal_Pointers::dismiss_pointers_for_new_users`); a REST user creation on the reference writes none (hook-trace, user-create), so the engine is right and the tool now runs the reference without the callbacks defined under `wp-admin/` |
+| 17910 | What each probe writes (10-19) | posts: the trash suffix written first and made unique (`__trashed-2`), a draft's zero GMT date kept on publish, the custom CSS revision, the `revision-upgrade-{id}` lock, the REST trash meta, autosaves the engine makes alone | open | trash, publish date, custom CSS revision and the trash a user deletion sends posts to are done ("What the side-effect diff found, fixed"); left: the `revision-upgrade-{id}` lock the reference takes while checking a post's revisions for the old format, and the autosave revisions the engine makes in `rest-autosaves` |
+| 17910 | What each probe writes (10-19) | options: menu locations in `theme_mods_*` on a menu save, the rewrite rules deleted and remade, the reference's block styles, comment type and attachment locks, oEmbed cache keys, the URL details cache | open | menu locations and the rewrite flush are done; left: `_transient_wp_styles_for_blocks`, `update_comment_type.lock`, `_transient_wp_generating_att_{id}`, the oEmbed cache keys, the URL details cache the engine alone keeps, `category_children` in `rest-meta` |
+| 17910 | What each probe writes (10-19) | comments and users: a comment's IP in an update of its own, a user's row written twice, no `last_ip` for an application password used with `REMOTE_ADDR`, user 1's `locale` meta, a deleted post's term relationship kept on the reference | open | the single writes, `last_ip` and the password list's keys are done; left: user 1's `locale` meta written by the reference in `plugin-surface`, and a deleted post's term relationship the reference keeps (`plugin-symbols2`, `template-loader-more`, `hook-inputs-2`) |
+| 17989 | The side-effect diff's findings, fixed (10-19) | order only: a REST batch's posts, comments, users, widget options and the update transients written in another order | open | from `divergences.json` |
 | 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | done | "A navigation's fallback menu, made during the render (2026-10-19)": the renderer asks `WP_Navigation_Fallback::get_fallback` through `Handoff::navigationFallback` (probe `navigation-fallback`) |

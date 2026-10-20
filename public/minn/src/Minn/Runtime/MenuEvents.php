@@ -75,11 +75,8 @@ final readonly class MenuEvents
             (new PostEvents())->deleteForGood($item->id);
         }
         TermWrites::delete($menuId, 'nav_menu');
-        $locations = NavMenu::locations();
-        $kept = array_filter($locations, static fn ($assigned) => (int) $assigned !== $menuId);
-        if (count($kept) !== count($locations)) {
-            ThemeMods::set('nav_menu_locations', $kept);
-        }
+        // The locations are written back whether or not the menu held one, so a theme with none gains an empty list (tests/tools/side-effects.php, rest-menu-save).
+        ThemeMods::set('nav_menu_locations', array_filter(NavMenu::locations(), static fn ($assigned) => (int) $assigned !== $menuId));
         Runtime::hooks()->action('wp_delete_nav_menu', [$menuId]);
     }
 

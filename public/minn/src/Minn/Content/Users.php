@@ -202,15 +202,18 @@ final readonly class Users
     }
 
     /**
-     * Sets the given columns on one user.
+     * Sets the given columns on one user, in one write as the reference
+     * makes it (tests/tools/side-effects.php).
      *
      * @param array<string, mixed> $columns
      */
     public function update(int $id, array $columns): void
     {
-        foreach ($columns as $column => $value) {
-            $this->db->execute("UPDATE {$this->db->table('users')} SET {$column} = ? WHERE ID = ?", [$value, $id]);
+        if ($columns === []) {
+            return;
         }
+        $set = implode(', ', array_map(static fn (string $column): string => "{$column} = ?", array_keys($columns)));
+        $this->db->execute("UPDATE {$this->db->table('users')} SET {$set} WHERE ID = ?", [...array_values($columns), $id]);
     }
 
     /** Removes the user and their meta; their posts are reassigned or removed first by the caller. */

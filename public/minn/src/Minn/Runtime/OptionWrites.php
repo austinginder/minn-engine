@@ -73,7 +73,9 @@ final class OptionWrites
             return self::add($option, $value, $autoload);
         }
         Runtime::hooks()->action('update_option', [$option, $old, $value]);
-        if (!Runtime::options()->update($option, $value)) {
+        // A flag given is settled as add_option settles one; with none, a flag left to the site (auto, auto-on, auto-off) is settled again (tests/tools/side-effects.php, rewrite-flush).
+        $flag = $autoload !== null || in_array(Runtime::options()->autoloadOf($option), ['auto', 'auto-on', 'auto-off'], true) ? (string) self::autoloadFlag($option, $value, Serialized::maybeEncode($value), $autoload) : null;
+        if (!Runtime::options()->update($option, $value, $flag)) {
             return false;
         }
         Runtime::hooks()->action("update_option_{$option}", [$old, $value, $option]);

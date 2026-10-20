@@ -111,15 +111,18 @@ final readonly class Comments
     }
 
     /**
-     * Sets the given columns on one comment.
+     * Sets the given columns on one comment, in one write as the reference
+     * makes it (tests/tools/side-effects.php).
      *
      * @param array<string, mixed> $columns
      */
     public function update(int $id, array $columns): void
     {
-        foreach ($columns as $column => $value) {
-            $this->db->execute("UPDATE {$this->db->table('comments')} SET {$column} = ? WHERE comment_ID = ?", [$value, $id]);
+        if ($columns === []) {
+            return;
         }
+        $set = implode(', ', array_map(static fn (string $column): string => "{$column} = ?", array_keys($columns)));
+        $this->db->execute("UPDATE {$this->db->table('comments')} SET {$set} WHERE comment_ID = ?", [...array_values($columns), $id]);
     }
 
     /** The comment form fields whose length the table limits, with the length a stock table gives each. */

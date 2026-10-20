@@ -1,0 +1,35 @@
+[
+    [
+        "a draft: trashed",
+        {
+            "post_status": "trash",
+            "post_name": "__trashed",
+            "post_date": "today",
+            "post_date_gmt": "today",
+            "post_modified": "today",
+            "post_modified_gmt": "today"
+        }
+    ],
+    [
+        "a draft published by wp_publish_post: published",
+        {
+            "post_status": "publish",
+            "post_name": "",
+            "post_date": "kept",
+            "post_date_gmt": "zero",
+            "post_modified": "kept",
+            "post_modified_gmt": "zero"
+        }
+    ],
+    [
+        "a draft published by wp_publish_post: trashed",
+        {
+            "post_status": "trash",
+            "post_name": "__trashed-2",
+            "post_date": "kept",
+            "post_date_gmt": "kept",
+            "post_modified": "today",
+            "post_modified_gmt": "today"
+        }
+    ]
+]

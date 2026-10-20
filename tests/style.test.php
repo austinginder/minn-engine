@@ -180,7 +180,7 @@ exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-logic.php')
 $check('facade logic: contracts/api/facade-logic.json is current', $facadeLogicStale === 0, 'run php tests/tools/facade-logic.php');
 $facadeLogic = (array) ((json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/facade-logic.json'), true) ?: [])['summary'] ?? []);
 $facadeLogicCeiling = 3838;
-$facadeLogicLinesCeiling = 30104;
+$facadeLogicLinesCeiling = 30100;
 $facadeLogicCount = (int) ($facadeLogic['logicFunctions'] ?? PHP_INT_MAX) + (int) ($facadeLogic['logicMethods'] ?? 0);
 $check("facade logic: functions and methods holding logic stay at or under {$facadeLogicCeiling}", $facadeLogicCount <= $facadeLogicCeiling, (string) $facadeLogicCount);
 $check("facade logic: their body lines stay at or under {$facadeLogicLinesCeiling}", (int) ($facadeLogic['logicLines'] ?? PHP_INT_MAX) <= $facadeLogicLinesCeiling, (string) ($facadeLogic['logicLines'] ?? '?'));

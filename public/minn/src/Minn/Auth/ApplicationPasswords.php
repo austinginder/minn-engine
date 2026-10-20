@@ -31,12 +31,24 @@ final readonly class ApplicationPasswords
      */
     public function all(int $userId): array
     {
+        return array_values($this->stored($userId));
+    }
+
+    /**
+     * The list as stored, its keys kept: a deleted password leaves a gap and
+     * the next one made goes after the highest key, as on the reference
+     * (tests/tools/side-effects.php, rest-app-passwords-class).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function stored(int $userId): array
+    {
         $raw = $this->users->meta($userId, self::META);
         if ($raw === null || $raw === '') {
             return [];
         }
         $list = Serialized::decode($raw);
-        return is_array($list) ? array_values(array_filter($list, 'is_array')) : [];
+        return is_array($list) ? array_filter($list, 'is_array') : [];
     }
 
     /**
@@ -63,7 +75,7 @@ final readonly class ApplicationPasswords
     {
         $plain = self::generate();
         $record = ['uuid' => self::uuid(), 'app_id' => $appId, 'name' => $name, 'password' => FastHash::available() ? FastHash::hash($plain) : PortableHash::hash($plain, 11), 'created' => time(), 'last_used' => null, 'last_ip' => null];
-        $list = $this->all($userId);
+        $list = $this->stored($userId);
         $list[] = $record;
         $this->save($userId, $list);
         return [$record, self::chunked($plain)];
@@ -84,17 +96,16 @@ final readonly class ApplicationPasswords
     /** Removes one password and returns its record; null when unknown. */
     public function delete(int $userId, string $uuid): ?array
     {
-        $kept = [];
+        $list = $this->stored($userId);
         $removed = null;
-        foreach ($this->all($userId) as $item) {
+        foreach ($list as $key => $item) {
             if (($item['uuid'] ?? '') === $uuid) {
                 $removed = $item;
-            } else {
-                $kept[] = $item;
+                unset($list[$key]);
             }
         }
         if ($removed !== null) {
-            $this->save($userId, $kept);
+            $this->save($userId, $list);
         }
         return $removed;
     }
@@ -144,7 +155,7 @@ final readonly class ApplicationPasswords
 
     private function change(int $userId, string $uuid, array $fields): ?array
     {
-        $list = $this->all($userId);
+        $list = $this->stored($userId);
         $changed = null;
         foreach ($list as $i => $item) {
             if (($item['uuid'] ?? '') === $uuid) {
@@ -159,7 +170,7 @@ final readonly class ApplicationPasswords
 
     private function save(int $userId, array $list): void
     {
-        $this->users->setMeta($userId, self::META, Serialized::encode(array_values($list)));
+        $this->users->setMeta($userId, self::META, Serialized::encode($list));
     }
 
     private static function uuid(): string
