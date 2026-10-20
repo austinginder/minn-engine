@@ -157,11 +157,12 @@ final readonly class Meta
         return [$column, $id];
     }
 
-    /** Sets one row's key and stored value. */
-    public function rewrite(string $type, int $metaId, string $key, string $stored): void
+    /** Sets one row's key and stored value; false when the database door refused the text. */
+    public function rewrite(string $type, int $metaId, string $key, string $stored): bool
     {
         [$table, , $id] = $this->spec($type);
         $this->db->execute("UPDATE {$table} SET meta_key = ?, meta_value = ? WHERE {$id} = ?", [$key, $stored, $metaId]);
+        return !$this->db->refused();
     }
 
     /** Inserts a meta row and returns its id. */
@@ -202,14 +203,15 @@ final readonly class Meta
         return $ids;
     }
 
-    /** Sets the value of the given meta rows. */
-    public function updateRows(string $type, array $ids, string $stored): void
+    /** Sets the value of the given meta rows; false when the database door refused the text. */
+    public function updateRows(string $type, array $ids, string $stored): bool
     {
         if ($ids === []) {
-            return;
+            return true;
         }
         [$table, , $id] = $this->spec($type);
         $this->db->execute("UPDATE {$table} SET meta_value = ? WHERE {$id} IN (" . implode(',', array_map('intval', $ids)) . ')', [$stored]);
+        return !$this->db->refused();
     }
 
     /** The rows a delete would take: by key, for one object or all, optionally only a stored value. @return list<array{meta_id: int, object_id: int}> */

@@ -120,31 +120,75 @@ final class Mpeg
         return ['version' => $version, 'layer' => $layer, 'bitrate' => $bitrate, 'sampleRate' => $sampleRate, 'padding' => $padding, 'mode' => $mode, 'channels' => $mode === 3 ? 1 : 2, 'samples' => $samples, 'length' => (int) $length];
     }
 
+    /** How many frames in a row make a place in the data the stream's start, and how many of one rate make it constant (probe media-meta). */
+    private const SYNC_RUN = 51;
+
     /**
-     * Every frame from an offset to an end, header by header, until one is
-     * not a frame: the first frame's header, the frames' mean bitrate and
-     * whether any frame's rate differs from the first's; null when the first
-     * is not a frame.
+     * The frames of a stream from an offset to an end, as the reference
+     * measures them inside another container (probe media-meta): data
+     * that does not begin with a frame has none; the stream starts where
+     * 51 frames follow one another (or fewer that run to the end), the
+     * first of them its first; when those frames share a
+     * rate it is the stream's, and otherwise every frame to the end counts
+     * toward the mean, past any bytes between them. Null when no frame is
+     * found.
      *
      * @return array{first: array<string, int>, bitrate: float, variable: bool}|null
      */
     public static function scan(Source $source, int $start, int $end): ?array
     {
-        $first = null;
-        $total = 0;
-        $count = 0;
-        $variable = false;
-        for ($at = $start; $at + 4 <= $end; $at += $frame['length']) {
-            $frame = self::frameHeader($source->bigEndian($at, 4));
-            if ($frame === null || $frame['length'] < 1) {
+        // The data begins with a frame; only a run too short to start the stream sends the search further.
+        $opens = self::frameHeader($source->bigEndian($start, 4));
+        for ($at = $opens === null || $opens['length'] < 1 ? null : $start; $at !== null; $at = self::nextFrame($source, $after, $end)) {
+            [$rates, $after] = self::run($source, $at, $end, self::SYNC_RUN);
+            if (count($rates) >= self::SYNC_RUN || $after + 4 > $end) {
                 break;
             }
-            $first ??= $frame;
-            $variable = $variable || $frame['bitrate'] !== $first['bitrate'];
-            $total += $frame['bitrate'];
-            $count++;
         }
-        return $first === null ? null : ['first' => $first, 'bitrate' => $total / $count, 'variable' => $variable];
+        if ($at === null) {
+            return null;
+        }
+        $first = (array) self::frameHeader($source->bigEndian($at, 4));
+        if (count(array_unique($rates)) === 1) {
+            return ['first' => $first, 'bitrate' => (float) $first['bitrate'], 'variable' => false];
+        }
+        [$total, $count] = [0, 0];
+        for ($from = $at; $from !== null; $from = self::nextFrame($source, $after, $end)) {
+            [$rates, $after] = self::run($source, $from, $end, PHP_INT_MAX);
+            [$total, $count] = [$total + array_sum($rates), $count + count($rates)];
+        }
+        return ['first' => $first, 'bitrate' => $total / $count, 'variable' => true];
+    }
+
+    /**
+     * The rates of the frames that follow one another from an offset, up to
+     * a number of them, and where the run stops.
+     *
+     * @return array{list<int>, int}
+     */
+    private static function run(Source $source, int $at, int $end, int $most): array
+    {
+        $rates = [];
+        while (count($rates) < $most && $at + 4 <= $end && ($frame = self::frameHeader($source->bigEndian($at, 4))) !== null && $frame['length'] > 0) {
+            $rates[] = $frame['bitrate'];
+            $at += $frame['length'];
+        }
+        return [$rates, $at];
+    }
+
+    /** Where the next frame header is from an offset (read a block at a time), or null before the end. */
+    private static function nextFrame(Source $source, int $at, int $end): ?int
+    {
+        for (; $at + 4 <= $end; $at += 65536) {
+            $block = $source->bytes($at, min(65536 + 3, $end - $at));
+            for ($i = strpos($block, "\xFF"); $i !== false && $i + 4 <= strlen($block); $i = strpos($block, "\xFF", $i + 1)) {
+                $frame = self::frameHeader(Source::bigEndianValue(substr($block, $i, 4)));
+                if ($frame !== null && $frame['length'] > 0) {
+                    return $at + $i;
+                }
+            }
+        }
+        return null;
     }
 
     /**

@@ -32,6 +32,12 @@ final class ExpGolomb
         $this->at += $count;
     }
 
+    /** Whether every bit has been read (what follows reads as zeros). */
+    public function exhausted(): bool
+    {
+        return $this->at >= strlen($this->bytes) * 8;
+    }
+
     /** The next unsigned exponential-Golomb code. */
     public function unsigned(): int
     {

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\Comments;
-use Minn\Content\Posts;
 use Minn\Content\PostWriter;
+use Minn\Content\Posts;
 use Minn\Content\RowCache;
+use Minn\Db;
 use Minn\Support\Slashes;
 
 /**
@@ -23,7 +24,7 @@ final class CommentWrites
     private const DEFAULTS = ['comment_post_ID' => 0, 'comment_author' => '', 'comment_author_email' => '', 'comment_author_url' => '', 'comment_author_IP' => '', 'comment_date' => '', 'comment_date_gmt' => '', 'comment_content' => '', 'comment_karma' => 0, 'comment_approved' => '1', 'comment_agent' => '', 'comment_type' => '', 'comment_parent' => 0, 'user_id' => 0];
 
     /** A comment stored (wp_insert_comment): its id, the post's count kept when it is approved, then wp_insert_comment told. */
-    public static function insert(mixed $commentdata): int
+    public static function insert(mixed $commentdata): int|false
     {
         $data = Slashes::strip((array) $commentdata);
         ['comment_date' => $date, 'comment_date_gmt' => $dateGmt, 'comment_type' => $type] = $data + ['comment_date' => null, 'comment_date_gmt' => null, 'comment_type' => null];
@@ -36,6 +37,9 @@ final class CommentWrites
         $columns = array_replace($columns, ['comment_date' => $date, 'comment_date_gmt' => (string) ($dateGmt ?? SiteTime::toGmt($date)), 'comment_type' => ($type ?? '') === '' ? 'comment' : (string) $type]);
         ['comment_post_ID' => $postId, 'comment_approved' => $approved] = $columns;
         $id = self::store()->insert($columns);
+        if ($id === 0) {
+            return false;
+        }
         if ($approved === '1') {
             self::updateCount($postId);
         }
@@ -114,8 +118,9 @@ final class CommentWrites
         }
         $columns = array_intersect_key((array) $data, self::DEFAULTS);
         $changed = Comments::changedColumns($columns, $stored);
-        if ($changed !== []) {
-            self::store()->update((int) $comment->comment_ID, $changed);
+        // Text the table cannot hold writes nothing (probe invalid-text).
+        if (!self::store()->update((int) $comment->comment_ID, $changed)) {
+            return $wpError ? Handoff::newError('db_update_error', 'Could not update comment in the database.', Db::fieldRefusal((string) Db::invalidColumn($changed))) : false;
         }
         self::cleanCache($comment->comment_ID);
         self::updateCount((int) $comment->comment_post_ID);

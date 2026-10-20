@@ -1,0 +1,238 @@
+[
+    [
+        "a table of binary: its charset, and which texts a query runs with",
+        [
+            "binary",
+            {
+                "malformed": 1,
+                "four-byte": 1,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of varbinary: its charset, and which texts a query runs with",
+        [
+            "binary",
+            {
+                "malformed": 1,
+                "four-byte": 1,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of blob: its charset, and which texts a query runs with",
+        [
+            "binary",
+            {
+                "malformed": 1,
+                "four-byte": 1,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of numbers: its charset, and which texts a query runs with",
+        [
+            false,
+            {
+                "malformed": 1,
+                "four-byte": 1,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of latin1: its charset, and which texts a query runs with",
+        [
+            "latin1",
+            {
+                "malformed": 1,
+                "four-byte": 1,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of utf8: its charset, and which texts a query runs with",
+        [
+            "utf8",
+            {
+                "malformed": false,
+                "four-byte": false,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of utf8mb4: its charset, and which texts a query runs with",
+        [
+            "utf8mb4",
+            {
+                "malformed": false,
+                "four-byte": 1,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of ascii: its charset, and which texts a query runs with",
+        [
+            "ascii",
+            {
+                "malformed": false,
+                "four-byte": false,
+                "e acute": false,
+                "cyrillic": false
+            }
+        ]
+    ],
+    [
+        "a table of cp1251: its charset, and which texts a query runs with",
+        [
+            "cp1251",
+            {
+                "malformed": false,
+                "four-byte": false,
+                "e acute": false,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of latin1 and utf8mb4: its charset, and which texts a query runs with",
+        [
+            "utf8mb4",
+            {
+                "malformed": false,
+                "four-byte": 1,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of latin1 and utf8: its charset, and which texts a query runs with",
+        [
+            "utf8",
+            {
+                "malformed": false,
+                "four-byte": false,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of utf8 and utf8mb4: its charset, and which texts a query runs with",
+        [
+            "utf8",
+            {
+                "malformed": false,
+                "four-byte": false,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "a table of latin1 and latin2: its charset, and which texts a query runs with",
+        [
+            "latin2",
+            {
+                "malformed": false,
+                "four-byte": false,
+                "e acute": 1,
+                "cyrillic": false
+            }
+        ]
+    ],
+    [
+        "a table of utf8mb4 and ascii: its charset, and which texts a query runs with",
+        [
+            "ascii",
+            {
+                "malformed": false,
+                "four-byte": false,
+                "e acute": false,
+                "cyrillic": false
+            }
+        ]
+    ],
+    [
+        "a table of cp1251 and utf8mb4: its charset, and which texts a query runs with",
+        [
+            "ascii",
+            {
+                "malformed": false,
+                "four-byte": false,
+                "e acute": false,
+                "cyrillic": false
+            }
+        ]
+    ],
+    [
+        "a table of latin1 and a blob: its charset, and which texts a query runs with",
+        [
+            "binary",
+            {
+                "malformed": 1,
+                "four-byte": 1,
+                "e acute": 1,
+                "cyrillic": 1
+            }
+        ]
+    ],
+    [
+        "an address of bytes: written by a query",
+        1
+    ],
+    [
+        "found by its bytes",
+        "a"
+    ],
+    [
+        "changed by a query",
+        1
+    ],
+    [
+        "written by wpdb::insert",
+        1
+    ],
+    [
+        "changed by wpdb::update",
+        2
+    ],
+    [
+        "a note that is not UTF-8, by a query on the binary table",
+        1
+    ],
+    [
+        "the same note by wpdb::insert (its column checked)",
+        false
+    ],
+    [
+        "removed by wpdb::delete",
+        2
+    ],
+    [
+        "a query naming no table, holding it",
+        true
+    ],
+    [
+        "a latin1 byte by wpdb::insert into a latin1 table",
+        1
+    ],
+    [
+        "kept as written",
+        "613f62"
+    ]
+]

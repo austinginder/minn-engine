@@ -66,4 +66,47 @@ $cases['codecs inside other containers: MP3 and AC-3 in WAV, MP2 and Vorbis in M
         [$read('v17-h264-ep.flv')['video']['resolution_x'], $read('v17-h264-ep.flv')['video']['resolution_y']],
     ], ['vbr', 'surround', '5.1', 192000, 44100, [16, 160], [100, 50], [16, 64]]);
 };
+$cases['files made to hurt the readers end quickly, with what they can say'] = static function () use ($expect): bool|string {
+    $folder = sys_get_temp_dir() . '/minn-av-hostile-' . getmypid();
+    @mkdir($folder);
+    $ebml = static fn (string $id, string $payload): string => $id . "\x01" . substr(pack('J', strlen($payload)), 1) . $payload;
+    $amf = static fn (string $value): string => "\x02" . pack('n', 10) . 'onMetaData' . "\x08" . pack('N', 1) . pack('n', 8) . 'duration' . $value . "\0\0\x09";
+    $flvMeta = static fn (string $amf): string => "FLV\x01\x05\x00\x00\x00\x09\0\0\0\0\x12" . substr(pack('N', strlen($amf)), 1) . "\0\0\0\0\0\0\0" . $amf . pack('N', 11 + strlen($amf));
+    $sps = "\x67\x42\x00\x1e" . chr(0b11010000);
+    $avc = "\x17\x00\x00\x00\x00\x01\x42\x00\x1e\xff\xe1" . pack('n', strlen($sps)) . $sps;
+    $title = "\x00a" . str_repeat("\0", 1048576);
+    $frame = 'TIT2' . pack('N', strlen($title)) . "\0\0" . $title;
+    $size = strlen($frame);
+    $files = [
+        // A cycle of reference frames that runs off its parameter set (4,294,967,295 of them, once).
+        'cycle.flv' => "FLV\x01\x01\x00\x00\x00\x09\0\0\0\0\x09" . substr(pack('N', strlen($avc)), 1) . "\0\0\0\0\0\0\0" . $avc . pack('N', 11 + strlen($avc)),
+        // A title of a million terminators.
+        'terminators.mp3' => "ID3\x03\x00\x00" . chr(($size >> 21) & 0x7f) . chr(($size >> 14) & 0x7f) . chr(($size >> 7) & 0x7f) . chr($size & 0x7f) . $frame,
+        // A tag that claims 256 MB in a file of twenty bytes.
+        'claims.mp3' => "ID3\x03\x00\x00\x7f\x7f\x7f\x7f" . str_repeat("\0", 10),
+        // Stream lists that claim the rest of the file, 4,096 times.
+        'lists.avi' => 'RIFF' . pack('V', 0) . 'AVI ' . str_repeat('LIST' . pack('V', 16) . 'hdrl' . 'LIST' . pack('V', 0xFFFFFFF0) . 'strl', 4096),
+        // A movie box of a million empty tracks.
+        'tracks.mov' => pack('N', 16) . "ftypqt  \0\0\0\0" . pack('N', 8 + 8 * 1048576) . 'moov' . str_repeat(pack('N', 8) . 'trak', 1048576),
+        // A sound track sampled zero times a second.
+        'zero.mkv' => $ebml("\x1A\x45\xDF\xA3", $ebml("\x42\x82", 'matroska')) . $ebml("\x18\x53\x80\x67", $ebml("\x15\x49\xA9\x66", $ebml("\x44\x89", pack('G', 1000.0))) . $ebml("\x16\x54\xAE\x6B", $ebml("\xAE", $ebml("\xD7", "\x01") . $ebml("\x83", "\x02") . $ebml("\x86", 'A_PCM/INT/LIT') . $ebml("\xE1", $ebml("\xB5", pack('G', 0.0)) . $ebml("\x9F", "\x02"))))),
+        // A playing time in words, and one that is a flag.
+        'words.flv' => $flvMeta($amf("\x02" . pack('n', 3) . 'abc')),
+        'flag.flv' => $flvMeta($amf("\x01\x01")),
+    ];
+    $seen = [];
+    $started = microtime(true);
+    try {
+        foreach ($files as $name => $bytes) {
+            file_put_contents("{$folder}/{$name}", $bytes);
+            $data = Analyzer::analyze("{$folder}/{$name}");
+            $seen[$name] = [$data['video']['resolution_x'] ?? null, isset($data['playtime_seconds'])];
+        }
+    } finally {
+        array_map('unlink', glob("{$folder}/*") ?: []);
+        @rmdir($folder);
+    }
+    $quick = microtime(true) - $started < 5;
+    return $expect([$quick, $seen], [true, ['cycle.flv' => [0, false], 'terminators.mp3' => [null, false], 'claims.mp3' => [null, false], 'lists.avi' => [null, false], 'tracks.mov' => [0.0, false], 'zero.mkv' => [null, false], 'words.flv' => [null, false], 'flag.flv' => [null, false]]]);
+};
 return $cases;

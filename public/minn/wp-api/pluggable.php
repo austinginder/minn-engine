@@ -20,8 +20,9 @@ use Minn\Runtime\Avatar;
 if (!function_exists('wp_create_nonce')) :
 function wp_create_nonce($action = -1)
 {
-    $user = wp_get_current_user();
-    $uid = (int) apply_filters('nonce_user_logged_out', $user->ID, $action);
+    // Only a visitor's id is asked of nonce_user_logged_out: a signed-in user's nonce is always theirs.
+    $uid = (int) wp_get_current_user()->ID;
+    $uid = $uid === 0 ? (int) apply_filters('nonce_user_logged_out', $uid, $action) : $uid;
     return Nonce::create($uid, wp_get_session_token(), is_int($action) ? $action : (string) $action);
 }
 endif;
@@ -31,7 +32,8 @@ function wp_verify_nonce($nonce, $action = -1)
 {
     $nonce = (string) $nonce;
     $user = wp_get_current_user();
-    $uid = (int) apply_filters('nonce_user_logged_out', $user->ID, $action);
+    $uid = (int) $user->ID;
+    $uid = $uid === 0 ? (int) apply_filters('nonce_user_logged_out', $uid, $action) : $uid;
     if ($nonce === '') {
         return false;
     }
@@ -420,6 +422,10 @@ function wp_validate_logged_in_cookie($user_id)
 {
     if ($user_id) {
         return $user_id;
+    }
+    // In the admin only the admin cookie signs a user in (probe pluggable-remaining).
+    if (is_blog_admin() || is_network_admin()) {
+        return false;
     }
     if (Runtime::current()->request !== null) {
         return wp_validate_auth_cookie();

@@ -134,6 +134,34 @@ final class Utf8
         return implode('', array_filter(self::characters($bytes), static fn (string $c): bool => self::firstCodePoint($c) !== null && ($charset === 'utf8mb4' || strlen($c) < 4)));
     }
 
+    /** The database charsets a query's text is held to, by the multibyte name of each. */
+    private const CHARSETS = ['cp1250' => 'Windows-1250', 'cp1251' => 'Windows-1251', 'cp1256' => 'Windows-1256', 'cp1257' => 'Windows-1257', 'cp850' => 'CP850', 'cp866' => 'CP866', 'latin2' => 'ISO-8859-2', 'latin5' => 'ISO-8859-9', 'latin7' => 'ISO-8859-13', 'greek' => 'ISO-8859-7', 'hebrew' => 'ISO-8859-8', 'koi8r' => 'KOI8-R', 'koi8u' => 'KOI8-U', 'sjis' => 'SJIS', 'cp932' => 'CP932', 'ujis' => 'EUC-JP', 'eucjpms' => 'eucJP-win', 'euckr' => 'EUC-KR', 'gbk' => 'CP936', 'gb2312' => 'EUC-CN', 'gb18030' => 'GB18030', 'big5' => 'BIG-5', 'ucs2' => 'UCS-2', 'utf16' => 'UTF-16', 'utf32' => 'UTF-32'];
+
+    /**
+     * Whether text can go to a table in this charset as the reference's
+     * database door judges it (probe invalid-text): anything for a binary or
+     * latin1 table or one without text; otherwise well-formed UTF-8, and of
+     * that only what the charset holds (no four-byte character for utf8, no
+     * byte past ASCII for ascii).
+     */
+    public static function fits(string $bytes, string|false $charset): bool
+    {
+        if ($charset === false || $charset === 'binary' || $charset === 'latin1') {
+            return true;
+        }
+        if (!self::isValid($bytes)) {
+            return false;
+        }
+        $encoding = self::CHARSETS[$charset] ?? null;
+        return match (true) {
+            $charset === 'utf8mb4' => true,
+            $charset === 'utf8', $charset === 'utf8mb3' => !preg_match('/[\xF0-\xF4]/', $bytes),
+            $charset === 'ascii' => !preg_match('/[\x80-\xFF]/', $bytes),
+            $encoding !== null => mb_convert_encoding(mb_convert_encoding($bytes, $encoding, 'UTF-8'), 'UTF-8', $encoding) === $bytes,
+            default => true,
+        };
+    }
+
     /** ISO-8859-1 as UTF-8: each byte the character of its value. */
     public static function fromLatin1(string $bytes): string
     {

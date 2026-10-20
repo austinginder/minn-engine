@@ -57,14 +57,15 @@ final readonly class PostWriter
      *
      * @param array<string, mixed> $columns
      */
-    public function update(int $id, array $columns): void
+    public function update(int $id, array $columns): bool
     {
         if ($columns === []) {
-            return;
+            return true;
         }
         $columns = self::fit($columns);
         $sets = implode(', ', array_map(static fn (string $column) => "{$column} = ?", array_keys($columns)));
         $this->db->execute("UPDATE {$this->db->table('posts')} SET {$sets} WHERE ID = ?", [...array_values($columns), $id]);
+        return !$this->db->refused();
     }
 
     /** Changes one post's status. */

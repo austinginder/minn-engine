@@ -103,6 +103,28 @@ $findings = [
     'A 404\'s address was kept as a page needing the Legacy Pack' => ['tests/ajax.test.php', 'a 404 never names its own address'],
     'Replies to spam and trashed comments were taken' => ['tests/comment-form.test.php', 'a reply to a comment marked spam'],
     'bloginfo() printed the site\'s name and description unescaped' => ['tests/tools/sweep-1018-probe.php', 'bloginfo display filters'],
+    // The sweep of 2026-10-20 (docs/security-review-2026-10-20.md).
+    'A crafted FLV hung the worker in its parameter set\'s cycle' => ['tests/unit/media-av.php', "'cycle.flv' => [0, false]"],
+    'Queries on binary and latin1 tables were refused (Wordfence lockouts lost)' => ['tests/tools/table-charsets-probe.php', 'an address of bytes: written by a query'],
+    'The latest-posts block printed protected posts whole' => ['tests/tools/sweep-1020-probe.php', 'latest posts showing'],
+    'An ID3 frame of terminators was split in quadratic time' => ['tests/unit/media-av.php', "'terminators.mp3' => [null, false]"],
+    'An AVI\'s stream lists were each walked to the end of the file' => ['tests/unit/media-av.php', "'lists.avi' => [null, false]"],
+    'A caption attribute was printed without kses' => ['tests/tools/sweep-1020-probe.php', 'a caption attribute with markup the post allowlist refuses'],
+    'An MPEG-4 file of empty boxes took memory without bound' => ['tests/unit/media-av.php', "'tracks.mov' => [0.0, false]"],
+    'A declared tag length became one allocation of that size' => ['tests/unit/media-av.php', "'claims.mp3' => [null, false]"],
+    'A zero rate or a worded duration threw out of the media readers' => ['tests/unit/media-av.php', "'zero.mkv' => [null, false]"],
+    'An audio cover was saved with the extension its tag declared' => ['tests/tools/sweep-1020-probe.php', 'a cover that is'],
+    'MPEG audio in a wave file was scanned to its end' => ['tests/tools/mpeg-in-wave-probe.php', "'51 at 8, then 16'"],
+    'Comments nested deep recursed through kses once per opener' => ['tests/unit/kses.php', 'comment openers 16,000 deep'],
+    'An autosave wrote a draft another user had locked' => ['tests/tools/sweep-1020-probe.php', 'locked by {$label}'],
+    'admin-post.php ran a visitor\'s handler as a signed-in user' => ['tests/runtime.test.php', 'only the admin cookie, a handler'],
+    'create_post_autosave() turned revisions off for the rest of the request' => ['tests/tools/sweep-1020-probe.php', 'create_post_autosave: a slot, and DOING_AUTOSAVE after it'],
+    'Refused post, comment and term writes reported success' => ['tests/tools/refused-writes-probe.php', 'a post whose content is refused'],
+    'Refused meta writes answered another row\'s id' => ['tests/tools/refused-writes-probe.php', 'a meta value refused: add_post_meta'],
+    'nonce_user_logged_out was asked for signed-in users' => ['tests/tools/sweep-1020-probe.php', 'nonce: asked of the filter, then checked for user 1'],
+    'The front end\'s cookie signed users in to the blog admin' => ['tests/tools/sweep-1020-probe.php', 'cookie in the blog admin, and outside it'],
+    'settings_errors() printed codes and types unescaped' => ['tests/tools/sweep-1020-probe.php', 'settings errors with quotes in their code and type'],
+    'do_settings_sections() printed a section\'s wrap raw' => ['tests/tools/sweep-1020-probe.php', 'a section\'s surrounding markup'],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 

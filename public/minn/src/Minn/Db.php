@@ -43,6 +43,9 @@ final class Db
     /** Whether a transaction this door opened is still open, so a nested call joins it instead of starting another. */
     private bool $inTransaction = false;
 
+    /** Whether the last write was refused for its text (execute). */
+    private bool $refused = false;
+
     public function __construct(
         private readonly mysqli $connection,
         private readonly string $prefix,
@@ -174,7 +177,8 @@ final class Db
     /** Runs a write and returns the affected row count. */
     public function execute(string $sql, array $params = []): int
     {
-        if (self::invalidText($sql, $params)) {
+        $this->refused = self::invalidText($sql, $params);
+        if ($this->refused) {
             return 0;
         }
         $affected = (int) $this->run($sql, $params)->affected_rows;
@@ -192,12 +196,34 @@ final class Db
      */
     public static function invalidText(string $sql, array $params = []): bool
     {
-        foreach ([$sql, ...$params] as $text) {
-            if (is_string($text) && !mb_check_encoding($text, 'UTF-8')) {
-                return true;
+        $invalid = !mb_check_encoding($sql, 'UTF-8');
+        // A list of values (an insert's row) is checked value by value.
+        array_walk_recursive($params, static function (mixed $text) use (&$invalid): void {
+            $invalid = $invalid || is_string($text) && !mb_check_encoding($text, 'UTF-8');
+        });
+        return $invalid;
+    }
+
+    /** The database error the reference's door gives for a field whose value it would not write. */
+    public static function fieldRefusal(string $field): string
+    {
+        return sprintf('WordPress database error: Processing the value for the following field failed: %s. The supplied value may be too long or contains invalid data.', $field);
+    }
+
+    /**
+     * The first of the given columns whose text the database door refuses
+     * (invalidText), or null.
+     *
+     * @param array<string, mixed> $columns
+     */
+    public static function invalidColumn(array $columns): ?string
+    {
+        foreach ($columns as $column => $value) {
+            if (is_string($value) && !mb_check_encoding($value, 'UTF-8')) {
+                return (string) $column;
             }
         }
-        return false;
+        return null;
     }
 
     /** @var array<string, list<\Closure>> listeners told when a write names a table, by its name without the prefix */
@@ -345,7 +371,14 @@ final class Db
     /** The id the last INSERT produced. */
     public function insertId(): int
     {
-        return (int) $this->connection->insert_id;
+        // A refused insert sent nothing: the connection's id is an earlier statement's.
+        return $this->refused ? 0 : (int) $this->connection->insert_id;
+    }
+
+    /** Whether the last write was refused for its text (invalidText): nothing was sent. */
+    public function refused(): bool
+    {
+        return $this->refused;
     }
 
     /** @var (\Closure(string): ?string)|null the runtime's option store, once it exists (Runtime::boot) */

@@ -1,0 +1,122 @@
+[
+    [
+        "a post whose content is refused: the error",
+        [
+            "db_insert_error",
+            "Could not insert post into the database.",
+            "WordPress database error: Processing the value for the following field failed: post_content. The supplied value may be too long or contains invalid data."
+        ]
+    ],
+    [
+        "the hooks heard",
+        [
+            "wp_insert_post_data"
+        ]
+    ],
+    [
+        "without the error asked for",
+        0
+    ],
+    [
+        "an update whose content is refused",
+        [
+            "db_update_error",
+            "Could not update post in the database.",
+            "WordPress database error: Processing the value for the following field failed: post_content. The supplied value may be too long or contains invalid data."
+        ]
+    ],
+    [
+        "the update's hooks",
+        [
+            "wp_insert_post_data",
+            "pre_post_update"
+        ]
+    ],
+    [
+        "a meta value refused: add_post_meta",
+        false
+    ],
+    [
+        "update_post_meta to it",
+        false
+    ],
+    [
+        "update_metadata_by_mid to it",
+        false
+    ],
+    [
+        "their hooks, and what is stored",
+        [
+            [
+                "add_post_meta",
+                "add_post_meta",
+                "added_post_meta",
+                "update_post_meta",
+                "update_post_meta"
+            ],
+            [
+                "ok"
+            ]
+        ]
+    ],
+    [
+        "a comment whose content is refused",
+        false
+    ],
+    [
+        "the comment's hooks",
+        []
+    ],
+    [
+        "a comment updated to it",
+        [
+            [
+                "db_update_error",
+                "Could not update comment in the database.",
+                "WordPress database error: Processing the value for the following field failed: comment_content. The supplied value may be too long or contains invalid data."
+            ],
+            false
+        ]
+    ],
+    [
+        "a term named \"zz?refused\"",
+        [
+            "invalid_term_name",
+            "Invalid term name.",
+            null
+        ]
+    ],
+    [
+        "a term named \"<i><\\/i>\"",
+        [
+            "invalid_term_name",
+            "Invalid term name.",
+            null
+        ]
+    ],
+    [
+        "a term named \"<b> <\\/b>\"",
+        [
+            "invalid_term_name",
+            "Invalid term name.",
+            null
+        ]
+    ],
+    [
+        "a term whose description is refused",
+        [
+            "db_insert_error",
+            "Could not insert term taxonomy into the database.",
+            "WordPress database error: Processing the value for the following field failed: description. The supplied value may be too long or contains invalid data."
+        ]
+    ],
+    [
+        "the term's hooks, and the term row left",
+        [
+            [
+                "wp_insert_term_data"
+            ],
+            1
+        ]
+    ]
+]

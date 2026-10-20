@@ -6,6 +6,8 @@ namespace Minn\Runtime;
 
 use Closure;
 use Minn\Content\PostWriter;
+use Minn\Db;
+use Minn\Objects\Errors;
 use Minn\Support\Sanitize;
 
 /**
@@ -144,10 +146,22 @@ final readonly class PostInsert
     public function persist(array $columns, ?int $existingId): int
     {
         if ($existingId !== null) {
-            $this->writer->update($existingId, $columns);
-            return $existingId;
+            return $this->writer->update($existingId, $columns) ? $existingId : 0;
         }
         return $this->writer->insert($columns);
+    }
+
+    /**
+     * The error for a post the database door would not write, its text not
+     * what the table holds (probe refused-writes): an insert's or an
+     * update's (a post that already has an id), naming the first such column.
+     *
+     * @param array<string, mixed> $columns
+     */
+    public static function unwritten(array $columns, ?int $existingId): Errors
+    {
+        $data = Db::fieldRefusal((string) Db::invalidColumn($columns));
+        return $existingId !== null ? Handoff::newError('db_update_error', 'Could not update post in the database.', $data) : Handoff::newError('db_insert_error', 'Could not insert post into the database.', $data);
     }
 
     /** Gives a new post written without a guid its permalink as one, once its slug, terms and meta are in. */

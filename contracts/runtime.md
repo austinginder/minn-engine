@@ -18095,6 +18095,44 @@ Left: the translation updates the reference installs after an upgrade (row below
 `retrieve_widgets` write in `rest-widgets-class` not yet explained. The reference's
 `wp_styles_for_blocks` transient (its cache of the block styles it builds) is accepted.
 
+## The security sweep and the facade doubts measured (2026-10-20)
+
+`docs/security-review-2026-10-20.md` holds the sweep: 21 findings (one high, five medium), each
+fixed to what the reference does and pinned (probes `table-charsets`, `refused-writes`,
+`mpeg-in-wave`, `sweep-1020`; unit `media-av`, `kses`; the runtime suite's admin-post rows).
+What it changed in the runtime's model:
+
+- **The database door judges a query by its table** (`wpdb::query`, `wpdb::get_table_charset`,
+  `Support\Utf8::fits`): a binary or blob column makes the table `binary` and nothing is
+  refused; a table without text has no charset; latin1 beside other charsets does not count,
+  utf8 beside utf8mb4 is utf8, any other mixture ascii. latin1 holds any byte, utf8mb4
+  well-formed UTF-8, utf8 no four-byte character, ascii nothing past ASCII, another charset
+  what it can encode. The engine's own statements (`Minn\Db`) still refuse what is not
+  UTF-8, now value by value in a list too, and `Db::insertId()` is 0 after a refused insert.
+- **Refused writes say so**: a post is `db_insert_error` / `db_update_error` naming the field
+  (`Db::fieldRefusal`) before any save hook; a comment insert is false, its update an error; a
+  term whose name sanitizes to nothing is `invalid_term_name`, one whose description is
+  refused leaves its term row (the probe puts the two id counters level again after it); meta
+  writes answer false with no "added" or "updated" action.
+- **MPEG audio inside a wave file** (`Mpeg::scan`): the data starts with a frame; a run of 51
+  (or fewer to the end) starts the stream, a shorter one is passed over; 51 at one rate make
+  it constant, and nothing after them is read; otherwise every frame to the end, across gaps.
+- **An audio cover is named for its bytes** (`AvMetadata::coverType`): JPEG, PNG and GIF as
+  themselves, anything else `.jpg` of no type.
+- **Edit locks** live in `Runtime\PostLocks` (`wp_check_post_lock` delegates); an author's
+  autosave of their draft goes to their slot while someone else holds it.
+- **Caption ids** are classes, given once a page (`RenderState::uniqueCaptionId`).
+
+The same day four agents measured 228 of the facade review's doubts on both stacks: 194
+real, the rest not or not probeable. Three real ones were security work (in the sweep); the
+rest are parity rows, their measured values in `~/Documents/minn-facade-review/doubts-2026-10-20`.
+
+Left open.
+
+- The other 274 doubts, measured the same way, then the real ones fixed.
+- Hostile files the reference reads as nothing more than their size (the FLV, Matroska and
+  AVI built by the sweep) give a few more fields on the engine.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18196,3 +18234,5 @@ rows that are `open` or `austin`.
 | 17998 | The side-effect diff, second round (10-20) | REST comments: a named author's details, an unknown author, the name and address required, the two argument rounds | done | probe `rest-comment-author` (38 rows) |
 | 17998 | The side-effect diff, second round (10-20) | statements carrying text that is not UTF-8 ran and stored "?" | done | `Minn\Db::invalidText`, probe `invalid-text` |
 | 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | done | "A navigation's fallback menu, made during the render (2026-10-19)": the renderer asks `WP_Navigation_Fallback::get_fallback` through `Handoff::navigationFallback` (probe `navigation-fallback`) |
+| 18098 | The security sweep (10-20) | the facade review's doubts: 228 measured (194 real, of which 3 fixed in the sweep); 274 to measure; the real ones to fix | open | measured values in ~/Documents/minn-facade-review/doubts-2026-10-20 (outside the repo); next: the second wave, then fixes file by file (post.php, comment.php, functions.php, admin.php first) |
+| 18098 | The security sweep (10-20) | crafted FLV, Matroska and AVI files the reference reads as only their size give a few more fields on the engine | accepted | nothing a plugin reads; the readers end quickly and never throw on them (unit `media-av`) |

@@ -267,8 +267,8 @@ class wpdb
         $this->flush();
         $query = apply_filters('query', $this->remove_placeholder_escape((string) $query));
         $this->last_query = $query;
-        // A query holding text the tables cannot store is not run.
-        $invalid = $this->check_current_query && \Minn\Db::invalidText($query);
+        // A query holding text its table cannot store is not run.
+        $invalid = $this->check_current_query && !$this->check_ascii($query) && !\Minn\Support\Utf8::fits($query, $this->query_charset($query));
         $this->check_current_query = true;
         try {
             $result = $invalid ? false : $this->dbh->query($query);
@@ -488,7 +488,10 @@ class wpdb
             }
             $kept = \Minn\Support\Utf8::keptBy($value['value'], (string) $value['charset']);
             $length = $value['length'] ?? false;
-            if (is_array($length)) {
+            // A latin1 column holds any byte, one character each (probe invalid-text).
+            if (is_array($length) && $value['charset'] === 'latin1') {
+                $kept = substr($kept, 0, (int) $length['length']);
+            } elseif (is_array($length)) {
                 $kept = $length['type'] === 'byte' ? mb_strcut($kept, 0, (int) $length['length'], 'UTF-8') : mb_substr($kept, 0, (int) $length['length'], 'UTF-8');
             }
             $data[$field]['value'] = $kept;
@@ -667,14 +670,48 @@ class wpdb
         if (isset($this->table_charset[$key])) {
             return $this->table_charset[$key];
         }
-        $charset = $this->charset;
-        foreach ($this->columns($table) as $column) {
+        $columns = $this->columns($table);
+        return $this->table_charset[$key] = $columns === [] ? $this->charset : self::shared_charset($columns);
+    }
+
+    /**
+     * The charset a table's columns come to (probe invalid-text): binary when
+     * one holds bytes, false when none holds text, else their one charset;
+     * latin1 beside others does not count, utf8 beside utf8mb4 is utf8, and
+     * any other mixture is ascii.
+     *
+     * @param array<string, array{type: string, collation: string}> $columns
+     */
+    private static function shared_charset(array $columns): string|false
+    {
+        $charsets = [];
+        foreach ($columns as $column) {
+            if (preg_match('/^(?:var)?binary\b|blob$/', $column['type'])) {
+                return 'binary';
+            }
             if ($column['collation'] !== '') {
                 $charset = explode('_', $column['collation'])[0];
-                break;
+                $charsets[$charset === 'utf8mb3' ? 'utf8' : $charset] = true;
             }
         }
-        return $this->table_charset[$key] = $charset;
+        if (count($charsets) > 1) {
+            unset($charsets['latin1']);
+        }
+        $charsets = array_keys($charsets);
+        return match (true) {
+            $charsets === [] => false,
+            count($charsets) === 1 => $charsets[0],
+            array_diff($charsets, ['utf8', 'utf8mb4']) === [] => 'utf8',
+            default => 'ascii',
+        };
+    }
+
+    /** The charset a query's text is held to: its table's, the connection's when it names none. */
+    private function query_charset(string $query): string|false
+    {
+        $table = $this->get_table_from_query($query);
+        $charset = $table ? $this->get_table_charset($table) : $this->charset;
+        return is_string($charset) || $charset === false ? $charset : $this->charset;
     }
 
     /** A column's charset: false for one that holds no text, the table's for a column it does not have. */

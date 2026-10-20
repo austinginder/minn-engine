@@ -29,6 +29,9 @@ final class Analyzer
         }
         try {
             return self::analyzed($source);
+        } catch (\ArithmeticError | \TypeError | \ValueError) {
+            // A file whose fields make no sense (a zero rate, a duration in words) is measured as nothing more than its size.
+            return ['filesize' => $source->size];
         } finally {
             $source->close();
         }
@@ -55,7 +58,7 @@ final class Analyzer
         if ($id3v1 !== null) {
             $data['id3v1'] = ['comments' => $id3v1];
         }
-        if (isset($data['playtime_seconds'])) {
+        if (is_int($data['playtime_seconds'] ?? null) || is_float($data['playtime_seconds'] ?? null)) {
             $data['playtime_string'] = self::playtimeString($data['playtime_seconds']);
         }
         return $data;

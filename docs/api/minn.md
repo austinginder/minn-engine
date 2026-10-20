@@ -6,7 +6,7 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
-| [`Db`](#db) | final class | 394 | The one door to the database. Every query is a prepared statement; the |
+| [`Db`](#db) | final class | 427 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 335 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Html`](#html) | final class | 133 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
@@ -81,7 +81,7 @@ long, so "post_type IN (?)" takes the types themselves.
 
 - const `INCOMPATIBLE_MODES` = `array (   0 => 'NO_ZERO_DATE',   1 => 'ONLY_FULL_GROUP_BY',   2 => 'STRICT_TRANS_TABLES',   3 => 'STRICT_ALL_TABLES',   4 => 'TRADITIONAL',   5 => 'ANSI', )` — The SQL modes WordPress turns off for its session (wpdb's incompatible modes): strictness and the modes that change what queries mean.
 
-Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\V1Controller`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Roles`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Comments`, `Minn\Content\Links`, `Minn\Content\Menus`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Content\Revisions`, `Minn\Content\RowCache`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Mail\Mailer`, `Minn\Ops\Diagnostics`, `Minn\Ops\Directory`, `Minn\Rest\Api`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentQuery`, `Minn\Runtime\DbDelta`, `Minn\Runtime\Meta`, `Minn\Runtime\Options`, `Minn\Runtime\PostLookup`, `Minn\Runtime\PostQuery`, `Minn\Runtime\Runtime`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermWriter`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\V1Controller`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Roles`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Comments`, `Minn\Content\Links`, `Minn\Content\Menus`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Content\Revisions`, `Minn\Content\RowCache`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Mail\Mailer`, `Minn\Ops\Diagnostics`, `Minn\Ops\Directory`, `Minn\Rest\Api`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentQuery`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\DbDelta`, `Minn\Runtime\Meta`, `Minn\Runtime\Options`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLookup`, `Minn\Runtime\PostQuery`, `Minn\Runtime\Runtime`, `Minn\Runtime\TemplateFiles`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(mysqli $connection, string $prefix)
@@ -179,6 +179,17 @@ side-effect diff, rest-embed-details).
 
 - `@param array<array-key, mixed> $params`
 
+### static `fieldRefusal(string $field): string`
+
+The database error the reference's door gives for a field whose value it would not write.
+
+### static `invalidColumn(array $columns): ?string`
+
+The first of the given columns whose text the database door refuses
+(invalidText), or null.
+
+- `@param array<string, mixed> $columns`
+
 ### static `onWrite(string $table, Closure $listener): void`
 
 Asks to be told whenever a write statement names a table (Content\RowCache drops what it kept from it).
@@ -216,6 +227,10 @@ behaviour there was before this existed.
 
 The id the last INSERT produced.
 
+### `refused(): bool`
+
+Whether the last write was refused for its text (invalidText): nothing was sent.
+
 ### `option(string $name): ?string`
 
 One option's stored value, or null when it is unset; home and siteurl
@@ -237,7 +252,7 @@ reference (_config_wp_home), without a trailing slash.
 
 One option's row as stored, whatever wp-config.php says, or null when it is unset.
 
-Internals: `placeholders()` (private, line 273), `run()` (private, line 392)
+Internals: `placeholders()` (private, line 299), `run()` (private, line 425)
 
 
 ## Engine

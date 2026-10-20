@@ -44,6 +44,9 @@ final class RenderState
     /** @var array<string, int> navigation labels used so far, for the reference's de-duplicated aria-labels */
     private array $labels = [];
 
+    /** @var array<string, int> caption ids given so far, for the reference's de-duplicated ones */
+    private array $captionIds = [];
+
     /** @var list<list<string>> the images of each content the_content is filtering, innermost last */
     private array $contentImages = [];
     /** @var list<string> each content the_content is filtering, as the engine rendered it, innermost last */
@@ -303,6 +306,13 @@ final class RenderState
         return $count === 1 ? $label : $label . ' ' . $count;
     }
 
+    /** A caption's id, or its text's: as given the first time on the page, then "id-N" for repeats (probe gallery-captions). */
+    public function uniqueCaptionId(string $id): string
+    {
+        $count = $this->captionIds[$id] = ($this->captionIds[$id] ?? 0) + 1;
+        return $count === 1 ? $id : $id . '-' . $count;
+    }
+
     /**
      * A page list renders plain on its own and takes the navigation block's
      * item classes, submenu toggles, and interactivity only while it sits
@@ -445,5 +455,6 @@ final class RenderState
         $this->navigation = 0;
         $this->pendingElements = null;
         $this->labels = [];
+        $this->captionIds = [];
     }
 }

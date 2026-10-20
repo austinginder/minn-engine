@@ -45,7 +45,7 @@ final class Flv
             }
             $at += 11 + $size + 4;
         }
-        $playtime = !empty($meta['duration']) ? $meta['duration'] : null;
+        $playtime = self::number($meta['duration'] ?? null);
         if ($audioFlags !== null) {
             $data['audio'] = self::audio($audioFlags, $meta);
         }
@@ -73,7 +73,8 @@ final class Flv
     private static function audio(int $flags, array $meta): array
     {
         $audio = ['dataformat' => 'flv'];
-        $bitrate = !empty($meta['audiodatarate']) ? (int) round($meta['audiodatarate'] * 1000) : null;
+        $rate = self::number($meta['audiodatarate'] ?? null);
+        $bitrate = $rate !== null ? (int) round($rate * 1000) : null;
         if ($bitrate !== null) {
             $audio['bitrate'] = $bitrate;
         }
@@ -165,7 +166,8 @@ final class Flv
             $bits->skip(1);
             $bits->signed();
             $bits->signed();
-            for ($cycle = $bits->unsigned(); $cycle > 0; $cycle--) {
+            // A cycle holds at most 255 frames; one that runs off the set reads no further.
+            for ($cycle = min(255, $bits->unsigned()); $cycle > 0 && !$bits->exhausted(); $cycle--) {
                 $bits->signed();
             }
         }
@@ -176,7 +178,16 @@ final class Flv
         $framesOnly = $bits->bit();
         $bits->skip($framesOnly === 1 ? 1 : 2);
         [$left, $right, $top, $bottom] = $bits->bit() === 1 ? [$bits->unsigned(), $bits->unsigned(), $bits->unsigned(), $bits->unsigned()] : [0, 0, 0, 0];
+        if ($bits->exhausted()) {
+            return [0, 0];
+        }
         return [$columns * 16 - 2 * ($left + $right), (2 - $framesOnly) * $rows * 16 - 2 * ($top + $bottom)];
+    }
+
+    /** A metadata value that is a number other than zero, or null (a string or a flag says nothing). */
+    private static function number(mixed $value): int|float|null
+    {
+        return (is_int($value) || is_float($value)) && $value != 0 ? $value : null;
     }
 
     /**

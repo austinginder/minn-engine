@@ -311,7 +311,9 @@ final readonly class Users
     /**
      * Replaces one usermeta row. The (user_id, meta_key) pair carries no
      * unique index on the stock schema, so this is a delete plus insert
-     * rather than an upsert.
+     * rather than an upsert. The value is the stored form: a string that
+     * reads as serialized is revived on the way through the meta API, so a
+     * caller with text from outside passes it through Options::toStorage.
      */
     public function setMeta(int $userId, string $key, string $value): void
     {

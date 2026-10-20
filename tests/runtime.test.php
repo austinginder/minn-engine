@@ -233,14 +233,19 @@ if ($referenceUp) {
     }
     $check('a comment whose redirect a plugin cancels gets a blank page and no Location, as on the reference', $cancelled['engine'] === [200, false, ''] && $cancelled['engine'] === $cancelled['reference'], json_encode($cancelled));
     // admin-post.php, where plugins' forms post: the visitor's or the signed-in hook after admin_init, a 400 for a
-    // named action nobody handles, a handler's redirect, on both stacks (found 2026-10-18 by the security sweep).
+    // named action nobody handles, a handler's redirect, either sign-in cookie, on both stacks (found 2026-10-18 and
+    // 2026-10-20 by the security sweeps).
     $minted = json_decode((string) shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/wp-reference') . ' && wp eval-file ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 1 2>/dev/null'), true);
-    $signedIn = is_array($minted) ? $minted['cookie_name'] . '=' . rawurlencode((string) $minted['cookie']) . '; ' . $minted['admin_cookie_name'] . '=' . rawurlencode((string) $minted['admin_cookie']) : '';
+    $front = is_array($minted) ? $minted['cookie_name'] . '=' . rawurlencode((string) $minted['cookie']) : '';
+    $adminOnly = is_array($minted) ? $minted['admin_cookie_name'] . '=' . rawurlencode((string) $minted['admin_cookie']) : '';
+    $signedIn = $front === '' ? '' : $front . '; ' . $adminOnly;
     $postCases = [
         'signed out, a handler for visitors' => ['action=minn_test_post', ''], 'signed out, no handler' => ['action=minn_test_unhandled', ''],
         'signed out, no action' => ['', ''], 'signed out, a handler that redirects' => ['action=minn_test_redirect', ''],
         'signed in, a handler' => ['action=minn_test_post', $signedIn], 'signed in, no handler' => ['action=minn_test_unhandled', $signedIn],
         'signed in, no action' => ['', $signedIn], 'signed in, only a visitors\' handler' => ['action=minn_test_redirect', $signedIn],
+        // Either cookie alone signs the form in, as the user it names (security sweep 2026-10-20).
+        'only the front end\'s cookie, a handler' => ['action=minn_test_post', $front], 'only the admin cookie, a handler' => ['action=minn_test_post', $adminOnly],
     ];
     $posted = static function (string $url, string $body, string $cookie): array {
         $ch = curl_init($url . '/wp-admin/admin-post.php');

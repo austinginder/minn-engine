@@ -7,7 +7,7 @@ dynamic core blocks that render from data
 | [`Archives`](#archives) | final readonly class | 29 | core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts). |
 | [`Dates`](#dates) | final class | 15 | Site-local dates the way the dynamic blocks print them. |
 | [`LatestComments`](#latestcomments) | final readonly class | 71 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
-| [`LatestPosts`](#latestposts) | final readonly class | 143 | core/latest-posts: the newest published posts as a list or a grid, each with |
+| [`LatestPosts`](#latestposts) | final readonly class | 148 | core/latest-posts: the newest published posts as a list or a grid, each with |
 | [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
 | [`SocialLinks`](#sociallinks) | final class | 78 | core/social-links and core/social-link. The list keeps its stored |
 | [`SyncedPattern`](#syncedpattern) | final readonly class | 33 | core/block: a synced pattern, rendered from the wp_block post it references. |
@@ -91,7 +91,7 @@ as the reference walks them: the_post for each (loop_start and loop_end
 around them, loop_no_results when there are none), and the main
 query's post set up again after, found or not.
 
-Internals: `featuredImage()` (private, line 92), `words()` (private, line 117), `args()` (private, line 150)
+Internals: `featuredImage()` (private, line 93), `words()` (private, line 118), `args()` (private, line 156)
 
 
 ## Search

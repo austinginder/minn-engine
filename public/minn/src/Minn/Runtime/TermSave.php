@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\Terms;
+use Minn\Db;
 use Minn\Objects\Errors;
 use Minn\Objects\Term;
+use Minn\Support\Lists;
 use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
-use Minn\Support\Lists;
 
 /**
  * wp_insert_term and wp_update_term in the reference's order (probe
@@ -55,6 +56,10 @@ final class TermSave
         $args['taxonomy'] = $taxonomy;
         $args = (array) TermFields::term($args, (string) $taxonomy, 'db');
         $name = (string) Slashes::strip((string) $args['name']);
+        // A name its sanitizing empties (tags only, or text the table cannot hold) is refused before it is looked for (probe invalid-text).
+        if (trim($name) === '') {
+            return Handoff::newError('invalid_term_name', 'Invalid term name.');
+        }
         $taken = self::nameTaken($name, $taxonomy, $args);
         if ($taken !== null) {
             return $taken;
@@ -67,6 +72,10 @@ final class TermSave
             self::slugFromId($terms, $termId, $taxonomy, $data, $args);
         }
         $ttId = $terms->addToTaxonomy($termId, $taxonomy, (string) Slashes::strip((string) $args['description']), (int) $args['parent']);
+        // A description the table cannot hold leaves the term row without a taxonomy, as the reference leaves it.
+        if ($ttId === 0) {
+            return Handoff::newError('db_insert_error', 'Could not insert term taxonomy into the database.', Db::fieldRefusal('description'));
+        }
         // Nothing else holds this name and slug now; a plugin may still name a term to keep instead.
         $duplicate = Runtime::hooks()->filter('wp_insert_term_duplicate_term_check', [null, $term, $taxonomy, $args, $ttId]);
         if (is_object($duplicate) && isset($duplicate->term_id)) {

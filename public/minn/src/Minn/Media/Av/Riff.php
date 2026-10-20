@@ -83,11 +83,13 @@ final class Riff
         foreach (self::chunks($source, 12, $source->size) as $chunk) {
             $list = $chunk['id'] === 'LIST' ? $source->bytes($chunk['start'], 4) : '';
             if ($list === 'hdrl') {
-                foreach (self::chunks($source, $chunk['start'] + 4, $chunk['start'] + $chunk['size']) as $part) {
+                // A stream list ends with the header list holding it, whatever size it claims.
+                $end = min($chunk['start'] + $chunk['size'], $source->size);
+                foreach (self::chunks($source, $chunk['start'] + 4, $end) as $part) {
                     if ($part['id'] === 'avih') {
                         $header = $source->bytes($part['start'], 40);
                     } elseif ($part['id'] === 'LIST' && $source->bytes($part['start'], 4) === 'strl') {
-                        $streams[] = self::stream($source, $part);
+                        $streams[] = self::stream($source, ['size' => min($part['size'], $end - $part['start'])] + $part);
                     }
                 }
             } elseif ($list === 'movi' && $movie === null) {

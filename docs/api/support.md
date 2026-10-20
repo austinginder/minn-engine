@@ -17,7 +17,7 @@ escaping, serialized readers, small helpers
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Kses`](#kses) | final class | 566 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 579 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
@@ -38,7 +38,7 @@ escaping, serialized readers, small helpers
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`TimezoneChoice`](#timezonechoice) | final class | 109 | The timezone choices a settings form offers (wp_timezone_choice, probe |
 | [`Url`](#url) | final class | 231 | URL shaping the escaping and query helpers share: the character cleanup |
-| [`Utf8`](#utf8) | final class | 154 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
+| [`Utf8`](#utf8) | final class | 182 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
 ## Accents
@@ -370,6 +370,7 @@ list are dropped; URL attributes lose unsafe schemes; style attributes
 keep only listed properties and no code. Comments keep their text, and
 block delimiters are written back with their attribute values filtered.
 
+- const `COMMENT_DEPTH` = `8`
 - const `COMMENT` = `array (   'a' =>    array (     0 => 'href',     1 => 'title',     2 => 'rel',   ),   'abbr' =>    array (     0 => 'title',   ),   'acronym' =>    array (     0 => 'title',   ),   'b' =>    array (   ),   'blockquote' =>    array (     0 => 'cite',   ),   'cite' =>    array (   ),   'code' =>    array (   ),   'del' =>    array (     0 => 'datetime',   ),   'em' =>    array (   ),   'i' =>    array (   ),   'q' =>    array (     0 => 'cite',   ),   's' =>    array (   ),   'strike' =>    array (   ),   'strong' =>    array (   ), )`
 - const `URI_ATTRIBUTES` = `array (   0 => 'action',   1 => 'archive',   2 => 'background',   3 => 'cite',   4 => 'classid',   5 => 'codebase',   6 => 'data',   7 => 'formaction',   8 => 'href',   9 => 'icon',   10 => 'longdesc',   11 => 'manifest',   12 => 'poster',   13 => 'profile',   14 => 'src',   15 => 'usemap',   16 => 'xmlns', )` — Every attribute the reference treats as holding a URI, so its scheme is judged wherever the attribute is allowed.
 - const `SCHEMES` = `array (   0 => 'http',   1 => 'https',   2 => 'ftp',   3 => 'ftps',   4 => 'mailto',   5 => 'news',   6 => 'irc',   7 => 'gopher',   8 => 'nntp',   9 => 'feed',   10 => 'telnet',   11 => 'mms',   12 => 'rtsp',   13 => 'sms',   14 => 'svn',   15 => 'tel',   16 => 'fax',   17 => 'xmpp',   18 => 'webcal',   19 => 'urn', )` — The URI schemes allowed by default.
@@ -518,7 +519,7 @@ Whether a URL may be an object's data in post content: an http or https
 URL on the uploads host and port, no credentials, query or fragment,
 whose path ends in ".pdf".
 
-Internals: `cleaned()` (private, line 155), `cleanValue()` (private, line 161), `tagsAsked()` (private, line 213), `run()` (private, line 270), `htmlComment()` (private, line 298), `deepDecode()` (private, line 410), `visible()` (private, line 423), `normalizeText()` (private, line 438), `normalizeAttribute()` (private, line 461), `named()` (private, line 481), `codePoint()` (private, line 488), `attributes()` (private, line 513), `rendered()` (private, line 538), `srcset()` (private, line 576)
+Internals: `cleaned()` (private, line 160), `cleanValue()` (private, line 166), `tagsAsked()` (private, line 218), `run()` (private, line 275), `htmlComment()` (private, line 303), `deepDecode()` (private, line 423), `visible()` (private, line 436), `normalizeText()` (private, line 451), `normalizeAttribute()` (private, line 474), `named()` (private, line 494), `codePoint()` (private, line 501), `attributes()` (private, line 526), `rendered()` (private, line 551), `srcset()` (private, line 589)
 
 
 ## KsesAttributes
@@ -1297,6 +1298,7 @@ off, so "\xE2\x82" counts once.
 
 - const `CHARACTER` = `'[\\x00-\\x7F]|[\\xC2-\\xDF][\\x80-\\xBF]|\\xE0[\\xA0-\\xBF][\\x80-\\xBF]|[\\xE1-\\xEC\\xEE\\xEF][\\x80-\\xBF]{2}|\\xED[\\x80-\\x9F][\\x80-\\xBF]|\\xF0[\\x90-\\xBF][\\x80-\\xBF]{2}|[\\xF1-\\xF3][\\x80-\\xBF]{3}|\\xF4[\\x80-\\x8F][\\x80-\\xBF]{2}'` — One well-formed character.
 - const `BROKEN` = `'\\xE0[\\xA0-\\xBF]|[\\xE1-\\xEC\\xEE\\xEF][\\x80-\\xBF]|\\xED[\\x80-\\x9F]|\\xF0[\\x90-\\xBF][\\x80-\\xBF]?|[\\xF1-\\xF3][\\x80-\\xBF]{1,2}|\\xF4[\\x80-\\x8F][\\x80-\\xBF]?'` — The start of a sequence that breaks off.
+- const `CHARSETS` = `array (   'cp1250' => 'Windows-1250',   'cp1251' => 'Windows-1251',   'cp1256' => 'Windows-1256',   'cp1257' => 'Windows-1257',   'cp850' => 'CP850',   'cp866' => 'CP866',   'latin2' => 'ISO-8859-2',   'latin5' => 'ISO-8859-9',   'latin7' => 'ISO-8859-13',   'greek' => 'ISO-8859-7',   'hebrew' => 'ISO-8859-8',   'koi8r' => 'KOI8-R',   'koi8u' => 'KOI8-U',   'sjis' => 'SJIS',   'cp932' => 'CP932',   'ujis' => 'EUC-JP',   'eucjpms' => 'eucJP-win',   'euckr' => 'EUC-KR',   'gbk' => 'CP936',   'gb2312' => 'EUC-CN',   'gb18030' => 'GB18030',   'big5' => 'BIG-5',   'ucs2' => 'UCS-2',   'utf16' => 'UTF-16',   'utf32' => 'UTF-32', )` — The database charsets a query's text is held to, by the multibyte name of each.
 
 Used by: `Minn\Support\Kses`
 
@@ -1350,6 +1352,14 @@ UTF-8 as ISO-8859-1: a character past U+00FF, or a malformed run, becomes "?".
 ### static `keptBy(string $bytes, string $charset): string`
 
 What a column in this charset keeps: utf8mb4 drops each malformed run, utf8 (utf8mb3) every four-byte character too; any other charset keeps the bytes.
+
+### static `fits(string $bytes, string|false $charset): bool`
+
+Whether text can go to a table in this charset as the reference's
+database door judges it (probe invalid-text): anything for a binary or
+latin1 table or one without text; otherwise well-formed UTF-8, and of
+that only what the charset holds (no four-byte character for utf8, no
+byte past ASCII for ascii).
 
 ### static `fromLatin1(string $bytes): string`
 

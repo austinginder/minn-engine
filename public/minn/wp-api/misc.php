@@ -359,24 +359,8 @@ function wp_update_custom_css_post($css, $args = [])
 function wp_check_post_lock($post)
 {
     $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $lock = get_post_meta($post->ID, '_edit_lock', true);
-    if (!$lock) {
-        return false;
-    }
-    $lock = explode(':', (string) $lock);
-    $time = (int) $lock[0];
-    $user = isset($lock[1]) ? (int) $lock[1] : (int) get_post_meta($post->ID, '_edit_last', true);
-    if (!$user || !$time) {
-        return false;
-    }
-    $time_window = apply_filters('wp_check_post_lock_window', 150);
-    if ($time && $time > time() - $time_window && $user !== get_current_user_id()) {
-        return $user;
-    }
-    return false;
+    $holder = $post === null ? 0 : Minn\Runtime\PostLocks::holder($post->ID, get_current_user_id());
+    return $holder === 0 ? false : $holder;
 }
 
 function wp_set_post_lock($post)

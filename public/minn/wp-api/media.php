@@ -1670,7 +1670,10 @@ function adjacent_image_link($prev = true, $size = 'thumbnail', $text = false)
 
 function img_caption_shortcode($attr, $content = '')
 {
-    if (!isset($attr['caption']) && preg_match('#((?:<a [^>]+>\s*)?<img [^>]+>(?:\s*</a>)?)(.*)#is', (string) $content, $m)) {
+    // A caption given as an attribute is held to the post allowlist; one written as the shortcode's content was held to it when saved.
+    if (isset($attr['caption'])) {
+        $attr['caption'] = wp_kses($attr['caption'], 'post');
+    } elseif (preg_match('#((?:<a [^>]+>\s*)?<img [^>]+>(?:\s*</a>)?)(.*)#is', (string) $content, $m)) {
         $content = $m[1];
         $attr['caption'] = trim($m[2]);
     }
@@ -1683,8 +1686,13 @@ function img_caption_shortcode($attr, $content = '')
     if ($atts['width'] < 1 || trim((string) $atts['caption']) === '') {
         return $content;
     }
-    $captionId = $atts['caption_id'] !== '' ? $atts['caption_id'] : ($atts['id'] !== '' ? 'caption-' . str_replace('_', '-', (string) $atts['id']) : '');
-    $id = $atts['id'] !== '' ? 'id="' . esc_attr(sanitize_html_class((string) $atts['id'])) . '" ' : '';
+    // Ids are classes, each once on a page (repeats numbered); a caption id of the shortcode's own is counted with them.
+    $state = Minn\Blocks\RenderState::current();
+    $given = $atts['id'] === '' ? '' : sanitize_html_class((string) $atts['id']);
+    $given = $given === '' ? '' : $state->uniqueCaptionId($given);
+    $ownCaption = $atts['caption_id'] === '' ? '' : sanitize_html_class((string) $atts['caption_id']);
+    $captionId = $ownCaption !== '' ? $state->uniqueCaptionId($ownCaption) : ($given !== '' ? 'caption-' . str_replace('_', '-', $given) : '');
+    $id = $given !== '' ? 'id="' . esc_attr($given) . '" ' : '';
     $describedBy = $captionId !== '' ? 'aria-describedby="' . esc_attr($captionId) . '" ' : '';
     $captionIdAttr = $captionId !== '' ? 'id="' . esc_attr($captionId) . '" ' : '';
     $class = trim('wp-caption ' . $atts['align'] . ' ' . $atts['class']);

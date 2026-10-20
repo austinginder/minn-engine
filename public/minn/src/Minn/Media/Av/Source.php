@@ -42,7 +42,8 @@ final class Source
             return substr($this->head, $offset, $length);
         }
         fseek($this->handle, $offset);
-        return (string) fread($this->handle, $length);
+        // No more is asked of the file than it holds: a declared length is not an allocation.
+        return (string) fread($this->handle, min($length, $this->size - $offset));
     }
 
     /** A big-endian unsigned integer of $width bytes (1 to 8) at $offset; 0 past the end. */

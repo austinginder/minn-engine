@@ -124,4 +124,10 @@ $cases['a style value is judged decoded'] = static function (): bool|string {
     $got = Kses::post('<p style="color:red;background:url(&#106;avascript:1)">t</p>');
     return $got === '<p style="color:red">t</p>' ? true : $got;
 };
+$cases['comment openers 16,000 deep end quickly, the deep ones collapsed'] = static function (): bool|string {
+    $started = microtime(true);
+    $got = Kses::allowing(str_repeat('<!--', 16000), Kses::COMMENT, ['http', 'https']);
+    $seconds = microtime(true) - $started;
+    return $seconds < 2 && memory_get_peak_usage() < 128 * 1048576 ? true : sprintf('%.2fs, %d bytes out', $seconds, strlen($got));
+};
 return $cases;

@@ -18,7 +18,7 @@ the block parser and renderer
 | [`LayoutStyle`](#layoutstyle) | final class | 193 | The CSS rules a block's layout writes (wp_get_layout_style, probe |
 | [`Parser`](#parser) | final class | 147 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
-| [`RenderState`](#renderstate) | final class | 434 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`RenderState`](#renderstate) | final class | 445 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 551 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
@@ -851,6 +851,10 @@ The next wp-elements-N class; the reference numbers these apart from the shared 
 ### `uniqueLabel(string $label): string`
 
 A navigation's aria-label: the label itself the first time, then "label N" for repeats.
+
+### `uniqueCaptionId(string $id): string`
+
+A caption's id, or its text's: as given the first time on the page, then "id-N" for repeats (probe gallery-captions).
 
 ### `enterNavigation(): void`
 

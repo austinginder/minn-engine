@@ -1,8 +1,8 @@
 {
     "wordpress": "7.1.3",
     "security": {
-        "found": 43,
-        "fixed": 43
+        "found": 64,
+        "fixed": 64
     },
     "sql": {
         "measured": "2026-10-12",
@@ -261,17 +261,19 @@
         }
     },
     "open": {
-        "done": 66,
-        "accepted": 19,
-        "open": 2,
-        "austin": 3
+        "done": 67,
+        "accepted": 20,
+        "open": 3,
+        "austin": 2
     },
     "run": {
         "measured": "2026-10-20",
         "suites": 92,
-        "green": 92,
-        "checks": 28580,
-        "red": [],
+        "green": 91,
+        "checks": 28710,
+        "red": [
+            "style"
+        ],
         "engineWarnings": 0,
         "warningKinds": []
     },
@@ -299,12 +301,12 @@
     "clones": {
         "duplicated": {
             "window": 100,
-            "stretches": 113,
-            "lines": 2089,
-            "of": 183564
+            "stretches": 112,
+            "lines": 2034,
+            "of": 184159
         },
         "engine": {
-            "of": 107153,
+            "of": 107712,
             "php": {
                 "strict": {
                     "window": 40,
@@ -331,7 +333,7 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76411,
+            "of": 76447,
             "window": 80,
             "stretches": 112,
             "lines": 2955
@@ -339,27 +341,27 @@
     },
     "facadeLogic": {
         "functions": 3491,
-        "methods": 3809,
+        "methods": 3811,
         "delegates": 3466,
         "logicFunctions": 1806,
-        "logicMethods": 2028,
-        "logicLines": 30063,
+        "logicMethods": 2030,
+        "logicLines": 30076,
         "kept": 0,
         "review": {
-            "doubts": 502,
-            "reviewed": 3195,
+            "doubts": 498,
+            "reviewed": 3197,
             "stale": 0,
             "verdicts": {
-                "delegate": 142,
+                "delegate": 143,
                 "move": 1528,
-                "keep": 1510,
+                "keep": 1511,
                 "remove": 15
             },
             "keep": {
                 "scope": 113,
                 "shape": 287,
                 "compose": 599,
-                "contract": 498,
+                "contract": 499,
                 "library": 13
             },
             "gates": {

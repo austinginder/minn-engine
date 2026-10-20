@@ -16,9 +16,10 @@ use Minn\Support\Text;
  * else's post gets the author's one autosave slot, made through
  * wp_insert_post and _wp_put_post_revision, or updated through
  * wp_update_post after wp_creating_autosave. A slot already there is left
- * alone when every field given matches the post. DOING_AUTOSAVE is defined
- * for the rest of the request, so plugins' save hooks can tell, and no
- * revision is saved while it is.
+ * alone when every field given matches the post. An autosave request
+ * (save) defines DOING_AUTOSAVE for the rest of the request, so plugins'
+ * save hooks can tell, and no revision is saved while it is; a slot saved
+ * on its own (create_post_autosave) defines nothing.
  */
 final class Autosaves
 {
@@ -48,7 +49,7 @@ final class Autosaves
      */
     public static function saveSlot(Post $post, int $userId, array $fields): int|Errors
     {
-        \defined('DOING_AUTOSAVE') || \define('DOING_AUTOSAVE', true);
+        // Saving a slot alone does not make the request an autosave (probe rest-autosaves): later writes keep their revisions.
         $slot = self::slot($post->ID, $userId);
         if ($slot === null) {
             $data = PostRevisions::data(['ID' => $post->ID] + $fields, true) + ['post_author' => $userId];
@@ -63,10 +64,10 @@ final class Autosaves
         return $saved instanceof Errors ? $saved : (int) $saved;
     }
 
-    /** Whether an autosave saves the post itself: the author's own draft (or auto-draft). */
+    /** Whether an autosave saves the post itself: the author's own draft (or auto-draft), while no one else holds its lock. */
     public static function inPlace(Post $post, int $userId): bool
     {
-        return in_array($post->post_status, ['draft', 'auto-draft'], true) && (int) $post->post_author === $userId;
+        return in_array($post->post_status, ['draft', 'auto-draft'], true) && (int) $post->post_author === $userId && PostLocks::holder($post->ID, $userId) === 0;
     }
 
     /** The id of the user's autosave of a post, or null. */

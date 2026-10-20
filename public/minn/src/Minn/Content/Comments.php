@@ -116,13 +116,14 @@ final readonly class Comments
      *
      * @param array<string, mixed> $columns
      */
-    public function update(int $id, array $columns): void
+    public function update(int $id, array $columns): bool
     {
         if ($columns === []) {
-            return;
+            return true;
         }
         $set = implode(', ', array_map(static fn (string $column): string => "{$column} = ?", array_keys($columns)));
         $this->db->execute("UPDATE {$this->db->table('comments')} SET {$set} WHERE comment_ID = ?", [...array_values($columns), $id]);
+        return !$this->db->refused();
     }
 
     /** The comment form fields whose length the table limits, with the length a stock table gives each. */

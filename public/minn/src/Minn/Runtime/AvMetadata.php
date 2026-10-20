@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Media\Av\Analyzer;
-use Minn\Media\FileTypes;
 
 /**
  * An audio or video file's metadata as WordPress's media readers keep it
@@ -123,7 +122,7 @@ final class AvMetadata
         }
         $type = "attachment:{$kind}";
         if (Registered::supports($type, 'thumbnail') || ThemeSupports::current('post-thumbnails', $type)) {
-            $cover = self::cover((string) $image['data'], (string) ($image['mime'] ?? ''), $file);
+            $cover = self::cover((string) $image['data'], $file);
             if ($cover !== null) {
                 MetaData::updatePost($attachmentId, '_thumbnail_id', $cover);
             }
@@ -132,21 +131,37 @@ final class AvMetadata
         return $metadata;
     }
 
+    /**
+     * A cover's extension and type, read from its bytes whatever the tag
+     * names (probe media-cover): a JPEG, PNG or GIF is what it is; anything
+     * else is kept as a .jpg of no type.
+     *
+     * @return array{0: string, 1: string}
+     */
+    private static function coverType(string $bytes): array
+    {
+        return match (true) {
+            str_starts_with($bytes, "\xFF\xD8\xFF") => ['jpg', 'image/jpeg'],
+            str_starts_with($bytes, "\x89PNG\r\n\x1A\n") => ['png', 'image/png'],
+            str_starts_with($bytes, 'GIF87a'), str_starts_with($bytes, 'GIF89a') => ['gif', 'image/gif'],
+            default => ['jpg', ''],
+        };
+    }
+
     /** The attachment a cover is kept as: one an earlier file made from the same bytes, or a new one. */
-    private static function cover(string $bytes, string $mime, string $file): ?int
+    private static function cover(string $bytes, string $file): ?int
     {
         $hash = md5($bytes);
         $found = PostReads::query(['fields' => 'ids', 'post_type' => 'attachment', 'post_status' => 'inherit', 'posts_per_page' => 1, 'meta_key' => '_cover_hash', 'meta_value' => $hash]);
         if (is_array($found) && $found !== []) {
             return (int) reset($found);
         }
-        $extensions = (string) array_search($mime, FileTypes::all(), true);
-        $name = str_replace('.', '-', basename($file)) . '-image.' . ($extensions === '' ? 'jpg' : explode('|', $extensions)[0]);
-        $upload = Handoff::uploadBits($name, $bytes);
+        [$extension, $type] = self::coverType($bytes);
+        $upload = Handoff::uploadBits(str_replace('.', '-', basename($file)) . '-image.' . $extension, $bytes);
         if (!is_array($upload) || !empty($upload['error'])) {
             return null;
         }
-        $cover = Attachments::insert(['post_mime_type' => $mime, 'post_type' => 'attachment', 'post_content' => ''], $upload['file']);
+        $cover = Attachments::insert(['post_mime_type' => $type, 'post_type' => 'attachment', 'post_content' => ''], $upload['file']);
         if (!is_int($cover) || $cover < 1) {
             return null;
         }

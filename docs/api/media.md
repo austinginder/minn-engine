@@ -123,7 +123,7 @@ MIME type, the ones a user may upload, the kind each extension is (image,
 audio, document...), and the type a file name's extension says, each
 list through the filter plugins hook.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Media\Icons`, `Minn\Media\MediaModal`, `Minn\Rest\PostCollectionParams`, `Minn\Runtime\Attachments`, `Minn\Runtime\AvMetadata`, `Minn\Runtime\FileNames`, `Minn\Runtime\FileTypeCheck`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Media\Icons`, `Minn\Media\MediaModal`, `Minn\Rest\PostCollectionParams`, `Minn\Runtime\Attachments`, `Minn\Runtime\FileNames`, `Minn\Runtime\FileTypeCheck`
 
 
 ### static `table(): array`

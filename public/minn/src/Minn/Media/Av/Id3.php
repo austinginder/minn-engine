@@ -198,15 +198,15 @@ final class Id3
         return $end === null ? '' : substr($text, $end + self::terminatorLength($encoding));
     }
 
-    /** Where a string's terminator starts: a NUL, or a NUL pair on a two-byte boundary for UTF-16. */
-    private static function terminator(string $text, int $encoding): ?int
+    /** Where a string's terminator starts, looking from $from: a NUL, or a NUL pair on a two-byte boundary for UTF-16. */
+    private static function terminator(string $text, int $encoding, int $from = 0): ?int
     {
         if (self::terminatorLength($encoding) === 1) {
-            $at = strpos($text, "\0");
+            $at = strpos($text, "\0", $from);
             return $at === false ? null : $at;
         }
-        for ($at = 0; $at + 1 < strlen($text); $at += 2) {
-            if ($text[$at] === "\0" && $text[$at + 1] === "\0") {
+        for ($at = strpos($text, "\0\0", $from); $at !== false; $at = strpos($text, "\0\0", $at + 1)) {
+            if (($at - $from) % 2 === 0) {
                 return $at;
             }
         }
@@ -222,11 +222,13 @@ final class Id3
      */
     private static function decoded(string $text, int $encoding): array
     {
+        // Read along the text rather than cut from it, so a run of terminators costs once each; past 1024 values
+        // the rest is left (the first is the one shown).
         $parts = [];
-        while ($text !== '') {
-            $end = self::terminator($text, $encoding);
-            $parts[] = $end === null ? $text : substr($text, 0, $end);
-            $text = $end === null ? '' : substr($text, $end + self::terminatorLength($encoding));
+        for ($at = 0, $size = strlen($text); $at < $size && count($parts) < 1024;) {
+            $end = self::terminator($text, $encoding, $at);
+            $parts[] = substr($text, $at, ($end ?? $size) - $at);
+            $at = $end === null ? $size : $end + self::terminatorLength($encoding);
         }
         return array_map(static fn (string $part): string => match ($encoding) {
             0 => mb_convert_encoding($part, 'UTF-8', 'ISO-8859-1'),

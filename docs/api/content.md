@@ -9,7 +9,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Clickable`](#clickable) | final class | 64 | Bare addresses in text made links (make_clickable, probe |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 262 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 263 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Emoji`](#emoji) | final class | 68 | Emoji as the reference's mail and feeds carry them, from the list the |
 | [`Excerpt`](#excerpt) | final class | 90 | The reference's generated excerpt, as captured from probe posts: |
@@ -30,7 +30,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostRecord`](#postrecord) | final readonly class | 162 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 432 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 433 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 561 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 41 | Revision rows read: the plain snapshots and the per-author autosave slots. |
@@ -41,11 +41,11 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
 | [`TermLinks`](#termlinks) | final class | 37 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
-| [`Terms`](#terms) | final readonly class | 219 |  |
+| [`Terms`](#terms) | final readonly class | 220 |  |
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 314 |  |
+| [`Users`](#users) | final readonly class | 316 |  |
 
 ## Autop
 
@@ -297,7 +297,7 @@ Inserts a row from column => value pairs and returns the new id.
 
 - `@param array<string, mixed> $columns`
 
-### `update(int $id, array $columns): void`
+### `update(int $id, array $columns): bool`
 
 Sets the given columns on one comment, in one write as the reference
 makes it (tests/tools/side-effects.php).
@@ -1235,7 +1235,7 @@ Inserts a posts row from column => value pairs and returns the new id.
 
 - `@param array<string, mixed> $columns`
 
-### `update(int $id, array $columns): void`
+### `update(int $id, array $columns): bool`
 
 Sets the given columns on one post; nothing happens for none.
 
@@ -1382,7 +1382,7 @@ plugin-symbols2).
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `fit()` (private, line 201), `countSql()` (private, line 261), `announceSticky()` (private, line 300), `saveSticky()` (private, line 308)
+Internals: `fit()` (private, line 202), `countSql()` (private, line 262), `announceSticky()` (private, line 301), `saveSticky()` (private, line 309)
 
 
 ## Posts
@@ -2060,7 +2060,7 @@ Reparents children to the grandparent, detaches relationships, drops the rows.
 
 "parent/child" for hierarchical taxonomies, the bare slug otherwise.
 
-Internals: `record()` (private, line 17), `refreshHierarchy()` (private, line 194), `keepsHierarchy()` (private, line 208)
+Internals: `record()` (private, line 17), `refreshHierarchy()` (private, line 195), `keepsHierarchy()` (private, line 209)
 
 
 ## TextFilters
@@ -2443,7 +2443,9 @@ and the cache (probe user-meta-writes); before it, from the table.
 
 Replaces one usermeta row. The (user_id, meta_key) pair carries no
 unique index on the stock schema, so this is a delete plus insert
-rather than an upsert.
+rather than an upsert. The value is the stored form: a string that
+reads as serialized is revived on the way through the meta API, so a
+caller with text from outside passes it through Options::toStorage.
 
 Internals: `record()` (private, line 23), `refreshCount()` (private, line 111), `writeAccount()` (private, line 123)
 

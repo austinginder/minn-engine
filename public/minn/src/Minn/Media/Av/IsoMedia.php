@@ -29,6 +29,9 @@ final class IsoMedia
 
     private const MOOV_LIMIT = 67108864;
 
+    /** The most boxes read at one level (the file's, or a container's). */
+    private const BOX_LIMIT = 4096;
+
     /** Whether a file's first bytes are an MPEG-4 or QuickTime box. */
     public static function detects(string $head): bool
     {
@@ -115,8 +118,8 @@ final class IsoMedia
     {
         $moov = null;
         $dataStart = null;
-        $at = 0;
-        while ($at + 8 <= $source->size) {
+        // The walk ends once both are found, and after a file's worth of boxes (real ones hold a few dozen; fragments a few thousand).
+        for ($at = 0, $count = 0; $at + 8 <= $source->size && ($moov === null || $dataStart === null) && $count < self::BOX_LIMIT; $count++) {
             [$size, $type, $head] = self::boxHeader($source->bytes($at, 16), $source->size - $at);
             if ($size < $head) {
                 break;
@@ -157,7 +160,7 @@ final class IsoMedia
     {
         $boxes = [];
         $at = $start;
-        while ($at + 8 <= $end) {
+        while ($at + 8 <= $end && count($boxes) < self::BOX_LIMIT) {
             [$size, $type, $head] = self::boxHeader(substr($bytes, $at, 16), $end - $at);
             if ($size < $head || $at + $size > $end) {
                 break;

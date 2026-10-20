@@ -18,6 +18,7 @@ use Minn\Content\Users;
 use Minn\I18n\Gettext;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\MainQuery;
+use Minn\Runtime\PostTags;
 use Minn\Runtime\Runtime;
 
 /**
@@ -119,7 +120,12 @@ final readonly class LatestPosts
         if (!(bool) $block->attr('displayPostContent', false)) {
             return '';
         }
-        if ($block->attr('displayPostContentRadio', 'excerpt') === 'full_post') {
+        $full = $block->attr('displayPostContentRadio', 'excerpt') === 'full_post';
+        // A post behind a password the reader has not given shows one sentence in either place (probe latest-posts).
+        if (PostTags::passwordRequired($object)) {
+            return '<div class="wp-block-latest-posts__post-' . ($full ? 'full-content' : 'excerpt') . '">' . Gettext::text('This content is password protected.') . '</div>';
+        }
+        if ($full) {
             $raw = $post->content;
             $content = RenderState::current()->postContent($post->id, static fn (): string => str_contains($raw, '<!-- wp:') ? Runtime::blockContentFilter($raw) : Runtime::classicContentFilter($raw));
             return '<div class="wp-block-latest-posts__post-full-content">' . $content . '</div>';

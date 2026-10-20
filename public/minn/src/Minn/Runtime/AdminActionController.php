@@ -115,15 +115,21 @@ final readonly class AdminActionController
      * admin-post.php, where plugins' forms post, as the reference answers it
      * (runtime suite, "admin-post.php"): an admin request with the admin
      * headers, admin_init, then admin_post_{action} for someone signed in
-     * (the admin cookie) or admin_post_nopriv_{action} for a visitor, and
+     * (by the admin cookie, else the front end's) or admin_post_nopriv_{action}
+     * for a visitor, and
      * admin_post or admin_post_nopriv when no action is named. A named action
      * nobody handles is a 400; what the handlers print is the page, and a
      * handler that redirects and exits sends its redirect.
      */
     private function post(Request $request): Response
     {
+        // Either sign-in cookie signs the request in, the admin cookie's user first, and that user is the one the handlers run as.
         $session = $this->cookie->admin($request->cookies, $request->secure);
-        $signedIn = $session !== null && $session->id() > 0 && $session->id() === Reader::current()->userId;
+        if ($session !== null && $session->id() > 0 && $session->id() !== Reader::current()->userId) {
+            Handoff::becomeUser($session->id());
+            CurrentUser::settle(Runtime::current());
+        }
+        $signedIn = Reader::current()->userId > 0;
         $headers = [
             'Content-Type' => 'text/html; charset=' . Runtime::options()->filtered('blog_charset'),
             'X-Frame-Options' => 'SAMEORIGIN',

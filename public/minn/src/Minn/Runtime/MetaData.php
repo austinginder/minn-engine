@@ -110,6 +110,9 @@ final class MetaData
         }
         Runtime::hooks()->action("add_{$type}_meta", [$objectId, $key, $value]);
         $id = self::store()->add((string) $type, $objectId, (string) $key, Options::toStorage($value));
+        if ($id === 0) {
+            return false;
+        }
         Handoff::cacheDelete($objectId, $type . '_meta');
         Runtime::hooks()->action("added_{$type}_meta", [$id, $objectId, $key, $value]);
         return $id;
@@ -155,7 +158,9 @@ final class MetaData
         foreach ($ids as $id) {
             self::announce('update', (string) $type, [$id, $objectId, $key, $value], [$id, $objectId, $key, $value]);
         }
-        self::store()->updateRows((string) $type, $ids, $stored);
+        if (!self::store()->updateRows((string) $type, $ids, $stored)) {
+            return false;
+        }
         Handoff::cacheDelete($objectId, $type . '_meta');
         foreach ($ids as $id) {
             self::announce('updated', (string) $type, [$id, $objectId, $key, $value], [$id, $objectId, $key, $value]);
@@ -289,7 +294,9 @@ final class MetaData
         $value = self::sanitize($key, Slashes::strip($value), $type, MetaKeys::subtype((string) $type, $objectId));
         $args = [(int) $metaId, $objectId, $key, $value];
         self::announce('update', (string) $type, $args, $args);
-        self::rows()->rewrite((string) $type, (int) $metaId, $key, Options::toStorage($value));
+        if (!self::rows()->rewrite((string) $type, (int) $metaId, $key, Options::toStorage($value))) {
+            return false;
+        }
         Handoff::cacheDelete($objectId, $type . '_meta');
         self::announce('updated', (string) $type, $args, $args);
         return true;

@@ -122,7 +122,8 @@ final readonly class Terms
             [$termId, $taxonomy, $description, $parent],
         );
         $ttId = $this->db->insertId();
-        if ($parent > 0 || $this->keepsHierarchy($taxonomy)) {
+        // A row the door refused leaves the hierarchy as it was (tests/tools/side-effects.php, refused-writes).
+        if ($ttId > 0 && ($parent > 0 || $this->keepsHierarchy($taxonomy))) {
             $this->refreshHierarchy($taxonomy);
         }
         return $ttId;

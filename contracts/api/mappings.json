@@ -2,15 +2,15 @@
     "generated": "2026-10-20",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 683,
-        "composes": 2122,
-        "leaf": 1006,
+        "minn": 684,
+        "composes": 2121,
+        "leaf": 1008,
         "noop": 3172,
         "placeholder": 0,
         "deadend": 1767,
-        "functions": 8672,
-        "minnMethods": 1428,
-        "leafLinesOver15": 11
+        "functions": 8674,
+        "minnMethods": 1430,
+        "leafLinesOver15": 12
     },
     "functions": {
         "Author::__construct": {
@@ -44996,7 +44996,7 @@
         },
         "do_settings_sections": {
             "file": "admin.php",
-            "lines": 24,
+            "lines": 25,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -45005,7 +45005,8 @@
             ],
             "composes": [
                 "do_settings_fields",
-                "esc_attr"
+                "esc_attr",
+                "wp_kses_post"
             ],
             "deadend": "admin"
         },
@@ -52720,16 +52721,20 @@
         },
         "img_caption_shortcode": {
             "file": "media.php",
-            "lines": 25,
-            "kind": "composes",
-            "minn": [],
+            "lines": 33,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\RenderState::current",
+                "Minn\\Blocks\\RenderState::uniqueCaptionId"
+            ],
             "composes": [
                 "apply_filters",
                 "current_theme_supports",
                 "do_shortcode",
                 "esc_attr",
                 "sanitize_html_class",
-                "shortcode_atts"
+                "shortcode_atts",
+                "wp_kses"
             ]
         },
         "in_category": {
@@ -60307,12 +60312,10 @@
         "settings_errors": {
             "file": "admin.php",
             "lines": 21,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request"
-            ],
+            "kind": "composes",
+            "minn": [],
             "composes": [
+                "esc_attr",
                 "get_settings_errors"
             ],
             "deadend": "admin"
@@ -65456,14 +65459,14 @@
         },
         "wp_check_post_lock": {
             "file": "misc.php",
-            "lines": 19,
-            "kind": "composes",
-            "minn": [],
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostLocks::holder"
+            ],
             "composes": [
-                "apply_filters",
                 "get_current_user_id",
-                "get_post",
-                "get_post_meta"
+                "get_post"
             ],
             "deadend": "admin"
         },
@@ -65879,7 +65882,7 @@
         },
         "wp_create_nonce": {
             "file": "pluggable.php",
-            "lines": 3,
+            "lines": 4,
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\Nonce::create"
@@ -76500,13 +76503,15 @@
         },
         "wp_validate_logged_in_cookie": {
             "file": "pluggable.php",
-            "lines": 7,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::request"
             ],
             "composes": [
+                "is_blog_admin",
+                "is_network_admin",
                 "wp_validate_auth_cookie"
             ]
         },
@@ -76548,7 +76553,7 @@
         },
         "wp_verify_nonce": {
             "file": "pluggable.php",
-            "lines": 16,
+            "lines": 17,
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\Nonce::at"
@@ -77812,7 +77817,7 @@
         },
         "wpdb::get_table_charset": {
             "file": "classes/wpdb.php",
-            "lines": 16,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -77951,12 +77956,19 @@
             "lines": 39,
             "kind": "minn",
             "minn": [
-                "Minn\\Db::invalidText",
-                "Minn\\Db::wrote"
+                "Minn\\Db::wrote",
+                "Minn\\Support\\Utf8::fits"
             ],
             "composes": [
                 "apply_filters"
             ]
+        },
+        "wpdb::query_charset": {
+            "file": "classes/wpdb.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "wpdb::quote_identifier": {
             "file": "classes/wpdb.php",
@@ -78021,6 +78033,13 @@
                 "apply_filters"
             ]
         },
+        "wpdb::shared_charset": {
+            "file": "classes/wpdb.php",
+            "lines": 20,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "wpdb::show_errors": {
             "file": "classes/wpdb.php",
             "lines": 3,
@@ -78030,7 +78049,7 @@
         },
         "wpdb::strip_invalid_text": {
             "file": "classes/wpdb.php",
-            "lines": 12,
+            "lines": 15,
             "kind": "minn",
             "minn": [
                 "Minn\\Support\\Utf8::keptBy"

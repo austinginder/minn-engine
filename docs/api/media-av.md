@@ -5,20 +5,20 @@
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Ac3`](#ac3) | final class | 40 | An AC-3 (Dolby Digital) frame's header as the reference's media reader |
-| [`Analyzer`](#analyzer) | final class | 111 | A media file's analysis, keyed as the reference's media reader keys the |
+| [`Analyzer`](#analyzer) | final class | 114 | A media file's analysis, keyed as the reference's media reader keys the |
 | [`Asf`](#asf) | final class | 182 | Advanced Systems Format files (WMV, WMA, ASF) as the reference's media |
-| [`ExpGolomb`](#expgolomb) | final class | 44 | A bit reader over a byte string for the exponential-Golomb codes of a |
+| [`ExpGolomb`](#expgolomb) | final class | 50 | A bit reader over a byte string for the exponential-Golomb codes of a |
 | [`Flac`](#flac) | final class | 115 | FLAC, on its own or as the first packet of an Ogg stream, as the |
-| [`Flv`](#flv) | final class | 204 | Flash video (FLV) as the reference's media reader measures it (probe |
+| [`Flv`](#flv) | final class | 215 | Flash video (FLV) as the reference's media reader measures it (probe |
 | [`Genres`](#genres) | final class | 15 | The genre names an ID3 tag refers to by number: the ID3v1 list with the |
-| [`Id3`](#id3) | final class | 354 | ID3 tags, as the reference's audio reader names what they say (probe |
-| [`IsoMedia`](#isomedia) | final class | 361 | MPEG-4 and QuickTime files (MP4, M4A, M4V, MOV) as the reference's media |
+| [`Id3`](#id3) | final class | 356 | ID3 tags, as the reference's audio reader names what they say (probe |
+| [`IsoMedia`](#isomedia) | final class | 364 | MPEG-4 and QuickTime files (MP4, M4A, M4V, MOV) as the reference's media |
 | [`Lame`](#lame) | final class | 135 | The LAME tag an encoder writes after the Xing or Info counts, and what |
 | [`Matroska`](#matroska) | final class | 314 | Matroska and WebM files (MKV, MKA, WebM) as the reference's media reader |
-| [`Mpeg`](#mpeg) | final class | 171 | MPEG audio (MP3, and layers 1 and 2) as the reference's audio reader |
+| [`Mpeg`](#mpeg) | final class | 215 | MPEG audio (MP3, and layers 1 and 2) as the reference's audio reader |
 | [`Ogg`](#ogg) | final class | 144 | Ogg files as the reference's media reader measures them (probe |
-| [`Riff`](#riff) | final class | 349 | RIFF files, WAV audio and AVI video, as the reference's media reader |
-| [`Source`](#source) | final class | 70 | A media file read in parts, so a large video is never loaded whole: its |
+| [`Riff`](#riff) | final class | 351 | RIFF files, WAV audio and AVI video, as the reference's media reader |
+| [`Source`](#source) | final class | 71 | A media file read in parts, so a large video is never loaded whole: its |
 
 ## Ac3
 
@@ -69,7 +69,7 @@ The analysis of the file at a path; null when there is no such file.
 
 A playing time as a clock: minutes and seconds, with hours past the first.
 
-Internals: `analyzed()` (private, line 38), `stream()` (private, line 69), `mpeg()` (private, line 107)
+Internals: `analyzed()` (private, line 41), `stream()` (private, line 72), `mpeg()` (private, line 110)
 
 
 ## Asf
@@ -129,6 +129,10 @@ The next bit.
 ### `skip(int $count): void`
 
 Passes over a number of bits.
+
+### `exhausted(): bool`
+
+Whether every bit has been read (what follows reads as zeros).
 
 ### `unsigned(): int`
 
@@ -200,7 +204,7 @@ The file's analysis.
 
 - `@return array<string, mixed>`
 
-Internals: `audio()` (private, line 73), `video()` (private, line 99), `pictureSize()` (private, line 127), `avcSize()` (private, line 151), `metaData()` (private, line 187)
+Internals: `audio()` (private, line 73), `video()` (private, line 100), `pictureSize()` (private, line 128), `avcSize()` (private, line 152), `number()` (private, line 188), `metaData()` (private, line 198)
 
 
 ## Genres
@@ -256,7 +260,7 @@ the named genre; null with no tag.
 
 - `@return array<string, list<string|int>>|null`
 
-Internals: `frames()` (private, line 91), `frameData()` (private, line 145), `values()` (private, line 171), `afterDescription()` (private, line 195), `terminator()` (private, line 202), `decoded()` (private, line 223), `utf16()` (private, line 240), `terminatorLength()` (private, line 250), `attachedPicture()` (private, line 261), `olderPicture()` (private, line 282), `pictureBytes()` (private, line 290), `genres()` (private, line 305), `numbered()` (private, line 338), `syncsafe()` (private, line 347), `names()` (private, line 357)
+Internals: `frames()` (private, line 91), `frameData()` (private, line 145), `values()` (private, line 171), `afterDescription()` (private, line 195), `terminator()` (private, line 202), `decoded()` (private, line 223), `utf16()` (private, line 242), `terminatorLength()` (private, line 252), `attachedPicture()` (private, line 263), `olderPicture()` (private, line 284), `pictureBytes()` (private, line 292), `genres()` (private, line 307), `numbered()` (private, line 340), `syncsafe()` (private, line 349), `names()` (private, line 359)
 
 
 ## IsoMedia
@@ -278,6 +282,7 @@ and MPEG-4 video have the bitrate the audio leaves.
 - const `CONTAINERS` = `array (   0 => 'moov',   1 => 'trak',   2 => 'mdia',   3 => 'minf',   4 => 'stbl',   5 => 'udta',   6 => 'ilst',   7 => 'covr', )`
 - const `EPOCH` = `2082844800` — Seconds between 1904, where the movie's clock starts, and 1970.
 - const `MOOV_LIMIT` = `67108864`
+- const `BOX_LIMIT` = `4096` — The most boxes read at one level (the file's, or a container's).
 
 Used by: `Minn\Media\Av\Analyzer`
 
@@ -293,7 +298,7 @@ the cover.
 
 - `@return array<string, mixed>`
 
-Internals: `movie()` (private, line 114), `boxHeader()` (private, line 141), `children()` (private, line 156), `find()` (private, line 178), `movieHeader()` (private, line 203), `track()` (private, line 224), `aac()` (private, line 261), `averageBitrate()` (private, line 282), `afterLength()` (private, line 299), `videoEntry()` (private, line 314), `cover()` (private, line 336), `ordered()` (private, line 359), `videoCodecs()` (private, line 366)
+Internals: `movie()` (private, line 117), `boxHeader()` (private, line 144), `children()` (private, line 159), `find()` (private, line 181), `movieHeader()` (private, line 206), `track()` (private, line 227), `aac()` (private, line 264), `averageBitrate()` (private, line 285), `afterLength()` (private, line 302), `videoEntry()` (private, line 317), `cover()` (private, line 339), `ordered()` (private, line 362), `videoCodecs()` (private, line 369)
 
 
 ## Lame
@@ -390,6 +395,7 @@ the first frame's and the playing time is every byte at it.
 - const `SAMPLE_RATES` = `array (   3 =>    array (     0 => 44100,     1 => 48000,     2 => 32000,   ),   2 =>    array (     0 => 22050,     1 => 24000,     2 => 16000,   ),   0 =>    array (     0 => 11025,     1 => 12000,     2 => 8000,   ), )`
 - const `CHANNEL_MODES` = `array (   0 => 'stereo',   1 => 'joint stereo',   2 => 'dual channel',   3 => 'mono', )`
 - const `SCAN` = `131072`
+- const `SYNC_RUN` = `51` — How many frames in a row make a place in the data the stream's start, and how many of one rate make it constant (probe media-meta).
 
 Used by: `Minn\Media\Av\Analyzer`, `Minn\Media\Av\Matroska`, `Minn\Media\Av\Riff`
 
@@ -411,14 +417,18 @@ reserved sample rate.
 
 ### static `scan(Minn\Media\Av\Source $source, int $start, int $end): ?array`
 
-Every frame from an offset to an end, header by header, until one is
-not a frame: the first frame's header, the frames' mean bitrate and
-whether any frame's rate differs from the first's; null when the first
-is not a frame.
+The frames of a stream from an offset to an end, as the reference
+measures them inside another container (probe media-meta): data
+that does not begin with a frame has none; the stream starts where
+51 frames follow one another (or fewer that run to the end), the
+first of them its first; when those frames share a
+rate it is the stream's, and otherwise every frame to the end counts
+toward the mean, past any bytes between them. Null when no frame is
+found.
 
 - `@return array{first: array<string, int>, bitrate: float, variable: bool}|null`
 
-Internals: `firstFrame()` (private, line 80), `infoFrame()` (private, line 157)
+Internals: `firstFrame()` (private, line 80), `run()` (private, line 169), `nextFrame()` (private, line 180), `infoFrame()` (private, line 201)
 
 
 ## Ogg
@@ -477,7 +487,7 @@ The file's analysis: format, type, timing and its streams.
 
 The name an AVI video codec code has; empty for one it does not know.
 
-Internals: `wave()` (private, line 39), `avi()` (private, line 78), `chunks()` (private, line 138), `stream()` (private, line 156), `waveFormat()` (private, line 177), `audio()` (private, line 193), `scannedAudio()` (private, line 223), `ac3Audio()` (private, line 248), `mpegAudio()` (private, line 267), `firstAudioFrame()` (private, line 287), `video()` (private, line 309), `formatName()` (private, line 332), `videoCodecs()` (private, line 352)
+Internals: `wave()` (private, line 39), `avi()` (private, line 78), `chunks()` (private, line 140), `stream()` (private, line 158), `waveFormat()` (private, line 179), `audio()` (private, line 195), `scannedAudio()` (private, line 225), `ac3Audio()` (private, line 250), `mpegAudio()` (private, line 269), `firstAudioFrame()` (private, line 289), `video()` (private, line 311), `formatName()` (private, line 334), `videoCodecs()` (private, line 354)
 
 
 ## Source

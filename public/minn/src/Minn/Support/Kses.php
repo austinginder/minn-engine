@@ -23,6 +23,11 @@ final class Kses
     /** @var (Closure(string): string)|null the hooked pass a comment's body takes, inside a hooked pass */
     private static ?Closure $commentPass = null;
 
+    /** How many comments the pass is inside now, and how deep one is still passed as found. */
+    private static int $commentDepth = 0;
+
+    private const COMMENT_DEPTH = 8;
+
     /** @var array<string, list<string>> the smaller set for comments and descriptions */
     public const COMMENT = [
         'a' => ['href', 'title', 'rel'], 'abbr' => ['title'], 'acronym' => ['title'], 'b' => [],
@@ -300,7 +305,15 @@ final class Kses
         if (str_ends_with($body, '-->')) {
             $body = substr($body, 0, -3);
         }
-        $body = self::$commentPass === null ? self::filter($body, $policy) : (self::$commentPass)($body);
+        // Comments nested past a few levels have their "--" collapsed first, so an opener inside cannot start another pass (a run of them would recurse once each).
+        if (++self::$commentDepth > self::COMMENT_DEPTH) {
+            $body = str_replace('--', '-', $body);
+        }
+        try {
+            $body = self::$commentPass === null ? self::filter($body, $policy) : (self::$commentPass)($body);
+        } finally {
+            self::$commentDepth--;
+        }
         while (str_contains($body, '--')) {
             $body = str_replace('--', '-', $body);
         }

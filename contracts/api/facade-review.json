@@ -233,9 +233,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "prints a page's sections from $wp_settings_sections: the before and after wrap, a numbered heading through a request counter, the callback and the fields table; markup by rules with engine state",
-                "doubt": "before_section and after_section are printed raw where WordPress passes them through wp_kses_post, and after_section prints for a section without fields where WordPress skips it; a settings page body is an admin screen Minn leaves out",
-                "body": "086a1cc8e0a9"
+                "why": "prints a page's sections from $wp_settings_sections: the before and after wrap through wp_kses_post (probe sweep-1020), a numbered heading through a request counter, the callback and the fields table; markup by rules with engine state",
+                "body": "14c3c13a60bf"
             },
             "enqueue_comment_hotkeys_js": {
                 "verdict": "keep",
@@ -439,9 +438,8 @@
             "settings_errors": {
                 "verdict": "move",
                 "to": "Minn\\Admin\\AdminNotice",
-                "why": "maps each error's type to its notice class and builds the dismissible notice markup, unless hidden after an update; markup by rules, the echo stays",
-                "doubt": "the code and type go into the id and class unescaped where WordPress uses esc_attr, and hide_on_update reads the engine's request rather than $_GET as plugins left it; these are a settings screen's notices, an admin screen Minn leaves out",
-                "body": "70e8f9ea3cfc"
+                "why": "maps each error's type to its notice class and builds the dismissible notice markup with the id and class escaped (probe sweep-1020), unless $_GET says the settings were just updated; markup by rules, the echo stays",
+                "body": "1d129517a78a"
             },
             "settings_fields": {
                 "verdict": "keep",
@@ -11724,9 +11722,9 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "answers pre_get_table_charset, else the charset of the table's first collated column, kept per table in table_charset; column metadata rules for Db, the col_meta and table_charset properties kept",
-                "doubt": "the first collated column wins: no 'binary' for a blob column, no rule for mixed charsets, the connection charset for a table without text columns (the reference says false) and no WP_Error for an unreadable table",
-                "body": "5d6fb0ade5f5"
+                "why": "answers pre_get_table_charset, else the charset the table's columns come to (shared_charset; the connection's for a table it cannot read), kept per table in table_charset; column metadata rules for Db, the col_meta and table_charset properties kept",
+                "doubt": "a table that cannot be read answers the connection charset where the reference gives a WP_Error",
+                "body": "dc86d71e2dc1"
             },
             "wpdb::get_var": {
                 "verdict": "keep",
@@ -11815,9 +11813,15 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "runs raw SQL, classifies the statement, reads affected rows, insert id and result rows and reports errors; a query holding text the tables cannot store is refused first through Db::invalidText (probe invalid-text); the run and classification belong in Db, keeping $this->flush, $this->print_error and the properties where the reference sets them",
+                "why": "runs raw SQL, classifies the statement, reads affected rows, insert id and result rows and reports errors; a query whose text its table's charset cannot hold is refused first (Utf8::fits on query_charset; probes invalid-text, table-charsets); the run and classification belong in Db, keeping $this->flush, $this->print_error and the properties where the reference sets them",
                 "doubt": "flushes before the query filter, never fills $queries under SAVEQUERIES (no log_query call), and lacks the reference's not-ready and empty-query checks",
-                "body": "1fdebfbd05c1"
+                "body": "53a9225365f5"
+            },
+            "wpdb::query_charset": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the charset a query is held to: get_table_charset of the table get_table_from_query names, the connection's when it names none; both are methods a subclass overrides",
+                "body": "cc2e8dfaf6c0"
             },
             "wpdb::select": {
                 "verdict": "keep",
@@ -11850,6 +11854,12 @@
                 "doubt": "the current modes are read through $this->get_var, so the query filter, last_query and num_queries see that read, where the reference reads them straight off the connection",
                 "body": "2aacefe82dff"
             },
+            "wpdb::shared_charset": {
+                "verdict": "move",
+                "to": "Minn\\Db",
+                "why": "the charset rule over a table's columns (binary for a byte column, false for none with text, latin1 not counted beside others, utf8 beside utf8mb4, ascii for any other mixture; probe table-charsets); column metadata rules for Db",
+                "body": "b7de4486dac4"
+            },
             "wpdb::show_errors": {
                 "verdict": "keep",
                 "reason": "contract",
@@ -11862,9 +11872,9 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "drops what each text value's column charset cannot hold (Utf8::keptBy) and cuts it to the column's character or byte length; the length cut joins Utf8 beside keptBy",
+                "why": "drops what each text value's column charset cannot hold (Utf8::keptBy) and cuts it to the column's character or byte length, a latin1 column by bytes (probe table-charsets); the length cut joins Utf8 beside keptBy",
                 "doubt": "a charset other than utf8, utf8mb4 and latin1 is kept as is, where the reference converts it through the server (SELECT CONVERT)",
-                "body": "fe3c4789b561"
+                "body": "da77f3023b95"
             },
             "wpdb::strip_invalid_text_for_column": {
                 "verdict": "keep",
@@ -17178,9 +17188,9 @@
             "img_caption_shortcode": {
                 "verdict": "move",
                 "to": "Minn\\Content\\MediaShortcodes",
-                "why": "the [caption] shortcode: splits the caption from the content, filters, works out ids, width and class and builds figure or div markup",
-                "doubt": "a caption attribute with HTML is not passed through wp_kses, caption_id is not sanitized, and the non-HTML5 form never adds aria-describedby to the img",
-                "body": "a5637058f4cd"
+                "why": "the [caption] shortcode: an attribute's caption through wp_kses post or the caption split from the content, the filter, a given id or caption id as a class given once a page (RenderState::uniqueCaptionId; probe sweep-1020), width and class, figure or div markup",
+                "doubt": "the non-HTML5 form never adds aria-describedby to the img",
+                "body": "eb81d0e9fc16"
             },
             "is_local_attachment": {
                 "verdict": "keep",
@@ -17734,10 +17744,10 @@
                 "body": "80e4b415d4b2"
             },
             "wp_check_post_lock": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\PostLock",
-                "why": "parses the _edit_lock meta (time and user, _edit_last as fallback) and answers the other user while the filtered 150 second window holds; Rest\\PostObject::lockHolder repeats the rule privately",
-                "body": "ef45c375511b"
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\PostLocks::holder",
+                "why": "the post looked up and its lock's other holder asked of PostLocks::holder (the filtered 150 second window), false for none; Rest\\PostObject::lockHolder still repeats the rule for Minn Admin, before the runtime",
+                "body": "f1f2d8c17f59"
             },
             "wp_custom_css_cb": {
                 "verdict": "keep",
@@ -18172,9 +18182,9 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "the current user's id through nonce_user_logged_out and the session token handed to Nonce::create",
-                "doubt": "nonce_user_logged_out is asked for signed-in users too, where WordPress asks it only for user 0, and the tick comes from Nonce::tick, not the pluggable wp_nonce_tick that wp_verify_nonce uses",
-                "body": "b137e1aa45b5"
+                "why": "the current user's id (a visitor's through nonce_user_logged_out; probe sweep-1020) and the session token handed to Nonce::create",
+                "doubt": "the tick comes from Nonce::tick, not the pluggable wp_nonce_tick that wp_verify_nonce uses",
+                "body": "33c5a4de3f2b"
             },
             "wp_generate_auth_cookie": {
                 "verdict": "move",
@@ -18349,9 +18359,8 @@
             "wp_validate_logged_in_cookie": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "an earlier user id wins, else wp_validate_auth_cookie (pluggable) on the logged_in cookie",
-                "doubt": "WordPress refuses the logged_in cookie in the blog and network admin (is_blog_admin); here it is accepted everywhere",
-                "body": "e6371f9822cc"
+                "why": "an earlier user id wins; in the blog or network admin nothing more (only the admin cookie signs in there), else wp_validate_auth_cookie (pluggable) on the logged_in cookie",
+                "body": "703568edd79e"
             },
             "wp_validate_redirect": {
                 "verdict": "delegate",
@@ -18369,9 +18378,8 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "re-checks the nonce against this tick and the last, answering 1 or 2, and fires wp_verify_nonce_failed; Nonce::verify does the same check but answers only a bool",
-                "doubt": "nonce_user_logged_out is asked for signed-in users too; WordPress asks it only when the user id is 0",
-                "body": "4e3e634df64b"
+                "why": "re-checks the nonce against this tick and the last for the current user (a visitor's id through nonce_user_logged_out), answering 1 or 2, and fires wp_verify_nonce_failed; Nonce::verify does the same check but answers only a bool",
+                "body": "c5aded07d10f"
             }
         },
         "plugin.php": {

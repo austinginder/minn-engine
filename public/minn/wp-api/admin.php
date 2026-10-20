@@ -301,7 +301,8 @@ function do_settings_sections($page)
     }
     foreach ((array) $GLOBALS['wp_settings_sections'][$page] as $section) {
         if ($section['before_section'] !== '') {
-            echo $section['section_class'] !== '' ? sprintf($section['before_section'], esc_attr($section['section_class'])) : $section['before_section'];
+            // The markup around a section is held to the post allowlist, as the reference holds it.
+            echo wp_kses_post($section['section_class'] !== '' ? sprintf($section['before_section'], esc_attr($section['section_class'])) : $section['before_section']);
         }
         if ($section['title']) {
             $count = (int) Runtime::current()->get('settings_section_count', 0) + 1;
@@ -317,7 +318,7 @@ function do_settings_sections($page)
             echo '</table>';
         }
         if ($section['after_section'] !== '') {
-            echo $section['after_section'];
+            echo wp_kses_post($section['after_section']);
         }
     }
 }
@@ -365,7 +366,7 @@ function get_settings_errors($setting = '', $sanitize = false)
 
 function settings_errors($setting = '', $sanitize = false, $hide_on_update = false)
 {
-    if ($hide_on_update && !empty(Runtime::current()->request?->query['settings-updated'])) {
+    if ($hide_on_update && !empty($_GET['settings-updated'])) {
         return;
     }
     $errors = get_settings_errors($setting, $sanitize);
@@ -381,7 +382,7 @@ function settings_errors($setting = '', $sanitize = false, $hide_on_update = fal
         if (in_array($type, ['error', 'success', 'warning', 'info'], true)) {
             $type = 'notice-' . $type;
         }
-        $output .= "<div id='setting-error-{$details['code']}' class='notice {$type} settings-error is-dismissible'> \n";
+        $output .= "<div id='" . esc_attr('setting-error-' . $details['code']) . "' class='" . esc_attr("notice {$type} settings-error is-dismissible") . "'> \n";
         $output .= "<p><strong>{$details['message']}</strong></p>";
         $output .= "</div> \n";
     }

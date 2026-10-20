@@ -6,8 +6,8 @@ namespace Minn\Runtime;
 
 use Minn\Auth\Can;
 use Minn\Content\Comments;
-use Minn\Content\Posts;
 use Minn\Content\PostWriter;
+use Minn\Content\Posts;
 use Minn\I18n\Gettext;
 use Minn\Objects\Post;
 use Minn\Support\Sanitize;
@@ -52,6 +52,9 @@ final class PostWrites
         $columns = array_replace($columns, PostSave::data($columns, $sanitized, $given, $postId));
         self::beforeSave($columns, $postId);
         $id = $insert->persist($columns, $existing?->ID);
+        if ($id === 0) {
+            return $wpError ? PostInsert::unwritten($columns, $existing?->ID) : 0;
+        }
         self::slugFromId($id, $columns, $type);
         Handoff::cacheDelete($id, 'posts');
         ['post_status' => $status] = $columns + ['post_status' => null];
@@ -137,12 +140,15 @@ final class PostWrites
         foreach (PostRevisions::all($post->ID, ['check_enabled' => false]) as $revision) {
             PostRevisions::delete($revision);
         }
-        // Newest first, so a reply goes before the comment it answers and is never moved up; the post is counted once, after.
+        // Newest first, so a reply goes before the comment it answers; the post is counted once, after (even if a hook throws).
         Deferrals::comments(true);
-        foreach (array_reverse((new Comments(Runtime::current()->db))->idsOf($post->ID)) as $commentId) {
-            CommentWrites::delete($commentId, true);
+        try {
+            foreach (array_reverse((new Comments(Runtime::current()->db))->idsOf($post->ID)) as $commentId) {
+                CommentWrites::delete($commentId, true);
+            }
+        } finally {
+            Deferrals::comments(false);
         }
-        Deferrals::comments(false);
         self::deleteMeta($post->ID);
         return self::remove($post);
     }

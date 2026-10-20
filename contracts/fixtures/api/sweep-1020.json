@@ -1,0 +1,180 @@
+[
+    [
+        "latest posts showing full_post: protected posts",
+        [
+            false,
+            2
+        ]
+    ],
+    [
+        "latest posts showing excerpt: protected posts",
+        [
+            false,
+            2
+        ]
+    ],
+    [
+        "a caption attribute with markup the post allowlist refuses",
+        "<figure id=\"attachment_5\" aria-describedby=\"caption-attachment-5\" style=\"width: 100px\" class=\"wp-caption alignnone\"><img src=\"a.jpg\"><figcaption id=\"caption-attachment-5\" class=\"wp-caption-text\"><b>b</b>s()<a href=\"alert(1)\">j</a><img src=\"i.png\"><span style=\"color:red\">c</span></figcaption></figure>"
+    ],
+    [
+        "a caption written as the content",
+        "<figure style=\"width: 100px\" class=\"wp-caption alignnone\"><img src=\"a.jpg\"><figcaption class=\"wp-caption-text\"><b onclick=\"x()\">kept</b></figcaption></figure>"
+    ],
+    [
+        "a caption id that is not a class",
+        "<figure aria-describedby=\"zzcapx\" style=\"width: 100px\" class=\"wp-caption alignnone\"><img src=\"a.jpg\"><figcaption id=\"zzcapx\" class=\"wp-caption-text\">c</figcaption></figure>"
+    ],
+    [
+        "ids given again on the page",
+        [
+            "id=\"attachment_5-2\" aria-describedby=\"caption-attachment-5-2\" ",
+            "id=\"attachment_5-3\" aria-describedby=\"caption-attachment-5-3\" ",
+            "id=\"attachment_5-2\" aria-describedby=\"caption-attachment-5-2\" ",
+            "id=\"shared\" aria-describedby=\"caption-shared\" ",
+            "id=\"q\" aria-describedby=\"shared-2\" ",
+            "id=\"q-2\" aria-describedby=\"caption-q-2\" ",
+            "id=\"abc\" aria-describedby=\"caption-abc\" "
+        ]
+    ],
+    [
+        "a visitor's nonce: asked of the filter, then checked for user 1",
+        [
+            [
+                [
+                    0,
+                    "zzsweep"
+                ]
+            ],
+            false,
+            1,
+            []
+        ]
+    ],
+    [
+        "settings errors with quotes in their code and type",
+        "<div id='setting-error-a&quot;b&lt;c' class='notice err&quot;or settings-error is-dismissible'> \n<p><strong>Msg <em>x</em></strong></p></div> \n<div id='setting-error-plain' class='notice notice-success settings-error is-dismissible'> \n<p><strong>Two</strong></p></div> \n"
+    ],
+    [
+        "a section's surrounding markup",
+        "<div class=\"k&quot;l\">s()<h2 id=\"wp-settings-section-zzsweep-1\">Title <b>t</b></h2>\n</div><img src=\"x\">"
+    ],
+    [
+        "create_post_autosave: a slot, and DOING_AUTOSAVE after it",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "a later write keeps its revision",
+        2
+    ],
+    [
+        "the author's autosave of their draft, locked by no one",
+        [
+            200,
+            "from the author",
+            null,
+            false
+        ]
+    ],
+    [
+        "the author's autosave of their draft, locked by the editor",
+        [
+            200,
+            "original",
+            "from the author",
+            true
+        ]
+    ],
+    [
+        "the author's autosave of their draft, locked by the author",
+        [
+            200,
+            "from the author",
+            null,
+            false
+        ]
+    ],
+    [
+        "the author's autosave of their draft, locked by the editor, an hour ago",
+        [
+            200,
+            "from the author",
+            null,
+            false
+        ]
+    ],
+    [
+        "the front end's cookie in the blog admin, and outside it",
+        [
+            false,
+            1,
+            true
+        ]
+    ],
+    [
+        "300 comment openers and one close through wp_filter_kses",
+        [
+            2093,
+            "8b5f4f8a27e3bcb0ec1afe79587a7714"
+        ]
+    ],
+    [
+        "300 comment openers and one close through wp_kses_post",
+        [
+            2093,
+            "8b5f4f8a27e3bcb0ec1afe79587a7714"
+        ]
+    ],
+    [
+        "3000 comment openers and one close through wp_filter_kses",
+        [
+            20993,
+            "281855ef2230bd924ad203a7eb691b86"
+        ]
+    ],
+    [
+        "3000 comment openers and one close through wp_kses_post",
+        [
+            20993,
+            "281855ef2230bd924ad203a7eb691b86"
+        ]
+    ],
+    [
+        "a cover that is a PNG named a GIF",
+        [
+            "png",
+            "image/png"
+        ]
+    ],
+    [
+        "a cover that is a GIF named a PNG",
+        [
+            "gif",
+            "image/gif"
+        ]
+    ],
+    [
+        "a cover that is a JPEG named HTML",
+        [
+            "jpg",
+            "image/jpeg"
+        ]
+    ],
+    [
+        "a cover that is a WebP",
+        [
+            "jpg",
+            ""
+        ]
+    ],
+    [
+        "a cover that is a script named a PNG",
+        [
+            "jpg",
+            ""
+        ]
+    ]
+]
