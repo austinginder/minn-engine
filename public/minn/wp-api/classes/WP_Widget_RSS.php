@@ -16,11 +16,11 @@ class WP_Widget_RSS extends WP_Widget
         if (!empty($instance['error'])) {
             return;
         }
+        // The address starts at its first "http"; the site's own address is never fetched (probe sweep-1020b).
         $url = strip_tags((string) ($instance['url'] ?? ''));
-        if (str_starts_with($url, 'http://feeds.feedburner.com/')) {
-            $url = 'http://feeds.feedburner.com/' . substr($url, 28);
-        }
-        if ($url === '') {
+        $at = stripos($url, 'http');
+        $url = $at === false ? '' : substr($url, $at);
+        if ($url === '' || in_array(untrailingslashit($url), [untrailingslashit(site_url()), untrailingslashit(home_url())], true)) {
             return;
         }
         $rss = fetch_feed($url);
@@ -29,7 +29,7 @@ class WP_Widget_RSS extends WP_Widget
         if (!is_wp_error($rss)) {
             $link = strip_tags((string) $rss->get_permalink());
             if ($title === '') {
-                $title = strip_tags((string) $rss->get_title());
+                $title = strip_tags((string) $rss->get_title()) ?: strip_tags((string) $rss->get_description());
             }
         }
         if (empty($title)) {

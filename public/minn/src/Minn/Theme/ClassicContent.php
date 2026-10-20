@@ -24,7 +24,7 @@ use Minn\Html;
 final class ClassicContent
 {
     /** A post's content as the classic loop prints it, with the more link. */
-    public static function render(PostRecord $post, ?string $moreLinkText): string
+    public static function render(PostRecord $post, ?string $moreLinkText, Teaser $teaser = Teaser::Kept): string
     {
         $permalinks = Runtime::current()->get('permalinks');
         if (!$permalinks instanceof Permalinks) {
@@ -43,6 +43,9 @@ final class ClassicContent
         if (!MainQuery::current()->is_singular() && empty($GLOBALS['more']) && $more !== false) {
             $label = $moreLinkText ?? \Minn\I18n\Gettext::text('(more&hellip;)');
             $content = substr($raw, 0, $more) . ' <a href="' . Html::attr($link() . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . $label . '</span></a>';
+        } elseif ($teaser === Teaser::Stripped && $more !== false) {
+            // The whole text without its teaser (the_content's $strip_teaser): what follows the more tag.
+            $content = '<span id="more-' . $post->id . '"></span>' . substr($raw, $more + 11);
         } else {
             $content = str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw);
         }

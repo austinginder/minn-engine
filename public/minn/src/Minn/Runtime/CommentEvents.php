@@ -55,10 +55,10 @@ final readonly class CommentEvents
      *
      * @param array<string, mixed> $prepared the request's fields as the controller prepares them
      */
-    public function restCreate(array $prepared, Request $request): int
+    public function restCreate(array $prepared, Request $request, string $type = 'comment'): int
     {
         $wpRequest = RuntimeRoutes::wpRequest($request);
-        $prepared = array_merge(self::preprocessed($prepared, $wpRequest), ['comment_type' => 'comment']) + ['comment_content' => ''];
+        $prepared = array_merge(self::preprocessed($prepared, $wpRequest), ['comment_type' => $type]) + ['comment_content' => ''];
         $user = Handoff::currentUser();
         $authored = array_filter(array_intersect_key($prepared, array_flip(['user_id', 'comment_author', 'comment_author_email', 'comment_author_url'])));
         if ($user->ID > 0 && $authored === []) {

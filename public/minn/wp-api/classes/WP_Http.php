@@ -156,32 +156,9 @@ namespace {
          */
         public function __construct($data, $requested_url = '')
         {
-            if (is_string($data)) {
-                $parsed = \Minn\Http\CookieText::parse($data);
-                [$this->name, $this->value] = [$parsed['name'], urldecode((string) $parsed['value'])];
-                foreach ($parsed['attributes'] as $key => $val) {
-                    $key = strtolower((string) $key);
-                    $val = $val === true ? '' : (string) $val;
-                    if (in_array($key, ['expires', 'path', 'domain', 'port'], true)) {
-                        $this->{$key} = $key === 'expires' ? strtotime($val) : $val;
-                    }
-                }
-                if ($requested_url !== '' && ($from = parse_url((string) $requested_url)) !== false) {
-                    $this->domain ??= $from['host'] ?? null;
-                    $path = $from['path'] ?? '/';
-                    $this->path ??= str_ends_with($path, '/') ? $path : dirname($path) . '/';
-                }
-            } else {
-                foreach ((array) $data as $key => $val) {
-                    if (property_exists($this, $key)) {
-                        $this->{$key} = $val;
-                    }
-                }
-                if (is_string($this->expires) && !is_numeric($this->expires)) {
-                    $this->expires = strtotime($this->expires);
-                }
+            foreach (\Minn\Http\CookieText::fields(is_string($data) ? $data : (array) $data, (string) $requested_url, array_keys(get_object_vars($this))) as $key => $value) {
+                $this->{$key} = $value;
             }
-            $this->path ??= '/';
         }
 
         /** Whether the cookie goes with a request to a URL: not expired, the host ending with its domain, the path starting with its path, the port among its ports. */
@@ -406,32 +383,7 @@ namespace {
          */
         public static function make_absolute_url($maybe_relative_path, $url)
         {
-            $relative = (string) $maybe_relative_path;
-            if (empty($url) || preg_match('#^[a-z][a-z0-9+.-]*:#i', $relative) === 1) {
-                return $maybe_relative_path;
-            }
-            $base = (array) wp_parse_url((string) $url);
-            if (str_starts_with($relative, '//')) {
-                return ($base['scheme'] ?? '') . ':' . $relative;
-            }
-            $parts = (array) wp_parse_url($relative);
-            $path = (string) ($parts['path'] ?? '');
-            $basePath = (string) ($base['path'] ?? '');
-            if ($path === '') {
-                $path = $basePath;
-            } elseif (!str_starts_with($path, '/')) {
-                $slash = strrpos($basePath, '/');
-                $path = ($slash === false ? '/' : substr($basePath, 0, $slash + 1)) . $path;
-                do {
-                    $path = (string) preg_replace('#/(?!\.\./)[^/]+/\.\./#', '/', $path, 1, $collapsed);
-                } while ($collapsed > 0);
-                while (str_starts_with($path, '/../')) {
-                    $path = substr($path, 3);
-                }
-                $path = str_starts_with($path, '/') ? $path : '/' . $path;
-            }
-            return ($base['scheme'] ?? '') . '://' . ($base['host'] ?? '') . (isset($base['port']) ? ':' . $base['port'] : '') . $path
-                . (($parts['query'] ?? '') !== '' ? '?' . $parts['query'] : '') . (($parts['fragment'] ?? '') !== '' ? '#' . $parts['fragment'] : '');
+            return empty($url) ? $maybe_relative_path : Minn\Support\Url::absolute((string) $maybe_relative_path, (string) $url);
         }
 
         /** A raw response split at its first blank line into the header block and the body. */

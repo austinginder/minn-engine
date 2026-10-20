@@ -126,6 +126,10 @@ final readonly class BatchController
         $wpRequest->set_attributes((array) $matched[1]);
         $valid = $wpRequest->has_valid_params();
         if (!Records::isError($valid)) {
+            // An argument's schema is checked as it is sanitized (probe sweep-1020b).
+            $valid = $wpRequest->sanitize_params();
+        }
+        if (!Records::isError($valid)) {
             return null;
         }
         $response = Responses::fromErrors($valid);

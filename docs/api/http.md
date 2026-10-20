@@ -7,7 +7,7 @@ request, response, routing, and the outgoing client
 | [`Access`](#access) | enum | 17 | Who a route is for. The six answers every route gives, so the |
 | [`Args`](#args) | final class | 195 | The parameters a route accepts, as the reference describes them in the |
 | [`CertificateName`](#certificatename) | final class | 56 | Whether a TLS certificate names a host: a wildcard only as a whole first |
-| [`CookieText`](#cookietext) | final class | 94 | Set-Cookie text and the matching rules a cookie jar applies: parsing a |
+| [`CookieText`](#cookietext) | final class | 133 | Set-Cookie text and the matching rules a cookie jar applies: parsing a |
 | [`Destination`](#destination) | final readonly class | 102 | Where Minn\Http lets a request go. Only http and https; when hosts are |
 | [`DiePage`](#diepage) | final class | 126 | The page wp_die shows a browser, as the reference draws it (probe |
 | [`Download`](#download) | final readonly class | 36 | A file the engine fetches for itself (a package, a language pack), over |
@@ -174,6 +174,19 @@ Whether a cookie with this path attribute (none means any) is sent for the reque
 ### static `defaultPath(string $requestPath): string`
 
 The path a cookie without one gets: the request path up to its last slash, or "/".
+
+### static `fields(array|string $data, string $requestedUrl, array $properties): array`
+
+A cookie's fields, as WP_Http_Cookie sets them: from a Set-Cookie
+value (the value URL-decoded; expires, path, domain and port from its
+attributes; the domain and path it names none of from the URL it came
+from: the host, and the URL's directory), or from given fields that are
+among $properties (an expiry given as a date becomes a timestamp); the
+path "/" when nothing gives one.
+
+- `@param array<string, mixed>|string $data`
+- `@param list<string> $properties`
+- `@return array<string, mixed>`
 
 
 ## Destination

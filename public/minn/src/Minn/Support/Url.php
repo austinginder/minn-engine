@@ -241,4 +241,39 @@ final class Url
         }
         return $location;
     }
+
+    /**
+     * A reference made absolute against a base URL, as WP_Http resolves a
+     * redirect's Location: one with a scheme stays as it is, "//host" takes
+     * the base's scheme, a path without a leading slash joins the base's
+     * folder with its "../" steps folded, and no path keeps the base's.
+     */
+    public static function absolute(string $relative, string $base): string
+    {
+        if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $relative) === 1) {
+            return $relative;
+        }
+        $from = (array) self::parse($base);
+        if (str_starts_with($relative, '//')) {
+            return ($from['scheme'] ?? '') . ':' . $relative;
+        }
+        $parts = (array) self::parse($relative);
+        $path = (string) ($parts['path'] ?? '');
+        $basePath = (string) ($from['path'] ?? '');
+        if ($path === '') {
+            $path = $basePath;
+        } elseif (!str_starts_with($path, '/')) {
+            $slash = strrpos($basePath, '/');
+            $path = ($slash === false ? '/' : substr($basePath, 0, $slash + 1)) . $path;
+            do {
+                $path = (string) preg_replace('#/(?!\.\./)[^/]+/\.\./#', '/', $path, 1, $collapsed);
+            } while ($collapsed > 0);
+            while (str_starts_with($path, '/../')) {
+                $path = substr($path, 3);
+            }
+            $path = str_starts_with($path, '/') ? $path : '/' . $path;
+        }
+        return ($from['scheme'] ?? '') . '://' . ($from['host'] ?? '') . (isset($from['port']) ? ':' . $from['port'] : '') . $path
+            . (($parts['query'] ?? '') !== '' ? '?' . $parts['query'] : '') . (($parts['fragment'] ?? '') !== '' ? '#' . $parts['fragment'] : '');
+    }
 }

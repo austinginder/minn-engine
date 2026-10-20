@@ -27,8 +27,10 @@ class WP_Widget_Recent_Posts extends WP_Widget
         echo $open . "\n\t\t<ul>\n";
         foreach ($query->posts as $post) {
             $current = get_queried_object_id() === $post->ID ? ' aria-current="page"' : '';
-            $postTitle = get_the_title($post) ?: $post->ID;
-            echo "\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"" . get_permalink($post) . "\"{$current}>{$postTitle}</a>\n";
+            // The link through the_permalink and escaped; an untitled post shows "(no title)".
+            $postTitle = get_the_title($post) ?: __('(no title)');
+            $link = esc_url(apply_filters('the_permalink', get_permalink($post), $post));
+            echo "\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"" . $link . "\"{$current}>{$postTitle}</a>\n";
             if ($showDate) {
                 echo "\t\t\t\t\t\t\t\t\t\t\t<span class=\"post-date\">" . get_the_date('', $post) . "</span>\n";
             }

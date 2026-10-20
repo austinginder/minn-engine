@@ -195,4 +195,34 @@ $say('the old translations object', $mask((static function () use ($moFile) {
     return $out;
 })()));
 
+// Each class reads its own format whatever the name says: an MO object over PHP never runs it, and an MO of another revision is refused.
+$say('each class reads its own format', (static function () use ($dir) {
+    $one = static function (int $revision): string {
+        return pack('V9', 0x950412de, $revision, 1, 28, 36, 0, 44, 2, 44) . pack('V2', 7, 47) . "Hi\0Bonjour\0";
+    };
+    file_put_contents("$dir/run.php", "<?php \$GLOBALS['zz_probe_l10n_ran'] = 1; return ['messages' => ['Hi' => 'Bonjour']];");
+    file_put_contents("$dir/plain.mo", $one(0));
+    file_put_contents("$dir/next.mo", $one(1));
+    file_put_contents("$dir/far.mo", $one(0x10000));
+    $out = [];
+    foreach ([['WP_Translation_File_MO', 'run.php'], ['WP_Translation_File_PHP', 'plain.mo'], ['WP_Translation_File_MO', 'plain.mo'], ['WP_Translation_File_MO', 'next.mo'], ['WP_Translation_File_MO', 'far.mo']] as [$class, $name]) {
+        unset($GLOBALS['zz_probe_l10n_ran']);
+        $reflection = new ReflectionClass($class);
+        $file = $reflection->newInstanceWithoutConstructor();
+        $constructor = $reflection->getConstructor();
+        $constructor->setAccessible(true);
+        $constructor->invoke($file, "$dir/$name");
+        ob_start();
+        $translated = $file->translate('Hi');
+        $printed = strlen((string) ob_get_clean());
+        $out[] = [$class, $name, $translated, $file->error(), $GLOBALS['zz_probe_l10n_ran'] ?? 0, $printed];
+    }
+    foreach (['next.mo', 'far.mo'] as $name) {
+        $legacy = new MO();
+        $out[] = [$name, $legacy->import_from_file("$dir/$name"), $legacy->translate('Hi'), load_textdomain('zz-probe-rev', "$dir/$name"), translate('Hi', 'zz-probe-rev')];
+        unload_textdomain('zz-probe-rev');
+    }
+    return $out;
+})());
+
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE), "\n";

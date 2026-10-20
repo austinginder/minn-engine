@@ -125,10 +125,8 @@ final class Kses
      * Block markup with every attribute key and string value passed through
      * the same filter, and the delimiters written back in their canonical
      * form ("--->" read as "-->"). Markup without a comment is left alone.
-     *
-     * @param Closure(string): string $clean
      */
-    public static function blockAttributes(string $html, Closure $clean): string
+    public static function blockAttributes(string $html, Closure $clean, ?Closure $entry = null): string
     {
         if (!str_contains($html, '<!--')) {
             return $html;
@@ -136,34 +134,34 @@ final class Kses
         if (str_contains($html, '--->')) {
             $html = (string) preg_replace_callback('%<!--(.*?)--->%', static fn (array $m): string => '<!--' . rtrim($m[1], '-') . '-->', $html);
         }
-        return Serializer::blocks(array_map(static fn (Block $block): Block => self::cleaned($block, $clean), Parser::parse($html)));
+        return Serializer::blocks(array_map(static fn (Block $block): Block => self::cleaned($block, $clean, $entry), Parser::parse($html)));
     }
 
     /**
      * As blockAttributes, the blocks read by the parser block_parser_class
-     * names, as wp_pre_kses_block_attributes reads them (probe
-     * kses-allowed-asks): the engine's own, or one a plugin swaps in, whose
-     * blocks are written back as it read them.
+     * names (probe kses-allowed-asks), written back as it read them; $entry
+     * sees each cleaned entry with its block's name and key and returns its
+     * value (a template part's tag names, probe sweep-1020b).
      *
      * @param Closure(string): string $clean
+     * @param ?Closure(?string, int|string, mixed): mixed $entry
      */
-    public static function blockAttributesParsed(string $html, Closure $clean): string
+    public static function blockAttributesParsed(string $html, Closure $clean, ?Closure $entry = null): string
     {
         $class = Parser::swapped();
         if ($class === null) {
-            return self::blockAttributes($html, $clean);
+            return self::blockAttributes($html, $clean, $entry);
         }
-        return Serializer::blocks(array_map(static fn (Block $block): Block => self::cleaned($block, $clean), Parser::withClass($class, $html)));
+        return Serializer::blocks(array_map(static fn (Block $block): Block => self::cleaned($block, $clean, $entry), Parser::withClass($class, $html)));
     }
 
     /** @param Closure(string): string $clean */
-    private static function cleaned(Block $block, Closure $clean): Block
+    private static function cleaned(Block $block, Closure $clean, ?Closure $entry): Block
     {
-        return new Block($block->name, self::cleanValue($block->attrs, $clean), array_map(static fn (Block $inner): Block => self::cleaned($inner, $clean), $block->innerBlocks), $block->innerHtml, $block->innerContent);
+        return new Block($block->name, self::cleanValue($block->attrs, $clean, $entry, $block->name), array_map(static fn (Block $inner): Block => self::cleaned($inner, $clean, $entry), $block->innerBlocks), $block->innerHtml, $block->innerContent);
     }
 
-    /** @param Closure(string): string $clean */
-    private static function cleanValue(mixed $value, Closure $clean): mixed
+    private static function cleanValue(mixed $value, Closure $clean, ?Closure $entry = null, ?string $block = null): mixed
     {
         if (is_string($value)) {
             return $clean($value);
@@ -173,7 +171,9 @@ final class Kses
         }
         $out = [];
         foreach ($value as $key => $inner) {
-            $out[is_string($key) ? $clean($key) : $key] = self::cleanValue($inner, $clean);
+            $key = is_string($key) ? $clean($key) : $key;
+            $inner = self::cleanValue($inner, $clean, $entry, $block);
+            $out[$key] = $entry === null ? $inner : $entry($block, $key, $inner);
         }
         return $out;
     }

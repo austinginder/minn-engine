@@ -857,7 +857,10 @@ function _minn_rest_search_through_handlers(WP_REST_Request $request)
     if (is_wp_error($valid)) {
         return $valid;
     }
-    $request->sanitize_params();
+    $sanitized = $request->sanitize_params();
+    if (is_wp_error($sanitized)) {
+        return $sanitized;
+    }
     $response = rest_ensure_response($controller->get_items($request));
     return is_wp_error($response) ? $response : rest_filter_response_fields($response, rest_get_server(), $request);
 }

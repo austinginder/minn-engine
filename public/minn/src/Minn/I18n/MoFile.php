@@ -21,7 +21,7 @@ final class MoFile
     public static function read(string $bytes): ?Catalog
     {
         $format = self::byteOrder($bytes);
-        if ($format === null || strlen($bytes) < 20) {
+        if ($format === null || strlen($bytes) < 20 || self::revision($bytes) !== 0) {
             return null;
         }
         $head = unpack("{$format}count/{$format}originals/{$format}translations", $bytes, 8);
@@ -74,6 +74,13 @@ final class MoFile
             }
         }
         return pack('V7', self::MAGIC, 0, $count, $originalsAt, $translationsAt, 0, $offset) . $tables[0] . $tables[1] . $data;
+    }
+
+    /** The file's format revision: only 0 is read (probe translation-files). */
+    public static function revision(string $bytes): ?int
+    {
+        $format = self::byteOrder($bytes);
+        return $format === null || strlen($bytes) < 8 ? null : (int) unpack($format, $bytes, 4)[1];
     }
 
     /** "V" for a little-endian file, "N" for a big-endian one, null for anything else. */

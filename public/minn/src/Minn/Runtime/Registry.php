@@ -400,6 +400,17 @@ final class Registry
         $this->features[$type][$feature] = $args === [] ? true : $args;
     }
 
+    /**
+     * The types holding features, registered or not (attachment:audio), in
+     * the order their first feature came (get_post_types_by_support walks these).
+     *
+     * @return list<string>
+     */
+    public function featuredTypes(): array
+    {
+        return array_map('strval', array_keys($this->features));
+    }
+
     /** Removes a feature from a post type. */
     public function removeSupport(string $type, string $feature): void
     {

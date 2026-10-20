@@ -20,7 +20,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Menus`](#menus) | final readonly class | 468 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`NoteMarkers`](#notemarkers) | final class | 34 | The markers the block editor's notes leave in content: a mark element |
-| [`ObjectLabels`](#objectlabels) | final class | 24 | A post type's or taxonomy's labels from its own and the defaults |
+| [`ObjectLabels`](#objectlabels) | final class | 39 | A post type's or taxonomy's labels from its own and the defaults |
 | [`Page`](#page) | final readonly class | 43 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 75 | A password-protected post on the front end: its body is the password |
 | [`PersonalData`](#personaldata) | final class | 36 | Personal data as the privacy tools hand it over (probe privacy): an |
@@ -45,7 +45,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 316 |  |
+| [`Users`](#users) | final readonly class | 326 |  |
 
 ## Autop
 
@@ -826,6 +826,15 @@ The labels, the object's own filled in by the rules above and laid over the defa
 
 - `@param array<string, mixed> $labels the object's own`
 - `@param array<string, mixed> $defaults key => the default for this object`
+- `@return array<string, mixed>`
+
+### static `derive(array $labels, ?string $label, string $name): array`
+
+The object's own labels with what the rules derive added, each only
+when what it comes from is there (probe post-doubts): what the
+reference writes back onto the object.
+
+- `@param array<string, mixed> $labels the object's own`
 - `@return array<string, mixed>`
 
 
@@ -2404,6 +2413,12 @@ User ids in login order, optionally the first N. @return list<int>
 ### `setPassword(int $userId, string $hash): void`
 
 Stores a new password hash and clears any pending reset key.
+
+### `clearResetKey(int $userId): void`
+
+A pending password reset dropped: a good sign-in (wp_signon, the
+sign-in page) ends it, so a link mailed earlier no longer opens the
+reset form (probe sweep-1020b, login suite).
 
 ### `count(): int`
 

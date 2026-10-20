@@ -512,8 +512,12 @@ add_action('set_current_user', '_wp_footnotes_kses_init');
 add_filter('force_filtered_html_on_import', '_wp_footnotes_force_filtered_html_on_import_filter', 999);
 add_filter('wp_save_post_revision_post_has_changed', 'wp_check_revisioned_meta_fields_have_changed', 10, 3);
 add_action('_wp_put_post_revision', 'wp_save_revisioned_meta_fields', 10, 2);
+// A comment author's address is scrambled against harvesters where it is shown (get_comment_author_email_link).
+add_filter('comment_email', 'antispambot');
 add_action('post_updated', 'wp_check_for_changed_slugs', 12, 3);
 add_action('post_updated', 'wp_check_for_changed_dates', 12, 3);
+add_action('attachment_updated', 'wp_check_for_changed_slugs', 12, 3);
+add_action('attachment_updated', 'wp_check_for_changed_dates', 12, 3);
 add_action('wp_after_insert_post', 'wp_save_post_revision_on_insert', 9, 3);
 // What the reference says on an admin request (admin-ajax.php is the only
 // one the engine answers), and the heartbeat's sign-in report.

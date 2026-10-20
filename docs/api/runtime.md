@@ -32,7 +32,7 @@ the WordPress runtime plugins load against
 | [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
 | [`BrowserGlobals`](#browserglobals) | final class | 45 | The browser and web server a request names, as the reference's globals |
 | [`CommentChecks`](#commentchecks) | final class | 297 | What WordPress checks of a comment before and after it is stored: the |
-| [`CommentCloser`](#commentcloser) | final readonly class | 30 | The Discussion setting that closes comments on old posts. Observed on the |
+| [`CommentCloser`](#commentcloser) | final readonly class | 31 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentEvents`](#commentevents) | final readonly class | 259 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
@@ -40,8 +40,8 @@ the WordPress runtime plugins load against
 | [`CommentQuery`](#commentquery) | final readonly class | 28 | The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner). |
 | [`CommentQueryRunner`](#commentqueryrunner) | final class | 131 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
 | [`CommentQueryWhere`](#commentquerywhere) | final class | 196 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
-| [`CommentReads`](#commentreads) | final class | 38 | What WordPress's comment functions tell about comments: the comments a |
-| [`CommentTags`](#commenttags) | final class | 59 | What the comment template tags tell about a comment (the one being read |
+| [`CommentReads`](#commentreads) | final class | 49 | What WordPress's comment functions tell about comments: the comments a |
+| [`CommentTags`](#commenttags) | final class | 60 | What the comment template tags tell about a comment (the one being read |
 | [`CommentThreads`](#commentthreads) | final class | 68 | A threaded or flat comment query's descendants as the reference fills |
 | [`CommentWrites`](#commentwrites) | final class | 344 | Comments written as WordPress's comment functions write them: a comment |
 | [`Connectors`](#connectors) | final class | 221 | The connectors registry: the external services a site talks to (AI |
@@ -94,7 +94,7 @@ the WordPress runtime plugins load against
 | [`PluginRemoval`](#pluginremoval) | final class | 135 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 269 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 270 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostCaches`](#postcaches) | final class | 27 | A post's cached rows let go as WordPress lets them go: its row, its meta |
 | [`PostData`](#postdata) | final class | 98 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 165 | What the reference's REST controllers tell plugins about a post they |
@@ -102,7 +102,7 @@ the WordPress runtime plugins load against
 | [`PostInsert`](#postinsert) | final readonly class | 184 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 223 | Post addresses as the reference's link functions build them (probe |
 | [`PostLocks`](#postlocks) | final class | 24 | A post's edit lock (_edit_lock, "time:user"): who holds it while it is |
-| [`PostLookup`](#postlookup) | final readonly class | 134 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
+| [`PostLookup`](#postlookup) | final readonly class | 153 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 425 | WP_Query::get_posts as the reference runs it (probe wp-query-sql): the |
 | [`PostQueryParts`](#postqueryparts) | final class | 56 | The pieces of one WP_Query run as the reference builds them and hands |
 | [`PostQueryResults`](#postqueryresults) | final class | 113 | What WP_Query does with its posts once it has them, as the reference does |
@@ -124,7 +124,7 @@ the WordPress runtime plugins load against
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registered`](#registered) | final class | 188 | What is registered, looked up the way WordPress's lookups answer: post |
 | [`RegisteredSettings`](#registeredsettings) | final class | 108 | Settings as register_setting keeps them (probe rest-settings): the |
-| [`Registry`](#registry) | final class | 512 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`Registry`](#registry) | final class | 523 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RequestHeaders`](#requestheaders) | final class | 82 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 374 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`Runtime`](#runtime) | final class | 475 | The WordPress runtime the engine offers plugin code: the procedural |
@@ -1740,7 +1740,7 @@ Whether plugins are loaded to be told anything.
 
 The check a new comment passes on the reference before it is written: check_comment_flood, with the address, the email and the GMT date.
 
-### `restCreate(array $prepared, Minn\Http\Request $request): int`
+### `restCreate(array $prepared, Minn\Http\Request $request, string $type = 'comment'): int`
 
 A comment created over REST with plugins loaded, as the reference's
 controller creates one (probe rest-comment-save): the request's
@@ -2017,6 +2017,13 @@ The comments a query finds (get_comments): comments, ids or a count, as the comm
 ### static `counts(mixed $postId = 0): object`
 
 How many comments a post or the site has in each status (wp_count_comments), unless wp_count_comments answers first.
+
+### static `table(mixed $postId = 0): array`
+
+The comments counted from the table by status, no filter asked
+(get_comment_count): a post's, or the site's for 0.
+
+- `@return array<string, int>`
 
 ### static `lastModified(mixed $timezone = 'server'): mixed`
 
@@ -5145,7 +5152,7 @@ gate refused it.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 152), `rememberThemeDomain()` (private, line 175), `includeFile()` (private, line 238), `registerRealpath()` (private, line 269), `isolatedInclude()` (private, line 282)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 153), `rememberThemeDomain()` (private, line 176), `includeFile()` (private, line 239), `registerRealpath()` (private, line 270), `isolatedInclude()` (private, line 283)
 
 
 ## PostCaches
@@ -5508,6 +5515,13 @@ __construct(Minn\Db $db)
 ```
 
 
+### `idWhere(array $columns): ?int`
+
+The first post whose columns hold the values given, each as stored
+(post_exists); null for none.
+
+- `@param array<string, string> $columns column => value; only post_title, post_content, post_date, post_type and post_status`
+
 ### `idByTitle(string $title, array $types): ?int`
 
 The id of a post with this title among the types, or null.
@@ -5520,7 +5534,7 @@ Revision rows newest first. @return list<array<string, mixed>>
 
 - `@return list<array<string, mixed>>`
 
-### `countByStatus(string $type): array`
+### `countByStatus(string $type, ?int $privateOf = NULL): array`
 
 How many posts of a type there are per status.
 
@@ -6891,6 +6905,13 @@ features apart from the type objects, so declaring one does not make
 the type exist. A feature with arguments keeps all of them.
 
 - `@param list<mixed> $args`
+
+### `featuredTypes(): array`
+
+The types holding features, registered or not (attachment:audio), in
+the order their first feature came (get_post_types_by_support walks these).
+
+- `@return list<string>`
 
 ### `removeSupport(string $type, string $feature): void`
 

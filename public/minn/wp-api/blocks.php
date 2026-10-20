@@ -647,6 +647,10 @@ function filter_block_kses_value($value, $allowed_html, $allowed_protocols = [],
         foreach ($value as $key => $inner_value) {
             $filtered_key = filter_block_kses_value($key, $allowed_html, $allowed_protocols, $block_context);
             $filtered_value = filter_block_kses_value($inner_value, $allowed_html, $allowed_protocols, $block_context);
+            // A template part's tag names, nested ones too, must be tags the allowlist knows (no "script").
+            if (($block_context['blockName'] ?? null) === 'core/template-part') {
+                $filtered_value = filter_block_core_template_part_attributes($filtered_value, $filtered_key, $allowed_html);
+            }
             if ($filtered_key !== $key) {
                 unset($value[$key]);
             }
@@ -660,7 +664,13 @@ function filter_block_kses_value($value, $allowed_html, $allowed_protocols = [],
 
 function filter_block_content($text, $allowed_html = 'post', $allowed_protocols = [])
 {
-    return Kses::blockAttributesParsed((string) $text, static fn (string $value): string => wp_kses($value, $allowed_html, (array) $allowed_protocols));
+    return Kses::blockAttributesParsed((string) $text, static fn (string $value): string => wp_kses($value, $allowed_html, (array) $allowed_protocols), _minn_template_part_entry($allowed_html));
+}
+
+/** @internal a template part's tag names, nested ones too, kept to tags the allowlist knows as its attributes are filtered (probe sweep-1020b) */
+function _minn_template_part_entry($allowed_html): Closure
+{
+    return static fn (?string $block, $key, $value) => $block === 'core/template-part' ? filter_block_core_template_part_attributes($value, $key, $allowed_html) : $value;
 }
 
 function _filter_block_content_callback($matches)
@@ -799,8 +809,14 @@ function _block_bindings_term_data_get_value(array $source_args, $block_instance
     if (!$term instanceof WP_Term) {
         return null;
     }
+    // A term of a taxonomy the public cannot view is shown only to who may edit it.
+    if (!is_taxonomy_viewable($term->taxonomy) && !current_user_can('edit_term', $term->term_id)) {
+        return null;
+    }
     return match ($source_args['field'] ?? '') {
         'id' => (string) $term->term_id,
+        'count' => (string) $term->count,
+        'parent' => (string) $term->parent,
         'name' => $term->name,
         'slug' => $term->slug,
         'description' => $term->description,
@@ -1842,10 +1858,12 @@ function inject_ignored_hooked_blocks_metadata_attributes($changes, $deprecated 
 /** A template part's attribute as kses leaves it: its tagName only when the allowed tags name it, anything else as given. */
 function filter_block_core_template_part_attributes($attribute_value, $attribute_name, $allowed_html)
 {
-    if ($attribute_name !== 'tagName') {
+    // Only a tag name is judged, an empty one passed through; a named context is its allowlist (wp_kses_allowed_html).
+    if ($attribute_name !== 'tagName' || empty($attribute_value)) {
         return $attribute_value;
     }
-    return is_string($attribute_value) && isset($allowed_html[$attribute_value]) ? $attribute_value : '';
+    $allowed = is_string($allowed_html) ? wp_kses_allowed_html($allowed_html) : (array) $allowed_html;
+    return is_string($attribute_value) && isset($allowed[$attribute_value]) ? $attribute_value : '';
 }
 
 /** A block's own content (a part, a pattern) through the content filters, without the_content: shortcodes, blocks, texturize, smilies, the content tags. */

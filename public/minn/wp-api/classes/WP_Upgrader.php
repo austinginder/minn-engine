@@ -375,11 +375,22 @@ class Plugin_Upgrader extends WP_Upgrader
         if ($file === '') {
             return new WP_Error('bad_request', $this->strings['bad_request']);
         }
-        $path = WP_PLUGIN_DIR . '/' . (str_contains($file, '/') ? dirname($file) : $file);
-        if (!file_exists($path)) {
+        // A plugin in a folder of its own takes the folder; any other is its one file. The plugins folder itself is
+        // never emptied, and a path climbing out of it (..) is refused, where the reference would delete above it.
+        if (str_contains($file, '..')) {
+            return new WP_Error('remove_old_failed', $this->strings['remove_old_failed']);
+        }
+        // Through the filesystem a plugin set up, as the reference deletes, else straight on disk (probe sweep-1020b).
+        global $wp_filesystem;
+        $fs = is_object($wp_filesystem) ? $wp_filesystem : null;
+        $plugins = $fs ? $fs->wp_plugins_dir() : trailingslashit(WP_PLUGIN_DIR);
+        $folder = trailingslashit(dirname($plugins . $file));
+        if (!($fs ? $fs->exists($folder) : file_exists($folder))) {
             return $removed;
         }
-        return Minn\Support\Files::deleteTree($path) ? true : new WP_Error('remove_old_failed', $this->strings['remove_old_failed']);
+        $tree = strpos($file, '/') && $folder !== $plugins;
+        $deleted = $fs ? $fs->delete($tree ? $folder : $plugins . $file, $tree) : ($tree ? Minn\Support\Files::deleteTree($folder) : (!is_file($plugins . $file) || unlink($plugins . $file)));
+        return $deleted ? true : new WP_Error('remove_old_failed', $this->strings['remove_old_failed']);
     }
 }
 

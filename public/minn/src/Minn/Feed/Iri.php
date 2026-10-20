@@ -70,7 +70,7 @@ final class Iri
             $authority = $parts['authority'];
             if (preg_match('/^(.*@)?([^@:]*|\[[^\]]*\])(?::(\d*))?$/', $authority, $a)) {
                 $port = ($a[3] ?? '') === '' || (int) $a[3] === (self::DEFAULT_PORTS[$scheme] ?? -1) ? '' : ':' . (int) $a[3];
-                $authority = ($a[1] ?? '') . strtolower($a[2]) . $port;
+                $authority = ($a[1] ?? '') . strtolower(self::unescape($a[2])) . $port;
             }
             $url .= '//' . self::encode($authority, ':@[]');
         }
@@ -113,9 +113,22 @@ final class Iri
         return implode('/', $out);
     }
 
-    /** Percent-encodes every byte outside the unreserved and sub-delimiter sets and the extra characters a component allows. */
+    /**
+     * Percent-encodes every byte outside the unreserved and sub-delimiter sets
+     * and the extra characters a component allows, then writes each escape
+     * the reference's way (unescape()).
+     */
     private static function encode(string $text, string $allowed): string
     {
-        return (string) preg_replace_callback('/%(?![0-9A-Fa-f]{2})|[^A-Za-z0-9\-._~!$&\'()*+,;=%' . preg_quote($allowed, '/') . ']/', static fn (array $m): string => rawurlencode($m[0]), $text);
+        return self::unescape((string) preg_replace_callback('/%(?![0-9A-Fa-f]{2})|[^A-Za-z0-9\-._~!$&\'()*+,;=%' . preg_quote($allowed, '/') . ']/', static fn (array $m): string => rawurlencode($m[0]), $text));
+    }
+
+    /** Escapes of letters, digits, "-", "." and "~" decoded, the rest in upper case ("_" stays escaped, as on the reference; probe feed-urls). */
+    private static function unescape(string $text): string
+    {
+        return (string) preg_replace_callback('/%([0-9A-Fa-f]{2})/', static function (array $m): string {
+            $char = chr((int) hexdec($m[1]));
+            return preg_match('/[A-Za-z0-9.~-]/', $char) ? $char : '%' . strtoupper($m[1]);
+        }, $text);
     }
 }

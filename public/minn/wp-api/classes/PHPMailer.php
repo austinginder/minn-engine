@@ -624,10 +624,10 @@ class PHPMailer
         return true;
     }
 
+    /** Only ASCII letters, digits, "@", ".", "_" and "-" (an empty string too) may reach the sendmail command line (probe sweep-1020b). */
     protected static function isShellSafe($string)
     {
-        $string = (string) $string;
-        return $string !== '' && escapeshellcmd($string) === $string && escapeshellarg($string) === "'{$string}'" && (bool) preg_match('/^[\w@.+=\-]+$/u', $string);
+        return preg_match('/^[A-Za-z0-9@._-]*\z/', (string) $string) === 1;
     }
 
     protected static function isPermittedPath($path)
@@ -645,9 +645,14 @@ class PHPMailer
         $header = Transfer::stripTrailingSpace((string) $header) . static::$LE . static::$LE;
         $list = array_map(fn ($pair) => $this->addrFormat($pair), $this->to);
         $to = trim(implode(', ', $list)) ?: 'undisclosed-recipients:;';
-        $params = $this->Sender !== '' && static::validateAddress($this->Sender) && static::isShellSafe($this->Sender) ? '-f' . $this->Sender : null;
-        $previous = $params !== null ? ini_get('sendmail_from') : false;
-        if ($params !== null) {
+        // No sender takes PHP's sendmail_from; the sender is PHP's for the send, and "-f" only with the sendmail options and a shell-safe address (probe sweep-1020b).
+        if ($this->Sender === '' && (string) ini_get('sendmail_from') !== '') {
+            $this->Sender = (string) ini_get('sendmail_from');
+        }
+        $valid = $this->Sender !== '' && static::validateAddress($this->Sender);
+        $params = $valid && $this->UseSendmailOptions && static::isShellSafe($this->Sender) ? '-f' . $this->Sender : null;
+        $previous = $valid ? ini_get('sendmail_from') : false;
+        if ($valid) {
             ini_set('sendmail_from', $this->Sender);
         }
         $result = $this->minnMailEach($this->SingleTo && count($list) > 1 ? $list : [$to], $body, rtrim($header), $params);

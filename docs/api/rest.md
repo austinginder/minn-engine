@@ -7,7 +7,7 @@ the wp/v2 surface: shapes and controllers
 | [`Api`](#api) | final readonly class | 449 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 124 | Judges a route's declared arguments against the request before the |
-| [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
+| [`BatchController`](#batchcontroller) | final readonly class | 163 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 89 | wp/v2/block-renderer as the reference answers it (probe |
 | [`BlockTypesController`](#blocktypescontroller) | final readonly class | 133 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
@@ -17,7 +17,7 @@ the wp/v2 surface: shapes and controllers
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 34 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 303 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 309 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
@@ -41,7 +41,7 @@ the wp/v2 surface: shapes and controllers
 | [`PluginsController`](#pluginscontroller) | final readonly class | 246 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 166 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
-| [`PostListArgs`](#postlistargs) | final class | 171 | The WP_Query arguments a post list request makes, as the reference makes |
+| [`PostListArgs`](#postlistargs) | final class | 170 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 538 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 197 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 528 | wp/v2 posts and pages, write side: create, update, trash, and force |
@@ -53,7 +53,7 @@ the wp/v2 surface: shapes and controllers
 | [`Responses`](#responses) | final class | 95 | REST answers as the WordPress layer shapes them: any value made a |
 | [`RestMeta`](#restmeta) | final class | 265 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 259 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 263 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
 | [`RouteCatalogue`](#routecatalogue) | final readonly class | 78 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
@@ -87,7 +87,7 @@ the wp/v2 surface: shapes and controllers
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
 | [`UserObject`](#userobject) | final readonly class | 103 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 379 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`UsersController`](#userscontroller) | final readonly class | 382 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 | [`ViewConfigPatch`](#viewconfigpatch) | final class | 151 | A patch to a view configuration (WP_View_Config_Data; probe |
 | [`WidgetObject`](#widgetobject) | final readonly class | 55 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
 | [`WidgetsController`](#widgetscontroller) | final readonly class | 169 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
@@ -386,7 +386,7 @@ Route: `POST /batch/v1 (public)`
 
 The requests answered in turn.
 
-Internals: `refusal()` (private, line 91), `invalid()` (private, line 109), `claims()` (private, line 136), `batchablePath()` (private, line 146), `subRequest()` (private, line 164), `error()` (private, line 182), `envelope()` (private, line 188)
+Internals: `refusal()` (private, line 91), `invalid()` (private, line 109), `claims()` (private, line 140), `batchablePath()` (private, line 150), `subRequest()` (private, line 168), `error()` (private, line 186), `envelope()` (private, line 192)
 
 
 ## BatchRequest
@@ -799,7 +799,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 80), `events()` (private, line 157), `allowed()` (private, line 226), `readablePost()` (private, line 267), `readable()` (private, line 276), `plainComment()` (private, line 286), `prepared()` (private, line 309)
+Internals: `totals()` (private, line 80), `events()` (private, line 163), `allowed()` (private, line 232), `readablePost()` (private, line 273), `readable()` (private, line 282), `plainComment()` (private, line 292), `prepared()` (private, line 315)
 
 
 ## Context
@@ -1820,7 +1820,7 @@ rest_query_var-{name}, and the list's orderby names as the query's.
 - `@param array<string, mixed> $args`
 - `@return array<string, mixed>`
 
-Internals: `mimeTypes()` (private, line 102), `sticky()` (private, line 114), `taxonomies()` (private, line 128), `termClause()` (private, line 149), `formats()` (private, line 173)
+Internals: `mimeTypes()` (private, line 102), `sticky()` (private, line 113), `taxonomies()` (private, line 127), `termClause()` (private, line 148), `formats()` (private, line 172)
 
 
 ## PostObject
@@ -2414,7 +2414,7 @@ One autosave slot per author; the reply carries a preview link.
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `draftObject()` (private, line 168), `clean()` (private, line 183), `withPreviewLink()` (private, line 225), `previewLink()` (private, line 241), `meta()` (private, line 258), `requireParent()` (private, line 274), `parentOf()` (private, line 286)
+Internals: `draftObject()` (private, line 172), `clean()` (private, line 187), `withPreviewLink()` (private, line 229), `previewLink()` (private, line 245), `meta()` (private, line 262), `requireParent()` (private, line 278), `parentOf()` (private, line 290)
 
 
 ## RouteArgs
@@ -4040,7 +4040,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `listAllowed()` (private, line 113), `totals()` (private, line 137), `hasPublishedContent()` (private, line 172), `validRole()` (private, line 181), `validLocale()` (private, line 196), `assignableRole()` (private, line 208), `validEmail()` (private, line 217), `loginRefusal()` (private, line 403)
+Internals: `listAllowed()` (private, line 114), `totals()` (private, line 138), `hasPublishedContent()` (private, line 174), `validRole()` (private, line 183), `validLocale()` (private, line 198), `assignableRole()` (private, line 210), `validEmail()` (private, line 219), `loginRefusal()` (private, line 406)
 
 
 ## ViewConfigPatch

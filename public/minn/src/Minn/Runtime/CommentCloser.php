@@ -36,7 +36,8 @@ final readonly class CommentCloser
      */
     public function closes(string $postType, string $postDateGmt, array $types, int $now): bool
     {
-        if (!$this->enabled || $this->days <= 0 || !in_array($postType, $types, true)) {
+        // A post never dated (a draft's zero GMT date) is not old.
+        if (!$this->enabled || $this->days <= 0 || !in_array($postType, $types, true) || str_starts_with($postDateGmt, '0000-00-00')) {
             return false;
         }
         $published = strtotime($postDateGmt . ' UTC');

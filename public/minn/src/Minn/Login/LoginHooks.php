@@ -53,6 +53,9 @@ final readonly class LoginHooks
      */
     public function signedIn(UserRecord $user): void
     {
+        // A good sign-in ends any pending password reset.
+        (new Users(Runtime::current()->db))->clearResetKey($user->id);
+        Handoff::cacheDelete($user->id, 'users');
         Handoff::cacheDelete($user->id, 'user_meta');
         Runtime::hooks()->action('wp_login', [$user->login, Handoff::newUser($user->id)]);
     }

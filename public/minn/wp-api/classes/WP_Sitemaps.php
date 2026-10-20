@@ -285,6 +285,10 @@ class WP_Sitemaps_Posts extends WP_Sitemaps_Provider
 
     public function get_url_list($page_num, $object_subtype = '')
     {
+        // Only a type the sitemap lists has a page: nav menu items give nothing, before any filter (probe sweep-1020b).
+        if (!array_key_exists((string) $object_subtype, $this->get_object_subtypes())) {
+            return [];
+        }
         $urls = apply_filters('wp_sitemaps_posts_pre_url_list', null, $object_subtype, $page_num);
         if ($urls !== null) {
             return $urls;
@@ -339,6 +343,10 @@ class WP_Sitemaps_Taxonomies extends WP_Sitemaps_Provider
 
     public function get_url_list($page_num, $object_subtype = '')
     {
+        // Only a taxonomy the sitemap lists has a page: a private one (nav_menu) gives nothing, before any filter.
+        if (!array_key_exists((string) $object_subtype, $this->get_object_subtypes())) {
+            return [];
+        }
         $urls = apply_filters('wp_sitemaps_taxonomies_pre_url_list', null, $object_subtype, $page_num);
         if ($urls !== null) {
             return $urls;

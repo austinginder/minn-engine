@@ -1,0 +1,437 @@
+[
+    [
+        "has_excerpt of \"0\", and of text",
+        [
+            false,
+            true
+        ]
+    ],
+    [
+        "date and time getters: what their filters are handed",
+        [
+            [
+                "get_the_modified_date",
+                "value",
+                "",
+                "post"
+            ],
+            [
+                "get_the_modified_date",
+                "value",
+                "Y",
+                "post"
+            ],
+            [
+                "get_the_modified_date",
+                false,
+                "",
+                null
+            ],
+            [
+                "get_the_modified_time",
+                "value",
+                "",
+                "post"
+            ],
+            [
+                "get_the_modified_time",
+                false,
+                "",
+                null
+            ],
+            [
+                "get_the_time",
+                "value",
+                "",
+                "post"
+            ]
+        ]
+    ],
+    [
+        "wp_post_revision_meta_keys order",
+        [
+            "zzpd_generic",
+            "zzpd_typed"
+        ]
+    ],
+    [
+        "get_available_post_statuses of an empty type, and of pages",
+        [
+            [
+                "publish",
+                "future",
+                "draft",
+                "pending",
+                "private",
+                "trash",
+                "auto-draft",
+                "inherit",
+                "request-pending",
+                "request-confirmed",
+                "request-failed",
+                "request-completed"
+            ],
+            12
+        ]
+    ],
+    [
+        "count_user_posts, by who asks",
+        {
+            "nobody": [
+                "1",
+                "1"
+            ],
+            "a subscriber": [
+                "1",
+                "1"
+            ],
+            "the author": [
+                "2",
+                "1"
+            ],
+            "an administrator": [
+                "2",
+                "1"
+            ]
+        }
+    ],
+    [
+        "wp_get_recent_posts: a number, nothing found as objects and as arrays",
+        [
+            [
+                [
+                    "wp_get_recent_posts",
+                    "Passing an integer number of posts is deprecated. Pass an array of arguments instead.",
+                    "3.1.0"
+                ]
+            ],
+            false,
+            []
+        ]
+    ],
+    [
+        "get_adjacent_post with a taxonomy that does not exist",
+        [
+            null,
+            null
+        ]
+    ],
+    [
+        "the_author with its deprecated arguments",
+        [
+            [
+                [
+                    "the_author",
+                    "",
+                    "2.1.0"
+                ],
+                [
+                    "the_author",
+                    "Use <code>get_the_author()</code> instead if you do not want the value echoed.",
+                    "1.5.0"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "use_block_editor_for_post*: answers, and the filters asked",
+        [
+            [
+                false,
+                false,
+                false,
+                false,
+                true
+            ],
+            [
+                [
+                    "use_block_editor_for_post_type",
+                    "post"
+                ]
+            ]
+        ]
+    ],
+    [
+        "get_post_types_by_support",
+        [
+            [
+                "zzpd_noeditor",
+                "zzpd:pseudo"
+            ],
+            [
+                "post",
+                "page",
+                "attachment",
+                "nav_menu_item",
+                "custom_css",
+                "customize_changeset",
+                "oembed_cache",
+                "user_request",
+                "wp_block",
+                "wp_template",
+                "wp_template_part",
+                "wp_global_styles",
+                "wp_navigation",
+                "wp_font_family",
+                "wp_font_face",
+                "zzpd_noeditor",
+                "zzpd_norest",
+                "zzpd:pseudo"
+            ],
+            true,
+            true
+        ]
+    ],
+    [
+        "get_delete_post_link of a type with its own edit address",
+        [
+            "/wp-admin/zzedit.php?{id}&amp;action=trash&amp;_wpnonce={nonce}",
+            [
+                [
+                    "get_delete_post_link",
+                    "",
+                    "3.0.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "get_page_by_title picks the oldest-dated",
+        "2019-01-01 10:00:00"
+    ],
+    [
+        "get_post_class keeps given characters, escaped",
+        [
+            "zz:colon",
+            "zz.dot",
+            "zz/slash",
+            "zz&quot;q&lt;b&gt;"
+        ]
+    ],
+    [
+        "get_body_class: a given class and a filter's",
+        [
+            "zz&quot;given",
+            "zz\"q<b>"
+        ]
+    ],
+    [
+        "old dates and slugs kept: a draft published, an attachment",
+        [
+            [
+                "2020-05-05"
+            ],
+            [
+                "zzpd-draft"
+            ],
+            [
+                "2020-05-05"
+            ],
+            [
+                "zzpd-file"
+            ]
+        ]
+    ],
+    [
+        "wp_is_post_autosave by name",
+        {
+            "{parent}-autosave-v1": "parent",
+            "999999-autosave-v1": false,
+            "{parent}-autosavexyz": "parent",
+            "123-autosavexyz": false,
+            "{parent}-revision-v1": false
+        }
+    ],
+    [
+        "_wp_put_post_revision refusals",
+        [
+            [
+                "invalid_post",
+                "Invalid post ID."
+            ],
+            [
+                "post_type",
+                "Cannot create a revision of a revision"
+            ]
+        ]
+    ],
+    [
+        "wp_get_post_revision: the variable handed in, after",
+        [
+            true,
+            999999999
+        ]
+    ],
+    [
+        "revisions with wp_save_post_revision_on_insert unhooked",
+        2
+    ],
+    [
+        "_get_custom_object_labels: written back, and answered",
+        {
+            "a label": [
+                "object",
+                {
+                    "name": "Zz Things",
+                    "singular_name": "Zz Things",
+                    "name_admin_bar": "Zz Things",
+                    "menu_name": "Zz Things",
+                    "all_items": "Zz Things",
+                    "archives": "Zz Things"
+                },
+                {
+                    "name": "Zz Things",
+                    "singular_name": "Zz Things",
+                    "menu_name": "Zz Things",
+                    "all_items": "Zz Things",
+                    "archives": "Zz Things",
+                    "name_admin_bar": "Zz Things"
+                }
+            ],
+            "a singular": [
+                "object",
+                {
+                    "singular_name": "Thing",
+                    "name_admin_bar": "Thing"
+                },
+                {
+                    "name": "Posts",
+                    "singular_name": "Thing",
+                    "menu_name": "M1",
+                    "all_items": "A1",
+                    "archives": "R1",
+                    "name_admin_bar": "Thing"
+                }
+            ],
+            "a menu": [
+                "object",
+                {
+                    "menu_name": "Menu",
+                    "name": "L",
+                    "singular_name": "L",
+                    "name_admin_bar": "L",
+                    "all_items": "Menu",
+                    "archives": "Menu"
+                },
+                {
+                    "name": "L",
+                    "singular_name": "L",
+                    "menu_name": "Menu",
+                    "all_items": "Menu",
+                    "archives": "Menu",
+                    "name_admin_bar": "L"
+                }
+            ],
+            "nothing": [
+                "object",
+                {
+                    "name_admin_bar": "zzt"
+                },
+                {
+                    "name": "Posts",
+                    "singular_name": "Post",
+                    "menu_name": "M1",
+                    "all_items": "A1",
+                    "archives": "R1",
+                    "name_admin_bar": "zzt"
+                }
+            ]
+        }
+    ],
+    [
+        "get_post_type_labels after a filter took two",
+        [
+            36,
+            "Zz Labels",
+            "Add Post"
+        ]
+    ],
+    [
+        "clean_attachment_cache, suspended and not",
+        [
+            [
+                "zzpd",
+                "zzpd"
+            ],
+            false,
+            false
+        ]
+    ],
+    [
+        "get_post_datetime zones",
+        {
+            "date local": [
+                "America/New_York",
+                "2024-01-15 19:00"
+            ],
+            "date gmt": [
+                "America/New_York",
+                "2024-01-15 19:00"
+            ],
+            "modified gmt": [
+                "America/New_York",
+                "set"
+            ]
+        }
+    ],
+    [
+        "get_the_excerpt of a protected post, translated",
+        "ZZ There is no excerpt because this is a protected post."
+    ],
+    [
+        "wp_filter_wp_template_unique_post_slug: an override that is taken",
+        "zzpd-chosen-2"
+    ],
+    [
+        "post_exists",
+        {
+            "[\"zzpd exists\",\"wrong\"]": 0,
+            "[\"zzpd exists\",\"\",\"2020-01-02\"]": 0,
+            "[\"zzpd exists\",\"\",\"\",\"\",\"draft\"]": 0,
+            "[\"zzpd pattern\"]": "pattern",
+            "[\"zzpd exists\\\\\"]": "post",
+            "[\" zzpd exists\"]": "post",
+            "[\"zzpd exists\",\"zzpd body\",\"2020-01-02 03:04:05\",\"post\",\"publish\"]": "post"
+        }
+    ],
+    [
+        "a loop among the ancestors: the answer, then A and B's parents",
+        [
+            true,
+            0,
+            0
+        ]
+    ],
+    [
+        "wp_count_posts readable: private posts left out, by who asks",
+        {
+            "nobody": 0,
+            "a subscriber": -1,
+            "an administrator": 0
+        }
+    ],
+    [
+        "_wp_link_page of a static front page",
+        "<a href=\"{site}/page/2/\" class=\"post-page-numbers\">"
+    ],
+    [
+        "_wp_link_page in a published post's preview",
+        "<a href=\"{site}/zzpd-front/2/?{id}&#038;preview_nonce=zznonce&#038;preview=true\" class=\"post-page-numbers\">"
+    ],
+    [
+        "prepend_attachment of a video with a featured image: its poster",
+        "zzpd-poster.jpg"
+    ],
+    [
+        "is_page_template against a/full.php",
+        [
+            true,
+            true,
+            false,
+            false,
+            false,
+            false
+        ]
+    ]
+]

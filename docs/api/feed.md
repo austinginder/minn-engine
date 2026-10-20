@@ -8,7 +8,7 @@
 | [`Dates`](#dates) | final class | 16 | Feed dates (RFC 822, W3C, and the looser forms feeds carry) as Unix timestamps; a date without a zone is UTC. |
 | [`Document`](#document) | final readonly class | 114 | A parsed feed: the tree and the format it was recognized as (the |
 | [`FeedError`](#feederror) | final class | 3 | A feed that could not be read: the message is the one the reference reports. |
-| [`Iri`](#iri) | final class | 109 | URLs in feeds: a reference resolved against its base (RFC 3986), then |
+| [`Iri`](#iri) | final class | 122 | URLs in feeds: a reference resolved against its base (RFC 3986), then |
 | [`Locator`](#locator) | final class | 54 | Feed autodiscovery: the feeds an HTML page names in its |
 | [`Parts`](#parts) | final class | 140 | The repeating parts of a feed element read out of the tree as raw |
 | [`Tree`](#tree) | final class | 146 | A feed document parsed into the nested arrays plugin code reads through |
@@ -145,7 +145,7 @@ The reference resolved against the base and normalized; null when neither is abs
 
 An absolute URL normalized; anything else returned as given.
 
-Internals: `split()` (private, line 50), `merge()` (private, line 56), `normalize()` (private, line 65), `removeDots()` (private, line 91), `encode()` (private, line 117)
+Internals: `split()` (private, line 50), `merge()` (private, line 56), `normalize()` (private, line 65), `removeDots()` (private, line 91), `encode()` (private, line 121), `unescape()` (private, line 127)
 
 
 ## Locator

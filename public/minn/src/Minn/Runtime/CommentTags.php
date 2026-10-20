@@ -67,6 +67,7 @@ final class CommentTags
         $comment = Records::comment($commentId);
         $url = (string) ($comment->comment_author_url ?? '');
         $url = $url === 'http://' ? '' : $url;
-        return Runtime::hooks()->filter('get_comment_author_url', [$url === '' ? '' : Escape::url($url), (string) ($comment->comment_ID ?? ''), $comment]);
+        // Only a web address is an author's site: any other scheme comes out empty.
+        return Runtime::hooks()->filter('get_comment_author_url', [$url === '' ? '' : Escape::url($url, ['http', 'https']), (string) ($comment->comment_ID ?? ''), $comment]);
     }
 }

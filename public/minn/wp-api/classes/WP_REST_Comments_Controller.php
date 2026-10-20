@@ -411,6 +411,10 @@ class WP_REST_Comments_Controller extends WP_REST_Controller
 
     protected function check_read_post_permission($post, $request)
     {
+        // A protected post's comments are for those who may edit it (probe sweep-1020b).
+        if (!empty($post->post_password) && !current_user_can('edit_post', $post->ID)) {
+            return false;
+        }
         // The post is readable by its own type's controller.
         $type = get_post_type_object($post->post_type);
         $controller = $type ? $type->get_rest_controller() : null;

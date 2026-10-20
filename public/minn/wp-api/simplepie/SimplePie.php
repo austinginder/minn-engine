@@ -384,10 +384,11 @@ class SimplePie
         if (($this->feed_url ?? '') === '' && $this->minn_file === null) {
             return is_string($this->raw_data) && $this->raw_data !== '' && $this->minn_read('', $this->raw_data, '', []);
         }
-        $url = (string) $this->feed_url;
+        $url = Iri::clean((string) $this->feed_url);
         $cache = $this->minn_cache ? $this->minn_make_cache($url) : null;
         $cached = $cache?->load();
-        if (is_array($cached) && isset($cached['child']) && is_array($cached['child'])) {
+        // A cached feed carries when it goes stale (now plus the lifetime when saved); past it, it is fetched again.
+        if (is_array($cached) && isset($cached['child']) && is_array($cached['child']) && (int) ($cached['__cache_expiration_time'] ?? 0) >= time()) {
             $this->data = $cached;
             $this->feed_url = (string) ($cached['url'] ?? $url);
             $this->minn_document = Document::fromTree(['child' => $cached['child']]);
@@ -397,7 +398,8 @@ class SimplePie
         if (!$this->minn_fetch($url)) {
             return false;
         }
-        $cache?->save($this->data);
+        $expires = time() + $this->cache_duration;
+        $cache?->save($this->data + ['cache_expiration_time' => $expires, '__cache_expiration_time' => $expires]);
         return true;
     }
 
@@ -436,7 +438,8 @@ class SimplePie
     public function subscribe_url($permanent = false)
     {
         $url = $permanent ? $this->permanent_url : $this->feed_url;
-        return $url === null || $url === '' ? null : $this->sanitize((string) $url, SIMPLEPIE_CONSTRUCT_IRI);
+        // The address as fetched, its "&" left as it is (probe feed-urls).
+        return $url === null || $url === '' ? null : Iri::clean((string) $url);
     }
 
     public function get_feed_tags($namespace, $tag)

@@ -31,13 +31,14 @@ escaping, serialized readers, small helpers
 | [`Sanitize`](#sanitize) | final class | 92 | Text made fit to store the way WordPress's sanitizers make it, each ending |
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
-| [`Serialized`](#serialized) | final class | 371 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
+| [`Serialized`](#serialized) | final class | 403 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
+| [`Sprintf`](#sprintf) | final class | 46 | A pattern filled one fragment at a time, as wp_sprintf fills it: "%%" is |
 | [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
 | [`Text`](#text) | final class | 69 | Plain text shaped the way WordPress's formatting helpers shape it: cut to |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`TimezoneChoice`](#timezonechoice) | final class | 109 | The timezone choices a settings form offers (wp_timezone_choice, probe |
-| [`Url`](#url) | final class | 231 | URL shaping the escaping and query helpers share: the character cleanup |
+| [`Url`](#url) | final class | 266 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 182 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
@@ -420,22 +421,21 @@ run is escaped the way esc_html escapes it (quotes included).
 
 Text escaped for HTML with references kept: invalid UTF-8 gives nothing, quotes become &quot; and &#039;.
 
-### static `blockAttributes(string $html, Closure $clean): string`
+### static `blockAttributes(string $html, Closure $clean, ?Closure $entry = NULL): string`
 
 Block markup with every attribute key and string value passed through
 the same filter, and the delimiters written back in their canonical
 form ("--->" read as "-->"). Markup without a comment is left alone.
 
-- `@param Closure(string): string $clean`
-
-### static `blockAttributesParsed(string $html, Closure $clean): string`
+### static `blockAttributesParsed(string $html, Closure $clean, ?Closure $entry = NULL): string`
 
 As blockAttributes, the blocks read by the parser block_parser_class
-names, as wp_pre_kses_block_attributes reads them (probe
-kses-allowed-asks): the engine's own, or one a plugin swaps in, whose
-blocks are written back as it read them.
+names (probe kses-allowed-asks), written back as it read them; $entry
+sees each cleaned entry with its block's name and key and returns its
+value (a template part's tag names, probe sweep-1020b).
 
 - `@param Closure(string): string $clean`
+- `@param ?Closure(?string, int|string, mixed): mixed $entry`
 
 ### static `allowing(string $content, array|string $allowedHtml, mixed $protocols, ?Closure $tagsFor = NULL): string`
 
@@ -519,7 +519,7 @@ Whether a URL may be an object's data in post content: an http or https
 URL on the uploads host and port, no credentials, query or fragment,
 whose path ends in ".pdf".
 
-Internals: `cleaned()` (private, line 160), `cleanValue()` (private, line 166), `tagsAsked()` (private, line 218), `run()` (private, line 275), `htmlComment()` (private, line 303), `deepDecode()` (private, line 423), `visible()` (private, line 436), `normalizeText()` (private, line 451), `normalizeAttribute()` (private, line 474), `named()` (private, line 494), `codePoint()` (private, line 501), `attributes()` (private, line 526), `rendered()` (private, line 551), `srcset()` (private, line 589)
+Internals: `cleaned()` (private, line 159), `cleanValue()` (private, line 164), `tagsAsked()` (private, line 218), `run()` (private, line 275), `htmlComment()` (private, line 303), `deepDecode()` (private, line 423), `visible()` (private, line 436), `normalizeText()` (private, line 451), `normalizeAttribute()` (private, line 474), `named()` (private, line 494), `codePoint()` (private, line 501), `attributes()` (private, line 526), `rendered()` (private, line 551), `srcset()` (private, line 589)
 
 
 ## KsesAttributes
@@ -1070,8 +1070,15 @@ The class an object was stored as, when it came back as a stdClass of its proper
 ### static `looksSerialized(string $data): bool`
 
 Whether a string has the shape of serialized data, as is_serialized()
-judges it: what maybe_serialize() stores serialized again so it reads
-back as the string it was.
+judges it by default: its last byte closes the record (what
+maybe_unserialize() decodes). Measured over sixty strings (probe
+sweep-1020b).
+
+### static `mayBeSerialized(string $data): bool`
+
+Whether a string may be serialized data, as is_serialized($data, false)
+judges it: a close anywhere will do. What maybe_serialize() stores
+serialized again so it reads back as the string it was.
 
 ### static `maybeEncode(mixed $data): mixed`
 
@@ -1088,7 +1095,7 @@ float, string, arrays of those, and objects written as their class.
 
 The integer values of a serialized list such as sticky_posts.
 
-Internals: `read()` (private, line 85), `readValue()` (private, line 98), `readObject()` (private, line 154), `encodeRecord()` (private, line 210), `encodeWrapper()` (private, line 227), `expect()` (private, line 234), `size()` (private, line 248), `until()` (private, line 281), `encodeValue()` (private, line 314), `encodeObject()` (private, line 354)
+Internals: `read()` (private, line 85), `readValue()` (private, line 98), `readObject()` (private, line 154), `encodeRecord()` (private, line 210), `encodeWrapper()` (private, line 227), `expect()` (private, line 234), `size()` (private, line 248), `opens()` (private, line 289), `opensRecord()` (private, line 295), `until()` (private, line 313), `encodeValue()` (private, line 346), `encodeObject()` (private, line 386)
 
 
 ## Slashes
@@ -1110,6 +1117,25 @@ Every string in a value with its quotes and backslashes slashed.
 Every string in a value with one level of slashes taken off.
 
 Internals: `deep()` (private, line 27)
+
+
+## Sprintf
+
+`final class Minn\Support\Sprintf` · `public/minn/src/Minn/Support/Sprintf.php`
+
+A pattern filled one fragment at a time, as wp_sprintf fills it: "%%" is
+a percent sign, each other fragment (a directive and the text up to the
+next one) takes the next argument or the one its position names, and
+$filter may write a fragment itself (the wp_sprintf filter: the list
+directive %l lives there); otherwise PHP's sprintf fills it, an array
+as nothing, and a fragment it cannot fill stays as written.
+
+### static `format(string $pattern, array $args, Closure $filter): string`
+
+The pattern with its arguments filled in.
+
+- `@param list<mixed> $args`
+- `@param Closure(string, mixed): mixed $filter the fragment and its argument in, the fragment as written out`
 
 
 ## SqlTable
@@ -1281,6 +1307,13 @@ host the caller allows (local paths always pass). Credentials before
 the host are kept, as the reference keeps them: the host decides.
 
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
+
+### static `absolute(string $relative, string $base): string`
+
+A reference made absolute against a base URL, as WP_Http resolves a
+redirect's Location: one with a scheme stays as it is, "//host" takes
+the base's scheme, a path without a leading slash joins the base's
+folder with its "../" steps folded, and no path keeps the base's.
 
 Internals: `isPrivate()` (private, line 156)
 

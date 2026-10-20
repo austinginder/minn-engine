@@ -53,6 +53,37 @@ those real differences were security-relevant and are in the table (17,
 | 20 | Low | `settings_errors()` printed a code and type into the id and class unescaped. | `esc_attr`. | Same. |
 | 21 | Low | `do_settings_sections()` printed a section's `before_section` and `after_section` raw. | Through `wp_kses_post`. | Same. |
 
+## The doubts' security fixes
+
+The same day, the doubts' second wave (274 left after the first) was measured by four more
+agents. Whatever touched permissions, escaping, files or stored data was fixed first, each to
+what the reference was measured doing. Several claims held only for a facade class method called
+directly, while the live route already matched WordPress. Those are fixed in the facade too, so a
+plugin calling the class gets the reference's answer.
+
+| # | Severity | Finding | Reference | Done |
+|---|---|---|---|---|
+| 22 | Medium | A contributor's post could carry `<!-- wp:template-part {"tagName":"script"} -->`: kses on save left the tag name alone. | A template part's tag names, nested ones too, are kept to tags the allowlist knows; `script` becomes `""`. | Same, in `filter_block_content` and `wp_pre_kses_block_attributes` (the save path) and `filter_block_kses_value`. |
+| 23 | Medium | `list_users` alone opened another user's edit view (email, capabilities) over REST. | `rest_forbidden_context` unless the caller may `edit_user`; a list shows edit fields only for users the caller may edit. | Same. |
+| 24 | Medium | Deleting a user with itself as the reassign target deleted the user and the content meant to be kept. | `rest_user_invalid_reassign` (400); nothing deleted. | Same. |
+| 25 | Medium | REST notes (`type: note`) were created by anyone who could comment, and drafts took comments from administrators. | A note needs `edit_post` on its post and ignores closed and draft; a comment on a draft is refused. | Same. |
+| 26 | Medium | A mailed password reset link stayed valid after a good sign-in. | The sign-in clears the pending key. | Same, on the form and in `wp_signon`. |
+| 27 | Medium | An active plugin path climbing out of the plugins folder (`zz/../../x.php`) or not ending in `.php` was loaded. | Only `.php` paths that pass `validate_file`. | Same. |
+| 28 | Medium | `delete_old_plugin` with `'/x.php'` would have deleted the whole plugins folder. | The plugins folder is never deleted as a tree; a plugin without its own folder loses only its file. | Same, through `$wp_filesystem` when one is set; `..` stays refused. |
+| 29 | Medium | An MO translation object over a `.php` path included it. | Each class reads its own format: an MO object over PHP is "Magic marker does not exist"; another revision is "Unsupported revision". | Same, the revision refused on every MO path. |
+| 30 | Low | `maybe_serialize` stored `E:` (enum) and loosely serialized strings raw, so WordPress would unserialize them after a switch back. | `is_serialized` strict by default, loose for storage; sixty strings measured. | Same. |
+| 31 | Low | The read-more block printed its text unfiltered; the recent posts widget printed links unescaped. | `wp_kses_post`; `esc_url(apply_filters('the_permalink', ...))`. | Same. |
+| 32 | Low | Term data bindings read a hidden taxonomy's terms to visitors. | `null` unless the caller may edit the term. | Same. |
+| 33 | Low | The RSS widget fetched the site's own address, and fetched text before "http" as part of the URL. | Refused; the URL starts at its first "http". | Same; feeds are fetched at their normalized address and a cached feed past its lifetime is fetched again. |
+| 34 | Low | `wpdb::set_prefix` took any prefix; the placeholder token was a fixed hash without `AUTH_SALT`. | `invalid_db_prefix` outside `[a-z0-9_]`; a random token per request. | Same; an empty query (`''`, `'0'`) is false before anything is reset. |
+| 35 | Low | Sendmail took senders with `+`, `=` or non-ASCII letters on its command line, and `-f` went even without the sendmail options. | Only ASCII letters, digits, `@ . _ -`; `-f` only with `UseSendmailOptions`; the sender is PHP's `sendmail_from` for the send. | Same. |
+| 36 | Low | The facade's sticky, revision-delete, protected-post comment and media MIME checks were looser than the live routes. | Sticky needs `edit_others_posts` and `publish_posts`; a revision delete needs `edit_post` on the parent (the live route too); a protected post's comments need `edit_post`; disallowed MIME types are dropped. | Same. |
+| 37 | Low | `WP_REST_Request` validated every argument by its schema, so an argument with its own sanitize callback was type-checked anyway, and one with its own validate callback was coerced. | Only a named validate callback validates; the schema is checked as the argument is sanitized (`rest_parse_request_arg`). | Same, with batch validation and the search fallback checking the sanitize result. |
+| 38 | Low | The sitemap providers listed what the sitemap never shows when asked directly: nav menus as a taxonomy, nav menu items as a post type. | A subtype not among the provider's own gives an empty list, before the pre filter. | Same, in each provider's `get_url_list`; the served sitemap no longer checks the subtype a second time. |
+
+Pinned by probes `sweep-1020b`, `feed-urls`, `rest-notes`, `post-doubts`, `comment-doubts` and
+`translation-files`, and the login suite's "a good sign-in ends a pending password reset".
+
 ## Checked and not a finding
 
 - **`wp_validate_redirect('http://u@ser@minn.localhost/')`** is accepted by the engine and

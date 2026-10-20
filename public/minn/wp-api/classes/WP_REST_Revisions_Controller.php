@@ -181,6 +181,11 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller
         if (!current_user_can('delete_post', $parent->ID)) {
             return new WP_Error('rest_cannot_delete', __('Sorry, you are not allowed to delete revisions of this post.'), ['status' => rest_authorization_required_code()]);
         }
+        // Whoever may not list the parent's revisions may not delete one (probe sweep-1020b).
+        $readable = $this->get_items_permissions_check($request);
+        if (is_wp_error($readable)) {
+            return $readable;
+        }
         $revision = $this->get_revision($request['id']);
         if (is_wp_error($revision)) {
             return $revision;

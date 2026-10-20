@@ -25,7 +25,18 @@ final class CommentReads
         if (!empty($filtered)) {
             return (object) $filtered;
         }
-        return (object) (new CommentQuery(Runtime::current()->db))->breakdown($postId);
+        return (object) self::table($postId);
+    }
+
+    /**
+     * The comments counted from the table by status, no filter asked
+     * (get_comment_count): a post's, or the site's for 0.
+     *
+     * @return array<string, int>
+     */
+    public static function table(mixed $postId = 0): array
+    {
+        return (new CommentQuery(Runtime::current()->db))->breakdown((int) $postId);
     }
 
     /**

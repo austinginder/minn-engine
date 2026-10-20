@@ -81,7 +81,8 @@ final class Plugins
         $paused = (new Recovery(new Site($runtime->db), $content))->pausedPlugins();
         foreach (is_array($active) ? $active : [] as $plugin) {
             $plugin = (string) $plugin;
-            if (!preg_match('#^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)?\.php$#', $plugin)) {
+            // A file in the plugins folder or one folder in it, never a name that climbs out (..).
+            if (!preg_match('#^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)?\.php$#', $plugin) || preg_match('#(^|/)\.\.(/|$)#', $plugin)) {
                 continue;
             }
             if (isset($paused[$plugin])) {

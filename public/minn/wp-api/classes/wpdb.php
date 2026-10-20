@@ -129,6 +129,10 @@ class wpdb
 
     public function set_prefix($prefix, $set_table_names = true)
     {
+        // A prefix is letters, digits and underscores only: anything else would reach every table name.
+        if (preg_match('/[^a-z0-9_]/i', (string) $prefix)) {
+            return new WP_Error('invalid_db_prefix', 'Invalid database prefix');
+        }
         $old = $this->prefix;
         $this->prefix = $prefix;
         $this->base_prefix = $prefix;
@@ -226,8 +230,9 @@ class wpdb
 
     public function placeholder_escape()
     {
+        // New for every request, so text that names it cannot come back as a %.
         static $placeholder = null;
-        return $placeholder ??= '{' . hash('sha256', 'minn-placeholder-' . (defined('AUTH_SALT') ? AUTH_SALT : '')) . '}';
+        return $placeholder ??= '{' . bin2hex(random_bytes(32)) . '}';
     }
 
     public function add_placeholder_escape($query)
@@ -262,12 +267,20 @@ class wpdb
         return $prepared['query'] === null ? '' : $this->add_placeholder_escape($prepared['query']);
     }
 
+    /**
+     * Runs a query. One the filter leaves empty ('' or '0') is false before
+     * anything is reset (probe sweep-1020b); one holding text its table
+     * cannot store is not run; a write is told to the engine's request-long
+     * row reads, so they hear plugin writes too.
+     */
     public function query($query)
     {
-        $this->flush();
         $query = apply_filters('query', $this->remove_placeholder_escape((string) $query));
+        if (empty($query)) {
+            return false;
+        }
+        $this->flush();
         $this->last_query = $query;
-        // A query holding text its table cannot store is not run.
         $invalid = $this->check_current_query && !$this->check_ascii($query) && !\Minn\Support\Utf8::fits($query, $this->query_charset($query));
         $this->check_current_query = true;
         try {
@@ -287,7 +300,6 @@ class wpdb
         }
         if (preg_match('/^\s*(insert|delete|update|replace)\s/i', $query)) {
             $this->rows_affected = (int) $this->dbh->affected_rows;
-            // The engine's request-long row reads hear plugin writes too.
             \Minn\Db::wrote($query);
             $this->insert_id = preg_match('/^\s*(insert|replace)\s/i', $query) ? (int) $this->dbh->insert_id : $this->insert_id;
             return $this->rows_affected;

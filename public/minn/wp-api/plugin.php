@@ -156,9 +156,10 @@ function get_plugins($plugin_folder = '')
 function wp_get_active_and_valid_plugins()
 {
     $out = [];
+    // A plugin is a .php file that stays inside the plugins folder (validate_file).
     foreach ((array) get_option('active_plugins', []) as $plugin) {
         $file = WP_PLUGIN_DIR . '/' . $plugin;
-        if (is_file($file)) {
+        if (str_ends_with((string) $plugin, '.php') && validate_file((string) $plugin) === 0 && is_file($file)) {
             $out[] = $file;
         }
     }

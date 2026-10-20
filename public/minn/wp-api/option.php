@@ -359,12 +359,14 @@ function is_serialized($data, $strict = true)
     if (!is_string($data)) {
         return false;
     }
-    return Serialized::looksSerialized($data);
+    return $strict ? Serialized::looksSerialized($data) : Serialized::mayBeSerialized($data);
 }
 
 function is_serialized_string($data)
 {
-    return is_string($data) && preg_match('/^s:\d+:".*";$/s', trim($data)) === 1;
+    // Only its ends are read: "s:", then a quote and a semicolon (probe sweep-1020b).
+    $data = is_string($data) ? trim($data) : '';
+    return strlen($data) >= 4 && str_starts_with($data, 's:') && str_ends_with($data, '";');
 }
 
 function maybe_serialize($data)

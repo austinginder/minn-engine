@@ -726,5 +726,64 @@
             ],
             "unset"
         ]
+    ],
+    [
+        "each class reads its own format",
+        [
+            [
+                "WP_Translation_File_MO",
+                "run.php",
+                false,
+                "Magic marker does not exist",
+                0,
+                0
+            ],
+            [
+                "WP_Translation_File_PHP",
+                "plain.mo",
+                false,
+                "Invalid data",
+                0,
+                55
+            ],
+            [
+                "WP_Translation_File_MO",
+                "plain.mo",
+                "Bonjour",
+                null,
+                0,
+                0
+            ],
+            [
+                "WP_Translation_File_MO",
+                "next.mo",
+                false,
+                "Unsupported revision",
+                0,
+                0
+            ],
+            [
+                "WP_Translation_File_MO",
+                "far.mo",
+                false,
+                "Unsupported revision",
+                0,
+                0
+            ],
+            [
+                "next.mo",
+                false,
+                "Hi",
+                true,
+                "Hi"
+            ],
+            [
+                "far.mo",
+                false,
+                "Hi",
+                true,
+                "Hi"
+            ]
+        ]
     ]
 ]

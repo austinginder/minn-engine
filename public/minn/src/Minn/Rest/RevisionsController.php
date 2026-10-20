@@ -88,6 +88,10 @@ final readonly class RevisionsController
         if (!$this->caller->can('delete_post', (int) $parent)) {
             throw new RestError('rest_cannot_delete', self::DELETE_REFUSAL, 403);
         }
+        // Whoever may not list the parent's revisions may not delete one (probe sweep-1020b).
+        if (!$this->caller->can('edit_post', (int) $parent)) {
+            throw new RestError('rest_cannot_read', 'Sorry, you are not allowed to view revisions of this post.', 403);
+        }
         $revision = $this->posts->find((int) $id);
         if ($revision === null || $revision->type !== 'revision') {
             throw new RestError('rest_post_invalid_id', 'Invalid revision ID.', 404);

@@ -7,7 +7,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ArchiveTitle`](#archivetitle) | final class | 55 | The label and name an archive titles itself with: `Category:` around the |
 | [`BodyClasses`](#bodyclasses) | final class | 86 | The body-class list a classic theme's body_class() starts from, in the |
 | [`BodyFacts`](#bodyfacts) | final readonly class | 10 | The facts about a page that decide the body classes a classic theme's |
-| [`ClassicContent`](#classiccontent) | final class | 41 | What a classic theme's the_content() prints: the content as written (the |
+| [`ClassicContent`](#classiccontent) | final class | 44 | What a classic theme's the_content() prints: the content as written (the |
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 125 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`CustomCss`](#customcss) | final class | 69 | Custom CSS as theme.json and blocks write it (a styles node's "css", a |
@@ -31,6 +31,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`StyleLayers`](#stylelayers) | final class | 68 | What plugins change about the global stylesheet's layers and nodes, for |
 | [`StylePresets`](#stylepresets) | final class | 160 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 88 | The settings and styles nodes as wp/v2/global-styles reports them: |
+| [`Teaser`](#teaser) | enum | 5 | What a post's full text does with the part before its more tag |
 | [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
 | [`TemplateIndex`](#templateindex) | final class | 304 | Every block template and template part the site offers, in the order the |
@@ -136,7 +137,7 @@ handed what the reference hands it, in the same hook order.
 
 Used by: `Minn\Front\FeedTags`
 
-### static `render(Minn\Content\PostRecord $post, ?string $moreLinkText): string`
+### static `render(Minn\Content\PostRecord $post, ?string $moreLinkText, Minn\Theme\Teaser $teaser = Minn\Theme\Teaser::Kept): string`
 
 A post's content as the classic loop prints it, with the more link.
 
@@ -1039,6 +1040,19 @@ The preset lists, at the root and under each block, keyed by the origin given; n
 Every var:preset|kind|slug token replaced by the custom property it names.
 
 Internals: `presetsUnder()` (private, line 75), `withAppearanceTools()` (private, line 87)
+
+
+## Teaser
+
+`enum Minn\Theme\Teaser` · `public/minn/src/Minn/Theme/Teaser.php`
+
+What a post's full text does with the part before its more tag
+(the_content's $strip_teaser): kept, or left out so the text starts
+where the more tag stood.
+
+Cases: `Kept`, `Stripped`
+
+Used by: `Minn\Theme\ClassicContent`
 
 
 ## TemplateBuffer

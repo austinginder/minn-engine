@@ -18144,10 +18144,28 @@ What it changed in the runtime's model:
 The same day four agents measured 228 of the facade review's doubts on both stacks: 194
 real, the rest not or not probeable. Three real ones were security work (in the sweep); the
 rest are parity rows, their measured values in `~/Documents/minn-facade-review/doubts-2026-10-20`.
+The other 274 were measured by four more agents; their security-relevant real ones are findings
+22 to 38 of the review (probes `sweep-1020b`, `feed-urls`, `rest-notes`), and the real ones of
+`post.php` and `comment.php` are fixed (probes `post-doubts`, `comment-doubts`). What they changed
+in the runtime's model:
+
+- **Block attributes through kses** (`Support\Kses::blockAttributesParsed`) take a per-entry
+  hook with the block's name: a template part's tag names are kept to the allowlist's tags.
+- **`is_serialized` has two tests** (`Serialized::looksSerialized`, strict, for reading back;
+  `Serialized::mayBeSerialized`, loose, for what storage serializes again).
+- **wpdb::query** runs the `query` filter on the previous query's state, and a query it leaves
+  empty is false before anything is reset.
+- **REST arguments**: only a named validate callback validates; the schema is checked as the
+  argument is sanitized (`rest_parse_request_arg`), in batch validation too.
+- **Feeds** are fetched at their normalized address (`Feed\Iri`: escapes of letters, digits,
+  `-`, `.`, `~` decoded, the rest upper-cased) and keep their lifetime in the cached data.
+- **Translation files** are read by their class; an MO of another revision is refused everywhere.
 
 Left open.
 
-- The other 274 doubts, measured the same way, then the real ones fixed.
+- The real doubts outside `post.php` and `comment.php`, and outside security, with their measured
+  values: `query.php`, admin, misc, functions, formatting, pluggable, media, template (wave 1)
+  and taxonomy, blocks, PHPMailer, WP_Rewrite, user, the REST classes (wave 2).
 - Hostile files the reference reads as nothing more than their size (the FLV, Matroska and
   AVI built by the sweep) give a few more fields on the engine.
 

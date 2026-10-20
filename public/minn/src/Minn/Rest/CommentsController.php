@@ -134,17 +134,23 @@ final readonly class CommentsController
         if ($post->isTrashed()) {
             throw new RestError('rest_comment_trash_post', 'Sorry, you are not allowed to create a comment on this post.', 403);
         }
-        if (!$post->isPublished() && !$this->caller->can('edit_post', $postId)) {
+        // A note is the post's editors' own: it needs edit_post, and a draft or comments closed do not stop it.
+        $note = ($body['type'] ?? null) === 'note';
+        if ($note && !$this->caller->can('edit_post', $postId)) {
+            throw new RestError('rest_cannot_create_note', 'Sorry, you are not allowed to create notes for this post.', 403);
+        }
+        // A draft takes no comment, whoever asks; another post not yet public takes one from who may read it.
+        if (!$note && $post->status === 'draft') {
             throw new RestError('rest_comment_draft_post', 'Sorry, you are not allowed to create a comment on this post.', 403);
         }
         if (!$this->readablePost($post, is_string($body['password'] ?? null) ? $body['password'] : '')) {
             throw $this->caller->refuse('rest_cannot_read_post', 'Sorry, you are not allowed to read the post for this comment.');
         }
-        if ($post->commentStatus !== 'open') {
+        if (!$note && $post->commentStatus !== 'open') {
             throw new RestError('rest_comment_closed', 'Sorry, comments are closed for this item.', 403);
         }
         $events = $this->events();
-        $id = $events->restCreate(['comment_post_ID' => $postId, 'comment_parent' => (int) ($body['parent'] ?? 0)] + $this->prepared($body, $request), $request);
+        $id = $events->restCreate(['comment_post_ID' => $postId, 'comment_parent' => (int) ($body['parent'] ?? 0)] + $this->prepared($body, $request), $request, $note ? 'note' : 'comment');
         if (isset($body['status']) && $this->caller->can('moderate_comments')) {
             CommentEvents::changeStatus($id, (string) $body['status']);
         }

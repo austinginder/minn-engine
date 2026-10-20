@@ -3,6 +3,7 @@
 
 use Minn\I18n\Catalog;
 use Minn\I18n\MoFile;
+use Minn\I18n\PhpFile;
 use Minn\I18n\PluralRule;
 use Minn\I18n\TranslationFiles;
 
@@ -108,17 +109,19 @@ class WP_Translation_File
         if ($this->file === '') {
             return;
         }
-        $catalog = TranslationFiles::read($this->file);
+        $catalog = $this->catalog();
         if ($catalog === null) {
-            $this->error = 'Invalid data';
+            $this->error ??= 'Invalid data';
             return;
         }
-        foreach ($catalog->headers as $name => $value) {
-            $this->headers[strtolower((string) $name)] = $value;
-        }
-        foreach ($catalog->entries as $key => $entry) {
-            $this->entries[$key] = implode("\0", $entry['translations']);
-        }
+        $this->headers = array_replace($this->headers, array_change_key_case($catalog->headers));
+        $this->entries = array_replace($this->entries, array_map(static fn (array $entry) => implode("\0", $entry['translations']), $catalog->entries));
+    }
+
+    /** The file read in this class's own format, whatever its name ends with (probe translation-files). */
+    protected function catalog(): ?Catalog
+    {
+        return TranslationFiles::read($this->file);
     }
 
     public function export()
@@ -154,6 +157,19 @@ class WP_Translation_File_MO extends WP_Translation_File
         return $this->error === null;
     }
 
+    protected function catalog(): ?Catalog
+    {
+        $bytes = (string) file_get_contents($this->file);
+        if ($this->detect_endian_and_validate_file(substr($bytes, 0, 4)) === false) {
+            return null;
+        }
+        if (MoFile::revision($bytes) !== 0) {
+            $this->error = 'Unsupported revision';
+            return null;
+        }
+        return MoFile::read($bytes);
+    }
+
     /** The headers and entries held, written as a .mo file; a file never read exports empty (probe translation-files). */
     public function export(): string
     {
@@ -170,6 +186,11 @@ class WP_Translation_File_PHP extends WP_Translation_File
     protected function parse_file()
     {
         parent::parse_file();
+    }
+
+    protected function catalog(): ?Catalog
+    {
+        return PhpFile::read($this->file);
     }
 
     /** The headers and entries held, written as a .l10n.php file; a file never read exports no messages (probe translation-files). */

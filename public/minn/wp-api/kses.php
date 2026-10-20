@@ -106,7 +106,7 @@ function wp_kses_split($content, $allowed_html, $allowed_protocols)
 /** Block delimiters written back with every attribute key and string value run through the same kses pass. */
 function wp_pre_kses_block_attributes($content, $allowed_html, $allowed_protocols)
 {
-    return Kses::blockAttributesParsed((string) $content, static fn (string $value): string => wp_kses($value, $allowed_html, $allowed_protocols));
+    return Kses::blockAttributesParsed((string) $content, static fn (string $value): string => wp_kses($value, $allowed_html, $allowed_protocols), _minn_template_part_entry($allowed_html));
 }
 
 function wp_kses_version()

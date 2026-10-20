@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1626
+        "delegates": 1629
     },
     "functions": {
         "__": {
@@ -348,6 +348,10 @@
             "file": "media.php",
             "statement": "return Minn\\Runtime\\AttachmentImages::sizes();"
         },
+        "_minn_keeps_old_address": {
+            "file": "post.php",
+            "statement": "return $post->post_status === 'publish' || ($post->post_type === 'attachment' && $post->post_status === 'inherit');"
+        },
         "_minn_kses_policy": {
             "file": "kses.php",
             "statement": "return Minn\\Runtime\\KsesRules::policy($allowed_html, $allowed_protocols, $content);"
@@ -495,6 +499,10 @@
         "_minn_template_index": {
             "file": "blocks.php",
             "statement": "return Minn\\Runtime\\TemplateFiles::templateIndex();"
+        },
+        "_minn_template_part_entry": {
+            "file": "blocks.php",
+            "statement": "return static fn (?string $block, $key, $value) => $block === 'core/template-part' ? filter_block_core_template_part_attributes($value, $key, $allowed_html) : $value;"
         },
         "_minn_term_item": {
             "file": "core-blocks.php",
@@ -1558,7 +1566,7 @@
         },
         "filter_block_content": {
             "file": "blocks.php",
-            "statement": "return Kses::blockAttributesParsed((string) $text, static fn (string $value): string => wp_kses($value, $allowed_html, (array) $allowed_protocols));"
+            "statement": "return Kses::blockAttributesParsed((string) $text, static fn (string $value): string => wp_kses($value, $allowed_html, (array) $allowed_protocols), _minn_template_part_entry($allowed_html));"
         },
         "filter_default_metadata": {
             "file": "meta.php",
@@ -1655,6 +1663,10 @@
         "get_available_languages": {
             "file": "l10n.php",
             "statement": "return Minn\\I18n\\TranslationFiles::languages((string) ($dir ?? WP_LANG_DIR), $dir === null ? null : (string) $dir);"
+        },
+        "get_available_post_statuses": {
+            "file": "post.php",
+            "statement": "// Every status wp_count_posts names, a status with no posts included.\n    return array_keys(get_object_vars(wp_count_posts($type)));"
         },
         "get_avatar_url": {
             "file": "template.php",
@@ -2807,10 +2819,6 @@
         "is_search": {
             "file": "query.php",
             "statement": "return _minn_main_query()->is_search();"
-        },
-        "is_serialized_string": {
-            "file": "option.php",
-            "statement": "return is_string($data) && preg_match('/^s:\\d+:\".*\";$/s', trim($data)) === 1;"
         },
         "is_single": {
             "file": "query.php",
@@ -5886,7 +5894,7 @@
         },
         "wp_pre_kses_block_attributes": {
             "file": "kses.php",
-            "statement": "return Kses::blockAttributesParsed((string) $content, static fn (string $value): string => wp_kses($value, $allowed_html, $allowed_protocols));"
+            "statement": "return Kses::blockAttributesParsed((string) $content, static fn (string $value): string => wp_kses($value, $allowed_html, $allowed_protocols), _minn_template_part_entry($allowed_html));"
         },
         "wp_pre_kses_less_than": {
             "file": "formatting.php",
@@ -6227,6 +6235,10 @@
         "wp_split_selector_list": {
             "file": "block-supports-states.php",
             "statement": "return States::split((string) $selector);"
+        },
+        "wp_sprintf": {
+            "file": "formatting.php",
+            "statement": "return Minn\\Support\\Sprintf::format((string) $pattern, $args, static fn (string $fragment, $value) => apply_filters('wp_sprintf', $fragment, $value));"
         },
         "wp_staticize_emoji": {
             "file": "formatting.php",

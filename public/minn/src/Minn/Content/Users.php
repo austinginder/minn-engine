@@ -236,6 +236,16 @@ final readonly class Users
         $this->db->execute("UPDATE {$this->db->table('users')} SET user_pass = ?, user_activation_key = '' WHERE ID = ?", [$hash, $userId]);
     }
 
+    /**
+     * A pending password reset dropped: a good sign-in (wp_signon, the
+     * sign-in page) ends it, so a link mailed earlier no longer opens the
+     * reset form (probe sweep-1020b, login suite).
+     */
+    public function clearResetKey(int $userId): void
+    {
+        $this->db->execute("UPDATE {$this->db->table('users')} SET user_activation_key = '' WHERE ID = ? AND user_activation_key != ''", [$userId]);
+    }
+
     /** How many users the site has. */
     public function count(): int
     {

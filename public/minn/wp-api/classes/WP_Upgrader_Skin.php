@@ -84,12 +84,17 @@ class WP_Upgrader_Skin implements \Minn\Objects\UpgraderSkin
         if (!is_wp_error($errors) || !$errors->has_errors()) {
             return;
         }
-        foreach ($errors->get_error_codes() as $code) {
-            $data = $errors->get_error_data($code);
-            foreach ($errors->get_error_messages($code) as $message) {
-                $this->feedback(is_string($data) && $data !== '' ? $message . ' ' . esc_html(strip_tags($data)) : $message);
-            }
+        foreach (self::minn_error_lines($errors) as $line) {
+            $this->feedback($line);
         }
+    }
+
+    /** Each message of an error, the error's own data (its first code's) after each one, tags stripped and escaped (probe sweep-1020b). */
+    protected static function minn_error_lines(WP_Error $errors): array
+    {
+        $data = $errors->get_error_data();
+        $suffix = is_string($data) && $data !== '' ? ' ' . esc_html(strip_tags($data)) : '';
+        return array_map(static fn ($message) => $message . $suffix, $errors->get_error_messages());
     }
 
     /** One line: an upgrader string by its key (or as given), its %s filled with the arguments, tags stripped and escaped. */
@@ -364,14 +369,13 @@ class Bulk_Upgrader_Skin extends WP_Upgrader_Skin
     {
     }
 
+    /** An error is kept for the item's line and its spinner hidden; nothing is printed as feedback (probe sweep-1020b). */
     public function error($errors)
     {
-        if (is_string($errors) && isset($this->upgrader->strings[$errors])) {
-            $this->error = $this->upgrader->strings[$errors];
-        } elseif (is_wp_error($errors)) {
-            $this->error = implode(', ', $errors->get_error_messages());
+        if (is_wp_error($errors)) {
+            $this->error = implode(', ', self::minn_error_lines($errors));
         }
-        parent::error($errors);
+        echo "<script>jQuery('.waiting-" . esc_js((string) ($this->upgrader->update_current ?? '')) . "').hide();</script>";
     }
 
     public function bulk_header()

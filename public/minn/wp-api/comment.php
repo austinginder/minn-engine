@@ -49,11 +49,11 @@ function get_comments_number_text($zero = false, $one = false, $more = false, $p
 {
     $number = (int) get_comments_number($post);
     if ($number > 1) {
-        $output = $more === false ? sprintf('%s Comments', number_format_i18n($number)) : str_replace('%', number_format_i18n($number), (string) $more);
+        $output = $more === false ? sprintf(_n('%s Comment', '%s Comments', $number), number_format_i18n($number)) : str_replace('%', number_format_i18n($number), (string) $more);
     } elseif ($number === 0) {
-        $output = $zero === false ? 'No Comments' : $zero;
+        $output = $zero === false ? __('No Comments') : $zero;
     } else {
-        $output = $one === false ? '1 Comment' : $one;
+        $output = $one === false ? __('1 Comment') : $one;
     }
     return apply_filters('comments_number', $output, $number);
 }
@@ -168,7 +168,8 @@ function get_comment_date($format = '', $comment_id = 0)
     if ($comment === null) {
         return '';
     }
-    return apply_filters('get_comment_date', mysql2date($format === '' ? get_option('date_format') : $format, $comment->comment_date), $format, $comment);
+    // Any empty format ("0", null, false) is the site's date format; the filter is handed the format as given.
+    return apply_filters('get_comment_date', mysql2date(empty($format) ? get_option('date_format') : $format, $comment->comment_date), $format, $comment);
 }
 
 /** When an approved comment last arrived, in GMT ('gmt', and the server's own, which is GMT here) or the site's time ('blog'); false with none. */
@@ -219,8 +220,9 @@ function comment_exists($comment_author, $comment_date, $timezone = 'blog')
 
 function get_comment_count($post_id = 0)
 {
-    $counts = wp_count_comments($post_id);
-    return ['approved' => $counts->approved, 'awaiting_moderation' => $counts->moderated, 'spam' => $counts->spam, 'trash' => $counts->trash, 'post-trashed' => $counts->{'post-trashed'}, 'all' => $counts->all, 'total_comments' => $counts->total_comments];
+    // Counted from the table: wp_count_comments's filter is not asked.
+    $counts = Minn\Runtime\CommentReads::table($post_id);
+    return ['approved' => $counts['approved'], 'awaiting_moderation' => $counts['moderated'], 'spam' => $counts['spam'], 'trash' => $counts['trash'], 'post-trashed' => $counts['post-trashed'], 'all' => $counts['all'], 'total_comments' => $counts['total_comments']];
 }
 
 function get_comment_author_IP($comment_id = 0)
@@ -250,11 +252,9 @@ function comment_author_url($comment_id = 0)
 function get_comment_author_url_link($link_text = '', $before = '', $after = '', $comment = 0)
 {
     $url = get_comment_author_url($comment);
-    $text = $link_text;
-    if ($text === '') {
-        $text = str_replace(['http://www.', 'http://'], '', $url);
-        $text = str_ends_with($text, '/') ? substr($text, 0, -1) : $text;
-    }
+    // The text shown, given or the address, loses its scheme, www. and a closing slash.
+    $text = str_replace(['http://www.', 'http://'], '', $link_text !== '' ? (string) $link_text : $url);
+    $text = str_ends_with($text, '/') ? substr($text, 0, -1) : $text;
     return apply_filters('get_comment_author_url_link', $before . '<a href="' . $url . '" rel="external">' . $text . '</a>' . $after);
 }
 
@@ -391,8 +391,9 @@ function wp_check_comment_flood($is_flood, $ip, $email, $date, $avoid_die = fals
     if ($is_flood === true || current_user_can('manage_options') || current_user_can('moderate_comments')) {
         return $is_flood === true;
     }
+    // The last comment is looked for in the hour before now; the new one's time is its own date.
     $now = $date !== '' ? (int) strtotime($date . ' UTC') : time();
-    $last = _minn_comments()->lastCommentTime(get_current_user_id(), (string) $ip, (string) $email, gmdate('Y-m-d H:i:s', $now - HOUR_IN_SECONDS));
+    $last = _minn_comments()->lastCommentTime(get_current_user_id(), (string) $ip, (string) $email, gmdate('Y-m-d H:i:s', time() - HOUR_IN_SECONDS));
     if ($last === null || !apply_filters('comment_flood_filter', false, $last, $now)) {
         return false;
     }
@@ -546,8 +547,9 @@ function comment_text($comment_id = 0, $args = [])
 
 function get_comment_ID()
 {
+    // No comment is "0".
     $comment = get_comment();
-    return apply_filters('get_comment_ID', (string) ($comment->comment_ID ?? ''), $comment);
+    return apply_filters('get_comment_ID', !empty($comment->comment_ID) ? (string) $comment->comment_ID : '0', $comment);
 }
 
 /** The author's name, linked to their URL when they gave one. */
@@ -560,7 +562,7 @@ function get_comment_author_link($comment_id = 0)
         $link = $author;
     } else {
         // The rel words through comment_author_link_rel, outside links external and nofollow too (probe filter-inputs-2).
-        $rel = esc_attr(implode(' ', (array) apply_filters('comment_author_link_rel', str_starts_with($url, home_url()) ? ['ugc'] : ['ugc', 'external', 'nofollow'], $comment)));
+        $rel = esc_attr(implode(' ', (array) apply_filters('comment_author_link_rel', wp_is_internal_link($url) ? ['ugc'] : ['ugc', 'external', 'nofollow'], $comment)));
         $link = '<a href="' . $url . '" class="url"' . ($rel !== '' ? ' rel="' . $rel . '"' : '') . '>' . $author . '</a>';
     }
     return apply_filters('get_comment_author_link', $link, $author, (string) ($comment->comment_ID ?? ''));
@@ -569,8 +571,12 @@ function get_comment_author_link($comment_id = 0)
 /** The hidden fields a comment form posts: the post and the comment replied to. */
 function get_comment_id_fields($post = null)
 {
+    // No post, no fields.
     $post = get_post($post);
-    $post_id = $post ? (int) $post->ID : 0;
+    if (!$post) {
+        return '';
+    }
+    $post_id = (int) $post->ID;
     $reply_to = _get_comment_reply_id($post_id);
     $result = "<input type='hidden' name='comment_post_ID' value='{$post_id}' id='comment_post_ID' />\n";
     $result .= "<input type='hidden' name='comment_parent' id='comment_parent' value='{$reply_to}' />\n";
@@ -597,7 +603,7 @@ function get_comments_pagenum_link($pagenum = 1, $max_page = 0)
     if ($permalink === '' || $pagenum === $bare) {
         $result = $permalink;
     } elseif ($GLOBALS['wp_rewrite']->using_permalinks()) {
-        $result = user_trailingslashit(trailingslashit($permalink) . 'comment-page-' . $pagenum, 'commentpaged');
+        $result = user_trailingslashit(trailingslashit($permalink) . $GLOBALS['wp_rewrite']->comments_pagination_base . '-' . $pagenum, 'commentpaged');
     } else {
         $result = add_query_arg('cpage', $pagenum, $permalink);
     }
@@ -641,13 +647,14 @@ function comment_reply_link($args = [], $comment = null, $post = null)
 /** The link that opens a post's comment form (a sign-in link when commenting needs an account), or false while its comments are closed. */
 function get_post_reply_link($args = [], $post = null)
 {
-    $args = wp_parse_args($args, ['add_below' => 'post', 'respond_id' => 'respond', 'reply_text' => 'Leave a Comment', 'login_text' => 'Log in to leave a Comment', 'before' => '', 'after' => '']);
+    $args = wp_parse_args($args, ['add_below' => 'post', 'respond_id' => 'respond', 'reply_text' => __('Leave a Comment'), 'login_text' => __('Log in to leave a Comment'), 'before' => '', 'after' => '']);
     $post = get_post($post);
     if (!$post || !comments_open($post->ID)) {
         return false;
     }
     if (get_option('comment_registration') && !is_user_logged_in()) {
-        $link = sprintf('<a rel="nofollow" class="comment-reply-login" href="%s">%s</a>', esc_url(wp_login_url()), $args['login_text']);
+        // Signing in comes back to the post.
+        $link = sprintf('<a rel="nofollow" class="comment-reply-login" href="%s">%s</a>', esc_url(wp_login_url(get_permalink())), $args['login_text']);
     } else {
         $move = sprintf('return addComment.moveForm( "%1$s-%2$d", "0", "%3$s", "%2$d" )', $args['add_below'], $post->ID, $args['respond_id']);
         $link = sprintf("<a rel='nofollow' class='comment-reply-link' href='%s' onclick='%s'>%s</a>", get_permalink($post->ID) . '#' . $args['respond_id'], $move, $args['reply_text']);
@@ -741,11 +748,13 @@ function comment_form_title($no_reply_text = false, $reply_text = false, $link_t
     $no_reply_text = $no_reply_text === false ? __('Leave a Reply') : $no_reply_text;
     $reply_text = $reply_text === false ? __('Leave a Reply to %s') : $reply_text;
     $reply_id = _get_comment_reply_id($post);
+    // The comment replied to becomes the global comment; with none the global is left alone.
     $reply_to = $reply_id > 0 ? get_comment($reply_id) : null;
     if ($reply_to === null) {
         echo $no_reply_text;
         return;
     }
+    $GLOBALS['comment'] = $reply_to;
     $author = $link_to_parent ? '<a href="#comment-' . $reply_to->comment_ID . '">' . get_comment_author($reply_to) . '</a>' : get_comment_author($reply_to);
     printf($reply_text, $author);
 }
@@ -804,12 +813,14 @@ function paginate_comments_links($args = [])
     $page = (int) get_query_var('cpage') ?: 1;
     $defaults = ['base' => add_query_arg('cpage', '%#%'), 'format' => '', 'total' => (int) ($GLOBALS['wp_query']->max_num_comment_pages ?? 0), 'current' => $page, 'echo' => true, 'add_fragment' => '#comments'];
     if ($GLOBALS['wp_rewrite']->using_permalinks()) {
-        $defaults['base'] = user_trailingslashit(trailingslashit(get_permalink()) . 'comment-page-%#%', 'commentpaged');
+        $defaults['base'] = user_trailingslashit(trailingslashit(get_permalink()) . $GLOBALS['wp_rewrite']->comments_pagination_base . '-%#%', 'commentpaged');
     }
     $args = wp_parse_args($args, $defaults);
     $links = paginate_links($args);
-    if ($args['echo'] && ($args['type'] ?? 'plain') === 'plain') {
+    // Printed unless an array was asked for, and then nothing is answered.
+    if ($args['echo'] && ($args['type'] ?? 'plain') !== 'array') {
         echo $links;
+        return null;
     }
     return $links;
 }
@@ -1161,11 +1172,12 @@ function comments_popup_link($zero = false, $one = false, $more = false, $css_cl
 
 function get_the_comments_navigation($args = [])
 {
-    if ((int) ($GLOBALS['wp_query']->max_num_comment_pages ?? 0) <= 1) {
+    // The pages counted as get_comment_pages_count counts them (the query's comments when it has no page count).
+    if (get_comment_pages_count() <= 1) {
         return '';
     }
-    $aria = Minn\Front\PostNavigation::ariaLabel((array) $args, 'Comments');
-    $args = wp_parse_args($args, ['prev_text' => 'Older comments', 'next_text' => 'Newer comments', 'screen_reader_text' => 'Comments navigation', 'aria_label' => 'Comments', 'class' => 'comment-navigation']);
+    $aria = Minn\Front\PostNavigation::ariaLabel((array) $args, __('Comments'));
+    $args = wp_parse_args($args, ['prev_text' => __('Older comments'), 'next_text' => __('Newer comments'), 'screen_reader_text' => __('Comments navigation'), 'aria_label' => __('Comments'), 'class' => 'comment-navigation']);
     $links = '';
     $previous = get_previous_comments_link($args['prev_text']);
     if ($previous) {
@@ -1296,11 +1308,11 @@ function comment_author_email($comment_id = 0)
 function get_comment_author_email_link($link_text = '', $before = '', $after = '', $comment = null)
 {
     $comment = get_comment($comment);
+    // Scrambled by antispambot on comment_email, where a plugin may take it off.
     $email = apply_filters('comment_email', $comment?->comment_author_email, $comment);
     if (empty($email) || $email === '@') {
         return '';
     }
-    $email = antispambot($email);
     return $before . sprintf('<a href="%1$s">%2$s</a>', esc_url('mailto:' . $email), esc_html($link_text !== '' ? $link_text : $email)) . $after;
 }
 

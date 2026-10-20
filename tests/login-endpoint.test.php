@@ -109,6 +109,13 @@ check(
 );
 check( 200 === $ws && str_contains( $wbody, 'incorrect' ), 'wrong password re-renders the form with an error', "status $ws" );
 
+// A password reset pending for the admin, which a good sign-in through this page ends, as the
+// reference's sign-in page ends it (wp_signon alone does not; security sweep 2026-10-20).
+$wp     = 'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' && wp --skip-plugins eval ';
+$key_of = static fn (): int => (int) trim( (string) shell_exec( $wp . escapeshellarg( 'clean_user_cache(1); echo strlen((string) get_userdata(1)->user_activation_key);' ) . ' 2>/dev/null' ) );
+shell_exec( $wp . escapeshellarg( 'get_password_reset_key(get_userdata(1));' ) . ' 2>/dev/null' );
+$key_before = $key_of();
+
 // 3. Correct password: 302, three auth cookies, redirect to the admin.
 [ $ls, $lh ] = http(
 	'POST', "$ENGINE/wp-login.php",
@@ -116,6 +123,7 @@ check( 200 === $ws && str_contains( $wbody, 'incorrect' ), 'wrong password re-re
 	'log=admin&pwd=' . rawurlencode( $PASS )
 );
 check( 302 === $ls, 'correct password redirects (302)', "status $ls" );
+check( $key_before > 0 && 0 === $key_of(), 'a good sign-in ends a pending password reset', "$key_before then " . $key_of() );
 check( str_contains( (string) $lh['location'], '/minn-admin/' ), 'redirects to the admin by default', (string) $lh['location'] );
 $hash      = md5( 'https://minn.localhost' );
 $logged_in = cookie_value( $lh['set-cookie'], 'wordpress_logged_in_' . $hash );

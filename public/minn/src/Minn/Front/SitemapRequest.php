@@ -78,15 +78,11 @@ final class SitemapRequest
         self::page($server, $sitemap, (string) Sanitize::textField(MainQuery::current()->get('sitemap-subtype')));
     }
 
-    /** One provider's page: printed, or a 404 when the subtype is not the provider's or the page has nothing. */
+    /** One provider's page: printed, or a 404 when it has nothing (a subtype not the provider's gives nothing). */
     private static function page(SitemapServer $server, string $sitemap, string $subtype): void
     {
         $provider = $server->registry->get_provider($sitemap);
         if (!$provider instanceof SitemapProvider) {
-            self::notFound();
-            return;
-        }
-        if ($subtype !== '' && !isset($provider->get_object_subtypes()[$subtype])) {
             self::notFound();
             return;
         }

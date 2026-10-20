@@ -14,6 +14,23 @@ final readonly class PostLookup
     }
 
     /**
+     * The first post whose columns hold the values given, each as stored
+     * (post_exists); null for none.
+     *
+     * @param array<string, string> $columns column => value; only post_title, post_content, post_date, post_type and post_status
+     */
+    public function idWhere(array $columns): ?int
+    {
+        $columns = array_intersect_key($columns, array_flip(['post_title', 'post_content', 'post_date', 'post_type', 'post_status']));
+        if ($columns === []) {
+            return null;
+        }
+        $where = implode(' AND ', array_map(static fn (string $column): string => "{$column} = ?", array_keys($columns)));
+        $id = $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE {$where} ORDER BY ID ASC LIMIT 1", array_values($columns));
+        return $id === null ? null : (int) $id;
+    }
+
+    /**
      * The id of a post with this title among the types, or null.
      *
      * @param list<string> $types
@@ -23,7 +40,7 @@ final readonly class PostLookup
         if ($types === []) {
             return null;
         }
-        $id = $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE post_title = ? AND post_type IN (?) ORDER BY ID ASC LIMIT 1", [$title, $types]);
+        $id = $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE post_title = ? AND post_type IN (?) ORDER BY post_date ASC, ID ASC LIMIT 1", [$title, $types]);
         return $id === null ? null : (int) $id;
     }
 
@@ -38,10 +55,12 @@ final readonly class PostLookup
      *
      * @return array<string, int> status => count
      */
-    public function countByStatus(string $type): array
+    public function countByStatus(string $type, ?int $privateOf = null): array
     {
+        // Private posts may be counted for one author only (wp_count_posts for a reader who may not read others').
+        $private = $privateOf === null ? '' : " AND (post_status != 'private' OR post_author = ?)";
         $counts = [];
-        foreach ($this->db->rows("SELECT post_status, COUNT(*) AS num_posts FROM {$this->db->table('posts')} WHERE post_type = ? GROUP BY post_status", [$type]) as $row) {
+        foreach ($this->db->rows("SELECT post_status, COUNT(*) AS num_posts FROM {$this->db->table('posts')} WHERE post_type = ?{$private} GROUP BY post_status", $privateOf === null ? [$type] : [$type, $privateOf]) as $row) {
             $counts[(string) $row['post_status']] = (int) $row['num_posts'];
         }
         return $counts;

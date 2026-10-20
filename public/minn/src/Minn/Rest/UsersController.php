@@ -99,7 +99,8 @@ final readonly class UsersController
         foreach ((array) $query->get_results() as $user) {
             if ($user instanceof User) {
                 $record = UserRecord::fromRow((array) $user->data);
-                $objects[] = $context->isEdit() ? $this->object->edit($record) : $this->object->view($record);
+                // In the edit context a user the caller may not edit is shown as in the view context.
+                $objects[] = $context->isEdit() && $this->caller->can('edit_user', $record->id) ? $this->object->edit($record) : $this->object->view($record);
             }
         }
         return Reply::list($objects, $total, $pages, Fields::fromQuery($request->query));
@@ -157,7 +158,8 @@ final readonly class UsersController
         $self = $this->caller->id();
         $fields = Fields::fromQuery($request->query);
         if (Context::of($request)->isEdit()) {
-            if ($self !== $userId && !$this->caller->can('list_users')) {
+            // The edit context is for who may edit this user, listing users is not enough (security sweep 2026-10-20).
+            if ($self !== $userId && !$this->caller->can('edit_user', $userId)) {
                 throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this user.');
             }
             return Reply::item($this->object->edit($user), $fields);
@@ -374,7 +376,8 @@ final readonly class UsersController
         $target = 0;
         if ($reassign !== '' && $reassign !== 'false') {
             $target = (int) $reassign;
-            if ($this->users->find($target) === null) {
+            // The posts cannot go to the user being deleted.
+            if ($target === $userId || $this->users->find($target) === null) {
                 throw new RestError('rest_user_invalid_reassign', 'Invalid user ID for reassignment.', 400);
             }
         }

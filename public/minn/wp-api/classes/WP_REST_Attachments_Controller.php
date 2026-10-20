@@ -92,7 +92,7 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
 
     protected function prepare_items_query($prepared_args = [], $request = NULL)
     {
-        // Attachments are listed in their own status unless the request names one; a list of media types stands for all their MIME types, else a list of MIME types for itself.
+        // Attachments are listed in their own status unless the request names one; the media types' MIME types, then each allowed MIME type named, filter the list (probe sweep-1020b).
         $query_args = parent::prepare_items_query($prepared_args, $request);
         if (empty($query_args['post_status'])) {
             $query_args['post_status'] = 'inherit';
@@ -100,10 +100,14 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
         $media_types = $this->get_media_types();
         $types = !empty($request['media_type']) && is_array($request['media_type']) ? array_values($request['media_type']) : [];
         $mime_types = array_merge([], ...array_map(static fn ($type) => $media_types[$type] ?? [], $types));
+        $allowed = array_values(get_allowed_mime_types());
+        foreach (!empty($request['mime_type']) && is_array($request['mime_type']) ? $request['mime_type'] : [] as $mime_type) {
+            if (in_array($mime_type, $allowed, true) && !in_array($mime_type, $mime_types, true)) {
+                $mime_types[] = $mime_type;
+            }
+        }
         if ($mime_types !== []) {
             $query_args['post_mime_type'] = $mime_types;
-        } elseif (!empty($request['mime_type']) && is_array($request['mime_type'])) {
-            $query_args['post_mime_type'] = $request['mime_type'];
         }
         return $query_args;
     }

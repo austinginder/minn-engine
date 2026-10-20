@@ -1,8 +1,8 @@
 {
     "wordpress": "7.1.3",
     "security": {
-        "found": 64,
-        "fixed": 64
+        "found": 81,
+        "fixed": 80
     },
     "sql": {
         "measured": "2026-10-12",
@@ -270,20 +270,20 @@
         "measured": "2026-10-20",
         "suites": 92,
         "green": 92,
-        "checks": 28749,
+        "checks": 28861,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
     },
     "gate": {
         "deadEndCalls": 0,
-        "deadEndsByHand": 85,
+        "deadEndsByHand": 82,
         "deadEndsByHandAreas": {
             "customizer": 20,
-            "admin": 58,
+            "admin": 55,
             "editor": 7
         },
-        "deadEndsByHandProven": 161,
+        "deadEndsByHandProven": 164,
         "floor": {
             "version": "8.3",
             "newest": "8.5",
@@ -299,12 +299,12 @@
     "clones": {
         "duplicated": {
             "window": 100,
-            "stretches": 112,
-            "lines": 2028,
-            "of": 184337
+            "stretches": 114,
+            "lines": 2054,
+            "of": 184790
         },
         "engine": {
-            "of": 107842,
+            "of": 108181,
             "php": {
                 "strict": {
                     "window": 40,
@@ -324,34 +324,34 @@
                 "lines": 126
             },
             "data": {
-                "strings": 1797,
-                "of": 1837,
-                "files": 20
+                "strings": 1800,
+                "of": 1840,
+                "files": 21
             },
             "sequences": 19
         },
         "facade": {
-            "of": 76495,
+            "of": 76609,
             "window": 80,
             "stretches": 112,
             "lines": 2955
         }
     },
     "facadeLogic": {
-        "functions": 3491,
-        "methods": 3811,
-        "delegates": 3466,
-        "logicFunctions": 1806,
+        "functions": 3493,
+        "methods": 3815,
+        "delegates": 3473,
+        "logicFunctions": 1805,
         "logicMethods": 2030,
-        "logicLines": 30095,
+        "logicLines": 30098,
         "kept": 0,
         "review": {
-            "doubts": 496,
-            "reviewed": 3197,
+            "doubts": 430,
+            "reviewed": 3196,
             "stale": 0,
             "verdicts": {
                 "delegate": 143,
-                "move": 1528,
+                "move": 1527,
                 "keep": 1511,
                 "remove": 15
             },
@@ -365,7 +365,7 @@
             "gates": {
                 "subclass": 321,
                 "pluggable": 25,
-                "unprobed": 158,
+                "unprobed": 157,
                 "globals": 166,
                 "refs": 27
             },

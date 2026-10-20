@@ -103,4 +103,43 @@ final class CookieText
         }
         return substr($requestPath, 0, (int) strrpos($requestPath, '/'));
     }
+
+    /**
+     * A cookie's fields, as WP_Http_Cookie sets them: from a Set-Cookie
+     * value (the value URL-decoded; expires, path, domain and port from its
+     * attributes; the domain and path it names none of from the URL it came
+     * from: the host, and the URL's directory), or from given fields that are
+     * among $properties (an expiry given as a date becomes a timestamp); the
+     * path "/" when nothing gives one.
+     *
+     * @param array<string, mixed>|string $data
+     * @param list<string> $properties
+     * @return array<string, mixed>
+     */
+    public static function fields(array|string $data, string $requestedUrl, array $properties): array
+    {
+        if (is_array($data)) {
+            $out = array_intersect_key($data, array_flip($properties));
+            if (is_string($out['expires'] ?? null) && !is_numeric($out['expires'])) {
+                $out['expires'] = strtotime($out['expires']);
+            }
+            return $out + ['path' => '/'];
+        }
+        $parsed = self::parse($data);
+        $out = ['name' => $parsed['name'], 'value' => urldecode((string) $parsed['value'])];
+        foreach ($parsed['attributes'] as $key => $value) {
+            $key = strtolower((string) $key);
+            $value = $value === true ? '' : (string) $value;
+            if (in_array($key, ['expires', 'path', 'domain', 'port'], true)) {
+                $out[$key] = $key === 'expires' ? strtotime($value) : $value;
+            }
+        }
+        $from = $requestedUrl === '' ? false : parse_url($requestedUrl);
+        if ($from !== false) {
+            $out['domain'] ??= $from['host'] ?? null;
+            $path = $from['path'] ?? '/';
+            $out['path'] ??= str_ends_with($path, '/') ? $path : dirname($path) . '/';
+        }
+        return ['path' => $out['path'] ?? '/'] + $out;
+    }
 }

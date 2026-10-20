@@ -1178,8 +1178,8 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "The term-data source's callback: get_term from the context, then the field asked for, the link through get_term_link.",
-                "doubt": "No viewability check: WP's source appears to return null to a visitor without read for a term of a non-viewable taxonomy, and (6.9) to read navigation-link and submenu blocks' id and type attributes instead of context.",
-                "body": "1cb267eb70b0"
+                "doubt": "(6.9) navigation-link and submenu blocks' id and type attributes are not read in place of the context, as the reference reads them.",
+                "body": "bd60b72bbdce"
             },
             "_block_template_render_without_post_block_context": {
                 "verdict": "move",
@@ -1525,8 +1525,7 @@
                 "verdict": "move",
                 "to": "Minn\\Support\\Kses",
                 "why": "Blanks a template part's tagName unless the allowed tags list it, a kses rule for Kses.",
-                "doubt": "A named allowlist (a context such as 'post') is not resolved through wp_kses_allowed_html, so every tagName is blanked; WP also passes an empty value through unchanged.",
-                "body": "4cd02dcb245a"
+                "body": "dedc9d9b3c5f"
             },
             "filter_block_kses": {
                 "verdict": "keep",
@@ -1538,8 +1537,7 @@
                 "verdict": "delegate",
                 "to": "Minn\\Support\\Kses::cleanValue",
                 "why": "Walks keys and values through wp_kses, strings only, which Kses::cleanValue already does for blockAttributes; that method is private today, and a renamed key keeps its place there where this body moves it last.",
-                "doubt": "$block_context is ignored: WP (6.5.5+) passes a core/template-part block's values through filter_block_core_template_part_attributes here, so an unsafe tagName is not blanked.",
-                "body": "0c40f8be10e7"
+                "body": "9439286c41aa"
             },
             "get_block_asset_url": {
                 "verdict": "move",
@@ -2144,17 +2142,6 @@
                 "why": "sets Mailer and the Sendmail path, taking php.ini's sendmail_path when it names sendmail; public configuration SMTP plugins call on the object's own properties",
                 "body": "cc68ab5f378d"
             },
-            "PHPMailer::isShellSafe": {
-                "verdict": "move",
-                "to": "Minn\\Mail\\Sendmail",
-                "gates": [
-                    "subclass",
-                    "unprobed"
-                ],
-                "why": "the rule for handing a Sender to a shell as -f: escapeshellcmd and escapeshellarg leave it unchanged and only safe characters appear; it guards both local transports",
-                "doubt": "+ and = pass here, which the reference refuses as shell-special (it allows letters, digits and @ _ - . only)",
-                "body": "cc5930ad592e"
-            },
             "PHPMailer::lang": {
                 "verdict": "keep",
                 "reason": "contract",
@@ -2181,8 +2168,7 @@
                     "unprobed"
                 ],
                 "why": "builds the To list (undisclosed-recipients when empty), the -f parameter for a valid shell-safe Sender, sets and restores php.ini's sendmail_from around the sends and turns a failure into an Exception; Mailer::viaMail repeats a simpler mail() send for the engine's own mail, so both should share one transport",
-                "doubt": "sets sendmail_from only for a shell-safe Sender and never takes it as the Sender when none is set; the reference sets it for any valid Sender and does both",
-                "body": "e2db3d05413b"
+                "body": "b4003a37e471"
             },
             "PHPMailer::mb_pathinfo": {
                 "verdict": "delegate",
@@ -4230,12 +4216,6 @@
                 "why": "follows a transport response's redirect (the count, a POST to GET for 302 and 303, the absolute location)",
                 "body": "b70c9fb11250"
             },
-            "WP_Http::make_absolute_url": {
-                "verdict": "move",
-                "to": "Minn\\Support\\Url",
-                "why": "resolves a relative address against a base, dot segments collapsed",
-                "body": "d36b91b7ad98"
-            },
             "WP_Http::normalize_cookies": {
                 "verdict": "keep",
                 "reason": "shape",
@@ -4290,8 +4270,8 @@
             "WP_Http_Cookie::__construct": {
                 "verdict": "move",
                 "to": "Minn\\Http\\CookieText",
-                "why": "fills a cookie from a header (parsed by CookieText, defaults from the requested address) or an array",
-                "body": "f68b2f9b9ad4"
+                "why": "sets each field CookieText::fields works out from a header or an array; only the property writes stay",
+                "body": "438cf423d033"
             },
             "WP_Http_Cookie::test": {
                 "verdict": "move",
@@ -5718,8 +5698,7 @@
                     "subclass"
                 ],
                 "why": "the inherit status by default and the media types or MIME types asked as post_mime_type; PostListArgs::mimeTypes holds the same rule for the engine's list",
-                "doubt": "media_type wins over mime_type here and mime_type is not limited to allowed types, where the engine's mimeTypes lets an allowed mime_type win; the move must keep one rule",
-                "body": "4ddc1e056100"
+                "body": "16a3e638d82a"
             },
             "WP_REST_Attachments_Controller::prepare_links": {
                 "verdict": "keep",
@@ -6099,8 +6078,8 @@
                 "verdict": "keep",
                 "reason": "contract",
                 "why": "asks the post type's own REST controller (a posts controller made when it has none) its check_read_permission, which plugin controllers override",
-                "doubt": "the password is never weighed: the reference asks edit_post for a protected post unless the request's password opens it, and answers false for a type that is not registered",
-                "body": "a709e7ac72bd"
+                "doubt": "a type that is not registered warns (a property read on null) before answering false, where the reference answers false quietly",
+                "body": "7f4d274f574f"
             },
             "WP_REST_Comments_Controller::check_target_post_permission": {
                 "verdict": "keep",
@@ -7066,8 +7045,7 @@
                     "subclass"
                 ],
                 "why": "the create rules (no id, another author, sticky, create_posts) PostsWriteController::serveCreate applies; the $this->check_assign_terms_permission call stays where it is",
-                "doubt": "lets publish_posts alone make a post sticky, where the engine's PostsWriteController::checkStickyChange asks edit_others_posts (rest-sticky, 7.1.3)",
-                "body": "ee44cf2522ae"
+                "body": "51a0ebf6f13e"
             },
             "WP_REST_Posts_Controller::delete_item": {
                 "verdict": "keep",
@@ -7291,8 +7269,7 @@
                     "subclass"
                 ],
                 "why": "the update rules (edit_post, another author, sticky) PostsWriteController::serveUpdate applies; the $this->get_post, $this->check_update_permission and $this->check_assign_terms_permission calls stay",
-                "doubt": "lets publish_posts alone make a post sticky, where the engine's PostsWriteController::checkStickyChange asks edit_others_posts (rest-sticky, 7.1.3)",
-                "body": "b8eaac0b5980"
+                "body": "76520aa426e5"
             }
         },
         "classes/WP_REST_Request.php": {
@@ -7312,8 +7289,7 @@
                 "verdict": "move",
                 "to": "Minn\\Rest\\ParamCheck",
                 "why": "the default validate and sanitize callbacks each route argument gets; a rule of the argument check",
-                "doubt": "every argument gets rest_validate_request_arg and rest_sanitize_request_arg when it names none; the reference adds no validate callback and defaults the sanitize callback to rest_parse_request_arg only for an argument with a type, so an argument with its own sanitize callback is not type-checked there",
-                "body": "bd5720adf7b1"
+                "body": "a18fe84f18de"
             },
             "WP_REST_Request::from_url": {
                 "verdict": "move",
@@ -7503,8 +7479,7 @@
                 "verdict": "keep",
                 "reason": "contract",
                 "why": "$this->get_parent and $this->get_revision, delete_post by name on each",
-                "doubt": "skips the reference's $this->get_items_permissions_check (edit_post on the parent) between finding the revision and asking delete_post on it",
-                "body": "49070a3b78da"
+                "body": "0a398717506a"
             },
             "WP_REST_Revisions_Controller::get_collection_params": {
                 "verdict": "keep",
@@ -9698,8 +9673,8 @@
                     "subclass"
                 ],
                 "why": "a page of post entries: the pre filter, the query, the front-page entry when it lists posts, each permalink with its W3C lastmod and entry filter; $this->get_posts_query_args stays at its point",
-                "doubt": "the reference may return an empty list for a subtype not in get_object_subtypes before the pre filter, and dates lastmod with wp_date(DATE_W3C) in the site's timezone rather than always +00:00",
-                "body": "54cf0b07eabe"
+                "doubt": "dates lastmod with wp_date(DATE_W3C) in the site's timezone rather than always +00:00",
+                "body": "e3c8ba6cfe84"
             },
             "WP_Sitemaps_Provider::get_sitemap_entries": {
                 "verdict": "keep",
@@ -9803,8 +9778,7 @@
                     "subclass"
                 ],
                 "why": "a page of term entries: the pre filter, the term ids at the page's offset, each term link that is not an error through the entry filter; $this->get_taxonomies_query_args stays at its point",
-                "doubt": "the reference may return an empty list before the pre filter when the taxonomy is not among get_object_subtypes",
-                "body": "fc43dd144a92"
+                "body": "ca7c946a6075"
             },
             "WP_Sitemaps_Users::__construct": {
                 "verdict": "keep",
@@ -10043,8 +10017,7 @@
                 "verdict": "delegate",
                 "to": "Minn\\I18n\\TranslationFiles::read",
                 "why": "reads the file once through TranslationFiles::read, recording Invalid data on failure, and keeps the headers lower-cased and each entry's forms NUL-joined; result conversion into the reference's arrays",
-                "doubt": "TranslationFiles::read picks the reader by extension, so an MO object over a .php path includes it and a PHP object over a .mo path reads it as one; the reference reads by the object's class",
-                "body": "58149a795246"
+                "body": "09507601cfce"
             },
             "WP_Translation_File::transform": {
                 "verdict": "keep",
@@ -10057,6 +10030,15 @@
                 "reason": "contract",
                 "why": "parses on first use and returns the held translation for a key, false when missing",
                 "body": "7981b3c2e69e"
+            },
+            "WP_Translation_File_MO::catalog": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\MoFile",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "checks the magic number through the class's own detect_endian_and_validate_file (a subclass may override it), refuses another revision with the reference's message, then reads the bytes; the revision and its message belong with the .mo reader",
+                "body": "8222efa73c32"
             },
             "WP_Translation_File_MO::detect_endian_and_validate_file": {
                 "verdict": "delegate",
@@ -10176,8 +10158,7 @@
                     "subclass"
                 ],
                 "why": "works out the plugin's folder (or its single file) under WP_PLUGIN_DIR and deletes the tree, refusing with remove_old_failed; the same job as Upgrade::clear plus the plugin path rule",
-                "doubt": "nothing stops the folder being the plugins root: a plugin value with a leading slash ('/x.php') makes dirname '/', so the whole plugins folder is deleted, where the reference deletes a folder only when it is not the plugins root",
-                "body": "330bad9074ab"
+                "body": "94cf052c2020"
             },
             "Plugin_Upgrader::install": {
                 "verdict": "keep",
@@ -10387,8 +10368,7 @@
                 "verdict": "keep",
                 "reason": "contract",
                 "why": "records the item's error text in $this->error for the bulk screen, then the parent's error",
-                "doubt": "an error's string data is not appended to $this->error as the reference appends it, and the reference's bulk skin does not print the lines through the parent",
-                "body": "5f11609029a3"
+                "body": "71df785fc533"
             },
             "Bulk_Upgrader_Skin::flush_output": {
                 "verdict": "keep",
@@ -10461,8 +10441,7 @@
                 "verdict": "keep",
                 "reason": "contract",
                 "why": "opens the header if needed and says a string or each error message through $this->feedback, adding text data; skins override it",
-                "doubt": "the reference appends the error's first data (get_error_data with no code) to every message; here each code's own data is appended",
-                "body": "3af428209823"
+                "body": "39ed13ec6b52"
             },
             "WP_Upgrader_Skin::feedback": {
                 "verdict": "keep",
@@ -10481,6 +10460,12 @@
                 "reason": "contract",
                 "why": "prints the wrap and title once, guarded by $this->done_header; the presentation subclasses override",
                 "body": "c7a7ad7b7042"
+            },
+            "WP_Upgrader_Skin::minn_error_lines": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "reads a WP_Error's messages and its first data through the error's own methods and escapes the data for both skins' lines; nothing in the engine owns upgrader output",
+                "body": "d01f78f1109a"
             },
             "WP_Upgrader_Skin::request_filesystem_credentials": {
                 "verdict": "keep",
@@ -11063,8 +11048,7 @@
                     "subclass"
                 ],
                 "why": "cleans the feed address, fetches the feed, builds the title with the feed icon link and its two filters, then the nav wrapper around wp_widget_rss_output",
-                "doubt": "the reference refuses an address equal to the site or home URL, trims leading text before http and falls back to the feed description for an empty title; the feedburner rewrite here rebuilds the same URL",
-                "body": "2cebbeaf45e3"
+                "body": "7e0f6ee89d22"
             }
         },
         "classes/WP_Widget_Recent_Comments.php": {
@@ -11120,8 +11104,7 @@
                     "subclass"
                 ],
                 "why": "queries recent posts with its args filter and builds the nav-wrapped list markup with aria-current, a title fallback and the optional date",
-                "doubt": "an untitled post shows its ID where the reference shows (no title), and the link skips the_permalink's filter and esc_url",
-                "body": "c5bceb07076c"
+                "body": "f03478283299"
             }
         },
         "classes/WP_Widget_Search.php": {
@@ -11759,8 +11742,7 @@
                     "subclass"
                 ],
                 "why": "makes and keeps in a static the token that stands for a literal %, from AUTH_SALT; static engine state that belongs with the placeholder filling",
-                "doubt": "without AUTH_SALT the token is a fixed, guessable hash, where the reference salts uniqid() per request and hooks remove_placeholder_escape on query",
-                "body": "2658a6c94589"
+                "body": "c1790692fdff"
             },
             "wpdb::prepare": {
                 "verdict": "move",
@@ -11814,8 +11796,8 @@
                     "subclass"
                 ],
                 "why": "runs raw SQL, classifies the statement, reads affected rows, insert id and result rows and reports errors; a query whose text its table's charset cannot hold is refused first (Utf8::fits on query_charset; probes invalid-text, table-charsets); the run and classification belong in Db, keeping $this->flush, $this->print_error and the properties where the reference sets them",
-                "doubt": "flushes before the query filter, never fills $queries under SAVEQUERIES (no log_query call), and lacks the reference's not-ready and empty-query checks",
-                "body": "53a9225365f5"
+                "doubt": "never fills $queries under SAVEQUERIES (no log_query call), and lacks the reference's not-ready check",
+                "body": "286a85cf3bad"
             },
             "wpdb::query_charset": {
                 "verdict": "keep",
@@ -11841,8 +11823,8 @@
                 "verdict": "keep",
                 "reason": "contract",
                 "why": "sets prefix and base_prefix and names each table property from the object's own lists; the properties plugins and subclasses read",
-                "doubt": "no WP_Error for a prefix outside [a-z0-9_], prefix set even when table names are not, the old tables (categories, post2cat, link2cat) left unnamed, CUSTOM_USER_TABLE ignored",
-                "body": "3aae63f2e68b"
+                "doubt": "prefix set even when table names are not, the old tables (categories, post2cat, link2cat) left unnamed, CUSTOM_USER_TABLE ignored",
+                "body": "783b63cec71f"
             },
             "wpdb::set_sql_mode": {
                 "verdict": "move",
@@ -12061,8 +12043,8 @@
                 "verdict": "move",
                 "to": "Minn\\Front\\CommentFormMarkup",
                 "why": "picks the plain or reply heading and links the parent's author; form markup by rules, the echo stays",
-                "doubt": "the parent is linked as #comment-N where the API uses get_comment_link, and the global $comment the API sets for the form's template tags is not set",
-                "body": "670470dc63fe"
+                "doubt": "the parent is linked as #comment-N where the API uses get_comment_link",
+                "body": "28342b17022d"
             },
             "comment_text": {
                 "verdict": "keep",
@@ -12105,8 +12087,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentTags",
                 "why": "the current comment's id through get_comment_ID; a template-tag read beside CommentTags::author",
-                "doubt": "no comment gives '' where the API gives '0'",
-                "body": "5ba30d5bd3e3"
+                "body": "b0e88e731f23"
             },
             "get_comment_author_IP": {
                 "verdict": "move",
@@ -12124,22 +12105,19 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentTags",
                 "why": "the comment_email filter, the empty and @ checks and the mailto anchor with before and after; markup by rules",
-                "doubt": "the address is scrambled by antispambot, which the API leaves to a comment_email filter, so the mailto and text differ (and vary per call)",
-                "body": "5ebc6ee83e14"
+                "body": "16c1c2a3403b"
             },
             "get_comment_author_link": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentTags",
                 "why": "picks the rel words by whether the URL is on the site, filters them and builds the author anchor, then get_comment_author_link; markup by rules",
-                "doubt": "internal is a home_url() prefix test where the API compares hosts (wp_is_internal_link, wp_internal_hosts), so an http/https or listed-host mismatch gets external nofollow",
-                "body": "078cad84ff2f"
+                "body": "77a2c9bf21a4"
             },
             "get_comment_author_url_link": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentTags",
                 "why": "strips http://, www. and one trailing slash for the default text and builds the rel=external anchor with its filter; markup by rules",
-                "doubt": "a given link text keeps its http:// and trailing slash, where the API strips them from whatever text it shows",
-                "body": "deca5aff7896"
+                "body": "1551080710da"
             },
             "get_comment_class": {
                 "verdict": "move",
@@ -12154,15 +12132,13 @@
                 "verdict": "delegate",
                 "to": "Minn\\Runtime\\CommentQuery::breakdown",
                 "why": "renames wp_count_comments' keys; CommentQuery::breakdown already counts the same statuses and totals, only moderated becomes awaiting_moderation",
-                "doubt": "it goes through wp_count_comments and its filter, so a plugin's filtered counts (or a partial object) reach get_comment_count, which the API counts straight from the table; key order differs too",
-                "body": "02556181465c"
+                "body": "e2a87902c5e5"
             },
             "get_comment_date": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentTags",
                 "why": "the default date format, the stored local date formatted and its get_comment_date filter; the twin of CommentTags::time",
-                "doubt": "only '' falls back to date_format; a null or false format reaches mysql2date where the API's empty() test uses the option",
-                "body": "2f8954655532"
+                "body": "59b702bc1799"
             },
             "get_comment_excerpt": {
                 "verdict": "move",
@@ -12174,8 +12150,7 @@
                 "verdict": "move",
                 "to": "Minn\\Front\\CommentFormMarkup",
                 "why": "builds the comment_post_ID and comment_parent hidden inputs from the post and the reply id, then comment_id_fields; form markup by rules",
-                "doubt": "with no post it still prints both fields with 0, where the API returns ''",
-                "body": "a0e72e71336b"
+                "body": "9f8e7eb7a4c9"
             },
             "get_comment_pages_count": {
                 "verdict": "move",
@@ -12202,8 +12177,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostTags",
                 "why": "picks the zero, one or more text by the count, substitutes % and fires comments_number; a template-tag rule beside PostTags::commentsNumber",
-                "doubt": "the default texts are bare English (no __ or _n), so the gettext filters and a translated site never see No Comments, 1 Comment, %s Comments",
-                "body": "a36eca2d664f"
+                "body": "6e730794f65a"
             },
             "get_comments_pagenum_link": {
                 "verdict": "move",
@@ -12212,8 +12186,7 @@
                     "globals"
                 ],
                 "why": "keeps the bare permalink for the default page, else comment-page-N or ?cpage=N, then #comments and its filter; CommentPages::link builds the same address",
-                "doubt": "hard-codes comment-page- where the API uses $wp_rewrite->comments_pagination_base",
-                "body": "aed7343850d2"
+                "body": "55ca7d2e9aff"
             },
             "get_edit_comment_link": {
                 "verdict": "move",
@@ -12240,8 +12213,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentTags",
                 "why": "the open check, then the login anchor or the moveForm reply anchor, before and after, through post_comments_link; markup by rules",
-                "doubt": "the sign-in link has no redirect, where the API passes get_permalink() to wp_login_url; default texts are untranslated",
-                "body": "a6b02ab77c94"
+                "body": "570a6be3988f"
             },
             "get_previous_comments_link": {
                 "verdict": "move",
@@ -12256,8 +12228,7 @@
                     "globals"
                 ],
                 "why": "gates on the comment page count, builds the previous and next divs and wraps them in _navigation_markup with the aria label; beside PostNavigation::ariaLabel",
-                "doubt": "it reads $wp_query->max_num_comment_pages where the API asks get_comment_pages_count(), which also counts $wp_query->comments when the template set no page count",
-                "body": "e056f94f203b"
+                "body": "fe3812c3952c"
             },
             "get_the_comments_pagination": {
                 "verdict": "keep",
@@ -12278,8 +12249,7 @@
                     "globals"
                 ],
                 "why": "the singular gate, the cpage and total defaults and the pretty or ?cpage= base are comment paging rules; paginate_links is still called by name and the echo stays",
-                "doubt": "echoes only the plain type and returns after echoing, where the API echoes any non-array type and returns nothing; the base hard-codes comment-page- instead of comments_pagination_base",
-                "body": "6af6ece6122c"
+                "body": "3fa3e661c073"
             },
             "sanitize_comment_cookies": {
                 "verdict": "keep",
@@ -12318,8 +12288,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentChecks",
                 "why": "the moderator exemption, the hour window, comment_flood_filter, the trigger action and the 429 die are flood policy; Comments::lastCommentTime already reads the row",
-                "doubt": "the hour window counts back from the comment's $date where the API counts back from now",
-                "body": "3782914d8e8c"
+                "body": "9b1ffc5aa29c"
             },
             "wp_comment_form_unfiltered_html_nonce": {
                 "verdict": "keep",
@@ -13035,8 +13004,8 @@
                 "verdict": "move",
                 "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "why": "a link to the post with the block's text or Read more and the title for screen readers; a post block renderer",
-                "doubt": "the content attribute is printed without wp_kses_post and the justifyContent is-justified class is not added, both of which WordPress does",
-                "body": "7c496d462be0"
+                "doubt": "the justifyContent is-justified class is not added, which WordPress does",
+                "body": "88bab04b157c"
             },
             "_minn_block_site_logo": {
                 "verdict": "move",
@@ -15164,12 +15133,6 @@
                 "reason": "compose",
                 "why": "deprecated: the notice, then _wp_specialchars with the arguments given or esc_html for the text alone",
                 "body": "acb1cf16565c"
-            },
-            "wp_sprintf": {
-                "verdict": "move",
-                "to": "Minn\\Support\\Sprintf",
-                "why": "a format parser: %% literals, positional and ordered arguments, each fragment through the wp_sprintf filter before sprintf; a new Support class, with wp_sprintf_l beside it",
-                "body": "816a26484315"
             },
             "wp_staticize_emoji_for_email": {
                 "verdict": "move",
@@ -17954,10 +17917,15 @@
             },
             "is_serialized": {
                 "verdict": "delegate",
-                "to": "Minn\\Support\\Serialized::looksSerialized",
-                "why": "the engine already decides it; the not-a-string guard belongs in the engine method once it takes any value",
-                "doubt": "$strict is never passed on: is_serialized($data, false) may accept what the engine refuses; a probe should settle it",
-                "body": "cce89825c3c8"
+                "to": "Minn\\Support\\Serialized",
+                "why": "the engine decides it (looksSerialized strict, mayBeSerialized loose); the not-a-string guard and the choice between them belong in the engine once it takes any value",
+                "body": "913ea188e444"
+            },
+            "is_serialized_string": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Serialized",
+                "why": "a shape test of a string's ends (\"s:\" and a closing quote and semicolon), the same family as looksSerialized, which belongs with the serialized reader",
+                "body": "f9040c339797"
             },
             "set_user_setting": {
                 "verdict": "move",
@@ -18454,8 +18422,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PluginFiles",
                 "why": "the active plugins' files that exist",
-                "doubt": "accepts any stored path that is a file; the reference also refuses one that is not .php or fails validate_file (a dot-dot path), which a probe with such an active_plugins entry would show",
-                "body": "049c7da15483"
+                "body": "64a13735f441"
             }
         },
         "post.php": {
@@ -18475,8 +18442,7 @@
                 "verdict": "keep",
                 "reason": "shape",
                 "why": "picks each default's flat or hierarchical form and casts ObjectLabels::build's result",
-                "doubt": "the object's own labels are left as given, where the API writes the derived labels back onto it as an object",
-                "body": "e3d14038f98f"
+                "body": "607116a8b73c"
             },
             "_minn_adjacent_post": {
                 "verdict": "move",
@@ -18610,8 +18576,7 @@
                 "verdict": "move",
                 "to": "Minn\\Front\\PageLinks",
                 "why": "the page-link URL scheme (plain or pretty, drafts, previews) and its anchor markup; PageLinks renders the list",
-                "doubt": "a static front page split into pages gets /2/ where the API uses the pagination base (/page/2/); previews add preview=true rather than going through get_preview_post_link with preview_id and nonce",
-                "body": "f59be03334ef"
+                "body": "6e9a0cd18920"
             },
             "_wp_preview_meta_filter": {
                 "verdict": "keep",
@@ -18635,8 +18600,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostRevisions",
                 "why": "the guard and the source, data, put chain are all PostRevisions steps; one engine method should take the post and the autosave flag",
-                "doubt": "a post without an ID returns null where the API returns WP_Error invalid_post, and a revision of a revision is not refused",
-                "body": "044946b8e960"
+                "body": "1b7ccd6b7555"
             },
             "add_post_type_support": {
                 "verdict": "keep",
@@ -18648,15 +18612,13 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostCaches",
                 "why": "letting an attachment's caches go belongs beside PostCaches::clean",
-                "doubt": "never deletes the posts and post_meta cache entries nor honours wp_suspend_cache_invalidation, which the API does",
-                "body": "99ace0d2303c"
+                "body": "56dd2e8f6dff"
             },
             "count_user_posts": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostReads",
                 "why": "which statuses count is the rule PostReads::byAuthorSql already holds; the count and its filter join it",
-                "doubt": "counts private posts for every reader, where the API counts them only for a reader who may read private posts or is the author",
-                "body": "a1347d8dabe7"
+                "body": "ce16fbc0b198"
             },
             "create_initial_post_types": {
                 "verdict": "move",
@@ -18674,8 +18636,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\AdjacentPosts",
                 "why": "term and exclusion rules, the private-posts level and three clause filters around the engine's adjacentClauses and adjacentId; the whole lookup is engine work",
-                "doubt": "an unknown taxonomy returns null only with in_same_term, where the API returns null for it before anything else",
-                "body": "5931bebe0f4b"
+                "body": "e60580beaf62"
             },
             "get_available_post_mime_types": {
                 "verdict": "move",
@@ -18686,19 +18647,11 @@
                 "why": "a distinct mime-type SQL read through $wpdb behind its pre filter; a stored-data read for PostLookup",
                 "body": "4d54025029d8"
             },
-            "get_available_post_statuses": {
-                "verdict": "keep",
-                "reason": "compose",
-                "why": "the status names of wp_count_posts",
-                "doubt": "drops statuses with no posts, where the API lists every status wp_count_posts names",
-                "body": "83a17ececd74"
-            },
             "get_body_class": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\BodyClasses",
                 "why": "takes the stored classic classes or works them out, adds the extras and filters; Theme\\PageRenderer already fires body_class itself",
-                "doubt": "escapes after body_class where the API escapes before it, so a filter's classes come back escaped",
-                "body": "219ea05030f3"
+                "body": "724a3cf2a641"
             },
             "get_boundary_post": {
                 "verdict": "move",
@@ -18710,8 +18663,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\EditLinks",
                 "why": "the capability check, delete or trash by EMPTY_TRASH_DAYS, the nonce and the filter; it belongs beside EditLinks::post",
-                "doubt": "builds post.php?post=%d for every type where the API uses the type's _edit_link (EditLinks::post does); the $deprecated notice is missing",
-                "body": "b13d63a11dd5"
+                "body": "e6c045ee7d6f"
             },
             "get_enclosed": {
                 "verdict": "move",
@@ -18745,8 +18697,7 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\PostClasses",
                 "why": "gathers the format, thumbnail, sticky and term facts and runs both filters around PostClasses::build; the gathering joins the builder",
-                "doubt": "extra classes go through the html-class sanitiser, stripping characters like ':' that the API keeps (it only escapes them)",
-                "body": "f09fabf93d80"
+                "body": "c47a3c84e110"
             },
             "get_post_custom_keys": {
                 "verdict": "keep",
@@ -18764,8 +18715,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\SiteTime",
                 "why": "picks the column, rejects zero dates and parses it in the right zone; stored-date parsing like SiteTime::fromStored",
-                "doubt": "a gmt source comes back in UTC where the API converts the result to the site's time zone",
-                "body": "50613b1d051e"
+                "body": "565d91887b1f"
             },
             "get_post_mime_type": {
                 "verdict": "move",
@@ -18801,15 +18751,13 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Registry",
                 "why": "Registry::labels then post_type_labels_{name} around the result; the filter is part of making labels",
-                "doubt": "the filtered labels are not merged back over the defaults, so a filter that drops a label loses it where the API restores it",
-                "body": "0cb348ac9ad0"
+                "body": "1417cd2901b4"
             },
             "get_post_types_by_support": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Registered",
                 "why": "matches each type's supports by and, or, not; Registered already lists objects by operator",
-                "doubt": "the operator is compared in lower case only, where the API's list filter takes AND, OR, NOT in any case",
-                "body": "43d8f60dd8be"
+                "body": "054588c53c92"
             },
             "get_pung": {
                 "verdict": "move",
@@ -18866,8 +18814,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostTags",
                 "why": "the protected-post answer and get_the_excerpt around the stored excerpt, a sibling of PostTags::title; Rest\\RenderedFields already fires the same filter itself",
-                "doubt": "the protected-post message skips __(), so a translated site shows it in English",
-                "body": "41230f63b0ad"
+                "body": "8cdc83776931"
             },
             "get_the_guid": {
                 "verdict": "move",
@@ -18885,22 +18832,19 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostTags",
                 "why": "PostTags::date's twin for the modified column: default format, the formatted time, its filter",
-                "doubt": "no post returns false without the filter, where the API sends false through get_the_modified_date; the filter also gets the resolved format, not the one given",
-                "body": "0d9f69ad0f98"
+                "body": "78bfe6d2a5a7"
             },
             "get_the_modified_time": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostTags",
                 "why": "PostTags::date's twin for the modified time: default time format, the formatted time, its filter",
-                "doubt": "no post returns false without the filter, where the API sends false through get_the_modified_time; the filter also gets the resolved format, not the one given",
-                "body": "7a07b7ffc7bb"
+                "body": "effa61fbc0c5"
             },
             "get_the_time": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostTags",
                 "why": "the same body as PostTags::date (get_the_date) with the time format and its own filter; it joins its twin",
-                "doubt": "get_the_time receives the resolved format where the API passes the format as given (empty for the default)",
-                "body": "07f085c0e82d"
+                "body": "757652b71d5f"
             },
             "get_to_ping": {
                 "verdict": "move",
@@ -18912,8 +18856,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostReads",
                 "why": "reads whether the stored excerpt is set; a column read like PostReads::type",
-                "doubt": "an excerpt of '0' counts as present here, where the API's empty() test says there is none",
-                "body": "a6db2c6193e5"
+                "body": "7202ee117568"
             },
             "is_multi_author": {
                 "verdict": "move",
@@ -18925,8 +18868,7 @@
                 "verdict": "move",
                 "to": "Minn\\Theme\\Templates",
                 "why": "the template-matching rules (default, a list, file names) over the queried page's slug are template behaviour",
-                "doubt": "matches by file basename when a name holds a dot, so 'a/full.php' answers true for 'b/full.php'; the API compares the whole slug",
-                "body": "792b99dccf99"
+                "body": "e0ca80470b6d"
             },
             "is_post_embeddable": {
                 "verdict": "keep",
@@ -18950,15 +18892,13 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostLookup",
                 "why": "which types to search and the match are the lookup's job, beside idByTitle",
-                "doubt": "$content, $date and $status are ignored, and with no type it searches only public types where the API searches every type",
-                "body": "2d956df86b1e"
+                "body": "daff487a76ea"
             },
             "prepend_attachment": {
                 "verdict": "move",
                 "to": "Minn\\Content\\MediaShortcodes",
                 "why": "chooses a video or audio player or an image link by the attachment's kind and builds its markup, then the filter; media rendering by rules",
-                "doubt": "a video with a featured image gets no poster attribute",
-                "body": "a79c0717f808"
+                "body": "4635747cb963"
             },
             "query_posts": {
                 "verdict": "keep",
@@ -19003,8 +18943,7 @@
                 "verdict": "keep",
                 "reason": "shape",
                 "why": "echoes and returns get_the_author",
-                "doubt": "$deprecated_echo is ignored: the_author('', false) still prints, where the API only returns",
-                "body": "170c77a3513c"
+                "body": "b0f644211edb"
             },
             "the_author_email": {
                 "verdict": "keep",
@@ -19016,8 +18955,7 @@
                 "verdict": "move",
                 "to": "Minn\\Theme\\ClassicContent",
                 "why": "picks the engine's classic pipeline or a plain the_content run, then escapes ]]>; the choice and the escape are engine work, only the echo stays",
-                "doubt": "$strip_teaser never reaches ClassicContent::render, so the_content(null, true) keeps the teaser under a classic theme",
-                "body": "b25d7d9096d0"
+                "body": "836e03950cb9"
             },
             "the_date": {
                 "verdict": "keep",
@@ -19080,15 +19018,14 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "use_block_editor_for_post_type by name, then its own filter",
-                "doubt": "runs the filter for no post where the API returns false first; a meta-box-loader request is not answered false",
-                "body": "09cf53054e50"
+                "doubt": "a meta-box-loader request is not answered false",
+                "body": "3b1b091165d3"
             },
             "use_block_editor_for_post_type": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Registered",
                 "why": "decides from the type's settings, then its filter; a type fact like Registered::viewableType",
-                "doubt": "skips the editor-support check and runs the filter for an unknown type, where the API returns false for both first",
-                "body": "da72fbfa8b61"
+                "body": "55e343c97641"
             },
             "walk_page_dropdown_tree": {
                 "verdict": "keep",
@@ -19112,22 +19049,19 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostWrites",
                 "why": "which posts keep an old date and the day it was, then rememberOld; the rule joins the post-save behaviour",
-                "doubt": "also requires the post before to be published, which the API does not ask; attachments (inherit) are left out",
-                "body": "996d0bf9d55a"
+                "body": "2105120b4c30"
             },
             "wp_check_for_changed_slugs": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostWrites",
                 "why": "which posts keep an old slug, then the engine's rememberOld; the rule joins the post-save behaviour",
-                "doubt": "an attachment (status inherit) never keeps its old slug, which the API also tracks",
-                "body": "5a3607b4d05a"
+                "body": "b204cc3cc72f"
             },
             "wp_check_post_hierarchy_for_loops": {
                 "verdict": "move",
                 "to": "Minn\\Support\\Hierarchy",
                 "why": "walks the parent chain by hand; Support\\Hierarchy already finds loops in a parent chain",
-                "doubt": "an existing loop above the new parent is only stepped around, where the API breaks it by setting each member's parent to 0",
-                "body": "444e407c07a4"
+                "body": "821866a92645"
             },
             "wp_check_revisioned_meta_fields_have_changed": {
                 "verdict": "keep",
@@ -19139,8 +19073,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostLookup",
                 "why": "every status filled to zero over the engine's counts, then its filter; the readable rule belongs beside countByStatus",
-                "doubt": "$perm is ignored: with 'readable' a user without read_private_posts still counts other authors' private posts",
-                "body": "4d0bb6086915"
+                "body": "d1f26041adcb"
             },
             "wp_delete_auto_drafts": {
                 "verdict": "move",
@@ -19155,8 +19088,8 @@
                 "verdict": "move",
                 "to": "Minn\\Theme\\TemplateWriter",
                 "why": "makes a template slug unique within its theme by numbered suffixes; template storage rules",
-                "doubt": "a slug another filter chose is returned untouched, where the API makes that one unique within the theme too; no truncation to 200 characters",
-                "body": "d60a88a66d94"
+                "doubt": "no truncation to 200 characters",
+                "body": "90eab1bcb2ae"
             },
             "wp_get_latest_revision_id_and_total_count": {
                 "verdict": "move",
@@ -19180,8 +19113,7 @@
                 "verdict": "keep",
                 "reason": "shape",
                 "why": "get_post limited to revisions, in the OBJECT, ARRAY_A or ARRAY_N shape asked",
-                "doubt": "assigns the fetched post back to the by-reference argument, so a caller's id variable becomes a WP_Post or null; the API reads into a local",
-                "body": "c6f921aa425f"
+                "body": "4b59772850c7"
             },
             "wp_get_post_revisions_url": {
                 "verdict": "keep",
@@ -19193,15 +19125,13 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "the API's defaults through get_posts, rows as arrays for ARRAY_A",
-                "doubt": "OBJECT output with nothing found returns an empty array where the API returns false; the numeric-argument deprecation notice is missing",
-                "body": "22ec495bd3ef"
+                "body": "e82b6c145498"
             },
             "wp_is_post_autosave": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostRevisions",
                 "why": "the autosave naming rule on a revision's slug, answering its parent; PostRevisions owns revision names",
-                "doubt": "matches any digits-autosave prefix where the API looks for the parent's own id followed by -autosave",
-                "body": "d0409dea4db9"
+                "body": "1881ce738a0c"
             },
             "wp_is_post_revision": {
                 "verdict": "move",
@@ -19228,8 +19158,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostRevisions",
                 "why": "picks the registered meta keys with revisions enabled, then its filter around the list; revision behaviour",
-                "doubt": "lists the type's keys before the generic ones where the API merges the generic keys first",
-                "body": "c3d11b85ff1e"
+                "body": "b3480916c47f"
             },
             "wp_reset_postdata": {
                 "verdict": "keep",
@@ -19265,8 +19194,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostRevisions",
                 "why": "the bail during post_updated decides when a revision is saved; it belongs in PostRevisions::save",
-                "doubt": "bails on every post_updated run, where the API bails only while wp_save_post_revision_on_insert hangs on wp_after_insert_post; a plugin that unhooks that gets no revisions",
-                "body": "a5619aa18938"
+                "body": "378a860641e4"
             },
             "wp_save_post_revision_on_insert": {
                 "verdict": "keep",
@@ -19460,7 +19388,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "runs a search through the API's search controller and handlers, with its parameters checked",
-                "body": "945bd85c9849"
+                "body": "adf4a1086a48"
             },
             "create_initial_rest_routes": {
                 "verdict": "keep",
@@ -21757,8 +21685,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "reads the posted credentials, fires wp_authenticate and secure_signon_cookie, then wp_authenticate and wp_set_auth_cookie (both pluggable) by name and the wp_login action",
-                "doubt": "WordPress adds wp_authenticate_cookie to authenticate here, passing the secure choice on, which is missing; and neither this nor the engine's own sign-in clears a pending user_activation_key, so a mailed reset link outlives the login if WordPress clears it (a probe should settle it)",
-                "body": "2a0d9c751bbf"
+                "body": "2d10e9b42408"
             },
             "wp_user_personal_data_exporter": {
                 "verdict": "move",

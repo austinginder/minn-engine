@@ -23,6 +23,19 @@ final class ObjectLabels
      */
     public static function build(array $labels, ?string $label, string $name, array $defaults): array
     {
+        return array_merge($defaults, self::derive($labels, $label, $name));
+    }
+
+    /**
+     * The object's own labels with what the rules derive added, each only
+     * when what it comes from is there (probe post-doubts): what the
+     * reference writes back onto the object.
+     *
+     * @param array<string, mixed> $labels the object's own
+     * @return array<string, mixed>
+     */
+    public static function derive(array $labels, ?string $label, string $name): array
+    {
         if ($label !== null && empty($labels['name'])) {
             $labels['name'] = $label;
         }
@@ -30,9 +43,11 @@ final class ObjectLabels
             $labels['singular_name'] = $labels['name'];
         }
         $labels['name_admin_bar'] ??= $labels['singular_name'] ?? $name;
-        $labels['menu_name'] ??= $labels['name'] ?? null;
-        $labels['all_items'] ??= $labels['menu_name'];
-        $labels['archives'] ??= $labels['all_items'];
-        return array_merge($defaults, $labels);
+        foreach (['menu_name' => 'name', 'all_items' => 'menu_name', 'archives' => 'all_items'] as $key => $from) {
+            if (!isset($labels[$key]) && isset($labels[$from])) {
+                $labels[$key] = $labels[$from];
+            }
+        }
+        return $labels;
     }
 }

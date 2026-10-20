@@ -585,41 +585,7 @@ function format_to_edit($content, $rich_text = false)
  */
 function wp_sprintf($pattern, ...$args)
 {
-    $pattern = (string) $pattern;
-    $at = strpos($pattern, '%');
-    if ($at === false) {
-        return $pattern;
-    }
-    $out = substr($pattern, 0, $at);
-    $length = strlen($pattern);
-    $next = 0;
-    while ($at < $length) {
-        if (substr($pattern, $at, 2) === '%%') {
-            $out .= '%';
-            $at += 2;
-            continue;
-        }
-        $end = strpos($pattern, '%', $at + 1);
-        $fragment = $end === false ? substr($pattern, $at) : substr($pattern, $at, $end - $at);
-        $at = $end === false ? $length : $end;
-        if (preg_match('/^%(\d+)\$/', $fragment, $position) === 1) {
-            $value = $args[(int) $position[1] - 1] ?? '';
-            $fragment = '%' . substr($fragment, strlen($position[0]));
-        } else {
-            $value = $args[$next++] ?? '';
-        }
-        $filtered = apply_filters('wp_sprintf', $fragment, $value);
-        if ($filtered !== $fragment) {
-            $out .= $filtered;
-            continue;
-        }
-        try {
-            $out .= sprintf($fragment, is_array($value) ? '' : $value);
-        } catch (\ValueError) {
-            $out .= $fragment;
-        }
-    }
-    return $out;
+    return Minn\Support\Sprintf::format((string) $pattern, $args, static fn (string $fragment, $value) => apply_filters('wp_sprintf', $fragment, $value));
 }
 
 /** A mail subject's quoted-printable encoded word decoded to its bytes (underscores as spaces), in the subject's own charset. */

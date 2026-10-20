@@ -365,15 +365,18 @@ class WP_REST_Request implements ArrayAccess, \Minn\Objects\RestRequest
     }
 
     /**
-     * The route's arguments as dispatch checks them: an argument without its
-     * own callbacks validates and sanitizes by its schema; one that names
-     * none (null, as a schema's arg_options do for a post's title and
-     * content) is not checked (probe namespaced-type).
+     * The route's arguments as dispatch checks them: only a validate callback
+     * an argument names validates it; one without a sanitize callback is
+     * checked and sanitized by its schema when sanitized
+     * (rest_parse_request_arg), so a value of the wrong type is refused
+     * there; one that names none (null, as a schema's arg_options do for a
+     * post's title and content) is not checked (probes namespaced-type,
+     * sweep-1020b).
      */
     private static function checked_args(array $args): array
     {
         foreach ($args as $key => $arg) {
-            $args[$key] = (array) $arg + ['validate_callback' => 'rest_validate_request_arg', 'sanitize_callback' => 'rest_sanitize_request_arg'];
+            $args[$key] = (array) $arg + ['sanitize_callback' => 'rest_parse_request_arg'];
         }
         return $args;
     }

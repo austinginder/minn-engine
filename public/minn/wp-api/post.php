@@ -129,7 +129,7 @@ function the_content($more_link_text = null, $strip_teaser = false)
     // a bare apply_filters('the_content', ...) elsewhere stays a plain filter run.
     if (Runtime::current()->get('classic_theme')) {
         $post = get_post();
-        $content = $post === null ? '' : \Minn\Theme\ClassicContent::render(Minn\Content\PostRecord::fromRow($post->to_array()), $more_link_text);
+        $content = $post === null ? '' : \Minn\Theme\ClassicContent::render(Minn\Content\PostRecord::fromRow($post->to_array()), $more_link_text, $strip_teaser ? \Minn\Theme\Teaser::Stripped : \Minn\Theme\Teaser::Kept);
     } else {
         $content = apply_filters('the_content', get_the_content($more_link_text, $strip_teaser));
     }
@@ -143,7 +143,7 @@ function get_the_excerpt($post = null)
         return '';
     }
     if (post_password_required($post)) {
-        return 'There is no excerpt because this is a protected post.';
+        return __('There is no excerpt because this is a protected post.');
     }
     // The stored excerpt; wp_trim_excerpt (the default here) makes one from the content when there is none.
     return apply_filters('get_the_excerpt', $post->post_excerpt, $post);
@@ -157,7 +157,8 @@ function the_excerpt()
 function has_excerpt($post = 0)
 {
     $post = get_post($post);
-    return $post !== null && $post->post_excerpt !== '';
+    // An excerpt of "0" is no excerpt (probe post-more doubts).
+    return $post !== null && !empty($post->post_excerpt);
 }
 
 function post_password_required($post = null)
@@ -191,8 +192,8 @@ function get_the_time($format = '', $post = null)
     if ($post === null) {
         return false;
     }
-    $format = $format === '' ? get_option('time_format') : $format;
-    return apply_filters('get_the_time', get_post_time($format, false, $post, true), $format, $post);
+    // The filter is handed the format as given.
+    return apply_filters('get_the_time', get_post_time(empty($format) ? get_option('time_format') : $format, false, $post, true), $format, $post);
 }
 
 function get_post_time($format = 'U', $gmt = false, $post = null, $translate = false)
@@ -202,22 +203,18 @@ function get_post_time($format = 'U', $gmt = false, $post = null, $translate = f
 
 function get_the_modified_date($format = '', $post = null)
 {
+    // No post is false through the filter too; the filter is handed the format as given.
     $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $format = $format === '' ? get_option('date_format') : $format;
-    return apply_filters('get_the_modified_date', get_post_modified_time($format, false, $post, true), $format, $post);
+    $date = $post === null ? false : get_post_modified_time(empty($format) ? get_option('date_format') : $format, false, $post, true);
+    return apply_filters('get_the_modified_date', $date, $format, $post);
 }
 
 function get_the_modified_time($format = '', $post = null)
 {
+    // No post is false through the filter too; the filter is handed the format as given.
     $post = get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $format = $format === '' ? get_option('time_format') : $format;
-    return apply_filters('get_the_modified_time', get_post_modified_time($format, false, $post, true), $format, $post);
+    $time = $post === null ? false : get_post_modified_time(empty($format) ? get_option('time_format') : $format, false, $post, true);
+    return apply_filters('get_the_modified_time', $time, $format, $post);
 }
 
 function get_post_modified_time($format = 'U', $gmt = false, $post = null, $translate = false)
@@ -354,12 +351,17 @@ function get_edit_post_link($post = 0, $context = 'display')
 
 function get_delete_post_link($post = 0, $deprecated = '', $force_delete = false)
 {
+    if (!empty($deprecated)) {
+        _deprecated_argument(__FUNCTION__, '3.0.0');
+    }
     $post = get_post($post);
-    if ($post === null || !current_user_can('delete_post', $post->ID)) {
+    $type = $post === null ? null : get_post_type_object($post->post_type);
+    if ($type === null || !current_user_can('delete_post', $post->ID)) {
         return null;
     }
+    // The type's own edit address (_edit_link), as the edit link uses.
     $action = $force_delete || !EMPTY_TRASH_DAYS ? 'delete' : 'trash';
-    $link = add_query_arg('action', $action, admin_url(sprintf('post.php?post=%d', $post->ID)));
+    $link = add_query_arg('action', $action, admin_url(sprintf((string) $type->_edit_link, $post->ID)));
     return apply_filters('get_delete_post_link', wp_nonce_url($link, "$action-post_{$post->ID}"), $post->ID, $force_delete);
 }
 
@@ -455,11 +457,9 @@ function wp_shortlink_header()
  */
 function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previous = true, $taxonomy = 'category')
 {
+    // No post, or a taxonomy that does not exist, is null before anything else.
     $post = get_post();
-    if ($post === null) {
-        return null;
-    }
-    if ($in_same_term && !taxonomy_exists($taxonomy)) {
+    if ($post === null || !taxonomy_exists($taxonomy)) {
         return null;
     }
     $adjacent = $previous ? 'previous' : 'next';
@@ -544,11 +544,18 @@ function wp_is_post_revision($post)
 
 function wp_is_post_autosave($post)
 {
+    // An autosave of its own parent: its name holds "{parent}-autosave".
     $post = get_post($post);
-    if ($post === null || $post->post_type !== 'revision' || !preg_match('/^\d+-autosave/', (string) $post->post_name)) {
+    if ($post === null || $post->post_type !== 'revision' || !str_contains((string) $post->post_name, $post->post_parent . '-autosave')) {
         return false;
     }
     return (int) $post->post_parent;
+}
+
+/** @internal whether a post's old date and slug are kept on record: a published post, or an attachment (inherit) */
+function _minn_keeps_old_address($post): bool
+{
+    return $post->post_status === 'publish' || ($post->post_type === 'attachment' && $post->post_status === 'inherit');
 }
 
 /** A post's revisions, newest first unless asked otherwise; none while its revisions are switched off (unless check_enabled is false). */
@@ -611,16 +618,25 @@ function _wp_post_revision_data($post = [], $autosave = false)
 function _wp_put_post_revision($post = null, $autosave = false)
 {
     $source = PostRevisions::source($post);
-    return empty($source['ID']) ? null : PostRevisions::put(_wp_post_revision_data($source, (bool) $autosave));
+    if (empty($source['ID'])) {
+        return new WP_Error('invalid_post', __('Invalid post ID.'));
+    }
+    if (($source['post_type'] ?? '') === 'revision') {
+        return new WP_Error('post_type', __('Cannot create a revision of a revision'));
+    }
+    return PostRevisions::put(_wp_post_revision_data($source, (bool) $autosave));
 }
 
 /** The meta keys a type's revisions keep: those registered with revisions_enabled, through wp_post_revision_meta_keys. */
 function wp_post_revision_meta_keys($post_type)
 {
     $keys = [];
-    foreach (get_registered_meta_keys('post', (string) $post_type) + get_registered_meta_keys('post') as $key => $args) {
-        if (!empty($args['revisions_enabled'])) {
-            $keys[] = (string) $key;
+    // The keys of every post type first, then the type's own.
+    foreach ([get_registered_meta_keys('post'), get_registered_meta_keys('post', (string) $post_type)] as $registered) {
+        foreach ($registered as $key => $args) {
+            if (!empty($args['revisions_enabled'])) {
+                $keys[] = (string) $key;
+            }
         }
     }
     return apply_filters('wp_post_revision_meta_keys', array_values(array_unique($keys)), $post_type);
@@ -716,11 +732,14 @@ function _wp_link_page($i)
     $url = get_permalink();
     if ((int) $i > 1) {
         $plain = (string) get_option('permalink_structure') === '' || in_array($post?->post_status, ['draft', 'pending'], true);
-        $url = $plain ? add_query_arg('page', (int) $i, $url) : trailingslashit($url) . user_trailingslashit((string) (int) $i, 'single_paged');
+        // A static front page's pages go by the pagination base (/page/2/).
+        $front = $post !== null && get_option('show_on_front') === 'page' && (int) get_option('page_on_front') === (int) $post->ID;
+        $url = $plain ? add_query_arg('page', (int) $i, $url) : trailingslashit($url) . user_trailingslashit(($front ? $GLOBALS['wp_rewrite']->pagination_base . '/' : '') . (int) $i, 'single_paged');
     }
-    // A preview's page links stay in the preview (probe post-template-remaining).
+    // A preview's page links stay in the preview, a published post's with the preview's id and nonce (probe post-template-remaining).
     if (is_preview()) {
-        $url = add_query_arg('preview', 'true', $url);
+        $args = $post?->post_status !== 'draft' && isset($_GET['preview_id'], $_GET['preview_nonce']) ? ['preview_id' => wp_unslash($_GET['preview_id']), 'preview_nonce' => wp_unslash($_GET['preview_nonce'])] : [];
+        $url = get_preview_post_link($post, $args, $url);
     }
     return '<a href="' . esc_url($url) . '" class="post-page-numbers">';
 }
@@ -786,6 +805,7 @@ function get_children($args = '', $output = OBJECT)
 function wp_get_recent_posts($args = [], $output = ARRAY_A)
 {
     if (is_numeric($args)) {
+        _deprecated_argument(__FUNCTION__, '3.1.0', __('Passing an integer number of posts is deprecated. Pass an array of arguments instead.'));
         $args = ['numberposts' => absint($args)];
     }
     $parsed = wp_parse_args($args, ['numberposts' => 10, 'offset' => 0, 'category' => 0, 'orderby' => 'post_date', 'order' => 'DESC', 'include' => '', 'exclude' => '', 'meta_key' => '', 'meta_value' => '', 'post_type' => 'post', 'post_status' => 'draft, publish, future, pending, private', 'suppress_filters' => true]);
@@ -793,7 +813,8 @@ function wp_get_recent_posts($args = [], $output = ARRAY_A)
     if ($output === ARRAY_A) {
         return array_map(static fn (WP_Post $p) => $p->to_array(), $posts);
     }
-    return $posts;
+    // Objects asked for and none found is false.
+    return $posts === [] ? false : $posts;
 }
 
 function wp_count_posts($type = 'post', $perm = '')
@@ -801,8 +822,10 @@ function wp_count_posts($type = 'post', $perm = '')
     if (!post_type_exists($type)) {
         return new stdClass();
     }
+    // "readable": a signed-in reader who may not read others' private posts counts only their own.
+    $own = $perm === 'readable' && is_user_logged_in() && !current_user_can(get_post_type_object($type)->cap->read_private_posts) ? get_current_user_id() : null;
     $counts = array_fill_keys(array_keys(get_post_stati()), 0);
-    foreach (_minn_post_lookup()->countByStatus((string) $type) as $status => $count) {
+    foreach (_minn_post_lookup()->countByStatus((string) $type, $own) as $status => $count) {
         $counts[$status] = (string) $count;
     }
     return apply_filters('wp_count_posts', (object) $counts, $type, $perm);
@@ -835,7 +858,7 @@ function wp_save_post_revision_on_insert($post_id, $post, $update)
 /** A published post that changed its slug keeps the old one on record (_wp_old_slug), as the REST writer does. */
 function wp_check_for_changed_slugs($post_id, $post, $post_before)
 {
-    if ($post->post_status !== 'publish' || is_post_type_hierarchical($post->post_type)) {
+    if (!_minn_keeps_old_address($post) || is_post_type_hierarchical($post->post_type)) {
         return;
     }
     _minn_post_writer()->rememberOld((int) $post_id, '_wp_old_slug', (string) $post_before->post_name, (string) $post->post_name);
@@ -845,7 +868,8 @@ function wp_check_for_changed_slugs($post_id, $post, $post_before)
 /** A post that stayed published while its day changed keeps the old day on record (_wp_old_date). */
 function wp_check_for_changed_dates($post_id, $post, $post_before)
 {
-    if ($post->post_status !== 'publish' || $post_before->post_status !== 'publish' || is_post_type_hierarchical($post->post_type)) {
+    // A published post, or an attachment (inherit), whatever it was before.
+    if (!_minn_keeps_old_address($post) || is_post_type_hierarchical($post->post_type)) {
         return;
     }
     _minn_post_writer()->rememberOld((int) $post_id, '_wp_old_date', substr((string) $post_before->post_date, 0, 10), substr((string) $post->post_date, 0, 10));
@@ -872,7 +896,8 @@ function wp_transition_post_status($new_status, $old_status, $post)
  */
 function wp_save_post_revision($post_id)
 {
-    $post = doing_action('post_updated') ? null : get_post($post_id);
+    // During post_updated it waits for wp_after_insert_post, while wp_save_post_revision_on_insert is there to save it.
+    $post = doing_action('post_updated') && has_action('wp_after_insert_post', 'wp_save_post_revision_on_insert') ? null : get_post($post_id);
     return $post === null ? null : PostRevisions::save($post);
 }
 
@@ -1222,7 +1247,8 @@ function get_post_type_labels($post_type_object)
 {
     $name = (string) ($post_type_object->name ?? '');
     $labels = Runtime::registry()->labels((array) ($post_type_object->labels ?? []), isset($post_type_object->label) ? (string) $post_type_object->label : null, empty($post_type_object->hierarchical) ? 'post' : 'page', $name);
-    return apply_filters("post_type_labels_{$name}", (object) $labels);
+    // Labels a filter takes away come back from the defaults.
+    return (object) array_merge($labels, (array) apply_filters("post_type_labels_{$name}", (object) $labels));
 }
 
 /** A type's capability names (Runtime\Registry::capabilities; probe post-remaining); a mapped type's meta capabilities are recorded. */
@@ -1259,10 +1285,12 @@ function remove_post_type_support($post_type, $feature)
 
 function get_post_types_by_support($feature, $operator = 'and')
 {
+    // Every type holding features, registered or not (attachment:audio), the operator in any case.
     $features = (array) $feature;
+    $operator = strtolower((string) $operator);
     $out = [];
-    foreach (Runtime::registry()->postTypes() as $name => $row) {
-        $supports = array_keys(Runtime::registry()->supports((string) $name));
+    foreach (Runtime::registry()->featuredTypes() as $name) {
+        $supports = array_keys(Runtime::registry()->supports($name));
         $matches = count(array_intersect($features, $supports));
         if (($operator === 'and' && $matches === count($features)) || ($operator === 'or' && $matches > 0) || ($operator === 'not' && $matches === 0)) {
             $out[] = $name;
@@ -1300,8 +1328,8 @@ function get_page_statuses()
 
 function get_available_post_statuses($type = 'post')
 {
-    $counts = wp_count_posts($type);
-    return array_keys(array_filter(get_object_vars($counts)));
+    // Every status wp_count_posts names, a status with no posts included.
+    return array_keys(get_object_vars(wp_count_posts($type)));
 }
 
 function wp_get_post_categories($post_id = 0, $args = [])
@@ -1342,7 +1370,15 @@ function get_the_author($deprecated = '')
 
 function the_author($deprecated = '', $deprecated_echo = true)
 {
-    echo get_the_author();
+    if (!empty($deprecated)) {
+        _deprecated_argument(__FUNCTION__, '2.1.0');
+    }
+    if ($deprecated_echo !== true) {
+        _deprecated_argument(__FUNCTION__, '1.5.0', sprintf(__('Use %s instead if you do not want the value echoed.'), '<code>get_the_author()</code>'));
+    }
+    if ($deprecated_echo) {
+        echo get_the_author();
+    }
     return get_the_author();
 }
 
@@ -1372,7 +1408,10 @@ function get_the_author_posts()
 
 function count_user_posts($userid, $post_type = 'post', $public_only = false)
 {
-    $count = _minn_post_lookup()->countByAuthor((int) $userid, array_map('strval', (array) $post_type), $public_only ? ['publish'] : ['publish', 'private']);
+    // Private posts count for the author themself, or for a reader who may read every type's private posts.
+    $types = array_map('strval', (array) $post_type);
+    $private = !$public_only && (((int) $userid > 0 && (int) $userid === get_current_user_id()) || array_filter($types, static fn (string $type): bool => !current_user_can(get_post_type_object($type)?->cap->read_private_posts ?? 'read_private_posts')) === []);
+    $count = _minn_post_lookup()->countByAuthor((int) $userid, $types, $private ? ['publish', 'private'] : ['publish']);
     return apply_filters('get_usernumposts', (string) $count, $userid, $post_type, $public_only);
 }
 
@@ -1418,9 +1457,12 @@ function is_multi_author()
 /** Whether the block editor edits a post type: it must exist and be visible in REST; attachments and revisions never are. */
 function use_block_editor_for_post_type($post_type)
 {
+    // A type that does not exist, has no editor or is not in the REST API is false before the filter.
     $type = get_post_type_object($post_type);
-    $use = $type !== null && !empty($type->show_in_rest) && $post_type !== 'attachment' && $post_type !== 'revision';
-    return (bool) apply_filters('use_block_editor_for_post_type', $use, $post_type);
+    if ($type === null || !post_type_supports($post_type, 'editor') || empty($type->show_in_rest)) {
+        return false;
+    }
+    return (bool) apply_filters('use_block_editor_for_post_type', true, $post_type);
 }
 
 /** The post meta core registers on init: a pattern's sync status (probe meta-registry). */
@@ -1469,23 +1511,19 @@ function the_guid($post = 0)
 
 function wp_get_post_revision(&$post, $output = OBJECT, $filter = 'raw')
 {
-    $post = get_post($post, OBJECT, $filter);
-    if (!$post) {
-        return $post;
+    // The caller's variable is left as it was.
+    $revision = get_post($post, OBJECT, $filter);
+    if (!$revision) {
+        return $revision;
     }
-    if ($post->post_type !== 'revision') {
+    if ($revision->post_type !== 'revision') {
         return null;
     }
-    if ($output === OBJECT) {
-        return $post;
-    }
-    if ($output === ARRAY_A) {
-        return get_object_vars($post);
-    }
-    if ($output === ARRAY_N) {
-        return array_values(get_object_vars($post));
-    }
-    return $post;
+    return match ($output) {
+        ARRAY_A => get_object_vars($revision),
+        ARRAY_N => array_values(get_object_vars($revision)),
+        default => $revision,
+    };
 }
 
 function the_ID()
@@ -1539,7 +1577,7 @@ function get_post_class($css_class = '', $post = null)
     $sticky = is_sticky($post->ID) && is_home() && !is_paged();
     $build = static fn (array $terms): array => PostClasses::build(
         (array) $post,
-        array_map(static fn ($c) => PostClasses::htmlClass((string) $c), $extra),
+        array_map(static fn ($c) => esc_attr((string) $c), $extra),
         $format,
         $thumbnail,
         $sticky,
@@ -1579,7 +1617,8 @@ function get_body_class($css_class = '')
     $classes = is_array($stored) ? array_map('strval', $stored) : _minn_query_body_classes();
     $extra = is_array($css_class) ? array_map('strval', $css_class) : preg_split('/\s+/', trim((string) $css_class), -1, PREG_SPLIT_NO_EMPTY);
     array_push($classes, ...array_filter((array) $extra, static fn ($c) => $c !== ''));
-    return array_unique(array_map('esc_attr', (array) apply_filters('body_class', $classes, $extra)));
+    // The classes are escaped before the filter; what a filter adds comes back as it gave it.
+    return array_unique((array) apply_filters('body_class', array_map('esc_attr', $classes), $extra));
 }
 
 function body_class($css_class = '')
@@ -1609,16 +1648,13 @@ function is_page_template($template = '')
     if (!is_singular()) {
         return false;
     }
+    // Whole slugs only; "default" is a page with none.
     $slug = (string) get_page_template_slug(get_queried_object_id());
-    if ($template === '') {
+    if (empty($template)) {
         return $slug !== '';
     }
-    foreach ((array) $template as $name) {
-        if ($name === $slug || ($name === 'default' && $slug === '') || (str_contains((string) $name, '.') && basename((string) $name) === basename($slug))) {
-            return true;
-        }
-    }
-    return false;
+    $names = (array) $template;
+    return in_array($slug, $names, true) || (in_array('default', $names, true) && $slug === '');
 }
 
 /** The posts, their meta and their terms read in one query each for a list (rows the engine already holds are not read again). */
@@ -1651,6 +1687,10 @@ function prepend_attachment($content)
         if (!empty($meta['width']) && !empty($meta['height'])) {
             $atts['width'] = (int) $meta['width'];
             $atts['height'] = (int) $meta['height'];
+        }
+        // A video with a featured image shows it as the poster.
+        if (has_post_thumbnail()) {
+            $atts['poster'] = wp_get_attachment_url(get_post_thumbnail_id());
         }
         $shown = wp_video_shortcode($atts);
     } elseif (wp_attachment_is('audio', $post)) {
@@ -1743,14 +1783,21 @@ function get_post_datetime($post = null, $field = 'date', $source = 'local')
     if ($time === '' || str_starts_with($time, '0000-00-00')) {
         return false;
     }
-    $zone = $source === 'gmt' ? new DateTimeZone('UTC') : wp_timezone();
-    return date_create_immutable_from_format('Y-m-d H:i:s', $time, $zone) ?: false;
+    // Read in its own zone, answered in the site's.
+    $datetime = date_create_immutable_from_format('Y-m-d H:i:s', $time, $source === 'gmt' ? new DateTimeZone('UTC') : wp_timezone());
+    return $datetime === false ? false : $datetime->setTimezone(wp_timezone());
 }
 
 function post_exists($title, $content = '', $date = '', $type = '', $status = '')
 {
-    $types = $type === '' ? array_values(get_post_types(['public' => true])) : [(string) $type];
-    return _minn_post_lookup()->idByTitle((string) $title, $types) ?? 0;
+    // Each part given matched as stored, title and content as the save leaves them; any type when none is named.
+    $where = ['post_title' => (string) sanitize_post_field('post_title', wp_unslash($title), 0, 'db')];
+    foreach (['post_content' => $content, 'post_date' => $date, 'post_type' => $type, 'post_status' => $status] as $column => $value) {
+        if (!empty($value)) {
+            $where[$column] = $column === 'post_content' ? (string) sanitize_post_field('post_content', wp_unslash($value), 0, 'db') : (string) wp_unslash($value);
+        }
+    }
+    return _minn_post_lookup()->idWhere($where) ?? 0;
 }
 
 function _truncate_post_slug($slug, $length = 200)
@@ -1760,9 +1807,12 @@ function _truncate_post_slug($slug, $length = 200)
 
 function use_block_editor_for_post($post)
 {
+    // A missing post is false before the filter.
     $post = get_post($post);
-    $use = $post ? use_block_editor_for_post_type($post->post_type) : false;
-    return (bool) apply_filters('use_block_editor_for_post', $use, $post);
+    if ($post === null) {
+        return false;
+    }
+    return (bool) apply_filters('use_block_editor_for_post', use_block_editor_for_post_type($post->post_type), $post);
 }
 
 function update_postmeta_cache($post_ids)
@@ -1857,6 +1907,13 @@ function wp_check_post_hierarchy_for_loops($post_parent, $post_id)
         }
         $seen[$ancestor] = true;
     }
+    // A loop already among the ancestors is broken: each of its posts loses its parent.
+    if ($ancestor > 0) {
+        $loop = array_slice(array_keys($seen), (int) array_search($ancestor, array_keys($seen), true));
+        foreach ($loop as $member) {
+            wp_update_post(['ID' => $member, 'post_parent' => 0]);
+        }
+    }
     return $post_parent;
 }
 
@@ -1873,9 +1930,11 @@ function wp_check_post_hierarchy_for_loops($post_parent, $post_id)
  */
 function wp_filter_wp_template_unique_post_slug($override_slug, $slug, $post_id, $post_status, $post_type)
 {
-    if ($override_slug !== null || !in_array($post_type, ['wp_template', 'wp_template_part'], true)) {
+    if (!in_array($post_type, ['wp_template', 'wp_template_part'], true)) {
         return $override_slug;
     }
+    // A slug a filter chose is kept unique within the theme too.
+    $slug = $override_slug ?: $slug;
     $terms = $post_id ? get_the_terms((int) $post_id, 'wp_theme') : false;
     $theme = is_array($terms) && $terms !== [] ? $terms[0]->name : get_stylesheet();
     $taken = static fn (string $candidate): bool => get_posts(['post_type' => $post_type, 'name' => $candidate, 'post_status' => 'any', 'post__not_in' => [(int) $post_id], 'fields' => 'ids', 'numberposts' => 1, 'no_found_rows' => true,
@@ -2088,6 +2147,12 @@ function get_all_page_ids()
 /** An attachment's term cache let go when asked, then clean_attachment_cache. */
 function clean_attachment_cache($id, $clean_terms = false)
 {
+    // Nothing while cache invalidation is suspended; the post and its meta let go first.
+    if (!empty($GLOBALS['_wp_suspend_cache_invalidation'])) {
+        return;
+    }
+    wp_cache_delete((int) $id, 'posts');
+    wp_cache_delete((int) $id, 'post_meta');
     if ($clean_terms) {
         clean_object_term_cache((int) $id, 'attachment');
     }
@@ -2201,8 +2266,10 @@ function _wp_privacy_statuses()
 function _get_custom_object_labels($data_object, $nohier_vs_hier_defaults)
 {
     $defaults = array_map(static fn ($pair) => !empty($data_object->hierarchical) ? $pair[1] : $pair[0], (array) $nohier_vs_hier_defaults);
-    $label = isset($data_object->label) ? (string) $data_object->label : null;
-    return (object) Minn\Content\ObjectLabels::build((array) ($data_object->labels ?? []), $label, (string) ($data_object->name ?? ''), $defaults);
+    // The derived labels are written back onto the object, as an object; the answer lays them over the defaults.
+    $labels = Minn\Content\ObjectLabels::derive((array) ($data_object->labels ?? []), isset($data_object->label) ? (string) $data_object->label : null, (string) ($data_object->name ?? ''));
+    $data_object->labels = (object) $labels;
+    return (object) array_merge($defaults, $labels);
 }
 
 /** Walks a children map (parent id => pages) depth first from a page, recording each page's slug by id. */

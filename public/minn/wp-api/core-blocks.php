@@ -1769,8 +1769,11 @@ function _minn_block_read_more(MinnBlock $block, MinnRenderer $renderer): string
     }
     $content = (string) $block->attr('content', '');
     $open = Wrapper::open('a', 'wp-block-read-more', $block);
+    // An untitled post is named by its id for screen readers (probe sweep-1020b).
+    $title = get_the_title($post->id);
+    $title = $title !== '' ? $title : sprintf(__('untitled post %s'), $post->id);
     return substr($open, 0, -1) . ' href="' . esc_url(get_permalink($post->id)) . '" target="' . esc_attr((string) $block->attr('linkTarget', '_self')) . '">'
-        . ($content !== '' ? $content : __('Read more')) . '<span class="screen-reader-text">: ' . get_the_title($post->id) . '</span></a>';
+        . ($content !== '' ? wp_kses_post($content) : __('Read more')) . '<span class="screen-reader-text">: ' . $title . '</span></a>';
 }
 
 /** @internal the log in (or log out) link, returning to this page unless told not to; the login form instead when asked */

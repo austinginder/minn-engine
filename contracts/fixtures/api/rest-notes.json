@@ -1,0 +1,70 @@
+[
+    [
+        "notes, by who and where",
+        {
+            "a subscriber on an open post": [
+                403,
+                "rest_cannot_create_note"
+            ],
+            "an author on their own closed post": [
+                201,
+                "note"
+            ],
+            "an author on another's post": [
+                403,
+                "rest_cannot_create_note"
+            ],
+            "an administrator on a closed draft": [
+                201,
+                "note"
+            ]
+        }
+    ],
+    [
+        "a note as stored and listed",
+        [
+            "note",
+            "1",
+            0,
+            false,
+            2
+        ]
+    ],
+    [
+        "ordinary comments on posts not yet public",
+        {
+            "an administrator on a pending post": [
+                201,
+                "comment"
+            ],
+            "a subscriber on a pending post": [
+                403,
+                "rest_cannot_read_post"
+            ],
+            "an administrator on a private post": [
+                201,
+                "comment"
+            ],
+            "a subscriber on a private post": [
+                403,
+                "rest_cannot_read_post"
+            ],
+            "an administrator on a future post": [
+                201,
+                "comment"
+            ],
+            "a subscriber on a future post": [
+                403,
+                "rest_cannot_read_post"
+            ],
+            "an administrator on a draft post": [
+                403,
+                "rest_comment_draft_post"
+            ],
+            "a subscriber on a draft post": [
+                403,
+                "rest_comment_draft_post"
+            ]
+        }
+    ]
+]

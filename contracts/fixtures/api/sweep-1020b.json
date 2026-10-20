@@ -1,0 +1,627 @@
+[
+    [
+        "another user in the edit context, with list_users only",
+        [
+            200,
+            403,
+            "rest_forbidden_context"
+        ]
+    ],
+    [
+        "a user reassigned to itself",
+        [
+            400,
+            "rest_user_invalid_reassign",
+            true
+        ]
+    ],
+    [
+        "a reset key after a good sign-in",
+        [
+            true,
+            "invalid_key"
+        ]
+    ],
+    [
+        "a template part tag",
+        [
+            "<!-- wp:template-part {\"tagName\":\"\",\"slug\":\"x\"} /-->",
+            "<!-- wp:template-part {\"tagName\":\"aside\",\"slug\":\"x\"} /-->",
+            "<!-- wp:paragraph {\"tagName\":\"script\"} /-->",
+            [
+                "header",
+                "div",
+                "",
+                "",
+                null,
+                "header",
+                "",
+                "script"
+            ]
+        ]
+    ],
+    [
+        "term data for a visitor and an administrator",
+        [
+            [
+                null,
+                null,
+                null,
+                null
+            ],
+            [
+                null,
+                null,
+                null,
+                null
+            ],
+            [
+                null,
+                null,
+                null,
+                null
+            ],
+            [
+                null,
+                null,
+                null,
+                null
+            ]
+        ]
+    ],
+    [
+        "read-more text through the post allowlist",
+        "<a class=\"wp-block-read-more\" href=\"{link}\" target=\"_self\"><b>Go</b>zz()<img src=\"x\"><span class=\"screen-reader-text\">: untitled post {id}</span></a>"
+    ],
+    [
+        "the recent posts widget: an untitled post and a link to escape",
+        "<ul> <li> <a href=\"http://zz.example/abc%20d#zzpl\">(no title)</a> </li> </ul>"
+    ],
+    [
+        "wpdb refuses a prefix, runs no empty query",
+        [
+            "invalid_db_prefix",
+            true,
+            false,
+            false,
+            1
+        ]
+    ],
+    [
+        "sitemap lists for a taxonomy that is not one of its own",
+        [
+            [],
+            [],
+            1,
+            []
+        ]
+    ],
+    [
+        "active plugins loaded",
+        [
+            "{plugins}/zzsweepb-one.php",
+            "{plugins}//zzsweepb-one.php",
+            "{plugins}/./zzsweepb-one.php"
+        ]
+    ],
+    [
+        "an old plugin deleted",
+        [
+            [
+                "zz-dir/zz.php",
+                true,
+                [
+                    [
+                        "delete",
+                        "/zz/plugins/zz-dir/",
+                        true
+                    ]
+                ]
+            ],
+            [
+                "/x.php",
+                true,
+                [
+                    [
+                        "delete",
+                        "/zz/plugins//x.php",
+                        false
+                    ]
+                ]
+            ],
+            [
+                "single.php",
+                true,
+                [
+                    [
+                        "delete",
+                        "/zz/plugins/single.php",
+                        false
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "who may make a post sticky",
+        {
+            "author": "rest_cannot_assign_sticky",
+            "editor": true,
+            "contributor": "rest_cannot_assign_sticky"
+        }
+    ],
+    [
+        "deleting a revision of a post the user may not edit",
+        [
+            "rest_cannot_read",
+            403,
+            "rest_cannot_read",
+            true
+        ]
+    ],
+    [
+        "who may read a protected post's comments",
+        {
+            "visitor": false,
+            "subscriber": false,
+            "contributor": false,
+            "author": true,
+            "editor": true
+        }
+    ],
+    [
+        "serialized or not",
+        [
+            [
+                "N;",
+                1,
+                1,
+                0,
+                "s:2:\"N;\";"
+            ],
+            [
+                " N; ",
+                1,
+                1,
+                0,
+                "s:4:\" N; \";"
+            ],
+            [
+                "b:1;x",
+                0,
+                1,
+                0,
+                "s:5:\"b:1;x\";"
+            ],
+            [
+                "b:2;",
+                1,
+                1,
+                0,
+                "s:4:\"b:2;\";"
+            ],
+            [
+                "i:5;x",
+                0,
+                1,
+                0,
+                "s:5:\"i:5;x\";"
+            ],
+            [
+                "i:a;",
+                0,
+                0,
+                0,
+                "i:a;"
+            ],
+            [
+                "d:x;",
+                0,
+                0,
+                0,
+                "d:x;"
+            ],
+            [
+                "d:1e5;",
+                0,
+                0,
+                0,
+                "d:1e5;"
+            ],
+            [
+                "s:1:\"x\";garbage",
+                0,
+                1,
+                0,
+                "s:15:\"s:1:\"x\";garbage\";"
+            ],
+            [
+                "s:1:\"x;",
+                0,
+                1,
+                0,
+                "s:7:\"s:1:\"x;\";"
+            ],
+            [
+                "s::\"x\";",
+                0,
+                0,
+                1,
+                "s::\"x\";"
+            ],
+            [
+                "s:1:x\";",
+                1,
+                1,
+                1,
+                "s:7:\"s:1:x\";\";"
+            ],
+            [
+                "a:1:{i:0;s:1:\"x\";garbage",
+                0,
+                1,
+                0,
+                "s:24:\"a:1:{i:0;s:1:\"x\";garbage\";"
+            ],
+            [
+                "a:1:{xxxx",
+                0,
+                0,
+                0,
+                "a:1:{xxxx"
+            ],
+            [
+                "a:1:{xxxx}",
+                1,
+                1,
+                0,
+                "s:10:\"a:1:{xxxx}\";"
+            ],
+            [
+                "a:1:{",
+                0,
+                0,
+                0,
+                "a:1:{"
+            ],
+            [
+                "O:8:\"stdClass\"",
+                0,
+                0,
+                0,
+                "O:8:\"stdClass\""
+            ],
+            [
+                "C:3:\"Foo\":0:{}",
+                0,
+                0,
+                0,
+                "C:3:\"Foo\":0:{}"
+            ],
+            [
+                "E:3:\"a:b\";",
+                1,
+                1,
+                0,
+                "s:10:\"E:3:\"a:b\";\";"
+            ],
+            [
+                "E:3:\"a:b\";x",
+                0,
+                1,
+                0,
+                "s:11:\"E:3:\"a:b\";x\";"
+            ],
+            [
+                "b:1;}",
+                0,
+                1,
+                0,
+                "s:5:\"b:1;}\";"
+            ],
+            [
+                "a:1:{}x",
+                0,
+                1,
+                0,
+                "s:7:\"a:1:{}x\";"
+            ],
+            [
+                "O:1:\"a\":0:{}}",
+                1,
+                1,
+                0,
+                "s:13:\"O:1:\"a\":0:{}}\";"
+            ],
+            [
+                "r:1;",
+                0,
+                0,
+                0,
+                "r:1;"
+            ],
+            [
+                "s:\";",
+                0,
+                0,
+                1,
+                "s:\";"
+            ],
+            [
+                "s:x\"x\";",
+                0,
+                0,
+                1,
+                "s:x\"x\";"
+            ]
+        ]
+    ],
+    [
+        "the RSS widget's address",
+        [
+            [
+                "junk http://zzfeed.example/sweepb",
+                "http://zzfeed.example/sweepb",
+                "<W><T><a class=\"rsswidget rss-widget-feed\" href=\"http://zzfeed.example/sweepb\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"{home}/wp-includes/images/rss.png\" alt=\"RSS feed: Zz Feed\" loading=\"lazy\" /></a> <a class=\"rsswidget rss-widget-title\" href=\"http://zzfeed.example/\">Zz Feed</a></T><ul><li><a class='rsswidget' href='http://zzfeed.example/1'>One</a></li></ul></W>"
+            ],
+            [
+                "zzfeed.example/sweepb3",
+                "",
+                ""
+            ],
+            [
+                "xHTTP://zzfeed.example/sweepb4",
+                "http://zzfeed.example/sweepb4",
+                "<W><T><a class=\"rsswidget rss-widget-feed\" href=\"http://zzfeed.example/sweepb4\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"{home}/wp-includes/images/rss.png\" alt=\"RSS feed: Zz Feed\" loading=\"lazy\" /></a> <a class=\"rsswidget rss-widget-title\" href=\"http://zzfeed.example/\">Zz Feed</a></T><ul><li><a class='rsswidget' href='http://zzfeed.example/1'>One</a></li></ul></W>"
+            ],
+            [
+                "http://zzfeed.example/sweepb-notitle",
+                "http://zzfeed.example/sweepb-notitle",
+                "<W><T><a class=\"rsswidget rss-widget-feed\" href=\"http://zzfeed.example/sweepb-notitle\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"{home}/wp-includes/images/rss.png\" alt=\"RSS feed: Zz feed description\" loading=\"lazy\" /></a> <a class=\"rsswidget rss-widget-title\" href=\"http://zzfeed.example/\">Zz feed description</a></T><ul><li><a class='rsswidget' href='http://zzfeed.example/1'>One</a></li></ul></W>"
+            ],
+            [
+                "{home}",
+                "",
+                ""
+            ],
+            [
+                "{home}",
+                "",
+                ""
+            ],
+            [
+                "{home}/",
+                "",
+                ""
+            ],
+            [
+                "{home}/",
+                "",
+                ""
+            ],
+            [
+                "xx{home}",
+                "",
+                ""
+            ],
+            [
+                "{home}/feed/",
+                "{home}/feed/",
+                "<W><T><a class=\"rsswidget rss-widget-feed\" href=\"{home}/feed/\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"{home}/wp-includes/images/rss.png\" alt=\"RSS feed: Zz Feed\" loading=\"lazy\" /></a> <a class=\"rsswidget rss-widget-title\" href=\"http://zzfeed.example/\">Zz Feed</a></T><ul><li><a class='rsswidget' href='http://zzfeed.example/1'>One</a></li></ul></W>"
+            ]
+        ]
+    ],
+    [
+        "shell-safe sender addresses",
+        [
+            [
+                "a+b@x.com",
+                false
+            ],
+            [
+                "a=b@x.com",
+                false
+            ],
+            [
+                "ä@example.com",
+                false
+            ],
+            [
+                "a_b-c.d@x.com",
+                true
+            ],
+            [
+                "-oQ@x.com",
+                true
+            ],
+            [
+                "a'b@x.com",
+                false
+            ],
+            [
+                "a b@x.com",
+                false
+            ],
+            [
+                "a~b@x.com",
+                false
+            ],
+            [
+                "",
+                true
+            ],
+            [
+                "@",
+                true
+            ],
+            [
+                "a\nb@x.com",
+                false
+            ],
+            [
+                "A@X.COM",
+                true
+            ]
+        ]
+    ],
+    [
+        "REST arguments checked",
+        {
+            "integer": [
+                true,
+                {
+                    "x": "x is not of type integer."
+                },
+                "abc"
+            ],
+            "integer, own sanitize": [
+                true,
+                true,
+                "abc!"
+            ],
+            "integer, own validate": [
+                true,
+                {
+                    "x": "x is not of type integer."
+                },
+                "abc"
+            ],
+            "integer, sanitize null": [
+                true,
+                true,
+                "abc"
+            ],
+            "enum": [
+                true,
+                {
+                    "x": "x is not one of a and b."
+                },
+                "abc"
+            ],
+            "enum without a type": [
+                true,
+                true,
+                "abc"
+            ],
+            "boolean": [
+                true,
+                {
+                    "x": "x is not of type boolean."
+                },
+                "yes"
+            ],
+            "array of integers": [
+                true,
+                {
+                    "x": "x[1] is not of type integer."
+                },
+                [
+                    "1",
+                    "x"
+                ]
+            ],
+            "minimum": [
+                true,
+                {
+                    "x": "x must be greater than or equal to 10"
+                },
+                "5"
+            ],
+            "validate false": [
+                {
+                    "x": "Invalid parameter."
+                },
+                true,
+                5
+            ]
+        }
+    ],
+    [
+        "media list MIME types",
+        [
+            [
+                13,
+                [
+                    "image/heif-sequence",
+                    "application/pdf"
+                ]
+            ],
+            "unset",
+            [
+                2,
+                [
+                    "image/jpeg",
+                    "application/pdf"
+                ]
+            ],
+            [
+                12,
+                [
+                    "image/heic-sequence",
+                    "image/heif-sequence"
+                ]
+            ],
+            "unset",
+            [
+                1,
+                [
+                    "application/pdf"
+                ]
+            ]
+        ]
+    ],
+    [
+        "upgrader skin errors",
+        [
+            [
+                "WP_Upgrader_Skin",
+                "",
+                [
+                    "Msg one Data one",
+                    "Msg one b Data one",
+                    "Msg two Data one",
+                    "<i>Msg</i> three Data one"
+                ]
+            ],
+            [
+                "WP_Upgrader_Skin",
+                "",
+                [
+                    "Html data bold &amp; x"
+                ]
+            ],
+            [
+                "WP_Upgrader_Skin",
+                "",
+                [
+                    "up_to_date"
+                ]
+            ],
+            [
+                "WP_Upgrader_Skin",
+                "",
+                []
+            ],
+            [
+                "Bulk_Upgrader_Skin",
+                "<script>jQuery('.waiting-3').hide();</script>",
+                "Msg one Data one, Msg one b Data one, Msg two Data one, <i>Msg</i> three Data one"
+            ],
+            [
+                "Bulk_Upgrader_Skin",
+                "<script>jQuery('.waiting-3').hide();</script>",
+                "Html data bold &amp; x"
+            ],
+            [
+                "Bulk_Upgrader_Skin",
+                "<script>jQuery('.waiting-3').hide();</script>",
+                false
+            ],
+            [
+                "Bulk_Upgrader_Skin",
+                "<script>jQuery('.waiting-3').hide();</script>",
+                ""
+            ]
+        ]
+    ]
+]

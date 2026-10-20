@@ -125,6 +125,23 @@ $findings = [
     'The front end\'s cookie signed users in to the blog admin' => ['tests/tools/sweep-1020-probe.php', 'cookie in the blog admin, and outside it'],
     'settings_errors() printed codes and types unescaped' => ['tests/tools/sweep-1020-probe.php', 'settings errors with quotes in their code and type'],
     'do_settings_sections() printed a section\'s wrap raw' => ['tests/tools/sweep-1020-probe.php', 'a section\'s surrounding markup'],
+    'REST notes ignored edit_post, and drafts took comments' => ['tests/tools/rest-notes-probe.php', 'notes, by who and where'],
+    'list_users alone opened another user\'s edit view' => ['tests/tools/sweep-1020b-probe.php', 'another user in the edit context, with list_users only'],
+    'A user deleted with itself as the reassign target' => ['tests/tools/sweep-1020b-probe.php', 'a user reassigned to itself'],
+    'A pending password reset outlived a good sign-in' => ['tests/login-endpoint.test.php', 'a good sign-in ends a pending password reset'],
+    'A template part kept tagName "script" through kses' => ['tests/tools/sweep-1020b-probe.php', 'a template part tag'],
+    'Term data bindings read hidden taxonomies to visitors' => ['tests/tools/sweep-1020b-probe.php', 'term data for a visitor and an administrator'],
+    'The read-more block printed its text unkses\'d' => ['tests/tools/sweep-1020b-probe.php', 'read-more text through the post allowlist'],
+    'The recent posts widget printed links unescaped' => ['tests/tools/sweep-1020b-probe.php', 'the recent posts widget: an untitled post and a link to escape'],
+    'wpdb took any prefix, and its placeholder was guessable' => ['tests/tools/sweep-1020b-probe.php', 'wpdb refuses a prefix, runs no empty query'],
+    'Nav menus could be listed as a sitemap' => ['tests/tools/sweep-1020b-probe.php', 'sitemap lists for a taxonomy that is not one of its own'],
+    'Active plugins outside the plugins folder were loaded' => ['tests/tools/sweep-1020b-probe.php', 'active plugins loaded'],
+    'delete_old_plugin could empty the plugins folder' => ['tests/tools/sweep-1020b-probe.php', 'an old plugin deleted'],
+    'An MO translation object ran a PHP file' => ['tests/tools/translation-files-probe.php', 'each class reads its own format'],
+    'Sticky, revision-delete and protected-comment checks were looser' => ['tests/tools/sweep-1020b-probe.php', 'deleting a revision of a post the user may not edit'],
+    'Enum strings were stored as serialized data' => ['tests/tools/sweep-1020b-probe.php', 'serialized or not'],
+    'The RSS widget fetched the site\'s own address' => ['tests/tools/sweep-1020b-probe.php', 'the RSS widget\'s address'],
+    'Sendmail took "+", "=" and non-ASCII senders' => ['tests/tools/sweep-1020b-probe.php', 'shell-safe sender addresses'],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 

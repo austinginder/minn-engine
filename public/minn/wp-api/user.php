@@ -497,11 +497,15 @@ function wp_signon($credentials = [], $secure_cookie = '')
         $secure_cookie = is_ssl();
     }
     $secure_cookie = apply_filters('secure_signon_cookie', $secure_cookie, $credentials);
+    // A valid sign-in cookie answers too, as the reference lets it during a sign-in.
+    add_filter('authenticate', 'wp_authenticate_cookie', 30, 3);
     $user = wp_authenticate($credentials['user_login'], $credentials['user_password']);
     if (is_wp_error($user)) {
         return $user;
     }
     wp_set_auth_cookie($user->ID, (bool) $credentials['remember'], $secure_cookie);
+    // A good sign-in ends any pending password reset (security sweep 2026-10-20).
+    (new Minn\Content\Users(Runtime::current()->db))->clearResetKey((int) $user->ID);
     do_action('wp_login', $user->user_login, $user);
     return $user;
 }

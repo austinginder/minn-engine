@@ -1,0 +1,87 @@
+[
+    [
+        "get_comment_ID with no comment",
+        "0"
+    ],
+    [
+        "get_comment_date with empty formats",
+        [
+            "January 1, 2024",
+            "January 1, 2024",
+            "January 1, 2024",
+            "January 1, 2024"
+        ]
+    ],
+    [
+        "get_comment_id_fields with no post",
+        ""
+    ],
+    [
+        "get_comments_number_text translated",
+        [
+            "ZZT No Comments",
+            "ZZT 1 Comment"
+        ]
+    ],
+    [
+        "get_comment_count of the post, under a wp_count_comments filter",
+        {
+            "approved": 1,
+            "awaiting_moderation": 0,
+            "spam": 0,
+            "trash": 0,
+            "post-trashed": 0,
+            "all": 1,
+            "total_comments": 1
+        }
+    ],
+    [
+        "comment_form_title: printed, and the global comment",
+        [
+            "Leave a Reply to <a href=\"#comment-{id}\">Zz Author</a>",
+            true
+        ]
+    ],
+    [
+        "get_comment_author_url_link texts",
+        [
+            "<a href=\"http://www.zz.example/\" rel=\"external\">zz.example</a>",
+            "<a href=\"http://www.zz.example/\" rel=\"external\">zz.example</a>"
+        ]
+    ],
+    [
+        "get_comment_author_link rel by address",
+        {
+            "http://zz-internal.example/x": "ugc",
+            "ftp://elsewhere.example/": null,
+            "https://elsewhere.example/": "ugc external nofollow"
+        }
+    ],
+    [
+        "comments open: an undated draft, an old post",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "get_comment_author_email_link: scrambled while hooked, plain without",
+        [
+            10,
+            true,
+            "<a href=\"mailto:zzcd@example.com\">zzcd@example.com</a>"
+        ]
+    ],
+    [
+        "get_comments_pagenum_link with a pagination base of its own",
+        "/zzcd-post/zzcp-2/#comments"
+    ],
+    [
+        "get_post_reply_link when signing in is needed",
+        "<a rel=\"nofollow\" class=\"comment-reply-login\" href=\"{site}/wp-login.php?redirect_to={post}\">Log in to leave a Comment</a>"
+    ],
+    [
+        "wp_check_comment_flood: a comment three hours old, the new one five seconds after it",
+        false
+    ]
+]

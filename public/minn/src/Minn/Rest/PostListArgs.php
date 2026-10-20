@@ -92,9 +92,9 @@ final class PostListArgs
     }
 
     /**
-     * A media list's MIME types, set after plugins have seen the query: the
-     * MIME types asked for (those the site allows), else every one of the
-     * media types asked for.
+     * A media list's MIME types, set after plugins have seen the query:
+     * every one of the media types asked for, then each MIME type asked for
+     * that the site allows (probe sweep-1020b).
      *
      * @param array<string, mixed> $vars
      * @return array<string, mixed>
@@ -103,10 +103,9 @@ final class PostListArgs
     {
         $byType = PostCollectionParams::mediaTypes();
         $allowed = array_merge(...array_values($byType));
-        $asked = array_values(array_intersect(array_map('strval', (array) $request['mime_type']), $allowed));
-        if ($asked === []) {
-            $asked = array_merge(...array_map(static fn ($type) => $byType[(string) $type] ?? [], array_values((array) $request['media_type'])));
-        }
+        $asked = array_merge(...array_map(static fn ($type) => $byType[(string) $type] ?? [], array_values((array) $request['media_type'])));
+        $named = array_intersect(array_map('strval', (array) $request['mime_type']), $allowed);
+        $asked = array_values(array_unique(array_merge($asked, array_diff($named, $asked))));
         return $asked === [] ? $vars : ['post_mime_type' => $asked] + $vars;
     }
 
