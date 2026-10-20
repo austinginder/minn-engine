@@ -82343,7 +82343,8 @@
                 "Minn\\Media\\Av\\Source"
             ],
             "usedBy": [
-                "Minn\\Media\\Av\\Matroska"
+                "Minn\\Media\\Av\\Matroska",
+                "Minn\\Media\\Av\\Riff"
             ],
             "constructor": null,
             "cases": [],
@@ -82792,6 +82793,118 @@
             ]
         },
         {
+            "name": "Minn\\Media\\Av\\ExpGolomb",
+            "short": "ExpGolomb",
+            "namespace": "Minn\\Media\\Av",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/Av/ExpGolomb.php",
+            "lines": 44,
+            "doc": "A bit reader over a byte string for the exponential-Golomb codes of a\nvideo parameter set: single bits, unsigned and signed codes. Reading\npast the end reads zeros, and a code longer than 32 bits stops at 32.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Media\\Av\\Flv"
+            ],
+            "constructor": {
+                "signature": "__construct(string $bytes)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "bytes",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 16,
+                "end": 18
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "at",
+                    "type": "int",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "bytes",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "bit",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "bit(): int",
+                    "doc": "The next bit.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 21,
+                    "end": 27
+                },
+                {
+                    "routes": [],
+                    "name": "skip",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "skip(int $count): void",
+                    "doc": "Passes over a number of bits.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "count",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "unsigned",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "unsigned(): int",
+                    "doc": "The next unsigned exponential-Golomb code.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 36,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "signed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "signed(): int",
+                    "doc": "The next signed exponential-Golomb code.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 50,
+                    "end": 54
+                }
+            ]
+        },
+        {
             "name": "Minn\\Media\\Av\\Flac",
             "short": "Flac",
             "namespace": "Minn\\Media\\Av",
@@ -82954,11 +83067,12 @@
             "namespace": "Minn\\Media\\Av",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Av/Flv.php",
-            "lines": 159,
-            "doc": "Flash video (FLV) as the reference's media reader measures it (probe\nmedia-meta). The onMetaData script tag gives the playing time, frame\nrate, data rates and codecs; the first audio tag gives the rate, sample\nsize and channels; the first video tag's Sorenson picture header the\nsize. The video's data rate is kept as written (kilobits), the audio's\nmade bits.",
+            "lines": 204,
+            "doc": "Flash video (FLV) as the reference's media reader measures it (probe\nmedia-meta). The onMetaData script tag gives the playing time, frame\nrate, data rates and codecs; the first audio tag gives the rate, sample\nsize and channels; the first video tag's Sorenson picture header the\nsize, or for H.264 its sequence parameter set, read as the reference\nreads it. The video's data rate is kept as written (kilobits), the\naudio's made bits; a file with no audio and no video rate gives the\nvideo the file's own rate.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Media\\Av\\ExpGolomb",
                 "Minn\\Media\\Av\\Source"
             ],
             "usedBy": [
@@ -83007,8 +83121,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 58
+                    "line": 30,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -83037,8 +83151,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 84
+                    "line": 73,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -83067,8 +83181,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 113
+                    "line": 99,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -83089,8 +83203,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 133
+                    "line": 127,
+                    "end": 139
+                },
+                {
+                    "routes": [],
+                    "name": "avcSize",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "avcSize(string $tag): array",
+                    "doc": "The width and height an H.264 sequence header gives, read as the\nreference reads them: the first parameter set of the decoder\nconfiguration, as stored (its emulation-prevention bytes kept), its\nfields read in the layout of the profiles without chroma settings\nwhatever its profile, and its crop counted in pairs of samples. A\ntag that is no sequence header has no size.",
+                    "shapes": [
+                        "@return array{0: int, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -83111,8 +83247,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 172
+                    "line": 187,
+                    "end": 219
                 }
             ]
         },
@@ -84308,7 +84444,7 @@
             "namespace": "Minn\\Media\\Av",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Av/Matroska.php",
-            "lines": 302,
+            "lines": 314,
             "doc": "Matroska and WebM files (MKV, MKA, WebM) as the reference's media reader\nmeasures them (probe media-meta). The segment information gives the\nplaying time and the date; the first video and audio tracks give the\nstreams, named by their codec where the reader knows it (and by the\ncodec identifier where it does not). MP3 and MP2 audio is described\nfrom its first frame, FLAC from its stream information, AC-3 from its\nfirst frame; the bitrate is the file's over its playing time, the video\nkeeping what a known audio bitrate leaves.",
             "implements": [],
             "extends": null,
@@ -84345,8 +84481,14 @@
                 },
                 {
                     "name": "AUDIO",
-                    "value": "array (   'A_AAC' => 'aac',   'A_AC3' => 'ac3',   'A_MPEG/L3' => 'mp3',   'A_MPEG/L2' => 'mp2',   'A_FLAC' => 'flac',   'A_PCM/INT/LIT' => 'pcm', )",
+                    "value": "array (   'A_AAC' => 'aac',   'A_AC3' => 'ac3',   'A_MPEG/L3' => 'mp3',   'A_MPEG/L2' => 'mp2',   'A_FLAC' => 'flac',   'A_PCM/INT/LIT' => 'pcm',   'A_VORBIS' => 'vorbis', )",
                     "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FRAMED",
+                    "value": "array (   0 => 'A_MPEG/L3',   1 => 'A_MPEG/L2',   2 => 'A_AC3', )",
+                    "doc": "The audio codecs described from their first frame, whose rate a file of audio alone keeps.",
                     "visibility": "private"
                 },
                 {
@@ -84381,8 +84523,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -84403,8 +84545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 81
+                    "line": 46,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -84453,8 +84595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 114
+                    "line": 92,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -84497,8 +84639,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 143
+                    "line": 126,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -84534,8 +84676,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 193
+                    "line": 156,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -84564,8 +84706,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 219
+                    "line": 214,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -84598,8 +84740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 256
+                    "line": 234,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -84625,8 +84767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 264
+                    "line": 271,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -84652,8 +84794,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 280
+                    "line": 279,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -84679,8 +84821,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 299
+                    "line": 295,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -84699,8 +84841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 309
+                    "line": 314,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -84719,8 +84861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 317
+                    "line": 324,
+                    "end": 329
                 }
             ]
         },
@@ -84730,7 +84872,7 @@
             "namespace": "Minn\\Media\\Av",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Av/Mpeg.php",
-            "lines": 144,
+            "lines": 171,
             "doc": "MPEG audio (MP3, and layers 1 and 2) as the reference's audio reader\nmeasures it (probe media-meta). The first frame gives the version,\nlayer, sample rate and channels. An Xing or Info frame (written by LAME\nand most encoders) gives the frame and byte counts: a variable bitrate is\nthe bytes over the frames' duration, and the playing time is the audio's\nbytes less one average frame, at that bitrate. Without one the bitrate is\nthe first frame's and the playing time is every byte at it.",
             "implements": [],
             "extends": null,
@@ -84833,6 +84975,42 @@
                 },
                 {
                     "routes": [],
+                    "name": "scan",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "scan(Minn\\Media\\Av\\Source $source, int $start, int $end): ?array",
+                    "doc": "Every frame from an offset to an end, header by header, until one is\nnot a frame: the first frame's header, the frames' mean bitrate and\nwhether any frame's rate differs from the first's; null when the first\nis not a frame.",
+                    "shapes": [
+                        "@return array{first: array<string, int>, bitrate: float, variable: bool}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "Minn\\Media\\Av\\Source",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "start",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "end",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 131,
+                    "end": 148
+                },
+                {
+                    "routes": [],
                     "name": "firstFrame",
                     "static": true,
                     "visibility": "private",
@@ -84899,8 +85077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 158
+                    "line": 157,
+                    "end": 185
                 }
             ]
         },
@@ -85109,11 +85287,12 @@
             "namespace": "Minn\\Media\\Av",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Av/Riff.php",
-            "lines": 295,
+            "lines": 349,
             "doc": "RIFF files, WAV audio and AVI video, as the reference's media reader\nmeasures them (probe media-meta). A WAV's format chunk describes its\nstream (the codec named by its format tag, lossless only for PCM) and\nits data chunk times it. An AVI's headers give the frames and their\nrate, each stream's format, and the movie list that holds the data; its\nvideo has the bitrate the audio's leaves. MP3 audio in an AVI (or in a\nWAV that states its rate) is described from its first frame.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Media\\Av\\Ac3",
                 "Minn\\Media\\Av\\Mpeg",
                 "Minn\\Media\\Av\\Source"
             ],
@@ -85198,8 +85377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 295
+                    "line": 346,
+                    "end": 349
                 },
                 {
                     "routes": [],
@@ -85221,7 +85400,7 @@
                         }
                     ],
                     "line": 39,
-                    "end": 66
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -85242,8 +85421,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 121
+                    "line": 78,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -85278,8 +85457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 138
+                    "line": 138,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -85308,8 +85487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 160
+                    "line": 156,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -85330,8 +85509,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 175
+                    "line": 177,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -85361,8 +85540,70 @@
                             "doc": "the tags with a format name of their own"
                         }
                     ],
-                    "line": 184,
-                    "end": 202
+                    "line": 193,
+                    "end": 211
+                },
+                {
+                    "routes": [],
+                    "name": "scannedAudio",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "scannedAudio(array $format, array $scan): array",
+                    "doc": "MP3 audio in a wave file, described from all its frames: the first\nframe's channels and rate, the frames' mean bitrate (variable when any\nframe's differs), the tag; the codec, the encoder's options and the\nlossless flag only when the wave format states a rate.",
+                    "shapes": [
+                        "@param array{tag: int, channels: int, sampleRate: int, average: int, bits: int} $format",
+                        "@param array{first: array<string, int>, bitrate: float, variable: bool} $scan",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "format",
+                            "type": "array",
+                            "shape": "array{tag: int, channels: int, sampleRate: int, average: int, bits: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scan",
+                            "type": "array",
+                            "shape": "array{first: array<string, int>, bitrate: float, variable: bool}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 223,
+                    "end": 236
+                },
+                {
+                    "routes": [],
+                    "name": "ac3Audio",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ac3Audio(array $format, array $frame): array",
+                    "doc": "AC-3 audio in a wave file, described from its first frame: the frame's\nrate, bitrate, channel mode and channels (a low frequency channel\ncounted as \".1\", which the ratio counts too), then the tag and codec;\nthe sample size only for an extensible format.",
+                    "shapes": [
+                        "@param array{tag: int, channels: int, sampleRate: int, average: int, bits: int} $format",
+                        "@param array{sampleRate: int, bitrate: int, channels: int|string, mode: string} $frame",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "format",
+                            "type": "array",
+                            "shape": "array{tag: int, channels: int, sampleRate: int, average: int, bits: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "frame",
+                            "type": "array",
+                            "shape": "array{sampleRate: int, bitrate: int, channels: int|string, mode: string}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 248,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -85392,8 +85633,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 224
+                    "line": 267,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -85429,8 +85670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 245
+                    "line": 287,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -85473,8 +85714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 275
+                    "line": 309,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -85493,8 +85734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 289
+                    "line": 332,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -85507,8 +85748,8 @@
                         "@return array<string, string> code => name"
                     ],
                     "params": [],
-                    "line": 298,
-                    "end": 309
+                    "line": 352,
+                    "end": 363
                 }
             ]
         },

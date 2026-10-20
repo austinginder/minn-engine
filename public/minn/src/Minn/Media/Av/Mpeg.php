@@ -121,6 +121,33 @@ final class Mpeg
     }
 
     /**
+     * Every frame from an offset to an end, header by header, until one is
+     * not a frame: the first frame's header, the frames' mean bitrate and
+     * whether any frame's rate differs from the first's; null when the first
+     * is not a frame.
+     *
+     * @return array{first: array<string, int>, bitrate: float, variable: bool}|null
+     */
+    public static function scan(Source $source, int $start, int $end): ?array
+    {
+        $first = null;
+        $total = 0;
+        $count = 0;
+        $variable = false;
+        for ($at = $start; $at + 4 <= $end; $at += $frame['length']) {
+            $frame = self::frameHeader($source->bigEndian($at, 4));
+            if ($frame === null || $frame['length'] < 1) {
+                break;
+            }
+            $first ??= $frame;
+            $variable = $variable || $frame['bitrate'] !== $first['bitrate'];
+            $total += $frame['bitrate'];
+            $count++;
+        }
+        return $first === null ? null : ['first' => $first, 'bitrate' => $total / $count, 'variable' => $variable];
+    }
+
+    /**
      * The Xing or Info frame's counts and the LAME tag after them, read from
      * the first frame; null when the first frame is audio.
      *

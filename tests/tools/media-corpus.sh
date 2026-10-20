@@ -75,4 +75,19 @@ $F -i t14.wav -c:a pcm_f32le "$OUT/a14-float.wav"
 $F -f lavfi -i "$V:s=64x48:d=1.0" -f lavfi -i "sine=f=440:d=1.0" -af "aformat=channel_layouts=5.1" -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a ac3 "$OUT/v12-ac3.mkv"
 $F -f lavfi -i "$V:s=64x48:d=1.0" -f lavfi -i "sine=f=440:d=1.0" -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a libmp3lame -b:a 64k "$OUT/v13-mp3.mkv"
 $F -f lavfi -i "$V:s=80x60:d=1.0" -f lavfi -i "sine=f=440:d=1.0" -c:v mjpeg -c:a pcm_s16le "$OUT/v14-mjpeg-pcm.avi"
+
+# Codecs inside other containers' readers: MP3 (constant and variable) and AC-3 (stereo, and 5.1 as an
+# extensible format) in WAV; MP2 and Vorbis as Matroska audio; H.264 in Flash video at a High and a
+# Baseline profile. v17-h264-ep.flv is a 160x90 Baseline FLV with its parameter set replaced by one holding an
+# emulation-prevention byte (built by hand once, kept as committed).
+tone 44100 2 t15.wav 2.0
+$F -i t15.wav -c:a libmp3lame -b:a 128k -f wav "$OUT/a15-mp3-cbr.wav"
+$F -i t15.wav -c:a libmp3lame -q:a 2 -f wav "$OUT/a16-mp3-vbr.wav"
+tone 48000 2 t17.wav 1.7
+$F -i t17.wav -c:a ac3 -b:a 192k -f wav "$OUT/a17-ac3.wav"
+$F -f lavfi -i "sine=f=440:d=2" -ac 6 -c:a ac3 -b:a 384k -f wav "$OUT/a18-ac3-51.wav"
+$F -f lavfi -i "sine=f=440:d=1.6" -c:a mp2 -b:a 192k "$OUT/a19-mp2.mka"
+$F -f lavfi -i "sine=f=440:d=1.6" -ac 2 -c:a vorbis -strict -2 "$OUT/a20-vorbis.mka"
+$F -f lavfi -i "$V:s=160x90:d=1.6" -f lavfi -i "sine=f=440:d=1.6" -c:v libx264 -profile:v high -preset veryfast -pix_fmt yuv420p -c:a aac -b:a 64k "$OUT/v15-h264-high.flv"
+$F -f lavfi -i "$V:s=100x50:d=0.6" -c:v libx264 -profile:v baseline -preset veryfast -pix_fmt yuv420p -an "$OUT/v16-h264-baseline.flv"
 ls -la "$OUT"

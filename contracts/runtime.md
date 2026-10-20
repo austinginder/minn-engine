@@ -17484,11 +17484,29 @@ shape, so a plugin that hands them its own reader's output gets the same answer.
   the next file with the same cover) and the attachment's thumbnail, where the attachment type
   or the theme supports thumbnails; the cover's bytes leave the metadata either way.
 
-Left: MP3 and AC-3 audio inside a WAV, which the reference describes through readers of
-their own (AC-3's channels "1.1" and a reordered stream; a variable MP3 with no stated rate),
-MP2 in Matroska (the reference reads into a laced block and finds a false frame), and H.264
-in Flash video (the reference's size from it is not the picture's). Each is rare as an upload;
-the engine describes them by the rules above.
+Codecs inside other containers' readers (2026-10-20, closing row 17483), each learned from
+built and patched files:
+
+- **MP3 in a WAV** is described from every frame of the data (`Mpeg::scan`): the first frame's
+  channels and rate, the frames' mean bitrate, `vbr` when any frame's rate differs (the mode is
+  then written before the channel mode). The codec, lossless flag and encoder options (`VBR`, or
+  `CBR` and the rate) appear only when the wave format states an average rate; without one the
+  playing time is the data's bits over the mean rate.
+- **AC-3 in a WAV**, plain or as an extensible format, is described from its first frame: the
+  frame's rate, bitrate, channel mode and channels ("1.1" for mono, "5.1", stereo as surround), the
+  tag and the format's own codec name, no sample size unless the format is extensible, and a ratio
+  that counts the ".1".
+- **Matroska audio alone** keeps the rate an MP2, MP3 or AC-3 track's first frame gives; other
+  codecs take the file's. Vorbis is named, lossy and variable, its rate a whole number read from
+  the identification header in the codec data.
+- **H.264 in Flash video** takes its size from the first parameter set of the decoder
+  configuration, as stored (its emulation-prevention bytes kept), its fields read in the layout of
+  the profiles without chroma settings whatever its profile (so a High profile stream usually
+  reads as a size it is not), the crop counted in pairs. A file of video alone whose metadata names
+  no video rate gives the video the file's rate.
+
+The earlier note here (MP2 in Matroska read into a laced block) did not reproduce: video with MP2
+audio agreed already.
 
 Pinned: probes `media-meta` (69 rows: the corpus, each reader on the other's files,
 unreadable files, built ID3 tags, the LAME, MPEG-4, wave, AVI, Vorbis and Flash tables, the
@@ -18150,7 +18168,7 @@ rows that are `open` or `austin`.
 | 17101 | Preset slugs in kebab case (10-18) | core's default font sizes printed when the theme no longer has their slugs (`defaultFontSizes: false`) | done | "Three owed rows settled" (probe `default-presets`) |
 | 17101 | Methods keep the reference's shape (10-18) | `WP_Theme_JSON_Resolver::get_theme_data()` ignores `with_supports => false` | done | "Three owed rows settled": the theme's own layer over its supports (probe `theme-data-supports`) |
 | 17101 | The $current_user global (10-18) | the `setup_userdata` globals (`$user_ID`, `$userdata`, `$user_login`, ...) | done | "Three owed rows settled" (probe `user-globals`) |
-| 17483 | Audio and video metadata (10-19) | MP3 and AC-3 inside a WAV, MP2 in Matroska, H.264 in Flash video: the reference's own readers for these, not followed | austin | rare as uploads, and the engine describes them by its other rules; accept, or owe them (each is a further reader of the reference's to learn from patched files) |
+| 17483 | Audio and video metadata (10-19) | MP3 and AC-3 inside a WAV, MP2 in Matroska, H.264 in Flash video: the reference's own readers for these, not followed | done | 2026-10-20: "Codecs inside other containers' readers" (corpus a15 to a20, v15 to v17; Vorbis in Matroska found on the way) |
 | 17591 | A template part found as the reference finds it (10-19) | `wp_filter_content_tags` decides lazy loading as for `the_content` whatever its context (a header part's images lazy, iframes not asked about first) | done | 2026-10-19: "The template part's four rows, settled" (probe `content-tags`) |
 | 17591 | A template part found as the reference finds it (10-19) | the renderer fires no `get_block_type_uses_context`, no `block_parser_class` for inner content; a navigation's inner blocks hear fewer hooks | done | 2026-10-19: "The template part's four rows, settled": each block a WP_Block with its parent (probe `block-instances`); what is left has rows of its own there |
 | 17591 | A template part found as the reference finds it (10-19) | the global styles lookup's query shape (`get_posts`, ID order, slug, filters suppressed) | done | 2026-10-19: "The template part's four rows, settled" (probe `global-styles-lookup`) |

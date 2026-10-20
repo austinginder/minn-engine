@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Minn\Media\Av\{Ac3, Analyzer, Genres, Mpeg, Source};
+use Minn\Media\Av\{Ac3, Analyzer, ExpGolomb, Genres, Mpeg, Source};
 
 /**
  * The media readers (Media\Av) on the corpus in tests/fixtures/media, with
@@ -52,5 +52,18 @@ $cases['playing times from each container'] = static function () use ($read, $ex
 };
 $cases['covers found in each format'] = static function () use ($read, $expect): bool|string {
     return $expect([$read('a01-cbr-tags.mp3')['id3v2']['APIC'][0]['image_width'], $read('a06-aac.m4a')['comments']['picture'][0]['image_mime'], $read('a12-flac.flac')['comments']['picture'][0]['image_mime']], [32, 'image/png', 'image/jpeg']);
+};
+$cases['exponential-Golomb codes, unsigned and signed'] = static function () use ($expect): bool|string {
+    $bits = new ExpGolomb((string) hex2bin('a64280'));
+    return $expect([$bits->unsigned(), $bits->unsigned(), $bits->unsigned(), $bits->signed(), $bits->signed()], [0, 1, 2, 2, -2]);
+};
+$cases['codecs inside other containers: MP3 and AC-3 in WAV, MP2 and Vorbis in Matroska, H.264 in Flash'] = static function () use ($read, $expect): bool|string {
+    return $expect([
+        $read('a16-mp3-vbr.wav')['audio']['bitrate_mode'], $read('a17-ac3.wav')['audio']['channelmode'], $read('a18-ac3-51.wav')['audio']['channels'],
+        $read('a19-mp2.mka')['audio']['bitrate'], $read('a20-vorbis.mka')['audio']['sample_rate'],
+        [$read('v15-h264-high.flv')['video']['resolution_x'], $read('v15-h264-high.flv')['video']['resolution_y']],
+        [$read('v16-h264-baseline.flv')['video']['resolution_x'], $read('v16-h264-baseline.flv')['video']['resolution_y']],
+        [$read('v17-h264-ep.flv')['video']['resolution_x'], $read('v17-h264-ep.flv')['video']['resolution_y']],
+    ], ['vbr', 'surround', '5.1', 192000, 44100, [16, 160], [100, 50], [16, 64]]);
 };
 return $cases;

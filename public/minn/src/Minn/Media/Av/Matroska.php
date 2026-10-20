@@ -22,7 +22,10 @@ final class Matroska
 
     private const VIDEO = ['V_VP8' => 'vp8', 'V_MPEG4/ISO/AVC' => 'h264', 'V_MPEG4/ISO/ASP' => 'mpeg4', 'V_MS/VFW/FOURCC' => 'vcm'];
 
-    private const AUDIO = ['A_AAC' => 'aac', 'A_AC3' => 'ac3', 'A_MPEG/L3' => 'mp3', 'A_MPEG/L2' => 'mp2', 'A_FLAC' => 'flac', 'A_PCM/INT/LIT' => 'pcm'];
+    private const AUDIO = ['A_AAC' => 'aac', 'A_AC3' => 'ac3', 'A_MPEG/L3' => 'mp3', 'A_MPEG/L2' => 'mp2', 'A_FLAC' => 'flac', 'A_PCM/INT/LIT' => 'pcm', 'A_VORBIS' => 'vorbis'];
+
+    /** The audio codecs described from their first frame, whose rate a file of audio alone keeps. */
+    private const FRAMED = ['A_MPEG/L3', 'A_MPEG/L2', 'A_AC3'];
 
     private const HEAD = 262144;
 
@@ -61,7 +64,8 @@ final class Matroska
         $overall = $playtime ? $source->size * 8 / $playtime : null;
         $audioStream = $audio === null ? null : self::audio($audio, $bytes, $found['segment']);
         if ($audioStream !== null) {
-            if ($video === null && $overall !== null) {
+            // Audio alone takes the file's rate, unless its first frame gave one (MP2, MP3 and AC-3 keep theirs).
+            if ($video === null && $overall !== null && !in_array($audio['codec'] ?? '', self::FRAMED, true)) {
                 $audioStream['bitrate'] = $overall;
                 $audioStream['compression_ratio'] = $overall / ((float) $audioStream['channels'] * $audioStream['sample_rate'] * $audioStream['bits_per_sample']);
             }
@@ -182,6 +186,14 @@ final class Matroska
             }
         } elseif ($codec === 'A_PCM/INT/LIT') {
             $audio['bitrate'] = $audio['sample_rate'] * $audio['channels'] * $audio['bits_per_sample'];
+        } elseif ($codec === 'A_VORBIS') {
+            // The identification header in the codec data (after its Xiph lacing) gives the rate as a whole number.
+            $private = (string) ($track['private'] ?? '');
+            $at = strpos($private, "\x01vorbis");
+            if ($at !== false && strlen($private) >= $at + 16) {
+                $audio['sample_rate'] = Source::littleEndianValue(substr($private, $at + 12, 4));
+            }
+            $audio += ['lossless' => false, 'bitrate_mode' => 'vbr'];
         }
         if ($audio['channels'] === 1 || $audio['channels'] === 2) {
             $audio['channelmode'] = $audio['channels'] === 1 ? 'mono' : 'stereo';

@@ -9,8 +9,10 @@ namespace Minn\Media\Av;
  * media-meta). The onMetaData script tag gives the playing time, frame
  * rate, data rates and codecs; the first audio tag gives the rate, sample
  * size and channels; the first video tag's Sorenson picture header the
- * size. The video's data rate is kept as written (kilobits), the audio's
- * made bits.
+ * size, or for H.264 its sequence parameter set, read as the reference
+ * reads it. The video's data rate is kept as written (kilobits), the
+ * audio's made bits; a file with no audio and no video rate gives the
+ * video the file's own rate.
  */
 final class Flv
 {
@@ -39,7 +41,7 @@ final class Flv
             } elseif ($type === 8 && $audioFlags === null) {
                 $audioFlags = ord($source->bytes($at + 11, 1));
             } elseif ($type === 9 && $videoTag === null) {
-                $videoTag = $source->bytes($at + 11, min($size, 64));
+                $videoTag = $source->bytes($at + 11, min($size, 512));
             }
             $at += 11 + $size + 4;
         }
@@ -53,6 +55,10 @@ final class Flv
         if ($playtime !== null) {
             $data['playtime_seconds'] = $playtime;
             $data['bitrate'] = $source->size * 8 / $playtime;
+            // A file of video alone whose metadata names no video rate gives the video the file's rate (H.264 from ffmpeg; probe media-meta).
+            if (isset($data['video']) && !isset($data['audio']) && empty($data['video']['bitrate'])) {
+                $data['video']['bitrate'] = $data['bitrate'];
+            }
         }
         return $data;
     }
@@ -96,7 +102,7 @@ final class Flv
         if (isset($meta['framerate'])) {
             $video['frame_rate'] = $meta['framerate'];
         }
-        [$width, $height] = self::pictureSize(substr($tag, 1));
+        [$width, $height] = (ord($tag[0] ?? "\0") & 0x0f) === 7 ? self::avcSize($tag) : self::pictureSize(substr($tag, 1));
         $video += ['resolution_x' => $width, 'resolution_y' => $height];
         if (!empty($meta['videodatarate'])) {
             $video['bitrate'] = $meta['videodatarate'];
@@ -130,6 +136,47 @@ final class Flv
             return [(int) bindec(substr($bits, 33, $width)), (int) bindec(substr($bits, 33 + $width, $width))];
         }
         return self::PICTURE_SIZES[$code] ?? [0, 0];
+    }
+
+    /**
+     * The width and height an H.264 sequence header gives, read as the
+     * reference reads them: the first parameter set of the decoder
+     * configuration, as stored (its emulation-prevention bytes kept), its
+     * fields read in the layout of the profiles without chroma settings
+     * whatever its profile, and its crop counted in pairs of samples. A
+     * tag that is no sequence header has no size.
+     *
+     * @return array{0: int, 1: int}
+     */
+    private static function avcSize(string $tag): array
+    {
+        if (strlen($tag) < 14 || ord($tag[1]) !== 0 || (ord($tag[10]) & 0x1f) === 0) {
+            return [0, 0];
+        }
+        $length = Source::bigEndianValue(substr($tag, 11, 2));
+        $bits = new ExpGolomb(substr($tag, 14, max(0, $length - 1)));
+        $bits->skip(24);
+        $bits->unsigned();
+        $bits->unsigned();
+        $order = $bits->unsigned();
+        if ($order === 0) {
+            $bits->unsigned();
+        } elseif ($order === 1) {
+            $bits->skip(1);
+            $bits->signed();
+            $bits->signed();
+            for ($cycle = $bits->unsigned(); $cycle > 0; $cycle--) {
+                $bits->signed();
+            }
+        }
+        $bits->unsigned();
+        $bits->skip(1);
+        $columns = $bits->unsigned() + 1;
+        $rows = $bits->unsigned() + 1;
+        $framesOnly = $bits->bit();
+        $bits->skip($framesOnly === 1 ? 1 : 2);
+        [$left, $right, $top, $bottom] = $bits->bit() === 1 ? [$bits->unsigned(), $bits->unsigned(), $bits->unsigned(), $bits->unsigned()] : [0, 0, 0, 0];
+        return [$columns * 16 - 2 * ($left + $right), (2 - $framesOnly) * $rows * 16 - 2 * ($top + $bottom)];
     }
 
     /**

@@ -7,16 +7,17 @@
 | [`Ac3`](#ac3) | final class | 40 | An AC-3 (Dolby Digital) frame's header as the reference's media reader |
 | [`Analyzer`](#analyzer) | final class | 111 | A media file's analysis, keyed as the reference's media reader keys the |
 | [`Asf`](#asf) | final class | 182 | Advanced Systems Format files (WMV, WMA, ASF) as the reference's media |
+| [`ExpGolomb`](#expgolomb) | final class | 44 | A bit reader over a byte string for the exponential-Golomb codes of a |
 | [`Flac`](#flac) | final class | 115 | FLAC, on its own or as the first packet of an Ogg stream, as the |
-| [`Flv`](#flv) | final class | 159 | Flash video (FLV) as the reference's media reader measures it (probe |
+| [`Flv`](#flv) | final class | 204 | Flash video (FLV) as the reference's media reader measures it (probe |
 | [`Genres`](#genres) | final class | 15 | The genre names an ID3 tag refers to by number: the ID3v1 list with the |
 | [`Id3`](#id3) | final class | 354 | ID3 tags, as the reference's audio reader names what they say (probe |
 | [`IsoMedia`](#isomedia) | final class | 361 | MPEG-4 and QuickTime files (MP4, M4A, M4V, MOV) as the reference's media |
 | [`Lame`](#lame) | final class | 135 | The LAME tag an encoder writes after the Xing or Info counts, and what |
-| [`Matroska`](#matroska) | final class | 302 | Matroska and WebM files (MKV, MKA, WebM) as the reference's media reader |
-| [`Mpeg`](#mpeg) | final class | 144 | MPEG audio (MP3, and layers 1 and 2) as the reference's audio reader |
+| [`Matroska`](#matroska) | final class | 314 | Matroska and WebM files (MKV, MKA, WebM) as the reference's media reader |
+| [`Mpeg`](#mpeg) | final class | 171 | MPEG audio (MP3, and layers 1 and 2) as the reference's audio reader |
 | [`Ogg`](#ogg) | final class | 144 | Ogg files as the reference's media reader measures them (probe |
-| [`Riff`](#riff) | final class | 295 | RIFF files, WAV audio and AVI video, as the reference's media reader |
+| [`Riff`](#riff) | final class | 349 | RIFF files, WAV audio and AVI video, as the reference's media reader |
 | [`Source`](#source) | final class | 70 | A media file read in parts, so a large video is never loaded whole: its |
 
 ## Ac3
@@ -33,7 +34,7 @@ the low frequency channel; the channel modes follow the coding mode.
 - const `CHANNELS` = `array (   0 => 2,   1 => 1,   2 => 2,   3 => 3,   4 => 3,   5 => 4,   6 => 4,   7 => 5, )`
 - const `MODES` = `array (   0 => 'stereo',   1 => 'mono',   2 => 'surround',   3 => 'stereo',   4 => 'stereo',   5 => 'surround',   6 => 'surround',   7 => 'surround', )`
 
-Used by: `Minn\Media\Av\Matroska`
+Used by: `Minn\Media\Av\Matroska`, `Minn\Media\Av\Riff`
 
 ### static `frame(string $bytes): ?array`
 
@@ -106,6 +107,38 @@ The file's analysis.
 Internals: `bitrates()` (private, line 114), `codecs()` (private, line 130), `video()` (private, line 154), `audio()` (private, line 172)
 
 
+## ExpGolomb
+
+`final class Minn\Media\Av\ExpGolomb` · `public/minn/src/Minn/Media/Av/ExpGolomb.php`
+
+A bit reader over a byte string for the exponential-Golomb codes of a
+video parameter set: single bits, unsigned and signed codes. Reading
+past the end reads zeros, and a code longer than 32 bits stops at 32.
+
+Used by: `Minn\Media\Av\Flv`
+
+```php
+__construct(string $bytes)
+```
+
+
+### `bit(): int`
+
+The next bit.
+
+### `skip(int $count): void`
+
+Passes over a number of bits.
+
+### `unsigned(): int`
+
+The next unsigned exponential-Golomb code.
+
+### `signed(): int`
+
+The next signed exponential-Golomb code.
+
+
 ## Flac
 
 `final class Minn\Media\Av\Flac` · `public/minn/src/Minn/Media/Av/Flac.php`
@@ -150,8 +183,10 @@ Flash video (FLV) as the reference's media reader measures it (probe
 media-meta). The onMetaData script tag gives the playing time, frame
 rate, data rates and codecs; the first audio tag gives the rate, sample
 size and channels; the first video tag's Sorenson picture header the
-size. The video's data rate is kept as written (kilobits), the audio's
-made bits.
+size, or for H.264 its sequence parameter set, read as the reference
+reads it. The video's data rate is kept as written (kilobits), the
+audio's made bits; a file with no audio and no video rate gives the
+video the file's own rate.
 
 - const `VIDEO_CODECS` = `array (   2 => 'Sorenson H.263',   3 => 'Screen video',   4 => 'On2 VP6',   5 => 'On2 VP6 with alpha channel',   6 => 'Screen video v2',   7 => 'Sorenson H.264', )`
 - const `AUDIO_CODECS` = `'Linear PCM, platform endian|ADPCM|mp3|Linear PCM, little endian|Nellymoser 16kHz mono|Nellymoser 8kHz mono|Nellymoser|G.711A-law logarithmic PCM|G.711 mu-law logarithmic PCM|reserved|AAC|Speex|||mp3 8kHz|Device-specific sound'`
@@ -165,7 +200,7 @@ The file's analysis.
 
 - `@return array<string, mixed>`
 
-Internals: `audio()` (private, line 67), `video()` (private, line 93), `pictureSize()` (private, line 121), `metaData()` (private, line 140)
+Internals: `audio()` (private, line 73), `video()` (private, line 99), `pictureSize()` (private, line 127), `avcSize()` (private, line 151), `metaData()` (private, line 187)
 
 
 ## Genres
@@ -319,7 +354,8 @@ keeping what a known audio bitrate leaves.
 - const `SEGMENT` = `408125543`
 - const `CONTAINERS` = `array (   0 => 440786851,   1 => 408125543,   2 => 357149030,   3 => 374648427,   4 => 174,   5 => 224,   6 => 225, )`
 - const `VIDEO` = `array (   'V_VP8' => 'vp8',   'V_MPEG4/ISO/AVC' => 'h264',   'V_MPEG4/ISO/ASP' => 'mpeg4',   'V_MS/VFW/FOURCC' => 'vcm', )`
-- const `AUDIO` = `array (   'A_AAC' => 'aac',   'A_AC3' => 'ac3',   'A_MPEG/L3' => 'mp3',   'A_MPEG/L2' => 'mp2',   'A_FLAC' => 'flac',   'A_PCM/INT/LIT' => 'pcm', )`
+- const `AUDIO` = `array (   'A_AAC' => 'aac',   'A_AC3' => 'ac3',   'A_MPEG/L3' => 'mp3',   'A_MPEG/L2' => 'mp2',   'A_FLAC' => 'flac',   'A_PCM/INT/LIT' => 'pcm',   'A_VORBIS' => 'vorbis', )`
+- const `FRAMED` = `array (   0 => 'A_MPEG/L3',   1 => 'A_MPEG/L2',   2 => 'A_AC3', )` — The audio codecs described from their first frame, whose rate a file of audio alone keeps.
 - const `HEAD` = `262144`
 - const `EPOCH` = `978307200` — Seconds between 1970 and 2001, where a Matroska date is counted from.
 
@@ -335,7 +371,7 @@ The file's analysis.
 
 - `@return array<string, mixed>`
 
-Internals: `walk()` (private, line 88), `element()` (private, line 122), `audio()` (private, line 152), `video()` (private, line 202), `firstBlock()` (private, line 222), `blockFor()` (private, line 259), `identifier()` (private, line 267), `size()` (private, line 283), `float()` (private, line 302), `signed()` (private, line 312)
+Internals: `walk()` (private, line 92), `element()` (private, line 126), `audio()` (private, line 156), `video()` (private, line 214), `firstBlock()` (private, line 234), `blockFor()` (private, line 271), `identifier()` (private, line 279), `size()` (private, line 295), `float()` (private, line 314), `signed()` (private, line 324)
 
 
 ## Mpeg
@@ -373,7 +409,16 @@ reserved sample rate.
 
 - `@return array{version: int, layer: int, bitrate: int, sampleRate: int, padding: int, mode: int, channels: int, samples: int, length: int}|null`
 
-Internals: `firstFrame()` (private, line 80), `infoFrame()` (private, line 130)
+### static `scan(Minn\Media\Av\Source $source, int $start, int $end): ?array`
+
+Every frame from an offset to an end, header by header, until one is
+not a frame: the first frame's header, the frames' mean bitrate and
+whether any frame's rate differs from the first's; null when the first
+is not a frame.
+
+- `@return array{first: array<string, int>, bitrate: float, variable: bool}|null`
+
+Internals: `firstFrame()` (private, line 80), `infoFrame()` (private, line 157)
 
 
 ## Ogg
@@ -432,7 +477,7 @@ The file's analysis: format, type, timing and its streams.
 
 The name an AVI video codec code has; empty for one it does not know.
 
-Internals: `wave()` (private, line 39), `avi()` (private, line 69), `chunks()` (private, line 129), `stream()` (private, line 147), `waveFormat()` (private, line 168), `audio()` (private, line 184), `mpegAudio()` (private, line 213), `firstAudioFrame()` (private, line 233), `video()` (private, line 255), `formatName()` (private, line 278), `videoCodecs()` (private, line 298)
+Internals: `wave()` (private, line 39), `avi()` (private, line 78), `chunks()` (private, line 138), `stream()` (private, line 156), `waveFormat()` (private, line 177), `audio()` (private, line 193), `scannedAudio()` (private, line 223), `ac3Audio()` (private, line 248), `mpegAudio()` (private, line 267), `firstAudioFrame()` (private, line 287), `video()` (private, line 309), `formatName()` (private, line 332), `videoCodecs()` (private, line 352)
 
 
 ## Source

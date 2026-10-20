@@ -312,6 +312,127 @@
         }
     ],
     [
+        "a15-mp3-cbr.wav",
+        {
+            "dataformat": "mp3",
+            "channels": 2,
+            "sample_rate": 44100,
+            "bitrate": 128000,
+            "channelmode": "joint stereo",
+            "bitrate_mode": "cbr",
+            "wformattag": 85,
+            "codec": "MPEG Layer-3",
+            "lossless": false,
+            "encoder_options": "CBR128",
+            "compression_ratio": "(float) 0.09070294784580499",
+            "fileformat": "wav",
+            "filesize": 32704,
+            "mime_type": "audio/wav",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
+        "a16-mp3-vbr.wav",
+        {
+            "dataformat": "mp3",
+            "channels": 2,
+            "sample_rate": 44100,
+            "bitrate": "(float) 100102.56410256411",
+            "bitrate_mode": "vbr",
+            "channelmode": "joint stereo",
+            "wformattag": 85,
+            "compression_ratio": "(float) 0.07093435664864237",
+            "fileformat": "wav",
+            "filesize": 25562,
+            "mime_type": "audio/wav",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
+        "a17-ac3.wav",
+        {
+            "dataformat": "ac3",
+            "bitrate_mode": "cbr",
+            "lossless": false,
+            "sample_rate": 48000,
+            "bitrate": 192000,
+            "channelmode": "surround",
+            "channels": 2,
+            "wformattag": 8192,
+            "codec": "Dolby AC3",
+            "compression_ratio": "(float) 0.125",
+            "fileformat": "wav",
+            "filesize": 41564,
+            "mime_type": "audio/wav",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
+        "a18-ac3-51.wav",
+        {
+            "dataformat": "ac3",
+            "bitrate_mode": "cbr",
+            "lossless": false,
+            "sample_rate": 44100,
+            "bitrate": 384000,
+            "channelmode": "surround",
+            "channels": "5.1",
+            "wformattag": 65534,
+            "codec": "WAVE_FORMAT_EXTENSIBLE",
+            "bits_per_sample": 16,
+            "compression_ratio": "(float) 0.10670935040682941",
+            "fileformat": "wav",
+            "filesize": 97080,
+            "mime_type": "audio/wav",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
+        "a19-mp2.mka",
+        {
+            "dataformat": "mp2",
+            "sample_rate": 44100,
+            "channels": 1,
+            "language": "und",
+            "bits_per_sample": 16,
+            "bitrate": 192000,
+            "channelmode": "mono",
+            "bitrate_mode": "cbr",
+            "lossless": false,
+            "encoder_options": "CBR192",
+            "compression_ratio": "(float) 0.272108843537415",
+            "fileformat": "matroska",
+            "filesize": 39880,
+            "mime_type": "audio/x-matroska",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
+        "a20-vorbis.mka",
+        {
+            "dataformat": "vorbis",
+            "sample_rate": 44100,
+            "channels": 2,
+            "language": "und",
+            "bits_per_sample": 32,
+            "lossless": false,
+            "bitrate_mode": "vbr",
+            "channelmode": "stereo",
+            "bitrate": "(float) 50876.84729064039",
+            "compression_ratio": "(float) 0.01802609385297633",
+            "fileformat": "matroska",
+            "filesize": 10328,
+            "mime_type": "audio/x-matroska",
+            "length": 2,
+            "length_formatted": "0:02"
+        }
+    ],
+    [
         "v01-h264-aac.mp4",
         {
             "bitrate": 131164,
@@ -648,6 +769,64 @@
                 "channelmode": "mono",
                 "compression_ratio": 1
             }
+        }
+    ],
+    [
+        "v15-h264-high.flv",
+        {
+            "lossless": false,
+            "filesize": 39016,
+            "mime_type": "video/x-flv",
+            "length": 2,
+            "length_formatted": "0:02",
+            "width": 16,
+            "height": 160,
+            "fileformat": "flv",
+            "dataformat": "flv",
+            "codec": "Sorenson H.264",
+            "audio": {
+                "dataformat": "flv",
+                "bitrate": 62500,
+                "codec": "AAC",
+                "sample_rate": 44100,
+                "bits_per_sample": 16,
+                "channels": 2,
+                "lossless": false,
+                "channelmode": "stereo",
+                "compression_ratio": "(float) 0.044288548752834465"
+            }
+        }
+    ],
+    [
+        "v16-h264-baseline.flv",
+        {
+            "lossless": false,
+            "bitrate": 70613,
+            "filesize": 5296,
+            "mime_type": "video/x-flv",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 100,
+            "height": 50,
+            "fileformat": "flv",
+            "dataformat": "flv",
+            "codec": "Sorenson H.264"
+        }
+    ],
+    [
+        "v17-h264-ep.flv",
+        {
+            "lossless": false,
+            "bitrate": 153320,
+            "filesize": 11499,
+            "mime_type": "video/x-flv",
+            "length": 1,
+            "length_formatted": "0:01",
+            "width": 16,
+            "height": 64,
+            "fileformat": "flv",
+            "dataformat": "flv",
+            "codec": "Sorenson H.264"
         }
     ],
     [
@@ -1203,6 +1382,36 @@
                 true
             ],
             [
+                "a15-mp3-cbr.wav",
+                "wav",
+                true
+            ],
+            [
+                "a16-mp3-vbr.wav",
+                "wav",
+                true
+            ],
+            [
+                "a17-ac3.wav",
+                "wav",
+                true
+            ],
+            [
+                "a18-ac3-51.wav",
+                "wav",
+                true
+            ],
+            [
+                "a19-mp2.mka",
+                "matroska",
+                true
+            ],
+            [
+                "a20-vorbis.mka",
+                "matroska",
+                true
+            ],
+            [
                 "v01-h264-aac.mp4",
                 "mp4",
                 true
@@ -1270,6 +1479,21 @@
             [
                 "v14-mjpeg-pcm.avi",
                 "avi",
+                true
+            ],
+            [
+                "v15-h264-high.flv",
+                "flv",
+                true
+            ],
+            [
+                "v16-h264-baseline.flv",
+                "flv",
+                true
+            ],
+            [
+                "v17-h264-ep.flv",
+                "flv",
                 true
             ],
             [

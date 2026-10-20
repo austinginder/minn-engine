@@ -56,11 +56,20 @@ final class Riff
         if ($start !== null) {
             $out = ['avdataoffset' => $start, 'avdataend' => $end] + $out;
         }
-        $mpeg = $format['tag'] === 0x55 && $format['average'] > 0 && $start !== null ? Mpeg::frameHeader($source->bigEndian($start, 4)) : null;
-        $out['audio'] = $mpeg !== null ? self::mpegAudio($format, $mpeg) : self::audio($format, ['ac3' => 0x2000, 'litewave' => 0x08AE]);
+        $scan = $format['tag'] === 0x55 && $start !== null ? Mpeg::scan($source, $start, $end) : null;
+        $ac3 = $start !== null && in_array($format['tag'], [0x2000, 0xFFFE], true) ? Ac3::frame($source->bytes($start, 8)) : null;
+        $out['audio'] = match (true) {
+            $scan !== null => self::scannedAudio($format, $scan),
+            $ac3 !== null => self::ac3Audio($format, $ac3),
+            default => self::audio($format, ['ac3' => 0x2000, 'litewave' => 0x08AE]),
+        };
         if ($start !== null && $format['average'] > 0) {
             $out['playtime_seconds'] = ($end - $start) / $format['average'];
             $out['bitrate'] = $format['average'] * 8;
+        } elseif ($scan !== null) {
+            // No stated rate: the frames' mean measures the data.
+            $out['playtime_seconds'] = ($end - $start) * 8 / $scan['bitrate'];
+            $out['bitrate'] = $scan['bitrate'];
         }
         return $out;
     }
@@ -198,6 +207,51 @@ final class Riff
         if ($bitrate > 0 && $format['channels'] > 0 && $format['sampleRate'] > 0) {
             $audio['compression_ratio'] = $bitrate / ($format['channels'] * $format['sampleRate'] * ($format['bits'] ?: 16));
         }
+        return $audio;
+    }
+
+    /**
+     * MP3 audio in a wave file, described from all its frames: the first
+     * frame's channels and rate, the frames' mean bitrate (variable when any
+     * frame's differs), the tag; the codec, the encoder's options and the
+     * lossless flag only when the wave format states a rate.
+     *
+     * @param array{tag: int, channels: int, sampleRate: int, average: int, bits: int} $format
+     * @param array{first: array<string, int>, bitrate: float, variable: bool} $scan
+     * @return array<string, mixed>
+     */
+    private static function scannedAudio(array $format, array $scan): array
+    {
+        $first = $scan['first'];
+        $bitrate = $scan['variable'] ? $scan['bitrate'] : $first['bitrate'];
+        $mode = ['channelmode' => ['stereo', 'joint stereo', 'dual channel', 'mono'][$first['mode']]];
+        $rate = ['bitrate_mode' => $scan['variable'] ? 'vbr' : 'cbr'];
+        $audio = ['dataformat' => 'mp3', 'channels' => $first['channels'], 'sample_rate' => $first['sampleRate'], 'bitrate' => $bitrate] + ($scan['variable'] ? $rate + $mode : $mode + $rate);
+        $audio['wformattag'] = $format['tag'];
+        if ($format['average'] > 0) {
+            $audio += ['codec' => self::formatName($format['tag']), 'lossless' => false, 'encoder_options' => $scan['variable'] ? 'VBR' : 'CBR' . intdiv($first['bitrate'], 1000)];
+        }
+        $audio['compression_ratio'] = $bitrate / ($first['channels'] * $first['sampleRate'] * 16);
+        return $audio;
+    }
+
+    /**
+     * AC-3 audio in a wave file, described from its first frame: the frame's
+     * rate, bitrate, channel mode and channels (a low frequency channel
+     * counted as ".1", which the ratio counts too), then the tag and codec;
+     * the sample size only for an extensible format.
+     *
+     * @param array{tag: int, channels: int, sampleRate: int, average: int, bits: int} $format
+     * @param array{sampleRate: int, bitrate: int, channels: int|string, mode: string} $frame
+     * @return array<string, mixed>
+     */
+    private static function ac3Audio(array $format, array $frame): array
+    {
+        $audio = ['dataformat' => 'ac3', 'bitrate_mode' => 'cbr', 'lossless' => false, 'sample_rate' => $frame['sampleRate'], 'bitrate' => $frame['bitrate'], 'channelmode' => $frame['mode'], 'channels' => $frame['channels'], 'wformattag' => $format['tag'], 'codec' => self::formatName($format['tag'])];
+        if ($format['tag'] === 0xFFFE && $format['bits'] > 0) {
+            $audio['bits_per_sample'] = $format['bits'];
+        }
+        $audio['compression_ratio'] = $frame['bitrate'] / ((float) $frame['channels'] * $frame['sampleRate'] * 16);
         return $audio;
     }
 
