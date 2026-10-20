@@ -20935,7 +20935,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Renderer.php",
-            "lines": 551,
+            "lines": 552,
             "doc": "Renders a block tree the way the reference renders post_content:\ndelimiters gone, each block's own HTML kept with inner blocks rendered\nin place, then the per-block render-time additions (layout classes, the\nparagraph class, image attributes, gallery ids, style-variation\ncounters), and finally texturize over the whole.",
             "implements": [],
             "extends": null,
@@ -21629,7 +21629,7 @@
                         }
                     ],
                     "line": 392,
-                    "end": 456
+                    "end": 457
                 },
                 {
                     "routes": [],
@@ -21642,8 +21642,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 478,
-                    "end": 482
+                    "line": 479,
+                    "end": 483
                 },
                 {
                     "routes": [],
@@ -21671,8 +21671,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 485,
-                    "end": 493
+                    "line": 486,
+                    "end": 494
                 },
                 {
                     "routes": [],
@@ -21691,8 +21691,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 501,
-                    "end": 504
+                    "line": 502,
+                    "end": 505
                 },
                 {
                     "routes": [],
@@ -21738,8 +21738,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 459,
-                    "end": 463
+                    "line": 460,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -21750,8 +21750,8 @@
                     "doc": "The WP_Block of the block the next one renders inside; null at a document's top.",
                     "shapes": [],
                     "params": [],
-                    "line": 466,
-                    "end": 469
+                    "line": 467,
+                    "end": 470
                 },
                 {
                     "routes": [],
@@ -21777,8 +21777,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 513,
-                    "end": 525
+                    "line": 514,
+                    "end": 526
                 },
                 {
                     "routes": [],
@@ -21797,8 +21797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 528,
-                    "end": 531
+                    "line": 529,
+                    "end": 532
                 },
                 {
                     "routes": [],
@@ -21826,8 +21826,8 @@
                             "doc": "the bound attributes' values, put into a static block's HTML"
                         }
                     ],
-                    "line": 534,
-                    "end": 563
+                    "line": 535,
+                    "end": 564
                 },
                 {
                     "routes": [],
@@ -21867,8 +21867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 565,
-                    "end": 587
+                    "line": 566,
+                    "end": 588
                 },
                 {
                     "routes": [],
@@ -21879,8 +21879,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 589,
-                    "end": 594
+                    "line": 590,
+                    "end": 595
                 }
             ]
         },
@@ -28324,7 +28324,7 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/Blocks.php",
-            "lines": 46,
+            "lines": 50,
             "doc": "The content pipeline's front door: block markup goes through the block\nrenderer (Minn\\Blocks), classic content rides the paragraph pipeline.",
             "implements": [],
             "extends": null,
@@ -28332,6 +28332,7 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Content\\Texturize",
                 "Minn\\Db",
+                "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -28375,8 +28376,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 31
+                    "line": 22,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -28387,8 +28388,8 @@
                     "doc": "The block renderer of the request being answered, which its runtime\nholds and builds over that request's own database door. With no\nruntime (the command line, the unit suite) one off-request renderer\nstands in.",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 42
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -28407,8 +28408,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 59
+                    "line": 53,
+                    "end": 64
                 }
             ]
         },
@@ -30846,7 +30847,7 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/MediaShortcodes.php",
-            "lines": 187,
+            "lines": 194,
             "doc": "The [video] and [audio] shortcodes as the reference prints them: a\nplugin may take either over first (wp_*_shortcode_override, handed the\nshortcode's own attributes and its instance number), then the source by\nsrc or by each format's attribute (a file of another kind is only a\nlink; YouTube and Vimeo addresses are video of their own; with none,\nthe post's first attached video or audio), the player's attributes (a\nvideo no wider than the content, its height in proportion; the flags\nbare), each source numbered by the instance, a fallback link, and the\nclass, library and final HTML through their filters.",
             "implements": [],
             "extends": null,
@@ -30910,7 +30911,7 @@
                         }
                     ],
                     "line": 37,
-                    "end": 70
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -30938,8 +30939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 93
+                    "line": 76,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -30965,8 +30966,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 104
+                    "line": 99,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -31010,8 +31011,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 140
+                    "line": 118,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -31039,8 +31040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 151
+                    "line": 146,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -31082,8 +31083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 165
+                    "line": 157,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -31111,8 +31112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 178
+                    "line": 171,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -31140,8 +31141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 185
+                    "line": 184,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -31149,7 +31150,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "library(string $kind): string",
-                    "doc": "The player library (wp_*_shortcode_library), its scripts and styles queued when it is the reference's own.",
+                    "doc": "The player library (wp_*_shortcode_library), its scripts and styles queued when it is the reference's own (a video's with the Vimeo renderer).",
                     "shapes": [],
                     "params": [
                         {
@@ -31160,8 +31161,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 196
+                    "line": 191,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -31187,8 +31188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 202
+                    "line": 206,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -31199,8 +31200,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 204,
-                    "end": 207
+                    "line": 211,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -31219,8 +31220,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 216
+                    "line": 217,
+                    "end": 223
                 }
             ]
         },
@@ -46918,7 +46919,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/AssetsController.php",
-            "lines": 42,
+            "lines": 70,
             "doc": "The engine's own static assets, served under a reserved path.",
             "implements": [],
             "extends": null,
@@ -46947,15 +46948,21 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 24
+                "line": 38,
+                "end": 40
             },
             "cases": [],
             "constants": [
                 {
                     "name": "TYPES",
-                    "value": "array (   'css' => 'text/css',   'js' => 'application/javascript', )",
-                    "doc": "",
+                    "value": "array (   'css' => 'text/css; charset=utf-8',   'js' => 'text/javascript; charset=utf-8',   'svg' => 'image/svg+xml', )",
+                    "doc": "Media types as the web server sends the reference's static files (scripts as text/javascript, with the charset).",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PLAYER_FILES",
+                    "value": "array (   'mediaelement-and-player.min.js' => 'vendor/mediaelement/mediaelement-and-player.min.js',   'mediaelementplayer-legacy.min.css' => 'vendor/mediaelement/mediaelementplayer-legacy.min.css',   'mejs-controls.svg' => 'vendor/mediaelement/mejs-controls.svg',   'renderers/vimeo.min.js' => 'vendor/mediaelement/renderers/vimeo.min.js',   'wp-mediaelement.min.js' => 'mediaelement/wp-mediaelement.js',   'wp-mediaelement.min.css' => 'mediaelement/wp-mediaelement.css',   'mediaelement-migrate.min.js' => 'mediaelement/mediaelement-migrate.js', )",
+                    "doc": "The media player's files, by the names the reference registers them\nunder: MediaElement.js's own (MIT, in vendor/mediaelement) and the\nengine's start-up, skin and migration script in their place.",
                     "visibility": "private"
                 },
                 {
@@ -47003,8 +47010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 37
+                    "line": 44,
+                    "end": 53
                 },
                 {
                     "routes": [
@@ -47032,8 +47039,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 44
+                    "line": 57,
+                    "end": 60
+                },
+                {
+                    "routes": [
+                        "GET /wp-includes/js/mediaelement/{file:(?:renderers/)?[a-z0-9.-]+\\.(?:js|css|svg)} (public)"
+                    ],
+                    "name": "player",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "player(Minn\\Http\\Request $request, string $file): Minn\\Http\\Response",
+                    "doc": "The media player, at the paths the reference registers it under (wp_default_scripts, wp_default_styles).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 72
                 },
                 {
                     "routes": [
@@ -47061,8 +47097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 55
+                    "line": 76,
+                    "end": 83
                 }
             ]
         },
@@ -72223,6 +72259,7 @@
                 "Minn\\I18n\\LocalDates",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Media\\MediaModal",
+                "Minn\\Media\\Player",
                 "Minn\\Query\\DateSql",
                 "Minn\\Query\\TaxSql",
                 "Minn\\Rest\\RestMeta",
@@ -73878,14 +73915,15 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/SiteLanguage.php",
-            "lines": 60,
-            "doc": "The site's language as pages declare it: the locale in force (a switched\none first, then what pre_determine_locale or the WPLANG option give,\nthrough the locale filter) and the html element's dir and lang\nattributes, which a plugin may change through language_attributes.",
+            "lines": 53,
+            "doc": "The site's language as pages declare it: the locale in force (a switched\none first, then what the WPLANG option gives, through the locale filter) and the html element's dir and lang\nattributes, which a plugin may change through language_attributes.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Html",
                 "Minn\\Objects\\SiteLocale",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\Translations"
             ],
             "usedBy": [
                 "Minn\\Runtime\\FileNames",
@@ -73905,11 +73943,11 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "locale(): string",
-                    "doc": "The locale in force (get_locale). It still takes what\npre_determine_locale answers, which the reference's get_locale does\nnot (probe text-domain-timing; open in contracts/runtime.md, \"Text\ndomains read at their first translation\").",
+                    "doc": "The locale in force (get_locale): a switched one, else the configured\none. pre_determine_locale is determine_locale's, not this one's (probe\ntext-domain-timing); the reference asks it while registering the media\nplayer's strings, as the engine now does (probe default-scripts).",
                     "shapes": [],
                     "params": [],
                     "line": 25,
-                    "end": 36
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -73920,8 +73958,8 @@
                     "doc": "The locale the WPLANG option names (en_US when it names none), through the locale filter.",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 43
+                    "line": 32,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -73929,11 +73967,11 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "tag(): string",
-                    "doc": "The language tag pages carry: the locale with a hyphen, plain \"en\" read as en_US.",
+                    "doc": "The language tag pages carry: the locale in force (determine_locale; probe sweep-1020) with a hyphen, plain \"en\" read as en_US.",
                     "shapes": [],
                     "params": [],
-                    "line": 46,
-                    "end": 50
+                    "line": 39,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -73944,8 +73982,8 @@
                     "doc": "Whether the site's language is written right to left (is_rtl).",
                     "shapes": [],
                     "params": [],
-                    "line": 53,
-                    "end": 57
+                    "line": 46,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -73964,8 +74002,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 75
+                    "line": 53,
+                    "end": 68
                 }
             ]
         },
@@ -74646,6 +74684,7 @@
                 "Minn\\Mail\\MailerStrings",
                 "Minn\\Media\\FileTypes",
                 "Minn\\Media\\MediaModal",
+                "Minn\\Media\\Player",
                 "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Releases",
@@ -88102,6 +88141,125 @@
             ]
         },
         {
+            "name": "Minn\\Media\\Player",
+            "short": "Player",
+            "namespace": "Minn\\Media",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/Player.php",
+            "lines": 63,
+            "doc": "The media player's data as the reference gives MediaElement.js (probe\nmedia-player): its strings in the language in force, and the site's\nsettings for it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Gettext",
+                "Minn\\Json",
+                "Minn\\Runtime\\Assets",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteUrls",
+                "Minn\\Runtime\\Translations"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FOLDER",
+                    "value": "'/wp-includes/js/mediaelement/'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "register",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "register(?Minn\\Runtime\\Assets $scripts): void",
+                    "doc": "The player's scripts as the reference registers them: MediaElement.js\n(MIT, served from minn/assets/vendor), the engine's migration script\nand start-up in the reference's own files' place, all in the footer.\nTheir strings and settings come with data().",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "scripts",
+                            "type": "?Minn\\Runtime\\Assets",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "registerStyles",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "registerStyles(?Minn\\Runtime\\Assets $styles): void",
+                    "doc": "The player's styles: MediaElement.js's own and the engine's skin.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "styles",
+                            "type": "?Minn\\Runtime\\Assets",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "data",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "data(?Minn\\Runtime\\Assets $scripts): void",
+                    "doc": "The strings (mejsL10n, before the library) and settings (_wpmejsSettings) given to the player's handles.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "scripts",
+                            "type": "?Minn\\Runtime\\Assets",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "strings",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "strings(): string",
+                    "doc": "The script that defines mejsL10n: the language determine_locale names, and each string translated.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 54,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "settings",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "settings(): array",
+                    "doc": "_wpmejsSettings: where the player's files are, its class prefix and\nstretching, and the shortcode libraries, through mejs_settings.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 70,
+                    "end": 80
+                }
+            ]
+        },
+        {
             "name": "Minn\\Media\\Sizing",
             "short": "Sizing",
             "namespace": "Minn\\Media",
@@ -89906,6 +90064,7 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\RecipientLocale",
                 "Minn\\Runtime\\Translations",
                 "Minn\\Runtime\\UserWrites",
                 "Minn\\Theme\\QueryClasses"
@@ -108926,7 +109085,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostObject.php",
-            "lines": 533,
+            "lines": 538,
             "doc": "Builds the wp/v2 post and page objects in the reference's shape: the\nview context, the edit context (raw+rendered dual fields, editor-only\nfields, and cap-gated wp:action-* links), and their _links blocks.",
             "implements": [],
             "extends": null,
@@ -109203,8 +109362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 316
+                    "line": 286,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -109230,8 +109389,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 407,
-                    "end": 417
+                    "line": 412,
+                    "end": 422
                 },
                 {
                     "routes": [],
@@ -109257,8 +109416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 420,
-                    "end": 436
+                    "line": 425,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -109291,8 +109450,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 512
+                    "line": 444,
+                    "end": 517
                 },
                 {
                     "routes": [],
@@ -109311,8 +109470,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 550,
-                    "end": 553
+                    "line": 555,
+                    "end": 558
                 },
                 {
                     "routes": [],
@@ -109381,7 +109540,7 @@
                         }
                     ],
                     "line": 126,
-                    "end": 150
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -109407,8 +109566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 200
+                    "line": 158,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -109429,8 +109588,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 215
+                    "line": 213,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -109459,8 +109618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 244
+                    "line": 229,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -109496,8 +109655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 272
+                    "line": 258,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -109518,8 +109677,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 278
+                    "line": 280,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -109545,8 +109704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 319,
-                    "end": 331
+                    "line": 324,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -109579,8 +109738,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 338,
-                    "end": 404
+                    "line": 343,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -109608,8 +109767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 521,
-                    "end": 533
+                    "line": 526,
+                    "end": 538
                 },
                 {
                     "routes": [],
@@ -109635,8 +109794,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 540,
-                    "end": 547
+                    "line": 545,
+                    "end": 552
                 }
             ]
         },
@@ -123828,7 +123987,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AccountFlows.php",
-            "lines": 140,
+            "lines": 149,
             "doc": "The account functions a sign-in page and plugins call, with the\nreference's checks, words, hooks and mail (probe account-flows): asking\nfor a password reset (retrieve_password), resetting one\n(reset_password), registering (register_new_user), and telling the site\nand the new user about a registration (wp_new_user_notification).",
             "implements": [],
             "extends": null,
@@ -123839,6 +123998,7 @@
                 "Minn\\Objects\\User",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\RecipientLocale",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\Translations",
@@ -123879,7 +124039,7 @@
                         }
                     ],
                     "line": 30,
-                    "end": 69
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -123905,8 +124065,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 78
+                    "line": 76,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -123932,8 +124092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 124
+                    "line": 90,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -123966,8 +124126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 153
+                    "line": 135,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -123993,8 +124153,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 159
+                    "line": 165,
+                    "end": 168
                 }
             ]
         },
@@ -125126,7 +125286,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AssetQueue.php",
-            "lines": 161,
+            "lines": 201,
             "doc": "The scripts and styles a request queues, as WordPress's asset functions\nqueue them: each kind's registry kept for the request, a handle queued\n(with the notice for one queued before init), and a script's element,\nfrom a file or inline, through the attribute filters.",
             "implements": [],
             "extends": null,
@@ -125140,14 +125300,26 @@
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer",
+                "Minn\\Content\\Blocks",
                 "Minn\\Content\\MediaShortcodes",
                 "Minn\\Front\\PostEmbed",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\ScriptModules"
             ],
             "constructor": null,
             "cases": [],
             "constants": [],
-            "properties": [],
+            "properties": [
+                {
+                    "name": "firstUse",
+                    "type": "?Closure",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
             "methods": [
                 {
                     "routes": [],
@@ -125173,8 +125345,55 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 36
+                    "line": 30,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(mixed $registry): ?Minn\\Runtime\\Assets",
+                    "doc": "The engine queue a registry object holds (a WP_Scripts or WP_Styles), null for anything else.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "registry",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "forFunctions",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forFunctions(string $kind, mixed $global): Minn\\Runtime\\Assets",
+                    "doc": "The registry a page's script or style function works on (follow), a script one used first (used).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "global",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -125187,8 +125406,8 @@
                         "@return array{0: list<string>, 1: list<string>, 2: list<string>}"
                     ],
                     "params": [],
-                    "line": 43,
-                    "end": 46
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -125209,8 +125428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 66
+                    "line": 73,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -125259,8 +125478,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 83
+                    "line": 95,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -125279,8 +125498,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 114
+                    "line": 124,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -125306,8 +125525,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 132
+                    "line": 140,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -125335,8 +125554,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 148
+                    "line": 160,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -125355,8 +125574,40 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 155
+                    "line": 170,
+                    "end": 175
+                },
+                {
+                    "routes": [],
+                    "name": "used",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "used(): void",
+                    "doc": "The page's script registry used, as rendering a block or queuing a\nscript uses the reference's (it is made then, and what it is told as it\nis made, it is told now): the facade's callback runs once and is gone.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 182,
+                    "end": 189
+                },
+                {
+                    "routes": [],
+                    "name": "onFirstUse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "onFirstUse(?Closure $first): void",
+                    "doc": "What the page's script registry is told on its first use (the facade's wp_scripts()); null for nothing.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "first",
+                            "type": "?Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 192,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -125375,8 +125626,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 162
+                    "line": 198,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -125395,8 +125646,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 168
+                    "line": 205,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -125422,8 +125673,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 176
+                    "line": 211,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -125442,8 +125693,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 102
+                    "line": 105,
+                    "end": 121
                 }
             ]
         },
@@ -125670,6 +125921,7 @@
             ],
             "usedBy": [
                 "Minn\\Media\\MediaModal",
+                "Minn\\Media\\Player",
                 "Minn\\Runtime\\AssetEdits",
                 "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\AssetView",
@@ -135979,6 +136231,7 @@
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\QueryArgs",
+                "Minn\\Runtime\\RecipientLocale",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\RewriteRules",
@@ -154755,6 +155008,136 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\RecipientLocale",
+            "short": "RecipientLocale",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/RecipientLocale.php",
+            "lines": 30,
+            "doc": "An email written in its reader's language, as the reference writes each:\nthe send run inside switch_to_user_locale for the account it goes to (the\nsite's locale when the address belongs to none) and the locale restored\nafter. The facade binds how a switch is made (WP_Locale_Switcher).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Objects\\User",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\UserWrites"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "switcher",
+                    "type": "?Closure",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "bind",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "bind(Closure $switcher): void",
+                    "doc": "How a switch is made (the facade's switch_to_user_locale and restore_previous_locale).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "switcher",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 25
+                },
+                {
+                    "routes": [],
+                    "name": "forUser",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forUser(int $userId, Closure $send): mixed",
+                    "doc": "What a send answers, run in a user's language (the site's for 0).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "send",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "forAddress",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forAddress(string $email, Closure $send): mixed",
+                    "doc": "What a send answers, run in the language of the account an address belongs to.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "send",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "forSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forSite(Closure $send): mixed",
+                    "doc": "What a send to the site's address (admin_email) answers, run in its account's language.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "send",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 44
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Records",
             "short": "Records",
             "namespace": "Minn\\Runtime",
@@ -157874,7 +158257,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 471,
+            "lines": 475,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -157892,6 +158275,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\I18n\\LocaleStack",
                 "Minn\\I18n\\TextDomains",
+                "Minn\\Runtime\\AssetQueue",
                 "Minn\\Runtime\\BlockTemplates",
                 "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\EarlyFilters",
@@ -157982,6 +158366,7 @@
                 "Minn\\Media\\FileTypes",
                 "Minn\\Media\\Icons",
                 "Minn\\Media\\MediaModal",
+                "Minn\\Media\\Player",
                 "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Updates",
                 "Minn\\Ops\\UpgraderRun",
@@ -158099,6 +158484,7 @@
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\QueryArgs",
+                "Minn\\Runtime\\RecipientLocale",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\RegisteredSettings",
@@ -158708,7 +159094,7 @@
                         }
                     ],
                     "line": 282,
-                    "end": 285
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -158736,8 +159122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 309
+                    "line": 302,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -158756,8 +159142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 315
+                    "line": 316,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -158768,8 +159154,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 318,
-                    "end": 321
+                    "line": 322,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -158780,8 +159166,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 324,
-                    "end": 327
+                    "line": 328,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -158792,8 +159178,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 330,
-                    "end": 333
+                    "line": 334,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -158804,8 +159190,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 336,
-                    "end": 339
+                    "line": 340,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -158816,8 +159202,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 342,
-                    "end": 345
+                    "line": 346,
+                    "end": 349
                 },
                 {
                     "routes": [],
@@ -158828,8 +159214,8 @@
                     "doc": "A script modules registry of its own, as each new WP_Script_Modules keeps (probe script-modules-printing).",
                     "shapes": [],
                     "params": [],
-                    "line": 348,
-                    "end": 354
+                    "line": 352,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -158840,8 +159226,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 357,
-                    "end": 360
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -158852,8 +159238,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 363,
-                    "end": 366
+                    "line": 367,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -158864,8 +159250,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 369,
-                    "end": 372
+                    "line": 373,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -158876,8 +159262,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 375,
-                    "end": 378
+                    "line": 379,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -158903,8 +159289,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 384
+                    "line": 385,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -158930,8 +159316,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 387,
-                    "end": 390
+                    "line": 391,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -158942,8 +159328,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 393,
-                    "end": 396
+                    "line": 397,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -158954,8 +159340,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 399,
-                    "end": 402
+                    "line": 403,
+                    "end": 406
                 },
                 {
                     "routes": [],
@@ -158966,8 +159352,8 @@
                     "doc": "Whether the facade's functions and classes are defined yet.",
                     "shapes": [],
                     "params": [],
-                    "line": 405,
-                    "end": 408
+                    "line": 409,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -158986,8 +159372,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 438
+                    "line": 415,
+                    "end": 442
                 },
                 {
                     "routes": [],
@@ -158998,8 +159384,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 470,
-                    "end": 473
+                    "line": 474,
+                    "end": 477
                 },
                 {
                     "routes": [],
@@ -159010,8 +159396,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 476,
-                    "end": 493
+                    "line": 480,
+                    "end": 497
                 },
                 {
                     "routes": [],
@@ -159030,8 +159416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 448,
-                    "end": 462
+                    "line": 452,
+                    "end": 466
                 }
             ]
         },
@@ -161175,7 +161561,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/SiteUrls.php",
-            "lines": 140,
+            "lines": 142,
             "doc": "The site's own addresses as WordPress builds them: the home and site\naddresses, the admin's, wp-includes', the sign-in and sign-out pages' (each with its\nscheme settled and its filter run), whether the request came over HTTPS,\nthe switch that forces the admin onto it, and the trailing slash the\npermalink structure asks for.",
             "implements": [],
             "extends": null,
@@ -161196,6 +161582,7 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Media\\Icons",
                 "Minn\\Media\\MediaModal",
+                "Minn\\Media\\Player",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\CommentPages",
@@ -161480,7 +161867,7 @@
                         }
                     ],
                     "line": 102,
-                    "end": 105
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -161506,8 +161893,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 118
+                    "line": 110,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -161526,8 +161913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 129
+                    "line": 123,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -161553,8 +161940,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 144
+                    "line": 138,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -161580,8 +161967,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -161600,8 +161987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 156
+                    "line": 155,
+                    "end": 158
                 }
             ]
         },
@@ -168881,6 +169268,8 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\I18n\\SiteLanguage",
+                "Minn\\Media\\Player",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRemoval",
@@ -171579,7 +171968,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/UserWrites.php",
-            "lines": 357,
+            "lines": 359,
             "doc": "Accounts written as WordPress's user functions write them: an account\nmade, changed (its row, profile meta and role, with the notices a\nchanged password or email sends) and deleted (its posts deleted or\nhanded on), a reset key issued, the lookups that guard a new account,\nand the cached rows let go; each step with the actions and filters the\nreference fires in its order.",
             "implements": [],
             "extends": null,
@@ -171599,6 +171988,7 @@
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\PostLookup",
                 "Minn\\Runtime\\PostWrites",
+                "Minn\\Runtime\\RecipientLocale",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Refusal",
                 "Minn\\Runtime\\Runtime",
@@ -172059,7 +172449,7 @@
                         }
                     ],
                     "line": 364,
-                    "end": 384
+                    "end": 386
                 }
             ]
         },

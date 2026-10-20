@@ -260,6 +260,16 @@ if ($referenceUp) {
     foreach ($postCases as $label => [$body, $cookie]) {
         $postAnswers[$label] = $posted($base, $body, $cookie) === $posted($reference, $body, $cookie) ? 'same' : [$posted($base, $body, $cookie), $posted($reference, $body, $cookie)];
     }
+    // The media player's files at the addresses the reference registers them under: MediaElement.js's own byte for
+    // byte (the engine ships the MIT library), the start-up, skin and migration script the engine's own.
+    $player = [];
+    foreach (['mediaelement-and-player.min.js' => true, 'mediaelementplayer-legacy.min.css' => true, 'mejs-controls.svg' => true, 'renderers/vimeo.min.js' => true, 'wp-mediaelement.min.js' => false, 'wp-mediaelement.min.css' => false, 'mediaelement-migrate.min.js' => false] as $file => $same) {
+        [$eh, $eb] = minn_test_fetch($base . '/wp-includes/js/mediaelement/' . $file);
+        [$rh, $rb] = minn_test_fetch($reference . '/wp-includes/js/mediaelement/' . $file);
+        $type = static fn (array $headers): string => strtolower(trim(explode(';', (string) ($headers['content-type'] ?? ''))[0]));
+        $player[$file] = [$eh['status'] === 200 && $rh['status'] === 200 && $type($eh) === $type($rh), $eb !== '' && (!$same || md5($eb) === md5($rb))];
+    }
+    $check('the media player\'s files are served where the reference serves them, the library byte for byte', array_filter($player, static fn (array $row): bool => $row !== [true, true]) === [], json_encode($player));
     // A query loop of its own, paged by query-{id}-page: its pagination on every page, other arguments kept, the
     // numbers windowed, as on the reference (the layout hash is engine-defined and masked, as the suites do).
     $pagesPage = wp_insert_post(['post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'zz custom query pages', 'post_content' => '<!-- wp:query {"queryId":91,"query":{"perPage":2,"postType":"post","inherit":false,"order":"desc","orderBy":"date"}} --><div class="wp-block-query"><!-- wp:post-template --><!-- wp:post-title /--><!-- /wp:post-template --><!-- wp:query-pagination {"align":"wide","className":"zz-pages","paginationArrow":"arrow","layout":{"type":"flex","justifyContent":"space-between"}} --><!-- wp:query-pagination-previous /--><!-- wp:query-pagination-numbers /--><!-- wp:query-pagination-next /--><!-- /wp:query-pagination --></div><!-- /wp:query -->']);

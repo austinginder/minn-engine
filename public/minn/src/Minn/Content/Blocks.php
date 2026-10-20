@@ -6,6 +6,7 @@ namespace Minn\Content;
 
 use Minn\Blocks\Renderer;
 use Minn\Db;
+use Minn\Runtime\AssetQueue;
 use Minn\Runtime\Runtime;
 
 /**
@@ -20,6 +21,10 @@ final class Blocks
     /** Post content as HTML: blocks through the renderer, classic content through the paragraph rules. */
     public static function render(string $raw): string
     {
+        // Content holds at least one block, classic text included, and rendering one uses the page's script registry.
+        if ($raw !== '') {
+            AssetQueue::used();
+        }
         if (str_contains($raw, '<!-- wp:')) {
             return self::renderer()->render($raw);
         }

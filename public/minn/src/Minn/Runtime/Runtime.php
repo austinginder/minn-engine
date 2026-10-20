@@ -281,6 +281,10 @@ final class Runtime
      */
     public static function classicContentFilter(string $content): string
     {
+        // do_blocks makes classic text a block too, and rendering it uses the page's script registry.
+        if ($content !== '') {
+            AssetQueue::used();
+        }
         return (string) RenderState::current()->filteringContent($content, static fn () => self::hooks()->filter('the_content', [$content]));
     }
 

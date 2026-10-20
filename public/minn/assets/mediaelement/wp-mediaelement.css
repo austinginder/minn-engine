@@ -1,0 +1,67 @@
+/*
+ * Minn's skin for MediaElement.js players, at the address the reference
+ * loads its own from (wp-mediaelement): a flat dark bar with square rails,
+ * a blue played rail and white controls, as a page's players look on the
+ * reference. Written for the engine.
+ */
+.mejs-container {
+	clear: both;
+	max-width: 100%;
+	background: #222;
+}
+
+.mejs-container * {
+	font-family: Helvetica, Arial;
+}
+
+.mejs-container .mejs-time {
+	font-weight: normal;
+}
+
+.mejs-container .mejs-controls {
+	background: #222;
+}
+
+.mejs-container .wp-audio-shortcode {
+	height: 100%;
+}
+
+.mejs-container.mejs-audio .mejs-poster {
+	height: 100% !important;
+}
+
+.mejs-container .wp-video-shortcode {
+	display: inline-block;
+}
+
+/* The rails: square, the whole of it faint, what has loaded white, what has played blue. */
+.mejs-container .mejs-time-total,
+.mejs-container .mejs-time-buffering,
+.mejs-container .mejs-time-loaded,
+.mejs-container .mejs-time-current,
+.mejs-container .mejs-time-hovered,
+.mejs-container .mejs-time-float,
+.mejs-container .mejs-time-float-current,
+.mejs-container .mejs-time-handle-content,
+.mejs-container .mejs-horizontal-volume-total,
+.mejs-container .mejs-horizontal-volume-current {
+	border-radius: 0;
+}
+
+.mejs-container .mejs-time-total,
+.mejs-container .mejs-horizontal-volume-total {
+	background: rgba(255, 255, 255, 0.33);
+}
+
+.mejs-container .mejs-time-loaded,
+.mejs-container .mejs-horizontal-volume-current {
+	background: #fff;
+}
+
+.mejs-container .mejs-time-current {
+	background: #0073aa;
+}
+
+.mejs-container .mejs-horizontal-volume-slider {
+	display: table;
+}

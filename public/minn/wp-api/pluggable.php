@@ -244,7 +244,7 @@ if (!function_exists('wp_notify_moderator')) :
  */
 function wp_notify_moderator($comment_id)
 {
-    if ((string) get_option('moderation_notify') !== '1') {
+    if (!apply_filters('notify_moderator', get_option('moderation_notify'), (int) $comment_id)) {
         return true;
     }
     $comment = get_comment($comment_id);
@@ -261,13 +261,18 @@ function wp_notify_moderator($comment_id)
     }
     $emails = (array) apply_filters('comment_moderation_recipients', $recipients, (int) $comment_id);
     $headers = apply_filters('comment_moderation_headers', '', (int) $comment_id);
-    $text = apply_filters('comment_moderation_text', $notice->body, (int) $comment_id);
-    $subject = apply_filters('comment_moderation_subject', $notice->subject, (int) $comment_id);
+    // Each moderator is written to in their own language, the notice made again for them (probe comment-remaining).
     foreach ($emails as $email) {
-        wp_mail((string) $email, wp_specialchars_decode((string) $subject), (string) $text, $headers);
+        Minn\Runtime\RecipientLocale::forAddress((string) $email, static function () use ($email, $post, $comment, $comment_id, $headers): void {
+            $notice = \Minn\Mail\Mailer::noticesFor(Runtime::current()->site)->moderation((string) get_option('admin_email'), (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content);
+            $text = apply_filters('comment_moderation_text', $notice->body, (int) $comment_id);
+            $subject = apply_filters('comment_moderation_subject', $notice->subject, (int) $comment_id);
+            wp_mail((string) $email, wp_specialchars_decode((string) $subject), (string) $text, $headers);
+        });
     }
     return true;
 }
+
 endif;
 
 if (!function_exists('wp_notify_postauthor')) :
@@ -291,15 +296,18 @@ function wp_notify_postauthor($comment_id, $deprecated = null)
     if ($post === null || $emails === []) {
         return false;
     }
-    $notices = \Minn\Mail\Mailer::noticesFor(Runtime::current()->site);
-    $notice = (string) $comment->comment_type === 'note'
-        ? $notices->newNote($emails[0], (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content, admin_url('post.php?post=' . $post->ID . '&action=edit'))
-        : $notices->newComment($emails[0], (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content, (string) get_permalink($post));
-    $text = apply_filters('comment_notification_text', $notice->body, (int) $comment_id);
-    $subject = apply_filters('comment_notification_subject', $notice->subject, (int) $comment_id);
     $headers = apply_filters('comment_notification_headers', '', (int) $comment_id);
+    // Each recipient is written to in their own language, the notice made again for them (probe comment-remaining).
     foreach ($emails as $email) {
-        wp_mail((string) $email, wp_specialchars_decode((string) $subject), (string) $text, $headers);
+        Minn\Runtime\RecipientLocale::forAddress((string) $email, static function () use ($email, $post, $comment, $comment_id, $headers): void {
+            $notices = \Minn\Mail\Mailer::noticesFor(Runtime::current()->site);
+            $notice = (string) $comment->comment_type === 'note'
+                ? $notices->newNote((string) $email, (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content, admin_url('post.php?post=' . $post->ID . '&action=edit'))
+                : $notices->newComment((string) $email, (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content, (string) get_permalink($post));
+            $text = apply_filters('comment_notification_text', $notice->body, (int) $comment_id);
+            $subject = apply_filters('comment_notification_subject', $notice->subject, (int) $comment_id);
+            wp_mail((string) $email, wp_specialchars_decode((string) $subject), (string) $text, $headers);
+        });
     }
     return true;
 }
@@ -466,17 +474,21 @@ if (!function_exists('wp_password_change_notification')) :
 function wp_password_change_notification($user)
 {
     $user = is_object($user) ? $user : get_userdata((int) $user);
-    if (!$user || (string) $user->user_email === (string) get_option('admin_email')) {
+    // The site's own account changing its password tells no one; the address is matched whatever its case.
+    if (!$user || strcasecmp((string) $user->user_email, (string) get_option('admin_email')) === 0) {
         return null;
     }
-    $blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
-    $email = apply_filters('wp_password_change_notification_email', [
-        'to' => get_option('admin_email'),
-        'subject' => sprintf('[%s] Password Changed', $blogname),
-        'message' => sprintf('Password changed for user: %s', $user->user_login) . "\r\n",
-        'headers' => '',
-    ], $user, $blogname);
-    wp_mail($email['to'], wp_specialchars_decode(sprintf($email['subject'], $blogname)), $email['message'], $email['headers']);
+    // Written in the site owner's language; the subject goes to the filter with its placeholder (probe pluggable-remaining).
+    Minn\Runtime\RecipientLocale::forSite(static function () use ($user): void {
+        $blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+        $email = apply_filters('wp_password_change_notification_email', [
+            'to' => get_option('admin_email'),
+            'subject' => __('[%s] Password Changed'),
+            'message' => sprintf(__('Password changed for user: %s'), $user->user_login) . "\r\n",
+            'headers' => '',
+        ], $user, $blogname);
+        wp_mail($email['to'], wp_specialchars_decode(sprintf($email['subject'], $blogname)), $email['message'], $email['headers']);
+    });
     return null;
 }
 endif;
@@ -737,6 +749,18 @@ function wp_login($username, $password, $deprecated = '')
     return false;
 }
 endif;
+
+// An email is written in its reader's language: the engine's sends run inside a switch made this way.
+Minn\Runtime\RecipientLocale::bind(static function (int $userId, \Closure $send): mixed {
+    $switched = $userId > 0 ? switch_to_user_locale($userId) : switch_to_locale(get_locale());
+    try {
+        return $send();
+    } finally {
+        if ($switched) {
+            restore_previous_locale();
+        }
+    }
+});
 
 // The engine asks for these through Minn\Runtime\Handoff, so a plugin's own version answers it as well.
 Handoff::bind([

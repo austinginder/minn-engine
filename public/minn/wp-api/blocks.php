@@ -451,6 +451,8 @@ function render_block($parsed_block)
     if ($pre_render !== null) {
         return $pre_render;
     }
+    // A block rendered uses the page's script registry, as WP_Block::render does.
+    Minn\Runtime\AssetQueue::used();
     $parsed_block = BlockFilters::data((array) $parsed_block, null, _minn_renders_natively($parsed_block['blockName'] ?? null) ? BlockFilters::NATIVE_DATA_DONE : []);
     $context = [];
     $post = get_post();

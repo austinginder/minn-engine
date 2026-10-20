@@ -58,11 +58,15 @@ final class AccountFlows
         if ($key instanceof Errors) {
             return $key;
         }
-        $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, self::resetLink($user, $key) . '&wp_lang=' . rawurlencode((string) Translations::userLocale($user)), (string) (Runtime::current()->request?->remoteAddress ?? ''));
-        $title = Runtime::hooks()->filter('retrieve_password_title', [$notice->subject, $user->user_login, $user]);
-        $message = Runtime::hooks()->filter('retrieve_password_message', [$notice->body, $key, $user->user_login, $user]);
-        $email = (array) Runtime::hooks()->filter('retrieve_password_notification_email', [['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user]);
-        if (!Handoff::mail($email['to'] ?? $user->user_email, Entities::decode((string) ($email['subject'] ?? $title), ENT_NOQUOTES), (string) ($email['message'] ?? $message), $email['headers'] ?? '')) {
+        // Written in the user's language (probe account-flows).
+        $sent = RecipientLocale::forUser((int) $user->ID, static function () use ($user, $key): bool {
+            $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, self::resetLink($user, $key) . '&wp_lang=' . rawurlencode((string) Translations::userLocale($user)), (string) (Runtime::current()->request?->remoteAddress ?? ''));
+            $title = Runtime::hooks()->filter('retrieve_password_title', [$notice->subject, $user->user_login, $user]);
+            $message = Runtime::hooks()->filter('retrieve_password_message', [$notice->body, $key, $user->user_login, $user]);
+            $email = (array) Runtime::hooks()->filter('retrieve_password_notification_email', [['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user]);
+            return (bool) Handoff::mail($email['to'] ?? $user->user_email, Entities::decode((string) ($email['subject'] ?? $title), ENT_NOQUOTES), (string) ($email['message'] ?? $message), $email['headers'] ?? '');
+        });
+        if (!$sent) {
             return Handoff::newError('retrieve_password_email_failure', Gettext::text('<strong>Error:</strong> The email could not be sent. Your site may not be correctly configured to send emails.'));
         }
         return true;
@@ -136,9 +140,12 @@ final class AccountFlows
         }
         $site = Entities::decode((string) Runtime::options()->filtered('blogname'), ENT_QUOTES);
         if ($notify !== 'user' && Runtime::hooks()->filter('wp_send_new_user_notification_to_admin', [true, $user])) {
-            $message = sprintf(Gettext::text('New user registration on your site %s:'), $site) . "\r\n\r\n" . sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . sprintf(Gettext::text('Email: %s'), $user->user_email) . "\r\n";
-            $mail = (array) Runtime::hooks()->filter('wp_new_user_notification_email_admin', [['to' => Runtime::options()->filtered('admin_email'), 'subject' => Gettext::text('[%s] New User Registration'), 'message' => $message, 'headers' => ''], $user, $site]);
-            Handoff::mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
+            // The site's address is told in its owner's language (the account holding it, else the site's).
+            RecipientLocale::forSite(static function () use ($user, $site): void {
+                $message = sprintf(Gettext::text('New user registration on your site %s:'), $site) . "\r\n\r\n" . sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . sprintf(Gettext::text('Email: %s'), $user->user_email) . "\r\n";
+                $mail = (array) Runtime::hooks()->filter('wp_new_user_notification_email_admin', [['to' => Runtime::options()->filtered('admin_email'), 'subject' => Gettext::text('[%s] New User Registration'), 'message' => $message, 'headers' => ''], $user, $site]);
+                Handoff::mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
+            });
         }
         if ($notify === 'admin' || (empty($deprecated) && $notify === '') || !Runtime::hooks()->filter('wp_send_new_user_notification_to_user', [true, $user])) {
             return;
@@ -147,9 +154,11 @@ final class AccountFlows
         if ($key instanceof Errors) {
             return;
         }
-        $message = sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . Gettext::text('To set your password, visit the following address:') . "\r\n\r\n" . self::resetLink($user, $key) . "\r\n\r\n" . SiteUrls::login() . "\r\n";
-        $mail = (array) Runtime::hooks()->filter('wp_new_user_notification_email', [['to' => $user->user_email, 'subject' => Gettext::text('[%s] Login Details'), 'message' => $message, 'headers' => ''], $user, $site]);
-        Handoff::mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
+        RecipientLocale::forUser((int) $user->ID, static function () use ($user, $key, $site): void {
+            $message = sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . Gettext::text('To set your password, visit the following address:') . "\r\n\r\n" . self::resetLink($user, $key) . "\r\n\r\n" . SiteUrls::login() . "\r\n";
+            $mail = (array) Runtime::hooks()->filter('wp_new_user_notification_email', [['to' => $user->user_email, 'subject' => Gettext::text('[%s] Login Details'), 'message' => $message, 'headers' => ''], $user, $site]);
+            Handoff::mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
+        });
     }
 
     /** The link that opens the password form for a user's key. */

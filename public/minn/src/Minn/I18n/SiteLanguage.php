@@ -7,32 +7,25 @@ namespace Minn\I18n;
 use Minn\Html;
 use Minn\Objects\SiteLocale;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\Translations;
 
 /**
  * The site's language as pages declare it: the locale in force (a switched
- * one first, then what pre_determine_locale or the WPLANG option give,
- * through the locale filter) and the html element's dir and lang
+ * one first, then what the WPLANG option gives, through the locale filter) and the html element's dir and lang
  * attributes, which a plugin may change through language_attributes.
  */
 final class SiteLanguage
 {
     /**
-     * The locale in force (get_locale). It still takes what
-     * pre_determine_locale answers, which the reference's get_locale does
-     * not (probe text-domain-timing; open in contracts/runtime.md, "Text
-     * domains read at their first translation").
+     * The locale in force (get_locale): a switched one, else the configured
+     * one. pre_determine_locale is determine_locale's, not this one's (probe
+     * text-domain-timing); the reference asks it while registering the media
+     * player's strings, as the engine now does (probe default-scripts).
      */
     public static function locale(): string
     {
         $stack = Runtime::locales();
-        if ($stack->switched()) {
-            return (string) $stack->current();
-        }
-        $early = Runtime::hooks()->filter('pre_determine_locale', [null]);
-        if (is_string($early) && $early !== '') {
-            return $early;
-        }
-        return self::configured();
+        return $stack->switched() ? (string) $stack->current() : self::configured();
     }
 
     /** The locale the WPLANG option names (en_US when it names none), through the locale filter. */
@@ -42,10 +35,10 @@ final class SiteLanguage
         return (string) Runtime::hooks()->filter('locale', [$locale === '' ? 'en_US' : $locale]);
     }
 
-    /** The language tag pages carry: the locale with a hyphen, plain "en" read as en_US. */
+    /** The language tag pages carry: the locale in force (determine_locale; probe sweep-1020) with a hyphen, plain "en" read as en_US. */
     public static function tag(): string
     {
-        $locale = self::locale();
+        $locale = Translations::locale();
         return str_replace('_', '-', $locale === 'en' ? 'en_US' : $locale);
     }
 

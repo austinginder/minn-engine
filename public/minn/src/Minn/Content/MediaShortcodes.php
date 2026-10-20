@@ -50,7 +50,10 @@ final class MediaShortcodes
             default => null,
         };
         if ($hosted === 'video/vimeo') {
-            // The reference rewrites a Vimeo address to its bare form, with loop, for the player.
+            // A Vimeo address takes the player's Vimeo renderer first; the reference rewrites it to its bare form, with loop.
+            if (Runtime::hooks()->actionsDone('init')) {
+                AssetQueue::enqueueScript('mediaelement-vimeo');
+            }
             $parts = (array) parse_url((string) $atts['src']);
             $atts['src'] = QueryArgs::add('loop', Flag::of($atts['loop']) ? '1' : '0', 'https://' . ($parts['host'] ?? '') . ($parts['path'] ?? ''));
         }
@@ -184,13 +187,17 @@ final class MediaShortcodes
         return $content > 0 && $width > $content ? [$content, (int) round($height * $content / $width)] : [$width, $height];
     }
 
-    /** The player library (wp_*_shortcode_library), its scripts and styles queued when it is the reference's own. */
+    /** The player library (wp_*_shortcode_library), its scripts and styles queued when it is the reference's own (a video's with the Vimeo renderer). */
     private static function library(string $kind): string
     {
         $library = (string) Runtime::hooks()->filter("wp_{$kind}_shortcode_library", ['mediaelement']);
         if ($library === 'mediaelement' && Runtime::hooks()->actionsDone('init')) {
             AssetQueue::enqueueStyle('wp-mediaelement');
             AssetQueue::enqueueScript('wp-mediaelement');
+            // A video player can play a Vimeo source too (probe av-shortcodes).
+            if ($kind === 'video') {
+                AssetQueue::enqueueScript('mediaelement-vimeo');
+            }
         }
         return $library;
     }

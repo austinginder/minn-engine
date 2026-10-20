@@ -5,7 +5,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Autop`](#autop) | final class | 168 | Classic-content paragraphing (wpautop): blank lines become paragraphs, |
-| [`Blocks`](#blocks) | final class | 46 | The content pipeline's front door: block markup goes through the block |
+| [`Blocks`](#blocks) | final class | 50 | The content pipeline's front door: block markup goes through the block |
 | [`Clickable`](#clickable) | final class | 64 | Bare addresses in text made links (make_clickable, probe |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
@@ -15,7 +15,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Excerpt`](#excerpt) | final class | 90 | The reference's generated excerpt, as captured from probe posts: |
 | [`Inventory`](#inventory) | final readonly class | 253 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
 | [`Links`](#links) | final readonly class | 102 | The links manager's table, as get_bookmarks and wp_insert_link read and |
-| [`MediaShortcodes`](#mediashortcodes) | final class | 187 | The [video] and [audio] shortcodes as the reference prints them: a |
+| [`MediaShortcodes`](#mediashortcodes) | final class | 194 | The [video] and [audio] shortcodes as the reference prints them: a |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
 | [`Menus`](#menus) | final readonly class | 468 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
@@ -635,7 +635,7 @@ class, library and final HTML through their filters.
 
 get_attached_media: the post's attachments of a kind ("video", "audio", a MIME type), as the reference's children query finds them.
 
-Internals: `sources()` (private, line 115), `anyOwnFormat()` (private, line 143), `sourceTags()` (private, line 154), `attributes()` (private, line 168), `fitted()` (private, line 181), `library()` (private, line 188), `fallback()` (private, line 199), `postId()` (private, line 204), `instance()` (private, line 210)
+Internals: `sources()` (private, line 118), `anyOwnFormat()` (private, line 146), `sourceTags()` (private, line 157), `attributes()` (private, line 171), `fitted()` (private, line 184), `library()` (private, line 191), `fallback()` (private, line 206), `postId()` (private, line 211), `instance()` (private, line 217)
 
 
 ## MenuItem

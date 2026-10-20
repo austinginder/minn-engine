@@ -391,6 +391,7 @@ final class Renderer
     /** One block as HTML, with the filters around it (unless renderNativeUnfiltered() asked for this one without). */
     public function renderBlock(Block $block): string
     {
+        AssetQueue::used();
         $unfiltered = $this->unfiltered;
         $this->unfiltered = false;
         $asCallback = $this->asCallback;

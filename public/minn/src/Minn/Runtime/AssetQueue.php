@@ -16,6 +16,9 @@ use Minn\Support\ScriptTag;
  */
 final class AssetQueue
 {
+    /** @var (Closure(): void)|null told once, when the page's script registry is first used */
+    private static ?Closure $firstUse = null;
+
     /**
      * The registry the page's functions work on: the one held by the object
      * in the global a plugin may replace ($wp_scripts, $wp_styles), as the
@@ -27,12 +30,28 @@ final class AssetQueue
     public static function follow(string $kind, mixed $global): Assets
     {
         $assets = self::assets($kind);
-        $own = is_object($global) ? (fn (): mixed => $this->assets ?? null)->call($global) : null;
+        $own = self::of($global);
         if (!$own instanceof Assets || $own->kind() !== $kind || $own === $assets) {
             return $assets;
         }
         Runtime::current()->set('assets_' . $kind, $own);
         return $own;
+    }
+
+    /** The engine queue a registry object holds (a WP_Scripts or WP_Styles), null for anything else. */
+    public static function of(mixed $registry): ?Assets
+    {
+        $own = is_object($registry) ? (fn (): mixed => $this->assets ?? null)->call($registry) : null;
+        return $own instanceof Assets ? $own : null;
+    }
+
+    /** The registry a page's script or style function works on (follow), a script one used first (used). */
+    public static function forFunctions(string $kind, mixed $global): Assets
+    {
+        if ($kind === 'script') {
+            self::used();
+        }
+        return self::follow($kind, $global);
     }
 
     /**
@@ -151,7 +170,28 @@ final class AssetQueue
     public static function enqueueScript(string $handle): void
     {
         self::warnTooEarly('wp_enqueue_script', $handle);
+        self::used();
         self::assets('script')->enqueue($handle);
+    }
+
+    /**
+     * The page's script registry used, as rendering a block or queuing a
+     * script uses the reference's (it is made then, and what it is told as it
+     * is made, it is told now): the facade's callback runs once and is gone.
+     */
+    public static function used(): void
+    {
+        $used = self::$firstUse;
+        self::$firstUse = null;
+        if ($used !== null) {
+            $used();
+        }
+    }
+
+    /** What the page's script registry is told on its first use (the facade's wp_scripts()); null for nothing. */
+    public static function onFirstUse(?Closure $first): void
+    {
+        self::$firstUse = $first;
     }
 
     /** A registered style queued (wp_enqueue_style with a handle alone). */

@@ -101,7 +101,9 @@ final class SiteUrls
     /** An address in wp-includes (includes_url). */
     public static function includes(mixed $path = '', mixed $scheme = null): string
     {
-        return (string) Runtime::hooks()->filter('includes_url', [self::site('/' . WPINC . '/', $scheme) . self::tail($path), $path, $scheme]);
+        // WPINC is defined once the API's constants load; asked before (the default scripts register early), it is the stock folder.
+        $folder = \defined('WPINC') ? (string) \constant('WPINC') : 'wp-includes';
+        return (string) Runtime::hooks()->filter('includes_url', [self::site('/' . $folder . '/', $scheme) . self::tail($path), $path, $scheme]);
     }
 
     /** The sign-in page (wp_login_url), told where to go after and whether to ask again, as login_url leaves it. */

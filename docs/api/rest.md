@@ -42,7 +42,7 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 166 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 171 | The WP_Query arguments a post list request makes, as the reference makes |
-| [`PostObject`](#postobject) | final readonly class | 533 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostObject`](#postobject) | final readonly class | 538 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 197 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 528 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
@@ -1882,7 +1882,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 85), `navigationView()` (private, line 96), `blockView()` (private, line 126), `viewFields()` (private, line 153), `viewTerms()` (private, line 208), `typeFields()` (private, line 224), `classList()` (private, line 253), `format()` (private, line 275), `termLinks()` (private, line 319), `editFields()` (private, line 338), `allow()` (private, line 521), `gmt()` (private, line 540)
+Internals: `meta()` (private, line 85), `navigationView()` (private, line 96), `blockView()` (private, line 126), `viewFields()` (private, line 158), `viewTerms()` (private, line 213), `typeFields()` (private, line 229), `classList()` (private, line 258), `format()` (private, line 280), `termLinks()` (private, line 324), `editFields()` (private, line 343), `allow()` (private, line 526), `gmt()` (private, line 545)
 
 
 ## PostsController

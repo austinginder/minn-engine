@@ -202,8 +202,14 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
         }
         if (current_theme_supports('block-templates')) {
             foreach (self::custom_block_templates() as $template) {
+                // A title is a header translated in the theme's domain, loaded first (probe template-getters).
+                $title = (string) $template['name'];
+                if (isset($template['title'])) {
+                    $this->load_textdomain();
+                    $title = translate((string) $template['title'], (string) $this->get('TextDomain'));
+                }
                 foreach ((array) ($template['postTypes'] ?? ['page']) as $type) {
-                    $templates[(string) $type][(string) $template['name']] = (string) ($template['title'] ?? $template['name']);
+                    $templates[(string) $type][(string) $template['name']] = $title;
                 }
             }
         }

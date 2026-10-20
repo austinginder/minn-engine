@@ -126,6 +126,11 @@ final readonly class PostObject
     private function blockView(PostRecord $p): array
     {
         $protected = $p->isProtected();
+        // The reference renders a pattern's content through the_content and then drops it, so its filters are heard
+        // (probe builtin-type-caps); the response carries only the raw content.
+        if (!$protected) {
+            RenderedFields::content($p);
+        }
         return [
             'id' => $p->id,
             'date' => self::date($p->date),

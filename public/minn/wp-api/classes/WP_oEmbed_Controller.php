@@ -83,15 +83,16 @@ final class WP_oEmbed_Controller
     /** @internal what an embed handler makes of an address no provider takes, with the scripts it queued; null when none takes it */
     private function minn_handled(string $url, array $fetch): ?object
     {
-        global $wp_embed;
-        $before = wp_scripts()->queue;
+        // The page's registry read as it stands, not used (the reference reads the global): an address no handler takes asks nothing of it.
+        global $wp_embed, $wp_scripts;
+        $before = $wp_scripts instanceof WP_Scripts ? $wp_scripts->queue : [];
         $html = $wp_embed instanceof WP_Embed ? $wp_embed->get_embed_handler_html(array_intersect_key($fetch, ['width' => 1, 'height' => 1]), $url) : false;
         if (!$html) {
             return null;
         }
         $scripts = [];
-        foreach (array_diff(wp_scripts()->queue, $before) as $handle) {
-            $scripts[] = wp_scripts()->registered[$handle]->src ?? '';
+        foreach (array_diff($wp_scripts instanceof WP_Scripts ? $wp_scripts->queue : [], $before) as $handle) {
+            $scripts[] = $wp_scripts->registered[$handle]->src ?? '';
         }
         return (object) ['provider_name' => __('Embed Handler'), 'html' => $html, 'scripts' => $scripts];
     }

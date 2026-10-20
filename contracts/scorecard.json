@@ -261,19 +261,17 @@
         }
     },
     "open": {
-        "done": 67,
-        "accepted": 20,
+        "done": 68,
+        "accepted": 21,
         "open": 3,
-        "austin": 2
+        "austin": 0
     },
     "run": {
         "measured": "2026-10-20",
         "suites": 92,
-        "green": 91,
-        "checks": 28710,
-        "red": [
-            "style"
-        ],
+        "green": 92,
+        "checks": 28749,
+        "red": [],
         "engineWarnings": 0,
         "warningKinds": []
     },
@@ -302,11 +300,11 @@
         "duplicated": {
             "window": 100,
             "stretches": 112,
-            "lines": 2034,
-            "of": 184159
+            "lines": 2028,
+            "of": 184337
         },
         "engine": {
-            "of": 107712,
+            "of": 107842,
             "php": {
                 "strict": {
                     "window": 40,
@@ -333,7 +331,7 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76447,
+            "of": 76495,
             "window": 80,
             "stretches": 112,
             "lines": 2955
@@ -345,10 +343,10 @@
         "delegates": 3466,
         "logicFunctions": 1806,
         "logicMethods": 2030,
-        "logicLines": 30076,
+        "logicLines": 30095,
         "kept": 0,
         "review": {
-            "doubts": 498,
+            "doubts": 496,
             "reviewed": 3197,
             "stale": 0,
             "verdicts": {
@@ -367,7 +365,7 @@
             "gates": {
                 "subclass": 321,
                 "pluggable": 25,
-                "unprobed": 159,
+                "unprobed": 158,
                 "globals": 166,
                 "refs": 27
             },

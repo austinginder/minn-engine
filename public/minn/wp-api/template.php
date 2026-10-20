@@ -726,7 +726,9 @@ function _minn_extra_feed(array $args, string $site, string $sep): array
 function wp_resource_hints()
 {
     $own = (string) (Runtime::current()->request?->host ?? '');
-    $hints = ['dns-prefetch' => array_values(array_unique([..._minn_assets('script')->externalHosts($own), ..._minn_assets('style')->externalHosts($own)])), 'preconnect' => []];
+    // The registries read as they stand, not used: the reference reads the globals.
+    $hosts = static fn (string $kind): array => Minn\Runtime\AssetQueue::follow($kind, $GLOBALS[$kind === 'script' ? 'wp_scripts' : 'wp_styles'] ?? null)->externalHosts($own);
+    $hints = ['dns-prefetch' => array_values(array_unique([...$hosts('script'), ...$hosts('style')])), 'preconnect' => []];
     foreach ($hints as $relation => $urls) {
         $urls = apply_filters('wp_resource_hints', $urls, $relation);
         $unique = [];

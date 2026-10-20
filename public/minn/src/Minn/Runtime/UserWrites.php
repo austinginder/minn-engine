@@ -369,17 +369,19 @@ final class UserWrites
         ['user_pass' => $newPassword, 'user_email' => $newEmail] = $userdata + ['user_pass' => null, 'user_email' => null];
         $site = Entities::decode((string) $options->filtered('blogname'), ENT_QUOTES);
         $values = ['USERNAME' => (string) $login, 'ADMIN_EMAIL' => (string) $options->filtered('admin_email'), 'EMAIL' => (string) $email, 'SITENAME' => $site, 'SITEURL' => SiteUrls::home()];
-        $sends = [];
-        if (!empty($newPassword) && $hooks->filter('send_password_change_email', [true, $user, $userdata])) {
-            $sends['password_change_email'] = ChangeNotices::password();
+        $password = !empty($newPassword) && $hooks->filter('send_password_change_email', [true, $user, $userdata]);
+        $address = $newEmail !== null && (string) $newEmail !== (string) $email && $hooks->filter('send_email_change_email', [true, $user, $userdata]);
+        if (!$password && !$address) {
+            return;
         }
-        if ($newEmail !== null && (string) $newEmail !== (string) $email && $hooks->filter('send_email_change_email', [true, $user, $userdata])) {
-            $sends['email_change_email'] = ChangeNotices::email();
-            $values['NEW_EMAIL'] = (string) $newEmail;
-        }
-        foreach ($sends as $filter => $template) {
-            $mail = $hooks->filter($filter, [['to' => $email] + $template + ['headers' => ''], $user, $userdata]);
-            Handoff::mail($mail['to'], sprintf($mail['subject'], $site), ChangeNotices::fill((string) $mail['message'], $values), $mail['headers']);
-        }
+        // Written in the user's language: one switch for both notices (probe account-flows).
+        RecipientLocale::forUser((int) ($user['ID'] ?? 0), static function () use ($password, $address, $newEmail, $email, $values, $site, $hooks, $user, $userdata): void {
+            $sends = ($password ? ['password_change_email' => ChangeNotices::password()] : []) + ($address ? ['email_change_email' => ChangeNotices::email()] : []);
+            $values += $address ? ['NEW_EMAIL' => (string) $newEmail] : [];
+            foreach ($sends as $filter => $template) {
+                $mail = $hooks->filter($filter, [['to' => $email] + $template + ['headers' => ''], $user, $userdata]);
+                Handoff::mail($mail['to'], sprintf($mail['subject'], $site), ChangeNotices::fill((string) $mail['message'], $values), $mail['headers']);
+            }
+        });
     }
 }

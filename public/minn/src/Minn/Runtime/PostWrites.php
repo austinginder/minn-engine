@@ -478,10 +478,10 @@ final class PostWrites
      */
     private static function template(int $id, array $postarr): bool
     {
-        // An empty template leaves the stored one as it is (probe page-template-save).
+        // An empty template leaves the stored one as it is; the theme's are read for "default" too (probe page-template-save).
         if (!empty($postarr['page_template'])) {
-            $template = (string) $postarr['page_template'];
-            if ($template === 'default' || array_key_exists($template, Themes::theme()->get_page_templates(Records::post($id)))) {
+            [$template, $templates] = [(string) $postarr['page_template'], Themes::theme()->get_page_templates(Records::post($id))];
+            if ($template === 'default' || array_key_exists($template, $templates)) {
                 MetaData::updatePost($id, '_wp_page_template', $template);
             } else {
                 return false;

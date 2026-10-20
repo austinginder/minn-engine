@@ -7,7 +7,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`AdminBar`](#adminbar) | final readonly class | 364 | The Minn bar on the public site: the same server-rendered chrome the |
 | [`ArchiveAddresses`](#archiveaddresses) | final readonly class | 97 | The archives an address may stand for, as the reference answers them: |
 | [`Archives`](#archives) | final readonly class | 63 | The archive periods wp_get_archives lists: months, years, days and weeks |
-| [`AssetsController`](#assetscontroller) | final readonly class | 42 | The engine's own static assets, served under a reserved path. |
+| [`AssetsController`](#assetscontroller) | final readonly class | 70 | The engine's own static assets, served under a reserved path. |
 | [`AttachmentAddresses`](#attachmentaddresses) | final readonly class | 80 | The addresses an attachment's page answers to besides those its rules |
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
@@ -183,7 +183,10 @@ Internals: `weekPeriod()` (private, line 57)
 
 The engine's own static assets, served under a reserved path.
 
-- const `TYPES` = `array (   'css' => 'text/css',   'js' => 'application/javascript', )`
+- const `TYPES` = `array (   'css' => 'text/css; charset=utf-8',   'js' => 'text/javascript; charset=utf-8',   'svg' => 'image/svg+xml', )` — Media types as the web server sends the reference's static files (scripts as text/javascript, with the charset).
+- const `PLAYER_FILES` = `array (   'mediaelement-and-player.min.js' => 'vendor/mediaelement/mediaelement-and-player.min.js',   'mediaelementplayer-legacy.min.css' => 'vendor/mediaelement/mediaelementplayer-legacy.min.css',   'mejs-controls.svg' => 'vendor/mediaelement/mejs-controls.svg',   'renderers/vimeo.min.js' => 'vendor/mediaelement/renderers/vimeo.min.js',   'wp-mediaelement.min.js' => 'mediaelement/wp-mediaelement.js',   'wp-mediaelement.min.css' => 'mediaelement/wp-mediaelement.css',   'mediaelement-migrate.min.js' => 'mediaelement/mediaelement-migrate.js', )` — The media player's files, by the names the reference registers them
+under: MediaElement.js's own (MIT, in vendor/mediaelement) and the
+engine's start-up, skin and migration script in their place.
 - const `EMBED_SCRIPTS` = `array (   'wp-embed.min.js' => 'embed-host.js',   'wp-embed-template.min.js' => 'embed-card.js', )` — The embed scripts, by the reference addresses a page and a card's sourceURL name them at.
 
 Used by: `Minn\Engine`
@@ -204,6 +207,12 @@ One engine asset file.
 Route: `GET /wp-includes/js/{file:wp-embed(?:-template)?\.min\.js} (public)`
 
 The engine's embed scripts at the addresses the reference serves its own from.
+
+### `player(Minn\Http\Request $request, string $file): Minn\Http\Response`
+
+Route: `GET /wp-includes/js/mediaelement/{file:(?:renderers/)?[a-z0-9.-]+\.(?:js|css|svg)} (public)`
+
+The media player, at the paths the reference registers it under (wp_default_scripts, wp_default_styles).
 
 ### `jquery(Minn\Http\Request $request, string $file): Minn\Http\Response`
 

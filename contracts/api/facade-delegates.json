@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1625
+        "delegates": 1626
     },
     "functions": {
         "__": {
@@ -234,7 +234,7 @@
         },
         "_minn_assets": {
             "file": "script-loader.php",
-            "statement": "return Minn\\Runtime\\AssetQueue::follow($kind, $GLOBALS[['script' => 'wp_scripts', 'style' => 'wp_styles'][$kind] ?? ''] ?? null);"
+            "statement": "// A script function uses the page's registry, as each calls wp_scripts() on the reference.\n    return Minn\\Runtime\\AssetQueue::forFunctions($kind, $GLOBALS[['script' => 'wp_scripts', 'style' => 'wp_styles'][$kind] ?? ''] ?? null);"
         },
         "_minn_block_bindings_post_readable": {
             "file": "blocks.php",
@@ -4995,6 +4995,10 @@
         "wp_default_editor": {
             "file": "misc.php",
             "statement": "return apply_filters('wp_default_editor', 'tinymce');"
+        },
+        "wp_default_styles": {
+            "file": "script-loader.php",
+            "statement": "Minn\\Media\\Player::registerStyles(Minn\\Runtime\\AssetQueue::of($styles));"
         },
         "wp_defer_comment_counting": {
             "file": "comment.php",

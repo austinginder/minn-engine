@@ -14,7 +14,23 @@ use Minn\Http\Route;
 /** The engine's own static assets, served under a reserved path. */
 final readonly class AssetsController
 {
-    private const TYPES = ['css' => 'text/css', 'js' => 'application/javascript'];
+    /** Media types as the web server sends the reference's static files (scripts as text/javascript, with the charset). */
+    private const TYPES = ['css' => 'text/css; charset=utf-8', 'js' => 'text/javascript; charset=utf-8', 'svg' => 'image/svg+xml'];
+
+    /**
+     * The media player's files, by the names the reference registers them
+     * under: MediaElement.js's own (MIT, in vendor/mediaelement) and the
+     * engine's start-up, skin and migration script in their place.
+     */
+    private const PLAYER_FILES = [
+        'mediaelement-and-player.min.js' => 'vendor/mediaelement/mediaelement-and-player.min.js',
+        'mediaelementplayer-legacy.min.css' => 'vendor/mediaelement/mediaelementplayer-legacy.min.css',
+        'mejs-controls.svg' => 'vendor/mediaelement/mejs-controls.svg',
+        'renderers/vimeo.min.js' => 'vendor/mediaelement/renderers/vimeo.min.js',
+        'wp-mediaelement.min.js' => 'mediaelement/wp-mediaelement.js',
+        'wp-mediaelement.min.css' => 'mediaelement/wp-mediaelement.css',
+        'mediaelement-migrate.min.js' => 'mediaelement/mediaelement-migrate.js',
+    ];
 
     /** The embed scripts, by the reference addresses a page and a card's sourceURL name them at. */
     private const EMBED_SCRIPTS = ['wp-embed.min.js' => 'embed-host.js', 'wp-embed-template.min.js' => 'embed-card.js'];
@@ -41,6 +57,18 @@ final readonly class AssetsController
     public function embedScript(Request $request, string $file): Response
     {
         return new Response(200, ['Content-Type' => self::TYPES['js'], 'Cache-Control' => 'public, max-age=86400'], (string) file_get_contents($this->assetsDir . '/' . self::EMBED_SCRIPTS[$file]));
+    }
+
+    /** The media player, at the paths the reference registers it under (wp_default_scripts, wp_default_styles). */
+    #[Route(Method::Get, '/wp-includes/js/mediaelement/{file:(?:renderers/)?[a-z0-9.-]+\.(?:js|css|svg)}', policy: new Policy(Access::Public))]
+    public function player(Request $request, string $file): Response
+    {
+        $relative = self::PLAYER_FILES[$file] ?? null;
+        if ($relative === null) {
+            return new Response(404);
+        }
+        $type = self::TYPES[strtolower(pathinfo($relative, PATHINFO_EXTENSION))];
+        return new Response(200, ['Content-Type' => $type, 'Cache-Control' => 'public, max-age=86400'], (string) file_get_contents($this->assetsDir . '/' . $relative));
     }
 
     /** The MIT libraries the engine ships, served at the paths the reference registers them under. */

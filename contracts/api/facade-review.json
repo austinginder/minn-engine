@@ -1701,8 +1701,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "Fires pre_render_block, render_block_data and render_block_context around a context built from the global post; BlockFilters::before and its context() already run this pipeline for engine blocks, so only the WP_Block render stays.",
-                "body": "3633ab614dd6"
+                "why": "Fires pre_render_block, then marks the page's script registry used (a rendered block uses it, AssetQueue::used), then render_block_data and render_block_context around a context built from the global post; BlockFilters::before and its context() already run this pipeline for engine blocks, so only the WP_Block render stays.",
+                "body": "029ff5463b3b"
             },
             "render_block_core_template_part": {
                 "verdict": "move",
@@ -11324,9 +11324,9 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "asks the global $wp_embed's handlers for an address no provider takes and answers their markup with the scripts queued meanwhile; part of the proxy's answer",
+                "why": "asks the global $wp_embed's handlers for an address no provider takes and answers their markup with the scripts queued meanwhile, reading the global $wp_scripts as it stands (no use of the registry); part of the proxy's answer",
                 "doubt": "the reference returns every script in the queue as scripts, not only those the handler queued during the call",
-                "body": "55c93779a611"
+                "body": "2ac3b0738990"
             },
             "WP_oEmbed_Controller::register_routes": {
                 "verdict": "keep",
@@ -18248,9 +18248,8 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "decides the recipients (the admin, plus a post author who may edit the comment), words the notice through Notices::moderation and its filters and sends each",
-                "doubt": "the notify_moderator filter is never asked, so a plugin cannot switch the mail on or off per comment",
-                "body": "d23cc445e3be"
+                "why": "notify_moderator over the option, the recipients (the admin, plus a post author who may edit the comment) and headers once, then for each recipient in their language (RecipientLocale::forAddress) the notice through Notices::moderation, its text and subject filters and wp_mail (probe comment-remaining)",
+                "body": "f92f95edf3ff"
             },
             "wp_notify_postauthor": {
                 "verdict": "move",
@@ -18258,9 +18257,9 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "decides the recipients with their filters and the own-comment rule, words the comment or note notice with its filters and sends each",
+                "why": "the recipients with their filters and the own-comment rule, the headers once, then for each recipient in their language the comment or note notice, its text and subject filters and wp_mail (probe comment-remaining)",
                 "doubt": "the author is kept when they moderated the comment themselves or can no longer read the post, and the headers start empty where WordPress gives From, Reply-To and Content-Type",
-                "body": "1ae688dcb636"
+                "body": "e2da638fcf2c"
             },
             "wp_parse_auth_cookie": {
                 "verdict": "keep",
@@ -18274,9 +18273,8 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "skips the admin's own change, words the admin notice, runs wp_password_change_notification_email and sends it; sibling of the change templates ChangeNotices holds",
-                "doubt": "the filter gets the subject already filled in, not the [%s] format, so the later sprintf runs over the site name and a % in it breaks; the admin address check is case-sensitive and the text skips __()",
-                "body": "b207ae899af8"
+                "why": "skips the site account's own change (the address matched whatever its case), then in that account's language (RecipientLocale::forSite) words the translated notice, hands wp_password_change_notification_email the [%s] subject and sends it (probe pluggable-remaining)",
+                "body": "3dad114d4ef8"
             },
             "wp_password_needs_rehash": {
                 "verdict": "delegate",
@@ -19873,11 +19871,8 @@
             "wp_default_scripts": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Assets",
-                "gates": [
-                    "unprobed"
-                ],
-                "why": "the engine's default scripts (jQuery, the wp packages, comment-reply, wp-embed, the script pack) are engine data",
-                "body": "68eb647dfbf7"
+                "why": "the engine's default scripts (jQuery, the wp packages, comment-reply, wp-embed, the media player through Media\\Player::register, its data at once except on the page's own registry, which takes it on first use; the script pack) are engine data; probes default-scripts, media-player",
+                "body": "6b23bca25b87"
             },
             "wp_dequeue_script": {
                 "verdict": "delegate",
@@ -20047,8 +20042,8 @@
             "wp_scripts": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "makes the global $wp_scripts once, wiring its defaults on init, and tells api-fetch once for each registry the global holds",
-                "body": "8537ca81d6fe"
+                "why": "makes the global $wp_scripts once, wiring its defaults on init; on each registry's first real use tells api-fetch and gives the media player its strings and settings (Media\\Player::data), as the reference's registry gets them when made",
+                "body": "033ea126d02c"
             },
             "wp_style_is": {
                 "verdict": "move",
@@ -21063,9 +21058,9 @@
             "wp_resource_hints": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\HeadLinks",
-                "why": "collects external asset hosts, runs each relation through wp_resource_hints, dedupes and prints the link markup by rules",
+                "why": "collects external asset hosts from the registries as they stand (no use of them), runs each relation through wp_resource_hints, dedupes and prints the link markup by rules",
                 "doubt": "prefetch and prerender are never offered to the filter, preconnect hrefs are not cut to scheme://host, attributes outside WordPress's list print, and hosts include dependencies' where WordPress reads only queued handles",
-                "body": "063a471aed25"
+                "body": "ad641cf743e8"
             },
             "wp_sanitize_script_attributes": {
                 "verdict": "move",

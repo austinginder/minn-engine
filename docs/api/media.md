@@ -14,6 +14,7 @@ uploads, image sizes and attachment metadata
 | [`MediaModal`](#mediamodal) | final class | 219 | WordPress's media modal, set up for a page that opens it (wp_enqueue_media): |
 | [`Metadata`](#metadata) | final class | 112 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
+| [`Player`](#player) | final class | 63 | The media player's data as the reference gives MediaElement.js (probe |
 | [`Sizing`](#sizing) | final class | 263 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 89 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 135 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
@@ -354,6 +355,43 @@ when there is no such file.
 - `@return array{meta: array<string, mixed>, type: int|null, iptc: array<string, mixed>, exif: array<string, mixed>}|null`
 
 Internals: `fromIptc()` (private, line 62), `fromExif()` (private, line 91), `described()` (private, line 134), `fraction()` (private, line 151), `exifTime()` (private, line 162), `cleaned()` (private, line 176)
+
+
+## Player
+
+`final class Minn\Media\Player` · `public/minn/src/Minn/Media/Player.php`
+
+The media player's data as the reference gives MediaElement.js (probe
+media-player): its strings in the language in force, and the site's
+settings for it.
+
+- const `FOLDER` = `'/wp-includes/js/mediaelement/'`
+
+### static `register(?Minn\Runtime\Assets $scripts): void`
+
+The player's scripts as the reference registers them: MediaElement.js
+(MIT, served from minn/assets/vendor), the engine's migration script
+and start-up in the reference's own files' place, all in the footer.
+Their strings and settings come with data().
+
+### static `registerStyles(?Minn\Runtime\Assets $styles): void`
+
+The player's styles: MediaElement.js's own and the engine's skin.
+
+### static `data(?Minn\Runtime\Assets $scripts): void`
+
+The strings (mejsL10n, before the library) and settings (_wpmejsSettings) given to the player's handles.
+
+### static `strings(): string`
+
+The script that defines mejsL10n: the language determine_locale names, and each string translated.
+
+### static `settings(): array`
+
+_wpmejsSettings: where the player's files are, its class prefix and
+stretching, and the shortcode libraries, through mejs_settings.
+
+- `@return array<string, mixed>`
 
 
 ## Sizing

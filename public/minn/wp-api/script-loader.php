@@ -8,7 +8,8 @@ use Minn\Runtime\Runtime;
 /** @internal The page's registry of a kind, the one in the global a plugin may have replaced (Minn\Runtime\AssetQueue::follow). */
 function _minn_assets(string $kind): Assets
 {
-    return Minn\Runtime\AssetQueue::follow($kind, $GLOBALS[['script' => 'wp_scripts', 'style' => 'wp_styles'][$kind] ?? ''] ?? null);
+    // A script function uses the page's registry, as each calls wp_scripts() on the reference.
+    return Minn\Runtime\AssetQueue::forFunctions($kind, $GLOBALS[['script' => 'wp_scripts', 'style' => 'wp_styles'][$kind] ?? ''] ?? null);
 }
 
 /** @internal a registered src as the URL the tag prints */
@@ -385,6 +386,11 @@ function wp_default_scripts($scripts)
     // and at the address the reference loads it from, where the engine serves its own script (Front\AssetsController::embedScript).
     $scripts->add('wp-embed', '/wp-includes/js/wp-embed.min.js', [], false);
     $scripts->add_data('wp-embed', 'strategy', 'defer');
+    // The media player; the page's own registry, made at boot, takes its strings and settings on first use (wp_scripts).
+    Minn\Media\Player::register(Minn\Runtime\AssetQueue::of($scripts));
+    if (!Runtime::booted() || (Runtime::current()->get('api_fetch_told') !== null && $scripts !== ($GLOBALS['wp_scripts'] ?? null))) {
+        Minn\Media\Player::data(Minn\Runtime\AssetQueue::of($scripts));
+    }
     $contentDir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
     foreach (Minn\Runtime\ScriptPack::handles($contentDir) as $handle => $row) {
         if (!wp_script_is($handle, 'registered')) {
@@ -395,6 +401,7 @@ function wp_default_scripts($scripts)
 
 function wp_default_styles($styles)
 {
+    Minn\Media\Player::registerStyles(Minn\Runtime\AssetQueue::of($styles));
 }
 
 /** The scripts registry; made, it tells wp_default_scripts (again on init, as the reference's constructor does), and apiFetch is told once per registry (a plugin may make a new one). */
@@ -408,6 +415,7 @@ function wp_scripts()
     if (Runtime::booted() && ($told = Runtime::current()->get('api_fetch_told')) !== null && !in_array(spl_object_id($GLOBALS['wp_scripts']), (array) $told, true)) {
         Runtime::current()->set('api_fetch_told', [...(array) $told, spl_object_id($GLOBALS['wp_scripts'])]);
         _minn_tell_api_fetch();
+        Minn\Media\Player::data(Minn\Runtime\AssetQueue::of($GLOBALS['wp_scripts']));
     }
     return $GLOBALS['wp_scripts'];
 }
