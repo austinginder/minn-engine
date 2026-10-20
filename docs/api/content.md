@@ -9,7 +9,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Clickable`](#clickable) | final class | 64 | Bare addresses in text made links (make_clickable, probe |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 248 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 262 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Emoji`](#emoji) | final class | 68 | Emoji as the reference's mail and feeds carry them, from the list the |
 | [`Excerpt`](#excerpt) | final class | 90 | The reference's generated excerpt, as captured from probe posts: |
@@ -17,7 +17,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Links`](#links) | final readonly class | 102 | The links manager's table, as get_bookmarks and wp_insert_link read and |
 | [`MediaShortcodes`](#mediashortcodes) | final class | 187 | The [video] and [audio] shortcodes as the reference prints them: a |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
-| [`Menus`](#menus) | final readonly class | 476 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
+| [`Menus`](#menus) | final readonly class | 468 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`NoteMarkers`](#notemarkers) | final class | 34 | The markers the block editor's notes leave in content: a mark element |
 | [`ObjectLabels`](#objectlabels) | final class | 24 | A post type's or taxonomy's labels from its own and the defaults |
@@ -30,10 +30,10 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostRecord`](#postrecord) | final readonly class | 162 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 421 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 432 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 561 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
-| [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
+| [`Revisions`](#revisions) | final readonly class | 41 | Revision rows read: the plain snapshots and the per-author autosave slots. |
 | [`RowCache`](#rowcache) | final class | 102 | Rows read once a request: posts, their terms, users, and every object's |
 | [`Site`](#site) | final readonly class | 114 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
@@ -339,9 +339,21 @@ A deleted comment's replies move up to its parent.
 
 Removes the comment and its meta; the post's count is the caller's to recount.
 
+### `typelessIds(int $limit): array`
+
+The newest comments stored without a type, at most $limit of them. @return list<int>
+
+- `@return list<int>`
+
+### `typeAsComments(array $ids): void`
+
+Gives the comments the type "comment". @param list<int> $ids
+
+- `@param list<int> $ids`
+
 ### `recount(int $postId): void`
 
-Recomputes a post's stored comment_count (approved comments only).
+Recomputes a post's stored comment_count: its approved comments, notes left out (tests/tools/side-effects.php, comment-helpers).
 
 ### static `statusOf(string $approved): string`
 
@@ -762,11 +774,7 @@ The ids of the menu items, in any menu or none, that point at an object of a kin
 
 - `@return list<int>`
 
-### `appendPage(int $menuId, int $pageId, int $authorId): int`
-
-Adds a page to the end of a menu, titled by the page itself, as a menu set to add new pages takes it.
-
-Internals: `hydrate()` (private, line 175), `meta()` (private, line 234), `menuIdOf()` (private, line 247), `classList()` (private, line 259), `xfnList()` (private, line 269), `writeMeta()` (private, line 453), `originalParent()` (private, line 463), `content()` (private, line 473), `writer()` (private, line 478), `site()` (private, line 486)
+Internals: `hydrate()` (private, line 175), `meta()` (private, line 234), `menuIdOf()` (private, line 247), `classList()` (private, line 259), `xfnList()` (private, line 269), `writeMeta()` (private, line 445), `originalParent()` (private, line 455), `content()` (private, line 465), `writer()` (private, line 470), `site()` (private, line 478)
 
 
 ## MoreTag
@@ -1210,7 +1218,7 @@ and format side effects, and revision snapshots.
 - const `ZERO_DATE` = `'0000-00-00 00:00:00'`
 - const `LENGTHS` = `array (   'post_status' => 20,   'comment_status' => 20,   'ping_status' => 20,   'post_password' => 255,   'post_name' => 200,   'guid' => 255,   'post_type' => 20,   'post_mime_type' => 100, )` — The posts table's short text columns, cut to fit as the reference's database layer cuts them.
 
-Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserWrites`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Cron\Cron`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserWrites`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Site $site)
@@ -1294,21 +1302,23 @@ The rules a live post's slug is settled by.
 
 ### `setTerms(int $id, string $taxonomy, array $termIds): void`
 
-Replaces a post's links in one taxonomy and refreshes that taxonomy's counts.
-
-### `taxonomiesOf(int $id): array`
-
-The taxonomies a post has terms in.
-
-- `@return list<string> the distinct taxonomies a post has links in`
+Replaces a post's links in one taxonomy and refreshes the counts of the terms it left and joined.
 
 ### `recountTaxonomiesOf(int $id): void`
 
 Recounts every term the post is in, after a status change.
 
-### `recount(string $taxonomy): void`
+### `termTaxonomyIdsOf(int $id): array`
 
-term_taxonomy.count is stored and trusted on read, so every status change refreshes it.
+The term_taxonomy ids a post is linked to. @return list<int>
+
+- `@return list<int>`
+
+### `recountTerms(array $ttIds): void`
+
+term_taxonomy.count is stored and trusted on read, so a write that touched terms (term_taxonomy ids) refreshes theirs. @param list<int> $ttIds
+
+- `@param list<int> $ttIds`
 
 ### `isSticky(int $id): bool`
 
@@ -1347,11 +1357,11 @@ categories, each only when the body has the field.
 - `@param array<string, string>|null $map REST field => taxonomy; the core taxonomies when null`
 - `@return array<string, list<int>>`
 
-### `reparentChildren(int $id, int $parent, array $types): void`
+### `reparentChildren(int $id, int $parent, array $types): array`
 
-Moves a deleted post's children of the given types to another parent, the way the reference keeps pages and attachments attached. @param list<string> $types
+Moves a deleted post's children of the given types to another parent, the way the reference keeps pages and attachments attached. @param list<string> $types @return list<int> the children moved
 
-- `@param list<string> $types`
+- `@param list<string> $types @return list<int> the children moved`
 
 ### `reassignAuthor(int $from, int $to): void`
 
@@ -1361,11 +1371,18 @@ Moves every post of one author to another.
 
 The database door this writer writes through, for a caller wrapping several of its verbs in one transaction.
 
+### `deleteRow(int $id): void`
+
+Deletes a post's row and nothing else: wp_delete_post has taken away
+what goes with it first, and a link in a taxonomy its type does not
+have stays, as on the reference (tests/tools/side-effects.php,
+plugin-symbols2).
+
 ### `destroy(int $id): void`
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `fit()` (private, line 202), `announceSticky()` (private, line 303), `saveSticky()` (private, line 311)
+Internals: `fit()` (private, line 201), `countSql()` (private, line 261), `announceSticky()` (private, line 300), `saveSticky()` (private, line 308)
 
 
 ## Posts
@@ -1643,12 +1660,12 @@ Whether this reader may edit a given post.
 
 `final readonly class Minn\Content\Revisions` · `public/minn/src/Minn/Content/Revisions.php`
 
-Revision rows: the plain snapshots and the per-author autosave slots.
+Revision rows read: the plain snapshots and the per-author autosave slots.
 
 Used by: `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\PostWriter $writer, Minn\Content\Site $site)
+__construct(Minn\Db $db)
 ```
 
 
@@ -1666,11 +1683,7 @@ Every revision of a post, its autosaves among them, newest first by date then id
 
 The autosaves of a post, newest first, as rows.
 
-### `saveAutosave(int $parentId, int $userId, string $title, string $content, string $excerpt): int`
-
-One autosave slot per author: updated in place when it exists.
-
-Internals: `named()` (private, line 44)
+Internals: `named()` (private, line 41)
 
 
 ## RowCache
@@ -1728,7 +1741,7 @@ Internals: `listen()` (private, line 105)
 
 Site-wide options and the site's clock.
 
-Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Ops\Changelog`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Runtime\TemplateFiles`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Ops\Changelog`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Runtime\TemplateFiles`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -2284,7 +2297,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Users` · `public/minn/src/Minn/Content/Users.php`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\PostWriter`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\UserWrites`
 
 ```php
 __construct(Minn\Db $db)

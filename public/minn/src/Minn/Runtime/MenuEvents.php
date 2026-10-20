@@ -8,6 +8,7 @@ use Minn\Content\Menus;
 use Minn\Content\Posts;
 use Minn\Http\Request;
 use Minn\Objects\Errors;
+use Minn\Objects\Post;
 use Minn\Rest\RuntimeRoutes;
 use Minn\RestError;
 use Minn\I18n\Gettext;
@@ -68,6 +69,36 @@ final readonly class MenuEvents
         return $menuId;
     }
 
+    /**
+     * _wp_auto_add_pages_to_menu: a top-level page just published joins each
+     * menu set to add new pages (nav_menu_options auto_add) that does not
+     * hold it already, through wp_update_nav_menu_item.
+     */
+    public function autoAddPage(Post $post, string $newStatus, string $oldStatus): void
+    {
+        if ($newStatus !== 'publish' || $oldStatus === 'publish' || $post->post_type !== 'page' || (int) $post->post_parent !== 0) {
+            return;
+        }
+        $options = Runtime::options()->filtered('nav_menu_options');
+        foreach ((array) (is_array($options) ? $options['auto_add'] ?? [] : []) as $menuId) {
+            if ($this->menus->find((int) $menuId) === null || $this->holds((int) $menuId, (int) $post->ID)) {
+                continue;
+            }
+            $this->saveItem((int) $menuId, 0, ['menu-item-object-id' => (int) $post->ID, 'menu-item-object' => $post->post_type, 'menu-item-type' => 'post_type', 'menu-item-status' => 'publish']);
+        }
+    }
+
+    /** Whether a menu has an item for the post. */
+    private function holds(int $menuId, int $postId): bool
+    {
+        foreach ($this->menus->items($menuId) as $item) {
+            if ($item->type === 'post_type' && $item->objectId === $postId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** wp_delete_nav_menu: the items through wp_delete_post, the term through wp_delete_term, the locations let go, then wp_delete_nav_menu. */
     public function deleteMenu(int $menuId): void
     {
@@ -75,8 +106,8 @@ final readonly class MenuEvents
             (new PostEvents())->deleteForGood($item->id);
         }
         TermWrites::delete($menuId, 'nav_menu');
-        // The locations are written back whether or not the menu held one, so a theme with none gains an empty list (tests/tools/side-effects.php, rest-menu-save).
-        ThemeMods::set('nav_menu_locations', array_filter(NavMenu::locations(), static fn ($assigned) => (int) $assigned !== $menuId));
+        // The locations are written back whether or not the menu held one, so a theme with none gains an empty list, and a location the menu held keeps its key, set to 0 (tests/tools/side-effects.php, rest-menu-save, theme-tags).
+        ThemeMods::set('nav_menu_locations', array_map(static fn ($assigned) => (int) $assigned === $menuId ? 0 : $assigned, NavMenu::locations()));
         Runtime::hooks()->action('wp_delete_nav_menu', [$menuId]);
     }
 

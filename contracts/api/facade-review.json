@@ -5785,9 +5785,8 @@
             "WP_REST_Autosaves_Controller::create_item": {
                 "verdict": "keep",
                 "reason": "shape",
-                "why": "runs the engine's autosave route and turns its answer into a WP_Error or the edit view through $this->prepare_item_for_response",
-                "doubt": "an author's own draft is saved as an autosave revision; WordPress's endpoint as known updates such a draft in place",
-                "body": "1c31395793ff"
+                "why": "runs the engine's autosave route; the author's own draft saved in place comes back as the engine shaped it, a slot through $this->prepare_item_for_response, a refusal as a WP_Error",
+                "body": "cea338c28418"
             },
             "WP_REST_Autosaves_Controller::create_item_permissions_check": {
                 "verdict": "keep",
@@ -5796,14 +5795,11 @@
                 "body": "ab58dbb6b09b"
             },
             "WP_REST_Autosaves_Controller::create_post_autosave": {
-                "verdict": "move",
-                "to": "Minn\\Content\\Revisions",
-                "gates": [
-                    "subclass"
-                ],
-                "why": "reuses the user's autosave when title, content and excerpt match the post by normalized whitespace, else writes the slot through the engine's saveAutosave",
-                "doubt": "$meta is ignored, and an unchanged autosave returns the old id where WordPress's API as known deletes it and refuses with no changes",
-                "body": "9bf3813102af"
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\Autosaves::saveSlot",
+                "why": "the user's autosave slot, made, updated or left alone when the given fields match the post (probe rest-autosaves)",
+                "doubt": "$meta is ignored: a revisioned meta key's value is not saved with the autosave",
+                "body": "e8d831d300dd"
             },
             "WP_REST_Autosaves_Controller::get_item": {
                 "verdict": "keep",
@@ -10642,8 +10638,8 @@
             "WP_Widget::get_settings": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "subclasses and the engine's Widget interface read instances through it",
-                "body": "9e7103b3d9e3"
+                "why": "subclasses and the engine's Widget interface read instances through it; a widget with no option stored yet gets one marked multi (probe widget-classes)",
+                "body": "3346924e5518"
             },
             "WP_Widget::posted_settings": {
                 "verdict": "keep",
@@ -11819,9 +11815,9 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "runs raw SQL, classifies the statement, reads affected rows, insert id and result rows and reports errors; the run and classification belong in Db, keeping $this->flush, $this->print_error and last_query, num_queries, rows_affected, insert_id, last_result and num_rows where the reference sets them",
-                "doubt": "flushes before the query filter, never fills $queries under SAVEQUERIES (no log_query call), and lacks the reference's not-ready, empty-query and invalid-text checks",
-                "body": "b0bbc5ea5a20"
+                "why": "runs raw SQL, classifies the statement, reads affected rows, insert id and result rows and reports errors; a query holding text the tables cannot store is refused first through Db::invalidText (probe invalid-text); the run and classification belong in Db, keeping $this->flush, $this->print_error and the properties where the reference sets them",
+                "doubt": "flushes before the query filter, never fills $queries under SAVEQUERIES (no log_query call), and lacks the reference's not-ready and empty-query checks",
+                "body": "1fdebfbd05c1"
             },
             "wpdb::select": {
                 "verdict": "keep",
@@ -11999,16 +11995,6 @@
                 "reason": "compose",
                 "why": "for the post-comments-form block: enqueues comment-reply while threaded and buffers comment_form by name so its hooks run",
                 "body": "190a1c6bc909"
-            },
-            "_wp_batch_update_comment_type": {
-                "verdict": "move",
-                "to": "Minn\\Content\\Comments",
-                "gates": [
-                    "globals"
-                ],
-                "why": "selects a filtered batch of untyped comments, sets their type through $wpdb, clears their cache, marks the update finished or schedules the next batch; stored-data migration",
-                "doubt": "no update_comment_type.lock option, so two overlapping cron runs work the same batch",
-                "body": "615638462f06"
             },
             "_wp_check_for_scheduled_update_comment_type": {
                 "verdict": "keep",
@@ -13455,8 +13441,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "the header data: random, stored, or the theme default matched against the registered defaults, sizes as whole numbers",
-                "body": "8c3319768e14"
+                "why": "the header data: random, stored, or the theme default matched against the registered defaults, sizes as whole numbers; no stored data is none, not a query string to parse",
+                "body": "18a417456b05"
             },
             "get_custom_header_markup": {
                 "verdict": "keep",
@@ -14596,8 +14582,8 @@
             "wp_update_https_detection_errors": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "deprecated: a notice, the pre filter's errors stored when it answers, else update_option with wp_get_https_detection_errors",
-                "body": "9a0edfb72ed2"
+                "why": "deprecated: a notice, the pre filter's errors stored when it answers, else update_option with wp_get_https_detection_errors, never autoloaded",
+                "body": "579d24af7f64"
             }
         },
         "embed.php": {
@@ -16916,11 +16902,8 @@
             "_minn_gallery_item": {
                 "verdict": "move",
                 "to": "Minn\\Content\\MediaShortcodes",
-                "gates": [
-                    "unprobed"
-                ],
-                "why": "picks the link or image per the link attribute and builds the item's orientation and caption",
-                "body": "1577d78cd275"
+                "why": "picks the link or image per the link attribute, a captioned image naming its caption (gallery-{instance}-{id}); no orientation without a size in the metadata (probe gallery-captions)",
+                "body": "0485c0736da8"
             },
             "_minn_image_scaled": {
                 "verdict": "move",
@@ -17095,8 +17078,8 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\MediaShortcodes",
                 "why": "the [gallery] shortcode: ids, attributes, post_gallery, the attachment query, items, the tags a post may hold (KsesRules::galleryTags) and style before Gallery::render; shortcode behaviour beside [video] and [audio]",
-                "doubt": "no is_feed branch, shortcode_atts_gallery fires before post_gallery, caption ids count per item instead of using the gallery's instance, and images get no aria-describedby",
-                "body": "20bfe67ecdeb"
+                "doubt": "no is_feed branch, and shortcode_atts_gallery fires before post_gallery",
+                "body": "a89b820fe89c"
             },
             "get_adjacent_image_link": {
                 "verdict": "move",
@@ -17519,9 +17502,8 @@
             "wp_maybe_generate_attachment_metadata": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Attachments",
-                "why": "decides when missing metadata is generated and stores it",
-                "doubt": "no wp_generating_att_{id} transient lock and no check that _wp_attachment_metadata is absent, so concurrent requests can generate twice",
-                "body": "8684e254dea3"
+                "why": "decides when missing metadata is generated and stores it, under the wp_generating_att_{id} transient lock (probe runtime-internals)",
+                "body": "cbcdaf13c904"
             },
             "wp_media_personal_data_exporter": {
                 "verdict": "move",
@@ -18528,15 +18510,6 @@
                 "why": "gathers the view facts from the global $wp_query for BodyClasses::forView; the gathering belongs with the builder",
                 "body": "cf40df3790d5"
             },
-            "_minn_revision_differs": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\PostRevisions",
-                "gates": [
-                    "unprobed"
-                ],
-                "why": "compares a post with a revision over the revision fields, close to the private PostRevisions::changed; it goes with the upgrade it serves",
-                "body": "8d486ec1bd48"
-            },
             "_page_traverse_name": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Pages",
@@ -18658,16 +18631,6 @@
                 "why": "the guard and the source, data, put chain are all PostRevisions steps; one engine method should take the post and the autosave flag",
                 "doubt": "a post without an ID returns null where the API returns WP_Error invalid_post, and a revision of a revision is not refused",
                 "body": "044946b8e960"
-            },
-            "_wp_upgrade_revisions_of_post": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\PostRevisions",
-                "gates": [
-                    "globals"
-                ],
-                "why": "renames old revisions through $wpdb and saves a fresh one when the newest differs; revision storage is engine work",
-                "doubt": "appends -v1 to the whole name where the API rewrites it to {id}-revision-v1 and hands each revision its predecessor's author; there is no upgrade lock",
-                "body": "4fcc34e175c0"
             },
             "add_post_type_support": {
                 "verdict": "keep",
@@ -20234,13 +20197,6 @@
                 "why": "decides which taxonomies to recount on a status change through update_post_term_count_statuses, which TermWrites::countPublished already reads; the recount rule belongs there",
                 "doubt": "an inherit status is not resolved to the parent's status first, and a change between two counted statuses still recounts, where the API skips it",
                 "body": "6ce3715742c9"
-            },
-            "_wp_auto_add_pages_to_menu": {
-                "verdict": "move",
-                "to": "Minn\\Content\\Menus",
-                "why": "the publish-transition rule for top-level pages and the nav_menu_options auto_add list decide the adds; Menus::autoAdd already reads that option and appendPage writes the item",
-                "doubt": "a page the menu already holds is added again, and the item is written without wp_update_nav_menu_item and its actions, where the API skips such a menu and saves through that function",
-                "body": "9d27f238db03"
             },
             "_wp_delete_post_menu_item": {
                 "verdict": "keep",

@@ -86,6 +86,9 @@ final readonly class TemplateWriter
             'post_title' => $fields['title'] ?? $record->title,
             'post_excerpt' => $fields['description'] ?? $record->description,
             'post_status' => 'publish',
+            // Templates take no comments or pings, so both start closed (probe rest-template-create).
+            'comment_status' => 'closed',
+            'ping_status' => 'closed',
             'post_name' => $record->slug,
             'post_type' => $record->type,
             'post_parent' => 0,
@@ -96,6 +99,8 @@ final readonly class TemplateWriter
         ]);
         $this->writer->setTerms($id, 'wp_theme', [$this->themeTermId()]);
         $this->setArea($id, $fields['area'] ?? $record->area, $record->type);
+        // Its guid, once its terms are in, as a post insert writes it: its slug under the home address.
+        $this->writer->update($id, ['guid' => rtrim((string) ($this->site->option('home') ?? ''), '/') . '/' . $record->slug . '/']);
         return $id;
     }
 

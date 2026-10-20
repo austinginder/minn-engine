@@ -1,8 +1,8 @@
 {
     "wordpress": "7.1.3",
     "security": {
-        "found": 30,
-        "fixed": 30
+        "found": 43,
+        "fixed": 43
     },
     "sql": {
         "measured": "2026-10-12",
@@ -128,7 +128,7 @@
         },
         "bootedCeiling": {
             "label": "Runtime::booted() branches",
-            "ceiling": 73,
+            "ceiling": 71,
             "started": 160,
             "since": "61614e6f",
             "rose": false
@@ -240,14 +240,14 @@
         },
         "facadeLogicCeiling": {
             "label": "Facade functions and methods holding logic",
-            "ceiling": 3865,
+            "ceiling": 3838,
             "started": 3865,
             "since": "db6aa5a6",
             "rose": false
         },
         "facadeLogicLinesCeiling": {
             "label": "Lines of logic in the facade",
-            "ceiling": 30383,
+            "ceiling": 30100,
             "started": 30383,
             "since": "db6aa5a6",
             "rose": false
@@ -261,29 +261,29 @@
         }
     },
     "open": {
-        "done": 39,
-        "accepted": 11,
-        "austin": 1,
-        "open": 0
+        "done": 66,
+        "accepted": 19,
+        "open": 2,
+        "austin": 3
     },
     "run": {
-        "measured": "2026-10-13",
-        "suites": 91,
-        "green": 91,
-        "checks": 25724,
+        "measured": "2026-10-20",
+        "suites": 92,
+        "green": 92,
+        "checks": 28580,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
     },
     "gate": {
-        "deadEndCalls": 2,
-        "deadEndsByHand": 84,
+        "deadEndCalls": 0,
+        "deadEndsByHand": 85,
         "deadEndsByHandAreas": {
             "customizer": 20,
-            "admin": 59,
-            "editor": 5
+            "admin": 58,
+            "editor": 7
         },
-        "deadEndsByHandProven": 157,
+        "deadEndsByHandProven": 161,
         "floor": {
             "version": "8.3",
             "newest": "8.5",
@@ -300,11 +300,11 @@
         "duplicated": {
             "window": 100,
             "stretches": 113,
-            "lines": 2083,
-            "of": 176186
+            "lines": 2089,
+            "of": 183564
         },
         "engine": {
-            "of": 99586,
+            "of": 107153,
             "php": {
                 "strict": {
                     "window": 40,
@@ -313,8 +313,8 @@
                 },
                 "sensitive": {
                     "window": 30,
-                    "stretches": 67,
-                    "lines": 292
+                    "stretches": 69,
+                    "lines": 302
                 }
             },
             "assets": {
@@ -328,47 +328,48 @@
                 "of": 1837,
                 "files": 20
             },
-            "sequences": 18
+            "sequences": 19
         },
         "facade": {
-            "of": 76600,
+            "of": 76411,
             "window": 80,
-            "stretches": 115,
-            "lines": 3019
+            "stretches": 112,
+            "lines": 2955
         }
     },
     "facadeLogic": {
-        "functions": 3490,
-        "methods": 3804,
-        "delegates": 3429,
-        "logicFunctions": 1832,
-        "logicMethods": 2033,
-        "logicLines": 30383,
+        "functions": 3491,
+        "methods": 3809,
+        "delegates": 3466,
+        "logicFunctions": 1806,
+        "logicMethods": 2028,
+        "logicLines": 30063,
         "kept": 0,
         "review": {
-            "doubts": 1,
-            "reviewed": 40,
+            "doubts": 502,
+            "reviewed": 3195,
             "stale": 0,
             "verdicts": {
-                "delegate": 1,
-                "move": 11,
-                "keep": 28,
-                "remove": 0
+                "delegate": 142,
+                "move": 1528,
+                "keep": 1510,
+                "remove": 15
             },
             "keep": {
-                "scope": 4,
-                "shape": 1,
-                "compose": 9,
-                "contract": 14
+                "scope": 113,
+                "shape": 287,
+                "compose": 599,
+                "contract": 498,
+                "library": 13
             },
             "gates": {
-                "subclass": 2,
-                "pluggable": 3,
-                "unprobed": 0,
-                "globals": 1,
-                "refs": 0
+                "subclass": 321,
+                "pluggable": 25,
+                "unprobed": 159,
+                "globals": 166,
+                "refs": 27
             },
-            "unreviewed": 3825
+            "unreviewed": 639
         }
     }
 }

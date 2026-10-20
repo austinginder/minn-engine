@@ -65,6 +65,11 @@ final readonly class CommentEvents
             $prepared = ['user_id' => $user->ID, 'comment_author' => $user->display_name, 'comment_author_email' => $user->user_email, 'comment_author_url' => $user->user_url] + $prepared;
         }
         self::requireContent($prepared);
+        // A comment that is not a user's own needs a name and an address while the site asks for them (require_name_email).
+        ['comment_author' => $name, 'comment_author_email' => $email] = $prepared + ['comment_author' => '', 'comment_author_email' => ''];
+        if (Runtime::options()->filtered('require_name_email') && ((string) $name === '' || (string) $email === '')) {
+            throw new RestError('rest_comment_author_data_required', 'Creating a comment requires valid author name and email values.', 400);
+        }
         $prepared += ['comment_date_gmt' => SiteTime::now('mysql', true), 'comment_author_email' => '', 'comment_author_url' => '', 'comment_agent' => ''];
         self::requireLengths($prepared);
         $approved = CommentChecks::allow($prepared, true);

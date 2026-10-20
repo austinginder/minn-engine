@@ -83,8 +83,10 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller
         if ($engine === null || $engine->status >= 400) {
             return new WP_Error((string) ($body['code'] ?? 'rest_no_route'), (string) ($body['message'] ?? __('No route was found matching the URL and request method.')), $body['data'] ?? ['status' => 404]);
         }
-        // The engine wrote the row itself: the post cache forgets the old one.
-        clean_post_cache((int) $body['id']);
+        // The engine answered with the autosave, or with the author's own draft saved in place.
+        if ((int) $body['id'] === $post->ID) {
+            return rest_ensure_response($body);
+        }
         $request->set_param('context', 'edit');
         return rest_ensure_response($this->prepare_item_for_response(get_post((int) $body['id']), $request));
     }
@@ -129,25 +131,12 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller
         return $this->add_additional_fields_schema($this->schema);
     }
 
-    /**
-     * Saves the user's autosave of a post through the engine's one slot per
-     * author; fields the same as the post's leave an existing autosave as it
-     * is, and answer its id.
-     */
+    /** Saves the user's autosave slot of a post; the slot's id, or the refusal. */
     public function create_post_autosave($post_data, $meta = [])
     {
-        $post_id = (int) $post_data['ID'];
-        $post = get_post($post_id);
-        $user_id = get_current_user_id();
-        $existing = wp_get_post_autosave($post_id, $user_id);
-        $fields = ['post_title', 'post_content', 'post_excerpt'];
-        $same = $post && array_filter($fields, static fn ($field) => array_key_exists($field, (array) $post_data) && normalize_whitespace((string) $post_data[$field]) !== normalize_whitespace((string) $post->{$field})) === [];
-        if ($existing && $same) {
-            return $existing->ID;
-        }
-        $saved = WP_REST_Server::minn_engine_api(new WP_REST_Request('POST', '/' . $this->namespace . '/' . $this->parent_base . '/' . $post_id . '/' . $this->rest_base))->saveAutosave($post_id, $user_id, (string) ($post_data['post_title'] ?? ''), (string) ($post_data['post_content'] ?? ''), (string) ($post_data['post_excerpt'] ?? ''));
-        clean_post_cache($saved);
-        return $saved;
+        $post = get_post((int) $post_data['ID']);
+        $fields = array_intersect_key((array) wp_unslash($post_data), array_flip(['post_title', 'post_content', 'post_excerpt']));
+        return Minn\Runtime\Autosaves::saveSlot($post, get_current_user_id(), array_map('strval', $fields));
     }
 
     /** A revision's shape, with where to preview the draft in the edit context. */

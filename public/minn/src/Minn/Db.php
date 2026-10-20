@@ -148,7 +148,7 @@ final class Db
      */
     public function rows(string $sql, array $params = []): array
     {
-        return $this->run($sql, $params)->get_result()->fetch_all(MYSQLI_ASSOC);
+        return self::invalidText($sql, $params) ? [] : $this->run($sql, $params)->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     /**
@@ -158,12 +158,15 @@ final class Db
      */
     public function row(string $sql, array $params = []): ?array
     {
-        return $this->run($sql, $params)->get_result()->fetch_assoc();
+        return self::invalidText($sql, $params) ? null : $this->run($sql, $params)->get_result()->fetch_assoc();
     }
 
     /** The first column of the first row, or null when there is no row. */
     public function value(string $sql, array $params = []): int|float|string|null
     {
+        if (self::invalidText($sql, $params)) {
+            return null;
+        }
         $row = $this->run($sql, $params)->get_result()->fetch_row();
         return $row === null ? null : $row[0];
     }
@@ -171,9 +174,30 @@ final class Db
     /** Runs a write and returns the affected row count. */
     public function execute(string $sql, array $params = []): int
     {
+        if (self::invalidText($sql, $params)) {
+            return 0;
+        }
         $affected = (int) $this->run($sql, $params)->affected_rows;
         self::wrote($sql);
         return $affected;
+    }
+
+    /**
+     * Whether a statement carries text the site's utf8mb4 tables cannot
+     * hold (bytes that are not UTF-8): the reference's database door runs
+     * no such query, a write among them (probe sanitize-option; the
+     * side-effect diff, rest-embed-details).
+     *
+     * @param array<array-key, mixed> $params
+     */
+    public static function invalidText(string $sql, array $params = []): bool
+    {
+        foreach ([$sql, ...$params] as $text) {
+            if (is_string($text) && !mb_check_encoding($text, 'UTF-8')) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** @var array<string, list<\Closure>> listeners told when a write names a table, by its name without the prefix */

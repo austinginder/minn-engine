@@ -115,6 +115,12 @@ $made['posts'][] = $post = (int) wp_insert_post(['post_title' => 'zz nm post', '
 $ids[$post] = 'zz-nm-post';
 _wp_auto_add_pages_to_menu('publish', 'draft', get_post($post));
 $say('pages added to menus that take them', [$hooked, $items($main), $items($other)]);
+$held = $page('zz nm held', ['post_status' => 'draft']);
+$ids[$held] = 'zz-nm-held';
+wp_update_nav_menu_item($main, 0, ['menu-item-type' => 'post_type', 'menu-item-object' => 'page', 'menu-item-object-id' => $held, 'menu-item-status' => 'publish']);
+$holding = $items($main);
+_wp_auto_add_pages_to_menu('publish', 'draft', get_post($held));
+$say('a page published into a menu that holds it already is not added again', [$holding, $items($main)]);
 
 wp_update_nav_menu_item($other, 0, ['menu-item-type' => 'post_type', 'menu-item-object' => 'page', 'menu-item-object-id' => $top, 'menu-item-status' => 'publish']);
 wp_update_nav_menu_item($other, 0, ['menu-item-type' => 'custom', 'menu-item-title' => 'ZZ Custom', 'menu-item-url' => 'https://zz.example/', 'menu-item-status' => 'publish']);

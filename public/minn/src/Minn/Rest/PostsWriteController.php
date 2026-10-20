@@ -22,6 +22,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Support\Kses;
 
@@ -86,7 +87,7 @@ final readonly class PostsWriteController
 
         $nowGmt = gmdate('Y-m-d H:i:s');
         $local = $this->site->localNow();
-        $title = self::field($body['title'] ?? '');
+        $title = self::takes($type, 'title') ? self::field($body['title'] ?? '') : '';
         // A draft or pending post keeps the slug it asks for as it is; a pending one from someone who may not publish keeps none.
         $slug = match (true) {
             !isset($body['slug']) || ($status === 'pending' && !$this->caller->can(TypeCapabilities::publish($type))) => '',
@@ -97,7 +98,8 @@ final readonly class PostsWriteController
         $date = $local;
         $dateGmt = ($status === 'publish' || $status === 'private') ? $nowGmt : '0000-00-00 00:00:00';
         $modified = $local;
-        $modifiedGmt = $nowGmt;
+        // A new row's modified GMT date is its GMT date, zero for a draft.
+        $modifiedGmt = $dateGmt;
         $asked = $this->askedDate($body);
         if ($asked !== null) {
             // An explicit date (site-local, or date_gmt); publishing into the future schedules.
@@ -137,6 +139,15 @@ final readonly class PostsWriteController
             ->withHeader('Location', $this->url->to('/wp/v2/' . $base . '/' . $id));
     }
 
+    /** What a plugin's type must support for its posts to take a title, content or excerpt: a field its schema lacks is not saved (probe rest-plugin-types). */
+    private const FIELD_SUPPORTS = ['title' => 'title', 'content' => 'editor', 'excerpt' => 'excerpt'];
+
+    /** Whether a type's posts take a title, content or excerpt from a request: posts and pages take all three (a page's schema has an excerpt it does not support). */
+    private static function takes(string $type, string $field): bool
+    {
+        return in_array($type, ['post', 'page'], true) || Registered::supports($type, self::FIELD_SUPPORTS[$field]);
+    }
+
     /** Whether a type's posts take a parent: pages, and a plugin's hierarchical type. */
     private static function hasParent(string $type): bool
     {
@@ -167,9 +178,9 @@ final readonly class PostsWriteController
             'post_author' => $author,
             'post_date' => $date,
             'post_date_gmt' => $dateGmt,
-            'post_content' => $this->clean(self::field($body['content'] ?? '')),
+            'post_content' => self::takes($type, 'content') ? $this->clean(self::field($body['content'] ?? '')) : '',
             'post_title' => $this->clean($title),
-            'post_excerpt' => $this->clean(self::field($body['excerpt'] ?? '')),
+            'post_excerpt' => self::takes($type, 'excerpt') ? $this->clean(self::field($body['excerpt'] ?? '')) : '',
             'post_status' => $status,
             'comment_status' => in_array($body['comment_status'] ?? '', ['open', 'closed'], true) ? $body['comment_status'] : $this->site->defaultDiscussion($type, 'comment'),
             'ping_status' => in_array($body['ping_status'] ?? '', ['open', 'closed'], true) ? $body['ping_status'] : $this->site->defaultDiscussion($type, 'pingback'),
@@ -440,7 +451,7 @@ final readonly class PostsWriteController
             [$columns['post_date'], $columns['post_date_gmt']] = $asked;
         }
         foreach (['title' => 'post_title', 'content' => 'post_content', 'excerpt' => 'post_excerpt'] as $field => $column) {
-            if (array_key_exists($field, $body)) {
+            if (array_key_exists($field, $body) && self::takes($type, $field)) {
                 $columns[$column] = $this->clean(self::field($body[$field]));
             }
         }

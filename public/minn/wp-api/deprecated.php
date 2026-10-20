@@ -1493,11 +1493,11 @@ function wp_simplepie_autoload($class)
 function wp_update_https_detection_errors()
 {
     _deprecated_function(__FUNCTION__, '6.4.0');
-    // A plugin may answer for the check (probe hook-inputs): its errors are stored, nothing is asked.
+    // A plugin may answer for the check (probe hook-inputs): its errors are stored, nothing is asked. The option is never autoloaded (tests/tools/side-effects.php).
     $pre = apply_filters('pre_wp_update_https_detection_errors', null);
     if (is_wp_error($pre)) {
-        update_option('https_detection_errors', $pre->errors);
+        update_option('https_detection_errors', $pre->errors, false);
         return;
     }
-    update_option('https_detection_errors', wp_get_https_detection_errors());
+    update_option('https_detection_errors', wp_get_https_detection_errors(), false);
 }

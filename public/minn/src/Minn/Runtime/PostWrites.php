@@ -51,11 +51,17 @@ final class PostWrites
         $columns = PostSave::guidAndSlug($insert->resolve($columns, $before), $postId, $type, self::writer()->slugs());
         $columns = array_replace($columns, PostSave::data($columns, $sanitized, $given, $postId));
         self::beforeSave($columns, $postId);
-        $id = $insert->persist($columns, $existing?->ID, static fn (int $id): string => (string) PostLinks::permalink($id));
+        $id = $insert->persist($columns, $existing?->ID);
         self::slugFromId($id, $columns, $type);
         Handoff::cacheDelete($id, 'posts');
         ['post_status' => $status] = $columns + ['post_status' => null];
-        $refused = self::templateRefusal($id, self::inputs($id, (array) Slashes::strip($given), $type, (string) $status, $update), (bool) $wpError);
+        $inputs = (array) Slashes::strip($given);
+        // The terms and meta, then a new post's guid (its permalink as it now stands), then the template.
+        self::inputs($id, $inputs, $type, (string) $status, $update);
+        if ($existing === null) {
+            $insert->fillGuid($id, $columns, static fn (int $id): string => (string) PostLinks::permalink($id));
+        }
+        $refused = self::templateRefusal($id, self::template($id, $inputs), (bool) $wpError);
         self::writer()->recountTaxonomiesOf($id);
         if ($refused !== null) {
             return $refused;
@@ -124,13 +130,19 @@ final class PostWrites
         MetaData::delete('post', $post->ID, '_wp_trash_meta_status');
         MetaData::delete('post', $post->ID, '_wp_trash_meta_time');
         TermWrites::deleteObjectRelationships($post->ID, Registered::objectTaxonomies($post->post_type));
-        self::writer()->reparentChildren($post->ID, (int) $post->post_parent, $post->post_type === 'page' ? ['page', 'attachment'] : ['attachment']);
+        // The children move up to the post's parent, and their cached rows go, so a delete of one of them next reads its new parent (probe post-remaining).
+        foreach (self::writer()->reparentChildren($post->ID, (int) $post->post_parent, $post->post_type === 'page' ? ['page', 'attachment'] : ['attachment']) as $child) {
+            PostCaches::clean($child);
+        }
         foreach (PostRevisions::all($post->ID, ['check_enabled' => false]) as $revision) {
             PostRevisions::delete($revision);
         }
-        foreach ((new Comments(Runtime::current()->db))->idsOf($post->ID) as $commentId) {
+        // Newest first, so a reply goes before the comment it answers and is never moved up; the post is counted once, after.
+        Deferrals::comments(true);
+        foreach (array_reverse((new Comments(Runtime::current()->db))->idsOf($post->ID)) as $commentId) {
             CommentWrites::delete($commentId, true);
         }
+        Deferrals::comments(false);
         self::deleteMeta($post->ID);
         return self::remove($post);
     }
@@ -420,12 +432,11 @@ final class PostWrites
     }
 
     /**
-     * The terms, meta and template a postarr carries beside the columns;
-     * false when the page template is not one the theme offers.
+     * The terms and meta a postarr carries beside the columns.
      *
      * @param array<string, mixed> $postarr
      */
-    private static function inputs(int $id, array $postarr, string $type, string $status, mixed $update): bool
+    private static function inputs(int $id, array $postarr, string $type, string $status, mixed $update): void
     {
         $taxonomies = Registered::objectTaxonomies($type);
         $categories = PostInsert::categories($postarr, $type, $status, $update, $taxonomies, (int) Runtime::options()->filtered('default_category'));
@@ -451,6 +462,16 @@ final class PostWrites
         foreach (is_array($postarr['meta_input'] ?? null) ? $postarr['meta_input'] : [] as $key => $value) {
             MetaData::updatePost($id, (string) $key, $value);
         }
+    }
+
+    /**
+     * The page template a postarr asks for; false when it is not one the
+     * theme offers.
+     *
+     * @param array<string, mixed> $postarr
+     */
+    private static function template(int $id, array $postarr): bool
+    {
         // An empty template leaves the stored one as it is (probe page-template-save).
         if (!empty($postarr['page_template'])) {
             $template = (string) $postarr['page_template'];
@@ -541,7 +562,7 @@ final class PostWrites
         $hooks = Runtime::hooks();
         $hooks->action("delete_post_{$post->post_type}", [$post->ID, $post]);
         $hooks->action('delete_post', [$post->ID, $post]);
-        self::writer()->destroy($post->ID);
+        self::writer()->deleteRow($post->ID);
         // A deleted post's scheduled publication goes with it, once its row is gone (tests/tools/side-effects.php, post-caps).
         CronEvents::clearHook('publish_future_post', [$post->ID]);
         $hooks->action("deleted_post_{$post->post_type}", [$post->ID, $post]);

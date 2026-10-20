@@ -12,6 +12,12 @@ ini_set('display_errors', 'stderr');
 $_SERVER += ['REQUEST_URI' => '', 'SERVER_PROTOCOL' => 'HTTP/1.0', 'HTTP_USER_AGENT' => 'WP CLI 2.12.0', 'REQUEST_METHOD' => 'GET', 'REMOTE_ADDR' => '127.0.0.1'];
 require __DIR__ . '/engine-runtime.php';
 Minn\Db::shared()->connection()->query('SET @zz_side_effects_probe = 1');
+// The process the probe runs in, which the tool masks where a probe names something after it.
+try {
+    Minn\Db::shared()->connection()->query("INSERT INTO zz_side_effects (tbl, op, conn, new_row) VALUES ('', 'p', CONNECTION_ID(), '" . getmypid() . "')");
+} catch (mysqli_sql_exception) {
+    // Run by hand, outside a pass: there is no audit table to mark.
+}
 (static function (string $probe): void {
     require __DIR__ . '/' . basename($probe);
 })($argv[1] ?? 'side-effects-baseline-probe.php');

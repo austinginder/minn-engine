@@ -13,6 +13,15 @@ namespace Minn\Support;
  */
 final class Lists
 {
+    /** @var (\Closure(array<array-key, mixed>): mixed)|null wp_parse_str's filter, which the runtime hands over */
+    private static ?\Closure $parsedFilter = null;
+
+    /** Hands over the filter a parsed query string goes through (wp_parse_str), or takes it back with null. */
+    public static function filterParsed(?\Closure $filter): void
+    {
+        self::$parsedFilter = $filter;
+    }
+
     /**
      * Arguments as WordPress takes them (wp_parse_args): an object's
      * properties, an array, or a query string, over the defaults.
@@ -28,6 +37,8 @@ final class Lists
             $parsed = $args;
         } else {
             parse_str((string) $args, $parsed);
+            // A query string (or nothing) is parsed as wp_parse_str parses it, through its filter once the runtime hands one over.
+            $parsed = self::$parsedFilter === null ? $parsed : (array) (self::$parsedFilter)($parsed);
         }
         return is_array($defaults) && $defaults ? array_merge($defaults, $parsed) : $parsed;
     }

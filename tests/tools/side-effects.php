@@ -8,7 +8,8 @@
  * (run-api-probe.php); after each run the rows it changed are put back as
  * they were (each row read back to check), so both runs start from the same
  * database. The tables a run makes or drops, and the files under
- * wp-content it leaves made or changed, are noted too.
+ * wp-content it leaves made or changed, are noted too; a file it made is
+ * removed after it, as its rows are put back.
  *
  * Each row's history (the states it went through, consecutive repeats
  * dropped) is compared between the stacks. Rows a run makes are named by
@@ -49,6 +50,8 @@ $snapshotFile = dirname(__DIR__, 2) . '/contracts/fixtures/effects/divergences.j
 $acceptedFile = dirname(__DIR__, 2) . '/contracts/fixtures/effects/accepted.json';
 $root = dirname(__DIR__, 2);
 $siteRoot = minn_test_site_root();
+// Each stack's own folder (public/ for the engine, wp-reference/ for WordPress) is one root in a stored path.
+define('FX_SITE_ROOT', $siteRoot);
 $config = str_replace("require_once ABSPATH . 'wp-settings.php';", '', (string) file_get_contents($siteRoot . '/public/wp-config.php'));
 define('ABSPATH', $siteRoot . '/public/');
 eval('?>' . $config);
@@ -236,6 +239,8 @@ function fx_run(mysqli $db, string $stack, string $probe, string $root, string $
 {
     $db->query('TRUNCATE TABLE `' . AUDIT . '`');
     $tablesBefore = fx_tables($db);
+    $contents = ["{$siteRoot}/public/wp-content", "{$siteRoot}/wp-reference/wp-content"];
+    $filesBefore = fx_files($contents);
     $marker = tempnam(sys_get_temp_dir(), 'minn-fx');
     touch($marker, time() - 1);
     [$code, $stderr] = $stack === 'reference'
@@ -244,28 +249,49 @@ function fx_run(mysqli $db, string $stack, string $probe, string $root, string $
         : fx_exec('php ' . escapeshellarg("{$root}/tests/tools/side-effects-runner.php") . ' ' . escapeshellarg($probe), $root);
     $events = [];
     $connections = [];
+    $pid = null;
     foreach ($db->query('SELECT tbl, op, conn, old_row, new_row FROM `' . AUDIT . '` ORDER BY seq')->fetch_all(MYSQLI_ASSOC) as $row) {
+        // The runner's mark: the process the probe ran in, whose id the probe may put in names (a temp folder, a login).
+        if ($row['op'] === 'p') {
+            $pid = (string) $row['new_row'];
+            continue;
+        }
         $events[] = ['tbl' => (string) $row['tbl'], 'op' => (string) $row['op'], 'old' => $row['old_row'] === null ? null : json_decode((string) $row['old_row'], true), 'new' => $row['new_row'] === null ? null : json_decode((string) $row['new_row'], true)];
         $connections[(int) $row['conn']] = true;
     }
     $tablesAfter = fx_tables($db);
     $files = [];
-    foreach (["{$siteRoot}/public/wp-content", "{$siteRoot}/wp-reference/wp-content"] as $content) {
+    foreach ($contents as $content) {
         foreach (array_filter(explode("\n", (string) shell_exec('find ' . escapeshellarg($content) . ' -type f -newer ' . escapeshellarg($marker) . " ! -name debug.log 2>/dev/null"))) as $file) {
             $files[] = 'wp-content' . substr($file, strlen($content));
         }
     }
     @unlink($marker);
+    // A file the run made goes again, as its rows do (WordPress's upgrader fetches the language packs the stored update data offers).
+    foreach (array_diff(fx_files($contents), $filesBefore) as $made) {
+        @unlink($made);
+    }
     $unrestored = fx_unrestored($db, fx_revert($db, $events));
     return [
         'code' => $code,
         'stderr' => $stderr,
         'events' => $events,
+        'pid' => $pid,
         'connections' => count($connections),
         'tables' => ['made' => array_values(array_diff($tablesAfter, $tablesBefore)), 'dropped' => array_values(array_diff($tablesBefore, $tablesAfter))],
         'files' => array_values(array_unique($files)),
         'unrestored' => $unrestored,
     ];
+}
+
+/** @param list<string> $roots @return list<string> every file under the folders, links not followed */
+function fx_files(array $roots): array
+{
+    $files = [];
+    foreach ($roots as $root) {
+        $files = [...$files, ...array_filter(explode("\n", (string) shell_exec('find ' . escapeshellarg($root) . ' -type f 2>/dev/null')))];
+    }
+    return $files;
 }
 
 /** The tables a column points into (core tables, by their unprefixed names). */
@@ -334,6 +360,12 @@ function fx_mask_scalar(mixed $value, array $made): mixed
     if (!is_string($value)) {
         return $value;
     }
+    if (($made['pid'] ?? null) !== null) {
+        $value = (string) preg_replace('/(?<!\d)' . $made['pid'] . '(?!\d)/', '<pid>', $value);
+    }
+    $value = str_replace([FX_SITE_ROOT . '/wp-reference/', FX_SITE_ROOT . '/public/'], '<root>/', $value);
+    // A custom template's slug is named by uniqid() on both stacks.
+    $value = (string) preg_replace('/\bcustom_slug_[0-9a-f]{13}\b/', 'custom_slug_<uniqid>', $value);
     if (preg_match('/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}/', $value) === 1 && !str_starts_with($value, '0000-00-00')) {
         return '<date>';
     }
@@ -349,7 +381,7 @@ function fx_mask_scalar(mixed $value, array $made): mixed
  *
  * @return array<string, list<mixed>>
  */
-function fx_histories(mysqli $db, array $events, string $prefix, ?array &$trace = null): array
+function fx_histories(mysqli $db, array $events, string $prefix, ?array &$trace = null, ?string $pid = null): array
 {
     $trace = [];
     // The rows this run made, named by table and order.
@@ -369,6 +401,7 @@ function fx_histories(mysqli $db, array $events, string $prefix, ?array &$trace 
         }
     }
     $made['*'] = array_filter($all, static fn (int $id): bool => $id >= 100, ARRAY_FILTER_USE_KEY);
+    $made['pid'] = $pid;
     $histories = [];
     foreach ($events as $event) {
         $table = $event['tbl'];
@@ -394,7 +427,7 @@ function fx_histories(mysqli $db, array $events, string $prefix, ?array &$trace 
         $keyColumns = FX_IDENTITY[$short] ?? ($shape['key'] !== [] ? $shape['key'] : array_keys($row));
         $identity = $short . ':' . implode('|', array_map(static fn (string $column): string => is_scalar($row[$column] ?? null) ? (string) $row[$column] : (string) json_encode($row[$column] ?? null), $keyColumns));
         $trace[] = match ($event['op']) {
-            'i' => "insert {$identity} " . substr((string) json_encode($new, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), 0, 300),
+            'i' => "insert {$identity} " . substr((string) json_encode($new, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), 0, 1200),
             'd' => "delete {$identity}",
             default => "update {$identity}: " . implode('; ', fx_diff($old, $new, '', 4)),
         };
@@ -556,7 +589,7 @@ $compare = static function (string $probe, array $baseline) use ($db, $root, $si
     foreach (['reference', 'engine'] as $stack) {
         $runs[$stack] = fx_run($db, $stack, $probe, $root, $siteRoot);
         // What the stack writes only by starting is not the probe's.
-        $histories[$stack] = array_filter(fx_histories($db, $runs[$stack]['events'], $prefix, $traces[$stack]), static fn (array $history, string $identity): bool => json_encode($baseline[$stack][$identity] ?? null) !== json_encode($history), ARRAY_FILTER_USE_BOTH);
+        $histories[$stack] = array_filter(fx_histories($db, $runs[$stack]['events'], $prefix, $traces[$stack], $runs[$stack]['pid']), static fn (array $history, string $identity): bool => json_encode($baseline[$stack][$identity] ?? null) !== json_encode($history), ARRAY_FILTER_USE_BOTH);
     }
     $differences = [];
     foreach (array_unique([...array_keys($histories['reference']), ...array_keys($histories['engine'])]) as $identity) {
@@ -612,7 +645,7 @@ if (isset($options['from'])) {
     $baseline = [];
     foreach (['reference', 'engine'] as $stack) {
         $run = fx_run($db, $stack, 'side-effects-baseline-probe.php', $root, $siteRoot);
-        $baseline[$stack] = fx_histories($db, $run['events'], $prefix);
+        $baseline[$stack] = fx_histories($db, $run['events'], $prefix, $baselineTrace, $run['pid']);
     }
     $report = ['baseline' => $baseline, 'probes' => []];
     foreach ($probes as $probe) {

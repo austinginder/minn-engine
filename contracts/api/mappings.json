@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 683,
-        "composes": 2126,
+        "composes": 2122,
         "leaf": 1006,
-        "noop": 3169,
+        "noop": 3172,
         "placeholder": 0,
         "deadend": 1767,
-        "functions": 8673,
-        "minnMethods": 1424,
+        "functions": 8672,
+        "minnMethods": 1428,
         "leafLinesOver15": 11
     },
     "functions": {
@@ -19144,14 +19144,13 @@
         },
         "WP_REST_Autosaves_Controller::create_item": {
             "file": "classes/WP_REST_Autosaves_Controller.php",
-            "lines": 18,
+            "lines": 20,
             "kind": "minn",
             "minn": [
                 "Minn\\Rest\\RuntimePrepare::during"
             ],
             "composes": [
                 "__",
-                "clean_post_cache",
                 "get_post",
                 "rest_ensure_response"
             ]
@@ -19167,15 +19166,15 @@
         },
         "WP_REST_Autosaves_Controller::create_post_autosave": {
             "file": "classes/WP_REST_Autosaves_Controller.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Autosaves::saveSlot"
+            ],
             "composes": [
-                "clean_post_cache",
                 "get_current_user_id",
                 "get_post",
-                "normalize_whitespace",
-                "wp_get_post_autosave"
+                "wp_unslash"
             ]
         },
         "WP_REST_Autosaves_Controller::get_collection_params": {
@@ -32162,11 +32161,12 @@
         },
         "WP_Widget::get_settings": {
             "file": "classes/WP_Widget.php",
-            "lines": 12,
+            "lines": 17,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "get_option",
+                "update_option",
                 "wp_convert_widget_settings"
             ]
         },
@@ -36931,11 +36931,10 @@
         },
         "_minn_gallery_item": {
             "file": "media.php",
-            "lines": 18,
+            "lines": 20,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_av_instance",
                 "wp_get_attachment_image",
                 "wp_get_attachment_link",
                 "wp_get_attachment_metadata",
@@ -38040,15 +38039,6 @@
                 "rest_ensure_response",
                 "rest_filter_response_fields",
                 "rest_get_server"
-            ]
-        },
-        "_minn_revision_differs": {
-            "file": "post.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_wp_post_revision_fields"
             ]
         },
         "_minn_rewrite": {
@@ -39736,16 +39726,13 @@
         },
         "_wp_auto_add_pages_to_menu": {
             "file": "taxonomy.php",
-            "lines": 9,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Menus::appendPage"
+                "Minn\\Runtime\\MenuEvents::autoAddPage"
             ],
             "composes": [
-                "_minn_menus",
-                "get_current_user_id",
-                "get_option",
-                "is_nav_menu"
+                "_minn_menu_events"
             ]
         },
         "_wp_batch_split_terms": {
@@ -39758,15 +39745,12 @@
         },
         "_wp_batch_update_comment_type": {
             "file": "comment.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "clean_comment_cache",
-                "update_option",
-                "wp_schedule_single_event"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentWrites::batchUpdateType"
+            ],
+            "composes": []
         },
         "_wp_before_delete_font_face": {
             "file": "fonts.php",
@@ -41090,14 +41074,13 @@
         },
         "_wp_upgrade_revisions_of_post": {
             "file": "post.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PostRevisions::upgrade"
+            ],
             "composes": [
-                "_minn_revision_differs",
-                "_wp_put_post_revision",
-                "clean_post_cache",
-                "reset"
+                "get_post"
             ]
         },
         "_wp_upload_dir": {
@@ -48105,7 +48088,7 @@
         },
         "get_custom_header": {
             "file": "custom-header.php",
-            "lines": 27,
+            "lines": 28,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -48116,6 +48099,7 @@
                 "get_theme_mod",
                 "get_theme_support",
                 "is_random_header_image",
+                "parse",
                 "wp_parse_args"
             ]
         },
@@ -71571,11 +71555,14 @@
         },
         "wp_maybe_generate_attachment_metadata": {
             "file": "media.php",
-            "lines": 8,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "delete_transient",
                 "get_attached_file",
+                "get_transient",
+                "set_transient",
                 "wp_generate_attachment_metadata",
                 "wp_get_attachment_metadata",
                 "wp_update_attachment_metadata"
@@ -77964,6 +77951,7 @@
             "lines": 39,
             "kind": "minn",
             "minn": [
+                "Minn\\Db::invalidText",
                 "Minn\\Db::wrote"
             ],
             "composes": [

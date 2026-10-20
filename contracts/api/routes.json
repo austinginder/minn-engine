@@ -2834,7 +2834,83 @@
                 }
             },
             "args": [],
-            "body": [],
+            "body": {
+                "author": {
+                    "description": "The ID of the user object, if author was a user.",
+                    "type": "integer",
+                    "required": false
+                },
+                "author_email": {
+                    "description": "Email address for the comment author.",
+                    "type": "string",
+                    "format": "email",
+                    "required": false,
+                    "sanitize_round": true
+                },
+                "author_ip": {
+                    "description": "IP address for the comment author.",
+                    "type": "string",
+                    "format": "ip",
+                    "required": false
+                },
+                "author_name": {
+                    "description": "Display name for the comment author.",
+                    "type": "string",
+                    "required": false
+                },
+                "author_url": {
+                    "description": "URL for the comment author.",
+                    "type": "string",
+                    "format": "uri",
+                    "required": false
+                },
+                "author_user_agent": {
+                    "description": "User agent for the comment author.",
+                    "type": "string",
+                    "required": false
+                },
+                "content": {
+                    "description": "The content for the comment.",
+                    "type": "object",
+                    "required": false,
+                    "handler_validates": true
+                },
+                "date": {
+                    "description": "The date the comment was published, in the site's timezone.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "date_gmt": {
+                    "description": "The date the comment was published, as GMT.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "parent": {
+                    "default": 0,
+                    "description": "The ID for the parent of the comment.",
+                    "type": "integer",
+                    "required": false
+                },
+                "post": {
+                    "default": 0,
+                    "description": "The ID of the associated post object.",
+                    "type": "integer",
+                    "required": false
+                },
+                "status": {
+                    "description": "State of the comment.",
+                    "type": "string",
+                    "required": false
+                },
+                "meta": {
+                    "description": "Meta fields.",
+                    "type": "object",
+                    "required": false,
+                    "bare_refusal": true
+                }
+            },
             "index": true
         },
         {
@@ -2863,7 +2939,83 @@
                 }
             },
             "args": [],
-            "body": [],
+            "body": {
+                "author": {
+                    "description": "The ID of the user object, if author was a user.",
+                    "type": "integer",
+                    "required": false
+                },
+                "author_email": {
+                    "description": "Email address for the comment author.",
+                    "type": "string",
+                    "format": "email",
+                    "required": false,
+                    "sanitize_round": true
+                },
+                "author_ip": {
+                    "description": "IP address for the comment author.",
+                    "type": "string",
+                    "format": "ip",
+                    "required": false
+                },
+                "author_name": {
+                    "description": "Display name for the comment author.",
+                    "type": "string",
+                    "required": false
+                },
+                "author_url": {
+                    "description": "URL for the comment author.",
+                    "type": "string",
+                    "format": "uri",
+                    "required": false
+                },
+                "author_user_agent": {
+                    "description": "User agent for the comment author.",
+                    "type": "string",
+                    "required": false
+                },
+                "content": {
+                    "description": "The content for the comment.",
+                    "type": "object",
+                    "required": false,
+                    "handler_validates": true
+                },
+                "date": {
+                    "description": "The date the comment was published, in the site's timezone.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "date_gmt": {
+                    "description": "The date the comment was published, as GMT.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "parent": {
+                    "default": 0,
+                    "description": "The ID for the parent of the comment.",
+                    "type": "integer",
+                    "required": false
+                },
+                "post": {
+                    "default": 0,
+                    "description": "The ID of the associated post object.",
+                    "type": "integer",
+                    "required": false
+                },
+                "status": {
+                    "description": "State of the comment.",
+                    "type": "string",
+                    "required": false
+                },
+                "meta": {
+                    "description": "Meta fields.",
+                    "type": "object",
+                    "required": false,
+                    "bare_refusal": true
+                }
+            },
             "index": true
         },
         {
@@ -2892,7 +3044,83 @@
                 }
             },
             "args": [],
-            "body": [],
+            "body": {
+                "author": {
+                    "description": "The ID of the user object, if author was a user.",
+                    "type": "integer",
+                    "required": false
+                },
+                "author_email": {
+                    "description": "Email address for the comment author.",
+                    "type": "string",
+                    "format": "email",
+                    "required": false,
+                    "sanitize_round": true
+                },
+                "author_ip": {
+                    "description": "IP address for the comment author.",
+                    "type": "string",
+                    "format": "ip",
+                    "required": false
+                },
+                "author_name": {
+                    "description": "Display name for the comment author.",
+                    "type": "string",
+                    "required": false
+                },
+                "author_url": {
+                    "description": "URL for the comment author.",
+                    "type": "string",
+                    "format": "uri",
+                    "required": false
+                },
+                "author_user_agent": {
+                    "description": "User agent for the comment author.",
+                    "type": "string",
+                    "required": false
+                },
+                "content": {
+                    "description": "The content for the comment.",
+                    "type": "object",
+                    "required": false,
+                    "handler_validates": true
+                },
+                "date": {
+                    "description": "The date the comment was published, in the site's timezone.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "date_gmt": {
+                    "description": "The date the comment was published, as GMT.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "parent": {
+                    "default": 0,
+                    "description": "The ID for the parent of the comment.",
+                    "type": "integer",
+                    "required": false
+                },
+                "post": {
+                    "default": 0,
+                    "description": "The ID of the associated post object.",
+                    "type": "integer",
+                    "required": false
+                },
+                "status": {
+                    "description": "State of the comment.",
+                    "type": "string",
+                    "required": false
+                },
+                "meta": {
+                    "description": "Meta fields.",
+                    "type": "object",
+                    "required": false,
+                    "bare_refusal": true
+                }
+            },
             "index": true
         },
         {
@@ -2921,7 +3149,83 @@
                 }
             },
             "args": [],
-            "body": [],
+            "body": {
+                "author": {
+                    "description": "The ID of the user object, if author was a user.",
+                    "type": "integer",
+                    "required": false
+                },
+                "author_email": {
+                    "description": "Email address for the comment author.",
+                    "type": "string",
+                    "format": "email",
+                    "required": false,
+                    "sanitize_round": true
+                },
+                "author_ip": {
+                    "description": "IP address for the comment author.",
+                    "type": "string",
+                    "format": "ip",
+                    "required": false
+                },
+                "author_name": {
+                    "description": "Display name for the comment author.",
+                    "type": "string",
+                    "required": false
+                },
+                "author_url": {
+                    "description": "URL for the comment author.",
+                    "type": "string",
+                    "format": "uri",
+                    "required": false
+                },
+                "author_user_agent": {
+                    "description": "User agent for the comment author.",
+                    "type": "string",
+                    "required": false
+                },
+                "content": {
+                    "description": "The content for the comment.",
+                    "type": "object",
+                    "required": false,
+                    "handler_validates": true
+                },
+                "date": {
+                    "description": "The date the comment was published, in the site's timezone.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "date_gmt": {
+                    "description": "The date the comment was published, as GMT.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "parent": {
+                    "default": 0,
+                    "description": "The ID for the parent of the comment.",
+                    "type": "integer",
+                    "required": false
+                },
+                "post": {
+                    "default": 0,
+                    "description": "The ID of the associated post object.",
+                    "type": "integer",
+                    "required": false
+                },
+                "status": {
+                    "description": "State of the comment.",
+                    "type": "string",
+                    "required": false
+                },
+                "meta": {
+                    "description": "Meta fields.",
+                    "type": "object",
+                    "required": false,
+                    "bare_refusal": true
+                }
+            },
             "index": true
         },
         {

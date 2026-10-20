@@ -880,6 +880,11 @@
             [
                 null,
                 false
+            ],
+            [
+                null,
+                false,
+                true
             ]
         ]
     ],

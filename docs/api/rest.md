@@ -4,9 +4,9 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 455 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 449 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
-| [`ArgCheck`](#argcheck) | final readonly class | 85 | Judges a route's declared arguments against the request before the |
+| [`ArgCheck`](#argcheck) | final readonly class | 124 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 89 | wp/v2/block-renderer as the reference answers it (probe |
@@ -17,7 +17,7 @@ the wp/v2 surface: shapes and controllers
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 34 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 294 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 303 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
@@ -44,7 +44,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostListArgs`](#postlistargs) | final class | 171 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 533 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 197 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 518 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 528 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
@@ -53,7 +53,7 @@ the wp/v2 surface: shapes and controllers
 | [`Responses`](#responses) | final class | 95 | REST answers as the WordPress layer shapes them: any value made a |
 | [`RestMeta`](#restmeta) | final class | 265 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 237 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 259 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
 | [`RouteCatalogue`](#routecatalogue) | final readonly class | 78 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
@@ -134,10 +134,6 @@ the shape asked for: the facade's controller class shapes them itself.
 A revision (or autosave) row as wp/v2 shapes it, in the view or edit context. @param array<string, mixed> $row
 
 - `@param array<string, mixed> $row`
-
-### `saveAutosave(int $parentId, int $userId, string $title, string $content, string $excerpt): int`
-
-Saves a user's autosave of a post in its one slot per author; the revision's id.
 
 ### `postObject(): Minn\Rest\PostObject`
 
@@ -248,7 +244,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 77), `engineResponse()` (private, line 407), `withPageLinks()` (private, line 421), `options()` (private, line 452), `withSchema()` (private, line 469), `withAllow()` (private, line 490)
+Internals: `controllers()` (private, line 77), `engineResponse()` (private, line 401), `withPageLinks()` (private, line 415), `options()` (private, line 446), `withSchema()` (private, line 463), `withAllow()` (private, line 484)
 
 
 ## ApplicationPasswordsController
@@ -330,10 +326,13 @@ did not arrive is rest_missing_callback_param; the shared collection
 parameters (context, page, per_page, search) are judged first and a
 refusal among them is answered alone; then every other invalid one is
 listed in rest_invalid_param, in the order the route declares them, with
-the schema's own refusal under details. The query is read against the
-route's args, the JSON body against its body set, and a JSON body that
-does not parse is refused on every route first. An argument its handler
-judges (Args::HANDLER_VALIDATES) is left to the handler.
+the schema's own refusal under details (none for an argument whose
+refusal is bare, Args::BARE_REFUSAL). An argument judged in the
+sanitize round (Args::SANITIZE_ROUND) is read only once all the others
+passed. The query is read against the route's args, the JSON body
+against its body set, and a JSON body that does not parse is refused on
+every route first. An argument its handler judges
+(Args::HANDLER_VALIDATES) is left to the handler.
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`
 
@@ -352,7 +351,7 @@ Throws the refusal the declared arguments earn, or returns. @param array<string,
 
 - `@param array<string, string> $captures what the path named, for a route whose parameters depend on it`
 
-Internals: `json()` (private, line 63), `missing()` (private, line 79), `round()` (private, line 93)
+Internals: `json()` (private, line 67), `missing()` (private, line 83), `round()` (private, line 97), `sanitizeRound()` (private, line 124), `refuse()` (private, line 149)
 
 
 ## BatchController
@@ -760,7 +759,7 @@ signed-in replies, moderation updates, trash, and force delete.
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Rest\CommentObject $object, Minn\Rest\Caller $caller)
+__construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Rest\CommentObject $object, Minn\Rest\Caller $caller, Minn\Content\Users $users)
 ```
 
 
@@ -800,7 +799,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 78), `events()` (private, line 155), `allowed()` (private, line 224), `readablePost()` (private, line 265), `readable()` (private, line 274), `plainComment()` (private, line 284), `prepared()` (private, line 306)
+Internals: `totals()` (private, line 80), `events()` (private, line 157), `allowed()` (private, line 226), `readablePost()` (private, line 267), `readable()` (private, line 276), `plainComment()` (private, line 286), `prepared()` (private, line 309)
 
 
 ## Context
@@ -1947,6 +1946,7 @@ delete, each gated by the capability engine and answering with the
 edit-context object the reference returns.
 
 - const `LIVE` = `array (   0 => 'publish',   1 => 'future',   2 => 'private', )` — The statuses that make a post live: they need the publish capability and give the post its slug.
+- const `FIELD_SUPPORTS` = `array (   'title' => 'title',   'content' => 'editor',   'excerpt' => 'excerpt', )` — What a plugin's type must support for its posts to take a title, content or excerpt: a field its schema lacks is not saved (probe rest-plugin-types).
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\NavigationController`, `Minn\Rest\RevisionsController`
 
@@ -2001,7 +2001,7 @@ A body's meta must be an object of keys (probe rest-meta). @param array<string, 
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `hasParent()` (private, line 141), `hasOrder()` (private, line 147), `events()` (private, line 153), `newColumns()` (private, line 164), `writeNewPost()` (private, line 198), `checkAssignTerms()` (private, line 227), `rememberOld()` (private, line 335), `floatingDate()` (private, line 349), `scheduledIfFuture()` (private, line 363), `askedDate()` (private, line 385), `updatedDate()` (private, line 403), `fieldColumns()` (private, line 416), `statusColumns()` (private, line 460), `checkStickyChange()` (private, line 496), `checkStickyPasswordConflict()` (private, line 508), `validStatus()` (private, line 528), `clean()` (private, line 537)
+Internals: `takes()` (private, line 146), `hasParent()` (private, line 152), `hasOrder()` (private, line 158), `events()` (private, line 164), `newColumns()` (private, line 175), `writeNewPost()` (private, line 209), `checkAssignTerms()` (private, line 238), `rememberOld()` (private, line 346), `floatingDate()` (private, line 360), `scheduledIfFuture()` (private, line 374), `askedDate()` (private, line 396), `updatedDate()` (private, line 414), `fieldColumns()` (private, line 427), `statusColumns()` (private, line 471), `checkStickyChange()` (private, line 507), `checkStickyPasswordConflict()` (private, line 519), `validStatus()` (private, line 539), `clean()` (private, line 548)
 
 
 ## RegisteredFields
@@ -2414,7 +2414,7 @@ One autosave slot per author; the reply carries a preview link.
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `clean()` (private, line 158), `withPreviewLink()` (private, line 200), `previewLink()` (private, line 216), `meta()` (private, line 233), `requireParent()` (private, line 249), `parentOf()` (private, line 261)
+Internals: `draftObject()` (private, line 168), `clean()` (private, line 183), `withPreviewLink()` (private, line 225), `previewLink()` (private, line 241), `meta()` (private, line 258), `requireParent()` (private, line 274), `parentOf()` (private, line 286)
 
 
 ## RouteArgs

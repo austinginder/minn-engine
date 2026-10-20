@@ -1,0 +1,63 @@
+[
+    [
+        "wpdb::insert of a value that is not UTF-8",
+        [
+            false,
+            "WordPress database error: Processing the value for the following field failed: option_value. The supplied value may be too long or contains invalid data."
+        ]
+    ],
+    [
+        "wpdb::query of an insert holding it",
+        [
+            false,
+            "WordPress database error: Could not perform query because it contains invalid data."
+        ]
+    ],
+    [
+        "a select holding it",
+        [
+            null,
+            "WordPress database error: Could not perform query because it contains invalid data."
+        ]
+    ],
+    [
+        "add_option of it",
+        false
+    ],
+    [
+        "wpdb::update to it",
+        [
+            false,
+            "WordPress database error: Processing the value for the following field failed: option_value. The supplied value may be too long or contains invalid data."
+        ]
+    ],
+    [
+        "update_option to it",
+        false
+    ],
+    [
+        "a transient of it",
+        false
+    ],
+    [
+        "four-byte UTF-8 is stored",
+        true
+    ],
+    [
+        "what was stored",
+        [
+            {
+                "option_name": "_transient_timeout_zz_invalid_e",
+                "option_value": "{time}"
+            },
+            {
+                "option_name": "zz_invalid_d",
+                "option_value": "ok"
+            },
+            {
+                "option_name": "zz_invalid_f",
+                "option_value": "ok 😀"
+            }
+        ]
+    ]
+]

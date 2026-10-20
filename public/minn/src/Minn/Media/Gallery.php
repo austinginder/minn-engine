@@ -70,8 +70,8 @@ final class Gallery
         if ($item['caption'] === '') {
             return '';
         }
-        return "\n\t\t\t" . '<' . $tag . " class='wp-caption-text gallery-caption' id='" . $item['caption_id'] . "'>\n\t\t\t"
-            . $item['caption'] . "\n\t\t\t" . '</' . $tag . '>';
+        return "\n\t\t\t\t" . '<' . $tag . " class='wp-caption-text gallery-caption' id='" . $item['caption_id'] . "'>\n\t\t\t\t"
+            . $item['caption'] . "\n\t\t\t\t" . '</' . $tag . '>';
     }
 
     /** A caller's tag name, reduced to what may safely open an element. */

@@ -42,7 +42,7 @@ final readonly class TermWriter
                 }
             }
         }
-        $this->posts->recount($taxonomy);
+        // The objects' other terms keep their counts; one moved to the default category was recounted as it was linked.
         return $objects;
     }
 
@@ -54,7 +54,7 @@ final readonly class TermWriter
      * that went, between delete_term_relationships and
      * deleted_term_relationships, and their counts. $count recounts a list
      * of term_taxonomy ids and tells plugins (wp_update_term_count); without
-     * it the taxonomy is recounted quietly.
+     * it those terms are recounted quietly.
      *
      * @param list<int> $keep term_taxonomy ids
      * @param list<int> $old the object's current term_taxonomy ids in the taxonomy
@@ -62,7 +62,7 @@ final readonly class TermWriter
      */
     public function relate(int $objectId, array $keep, array $old, string $taxonomy, ?Closure $count = null): void
     {
-        $count ??= fn (array $ttIds) => $this->posts->recount($taxonomy);
+        $count ??= fn (array $ttIds) => $this->posts->recountTerms($ttIds);
         $hooks = Runtime::hooks();
         $added = [];
         foreach ($keep as $ttId) {
@@ -93,7 +93,7 @@ final readonly class TermWriter
         if ($ttIds === []) {
             return false;
         }
-        $count ??= fn (array $ids) => $this->posts->recount($taxonomy);
+        $count ??= fn (array $ids) => $this->posts->recountTerms($ids);
         $hooks = Runtime::hooks();
         $hooks->action('delete_term_relationships', [$objectId, $ttIds, $taxonomy]);
         $removed = $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE object_id = ? AND term_taxonomy_id IN (" . implode(',', array_map('intval', $ttIds)) . ')', [$objectId]);

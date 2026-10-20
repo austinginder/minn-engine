@@ -17995,6 +17995,88 @@ Left:
 - Order only (states): a REST batch's posts (their GUID written at insert or after), comments
   and users written in another order, widget options and the update transients.
 
+## The side-effect diff, second round (2026-10-20)
+
+The 62 differences left in 48 probes, taken one by one as in the first round (`--events`, then a
+scratch probe on both stacks where the trace did not settle it). Most turned out to be real
+writes the engine made otherwise; a few were the tool's own noise. Each fix is pinned by a probe
+row as well as by the diff.
+
+- **A post's insert in the reference's order** (`Runtime\PostWrites::insert`): the row, the slug
+  made from the id, the terms (categories, tags, `tax_input`), `meta_input`, then the guid, then
+  the page template. The guid is the permalink as it stands then, so an untitled published post's
+  guid names its id slug; the engine had written the guid first, when the slug was still empty,
+  and stored the home address. A REST-created draft's `post_modified_gmt` is its zero GMT date.
+- **Term counts** are refreshed for the terms a write touched (`PostWriter::recountTerms`), as
+  the reference counts them; every save had recounted the whole taxonomy.
+- **A post's own draft autosaved by its author is saved in place** (`Runtime\Autosaves`; probe
+  `rest-autosaves`): `wp_update_post` with the fields given, and the reply is the post in a
+  revision's shape (its own parent, linked only when it has one; no dates while it floats; its
+  plain preview link). Anyone else's post gets the author's slot through `wp_insert_post` and
+  `_wp_put_post_revision`, or `wp_creating_autosave` and `wp_update_post` for a slot already
+  there; a slot is left alone when every field given matches the post. `DOING_AUTOSAVE` is defined
+  for the rest of the request, and no revision is saved while it is. The engine had always made a
+  slot, outside `wp_insert_post`, so a draft never took its autosave and `save_post` never fired.
+- **The pre-3.6 revision upgrade** (`PostRevisions::upgrade`, `Runtime\OptionLock`; probe
+  `revision-more`): under the `revision-upgrade-{id}` lock (an option row inserted only when free,
+  autoload off, taken over once an hour old), newest first, an old revision takes the name of its
+  shape (`{id}-revision` and `{id}-revision-2` become `{id}-revision-v1`; another shape stays) and
+  the author of the old revision before it (the oldest keeps its own); unless one was already up to
+  date, the post is then saved as a revision as a save saves one. The comment type batch takes the
+  same kind of lock (`update_comment_type.lock`, autoload `no`), scheduling a try five minutes on
+  while another batch holds it (probe `comment-helpers`).
+- **Menus**: a draft item keeps zero GMT dates; an untitled live item takes its id for a slug in a
+  write of its own; deleting a menu leaves its locations at 0; a page published into a menu set to
+  add new pages goes through `wp_update_nav_menu_item` (its position the next after the items), and
+  a menu that holds the page already is skipped (probe `nav-menu-remaining`).
+- **REST comments** (probe `rest-comment-author`): an author named by id gives the comment their
+  name, address and site unless the author fields say otherwise; an author who does not exist, or
+  0, is `rest_comment_author_invalid`; while `require_name_email` is on, a comment left without a
+  name or an address is `rest_comment_author_data_required` (after the content check); content is
+  text or its raw form, anything else none. The body's arguments are judged in the reference's two
+  rounds: types and formats first (a meta that is not an object refused bare, "Invalid
+  parameter."), then the author's address alone (`Args::SANITIZE_ROUND`, empty allowed).
+- **Text the tables cannot hold** (probe `invalid-text`): `Minn\Db` and the facade's `wpdb::query`
+  run no statement carrying bytes that are not UTF-8, a read included; `add_option` and
+  `update_option` say they stored nothing. Four-byte UTF-8 is stored.
+- **Smaller writes**: `wp_update_user` reads every profile key, a missing one as empty, so a missing
+  `locale` row is added; a deleted post keeps its links in taxonomies its type does not have, and
+  its children's cached rows go when they move up a level (probe `post-remaining`); a post saved
+  again by id without its discussion statuses closes its comments and gives its pings the type's
+  default (probe `insert-defaults`); a REST save of a plugin's type stores no field its schema lacks
+  (probe `rest-plugin-types`); a REST term save with only meta still saves the term, refreshing
+  `category_children`; a template is made with comments and pings closed and gets its guid; notes
+  are left out of a post's `comment_count`; a post's comments go newest first and it is counted
+  once after; `WP_Widget::get_settings` stores the option marked multi the first time; an area's
+  widget list keeps its keys when a widget leaves it; `wp_maybe_generate_attachment_metadata`
+  holds the `wp_generating_att_{id}` transient lock (probe `runtime-internals`);
+  `https_detection_errors` is never autoloaded.
+
+Found by the full run that followed (the hook battery):
+
+- **`wp_parse_args` given a query string, or nothing, goes through `wp_parse_str`'s filter**
+  (`Support\Lists::args`, handed the filter by `Runtime::boot`), as the reference parses it; the
+  engine had parsed it without the hook. 134 recorded hook differences agreed at once (the
+  snapshot fell from 716 differing hooks to 695). Two engine-only parses went with it:
+  `get_custom_header` with no stored data, and the gallery below.
+- **A `[gallery]`'s captioned image names its caption** (`aria-describedby`), whose id is the
+  gallery's number and the image's (`gallery-{instance}-{id}`); the engine had numbered captions
+  by item and named none. The caption sits a tab deeper, and an image whose metadata gives no
+  size has no orientation class (probe `gallery-captions`).
+- **A revision save asks `wp_revisions_to_keep` before it turns back for `DOING_AUTOSAVE`**.
+- A comment made with no request (the command line) takes its address and agent from the server
+  variables, as the reference reads them.
+
+The tool learned: each run's process id is masked (probes name temp folders and logins after it),
+as are `uniqid()` template slugs and each stack's own folder in a stored path; a file a run makes
+is removed after it. Three probes were made
+deterministic (`oembed`'s address, `password-rehash`'s login, `rest-protected-comments`' words),
+and `upgrader` turns off the translation install that follows an upgrade.
+
+Left: the translation updates the reference installs after an upgrade (row below), and a
+`retrieve_widgets` write in `rest-widgets-class` not yet explained. The reference's
+`wp_styles_for_blocks` transient (its cache of the block styles it builds) is accepted.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18085,8 +18167,14 @@ rows that are `open` or `austin`.
 | 17853 | Text domains at their first translation (10-19) | `get_locale` takes `pre_determine_locale`'s answer, which the reference's does not | austin | fixed alone, the hook battery refuses it: the reference asks `pre_determine_locale` in 40 probe scenarios only to build MediaElement's `mejsL10n`, and the engine registers no MediaElement player; build the player scripts (MIT library, the engine's own skin and init) or accept the native player, then fix `I18n\SiteLanguage::locale` |
 | 17910 | What each probe writes (10-19) | pings and enclosures: `_pingme`, `_encloseme`, `_trackbackme` and the `do_pings` event, which the engine never writes | accepted | `_publish_post_hook` and `do_all_enclosures` are dead ends (`tests/tools/deadends.php`, PINGS); `contracts/fixtures/effects/accepted.json` sets the marks aside and the cron list is read without `do_pings` |
 | 17910 | What each probe writes (10-19) | a new user's empty `dismissed_wp_pointers` meta | accepted | an admin hook WP-CLI loads (`WP_Internal_Pointers::dismiss_pointers_for_new_users`); a REST user creation on the reference writes none (hook-trace, user-create), so the engine is right and the tool now runs the reference without the callbacks defined under `wp-admin/` |
-| 17910 | What each probe writes (10-19) | posts: the trash suffix written first and made unique (`__trashed-2`), a draft's zero GMT date kept on publish, the custom CSS revision, the `revision-upgrade-{id}` lock, the REST trash meta, autosaves the engine makes alone | open | trash, publish date, custom CSS revision and the trash a user deletion sends posts to are done ("What the side-effect diff found, fixed"); left: the `revision-upgrade-{id}` lock the reference takes while checking a post's revisions for the old format, and the autosave revisions the engine makes in `rest-autosaves` |
-| 17910 | What each probe writes (10-19) | options: menu locations in `theme_mods_*` on a menu save, the rewrite rules deleted and remade, the reference's block styles, comment type and attachment locks, oEmbed cache keys, the URL details cache | open | menu locations and the rewrite flush are done; left: `_transient_wp_styles_for_blocks`, `update_comment_type.lock`, `_transient_wp_generating_att_{id}`, the oEmbed cache keys, the URL details cache the engine alone keeps, `category_children` in `rest-meta` |
-| 17910 | What each probe writes (10-19) | comments and users: a comment's IP in an update of its own, a user's row written twice, no `last_ip` for an application password used with `REMOTE_ADDR`, user 1's `locale` meta, a deleted post's term relationship kept on the reference | open | the single writes, `last_ip` and the password list's keys are done; left: user 1's `locale` meta written by the reference in `plugin-surface`, and a deleted post's term relationship the reference keeps (`plugin-symbols2`, `template-loader-more`, `hook-inputs-2`) |
-| 17989 | The side-effect diff's findings, fixed (10-19) | order only: a REST batch's posts, comments, users, widget options and the update transients written in another order | open | from `divergences.json` |
+| 17910 | What each probe writes (10-19) | posts: the trash suffix written first and made unique (`__trashed-2`), a draft's zero GMT date kept on publish, the custom CSS revision, the `revision-upgrade-{id}` lock, the REST trash meta, autosaves the engine makes alone | done | trash, publish date, custom CSS revision and the trash a user deletion sends posts to: "What the side-effect diff found, fixed"; the `revision-upgrade-{id}` lock and the autosaves: "The side-effect diff, second round (2026-10-20)" (probes `revision-more`, `rest-autosaves`) |
+| 17910 | What each probe writes (10-19) | options: menu locations in `theme_mods_*` on a menu save, the rewrite rules deleted and remade, the reference's block styles, comment type and attachment locks, oEmbed cache keys, the URL details cache | done | menu locations and the rewrite flush: first round; `update_comment_type.lock`, `wp_generating_att_{id}`, the oEmbed keys (the probe's address was random), the URL details cache (text the tables cannot hold, probe `invalid-text`) and `category_children`: "The side-effect diff, second round"; `wp_styles_for_blocks` is its own row (17998) |
+| 17910 | What each probe writes (10-19) | comments and users: a comment's IP in an update of its own, a user's row written twice, no `last_ip` for an application password used with `REMOTE_ADDR`, user 1's `locale` meta, a deleted post's term relationship kept on the reference | done | the single writes, `last_ip` and the password list's keys: first round; user 1's `locale` (every profile key written back) and a deleted post's links in a taxonomy its type lacks: "The side-effect diff, second round" |
+| 17989 | The side-effect diff's findings, fixed (10-19) | order only: a REST batch's posts, comments, users, widget options and the update transients written in another order | done | the states these orders made are gone from `divergences.json` (2026-10-20): a post's insert writes its slug, terms, meta, guid and template in the reference's order ("The side-effect diff, second round"); the tool compares a row's states, not the order between rows |
+| 17998 | The side-effect diff, second round (10-20) | the translation updates the reference installs once an upgrade is done (`async_update_translation`, packs from the stored update data) | austin | the engine installs no translation updates (core, plugin or theme): through the update service (Track H) for 0.1.0, or after it; probe `upgrader` turns the reference's install off meanwhile |
+| 17998 | The side-effect diff, second round (10-20) | `retrieve_widgets` stores a widget made with no sidebar first among the inactive ones during `rest-widgets-class` on the reference only | open | not reproduced alone (a fresh controller writes nothing on either stack); the moves' kept keys are done |
+| 17998 | The side-effect diff, second round (10-20) | the reference's `wp_styles_for_blocks` transient: the block styles it builds, cached | accepted | the engine builds its block styles from theme.json each request; no plugin reads the cache; `contracts/fixtures/effects/accepted.json` |
+| 17998 | The side-effect diff, second round (10-20) | an author's own draft autosaved over REST made an autosave row outside `wp_insert_post` (no `save_post`, no `DOING_AUTOSAVE`) | done | `Runtime\Autosaves`, probe `rest-autosaves` |
+| 17998 | The side-effect diff, second round (10-20) | REST comments: a named author's details, an unknown author, the name and address required, the two argument rounds | done | probe `rest-comment-author` (38 rows) |
+| 17998 | The side-effect diff, second round (10-20) | statements carrying text that is not UTF-8 ran and stored "?" | done | `Minn\Db::invalidText`, probe `invalid-text` |
 | 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | done | "A navigation's fallback menu, made during the render (2026-10-19)": the renderer asks `WP_Navigation_Fallback::get_fallback` through `Handoff::navigationFallback` (probe `navigation-fallback`) |

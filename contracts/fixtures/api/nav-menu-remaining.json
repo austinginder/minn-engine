@@ -88,6 +88,63 @@
         ]
     ],
     [
+        "a page published into a menu that holds it already is not added again",
+        [
+            [
+                [
+                    "{zz-nm-top}",
+                    "page",
+                    "post_type",
+                    "zz nm top",
+                    1,
+                    0
+                ],
+                [
+                    "{zz-nm-drafted}",
+                    "page",
+                    "post_type",
+                    "zz nm drafted",
+                    2,
+                    0
+                ],
+                [
+                    "{zz-nm-held}",
+                    "page",
+                    "post_type",
+                    "zz nm held",
+                    3,
+                    0
+                ]
+            ],
+            [
+                [
+                    "{zz-nm-top}",
+                    "page",
+                    "post_type",
+                    "zz nm top",
+                    1,
+                    0
+                ],
+                [
+                    "{zz-nm-drafted}",
+                    "page",
+                    "post_type",
+                    "zz nm drafted",
+                    2,
+                    0
+                ],
+                [
+                    "{zz-nm-held}",
+                    "page",
+                    "post_type",
+                    "zz nm held",
+                    3,
+                    0
+                ]
+            ]
+        ]
+    ],
+    [
         "menu items taken away with their post",
         [
             [
@@ -106,6 +163,14 @@
                         "post_type",
                         "zz nm drafted",
                         2,
+                        0
+                    ],
+                    [
+                        "{zz-nm-held}",
+                        "page",
+                        "post_type",
+                        "zz nm held",
+                        3,
                         0
                     ]
                 ],
@@ -143,6 +208,14 @@
                     "post_type",
                     "zz nm drafted",
                     1,
+                    0
+                ],
+                [
+                    "{zz-nm-held}",
+                    "page",
+                    "post_type",
+                    "zz nm held",
+                    2,
                     0
                 ]
             ],

@@ -1445,23 +1445,10 @@ function _close_comments_for_old_posts($posts, $query)
     return $posts;
 }
 
-/**
- * Gives comments stored without a type the type "comment", newest first, a
- * batch at a time (wp_update_comment_type_batch_size, 100; on
- * wp_update_comment_type_batch). A batch that changed some schedules the
- * next; one that finds none marks the update finished.
- */
+/** One batch of the update giving comments stored without a type the type "comment" (on wp_update_comment_type_batch). */
 function _wp_batch_update_comment_type()
 {
-    global $wpdb;
-    $ids = $wpdb->get_col($wpdb->prepare("SELECT comment_ID FROM {$wpdb->comments} WHERE comment_type = '' ORDER BY comment_ID DESC LIMIT %d", (int) apply_filters('wp_update_comment_type_batch_size', 100)));
-    if (!$ids) {
-        update_option('finished_updating_comment_type', true);
-        return;
-    }
-    $wpdb->query("UPDATE {$wpdb->comments} SET comment_type = 'comment' WHERE comment_ID IN (" . implode(',', array_map('intval', $ids)) . ')');
-    clean_comment_cache(array_map('intval', $ids));
-    wp_schedule_single_event(time() + 2 * MINUTE_IN_SECONDS, 'wp_update_comment_type_batch');
+    Minn\Runtime\CommentWrites::batchUpdateType();
 }
 
 /** Schedules the comment-type update while it is unfinished and not already scheduled (on admin_init). */

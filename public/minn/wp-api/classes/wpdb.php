@@ -23,6 +23,7 @@ class wpdb
     public $col_info;
     protected $col_meta = [];
     protected $table_charset = [];
+    protected $check_current_query = true;
     public $queries;
     public $time_start = null;
     protected $last_fields = null;
@@ -266,16 +267,18 @@ class wpdb
         $this->flush();
         $query = apply_filters('query', $this->remove_placeholder_escape((string) $query));
         $this->last_query = $query;
-        $this->num_queries++;
+        // A query holding text the tables cannot store is not run.
+        $invalid = $this->check_current_query && \Minn\Db::invalidText($query);
+        $this->check_current_query = true;
         try {
-            $result = $this->dbh->query($query);
+            $result = $invalid ? false : $this->dbh->query($query);
+            $error = $invalid ? 'WordPress database error: Could not perform query because it contains invalid data.' : $this->dbh->error;
         } catch (\mysqli_sql_exception $e) {
-            $this->last_error = $e->getMessage();
-            $this->print_error();
-            return false;
+            [$result, $error] = [false, $e->getMessage()];
         }
+        $this->num_queries += $invalid ? 0 : 1;
         if ($result === false) {
-            $this->last_error = $this->dbh->error;
+            $this->last_error = $error;
             $this->print_error();
             return false;
         }
@@ -286,9 +289,7 @@ class wpdb
             $this->rows_affected = (int) $this->dbh->affected_rows;
             // The engine's request-long row reads hear plugin writes too.
             \Minn\Db::wrote($query);
-            if (preg_match('/^\s*(insert|replace)\s/i', $query)) {
-                $this->insert_id = (int) $this->dbh->insert_id;
-            }
+            $this->insert_id = preg_match('/^\s*(insert|replace)\s/i', $query) ? (int) $this->dbh->insert_id : $this->insert_id;
             return $this->rows_affected;
         }
         if ($result instanceof \mysqli_result) {

@@ -183,18 +183,19 @@ check(str_contains(page("$ENGINE/", '', [sessionCookie($editor, $ENGINE)])['body
 check(str_contains(page("$ENGINE/feed/", '', [sessionCookie($editor, $ENGINE)])['body'], 'zz-reader-private') && !str_contains(page("$ENGINE/feed/")['body'], 'zz-reader-private'), 'the feed does the same');
 
 // 4. Previews: the autosave shows in place of the draft, on both stacks, from the engine's own preview link.
-$ctx = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false], 'http' => ['ignore_errors' => true, 'method' => 'POST', 'header' => "Content-Type: application/json\r\n" . sessionCookie($author, $ENGINE) . "\r\nX-WP-Nonce: {$author['nonce']}", 'content' => json_encode(['title' => 'zz reader autosaved title', 'content' => '<!-- wp:paragraph --><p>zz reader autosave words</p><!-- /wp:paragraph -->'])]]);
+// The editor autosaves the author's draft: an author's autosave of their own draft is saved into the draft itself (probe rest-autosaves).
+$ctx = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false], 'http' => ['ignore_errors' => true, 'method' => 'POST', 'header' => "Content-Type: application/json\r\n" . sessionCookie($editor, $ENGINE) . "\r\nX-WP-Nonce: {$editor['nonce']}", 'content' => json_encode(['title' => 'zz reader autosaved title', 'content' => '<!-- wp:paragraph --><p>zz reader autosave words</p><!-- /wp:paragraph -->'])]]);
 $autosave = json_decode((string) @file_get_contents("$ENGINE/?rest_route=" . rawurlencode('/wp/v2/posts/10/autosaves'), false, $ctx), true);
 $link = (string) ($autosave['preview_link'] ?? '');
 check(preg_match('#\?p=10&preview_id=10&preview_nonce=[0-9a-f]{10}&preview=true$#', $link) === 1, 'the autosave answers with a preview link carrying a real nonce', $link);
 $path = substr($link, strlen($ENGINE));
-$e = page($ENGINE . $path, '', [sessionCookie($author, $ENGINE)]);
-$r = page($REF . $path, '', [sessionCookie($author, $REF)]);
+$e = page($ENGINE . $path, '', [sessionCookie($editor, $ENGINE)]);
+$r = page($REF . $path, '', [sessionCookie($editor, $REF)]);
 check($e['status'] === '200' && str_contains($e['body'], 'zz reader autosave words') && str_contains($e['body'], 'zz reader autosaved title'), 'the engine shows the autosave to its author', $e['status']);
 check($r['status'] === '200' && str_contains($r['body'], 'zz reader autosave words'), 'the reference accepts the engine\'s preview nonce and shows the same autosave', $r['status']);
 $anonymous = [page($ENGINE . $path)['status'], page($REF . $path)['status']];
 check($anonymous === ['403', '403'], 'an anonymous reader is refused the preview link (its nonce is not theirs), as on the reference', json_encode($anonymous));
-$plain = page("$ENGINE/?p=10", '', [sessionCookie($author, $ENGINE)]);
+$plain = page("$ENGINE/?p=10", '', [sessionCookie($editor, $ENGINE)]);
 check($plain['status'] === '200' && !str_contains($plain['body'], 'zz reader autosave words'), 'without the preview link the draft shows its stored content');
 
 // 5. A post slugged with a number, under /%postname%/: its address is the post, not that year's archive.

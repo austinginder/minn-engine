@@ -16,6 +16,7 @@ use Minn\Content\PostRecord;
 use Minn\Content\CommentRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
+use Minn\Content\Users;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -36,6 +37,7 @@ final readonly class CommentsController
         private Posts $posts,
         private CommentObject $object,
         private Caller $caller,
+        private Users $users,
     ) {
     }
 
@@ -108,7 +110,7 @@ final readonly class CommentsController
     }
 
     /** A signed-in reply; the author fields come from the user. */
-    #[Route(Method::Post, '/wp/v2/comments', policy: new Policy(Access::SignedIn, signIn: 'rest_comment_login_required', signInMessage: 'Sorry, you must be logged in to comment.'))]
+    #[Route(Method::Post, '/wp/v2/comments', policy: new Policy(Access::SignedIn, signIn: 'rest_comment_login_required', signInMessage: 'Sorry, you must be logged in to comment.'), body: [Args::COMMENT_WRITE])]
     public function create(Request $request): Response
     {
         $this->caller->require('rest_comment_login_required', 'Sorry, you must be logged in to comment.');
@@ -158,9 +160,9 @@ final readonly class CommentsController
     }
 
     /** Status flips and content or author edits, for moderators. */
-    #[Route(Method::Post, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
-    #[Route(Method::Put, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
-    #[Route(Method::Patch, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'))]
+    #[Route(Method::Post, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'), body: [Args::COMMENT_WRITE])]
+    #[Route(Method::Put, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'), body: [Args::COMMENT_WRITE])]
+    #[Route(Method::Patch, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Cap, 'moderate_comments', param: 'id', subject: Subject::Comment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this comment.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this comment.'), body: [Args::COMMENT_WRITE])]
     public function update(Request $request, string $id): Response
     {
         $commentId = (int) $id;
@@ -297,8 +299,9 @@ final readonly class CommentsController
      */
     /**
      * The fields a request sends, as the reference's controller prepares
-     * them for the runtime: the content, the author fields, the address (a
-     * moderator may name one) and the browser.
+     * them for the runtime: the content, the author (a user's own details
+     * unless the author fields say otherwise), the address (a moderator may
+     * name one) and the browser.
      *
      * @param array<string, mixed> $body
      * @return array<string, mixed>
@@ -306,11 +309,18 @@ final readonly class CommentsController
     private function prepared(array $body, Request $request): array
     {
         $prepared = [];
-        if (isset($body['content'])) {
-            $prepared += ['comment_content' => is_array($body['content']) ? (string) ($body['content']['raw'] ?? '') : (string) $body['content']];
+        // Content is a string or its raw form; anything else is none (a number is refused as invalid content).
+        $content = $body['content'] ?? null;
+        if (is_string($content) || (is_array($content) && is_string($content['raw'] ?? null))) {
+            $prepared += ['comment_content' => is_array($content) ? $content['raw'] : $content];
         }
         if (isset($body['author'])) {
-            $prepared += ['user_id' => (int) $body['author']];
+            // The named user's own name, address and site, which the author fields then override; one who does not exist is refused.
+            $user = (int) $body['author'] > 0 ? $this->users->find((int) $body['author']) : null;
+            if ($user === null) {
+                throw new RestError('rest_comment_author_invalid', 'Invalid comment author ID.', 400);
+            }
+            $prepared += ['user_id' => $user->id, 'comment_author' => $user->displayName, 'comment_author_email' => $user->email, 'comment_author_url' => $user->url];
         }
         foreach (['author_name' => 'comment_author', 'author_email' => 'comment_author_email', 'author_url' => 'comment_author_url'] as $field => $column) {
             if (isset($body[$field])) {

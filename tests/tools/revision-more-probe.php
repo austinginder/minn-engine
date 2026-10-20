@@ -391,6 +391,45 @@ $wpdb->update($wpdb->posts, ['post_name' => $excerpt . '-revision'], ['ID' => $e
 clean_post_cache($excerptRevision);
 $say('pre-3.6 revisions, the latest differs only in its excerpt', $mask([_wp_upgrade_revisions_of_post(get_post($excerpt), wp_get_post_revisions($excerpt)), $revisionsOf($excerpt)]));
 
+// Old names and authors, oldest first: [name with P for the post's id, author]; what each becomes, and the revision the post adds.
+$upgraded = static function (array $specs, int $postAuthor) use ($post, $wpdb): array {
+    $parent = $post('upgrade matrix', ['post_author' => $postAuthor]);
+    $made = [];
+    foreach ($specs as $at => [$name, $author]) {
+        $made[] = $revision = (int) wp_insert_post(['post_title' => 'zz rm matrix ' . $at, 'post_status' => 'inherit', 'post_type' => 'revision', 'post_parent' => $parent, 'post_date' => '2012-01-0' . ($at + 1) . ' 10:00:00', 'post_author' => $author]);
+        $wpdb->update($wpdb->posts, ['post_name' => str_replace('P', (string) $parent, $name)], ['ID' => $revision]);
+        clean_post_cache($revision);
+    }
+    $answer = _wp_upgrade_revisions_of_post(get_post($parent), wp_get_post_revisions($parent));
+    $named = static fn (WP_Post $r): array => [str_replace((string) $parent, 'P', $r->post_name), (int) $r->post_author];
+    $added = array_values(array_filter(wp_get_post_revisions($parent), static fn (WP_Post $r): bool => !in_array($r->ID, $made, true)));
+    return [$answer, array_map(static fn (int $id): array => $named(get_post($id)), $made), array_map($named, $added)];
+};
+$previous = get_current_user_id();
+wp_set_current_user(2);
+$say('pre-3.6 names and authors: each old revision takes the name of its shape and the author of the old one before it', [
+    'all old' => $upgraded([['P-revision', 1], ['P-revision', 2], ['P-revision', 3]], 3),
+    'one up to date between' => $upgraded([['P-revision', 1], ['P-revision-v1', 2], ['P-revision', 3]], 3),
+    'other shapes' => $upgraded([['P-revision', 1], ['Q-revision', 2], ['foo-autosave', 3], ['P-autosave', 1], ['P-revision-x', 2], ['revision', 3]], 3),
+    'all up to date' => $upgraded([['P-revision-v1', 1], ['P-revision-v1', 2]], 3),
+    'the newest up to date' => $upgraded([['P-revision', 1], ['P-revision-v1', 2]], 3),
+    'the newest at v2' => $upgraded([['P-revision', 1], ['P-revision-v2', 2]], 3),
+    'the newest named v1x' => $upgraded([['P-revision', 1], ['P-revision-v1x', 2]], 3),
+    'numbered old names' => $upgraded([['P-revision', 1], ['P-autosave-3', 2], ['P-revision-4-5', 3]], 3),
+    'capitals, v0, a bare v1' => $upgraded([['P-Revision', 1], ['P-revision-v0', 2], ['x-v1', 3]], 3),
+    'one old revision' => $upgraded([['P-revision', 1]], 3),
+]);
+wp_set_current_user($previous);
+
+$held = $post('held lock', []);
+$heldLock = "revision-upgrade-{$held}";
+add_option($heldLock, time() - 30, '', false);
+$whileHeld = _wp_upgrade_revisions_of_post(get_post($held), wp_get_post_revisions($held));
+$stillHeld = get_option($heldLock) !== false;
+update_option($heldLock, time() - 2 * HOUR_IN_SECONDS);
+$say('an upgrade while another holds the lock refuses; once the lock is an hour old it is taken over and let go', [$whileHeld, $stillHeld, _wp_upgrade_revisions_of_post(get_post($held), wp_get_post_revisions($held)), get_option($heldLock)]);
+delete_option($heldLock);
+
 unregister_post_meta('post', 'zz_rm_revisioned');
 unregister_post_meta('post', 'zz_rm_revisioned_too');
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE), "\n";

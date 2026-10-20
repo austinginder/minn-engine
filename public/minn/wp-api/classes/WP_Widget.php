@@ -208,6 +208,11 @@ class WP_Widget implements \Minn\Objects\Widget
         if ($settings === false && isset($this->alt_option_name)) {
             $settings = get_option($this->alt_option_name);
         }
+        // A widget with no settings stored yet gets its option, marked multi (probe widget-classes).
+        if ($settings === false) {
+            $settings = ['_multiwidget' => 1];
+            update_option($this->option_name, $settings);
+        }
         if (!is_array($settings) && !($settings instanceof ArrayAccess)) {
             $settings = [];
         }

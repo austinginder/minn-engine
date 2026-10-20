@@ -116,7 +116,7 @@ final readonly class RuntimeEnvelope implements Envelope
      */
     private function handler(Matched $matched, ?RestError $refusal): array
     {
-        $args = array_map(static fn (array $arg): array => array_diff_key($arg, [Args::HANDLER_VALIDATES => true]), $matched->route->arguments($matched->captures)) ?: $matched->route->bodyArguments();
+        $args = array_map(Args::published(...), $matched->route->arguments($matched->captures) ?: $matched->route->bodyArguments());
         return [
             'methods' => array_fill_keys($matched->methods, true),
             'accept_json' => false,

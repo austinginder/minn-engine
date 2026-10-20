@@ -56,10 +56,8 @@ final readonly class TermEvents
      */
     public function restUpdate(int $termId, string $taxonomy, array $body, Request $request): void
     {
+        // A request with no term fields (only meta) still saves the term, as on the reference (tests/tools/side-effects.php, rest-meta).
         $prepared = self::prepared($taxonomy, $body, $request);
-        if ($prepared === []) {
-            return;
-        }
         $changed = TermWrites::update($termId, $taxonomy, Slashes::add($prepared));
         if ($changed instanceof Errors) {
             throw self::refusal($changed);

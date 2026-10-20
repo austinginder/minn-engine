@@ -73,7 +73,6 @@ final readonly class PostWriter
         $this->update($id, ['post_status' => $status]);
     }
 
-    /** One row per key: an existing value is replaced, not shadowed. */
     /** Moves a post to another type, leaving it alone when it is already there. */
     public function setType(int $id, string $type): bool
     {
@@ -209,7 +208,7 @@ final readonly class PostWriter
         return $columns;
     }
 
-    /** Replaces a post's links in one taxonomy and refreshes that taxonomy's counts. */
+    /** Replaces a post's links in one taxonomy and refreshes the counts of the terms it left and joined. */
     public function setTerms(int $id, string $taxonomy, array $termIds): void
     {
         $relationships = $this->db->table('term_relationships');
@@ -220,7 +219,9 @@ final readonly class PostWriter
              WHERE tr.object_id = ? AND tt.taxonomy = ?",
             [$id, $taxonomy],
         );
+        $touched = [];
         foreach ($existing as $row) {
+            $touched[] = (int) $row['term_taxonomy_id'];
             $this->db->execute("DELETE FROM {$relationships} WHERE object_id = ? AND term_taxonomy_id = ?", [$id, (int) $row['term_taxonomy_id']]);
         }
         foreach ($termIds as $termId) {
@@ -228,46 +229,42 @@ final readonly class PostWriter
             if ($ttid === null) {
                 continue;
             }
+            $touched[] = (int) $ttid;
             $this->db->execute("INSERT IGNORE INTO {$relationships} (object_id, term_taxonomy_id) VALUES (?, ?)", [$id, (int) $ttid]);
         }
-        $this->recount($taxonomy);
-    }
-
-    /**
-     * The taxonomies a post has terms in.
-     *
-     * @return list<string> the distinct taxonomies a post has links in
-     */
-    public function taxonomiesOf(int $id): array
-    {
-        $rows = $this->db->rows(
-            "SELECT DISTINCT tt.taxonomy FROM {$this->db->table('term_relationships')} tr
-             JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
-             WHERE tr.object_id = ?",
-            [$id],
-        );
-        return array_map(static fn (array $row) => (string) $row['taxonomy'], $rows);
+        $this->recountTerms($touched);
     }
 
     /** Recounts every term the post is in, after a status change. */
     public function recountTaxonomiesOf(int $id): void
     {
-        foreach ($this->taxonomiesOf($id) as $taxonomy) {
-            $this->recount($taxonomy);
-        }
+        $this->recountTerms($this->termTaxonomyIdsOf($id));
     }
 
-    /** term_taxonomy.count is stored and trusted on read, so every status change refreshes it. */
-    public function recount(string $taxonomy): void
+    /** The term_taxonomy ids a post is linked to. @return list<int> */
+    public function termTaxonomyIdsOf(int $id): array
     {
-        $this->db->execute(
-            "UPDATE {$this->db->table('term_taxonomy')} tt SET tt.count = (
+        return array_map('intval', array_column($this->db->rows("SELECT term_taxonomy_id FROM {$this->db->table('term_relationships')} WHERE object_id = ?", [$id]), 'term_taxonomy_id'));
+    }
+
+    /** term_taxonomy.count is stored and trusted on read, so a write that touched terms (term_taxonomy ids) refreshes theirs. @param list<int> $ttIds */
+    public function recountTerms(array $ttIds): void
+    {
+        $ttIds = array_values(array_unique(array_map('intval', $ttIds)));
+        if ($ttIds === []) {
+            return;
+        }
+        $this->db->execute($this->countSql() . ' WHERE tt.term_taxonomy_id IN (' . implode(',', array_fill(0, count($ttIds), '?')) . ')', $ttIds);
+    }
+
+    /** The update that sets each term's count to its published posts. */
+    private function countSql(): string
+    {
+        return "UPDATE {$this->db->table('term_taxonomy')} tt SET tt.count = (
                 SELECT COUNT(*) FROM {$this->db->table('term_relationships')} tr
                 JOIN {$this->db->table('posts')} p ON p.ID = tr.object_id
                 WHERE tr.term_taxonomy_id = tt.term_taxonomy_id AND p.post_status = 'publish'
-            ) WHERE tt.taxonomy = ?",
-            [$taxonomy],
-        );
+            )";
     }
 
     /** Whether the post is in the sticky_posts option. */
@@ -399,13 +396,18 @@ final readonly class PostWriter
         return $out;
     }
 
-    /** Removes a post, its revisions, term links, and meta. */
-    /** Moves a deleted post's children of the given types to another parent, the way the reference keeps pages and attachments attached. @param list<string> $types */
-    public function reparentChildren(int $id, int $parent, array $types): void
+    /** Moves a deleted post's children of the given types to another parent, the way the reference keeps pages and attachments attached. @param list<string> $types @return list<int> the children moved */
+    public function reparentChildren(int $id, int $parent, array $types): array
     {
+        $moved = [];
         foreach ($types as $type) {
-            $this->db->execute("UPDATE {$this->db->table('posts')} SET post_parent = ? WHERE post_parent = ? AND post_type = ?", [$parent, $id, $type]);
+            $children = array_map('intval', array_column($this->db->rows("SELECT ID FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = ?", [$id, $type]), 'ID'));
+            if ($children !== []) {
+                $this->db->execute("UPDATE {$this->db->table('posts')} SET post_parent = ? WHERE post_parent = ? AND post_type = ?", [$parent, $id, $type]);
+                $moved = [...$moved, ...$children];
+            }
         }
+        return $moved;
     }
 
     /** Moves every post of one author to another. */
@@ -420,6 +422,17 @@ final readonly class PostWriter
         return $this->db;
     }
 
+    /**
+     * Deletes a post's row and nothing else: wp_delete_post has taken away
+     * what goes with it first, and a link in a taxonomy its type does not
+     * have stays, as on the reference (tests/tools/side-effects.php,
+     * plugin-symbols2).
+     */
+    public function deleteRow(int $id): void
+    {
+        $this->db->execute("DELETE FROM {$this->db->table('posts')} WHERE ID = ?", [$id]);
+    }
+
     /** Hard-deletes a post with its revisions and its meta. */
     public function destroy(int $id): void
     {
@@ -427,14 +440,12 @@ final readonly class PostWriter
             $posts = $this->db->table('posts');
             $this->db->execute("DELETE FROM {$posts} WHERE post_parent = ? AND post_type = 'revision'", [$id]);
             $this->db->execute("DELETE FROM {$posts} WHERE ID = ?", [$id]);
-            $taxonomies = $this->taxonomiesOf($id);
+            $terms = $this->termTaxonomyIdsOf($id);
             $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE object_id = ?", [$id]);
             $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ?", [$id]);
-            return $taxonomies;
+            return $terms;
         });
         // The counts are read back from what the delete left, so they are settled after it commits.
-        foreach ($taxonomies as $taxonomy) {
-            $this->recount($taxonomy);
-        }
+        $this->recountTerms($taxonomies);
     }
 }

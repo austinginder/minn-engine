@@ -940,9 +940,13 @@ function wp_maybe_generate_attachment_metadata($attachment)
     if ($id < 1) {
         return;
     }
+    // The attachment's lock (a transient naming the file) keeps a second request from making the same sizes.
     $file = get_attached_file($id);
-    if (empty(wp_get_attachment_metadata($id)) && is_string($file) && file_exists($file)) {
+    $lock = 'wp_generating_att_' . $id;
+    if (empty(wp_get_attachment_metadata($id)) && is_string($file) && file_exists($file) && !get_transient($lock)) {
+        set_transient($lock, $file);
         wp_update_attachment_metadata($id, wp_generate_attachment_metadata($id, $file));
+        delete_transient($lock);
     }
 }
 
@@ -1553,7 +1557,7 @@ function gallery_shortcode($attr)
     }
     $items = [];
     foreach (_minn_gallery_attachments($atts) as $attachment) {
-        $items[] = _minn_gallery_item($attachment, $atts);
+        $items[] = _minn_gallery_item($attachment, $atts, $instance);
     }
     if ($items === []) {
         return '';
@@ -1599,25 +1603,27 @@ function _minn_gallery_attachments(array $atts): array
 }
 
 /** @internal one gallery cell: the image, how it is linked, and its caption */
-function _minn_gallery_item($attachment, array $atts): array
+function _minn_gallery_item($attachment, array $atts, int $instance): array
 {
     $id = (int) $attachment->ID;
     $size = (string) $atts['size'];
-    $link = (string) $atts['link'];
-    $icon = match ($link) {
-        'none' => wp_get_attachment_image($id, $size, false, ['aria-describedby' => null]),
-        'file' => wp_get_attachment_link($id, $size, false, false),
-        default => wp_get_attachment_link($id, $size, true, false),
-    };
-    $meta = wp_get_attachment_metadata($id);
-    $width = (int) ($meta['width'] ?? 0);
-    $height = (int) ($meta['height'] ?? 0);
     $caption = trim((string) $attachment->post_excerpt);
+    // A captioned image names its caption, which takes the gallery's number and the image's id.
+    $captionId = 'gallery-' . $instance . '-' . $id;
+    $attr = $caption === '' ? '' : ['aria-describedby' => $captionId];
+    $icon = match ((string) $atts['link']) {
+        'none' => wp_get_attachment_image($id, $size, false, $attr),
+        'file' => wp_get_attachment_link($id, $size, false, false, false, $attr),
+        default => wp_get_attachment_link($id, $size, true, false, false, $attr),
+    };
+    // An image whose metadata gives no size has no orientation.
+    $meta = wp_get_attachment_metadata($id);
+    $orientation = isset($meta['width'], $meta['height']) ? ((int) $meta['height'] > (int) $meta['width'] ? 'portrait' : 'landscape') : '';
     return [
         'icon' => $icon,
-        'orientation' => $height > $width ? 'portrait' : 'landscape',
+        'orientation' => $orientation,
         'caption' => $caption === '' ? '' : wptexturize($caption),
-        'caption_id' => 'gallery-' . _minn_av_instance('gallery_caption') . '-' . $id,
+        'caption_id' => $captionId,
     ];
 }
 

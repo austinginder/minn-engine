@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1622
+        "delegates": 1625
     },
     "functions": {
         "__": {
@@ -608,6 +608,14 @@
             "file": "cron.php",
             "statement": "return Minn\\Runtime\\CronEvents::upgrade($cron);"
         },
+        "_wp_auto_add_pages_to_menu": {
+            "file": "taxonomy.php",
+            "statement": "_minn_menu_events()->autoAddPage($post, (string) $new_status, (string) $old_status);"
+        },
+        "_wp_batch_update_comment_type": {
+            "file": "comment.php",
+            "statement": "Minn\\Runtime\\CommentWrites::batchUpdateType();"
+        },
         "_wp_call_all_hook": {
             "file": "plugin.php",
             "statement": "Runtime::hooks()->callAll(array_values((array) $args));"
@@ -783,6 +791,10 @@
         "_wp_to_kebab_case": {
             "file": "template.php",
             "statement": "return \\Minn\\Blocks\\StyleEngine::kebab((string) $input_string);"
+        },
+        "_wp_upgrade_revisions_of_post": {
+            "file": "post.php",
+            "statement": "return PostRevisions::upgrade(get_post($post), array_values((array) $revisions));"
         },
         "_wp_upload_dir": {
             "file": "link-template.php",

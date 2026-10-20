@@ -206,7 +206,7 @@ final class Services
     /** Revisions and autosaves. */
     public function revisions(): Revisions
     {
-        return $this->share(Revisions::class, fn () => new Revisions($this->db, $this->writer(), $this->site()));
+        return $this->share(Revisions::class, fn () => new Revisions($this->db));
     }
 
     /** The site editor's saved global styles. */

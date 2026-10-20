@@ -22,6 +22,9 @@ use Minn\Support\Kses;
 use Minn\Auth\Nonce;
 use Minn\Front\Permalinks;
 use Minn\Runtime\PostEvents;
+use Minn\Runtime\Autosaves;
+use Minn\Runtime\Records;
+use Minn\Objects\Errors;
 
 /**
  * wp/v2 revisions under posts, pages, patterns and navigation menus, and
@@ -138,21 +141,43 @@ final readonly class RevisionsController
     {
         $userId = $this->requireParent((int) $id, $base);
         $body = $request->json();
-        // A field the request leaves out keeps the user's earlier autosave's (probe rest-revisions).
-        $earlier = array_values(array_filter(PostRecord::fromRows($this->revisions->autosavesOf((int) $id)), static fn (PostRecord $row) => $row->authorId === $userId))[0] ?? null;
-        // A field the parent's type lacks is saved blank; a menu item keeps no field of an autosave at all (probe rest-autosaves).
-        $fields = self::TYPES[$base] === 'nav_menu_item' ? [] : self::FIELDS[self::TYPES[$base]] ?? ['title', 'content', 'excerpt'];
-        $field = fn (string $key, string $kept) => !in_array($key, $fields, true) ? '' : (array_key_exists($key, $body) ? $this->clean(PostsWriteController::field($body[$key])) : $kept);
-        if ($earlier !== null) {
-            // A repeat autosave is heard before it is written: the fields the request gave, then the slot's own (probe hook-inputs-2).
-            $given = [];
-            foreach (array_intersect(['title', 'content', 'excerpt'], $fields, array_keys($body)) as $key) {
-                $given['post_' . $key] = $field($key, '');
-            }
-            Runtime::hooks()->action('wp_creating_autosave', [$given + ['post_parent' => (int) $id, 'post_status' => 'inherit', 'post_type' => 'revision', 'post_name' => $id . '-autosave-v1', 'post_date' => '', 'post_date_gmt' => '', 'ID' => $earlier->id, 'post_author' => $userId], true]);
+        // A field the parent's type lacks is left out; a menu item keeps no field of an autosave at all (probe rest-autosaves).
+        $allowed = self::TYPES[$base] === 'nav_menu_item' ? [] : self::FIELDS[self::TYPES[$base]] ?? ['title', 'content', 'excerpt'];
+        $fields = [];
+        foreach (array_intersect($allowed, array_keys($body)) as $key) {
+            $fields['post_' . $key] = $this->clean(PostsWriteController::field($body[$key]));
         }
-        $revisionId = $this->revisions->saveAutosave((int) $id, $userId, $field('title', $earlier->title ?? ''), $field('content', $earlier->content ?? ''), $field('excerpt', $earlier->excerpt ?? ''));
-        return Reply::item($this->withPreviewLink($this->object($this->posts->find($revisionId), Context::Edit), (int) $id), Fields::fromQuery($request->query));
+        $post = Records::post((int) $id);
+        $saved = Autosaves::save($post, $userId, $fields);
+        if ($saved instanceof Errors) {
+            throw new RestError($saved->get_error_code(), $saved->get_error_message(), 500);
+        }
+        if ($saved === (int) $id) {
+            // The author's own draft was saved in place: the reply is the post, in a revision's shape.
+            return Reply::item($this->draftObject($this->posts->find($saved)), Fields::fromQuery($request->query));
+        }
+        return Reply::item($this->withPreviewLink($this->object($this->posts->find($saved), Context::Edit), (int) $id), Fields::fromQuery($request->query));
+    }
+
+    /**
+     * A draft saved in place by its autosave, as the reference replies with
+     * it: a revision's fields with the post's own parent (linked only when
+     * there is one), its own guid, no dates while it floats, and its plain
+     * preview link.
+     */
+    private function draftObject(PostRecord $post): array
+    {
+        // The post's own parent stands where a revision's would, and is linked the same way.
+        $object = $this->object($post, Context::Edit);
+        $links = $post->parentId > 0 ? $object['_links'] : null;
+        unset($object['_links']);
+        $object['guid'] = ['rendered' => $post->guid, 'raw' => $post->guid];
+        if ($post->dateGmt === '' || str_starts_with($post->dateGmt, '0000')) {
+            $object['date'] = null;
+            $object['date_gmt'] = null;
+        }
+        $object['preview_link'] = $this->url->home('/?' . ($post->type === 'page' ? 'page_id' : 'p') . '=' . $post->id . '&preview=true');
+        return $links === null ? $object : $object + ['_links' => $links];
     }
 
     private function clean(string $markup): string

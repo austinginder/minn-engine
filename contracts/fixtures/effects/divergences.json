@@ -101,6 +101,7 @@
         "front-query-probe.php",
         "functions-remaining-probe.php",
         "functions-utils-probe.php",
+        "gallery-captions-probe.php",
         "general-template-more-probe.php",
         "general-template-remaining-probe.php",
         "get-pages-probe.php",
@@ -132,6 +133,7 @@
         "interactivity-api-methods-probe.php",
         "interactivity-directives-processor-probe.php",
         "interactivity-probe.php",
+        "invalid-text-probe.php",
         "json-schema-probe.php",
         "kses-allowed-asks-probe.php",
         "kses-internals-probe.php",
@@ -241,6 +243,7 @@
         "rest-block-patterns-probe.php",
         "rest-block-renderer-probe.php",
         "rest-block-types-probe.php",
+        "rest-comment-author-probe.php",
         "rest-comment-lists-probe.php",
         "rest-comment-save-probe.php",
         "rest-comments-controller-probe.php",
@@ -408,162 +411,7 @@
         "wpdb-probe.php"
     ],
     "differences": {
-        "block-supports-probe.php": {
-            "options:_transient_wp_styles_for_blocks": "net"
-        },
-        "breadcrumbs-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "category-menu-helpers-probe.php": {
-            "terms:terms#n": "states"
-        },
-        "comment-blocks-probe.php": {
-            "comments:comments#n": "states"
-        },
-        "comment-helpers-probe.php": {
-            "options:update_comment_type.lock": "states",
-            "posts:posts#n": "states"
-        },
-        "comment-remaining-probe.php": {
-            "comments:comments#n": "states"
-        },
-        "editor-styles-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "fonts-probe.php": {
-            "postmeta:posts#n|_wp_font_face_file": "states",
-            "posts:posts#n": "states"
-        },
-        "hook-inputs-2-probe.php": {
-            "posts:posts#n": "states",
-            "term_relationships:posts#n|1": "states"
-        },
-        "hook-inputs-probe.php": {
-            "posts:posts#n": "states",
-            "usermeta:1|locale": "net"
-        },
-        "icons-probe.php": {
-            "usermeta:users#n|nickname": "states",
-            "users:users#n": "states"
-        },
-        "media-cover-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "nav-menu-items-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "nav-menu-remaining-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "oembed-probe.php": {
-            "options:_transient_oembed_<hash>": "states",
-            "options:_transient_timeout_oembed_<hash>": "states"
-        },
-        "password-rehash-probe.php": {
-            "usermeta:users#n|nickname": "states",
-            "users:users#n": "states"
-        },
-        "patch-security-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "placeholders-admin-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "plugin-queue3-probe.php": {
-            "options:_transient_dirsize_cache": "states"
-        },
-        "plugin-queue4-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "plugin-surface-probe.php": {
-            "usermeta:1|locale": "net"
-        },
-        "plugin-symbols2-probe.php": {
-            "term_relationships:posts#n|1": "net"
-        },
-        "post-remaining-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "rest-autosaves-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "rest-batch-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "rest-comments-controller-probe.php": {
-            "comments:comments#n": "states"
-        },
-        "rest-embed-details-probe.php": {
-            "options:_site_transient_g_url_details_response_<hash>": "states"
-        },
-        "rest-fields-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "rest-menu-save-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "rest-menus-controller-probe.php": {
-            "options:theme_mods_twentytwentyfive": "states",
-            "posts:posts#n": "states"
-        },
-        "rest-meta-probe.php": {
-            "options:category_children": "states",
-            "posts:posts#n": "states",
-            "usermeta:1|locale": "net"
-        },
-        "rest-plugin-caps-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "rest-plugin-types-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "rest-posts-write-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "rest-protected-comments-probe.php": {
-            "comments:comments#n": "states"
-        },
-        "rest-template-create-probe.php": {
-            "posts:posts#n": "states"
-        },
         "rest-widgets-class-probe.php": {
-            "options:sidebars_widgets": "states",
-            "options:widget_zz_widgets_plain": "states",
-            "options:widget_zz_widgets_probe": "states"
-        },
-        "revision-more-probe.php": {
-            "options:revision-upgrade-posts#n": "states"
-        },
-        "runtime-internals-probe.php": {
-            "options:_transient_wp_generating_att_posts#n": "states"
-        },
-        "schema-and-menus-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "security-parity-probe.php": {
-            "comments:comments#n": "states"
-        },
-        "template-family-probe.php": {
-            "posts:posts#n": "states"
-        },
-        "template-loader-more-probe.php": {
-            "posts:posts#n": "states",
-            "term_relationships:posts#n|1460": "net"
-        },
-        "theme-tags-probe.php": {
-            "options:theme_mods_twentytwentyfive": "states"
-        },
-        "upgrader-probe.php": {
-            "options:_site_transient_update_plugins": "states",
-            "options:_site_transient_update_themes": "states"
-        },
-        "widget-classes-probe.php": {
-            "options:widget_zz_probe": "states"
-        },
-        "widget-factory-probe.php": {
-            "options:widget_zz_factory_probe": "states"
-        },
-        "widgets-remaining-probe.php": {
             "options:sidebars_widgets": "states"
         }
     }

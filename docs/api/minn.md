@@ -6,7 +6,7 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
-| [`Db`](#db) | final class | 370 | The one door to the database. Every query is a prepared statement; the |
+| [`Db`](#db) | final class | 394 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 335 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Html`](#html) | final class | 133 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
@@ -170,6 +170,15 @@ The first column of the first row, or null when there is no row.
 
 Runs a write and returns the affected row count.
 
+### static `invalidText(string $sql, array $params = array ( )): bool`
+
+Whether a statement carries text the site's utf8mb4 tables cannot
+hold (bytes that are not UTF-8): the reference's database door runs
+no such query, a write among them (probe sanitize-option; the
+side-effect diff, rest-embed-details).
+
+- `@param array<array-key, mixed> $params`
+
 ### static `onWrite(string $table, Closure $listener): void`
 
 Asks to be told whenever a write statement names a table (Content\RowCache drops what it kept from it).
@@ -228,7 +237,7 @@ reference (_config_wp_home), without a trailing slash.
 
 One option's row as stored, whatever wp-config.php says, or null when it is unset.
 
-Internals: `placeholders()` (private, line 249), `run()` (private, line 368)
+Internals: `placeholders()` (private, line 273), `run()` (private, line 392)
 
 
 ## Engine

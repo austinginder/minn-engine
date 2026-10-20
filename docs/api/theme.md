@@ -37,7 +37,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
-| [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
+| [`TemplateWriter`](#templatewriter) | final readonly class | 121 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 250 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 358 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeHeaders`](#themeheaders) | final class | 95 | A theme's headers as the reference's WP_Theme reads and shows them |
@@ -1307,7 +1307,7 @@ Moves a site copy to the trash, which hands the theme's file back.
 
 Deletes a saved template row.
 
-Internals: `insert()` (private, line 76), `setArea()` (private, line 114), `themeTermId()` (private, line 124)
+Internals: `insert()` (private, line 76), `setArea()` (private, line 119), `themeTermId()` (private, line 129)
 
 
 ## Templates

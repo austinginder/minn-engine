@@ -24,6 +24,10 @@
         {
             "match": "^options:_transient(_timeout)?_doing_cron$",
             "reason": "the reference spawns WP-Cron at the end of a run when an event has fallen due, its lock in the doing_cron transient; the engine's probe runner spawns none (the engine's cron runs on requests, wp-cron.php held to the reference by tests/cron.test.php), so this follows the clock, not the probe"
+        },
+        {
+            "match": "^options:_transient(_timeout)?_wp_styles_for_blocks$",
+            "reason": "the reference caches the block styles it builds from theme.json in a transient; the engine builds them each request and no plugin reads the cache (contracts/runtime.md register, row 17998, accepted)"
         }
     ]
 }

@@ -1246,18 +1246,10 @@ function _wp_delete_post_menu_item($object_id)
     }
 }
 
-/** The default on transition_post_status: a top-level page that is published joins every menu set to add new pages. */
+/** The default on transition_post_status: a top-level page that is published joins every menu set to add new pages that lacks it. */
 function _wp_auto_add_pages_to_menu($new_status, $old_status, $post)
 {
-    if ($new_status !== 'publish' || $old_status === 'publish' || $post->post_type !== 'page' || (int) $post->post_parent !== 0) {
-        return;
-    }
-    $options = get_option('nav_menu_options');
-    foreach ((array) ($options['auto_add'] ?? []) as $menu_id) {
-        if (is_nav_menu($menu_id)) {
-            _minn_menus()->appendPage((int) $menu_id, (int) $post->ID, get_current_user_id());
-        }
-    }
+    _minn_menu_events()->autoAddPage($post, (string) $new_status, (string) $old_status);
 }
 
 /** The term a shared term was split into, from the _split_terms record a pre-4.2 site may carry; false when none. */

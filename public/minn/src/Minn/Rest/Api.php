@@ -118,7 +118,7 @@ final readonly class Api
             new RenderController($s->db(), $s->site(), $s->posts(), $s->permalinks(), $caller, $s->contentDir() . '/themes'),
             new SystemController($s->diagnostics(), $s->logs(), $caller),
             new SettingsController(new Settings($s->site()), $caller, new LiveSettings($s->schema())),
-            new CommentsController($s->comments(), $s->posts(), $s->commentObject(), $caller),
+            new CommentsController($s->comments(), $s->posts(), $s->commentObject(), $caller, $s->users()),
             new GlobalStylesController($s->userStyles(), $s->themeStyles(), new GlobalStylesObject($s->revisions(), $s->url(), $caller), $s->revisions(), $caller),
             new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller, $s->permalinks()),
             new MediaController($s->posts(), $s->mediaWriter(), $s->mediaObject(), $caller, $postsController),
@@ -164,12 +164,6 @@ final readonly class Api
     {
         $s = $this->services;
         return (new RevisionsController($s->posts(), $s->revisions(), $s->url(), $s->caller(), $s->permalinks()))->object($row, $context);
-    }
-
-    /** Saves a user's autosave of a post in its one slot per author; the revision's id. */
-    public function saveAutosave(int $parentId, int $userId, string $title, string $content, string $excerpt): int
-    {
-        return $this->services->revisions()->saveAutosave($parentId, $userId, $title, $content, $excerpt);
     }
 
     /** The wp/v2 post shape. */

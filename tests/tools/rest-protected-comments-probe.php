@@ -36,7 +36,7 @@ foreach ($users as $who => $id) {
         $data = $response->get_data();
         $out["{$who} list, {$label}"] = $response->get_status() . ' ' . (is_array($data) && isset($data['code']) ? $data['code'] : count((array) $data) . ' comments');
         $request = new WP_REST_Request('POST', '/wp/v2/comments');
-        $request->set_body_params(['post' => $post, 'content' => "zz seccm {$who} {$label} " . wp_generate_password(6, false)] + ($password === null ? [] : ['password' => $password]));
+        $request->set_body_params(['post' => $post, 'content' => "zz seccm {$who} {$label} " . getmypid()] + ($password === null ? [] : ['password' => $password]));
         $response = rest_do_request($request);
         $data = $response->get_data();
         if (isset($data['id']) && is_int($data['id'])) { $made['comments'][] = $data['id']; }

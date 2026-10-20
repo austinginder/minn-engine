@@ -192,12 +192,26 @@ final readonly class Comments
         $this->db->execute("DELETE FROM {$this->db->table('commentmeta')} WHERE comment_id = ?", [$id]);
     }
 
-    /** Recomputes a post's stored comment_count (approved comments only). */
+    /** The newest comments stored without a type, at most $limit of them. @return list<int> */
+    public function typelessIds(int $limit): array
+    {
+        return array_map('intval', array_column($this->db->rows("SELECT comment_ID FROM {$this->db->table('comments')} WHERE comment_type = '' ORDER BY comment_ID DESC LIMIT ?", [$limit]), 'comment_ID'));
+    }
+
+    /** Gives the comments the type "comment". @param list<int> $ids */
+    public function typeAsComments(array $ids): void
+    {
+        if ($ids !== []) {
+            $this->db->execute("UPDATE {$this->db->table('comments')} SET comment_type = 'comment' WHERE comment_ID IN (" . implode(',', array_fill(0, count($ids), '?')) . ')', $ids);
+        }
+    }
+
+    /** Recomputes a post's stored comment_count: its approved comments, notes left out (tests/tools/side-effects.php, comment-helpers). */
     public function recount(int $postId): void
     {
         $this->db->execute(
             "UPDATE {$this->db->table('posts')} SET comment_count =
-             (SELECT COUNT(*) FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1')
+             (SELECT COUNT(*) FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1' AND comment_type <> 'note')
              WHERE ID = ?",
             [$postId, $postId],
         );

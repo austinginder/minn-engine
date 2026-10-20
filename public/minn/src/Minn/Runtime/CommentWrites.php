@@ -215,6 +215,34 @@ final class CommentWrites
         return true;
     }
 
+    /**
+     * One batch of the update giving comments stored without a type the
+     * type "comment" (_wp_batch_update_comment_type, on
+     * wp_update_comment_type_batch): under its lock (Runtime\OptionLock),
+     * the newest wp_update_comment_type_batch_size of them (100), the next
+     * batch scheduled first; a batch that finds none marks the update
+     * finished. While another batch holds the lock, only a try five
+     * minutes on is scheduled.
+     */
+    public static function batchUpdateType(): void
+    {
+        $lock = 'update_comment_type.lock';
+        if (!OptionLock::take($lock, 'no')) {
+            // Another batch holds the lock: this one tries again in five minutes.
+            CronEvents::scheduleSingle(time() + 5 * 60, 'wp_update_comment_type_batch');
+            return;
+        }
+        $ids = self::store()->typelessIds((int) Runtime::hooks()->filter('wp_update_comment_type_batch_size', [100]));
+        if ($ids === []) {
+            OptionWrites::update('finished_updating_comment_type', true);
+        } else {
+            CronEvents::scheduleSingle(time() + 2 * 60, 'wp_update_comment_type_batch');
+            self::store()->typeAsComments($ids);
+            self::cleanCache($ids);
+        }
+        OptionLock::release($lock);
+    }
+
     /** A comment to the trash (wp_trash_comment), or deleted when the trash is off. */
     public static function trash(mixed $commentId): bool
     {

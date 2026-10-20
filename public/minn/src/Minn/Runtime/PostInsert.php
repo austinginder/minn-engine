@@ -57,11 +57,11 @@ final readonly class PostInsert
                 'post_mime_type' => '',
             ];
         }
-        // A missing or empty comment or ping status means the default (probe insert-defaults): the type's for a
-        // new post (a page, or a type without comments or trackbacks, starts closed), closed for an update.
+        // A missing or empty comment or ping status means the default (probe insert-defaults): the type's (a page,
+        // or a type without comments or trackbacks, starts closed), except that an update's comments close.
         foreach (['comment_status' => 'comment', 'ping_status' => 'pingback'] as $column => $kind) {
-            if (($columns[$column] ?? '') === '' && ($existing === null || isset($columns[$column]))) {
-                $columns[$column] = $existing === null ? ($this->discussion)($this->type($columns, null), $kind) : 'closed';
+            if (($columns[$column] ?? '') === '') {
+                $columns[$column] = $existing !== null && $column === 'comment_status' ? 'closed' : ($this->discussion)($this->type($columns, $existing), $kind);
             }
         }
         return $columns;
@@ -140,18 +140,22 @@ final readonly class PostInsert
         return $columns;
     }
 
-    /** Writes the resolved columns; a new post without a guid gets the ?p= form. @return int the post id */
-    public function persist(array $columns, ?int $existingId, Closure $guid): int
+    /** Writes the resolved columns. @return int the post id */
+    public function persist(array $columns, ?int $existingId): int
     {
         if ($existingId !== null) {
             $this->writer->update($existingId, $columns);
             return $existingId;
         }
-        $id = $this->writer->insert($columns);
+        return $this->writer->insert($columns);
+    }
+
+    /** Gives a new post written without a guid its permalink as one, once its slug, terms and meta are in. */
+    public function fillGuid(int $id, array $columns, Closure $guid): void
+    {
         if (($columns['guid'] ?? '') === '') {
             $this->writer->update($id, ['guid' => $guid($id)]);
         }
-        return $id;
     }
 
     /**

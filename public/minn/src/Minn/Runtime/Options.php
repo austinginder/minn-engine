@@ -342,7 +342,10 @@ final class Options
         if ($old === $value || self::toStorage($old) === self::toStorage($value)) {
             return false;
         }
-        $this->db->execute("UPDATE {$this->db->table('options')} SET option_value = ?" . ($autoload === null ? '' : ', autoload = ?') . ' WHERE option_name = ?', $autoload === null ? [self::toStorage($value), $name] : [self::toStorage($value), $autoload, $name]);
+        // An update the database did not take (text it cannot hold) changes nothing, and says so.
+        if ($this->db->execute("UPDATE {$this->db->table('options')} SET option_value = ?" . ($autoload === null ? '' : ', autoload = ?') . ' WHERE option_name = ?', $autoload === null ? [self::toStorage($value), $name] : [self::toStorage($value), $autoload, $name]) === 0) {
+            return false;
+        }
         $held = $this->remember($name, $value);
         if (Runtime::installing()) {
             return true;
@@ -436,6 +439,15 @@ final class Options
         }
         $this->db->execute("UPDATE {$this->db->table('options')} SET autoload = ? WHERE option_name = ?", [$wanted, $name]);
         return true;
+    }
+
+    /**
+     * Inserts an option row only when no row holds the name yet, past every
+     * cache: a lock (Runtime\OptionLock). Whether this call made the row.
+     */
+    public function claim(string $name, string $value, string $autoload): bool
+    {
+        return $this->db->execute("INSERT IGNORE INTO {$this->db->table('options')} (option_name, option_value, autoload) VALUES (?, ?, ?)", [$name, $value, $autoload]) > 0;
     }
 
     /** Removes an option: out of the list or its own key, and known unset. */

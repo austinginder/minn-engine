@@ -77,7 +77,8 @@ function get_custom_header()
             }
         }
     }
-    $header = wp_parse_args($data, [
+    // No header data stored is none, not a query string to parse (hook battery, custom-header).
+    $header = wp_parse_args(is_array($data) || is_object($data) ? $data : [], [
         'url' => '',
         'thumbnail_url' => '',
         'width' => get_theme_support('custom-header', 'width'),

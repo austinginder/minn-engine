@@ -65,7 +65,17 @@ $fake = static function ($pre, $args, $address) use (&$fetched) {
     return ['headers' => [], 'body' => 'nope', 'response' => ['code' => 404, 'message' => 'Not Found'], 'cookies' => [], 'filename' => null];
 };
 add_filter('pre_http_request', $fake, 10, 3);
-$video = 'https://www.youtube.com/watch?v=zzprobe' . wp_rand(1000, 9999);
+// The proxy's cache, found by what it holds, goes before the run and after, so the fixed address is fetched afresh.
+$sweep = static function (): void {
+    global $wpdb;
+    foreach ($wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE '\\_transient\\_oembed\\_%'") as $row) {
+        if (str_contains((string) $row->option_value, 'zzprobe')) {
+            delete_transient(substr($row->option_name, strlen('_transient_')));
+        }
+    }
+};
+$sweep();
+$video = 'https://www.youtube.com/watch?v=zzprobe4242';
 wp_set_current_user(0);
 $send('proxy visitor', '/oembed/1.0/proxy', ['url' => $video]);
 wp_set_current_user(3);
@@ -83,11 +93,6 @@ $say('iframe titles', [
     wp_filter_oembed_iframe_title_attribute('<div>no frame</div>', (object) ['title' => 'New'], 'x'),
     wp_filter_oembed_iframe_title_attribute('<iframe src="x"></iframe>', (object) [], 'x'),
 ]);
-global $wpdb;
-foreach ($wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE '\\_transient\\_oembed\\_%'") as $row) {
-    if (str_contains((string) $row->option_value, 'zzprobe')) {
-        delete_transient(substr($row->option_name, strlen('_transient_')));
-    }
-}
+$sweep();
 wp_delete_post($draft, true);
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

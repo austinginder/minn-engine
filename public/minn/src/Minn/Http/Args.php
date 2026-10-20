@@ -31,6 +31,30 @@ final class Args
     /** The key an argument carries when its handler judges it (a status the caller may not read is refused before the enum is). */
     public const HANDLER_VALIDATES = 'handler_validates';
 
+    /**
+     * The key an argument carries when the reference judges it only once
+     * every other argument has passed, in the round its sanitize callbacks
+     * run, and lets it be empty: the comment author's address.
+     */
+    public const SANITIZE_ROUND = 'sanitize_round';
+
+    /** The key an argument carries when the reference's own check refuses it with a bare "Invalid parameter." and no details: a comment's meta. */
+    public const BARE_REFUSAL = 'bare_refusal';
+
+    /** The keys only the engine reads, which an argument never shows plugins. */
+    private const INTERNAL = [self::HANDLER_VALIDATES => true, self::SANITIZE_ROUND => true, self::BARE_REFUSAL => true];
+
+    /**
+     * An argument as the index and plugins read it, without the keys only the engine reads.
+     *
+     * @param array<string, mixed> $arg
+     * @return array<string, mixed>
+     */
+    public static function published(array $arg): array
+    {
+        return array_diff_key($arg, self::INTERNAL);
+    }
+
     /** Read by Rest\Context::of(): which view of a resource is wanted. */
     public const CONTEXT = [
         'context' => ['description' => 'Scope under which the request is made; determines fields present in response.', 'type' => 'string', 'enum' => ['view', 'embed', 'edit'], 'default' => 'view', 'required' => false],
@@ -98,6 +122,28 @@ final class Args
         'status' => ['default' => 'approve', 'description' => 'Limit result set to comments assigned a specific status. Requires authorization.', 'type' => 'string', 'required' => false],
         'type' => ['default' => 'comment', 'description' => 'Limit result set to comments assigned a specific type. Requires authorization.', 'type' => 'string', 'required' => false],
         'password' => ['description' => 'The password for the post if it is password protected.', 'type' => 'string', 'required' => false],
+    ];
+
+    /**
+     * Read by Rest\CommentsController::create() and update(): the body of a comment save. The
+     * content is the handler's to judge (a number is invalid content on the reference), the
+     * author's address is judged after the rest, and a meta that is not an object earns the
+     * bare refusal.
+     */
+    public const COMMENT_WRITE = [
+        'author' => ['description' => 'The ID of the user object, if author was a user.', 'type' => 'integer', 'required' => false],
+        'author_email' => ['description' => 'Email address for the comment author.', 'type' => 'string', 'format' => 'email', 'required' => false, self::SANITIZE_ROUND => true],
+        'author_ip' => ['description' => 'IP address for the comment author.', 'type' => 'string', 'format' => 'ip', 'required' => false],
+        'author_name' => ['description' => 'Display name for the comment author.', 'type' => 'string', 'required' => false],
+        'author_url' => ['description' => 'URL for the comment author.', 'type' => 'string', 'format' => 'uri', 'required' => false],
+        'author_user_agent' => ['description' => 'User agent for the comment author.', 'type' => 'string', 'required' => false],
+        'content' => ['description' => 'The content for the comment.', 'type' => 'object', 'required' => false, self::HANDLER_VALIDATES => true],
+        'date' => ['description' => 'The date the comment was published, in the site\'s timezone.', 'type' => 'string', 'format' => 'date-time', 'required' => false],
+        'date_gmt' => ['description' => 'The date the comment was published, as GMT.', 'type' => 'string', 'format' => 'date-time', 'required' => false],
+        'parent' => ['default' => 0, 'description' => 'The ID for the parent of the comment.', 'type' => 'integer', 'required' => false],
+        'post' => ['default' => 0, 'description' => 'The ID of the associated post object.', 'type' => 'integer', 'required' => false],
+        'status' => ['description' => 'State of the comment.', 'type' => 'string', 'required' => false],
+        'meta' => ['description' => 'Meta fields.', 'type' => 'object', 'required' => false, self::BARE_REFUSAL => true],
     ];
 
     /**

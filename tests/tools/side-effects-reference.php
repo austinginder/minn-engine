@@ -12,6 +12,11 @@
  */
 
 $GLOBALS['wpdb']->query('SET @zz_side_effects_probe = 1');
+// The process the probe runs in, which the tool masks where a probe names something after it.
+// Run by hand, outside a pass, there is no audit table to mark.
+$quiet = $GLOBALS['wpdb']->suppress_errors();
+$GLOBALS['wpdb']->query("INSERT INTO zz_side_effects (tbl, op, conn, new_row) VALUES ('', 'p', CONNECTION_ID(), '" . getmypid() . "')");
+$GLOBALS['wpdb']->suppress_errors($quiet);
 $admin = DIRECTORY_SEPARATOR . 'wp-admin' . DIRECTORY_SEPARATOR;
 foreach ($GLOBALS['wp_filter'] as $hook => $registered) {
     foreach ($registered->callbacks as $priority => $callbacks) {

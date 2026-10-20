@@ -256,6 +256,12 @@ $say('missing attachment metadata made', (static function () use (&$made) {
     wp_update_attachment_metadata($id, $generated);
     $made[] = $missing = (int) wp_insert_attachment(['post_mime_type' => 'image/png', 'post_title' => 'Zz maybe meta missing', 'post_status' => 'inherit'], wp_get_upload_dir()['basedir'] . '/zz-not-there.png');
     $out[] = [wp_maybe_generate_attachment_metadata(get_post($missing)), $shape($missing)];
+    // Another request already generating the metadata holds the attachment's lock: nothing is made.
+    $upload = wp_upload_bits('zz-maybe-meta-held.png', null, $bits);
+    $made[] = $held = (int) wp_insert_attachment(['post_mime_type' => 'image/png', 'post_title' => 'Zz maybe meta held', 'post_status' => 'inherit'], $upload['file']);
+    set_transient('wp_generating_att_' . $held, $upload['file']);
+    $out[] = [wp_maybe_generate_attachment_metadata(get_post($held)), $shape($held), get_transient('wp_generating_att_' . $held) === $upload['file']];
+    delete_transient('wp_generating_att_' . $held);
     return $out;
 })());
 

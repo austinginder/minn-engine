@@ -136,10 +136,60 @@ final class PostRevisions
         return is_object($post) ? get_object_vars($post) : [];
     }
 
+    /**
+     * Revisions named before 3.6 brought up to date
+     * (_wp_upgrade_revisions_of_post; probe revision-more), under the
+     * post's lock (Runtime\OptionLock), let go when the renaming is done.
+     * Newest first, each old revision takes its versioned name when its
+     * name has the "{id}-revision" or "{id}-autosave" shape, and the author
+     * of the old revision before it (the oldest keeps its own). Unless a
+     * revision was already up to date, the post is then saved as a revision
+     * as a save would save it. False while another upgrade holds the lock.
+     *
+     * @param list<object> $revisions newest first
+     */
+    public static function upgrade(Post $post, array $revisions): bool
+    {
+        $lock = "revision-upgrade-{$post->ID}";
+        if (!OptionLock::take($lock, 'off')) {
+            return false;
+        }
+        $db = Runtime::current()->db;
+        $current = false;
+        foreach ($revisions as $at => $revision) {
+            if (self::version((string) $revision->post_name) > 0) {
+                $current = true;
+                continue;
+            }
+            $older = $revisions[$at + 1] ?? null;
+            $author = $older !== null && self::version((string) $older->post_name) === 0 ? (int) $older->post_author : (int) $revision->post_author;
+            $db->execute("UPDATE {$db->table('posts')} SET post_name = ?, post_author = ? WHERE ID = ?", [self::versionedName((string) $revision->post_name), $author, (int) $revision->ID]);
+            PostCaches::clean((int) $revision->ID);
+        }
+        OptionLock::release($lock);
+        if (!$current) {
+            self::save($post);
+        }
+        return true;
+    }
+
+    /** The version a revision's name carries ("{id}-revision-v1" is 1); 0 for a name from before versions, or any other. */
+    private static function version(string $name): int
+    {
+        return preg_match('/^\d+-(?:revision|autosave)-v(\d+)$/', $name, $match) === 1 ? (int) $match[1] : 0;
+    }
+
+    /** An old revision's name with its version: "{id}-revision" and "{id}-revision-2" become "{id}-revision-v1"; another shape stays as it is. */
+    private static function versionedName(string $name): string
+    {
+        return (string) preg_replace('/^(\d+-(?:revision|autosave))[\d-]*$/', '$1-v1', $name);
+    }
+
     /** The new revision's id, or null when none was called for. */
     public static function save(Post $post): ?int
     {
-        if (!Registered::supports($post->post_type, 'revisions') || $post->post_status === 'auto-draft' || !self::enabled($post)) {
+        // An autosave's request (DOING_AUTOSAVE) saves no revision, whatever it writes, once wp_revisions_to_keep has been asked (tests/tools/side-effects.php, rest-autosaves; hook battery, hook-inputs-2).
+        if (!Registered::supports($post->post_type, 'revisions') || $post->post_status === 'auto-draft' || !self::enabled($post) || (\defined('DOING_AUTOSAVE') && \constant('DOING_AUTOSAVE'))) {
             return null;
         }
         $latest = null;

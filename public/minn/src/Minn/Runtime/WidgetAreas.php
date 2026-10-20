@@ -136,8 +136,11 @@ final class WidgetAreas
     public static function assign(string $widgetId, string $sidebarId): void
     {
         $sidebars = self::stored();
+        // The widget leaves every list with the other widgets' keys kept, and goes on the end of its new one (probe rest-widgets-class).
         foreach ($sidebars as $sidebar => $widgets) {
-            $sidebars[$sidebar] = array_values(array_filter((array) $widgets, static fn ($id) => $id !== $widgetId));
+            if (is_array($widgets)) {
+                $sidebars[$sidebar] = array_filter($widgets, static fn ($id) => $id !== $widgetId);
+            }
         }
         if ($sidebarId !== '') {
             $sidebars[$sidebarId][] = $widgetId;
@@ -186,15 +189,16 @@ final class WidgetAreas
      * @param array<string, mixed> $stored the stored lists, sidebar => widget ids
      * @param list<string> $areas the registered sidebars
      * @param list<string> $registered the registered widgets
-     * @return array<string, list<string>>
+     * @return array<string, array<int, string>>
      */
     public static function retrieve(array $stored, array $areas, array $registered): array
     {
         $known = array_flip($registered);
         $keep = static fn ($ids): array => array_values(array_filter((array) $ids, static fn ($id) => is_string($id) && isset($known[$id])));
         $sidebars = [self::INACTIVE => []];
+        // An area's list keeps its keys where widgets are left out (probe widgets-remaining); the inactive list is made afresh.
         foreach ($areas as $id) {
-            $sidebars[$id] = $keep($stored[$id] ?? []);
+            $sidebars[$id] = array_filter((array) ($stored[$id] ?? []), static fn ($widget) => is_string($widget) && isset($known[$widget]));
         }
         $gone = array_diff_key(array_filter($stored, 'is_array'), $sidebars);
         $inactive = array_merge(self::unmentioned($stored, $registered), $keep($stored[self::INACTIVE] ?? []), ...array_map($keep, array_values($gone)));

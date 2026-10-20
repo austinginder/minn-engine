@@ -193,6 +193,18 @@ $made[] = $pending;
 wp_set_current_user(0);
 wp_update_post(['ID' => $pending, 'post_title' => 'zz probe pend again']);
 $say('pending updated by a visitor', get_post($pending)->post_name);
+$discussion = [];
+foreach (['nothing' => [], 'both empty' => ['comment_status' => '', 'ping_status' => ''], 'comments empty' => ['comment_status' => ''], 'pings empty' => ['ping_status' => '']] as $what => $extra) {
+    foreach (['post', 'page'] as $type) {
+        $made[] = $open = (int) wp_insert_post(['post_title' => 'zz probe talk', 'post_status' => 'publish', 'post_type' => $type, 'comment_status' => 'open', 'ping_status' => 'open']);
+        wp_insert_post(['ID' => $open, 'post_title' => 'zz probe talk', 'post_type' => $type, 'post_status' => 'publish', 'post_content' => 'x'] + $extra);
+        $saved = get_post($open);
+        wp_update_post(['ID' => $open, 'post_content' => 'y'] + $extra);
+        $updated = get_post($open);
+        $discussion["{$what}, {$type}"] = [$saved->comment_status, $saved->ping_status, $updated->comment_status, $updated->ping_status];
+    }
+}
+$say('an open post saved again by id without its discussion statuses (wp_insert_post, then wp_update_post): comments close, pings take the type default', $discussion);
 foreach (array_reverse($made) as $id) {
     wp_delete_post($id, true);
 }

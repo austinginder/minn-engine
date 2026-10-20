@@ -85,7 +85,7 @@ foreach ($files as $path) {
 // Query calls a facade file still makes, through the engine's Db or through
 // $wpdb (the facade's own wpdb answers on the same database, so a query there
 // is SQL in the facade all the same). Only falls: move the work into src/Minn/.
-$facadeQueries = ['canonical.php' => 1, 'comment.php' => 5, 'pluggable.php' => 1, 'post.php' => 5, 'query.php' => 3, 'upgrade.php' => 4, 'user.php' => 2];
+$facadeQueries = ['canonical.php' => 1, 'comment.php' => 4, 'pluggable.php' => 1, 'post.php' => 3, 'query.php' => 3, 'upgrade.php' => 4, 'user.php' => 2];
 $facadeLong = [];
 $facadeDir = dirname($root) . '/wp-api';
 // Functions and methods, by brace matching: a method's body ends at the brace that closes it.

@@ -338,6 +338,8 @@ final readonly class Menus
         // As the reference names an item: by its title, by its id with none, not at all while a draft.
         $draft = in_array($fields['status'], ['draft', 'pending', 'auto-draft'], true);
         $slug = $draft || $fields['title'] === '' ? '' : $writer->uniqueSlug($fields['title'], 0, 'nav_menu_item');
+        // A draft's GMT dates stay zero until it is published.
+        $gmt = $draft ? '0000-00-00 00:00:00' : $gmt;
         $id = $writer->insert([
             'post_author' => $fields['authorId'],
             'post_date' => $now,
@@ -362,9 +364,13 @@ final readonly class Menus
             'post_mime_type' => '',
             'comment_count' => 0,
         ]);
-        $slug = $draft || $slug !== '' ? $slug : (string) $id;
+        // An untitled live item takes its id for a slug, in a write of its own before the guid's.
+        if (!$draft && $slug === '') {
+            $slug = (string) $id;
+            $writer->update($id, ['post_name' => $slug]);
+        }
         $home = rtrim((string) ($site->option('home') ?? ''), '/');
-        $writer->update($id, ['post_name' => $slug, 'guid' => $draft ? $home . '/?p=' . $id : $home . '/' . $slug . '/']);
+        $writer->update($id, ['guid' => $draft ? $home . '/?p=' . $id : $home . '/' . $slug . '/']);
         $this->writeMeta($id, [
             'type' => $fields['type'], 'menu_item_parent' => (string) $fields['parent'], 'object_id' => (string) ($fields['type'] === 'custom' ? $id : $fields['objectId']),
             'object' => $fields['object'], 'target' => $fields['target'], 'classes' => $fields['classes'] ?? [''], 'xfn' => $fields['xfn'] ?? '', 'url' => $fields['url'],
@@ -428,20 +434,6 @@ final readonly class Menus
              WHERE p.post_type = 'nav_menu_item' ORDER BY p.ID ASC",
             [(string) $objectId, $type],
         ), 'ID'));
-    }
-
-    /** Adds a page to the end of a menu, titled by the page itself, as a menu set to add new pages takes it. */
-    public function appendPage(int $menuId, int $pageId, int $authorId): int
-    {
-        $last = 0;
-        foreach ($this->items($menuId) as $item) {
-            $last = max($last, $item->menuOrder);
-        }
-        return $this->createItem([
-            'title' => '', 'url' => '', 'type' => 'post_type', 'object' => 'page', 'objectId' => $pageId, 'parent' => 0,
-            'menuOrder' => $last + 1, 'target' => '', 'status' => 'publish', 'menuId' => $menuId, 'attrTitle' => '',
-            'description' => '', 'authorId' => $authorId,
-        ]);
     }
 
     /**

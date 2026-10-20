@@ -166,10 +166,12 @@ final class UserWrites
         }
         $before = Handoff::user($id)->to_array();
         $merged = $before;
-        foreach ([...UserInsert::META_KEYS, 'infinite_scrolling'] as $key) {
-            if (MetaData::exists('user', $id, $key)) {
-                $merged[$key] = MetaData::get('user', $id, $key, true);
-            }
+        // Every profile key is read, a missing one as empty, so the save writes them all back and a missing row is added (tests/tools/side-effects.php, rest-meta).
+        foreach (UserInsert::META_KEYS as $key) {
+            $merged[$key] = MetaData::get('user', $id, $key, true);
+        }
+        if (MetaData::exists('user', $id, 'infinite_scrolling')) {
+            $merged['infinite_scrolling'] = MetaData::get('user', $id, 'infinite_scrolling', true);
         }
         $result = self::insert(array_merge(Slashes::add($merged), $userdata));
         if (!Records::isError($result)) {

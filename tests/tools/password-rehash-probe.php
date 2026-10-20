@@ -69,7 +69,7 @@ if (defined('PASSWORD_ARGON2ID')) {
     $say('…back on bcrypt, the argon2id hash still verifies and needs a rehash', [wp_check_password('pw', $a), wp_password_needs_rehash($a)]);
 }
 
-$login = 'zz-rehash-' . substr(md5((string) microtime(true)), 0, 6);
+$login = 'zz-rehash-' . getmypid();
 $id = wp_insert_user(['user_login' => $login, 'user_pass' => 'pw', 'user_email' => $login . '@example.test', 'role' => 'subscriber']);
 $set = [];
 $onSet = static function ($password, $user) use (&$set) {

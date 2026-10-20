@@ -21,10 +21,13 @@ use Minn\Runtime\Refusal;
  * parameters (context, page, per_page, search) are judged first and a
  * refusal among them is answered alone; then every other invalid one is
  * listed in rest_invalid_param, in the order the route declares them, with
- * the schema's own refusal under details. The query is read against the
- * route's args, the JSON body against its body set, and a JSON body that
- * does not parse is refused on every route first. An argument its handler
- * judges (Args::HANDLER_VALIDATES) is left to the handler.
+ * the schema's own refusal under details (none for an argument whose
+ * refusal is bare, Args::BARE_REFUSAL). An argument judged in the
+ * sanitize round (Args::SANITIZE_ROUND) is read only once all the others
+ * passed. The query is read against the route's args, the JSON body
+ * against its body set, and a JSON body that does not parse is refused on
+ * every route first. An argument its handler judges
+ * (Args::HANDLER_VALIDATES) is left to the handler.
  */
 final readonly class ArgCheck
 {
@@ -57,6 +60,7 @@ final readonly class ArgCheck
             $this->missing($args, $values);
         }
         $this->round($sources);
+        $this->sanitizeRound($sources);
     }
 
     /** A JSON body that does not parse is refused on every route, before its arguments are read; an empty one is not a body. */
@@ -96,7 +100,34 @@ final readonly class ArgCheck
         $details = [];
         foreach ($sources as [$args, $values]) {
             foreach ($args as $name => $schema) {
-                if (!array_key_exists($name, $values) || ($schema[Args::HANDLER_VALIDATES] ?? false) === true) {
+                if (!array_key_exists($name, $values) || ($schema[Args::HANDLER_VALIDATES] ?? false) === true || ($schema[Args::SANITIZE_ROUND] ?? false) === true) {
+                    continue;
+                }
+                $verdict = $this->schema->validate($values[$name], $schema, $name);
+                if ($verdict instanceof Refusal && ($schema[Args::BARE_REFUSAL] ?? false) === true) {
+                    $invalid[$name] = 'Invalid parameter.';
+                } elseif ($verdict instanceof Refusal) {
+                    $invalid[$name] = $verdict->message;
+                    $details[$name] = ['code' => $verdict->code, 'message' => $verdict->message, 'data' => $verdict->data];
+                }
+            }
+        }
+        self::refuse($invalid, $details);
+    }
+
+    /**
+     * The arguments the reference judges once every other one passed, in its
+     * sanitize round: each may be empty, and is otherwise held to its schema.
+     *
+     * @param list<array{0: array<string, array<string, mixed>>, 1: array<string, mixed>}> $sources
+     */
+    private function sanitizeRound(array $sources): void
+    {
+        $invalid = [];
+        $details = [];
+        foreach ($sources as [$args, $values]) {
+            foreach ($args as $name => $schema) {
+                if (($schema[Args::SANITIZE_ROUND] ?? false) !== true || !array_key_exists($name, $values) || $values[$name] === '') {
                     continue;
                 }
                 $verdict = $this->schema->validate($values[$name], $schema, $name);
@@ -106,6 +137,17 @@ final readonly class ArgCheck
                 }
             }
         }
+        self::refuse($invalid, $details);
+    }
+
+    /**
+     * rest_invalid_param naming every refused argument, when there is one.
+     *
+     * @param array<string, string> $invalid
+     * @param array<string, array<string, mixed>> $details
+     */
+    private static function refuse(array $invalid, array $details): void
+    {
         if ($invalid !== []) {
             throw new RestError('rest_invalid_param', 'Invalid parameter(s): ' . implode(', ', array_keys($invalid)), 400, ['params' => $invalid, 'details' => $details]);
         }

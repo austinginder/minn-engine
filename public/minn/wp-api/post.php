@@ -1001,34 +1001,13 @@ function _wp_preview_terms_filter($terms, $post_id, $taxonomy)
 
 /**
  * Revisions named before 3.6 ({id}-revision, {id}-autosave) given their -v1
- * names. When the newest was one of those and differs from the post (or
- * there are none), a revision of the post itself is added. Always true.
+ * names under the post's upgrade lock. When the newest was one of those and
+ * differs from the post (or there are none), a revision of the post itself
+ * is added. False while another upgrade holds the lock.
  */
 function _wp_upgrade_revisions_of_post($post, $revisions)
 {
-    global $wpdb;
-    $newest = reset($revisions);
-    foreach ($revisions as $revision) {
-        if (!str_contains((string) $revision->post_name, '-v1')) {
-            $wpdb->update($wpdb->posts, ['post_name' => $revision->post_name . '-v1'], ['ID' => $revision->ID]);
-            clean_post_cache($revision->ID);
-        }
-    }
-    if ($newest === false || (!str_contains((string) $newest->post_name, '-v1') && _minn_revision_differs($post, $newest))) {
-        _wp_put_post_revision($post);
-    }
-    return true;
-}
-
-/** @internal Whether a revision's revisioned fields differ from the post's. */
-function _minn_revision_differs(WP_Post $post, WP_Post $revision): bool
-{
-    foreach (array_keys(_wp_post_revision_fields($post)) as $field) {
-        if ((string) $post->$field !== (string) $revision->$field) {
-            return true;
-        }
-    }
-    return false;
+    return PostRevisions::upgrade(get_post($post), array_values((array) $revisions));
 }
 
 /** Posts into the object cache, each only where none is cached yet. */

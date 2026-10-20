@@ -1,0 +1,501 @@
+[
+    [
+        "an author named by id: their name, address and site",
+        [
+            201,
+            "Erin Editor",
+            "editor@minn-engine.localhost",
+            "",
+            2
+        ]
+    ],
+    [
+        "an author named by id, with author fields of its own",
+        [
+            201,
+            "Given",
+            "given@example.com",
+            "https://given.example",
+            2
+        ]
+    ],
+    [
+        "an author named by id, with only an address of its own",
+        [
+            201,
+            "scribe",
+            "x@example.com",
+            "",
+            3
+        ]
+    ],
+    [
+        "an author who does not exist",
+        [
+            400,
+            "rest_comment_author_invalid",
+            "Invalid comment author ID.",
+            null,
+            null
+        ]
+    ],
+    [
+        "author 0",
+        [
+            400,
+            "rest_comment_author_invalid",
+            "Invalid comment author ID.",
+            null,
+            null
+        ]
+    ],
+    [
+        "an author who does not exist, on a post that does not either",
+        [
+            403,
+            "rest_comment_invalid_post_id",
+            "Sorry, you are not allowed to create this comment without a post.",
+            null,
+            null
+        ]
+    ],
+    [
+        "an author who does not exist, with no content",
+        [
+            400,
+            "rest_comment_author_invalid",
+            "Invalid comment author ID.",
+            null,
+            null
+        ]
+    ],
+    [
+        "no author: the user signed in",
+        [
+            201,
+            "admin",
+            "admin@minn-engine.localhost",
+            "https://minn.localhost",
+            1
+        ]
+    ],
+    [
+        "a name and no address",
+        [
+            400,
+            "rest_comment_author_data_required",
+            "Creating a comment requires valid author name and email values.",
+            null,
+            null
+        ]
+    ],
+    [
+        "an address and no name",
+        [
+            400,
+            "rest_comment_author_data_required",
+            "Creating a comment requires valid author name and email values.",
+            null,
+            null
+        ]
+    ],
+    [
+        "a site and nothing else",
+        [
+            400,
+            "rest_comment_author_data_required",
+            "Creating a comment requires valid author name and email values.",
+            null,
+            null
+        ]
+    ],
+    [
+        "a name and an address",
+        [
+            201,
+            "Named",
+            "named@example.com",
+            "",
+            0
+        ]
+    ],
+    [
+        "an empty address",
+        [
+            400,
+            "rest_comment_author_data_required",
+            "Creating a comment requires valid author name and email values.",
+            null,
+            null
+        ]
+    ],
+    [
+        "a name and no address, with no content",
+        [
+            400,
+            "rest_comment_content_invalid",
+            "Invalid comment content.",
+            null,
+            null
+        ]
+    ],
+    [
+        "a name and no address, while the site asks for neither",
+        [
+            201,
+            "Named",
+            "",
+            "",
+            0
+        ]
+    ],
+    [
+        "content given raw",
+        [
+            201,
+            "admin",
+            "admin@minn-engine.localhost",
+            "https://minn.localhost",
+            1
+        ]
+    ],
+    [
+        "content that is a number",
+        [
+            400,
+            "rest_comment_content_invalid",
+            "Invalid comment content.",
+            null,
+            null
+        ]
+    ],
+    [
+        "refused: an address that is not one",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): author_email",
+            {
+                "author_email": "Invalid email address."
+            },
+            {
+                "author_email": {
+                    "code": "rest_invalid_email",
+                    "message": "Invalid email address.",
+                    "data": null
+                }
+            }
+        ]
+    ],
+    [
+        "refused: an author that is not a number",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): author",
+            {
+                "author": "author is not of type integer."
+            },
+            {
+                "author": {
+                    "code": "rest_invalid_type",
+                    "message": "author is not of type integer.",
+                    "data": {
+                        "param": "author"
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "refused: a date that is not one",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): date",
+            {
+                "date": "Invalid date."
+            },
+            {
+                "date": {
+                    "code": "rest_invalid_date",
+                    "message": "Invalid date.",
+                    "data": null
+                }
+            }
+        ]
+    ],
+    [
+        "refused: an IP that is not one",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): author_ip",
+            {
+                "author_ip": "author_ip is not a valid IP address."
+            },
+            {
+                "author_ip": {
+                    "code": "rest_invalid_ip",
+                    "message": "author_ip is not a valid IP address.",
+                    "data": null
+                }
+            }
+        ]
+    ],
+    [
+        "refused: a site that is not one (no refusal; the address is still asked for)",
+        [
+            400,
+            "rest_comment_author_data_required",
+            "Creating a comment requires valid author name and email values.",
+            null,
+            null
+        ]
+    ],
+    [
+        "refused: a meta that is not an object",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): meta",
+            {
+                "meta": "Invalid parameter."
+            },
+            []
+        ]
+    ],
+    [
+        "refused: a parent that is not a number",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): parent",
+            {
+                "parent": "parent is not of type integer."
+            },
+            {
+                "parent": {
+                    "code": "rest_invalid_type",
+                    "message": "parent is not of type integer.",
+                    "data": {
+                        "param": "parent"
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "refused: a status that is not text",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): status",
+            {
+                "status": "status is not of type string."
+            },
+            {
+                "status": {
+                    "code": "rest_invalid_type",
+                    "message": "status is not of type string.",
+                    "data": {
+                        "param": "status"
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "refused: a post that is not a number and an address that is not one",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): post",
+            {
+                "post": "post is not of type integer."
+            },
+            {
+                "post": {
+                    "code": "rest_invalid_type",
+                    "message": "post is not of type integer.",
+                    "data": {
+                        "param": "post"
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "refused: an IP and an address",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): author_ip",
+            {
+                "author_ip": "author_ip is not a valid IP address."
+            },
+            {
+                "author_ip": {
+                    "code": "rest_invalid_ip",
+                    "message": "author_ip is not a valid IP address.",
+                    "data": null
+                }
+            }
+        ]
+    ],
+    [
+        "refused: an IP and a post",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): author_ip, post",
+            {
+                "author_ip": "author_ip is not a valid IP address.",
+                "post": "post is not of type integer."
+            },
+            {
+                "author_ip": {
+                    "code": "rest_invalid_ip",
+                    "message": "author_ip is not a valid IP address.",
+                    "data": null
+                },
+                "post": {
+                    "code": "rest_invalid_type",
+                    "message": "post is not of type integer.",
+                    "data": {
+                        "param": "post"
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "refused: a meta and a post",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): post, meta",
+            {
+                "post": "post is not of type integer.",
+                "meta": "Invalid parameter."
+            },
+            {
+                "post": {
+                    "code": "rest_invalid_type",
+                    "message": "post is not of type integer.",
+                    "data": {
+                        "param": "post"
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "refused: a meta and an address",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): meta",
+            {
+                "meta": "Invalid parameter."
+            },
+            []
+        ]
+    ],
+    [
+        "an edit naming an author by id",
+        [
+            200,
+            "Erin Editor",
+            "editor@minn-engine.localhost",
+            "",
+            2
+        ]
+    ],
+    [
+        "an edit naming an author who does not exist",
+        [
+            400,
+            "rest_comment_author_invalid",
+            "Invalid comment author ID.",
+            null,
+            null
+        ]
+    ],
+    [
+        "an edit naming author 0",
+        [
+            400,
+            "rest_comment_author_invalid",
+            "Invalid comment author ID.",
+            null,
+            null
+        ]
+    ],
+    [
+        "an edit naming only a name",
+        [
+            200,
+            "Renamed",
+            "editor@minn-engine.localhost",
+            "",
+            2
+        ]
+    ],
+    [
+        "an edit naming an address that is not one",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): author_email",
+            {
+                "author_email": "Invalid email address."
+            },
+            {
+                "author_email": {
+                    "code": "rest_invalid_email",
+                    "message": "Invalid email address.",
+                    "data": null
+                }
+            }
+        ]
+    ],
+    [
+        "the author user: a name and no address",
+        [
+            400,
+            "rest_comment_author_data_required",
+            "Creating a comment requires valid author name and email values.",
+            null,
+            null
+        ]
+    ],
+    [
+        "the author user: naming themself",
+        [
+            201,
+            "scribe",
+            "scribe@minn-engine.localhost",
+            "",
+            3
+        ]
+    ],
+    [
+        "signed out: an address that is not one",
+        [
+            400,
+            "rest_invalid_param",
+            "Invalid parameter(s): author_email",
+            {
+                "author_email": "Invalid email address."
+            },
+            {
+                "author_email": {
+                    "code": "rest_invalid_email",
+                    "message": "Invalid email address.",
+                    "data": null
+                }
+            }
+        ]
+    ]
+]

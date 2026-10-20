@@ -107,6 +107,7 @@ $note = $send('POST', '/wp/v2/zz_note', [], ['title' => 'Zz Note', 'status' => '
 $ids['note'] = (int) ($note['data']['id'] ?? 0);
 $made['posts'][] = $ids['note'];
 $say('create note', $mask($note));
+$say('the note keeps no content: its type has no editor', [get_post_field('post_title', $ids['note']), get_post_field('post_content', $ids['note'])]);
 $say('hidden type', $send('GET', '/wp/v2/zz_hidden'));
 $say('elsewhere under wp/v2', $send('GET', '/wp/v2/zz_elsewhere'));
 

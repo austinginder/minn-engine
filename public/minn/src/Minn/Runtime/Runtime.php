@@ -136,6 +136,8 @@ final class Runtime
         self::loadObjectCacheDropin($runtime);
         self::loadFacade($runtime->engineDir);
         _minn_bind_hook_globals();
+        // Arguments given as a query string (or none) are parsed through wp_parse_str's filter, as the reference's wp_parse_args parses them.
+        \Minn\Support\Lists::filterParsed(static fn (array $parsed): mixed => self::hooks()->filter('wp_parse_str', [$parsed]));
         self::registry()->shareObjects();
         Constants::define($runtime);
         if ($runtime->request !== null) {

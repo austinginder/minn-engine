@@ -227,6 +227,16 @@ $untype('four');
 $runs['finished, yet a batch still converts'] = [_wp_batch_update_comment_type(), $state()];
 wp_clear_scheduled_hook('wp_update_comment_type_batch');
 $say('comment type batches', $mask($runs));
+$untype('five');
+$held = [];
+foreach (['held a minute' => 60, 'held an hour and more' => 2 * HOUR_IN_SECONDS] as $what => $age) {
+    add_option('update_comment_type.lock', time() - $age, '', false);
+    _wp_batch_update_comment_type();
+    $held[$what] = [$state(), get_option('update_comment_type.lock') !== false];
+    delete_option('update_comment_type.lock');
+    wp_clear_scheduled_hook('wp_update_comment_type_batch');
+}
+$say('comment type batches under another batch\'s lock: none while it is fresh, one once it is an hour old', $mask($held));
 
 // Notes (comments of type note): the post's author told of a new one made over
 // REST, and a mentioned user told by mail; caught at pre_wp_mail.

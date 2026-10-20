@@ -291,8 +291,9 @@ final class CommentChecks
             'comment_post_ID' => (int) ($postId ?? 0),
             'user_id' => (int) ($data['user_id'] ?? 0),
             'comment_parent' => $parent > 0 && in_array(self::status($parent), ['approved', 'unapproved'], true) ? $parent : 0,
-            'comment_author_IP' => (string) preg_replace('/[^0-9a-fA-F:., ]/', '', (string) ($address ?? ($request?->remoteAddress ?? ''))),
-            'comment_agent' => substr((string) ($agent ?? ($request?->header('user-agent') ?? '')), 0, 254),
+            // With no request (the command line) the server variables stand in, as the reference reads them.
+            'comment_author_IP' => (string) preg_replace('/[^0-9a-fA-F:., ]/', '', (string) ($address ?? ($request === null ? Request::serverVariable('REMOTE_ADDR') : $request->remoteAddress) ?? '')),
+            'comment_agent' => substr((string) ($agent ?? ($request === null ? Request::serverVariable('HTTP_USER_AGENT') : $request->header('user-agent')) ?? ''), 0, 254),
             'comment_date' => $date ?? SiteTime::now('mysql'),
             'comment_date_gmt' => $dateGmt ?? SiteTime::now('mysql', true),
             'comment_type' => (string) ($type ?? '') === '' ? 'comment' : $type,

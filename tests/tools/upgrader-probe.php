@@ -43,6 +43,8 @@ foreach (['wp-admin/includes/plugin.php', 'wp-admin/includes/file.php', 'wp-admi
         require_once ABSPATH . $admin;
     }
 }
+// The reference installs the translation updates its stored update data offers once an upgrade is done; the engine has no translation updates yet, and the site's languages are not the probe's to change.
+add_filter('async_update_translation', '__return_false');
 $tmp = sys_get_temp_dir() . '/minn-upgrader-probe-' . getmypid();
 $saved = [];
 foreach (['_site_transient_update_plugins', '_site_transient_timeout_update_plugins', '_site_transient_update_themes', '_site_transient_timeout_update_themes'] as $option) {

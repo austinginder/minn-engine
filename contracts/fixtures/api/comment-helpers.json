@@ -250,6 +250,39 @@
         }
     ],
     [
+        "comment type batches under another batch's lock: none while it is fresh, one once it is an hour old",
+        {
+            "held a minute": [
+                [
+                    [
+                        "comment",
+                        "comment",
+                        "comment",
+                        "comment",
+                        ""
+                    ],
+                    true,
+                    true
+                ],
+                true
+            ],
+            "held an hour and more": [
+                [
+                    [
+                        "comment",
+                        "comment",
+                        "comment",
+                        "comment",
+                        "comment"
+                    ],
+                    true,
+                    true
+                ],
+                false
+            ]
+        }
+    ],
+    [
         "notes told",
         {
             "a regular comment": [
