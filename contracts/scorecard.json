@@ -261,10 +261,10 @@
         }
     },
     "open": {
-        "done": 74,
-        "accepted": 22,
-        "open": 12,
-        "austin": 1
+        "done": 77,
+        "accepted": 23,
+        "open": 11,
+        "austin": 2
     },
     "run": {
         "measured": "2026-10-21",
@@ -301,10 +301,10 @@
             "window": 100,
             "stretches": 122,
             "lines": 2184,
-            "of": 189734
+            "of": 189772
         },
         "engine": {
-            "of": 113714,
+            "of": 113746,
             "php": {
                 "strict": {
                     "window": 40,
@@ -331,7 +331,7 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76020,
+            "of": 76026,
             "window": 80,
             "stretches": 108,
             "lines": 2901
@@ -343,33 +343,33 @@
         "delegates": 3552,
         "logicFunctions": 1781,
         "logicMethods": 1972,
-        "logicLines": 29291,
+        "logicLines": 29293,
         "kept": 0,
         "review": {
-            "doubts": 118,
-            "reviewed": 3115,
+            "doubts": 45,
+            "reviewed": 3133,
             "stale": 0,
             "verdicts": {
                 "delegate": 148,
-                "move": 1469,
-                "keep": 1484,
+                "move": 1478,
+                "keep": 1493,
                 "remove": 14
             },
             "keep": {
                 "scope": 114,
-                "shape": 285,
-                "compose": 598,
+                "shape": 289,
+                "compose": 603,
                 "contract": 476,
                 "library": 11
             },
             "gates": {
                 "subclass": 302,
-                "pluggable": 25,
-                "unprobed": 147,
-                "globals": 170,
+                "pluggable": 26,
+                "unprobed": 149,
+                "globals": 171,
                 "refs": 27
             },
-            "unreviewed": 638
+            "unreviewed": 620
         }
     },
     "behaviour": {
@@ -381,7 +381,7 @@
         "restFuzz": {
             "routes": 201,
             "requests": 14607,
-            "differences": 583
+            "differences": 526
         },
         "cliFeatures": {
             "scenarios": 178,
