@@ -18239,7 +18239,13 @@ Left open.
   as `rest_cannot_view` where the reference refuses `rest_forbidden_context` or 400 first: the
   policy gate judges the caller before those arguments.
 - Navigation and block items embedded keep fewer nested fields (`title.raw`, `content.raw`,
-  `block_version`); the page list's items carry a trailing space in their class.
+  `block_version`); the page list's items carry a trailing space in their class. Settled the same
+  day: in the embed context a navigation post keeps its raw title and content and the block
+  version for any caller, a pattern's raw-only title shows empty, and a template or part keeps
+  every view field but the dates, with an empty content (`Embed::halves`, `TemplateObject`). The
+  embed cut reads the post type from the route, so `_fields` without `type` keeps a navigation
+  post's content. A template lookup with an empty slug (`''`, `'0'`) answers an empty object. The
+  page list's class space did not show again (suite `rest-parity`, embed context).
 - The single-site scenarios of WP-CLI's entity commands the engine failed on the first pass (31)
   are settled the same night: WP-CLI's own debug mode (the error level and log under WP-CLI, errors
   on stderr), the engine's `option` and `user list/get` commands taking WP-CLI's own argument rules
@@ -18371,7 +18377,9 @@ rows that are `open` or `austin`.
 | 18300 | REST fuzzing (10-21) | menus' signed-out `context=edit`, bad `status` or `post` refused by the caller first | done | the gate judges a route's edit-context policy before its own; the four menus reads carry one (`Http\Policy::$of` names the menu taxonomy's and item type's registered caps); suite `rest-parity` |
 | 18300 | REST fuzzing (10-21) | `edit_term`, `delete_term` and `assign_term` on a built-in taxonomy's term mapped to the category caps: an editor could edit a menu's term and anyone a link category's | done | `Auth\Capabilities` maps every taxonomy by its registered caps (`edit_theme_options`, `manage_links`); probe `term-caps` |
 | 18300 | REST fuzzing (10-21) | menu items listed with a `status` the caller may not ask for: the reference refuses the status ("Status is forbidden.") before the caller is judged, signed out too | done | `Rest\MenuItemStatus`, a route refusal judged after the arguments and before the policy; suite `rest-parity` |
-| 18300 | REST fuzzing (10-21) | navigation and block embeds' nested fields; the page list's trailing class space | open | `PostObject` embed view; `Blocks\Dynamic\Theme\Navigation` |
+| 18300 | REST fuzzing (10-21) | navigation and block embeds' nested fields; the page list's trailing class space | done | `Embed::halves` from `PostObject::embed`; the cut reads the route's post type; the class space did not show again; suite `rest-parity` (embed context) |
+| 18300 | REST fuzzing (10-21) | templates and template parts in the embed context cut to a post's embed keys; a lookup with an empty slug answered the index template | done | `TemplateObject` shapes its own embed view (no dates, empty content); `''` and `'0'` answer `{}`; suite `rest-parity` (embed context) |
+| 18300 | REST fuzzing (10-21) | an argument the route reads as a string sent as an array (`name[]` on the abilities' run and the block renderer, `stylesheet[]` on a theme's style variations, `password[]` on a post) or a post's `excerpt_length` past PHP's integers: the reference fails with a PHP fatal error (500, an HTML page) | accepted | the engine refuses the argument (400) or the caller (401, 404) as the route's other bad input is refused, and answers the huge length with its JSON 500; a fatal error page is not a contract |
 | 18300 | REST fuzzing (10-21) | WP-CLI entity scenarios the engine fails on a single site (31) | done | `Cli\Bundled`, the CLI debug mode, probe `cli-runtime-doubts` |
 | 18300 | REST fuzzing (10-21) | a password with quotes or backslashes is checked raw where WordPress checks it slashed (sign-in, reset, REST) | done | slashed at wp-login, the reset form and REST; a backslash or empty password refused in the sanitize round (`Http\Args::PASSWORD`); suite `users` |
 | 18300 | REST fuzzing (10-21) | a path's integer capture named again in the query or a write's body (`?id=abc`, `{"id": 2}`) on the item writes, deletes and the media and global-styles reads: the reference judges and answers that one, the engine kept the path's | done | `Rest\PathArgs` on 48 routes (POST_ID, COMMENT_ID, GLOBAL_STYLES_ID); a callback's plain `false` listed without details (`Rest\ParamCheck`, the URL details route); suite `rest-parity` builds the cases from the reference's index |

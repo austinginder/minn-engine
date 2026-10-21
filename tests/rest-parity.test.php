@@ -242,5 +242,38 @@ foreach ( array( 1 => 'an administrator', 3 => 'an author' ) as $uid => $who ) {
 	echo ( $ok ? '  ok   ' : '  FAIL ' ) . "path argument: $who's write naming another post in its body" . ( $ok ? '' : ' (' . json_encode( $seen ) . ')' ) . "\n";
 }
 
+// The embed context's nested fields: templates keep their view fields but the dates, with an
+// empty content; a navigation post keeps its raw title and content and the block version, a
+// pattern's raw-only title shows empty, also when _fields leaves out the type. An empty slug
+// looks no template up.
+$nav   = (int) $wp( 'post create --post_type=wp_navigation --post_status=publish --post_title=embed-nav --post_content=' . escapeshellarg( '<!-- wp:page-list /-->' ) . ' --porcelain' );
+$block = (int) $wp( 'post create --post_type=wp_block --post_status=publish --post_title=embed-pattern --post_content=' . escapeshellarg( '<!-- wp:paragraph --><p>zz</p><!-- /wp:paragraph -->' ) . ' --porcelain' );
+if ( $nav > 0 && $block > 0 ) {
+	$routes = array( '/wp/v2/templates?context=embed', '/wp/v2/template-parts?context=embed', '/wp/v2/templates?context=embed&_fields=content,id', '/wp/v2/templates/lookup?slug=', '/wp/v2/template-parts/lookup?slug=0', "/wp/v2/navigation/$nav?context=embed", "/wp/v2/navigation?context=embed&include=$nav&_fields=title,content", "/wp/v2/blocks/$block?context=embed", "/wp/v2/blocks?context=embed&include=$block&_fields=title,wp_pattern_sync_status" );
+	foreach ( array( 0 => 'signed out', 3 => 'an author' ) as $uid => $who ) {
+		$session = $uid > 0 ? json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . " $uid" ), true ) : null;
+		foreach ( $routes as $route ) {
+			[ $path, $query ] = explode( '?', $route, 2 );
+			$answers          = array();
+			foreach ( array( $REF, $ENGINE ) as $base ) {
+				$curl = curl_init( "$base/index.php?rest_route=" . rawurlencode( $path ) . "&$query" );
+				curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_HTTPHEADER => null === $session ? array() : array( 'X-WP-Nonce: ' . $session['nonce'], 'Cookie: ' . $session['cookie_name'] . '=' . $session['cookie'] ) ) );
+				$answers[] = curl_getinfo( $curl, CURLINFO_HTTP_CODE ) . ' ' . (string) curl_exec( $curl );
+			}
+			$ok = $answers[0] === $answers[1];
+			$ok ? $pass++ : $fail++;
+			echo ( $ok ? '  ok   ' : '  FAIL ' ) . "embed context, $who: " . str_replace( array( (string) $nav, (string) $block ), '{id}', $route ) . ( $ok ? '' : "\n      " . substr( $answers[0], 0, 240 ) . "\n      " . substr( $answers[1], 0, 240 ) ) . "\n";
+		}
+		if ( null !== $session ) {
+			$wp( 'eval ' . escapeshellarg( 'WP_Session_Tokens::get_instance(' . $uid . ')->destroy(' . var_export( (string) $session['token'], true ) . ');' ) );
+		}
+	}
+}
+foreach ( array( $nav, $block ) as $id ) {
+	if ( $id > 0 ) {
+		$wp( "post delete $id --force" );
+	}
+}
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

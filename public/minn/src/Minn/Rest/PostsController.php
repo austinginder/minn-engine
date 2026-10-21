@@ -120,6 +120,7 @@ final readonly class PostsController
             $object = match (true) {
                 $shape !== null => $shape($record, $context),
                 $context->isEdit() => ItemRender::opened(fn (): array => $this->object->edit($record, $this->caller->id(), $fields), $record),
+                $context === Context::Embed => $this->object->embed($record, $fields),
                 default => $this->object->view($record, $fields),
             };
             if ($object !== null) {
@@ -270,9 +271,11 @@ final readonly class PostsController
         if (!$edit && !($readable !== null ? $readable($postId) : $row->status === 'publish' || $this->caller->can('read_post', $postId))) {
             throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
         }
-        $render = $edit
-            ? fn (): array => $this->object->edit($row, $this->caller->id(), $fields)
-            : fn (): array => $this->object->viewWithPassword($row, $password, $fields);
+        $render = match (true) {
+            $edit => fn (): array => $this->object->edit($row, $this->caller->id(), $fields),
+            Context::of($request) === Context::Embed && $password === '' => fn (): array => $this->object->embed($row, $fields),
+            default => fn (): array => $this->object->viewWithPassword($row, $password, $fields),
+        };
         $opened = $edit || ($password !== '' && $row->isProtected());
         $object = ItemRender::around($opened ? static fn (): array => ItemRender::opened($render, $row) : $render, $request->query['excerpt_length'] ?? null);
         return self::withAlternate(Reply::item($object, $fields), $row);

@@ -48,6 +48,12 @@ final readonly class PostObject
         return RuntimePrepare::postItem('rest_prepare_' . $p->type, $this->viewFields($p, $fields), $p->id, $p->type);
     }
 
+    /** The embed-context object before Embed cuts it to the kind's keys, with the nested halves its type's embed shows (Embed::halves). */
+    public function embed(PostRecord $p, ?Fields $fields = null): array
+    {
+        return RuntimePrepare::postItem('rest_prepare_' . $p->type, Embed::halves($p, $this->viewFields($p, $fields)), $p->id, $p->type);
+    }
+
     /**
      * The view-context object for a post read with a password: a protected
      * post's content and excerpt rendered when the password is its own

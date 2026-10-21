@@ -40,10 +40,12 @@ final readonly class TemplateObject
             // that is only HTML.
             $content['block_version'] = str_contains($markup, '<!-- wp:') ? 1 : 0;
         }
+        // The embed context shows every view field but the dates, and none of the content's halves.
+        $embed = $context === Context::Embed;
         $out = [
             'id' => $id,
             'theme' => $record->theme,
-            'content' => $content,
+            'content' => $embed ? [] : $content,
             'slug' => $record->slug,
             'source' => $record->source,
             'origin' => $record->origin,
@@ -61,8 +63,10 @@ final readonly class TemplateObject
         if ($as === TemplateIndex::PART && $record->isPart()) {
             $out['area'] = (string) $record->area;
         }
-        $out['modified'] = $record->modified;
-        $out['date'] = $record->date;
+        if (!$embed) {
+            $out['modified'] = $record->modified;
+            $out['date'] = $record->date;
+        }
         $out['author_text'] = $this->index->authorText($record);
         $out['original_source'] = $this->index->originalSource($record);
         if ($record->plugin !== null) {

@@ -22,7 +22,7 @@ the wp/v2 surface: shapes and controllers
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
-| [`Embed`](#embed) | final class | 229 | The _embed decoration and the embed context. Every embeddable link in an |
+| [`Embed`](#embed) | final class | 264 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`ExistingPost`](#existingpost) | final class | 10 | A post created with an id names one that exists: refused with |
 | [`Fields`](#fields) | final readonly class | 106 | The _fields response filter. Dot paths descend ("title.rendered"); the |
@@ -55,8 +55,8 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 176 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 170 | The WP_Query arguments a post list request makes, as the reference makes |
-| [`PostObject`](#postobject) | final readonly class | 561 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 261 | wp/v2 posts and pages, read side. |
+| [`PostObject`](#postobject) | final readonly class | 567 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostsController`](#postscontroller) | final readonly class | 264 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 528 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
@@ -90,9 +90,9 @@ the wp/v2 surface: shapes and controllers
 | [`StatusesController`](#statusescontroller) | final readonly class | 97 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
 | [`Subjects`](#subjects) | final readonly class | 53 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
-| [`TemplateObject`](#templateobject) | final readonly class | 101 | The wp/v2/templates and wp/v2/template-parts resource. |
+| [`TemplateObject`](#templateobject) | final readonly class | 105 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplateRevisionsController`](#templaterevisionscontroller) | final readonly class | 152 | wp/v2/templates and wp/v2/template-parts revisions and autosaves: the |
-| [`TemplatesController`](#templatescontroller) | final readonly class | 324 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
+| [`TemplatesController`](#templatescontroller) | final readonly class | 329 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermCollectionParams`](#termcollectionparams) | final class | 13 | A taxonomy's term list parameters as the reference declares them (probe |
 | [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
 | [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
@@ -997,7 +997,7 @@ cut to the reference's key set for that kind of item.
 - const `KEYS` = `array (   'post' =>    array (     0 => 'id',     1 => 'date',     2 => 'slug',     3 => 'type',     4 => 'link',     5 => 'title',     6 => 'excerpt',     7 => 'author',     8 => 'featured_media',     9 => '_links',   ),   'media' =>    array (     0 => 'id',     1 => 'date',     2 => 'slug',     3 => 'type',     4 => 'link',     5 => 'title',     6 => 'author',     7 => 'featured_media',     8 => 'caption',     9 => 'alt_text',     10 => 'media_type',     11 => 'mime_type',     12 => 'media_details',     13 => 'source_url',     14 => '_links',   ),   'user' =>    array (     0 => 'id',     1 => 'name',     2 => 'url',     3 => 'description',     4 => 'link',     5 => 'slug',     6 => 'avatar_urls',     7 => '_links',   ),   'term' =>    array (     0 => 'id',     1 => 'link',     2 => 'name',     3 => 'slug',     4 => 'taxonomy',     5 => '_links',   ),   'comment' =>    array (     0 => 'id',     1 => 'parent',     2 => 'author',     3 => 'author_name',     4 => 'author_url',     5 => 'date',     6 => 'content',     7 => 'link',     8 => 'type',     9 => 'author_avatar_urls',     10 => '_links',   ),   'menu-item' =>    array (     0 => 'id',     1 => 'title',     2 => 'status',     3 => 'url',     4 => 'attr_title',     5 => 'description',     6 => 'type',     7 => 'type_label',     8 => 'object',     9 => 'object_id',     10 => 'parent',     11 => 'menu_order',     12 => 'target',     13 => 'classes',     14 => 'xfn',     15 => 'invalid',     16 => '_links',   ), )`
 - const `TYPE_KEYS` = `array (   'wp_navigation' =>    array (     0 => 'status',     1 => 'content',   ),   'wp_block' =>    array (     0 => 'wp_pattern_sync_status',   ), )` — The keys a post type shows in embed beyond a post's (probe: each type's list in the embed context).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\RegisteredFields`, `Minn\Rest\TemplateRevisionsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredFields`, `Minn\Rest\TemplateRevisionsController`
 
 ```php
 __construct(Minn\Http\Router $router, Minn\Rest\Types $types, Minn\Rest\Taxonomies $taxonomies)
@@ -1022,13 +1022,23 @@ WP_REST_Server::embed_links): every rel when none is named.
 - `@param array<string, mixed> $item @param list<string> $rels`
 - `@return array<string, mixed>`
 
+### static `halves(Minn\Content\PostRecord $p, array $object): array`
+
+A post's view object with the nested halves its type's embed shows:
+a navigation post's title and content keep their raw halves and the
+content its block version, for any caller; a pattern's title, which
+has only a raw half, shows empty.
+
+- `@param array<string, mixed> $object`
+- `@return array<string, mixed>`
+
 ### static `shape(string $type, array $item): array`
 
 An item cut to the embed shape of its object type (a post type, a taxonomy, attachment, user or comment); any other kept whole. @param array<string, mixed> $item @return array<string, mixed>
 
 - `@param array<string, mixed> $item @return array<string, mixed>`
 
-Internals: `decorateItem()` (private, line 102), `answer()` (private, line 146), `target()` (private, line 182), `kind()` (private, line 200), `taxonomyBase()` (private, line 220), `context()` (private, line 245)
+Internals: `decorateItem()` (private, line 104), `answer()` (private, line 148), `target()` (private, line 185), `kind()` (private, line 203), `typeAt()` (private, line 226), `taxonomyBase()` (private, line 231), `context()` (private, line 281)
 
 
 ## EngineRoutes
@@ -2284,6 +2294,10 @@ hooks it; with a _fields selection, the rendered title, content and
 excerpt only when it asks for them, as the reference renders only
 what is asked.
 
+### `embed(Minn\Content\PostRecord $p, ?Minn\Rest\Fields $fields = NULL): array`
+
+The embed-context object before Embed cuts it to the kind's keys, with the nested halves its type's embed shows (Embed::halves).
+
 ### `viewWithPassword(Minn\Content\PostRecord $p, mixed $password, ?Minn\Rest\Fields $fields = NULL): array`
 
 The view-context object for a post read with a password: a protected
@@ -2325,7 +2339,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 108), `navigationView()` (private, line 119), `blockView()` (private, line 149), `viewFields()` (private, line 181), `viewTerms()` (private, line 236), `typeFields()` (private, line 252), `classList()` (private, line 281), `format()` (private, line 303), `termLinks()` (private, line 347), `editFields()` (private, line 366), `allow()` (private, line 549), `gmt()` (private, line 568)
+Internals: `meta()` (private, line 114), `navigationView()` (private, line 125), `blockView()` (private, line 155), `viewFields()` (private, line 187), `viewTerms()` (private, line 242), `typeFields()` (private, line 258), `classList()` (private, line 287), `format()` (private, line 309), `termLinks()` (private, line 353), `editFields()` (private, line 372), `allow()` (private, line 555), `gmt()` (private, line 574)
 
 
 ## PostsController
@@ -2399,7 +2413,7 @@ asked for, and the right password opens the content and the excerpt.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `shaped()` (private, line 112), `totals()` (private, line 140), `readable()` (private, line 159), `visibleStatuses()` (private, line 185)
+Internals: `shaped()` (private, line 112), `totals()` (private, line 141), `readable()` (private, line 160), `visibleStatuses()` (private, line 186)
 
 
 ## PostsWriteController
@@ -4116,7 +4130,7 @@ The rest_base of a template type.
 
 The wp/v2 template shape.
 
-Internals: `links()` (private, line 86)
+Internals: `links()` (private, line 90)
 
 
 ## TemplateRevisionsController
@@ -4283,7 +4297,7 @@ Route: `DELETE /wp/v2/template-parts/{id:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)
 
 Deletes a customised template part.
 
-Internals: `listing()` (private, line 148), `listed()` (private, line 174), `lookup()` (private, line 191), `single()` (private, line 209), `save()` (private, line 218), `create()` (private, line 236), `fields()` (private, line 258), `delete()` (private, line 277), `trashed()` (private, line 294), `record()` (private, line 316), `readable()` (private, line 326), `requireWrite()` (private, line 337), `text()` (private, line 346)
+Internals: `listing()` (private, line 148), `listed()` (private, line 174), `lookup()` (private, line 191), `single()` (private, line 214), `save()` (private, line 223), `create()` (private, line 241), `fields()` (private, line 263), `delete()` (private, line 282), `trashed()` (private, line 299), `record()` (private, line 321), `readable()` (private, line 331), `requireWrite()` (private, line 342), `text()` (private, line 351)
 
 
 ## TermCollectionParams

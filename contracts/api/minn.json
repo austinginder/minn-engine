@@ -34789,6 +34789,7 @@
                 "Minn\\Front\\SingleQueries",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontObject",
                 "Minn\\Rest\\FontsController",
                 "Minn\\Rest\\GlobalStylesController",
@@ -106321,11 +106322,12 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Embed.php",
-            "lines": 229,
+            "lines": 264,
             "doc": "The _embed decoration and the embed context. Every embeddable link in an\nobject's _links is answered in-process as the same caller with\ncontext=embed and placed under _embedded[rel], an error as the error\nitself; a rel whose every embed came back empty is left out, while an\nempty list beside a full one stays (wp:term keeps its empty tags list\nnext to the categories).\nLists have _fields applied per item before the links are read, so a\n_fields value without _links embeds nothing there; a single object embeds\nfirst and is filtered afterwards. The embed context is the view object\ncut to the reference's key set for that kind of item.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Content\\PostRecord",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
@@ -106345,6 +106347,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\TemplateRevisionsController"
             ],
@@ -106376,8 +106379,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 45,
-                "end": 50
+                "line": 46,
+                "end": 51
             },
             "cases": [],
             "constants": [
@@ -106452,8 +106455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 68
+                    "line": 54,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -106479,8 +106482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 99
+                    "line": 72,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -106516,8 +106519,38 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 143
+                    "line": 142,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "halves",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "halves(Minn\\Content\\PostRecord $p, array $object): array",
+                    "doc": "A post's view object with the nested halves its type's embed shows:\na navigation post's title and content keep their raw halves and the\ncontent its block version, for any caller; a pattern's title, which\nhas only a raw half, shows empty.",
+                    "shapes": [
+                        "@param array<string, mixed> $object",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "object",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 250,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -106545,15 +106578,15 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 231,
-                    "end": 242
+                    "line": 267,
+                    "end": 278
                 },
                 {
                     "routes": [],
                     "name": "decorateItem",
                     "static": false,
                     "visibility": "private",
-                    "signature": "decorateItem(Minn\\Http\\Request $request, array $item, ?array $rels, ?string $kind): array",
+                    "signature": "decorateItem(Minn\\Http\\Request $request, array $item, ?array $rels, ?string $kind, ?string $type): array",
                     "doc": "",
                     "shapes": [
                         "@param ?list<string> $rels"
@@ -106586,10 +106619,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 131
+                    "line": 104,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -106615,8 +106655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 179
+                    "line": 148,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -106637,8 +106677,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 197
+                    "line": 185,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -106657,8 +106697,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 218
+                    "line": 203,
+                    "end": 223
+                },
+                {
+                    "routes": [],
+                    "name": "typeAt",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "typeAt(string $path): ?string",
+                    "doc": "The post type a wp/v2 path serves, so the embed shape holds when _fields leaves out the item's type.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 226,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -106677,15 +106737,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 228
+                    "line": 231,
+                    "end": 239
                 },
                 {
                     "routes": [],
                     "name": "context",
                     "static": true,
                     "visibility": "private",
-                    "signature": "context(string $kind, array $object): array",
+                    "signature": "context(string $kind, array $object, ?string $pathType = NULL): array",
                     "doc": "The embed shape, with the fields plugin code registered for the item's type to show in embed.",
                     "shapes": [],
                     "params": [
@@ -106702,10 +106762,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "pathType",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 255
+                    "line": 281,
+                    "end": 291
                 }
             ]
         },
@@ -113600,7 +113667,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostObject.php",
-            "lines": 561,
+            "lines": 567,
             "doc": "Builds the wp/v2 post and page objects in the reference's shape: the\nview context, the edit context (raw+rendered dual fields, editor-only\nfields, and cap-gated wp:action-* links), and their _links blocks.",
             "implements": [],
             "extends": null,
@@ -113613,6 +113680,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Objects\\Post",
                 "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Embed",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\RegisteredPostFields",
                 "Minn\\Rest\\RegisteredType",
@@ -113790,6 +113858,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "embed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "embed(Minn\\Content\\PostRecord $p, ?Minn\\Rest\\Fields $fields = NULL): array",
+                    "doc": "The embed-context object before Embed cuts it to the kind's keys, with the nested halves its type's embed shows (Embed::halves).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "?Minn\\Rest\\Fields",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 55
+                },
+                {
+                    "routes": [],
                     "name": "viewWithPassword",
                     "static": false,
                     "visibility": "public",
@@ -113819,8 +113914,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 72
+                    "line": 63,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -113853,8 +113948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -113873,8 +113968,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -113893,8 +113988,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 100
+                    "line": 97,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -113913,8 +114008,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 344
+                    "line": 315,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -113940,8 +114035,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 435,
-                    "end": 445
+                    "line": 441,
+                    "end": 451
                 },
                 {
                     "routes": [],
@@ -113967,8 +114062,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 448,
-                    "end": 464
+                    "line": 454,
+                    "end": 470
                 },
                 {
                     "routes": [],
@@ -114001,8 +114096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 467,
-                    "end": 540
+                    "line": 473,
+                    "end": 546
                 },
                 {
                     "routes": [],
@@ -114021,8 +114116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 578,
-                    "end": 581
+                    "line": 584,
+                    "end": 587
                 },
                 {
                     "routes": [],
@@ -114050,8 +114145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 111
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -114070,8 +114165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 141
+                    "line": 125,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -114090,8 +114185,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 178
+                    "line": 155,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -114117,8 +114212,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 228
+                    "line": 187,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -114139,8 +114234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 243
+                    "line": 242,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -114169,8 +114264,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 272
+                    "line": 258,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -114206,8 +114301,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 300
+                    "line": 287,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -114228,8 +114323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 306
+                    "line": 309,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -114255,8 +114350,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 359
+                    "line": 353,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -114289,8 +114384,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 366,
-                    "end": 432
+                    "line": 372,
+                    "end": 438
                 },
                 {
                     "routes": [],
@@ -114318,8 +114413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 549,
-                    "end": 561
+                    "line": 555,
+                    "end": 567
                 },
                 {
                     "routes": [],
@@ -114345,8 +114440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 568,
-                    "end": 575
+                    "line": 574,
+                    "end": 581
                 }
             ]
         },
@@ -114356,7 +114451,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsController.php",
-            "lines": 261,
+            "lines": 264,
             "doc": "wp/v2 posts and pages, read side.",
             "implements": [],
             "extends": null,
@@ -114580,8 +114675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 229
+                    "line": 222,
+                    "end": 230
                 },
                 {
                     "routes": [
@@ -114616,8 +114711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 236
+                    "line": 234,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -114659,8 +114754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 279
+                    "line": 250,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -114686,8 +114781,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 288
+                    "line": 285,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -114740,7 +114835,7 @@
                         }
                     ],
                     "line": 112,
-                    "end": 130
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -114769,8 +114864,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 156
+                    "line": 141,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -114789,8 +114884,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 175
+                    "line": 160,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -114825,8 +114920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 212
+                    "line": 186,
+                    "end": 213
                 }
             ]
         },
@@ -124829,7 +124924,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TemplateObject.php",
-            "lines": 101,
+            "lines": 105,
             "doc": "The wp/v2/templates and wp/v2/template-parts resource.",
             "implements": [],
             "extends": null,
@@ -124977,7 +125072,7 @@
                         }
                     ],
                     "line": 29,
-                    "end": 79
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -125003,8 +125098,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 111
+                    "line": 90,
+                    "end": 115
                 }
             ]
         },
@@ -125487,7 +125582,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TemplatesController.php",
-            "lines": 324,
+            "lines": 329,
             "doc": "wp/v2/templates and wp/v2/template-parts: the block theme's templates as\none list, whether they come from the theme's files, from a row the site\nsaved over one, or from a plugin. Reading needs only edit_posts (the\nreference lets an editor or author see the layout); changing anything\nneeds edit_theme_options.",
             "implements": [],
             "extends": null,
@@ -126031,7 +126126,7 @@
                         }
                     ],
                     "line": 191,
-                    "end": 207
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -126064,8 +126159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 216
+                    "line": 214,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -126098,8 +126193,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 227
+                    "line": 223,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -126125,8 +126220,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 250
+                    "line": 241,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -126148,8 +126243,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 269
+                    "line": 263,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -126182,8 +126277,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 292
+                    "line": 282,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -126202,8 +126297,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 314
+                    "line": 299,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -126229,8 +126324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 323
+                    "line": 321,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -126241,8 +126336,8 @@
                     "doc": "Reading the layout is an editor's business, not only an administrator's.",
                     "shapes": [],
                     "params": [],
-                    "line": 326,
-                    "end": 335
+                    "line": 331,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -126253,8 +126348,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 337,
-                    "end": 343
+                    "line": 342,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -126273,8 +126368,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 352
+                    "line": 351,
+                    "end": 357
                 }
             ]
         },

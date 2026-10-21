@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Content\PostRecord;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -80,15 +81,16 @@ final class Embed
             return $response;
         }
         $kind = self::kind($request->path);
+        $type = $this->typeAt($request->path);
         if (array_is_list($data)) {
             foreach ($data as &$item) {
                 if (is_array($item) && !array_is_list($item)) {
-                    $item = $this->decorateItem($request, $item, $rels, $embedContext ? $kind : null);
+                    $item = $this->decorateItem($request, $item, $rels, $embedContext ? $kind : null, $type);
                 }
             }
             unset($item);
         } else {
-            $data = $this->decorateItem($request, $data, $rels, $embedContext ? $kind : null);
+            $data = $this->decorateItem($request, $data, $rels, $embedContext ? $kind : null, $type);
             $fields = Fields::fromQuery($request->query);
             if ($fields !== null && $fields->deferred) {
                 // Asking for _embedded on a single object keeps its _links too.
@@ -99,10 +101,10 @@ final class Embed
     }
 
     /** @param ?list<string> $rels */
-    private function decorateItem(Request $request, array $item, ?array $rels, ?string $kind): array
+    private function decorateItem(Request $request, array $item, ?array $rels, ?string $kind, ?string $type): array
     {
         if ($kind !== null) {
-            $item = self::context($kind, $item);
+            $item = self::context($kind, $item, $type);
         }
         if ($rels === null || !isset($item['_links']) || !is_array($item['_links'])) {
             return $item;
@@ -167,10 +169,11 @@ final class Embed
         }
         if (is_array($data)) {
             $kind = self::kind($path);
+            $type = $this->typeAt($path);
             if (array_is_list($data)) {
-                $data = array_map(fn ($row) => is_array($row) && $kind !== null ? self::context($kind, $row) : $row, $data);
+                $data = array_map(fn ($row) => is_array($row) && $kind !== null ? self::context($kind, $row, $type) : $row, $data);
             } elseif ($kind !== null) {
-                $data = self::context($kind, $data);
+                $data = self::context($kind, $data, $type);
             }
         } else {
             $data = null;
@@ -211,10 +214,18 @@ final class Embed
             $base === 'menu-items' => 'menu-item',
             // A font family and its faces show the same fields in every context (Rest\FontObject).
             $base === 'font-families' => null,
+            // A template shapes its own embed view (Rest\TemplateObject).
+            $base === 'templates', $base === 'template-parts' => null,
             $this->taxonomyBase($base) => 'term',
             $this->types->slugForRestBase($base) !== null => 'post',
             default => null,
         };
+    }
+
+    /** The post type a wp/v2 path serves, so the embed shape holds when _fields leaves out the item's type. */
+    private function typeAt(string $path): ?string
+    {
+        return preg_match('#^/wp/v2/([^/]+)(?:/|$)#', $path, $m) === 1 ? $this->types->slugForRestBase($m[1]) : null;
     }
 
     private function taxonomyBase(string $base): bool
@@ -225,6 +236,31 @@ final class Embed
             }
         }
         return false;
+    }
+
+    /**
+     * A post's view object with the nested halves its type's embed shows:
+     * a navigation post's title and content keep their raw halves and the
+     * content its block version, for any caller; a pattern's title, which
+     * has only a raw half, shows empty.
+     *
+     * @param array<string, mixed> $object
+     * @return array<string, mixed>
+     */
+    public static function halves(PostRecord $p, array $object): array
+    {
+        if ($p->type === 'wp_block' && isset($object['title'])) {
+            $object['title'] = [];
+        }
+        if ($p->type === 'wp_navigation') {
+            if (isset($object['title'])) {
+                $object['title'] = ['raw' => $p->title] + $object['title'];
+            }
+            if (isset($object['content'])) {
+                $object['content'] = ['raw' => $p->content] + $object['content'] + ['block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0];
+            }
+        }
+        return $object;
     }
 
     /** An item cut to the embed shape of its object type (a post type, a taxonomy, attachment, user or comment); any other kept whole. @param array<string, mixed> $item @return array<string, mixed> */
@@ -242,10 +278,10 @@ final class Embed
     }
 
     /** The embed shape, with the fields plugin code registered for the item's type to show in embed. */
-    private static function context(string $kind, array $object): array
+    private static function context(string $kind, array $object, ?string $pathType = null): array
     {
         $type = match ($kind) {
-            'post' => (string) ($object['type'] ?? ''),
+            'post' => $pathType ?? (string) ($object['type'] ?? ''),
             'term' => (string) ($object['taxonomy'] ?? ''),
             'media' => 'attachment',
             'menu-item' => 'nav_menu_item',

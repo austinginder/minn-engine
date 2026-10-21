@@ -193,7 +193,12 @@ final readonly class TemplatesController
         if (!Runtime::booted()) {
             throw RestError::noRoute();
         }
-        $hierarchy = TemplateFiles::hierarchy((string) $request->query['slug'], SchemaValues::toBoolean($request->query['is_custom'] ?? false), (string) ($request->query['template_prefix'] ?? ''));
+        $slug = (string) $request->query['slug'];
+        if ($slug === '' || $slug === '0') {
+            // An empty slug looks nothing up: the reference answers an empty object.
+            return Reply::item(new \stdClass(), null);
+        }
+        $hierarchy = TemplateFiles::hierarchy($slug, SchemaValues::toBoolean($request->query['is_custom'] ?? false), (string) ($request->query['template_prefix'] ?? ''));
         $found = [];
         foreach (Handoff::blockTemplates(['slug__in' => $hierarchy], TemplateIndex::TEMPLATE) as $template) {
             $found[$template->slug] ??= $template->id;
