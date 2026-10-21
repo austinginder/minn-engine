@@ -35,6 +35,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`ScreenOptions`](#screenoptions) | final class | 27 | Which screen option a save keeps for itself, as set_screen_options tells |
 | [`SessionsController`](#sessionscontroller) | final readonly class | 72 | A person's sign-in sessions, read from the same session_tokens store |
 | [`SiteController`](#sitecontroller) | final readonly class | 90 | The small Settings-view routes of minn-admin/v1: the site logo, the |
+| [`SiteHealthTests`](#sitehealthtests) | final class | 69 | The Site Health screen's tests as the reference lists them (probe |
 | [`StructureController`](#structurecontroller) | final readonly class | 159 | The Structure view of minn-admin/v1: post types, taxonomies, and the |
 | [`SubmitButton`](#submitbutton) | final class | 37 | A settings form's submit input as get_submit_button builds it: "button" |
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
@@ -1224,6 +1225,30 @@ Route: `GET /minn-admin/v1/media/months (floor edit_posts)`
 The months the library has uploads in.
 
 Internals: `logoUrl()` (private, line 57)
+
+
+## SiteHealthTests
+
+`final class Minn\Admin\SiteHealthTests` · `public/minn/src/Minn/Admin/SiteHealthTests.php`
+
+The Site Health screen's tests as the reference lists them (probe
+blocks-rest-widget-doubts): the direct ones each by its label and the
+name of the check that runs it, the asynchronous ones by their REST
+route, with the check to run in their place when the screen runs them
+directly; through site_status_tests. And the weekly scheduled check.
+
+- const `DIRECT` = `array (   'wordpress_version' =>    array (     0 => 'WordPress Version',     1 => 'wordpress_version',   ),   'plugin_version' =>    array (     0 => 'Plugin Versions',     1 => 'plugin_version',   ),   'theme_version' =>    array (     0 => 'Theme Versions',     1 => 'theme_version',   ),   'php_version' =>    array (     0 => 'PHP Version',     1 => 'php_version',   ),   'php_extensions' =>    array (     0 => 'PHP Extensions',     1 => 'php_extensions',   ),   'php_default_timezone' =>    array (     0 => 'PHP Default Timezone',     1 => 'php_default_timezone',   ),   'php_sessions' =>    array (     0 => 'PHP Sessions',     1 => 'php_sessions',   ),   'sql_server' =>    array (     0 => 'Database Server version',     1 => 'sql_server',   ),   'ssl_support' =>    array (     0 => 'Secure communication',     1 => 'ssl_support',   ),   'scheduled_events' =>    array (     0 => 'Scheduled events',     1 => 'scheduled_events',   ),   'http_requests' =>    array (     0 => 'HTTP Requests',     1 => 'http_requests',   ),   'rest_availability' =>    array (     0 => 'REST API availability',     1 => 'rest_availability',     2 => true,   ),   'debug_enabled' =>    array (     0 => 'Debugging enabled',     1 => 'is_in_debug_mode',   ),   'file_uploads' =>    array (     0 => 'File uploads',     1 => 'file_uploads',   ),   'plugin_theme_auto_updates' =>    array (     0 => 'Plugin and theme auto-updates',     1 => 'plugin_theme_auto_updates',   ),   'update_temp_backup_writable' =>    array (     0 => 'Plugin and theme temporary backup directory access',     1 => 'update_temp_backup_writable',   ),   'available_updates_disk_space' =>    array (     0 => 'Available disk space',     1 => 'available_updates_disk_space',   ),   'autoloaded_options' =>    array (     0 => 'Autoloaded options',     1 => 'autoloaded_options',   ),   'insecure_registration' =>    array (     0 => 'Open Registration with privileged default role',     1 => 'insecure_registration',   ),   'search_engine_visibility' =>    array (     0 => 'Search Engine Visibility',     1 => 'search_engine_visibility',   ),   'opcode_cache' =>    array (     0 => 'Opcode cache',     1 => 'opcode_cache',   ),   'persistent_object_cache' =>    array (     0 => 'Persistent object cache',     1 => 'persistent_object_cache',   ), )` — The direct tests: name => [label, check, and true for one the scheduled check skips].
+- const `ASYNC` = `array (   'dotorg_communication' =>    array (     0 => 'Communication with WordPress.org',     1 => 'dotorg-communication',   ),   'background_updates' =>    array (     0 => 'Background updates',     1 => 'background-updates',   ),   'loopback_requests' =>    array (     0 => 'Loopback request',     1 => 'loopback-requests',   ),   'https_status' =>    array (     0 => 'HTTPS status',     1 => 'https-status',   ),   'authorization_header' =>    array (     0 => 'Authorization header',     1 => 'authorization-header',   ),   'page_cache' =>    array (     0 => 'Page cache',     1 => 'page-cache',   ), )` — The asynchronous tests: name => [label, route slug].
+
+### static `all(object $health, Closure $route): mixed`
+
+Every test, direct and asynchronous, through site_status_tests.
+
+- `@param Closure(string): string $route a test's REST address from its route slug`
+
+### static `scheduleWeeklyCheck(): void`
+
+The weekly scheduled check, scheduled a day from now unless it is already.
 
 
 ## StructureController

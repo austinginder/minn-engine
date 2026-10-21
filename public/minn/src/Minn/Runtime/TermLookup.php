@@ -333,8 +333,8 @@ final class TermLookup
                 }
             }
             $link = SiteUrls::home(SiteUrls::trailing(str_replace("%{$term->taxonomy}%", $slug, $changed), 'category'));
-        } elseif ($changed === '' && $rewrite !== null && $rewrite->using_permalinks()) {
-            // A taxonomy with no link structure (one removed at runtime) links by query, as under plain permalinks.
+        } elseif ($rewrite !== null && ($changed === '' || !$rewrite->using_permalinks())) {
+            // A taxonomy with no link structure (one removed at runtime) links by query, as plain permalinks do (probe taxonomy-blocks-user-doubts).
             $link = self::queryLink($term);
         }
         if ($term->taxonomy === 'post_tag') {

@@ -13,6 +13,7 @@ namespace PHPMailer\PHPMailer;
 
 use Minn\Mail\AddressRules;
 use Minn\Mail\Composer;
+use Minn\Mail\CustomHeaders;
 use Minn\Mail\DebugOutput;
 use Minn\Mail\Dkim;
 use Minn\Mail\Draft;
@@ -22,6 +23,7 @@ use Minn\Mail\HtmlMessage;
 use Minn\Mail\MailerStrings;
 use Minn\Mail\MailLog;
 use Minn\Mail\MimeTypes;
+use Minn\Mail\SendmailLine;
 use Minn\Mail\SmtpSession;
 use Minn\Mail\TextWrap;
 use Minn\Mail\Transfer;
@@ -574,6 +576,7 @@ class PHPMailer
         }
         $this->Subject = trim((string) $this->Subject);
         $this->minnCompose();
+        $this->ContentType = str_contains((string) $this->message_type, 'alt') ? self::CONTENT_TYPE_MULTIPART_ALTERNATIVE : $this->ContentType;
     }
 
     public function postSend()
@@ -607,6 +610,8 @@ class PHPMailer
     protected function sendmailSend($header, $body)
     {
         $header = Transfer::stripTrailingSpace((string) $header) . static::$LE . static::$LE;
+        // No sender takes PHP's sendmail_from, as mail() does (probe db-mail-rewrite-doubts).
+        $this->Sender = $this->Sender === '' ? (string) ini_get('sendmail_from') : $this->Sender;
         $command = $this->minnSendmailCommand();
         $targets = $this->SingleTo ? array_map(fn ($pair) => [$pair], $this->to) : [$this->to];
         foreach ($targets as $to) {
@@ -614,7 +619,7 @@ class PHPMailer
             if ($pipe === false) {
                 throw new Exception($this->lang('execute') . $this->Sendmail, self::STOP_CRITICAL);
             }
-            fwrite($pipe, ($this->SingleTo ? 'To: ' . $to[0][0] . "\n" : '') . $header . $body);
+            fwrite($pipe, ($this->SingleTo ? 'To: ' . $this->addrFormat($to[0]) . "\n" : '') . $header . $body);
             $result = pclose($pipe);
             $this->doCallback($result === 0, $to, $this->SingleTo ? [] : $this->cc, $this->SingleTo ? [] : $this->bcc, $this->Subject, $body, $this->From, []);
             if ($result !== 0) {
@@ -643,8 +648,7 @@ class PHPMailer
     protected function mailSend($header, $body)
     {
         $header = Transfer::stripTrailingSpace((string) $header) . static::$LE . static::$LE;
-        $list = array_map(fn ($pair) => $this->addrFormat($pair), $this->to);
-        $to = trim(implode(', ', $list)) ?: 'undisclosed-recipients:;';
+        $to = trim(implode(', ', array_map(fn ($pair) => $this->addrFormat($pair), $this->to))) ?: 'undisclosed-recipients:;';
         // No sender takes PHP's sendmail_from; the sender is PHP's for the send, and "-f" only with the sendmail options and a shell-safe address (probe sweep-1020b).
         if ($this->Sender === '' && (string) ini_get('sendmail_from') !== '') {
             $this->Sender = (string) ini_get('sendmail_from');
@@ -655,7 +659,7 @@ class PHPMailer
         if ($valid) {
             ini_set('sendmail_from', $this->Sender);
         }
-        $result = $this->minnMailEach($this->SingleTo && count($list) > 1 ? $list : [$to], $body, rtrim($header), $params);
+        $result = $this->minnMailEach($this->SingleTo && count($this->to) > 1 ? array_map(static fn ($pair) => [$pair], $this->to) : [$this->to], $body, rtrim($header), $params);
         if ($previous !== false) {
             ini_set('sendmail_from', $previous);
         }
@@ -669,8 +673,8 @@ class PHPMailer
     {
         $result = false;
         foreach ($targets as $to) {
-            $result = $this->mailPassthru($to, $this->Subject, $body, $header, $params);
-            $this->doCallback($result, $this->SingleTo ? [[$to, '']] : $this->to, $this->cc, $this->bcc, $this->Subject, $body, $this->From, []);
+            $result = $this->mailPassthru(trim(implode(', ', array_map(fn ($pair) => $this->addrFormat($pair), $to))) ?: 'undisclosed-recipients:;', $this->Subject, $body, $header, $params);
+            $this->doCallback($result, $to, $this->cc, $this->bcc, $this->Subject, $body, $this->From, []);
         }
         return $result;
     }
@@ -711,8 +715,13 @@ class PHPMailer
     {
         $header = Transfer::stripTrailingSpace((string) $header) . static::$LE . static::$LE;
         if (!$this->smtpConnect($this->SMTPOptions)) {
-            throw new Exception($this->lang('smtp_connect_failed') . ' https://github.com/PHPMailer/PHPMailer/wiki/Troubleshooting', self::STOP_CRITICAL);
+            throw new Exception($this->lang('smtp_connect_failed'), self::STOP_CRITICAL);
         }
+        if ($this->smtp->getSMTPUTF8() && !$this->smtp->getServerExt('SMTPUTF8')) {
+            throw new Exception($this->lang('no_smtputf8'), self::STOP_CRITICAL);
+        }
+        // XCLIENT goes once the session is open and signed in, before MAIL; a refusal does not stop the send.
+        $this->SMTPXClient === [] || $this->smtp->xclient($this->SMTPXClient);
         $from = $this->Sender !== '' ? $this->Sender : $this->From;
         if (!$this->smtp->mail($from)) {
             $this->setError($this->lang('from_failed') . $from . ' : ' . implode(',', $this->smtp->getError()));
@@ -765,6 +774,7 @@ class PHPMailer
         if ($this->smtp->connected()) {
             return true;
         }
+        $this->smtp->setSMTPUTF8((bool) $this->UseSMTPUTF8);
         $this->smtp->setTimeout($this->Timeout);
         $this->smtp->setDebugLevel($this->SMTPDebug);
         $this->smtp->setDebugOutput($this->Debugoutput);
@@ -796,10 +806,10 @@ class PHPMailer
             $this->edebug($this->lang('invalid_host') . ' ' . $entry->host);
             return null;
         }
-        if (!$this->smtp->connect($prefix . $entry->host, $entry->port ?? (int) $this->Port, $this->Timeout, $options)) {
+        if (!$this->smtp->connect($prefix . $entry->host, $entry->portOr((int) $this->Port), $this->Timeout, $options)) {
             return null;
         }
-        return $this->minnOpenSession($secure, $tls);
+        return $this->minnOpenSession($secure, $tls, $entry);
     }
 
     /** @return array{0: string, 1: string, 2: bool} the connect prefix, the security asked for, and whether STARTTLS is required */
@@ -815,10 +825,10 @@ class PHPMailer
         return $result;
     }
 
-    private function minnOpenSession($secure, $tls)
+    private function minnOpenSession($secure, $tls, HostEntry $entry)
     {
         try {
-            $this->minnGreet($secure, $tls);
+            $this->minnGreet($secure, $tls, $entry);
             if ($this->SMTPAuth && !$this->smtp->authenticate($this->Username, $this->Password, $this->AuthType, $this->oauth)) {
                 throw new Exception($this->lang('authenticate'));
             }
@@ -830,11 +840,12 @@ class PHPMailer
         }
     }
 
-    private function minnGreet($secure, $tls)
+    /** EHLO, then STARTTLS when asked for, or when offered to a host that takes an offer (not localhost), and EHLO again. */
+    private function minnGreet($secure, $tls, HostEntry $entry)
     {
         $hello = $this->Helo !== '' ? $this->Helo : $this->serverHostname();
         $this->smtp->hello($hello);
-        if ($this->SMTPAutoTLS && $secure !== 'ssl' && $this->smtp->getServerExt('STARTTLS')) {
+        if ($this->SMTPAutoTLS && $secure !== 'ssl' && $entry->takesOfferedTls() && $this->smtp->getServerExt('STARTTLS')) {
             $tls = true;
         }
         if (!$tls) {
@@ -944,7 +955,7 @@ class PHPMailer
 
     private function minnSmime($body)
     {
-        $signed = \Minn\Mail\Smime::sign($this->MIMEHeader . $this->getMailMIME() . static::$LE . $body, $this->sign_cert_file, $this->sign_key_file, $this->sign_key_pass, $this->sign_extracerts_file);
+        $signed = \Minn\Mail\Smime::sign($this->MIMEHeader . \Minn\Mail\Smime::entityHeaders($this->getMailMIME(), $body) . static::$LE . $body, $this->sign_cert_file, $this->sign_key_file, $this->sign_key_pass, $this->sign_extracerts_file);
         if ($signed === null) {
             throw new Exception($this->lang('signing') . openssl_error_string());
         }
@@ -1168,28 +1179,11 @@ class PHPMailer
         return true;
     }
 
+    /** The first custom header of a name given a new value, the others of it dropped (Minn\Mail\CustomHeaders::replace). */
     public function replaceCustomHeader($name, $value = null)
     {
-        if ($value === null && str_contains((string) $name, ':')) {
-            [$name, $value] = explode(':', (string) $name, 2);
-        }
-        [$name, $value] = [trim((string) $name), trim((string) $value)];
-        if ($name === '' || strpbrk($name . $value, "\r\n") !== false) {
-            return $this->minnRefuse($this->lang('invalid_header'));
-        }
-        $replaced = false;
-        foreach ($this->CustomHeader as $index => $header) {
-            if ($header[0] === $name) {
-                $replaced ? $this->minnDropHeader($index) : $this->CustomHeader[$index] = [$name, $value];
-                $replaced = true;
-            }
-        }
-        return true;
-    }
-
-    private function minnDropHeader($index)
-    {
-        unset($this->CustomHeader[$index]);
+        [$replaced, $this->CustomHeader] = CustomHeaders::replace($this->CustomHeader, $name, $value);
+        return $replaced;
     }
 
     protected function setError($msg)
@@ -1212,15 +1206,10 @@ class PHPMailer
         return date(self::RFC822_DATE_FORMAT);
     }
 
+    /** The name the mailer gives itself (Minn\Mail\HostEntry::serverName). */
     protected function serverHostname()
     {
-        $candidates = [(string) $this->Hostname, (string) ($_SERVER['SERVER_NAME'] ?? ''), function_exists('gethostname') ? (string) gethostname() : '', (string) php_uname('n')];
-        foreach ($candidates as $candidate) {
-            if ($candidate !== '') {
-                return static::isValidHost($candidate) ? $candidate : 'localhost.localdomain';
-            }
-        }
-        return 'localhost.localdomain';
+        return HostEntry::serverName((string) $this->Hostname, isset($_SERVER['SERVER_NAME']) ? (string) $_SERVER['SERVER_NAME'] : null);
     }
 
     public static function isValidHost($host)
@@ -1243,7 +1232,7 @@ class PHPMailer
         if (count(static::$language) < 1) {
             static::setLanguage();
         }
-        return static::$language[$key] ?? $key;
+        return MailerStrings::word(static::$language, (string) $key);
     }
 
     private function minnRefuse($message, $code = self::STOP_MESSAGE)
@@ -1584,14 +1573,9 @@ class PHPMailer
         );
     }
 
+    /** The sendmail or qmail command, -f with a valid, shell-safe sender (Minn\Mail\SendmailLine). */
     private function minnSendmailCommand()
     {
-        $safe = $this->Sender !== '' && static::validateAddress($this->Sender) && static::isShellSafe($this->Sender);
-        $path = escapeshellcmd((string) $this->Sendmail);
-        if (!$this->UseSendmailOptions) {
-            return $path;
-        }
-        $sender = $safe ? ' -f' . escapeshellarg($this->Sender) : '';
-        return $this->Mailer === 'qmail' ? $path . $sender : $path . ' -oi' . $sender . ' -t';
+        return SendmailLine::command((string) $this->Sendmail, $this->Mailer === 'qmail' ? 'qmail' : 'sendmail', $this->Sender !== '' && static::validateAddress($this->Sender) && static::isShellSafe($this->Sender) ? $this->Sender : null);
     }
 }

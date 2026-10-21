@@ -37,6 +37,19 @@ final class MailerStrings
         return self::set('wordpress');
     }
 
+    /**
+     * One message by key from a loaded set (PHPMailer::lang): the key itself
+     * when the set lacks it; a failed SMTP connect points to the
+     * troubleshooting page.
+     *
+     * @param array<string, string> $language
+     */
+    public static function word(array $language, string $key): string
+    {
+        $text = (string) ($language[$key] ?? $key);
+        return $key === 'smtp_connect_failed' ? $text . ' https://github.com/PHPMailer/PHPMailer/wiki/Troubleshooting' : $text;
+    }
+
     /** @return array<string, string> */
     private static function set(string $name): array
     {

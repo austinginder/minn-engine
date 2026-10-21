@@ -33,6 +33,20 @@ final class Smime
             return null;
         }
         $parts = explode("\n\n", str_replace("\r\n", "\n", $signed), 2);
-        return [Transfer::normalizeBreaks($parts[0]) . "\r\n", Transfer::normalizeBreaks($parts[1] ?? '')];
+        // The message's own headers carry MIME-Version: the signed headers do not repeat it.
+        $headers = (string) preg_replace('/^MIME-Version:[^\n]*\n/mi', '', $parts[0]);
+        return [Transfer::normalizeBreaks($headers) . "\r\n", Transfer::normalizeBreaks($parts[1] ?? '')];
+    }
+
+    /**
+     * The MIME headers of the entity that is signed: a multipart entity whose
+     * body is 7-bit clean is not declared 8bit (probe db-mail-rewrite-doubts).
+     */
+    public static function entityHeaders(string $mimeHeaders, string $body): string
+    {
+        if (Transfer::has8bit($body) || !preg_match('/^Content-Type: multipart\//mi', $mimeHeaders)) {
+            return $mimeHeaders;
+        }
+        return (string) preg_replace('/^Content-Transfer-Encoding: 8bit\r?\n/mi', '', $mimeHeaders);
     }
 }

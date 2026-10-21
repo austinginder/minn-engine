@@ -34,6 +34,20 @@ use Minn\Objects\Rewrite;
 final class RewriteRules
 {
     /** What a permastruct's flags default to (no endpoint places). */
+    /** The top rules the global object starts with: the REST routes, the sitemaps and Minn Admin's own address. */
+    private const TOP = [
+        '^wp-json/?$' => 'index.php?rest_route=/',
+        '^wp-json/(.*)?' => 'index.php?rest_route=/$matches[1]',
+        '^index.php/wp-json/?$' => 'index.php?rest_route=/',
+        '^index.php/wp-json/(.*)?' => 'index.php?rest_route=/$matches[1]',
+        '^wp-sitemap\\.xml$' => 'index.php?sitemap=index',
+        '^wp-sitemap\\.xsl$' => 'index.php?sitemap-stylesheet=sitemap',
+        '^wp-sitemap-index\\.xsl$' => 'index.php?sitemap-stylesheet=index',
+        '^wp-sitemap-([a-z]+?)-([a-z\\d_-]+?)-(\\d+?)\\.xml$' => 'index.php?sitemap=$matches[1]&sitemap-subtype=$matches[2]&paged=$matches[3]',
+        '^wp-sitemap-([a-z]+?)-(\\d+?)\\.xml$' => 'index.php?sitemap=$matches[1]&paged=$matches[2]',
+        '^minn-admin(/.*)?$' => 'index.php?minn_admin=1',
+    ];
+
     private const DEFAULTS = ['ep_mask' => 0, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true];
 
     /** The six date and time tags that together name a post. */
@@ -186,12 +200,14 @@ final class RewriteRules
     }
 
     /**
-     * The built-in taxonomies' tags and patterns, set once on the site's
+     * The global object's top rules (REST, sitemaps, Minn Admin) and the
+     * built-in taxonomies' tags and patterns, set once on the site's
      * rewrite under the front of the structure then; a structure set later
      * leaves them, and a plugin's, as they were (probe registry-rewrites).
      */
     public static function builtins(Rewrite $rewrite): void
     {
+        $rewrite->extra_rules_top = self::TOP + (array) $rewrite->extra_rules_top;
         $flags = ['with_front' => true, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true];
         foreach (['category' => ['(.+?)', 'category_name=', EP_CATEGORIES], 'post_tag' => ['([^/]+)', 'tag=', EP_TAGS], 'post_format' => ['([^/]+)', 'post_format=', EP_NONE]] as $name => [$regex, $query, $mask]) {
             $rewrite->add_rewrite_tag("%{$name}%", $regex, $query);

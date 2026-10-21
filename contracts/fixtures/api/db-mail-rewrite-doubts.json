@@ -1,0 +1,1798 @@
+[
+    [
+        "wpdb: a subclass is connected through db_connect, which sets the names",
+        [
+            [
+                "db_connect",
+                [
+                    "prepare",
+                    "SET NAMES %s",
+                    [
+                        "utf8mb4"
+                    ]
+                ],
+                [
+                    "prepare",
+                    " COLLATE %s",
+                    [
+                        "utf8mb4_unicode_520_ci"
+                    ]
+                ]
+            ],
+            "utf8mb4",
+            "utf8mb4_unicode_520_ci",
+            true
+        ]
+    ],
+    [
+        "wpdb: insert prepares once",
+        [
+            1,
+            [
+                [
+                    "prepare",
+                    "INSERT INTO `zz_doubtf_t` (`a`, `b`, `c`) VALUES (%s, %s, %s)",
+                    [
+                        "x",
+                        "y",
+                        "z"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "wpdb: insert with a null prepares once",
+        [
+            [
+                "prepare",
+                "INSERT INTO `zz_doubtf_t` (`a`, `b`, `n`) VALUES (%s, NULL, %d)",
+                [
+                    "x",
+                    5
+                ]
+            ]
+        ]
+    ],
+    [
+        "wpdb: update prepares once",
+        [
+            1,
+            [
+                [
+                    "prepare",
+                    "UPDATE `zz_doubtf_t` SET `a` = %s, `b` = %s WHERE `c` = %s AND `id` = %d",
+                    [
+                        "p",
+                        "q",
+                        "z",
+                        1
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "wpdb: update with nulls",
+        [
+            [
+                "prepare",
+                "UPDATE `zz_doubtf_t` SET `a` = NULL WHERE `b` IS NULL",
+                []
+            ]
+        ]
+    ],
+    [
+        "wpdb: delete prepares once",
+        [
+            0,
+            [
+                [
+                    "prepare",
+                    "DELETE FROM `zz_doubtf_t` WHERE `c` = %s AND `a` = %s",
+                    [
+                        "nope",
+                        "p"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "wpdb: delete with a null",
+        [
+            [
+                "prepare",
+                "DELETE FROM `zz_doubtf_t` WHERE `c` IS NULL",
+                []
+            ]
+        ]
+    ],
+    [
+        "wpdb: a failed insert resets insert_id",
+        [
+            false,
+            0
+        ]
+    ],
+    [
+        "wpdb: a failed raw insert keeps insert_id",
+        0
+    ],
+    [
+        "wpdb: a refused insert resets insert_id",
+        [
+            0,
+            true
+        ]
+    ],
+    [
+        "wpdb: an insert too long for its column resets insert_id",
+        0
+    ],
+    [
+        "wpdb: a raw insert refused for its text",
+        [
+            0,
+            "WordPress database error: Could not perform query because it contains invalid data."
+        ]
+    ],
+    [
+        "wpdb: a failed delete keeps insert_id",
+        777
+    ],
+    [
+        "wpdb: a write with no placeholder is not a notice",
+        [
+            [
+                "wpdb::prepare",
+                "The query argument of wpdb::prepare() must have a placeholder."
+            ]
+        ]
+    ],
+    [
+        "wpdb: two fields too long",
+        [
+            false,
+            "WordPress database error: Processing the values for the following fields failed: a, b. The supplied values may be too long or contain invalid data."
+        ]
+    ],
+    [
+        "wpdb: one field too long",
+        [
+            false,
+            "WordPress database error: Processing the value for the following field failed: a. The supplied value may be too long or contains invalid data."
+        ]
+    ],
+    [
+        "wpdb: get_col reads each row through get_var",
+        [
+            [
+                null,
+                "a",
+                null
+            ],
+            [
+                [
+                    "get_var",
+                    null,
+                    0,
+                    0
+                ],
+                [
+                    "get_var",
+                    null,
+                    0,
+                    1
+                ],
+                [
+                    "get_var",
+                    null,
+                    0,
+                    2
+                ]
+            ]
+        ]
+    ],
+    [
+        "wpdb: get_col with a query",
+        [
+            null,
+            "a",
+            null,
+            "0"
+        ]
+    ],
+    [
+        "wpdb: get_col of a second column",
+        [
+            null,
+            "b"
+        ]
+    ],
+    [
+        "wpdb: get_var of empty and zero",
+        [
+            null,
+            "0",
+            null,
+            "0",
+            " "
+        ]
+    ],
+    [
+        "wpdb: get_row with no query",
+        [
+            null,
+            null,
+            null
+        ]
+    ],
+    [
+        "wpdb: get_results with no query",
+        [
+            null,
+            null
+        ]
+    ],
+    [
+        "wpdb: get_results with an unknown output",
+        [
+            null,
+            [
+                {
+                    "a": "1"
+                }
+            ],
+            null
+        ]
+    ],
+    [
+        "wpdb: get_row with an unknown output",
+        [
+            null,
+            null
+        ]
+    ],
+    [
+        "wpdb: get_var with no query",
+        [
+            "1",
+            "2"
+        ]
+    ],
+    [
+        "wpdb: get_col with no query",
+        [
+            "1",
+            "2"
+        ]
+    ],
+    [
+        "wpdb: get_var asks check_safe_collation",
+        1
+    ],
+    [
+        "wpdb: get_row asks check_safe_collation",
+        1
+    ],
+    [
+        "wpdb: get_col asks check_safe_collation",
+        1
+    ],
+    [
+        "wpdb: get_results asks check_safe_collation",
+        1
+    ],
+    [
+        "wpdb: check_safe_collation by collation",
+        {
+            "utf8mb4_unicode_ci": false,
+            "utf8mb4_bin": true,
+            "utf8mb4_general_ci": true,
+            "utf8mb3_general_ci": true,
+            "latin1_swedish_ci": true,
+            "ascii_general_ci": false,
+            "utf8mb4_unicode_520_ci": false,
+            "latin1_bin": true,
+            "binary": true
+        }
+    ],
+    [
+        "wpdb: check_safe_collation by query",
+        [
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "wpdb: column metadata is the server row",
+        [
+            [
+                "id",
+                "a",
+                "b",
+                "c",
+                "n"
+            ],
+            [
+                "a",
+                "varchar(3)",
+                "utf8mb4_unicode_ci"
+            ]
+        ]
+    ],
+    [
+        "wpdb: charset of a missing table",
+        [
+            [
+                "WP_Error",
+                "wpdb_get_table_charset_failure",
+                "Could not retrieve table charset."
+            ],
+            [
+                "WP_Error",
+                "wpdb_get_table_charset_failure",
+                "Could not retrieve table charset."
+            ],
+            {
+                "errors": {
+                    "wpdb_get_table_charset_failure": [
+                        "Could not retrieve table charset."
+                    ]
+                },
+                "error_data": []
+            }
+        ]
+    ],
+    [
+        "wpdb: prepare notices",
+        [
+            [
+                "SELECT 1",
+                [
+                    [
+                        "wpdb::prepare",
+                        "The query argument of wpdb::prepare() must have a placeholder."
+                    ],
+                    [
+                        "wpdb::prepare",
+                        "The query does not contain the correct number of placeholders (0) for the number of arguments passed (1)."
+                    ]
+                ]
+            ],
+            [
+                "SELECT 100{escape}",
+                []
+            ],
+            [
+                "SELECT 5{escape}",
+                []
+            ],
+            [
+                "SELECT 1",
+                [
+                    [
+                        "wpdb::prepare",
+                        "The query argument of wpdb::prepare() must have a placeholder."
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "wpdb::prepare",
+                        "The query only expected one placeholder, but an array of multiple placeholders was sent."
+                    ]
+                ]
+            ],
+            [
+                "SELECT 'a'",
+                []
+            ],
+            [
+                "",
+                [
+                    [
+                        "wpdb::prepare",
+                        "The query does not contain the correct number of placeholders (2) for the number of arguments passed (1)."
+                    ]
+                ]
+            ],
+            [
+                "SELECT 'a', 'b'",
+                [
+                    [
+                        "wpdb::prepare",
+                        "The query does not contain the correct number of placeholders (2) for the number of arguments passed (3)."
+                    ]
+                ]
+            ],
+            [
+                "SELECT 'a'",
+                [
+                    [
+                        "wpdb::prepare",
+                        "The query does not contain the correct number of placeholders (1) for the number of arguments passed (2)."
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "wpdb::prepare",
+                        "The query only expected one placeholder, but an array of multiple placeholders was sent."
+                    ]
+                ]
+            ],
+            [
+                "SELECT a a",
+                []
+            ]
+        ]
+    ],
+    [
+        "wpdb: print_error with show and suppress",
+        [
+            "",
+            [
+                [
+                    [
+                        "query",
+                        "error_str"
+                    ],
+                    "SELECT * FROM zz_doubtf_nowhere",
+                    "Table '{db}.zz_doubtf_nowhere' doesn't exist"
+                ],
+                [
+                    [
+                        "query",
+                        "error_str"
+                    ],
+                    "SELECT * FROM zz_doubtf_nowhere2",
+                    "Table '{db}.zz_doubtf_nowhere2' doesn't exist"
+                ]
+            ]
+        ]
+    ],
+    [
+        "wpdb: the logged line names its caller",
+        [
+            "WordPress database error Table '{db}.zz_doubtf_nowhere2' doesn't exist for query SELECT * FROM zz_doubtf_nowhere2 made by {caller}"
+        ]
+    ],
+    [
+        "wpdb: the query filter sees the last query",
+        [
+            "SELECT 1 UNION SELECT 2",
+            2
+        ]
+    ],
+    [
+        "wpdb: a wpdb that is not ready runs nothing",
+        [
+            false,
+            [],
+            "SELECT 3"
+        ]
+    ],
+    [
+        "wpdb: select a missing database",
+        [
+            null,
+            false
+        ]
+    ],
+    [
+        "wpdb: set_blog_id on one site",
+        [
+            0,
+            4,
+            2,
+            true,
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "wpdb: set_prefix returns and names",
+        [
+            true,
+            "zzp_",
+            "zzq_",
+            "zzr_",
+            "zzs_",
+            "zzs_",
+            "zzs_posts",
+            "zzs_categories",
+            "zzs_post2cat",
+            "zzs_link2cat",
+            "zzs_users",
+            null
+        ]
+    ],
+    [
+        "wpdb: set_sql_mode with no modes",
+        [
+            [],
+            [],
+            0,
+            true
+        ]
+    ],
+    [
+        "wpdb: strip_invalid_text by charset",
+        [
+            "6162633f",
+            "6162633f",
+            "616263",
+            "616263",
+            "616263c3a9",
+            "6162633f",
+            "706c61696e"
+        ]
+    ],
+    [
+        "wpdb: strip_invalid_text asks the server",
+        3
+    ],
+    [
+        "wpdb: strip_invalid_text_from_query",
+        [
+            "53454c454354202a2046524f4d207a7a5f646f756274665f742057484552452061203d2027787927",
+            "53454c45435420277879f09f988027",
+            "53454c454354202a2046524f4d207a7a5f646f756274665f6c6174696e2057484552452061203d202778ff7927",
+            "53454c454354202a2046524f4d207a7a5f646f756274665f742057484552452061203d202778c3a97927"
+        ]
+    ],
+    [
+        "mail: lang smtp_connect_failed",
+        [
+            "SMTP connect() failed. https://github.com/PHPMailer/PHPMailer/wiki/Troubleshooting",
+            "zz-nokey"
+        ]
+    ],
+    [
+        "mail: isShellSafe",
+        [
+            [
+                "a+b@example.test",
+                false
+            ],
+            [
+                "a=b@example.test",
+                false
+            ],
+            [
+                "ä@example.test",
+                false
+            ],
+            [
+                "ab@example.test",
+                true
+            ],
+            [
+                "a_b-c.d@example.test",
+                true
+            ],
+            [
+                "-oQ@x.com",
+                true
+            ],
+            [
+                "a'b@example.test",
+                false
+            ],
+            [
+                "a b@example.test",
+                false
+            ],
+            [
+                "a!b@example.test",
+                false
+            ],
+            [
+                "",
+                true
+            ]
+        ]
+    ],
+    [
+        "mail: mail() with only a Cc",
+        [
+            "To: undisclosed-recipients:;\r\nSubject: zzdoubtf\r\n"
+        ]
+    ],
+    [
+        "mail: preSend with an AltBody",
+        [
+            "multipart/alternative",
+            "mime",
+            "alt"
+        ]
+    ],
+    [
+        "mail: serverHostname",
+        [
+            "localhost.localdomain",
+            "zz.example.test",
+            "localhost.localdomain"
+        ]
+    ],
+    [
+        "mail: replaceCustomHeader refused",
+        [
+            [
+                true,
+                "",
+                false,
+                []
+            ],
+            [
+                false,
+                "",
+                false,
+                [
+                    [
+                        "X-Zz",
+                        "one"
+                    ]
+                ]
+            ],
+            [
+                true,
+                "",
+                false,
+                []
+            ],
+            [
+                true,
+                "",
+                false,
+                [
+                    [
+                        "X-Zz",
+                        "three"
+                    ]
+                ]
+            ],
+            [
+                true,
+                "",
+                false,
+                []
+            ]
+        ]
+    ],
+    [
+        "mail: S/MIME signed headers",
+        {
+            "ascii": [
+                1,
+                [
+                    "MIME-Version: 1.0",
+                    "Content-Type: multipart/signed; protocol=\"application/x-pkcs7-signature\"; micalg=\"sha-256\"; boundary=\"----SMIME\"",
+                    "Content-Type: text/plain; charset=utf-8",
+                    "Content-Type: application/x-pkcs7-signature; name=\"smime.p7s\"",
+                    "Content-Transfer-Encoding: base64",
+                    "Content-Disposition: attachment; filename=\"smime.p7s\""
+                ]
+            ],
+            "utf8": [
+                1,
+                [
+                    "MIME-Version: 1.0",
+                    "Content-Type: multipart/signed; protocol=\"application/x-pkcs7-signature\"; micalg=\"sha-256\"; boundary=\"----SMIME\"",
+                    "Content-Type: text/plain; charset=utf-8",
+                    "Content-Transfer-Encoding: 8bit",
+                    "Content-Type: application/x-pkcs7-signature; name=\"smime.p7s\"",
+                    "Content-Transfer-Encoding: base64",
+                    "Content-Disposition: attachment; filename=\"smime.p7s\""
+                ]
+            ],
+            "html+alt": [
+                1,
+                [
+                    "MIME-Version: 1.0",
+                    "Content-Type: multipart/signed; protocol=\"application/x-pkcs7-signature\"; micalg=\"sha-256\"; boundary=\"----SMIME\"",
+                    "Content-Type: multipart/alternative;",
+                    "Content-Type: text/plain; charset=us-ascii",
+                    "Content-Type: text/html; charset=us-ascii",
+                    "Content-Type: application/x-pkcs7-signature; name=\"smime.p7s\"",
+                    "Content-Transfer-Encoding: base64",
+                    "Content-Disposition: attachment; filename=\"smime.p7s\""
+                ]
+            ]
+        }
+    ],
+    [
+        "mail: SMTP to localhost offering STARTTLS",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    false
+                ],
+                [
+                    "connect",
+                    "localhost",
+                    2525
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "mail",
+                    "from@example.test",
+                    false
+                ],
+                [
+                    "recipient",
+                    "one@example.test"
+                ],
+                [
+                    "data"
+                ],
+                [
+                    "quit"
+                ],
+                [
+                    "close"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: SMTP to a remote host offering STARTTLS",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    false
+                ],
+                [
+                    "connect",
+                    "mail.example.test",
+                    2525
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "startTLS"
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "mail",
+                    "from@example.test",
+                    false
+                ],
+                [
+                    "recipient",
+                    "one@example.test"
+                ],
+                [
+                    "data"
+                ],
+                [
+                    "quit"
+                ],
+                [
+                    "close"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: SMTP host ports",
+        [
+            [
+                [
+                    "connect",
+                    "mail.example.test",
+                    2525
+                ]
+            ],
+            [
+                [
+                    "connect",
+                    "mail.example.test",
+                    2525
+                ]
+            ],
+            [
+                [
+                    "connect",
+                    "mail.example.test",
+                    65535
+                ]
+            ],
+            [
+                [
+                    "connect",
+                    "mail.example.test",
+                    2526
+                ]
+            ]
+        ]
+    ],
+    [
+        "mail: SMTP with XCLIENT attributes",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    false
+                ],
+                [
+                    "connect",
+                    "mail.example.test",
+                    2525
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "xclient",
+                    {
+                        "ADDR": "192.0.2.1",
+                        "NAME": "zz.example.test"
+                    }
+                ],
+                [
+                    "mail",
+                    "from@example.test",
+                    false
+                ],
+                [
+                    "recipient",
+                    "one@example.test"
+                ],
+                [
+                    "data"
+                ],
+                [
+                    "quit"
+                ],
+                [
+                    "close"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: SMTP with SMTPUTF8",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    true
+                ],
+                [
+                    "connect",
+                    "mail.example.test",
+                    2525
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "mail",
+                    "from@example.test",
+                    true
+                ],
+                [
+                    "recipient",
+                    "one@example.test"
+                ],
+                [
+                    "data"
+                ],
+                [
+                    "quit"
+                ],
+                [
+                    "close"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: SMTP to localhost asking for tls",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    false
+                ],
+                [
+                    "connect",
+                    "localhost",
+                    2525
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "startTLS"
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "mail",
+                    "from@example.test",
+                    false
+                ],
+                [
+                    "recipient",
+                    "one@example.test"
+                ],
+                [
+                    "data"
+                ],
+                [
+                    "quit"
+                ],
+                [
+                    "close"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: SMTP to 127.0.0.1 offering STARTTLS",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    false
+                ],
+                [
+                    "connect",
+                    "127.0.0.1",
+                    2525
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "startTLS"
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "mail",
+                    "from@example.test",
+                    false
+                ],
+                [
+                    "recipient",
+                    "one@example.test"
+                ],
+                [
+                    "data"
+                ],
+                [
+                    "quit"
+                ],
+                [
+                    "close"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: smtpConnect alone",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    true
+                ],
+                [
+                    "connect",
+                    "mail.example.test",
+                    2525
+                ],
+                [
+                    "hello"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: SMTP with a first host refused",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    false
+                ],
+                [
+                    "connect",
+                    "a.example.test",
+                    2525
+                ],
+                [
+                    "connect",
+                    "b.example.test",
+                    2525
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "mail",
+                    "from@example.test",
+                    false
+                ],
+                [
+                    "recipient",
+                    "one@example.test"
+                ],
+                [
+                    "data"
+                ],
+                [
+                    "quit"
+                ],
+                [
+                    "close"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: SMTP asking SMTPUTF8 of a server without it",
+        [
+            [
+                "threw",
+                "Server does not support SMTPUTF8 needed to send to Unicode addresses"
+            ],
+            [
+                [
+                    "setSMTPUTF8",
+                    true
+                ],
+                [
+                    "connect",
+                    "mail.example.test",
+                    2525
+                ],
+                [
+                    "hello"
+                ]
+            ],
+            "Server does not support SMTPUTF8 needed to send to Unicode addresses"
+        ]
+    ],
+    [
+        "mail: SMTP with XCLIENT and a login",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    false
+                ],
+                [
+                    "connect",
+                    "mail.example.test",
+                    2525
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "authenticate"
+                ],
+                [
+                    "xclient",
+                    {
+                        "ADDR": "192.0.2.1"
+                    }
+                ],
+                [
+                    "mail",
+                    "from@example.test",
+                    false
+                ],
+                [
+                    "recipient",
+                    "one@example.test"
+                ],
+                [
+                    "data"
+                ],
+                [
+                    "quit"
+                ],
+                [
+                    "close"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: SMTP with XCLIENT refused",
+        [
+            true,
+            [
+                [
+                    "setSMTPUTF8",
+                    false
+                ],
+                [
+                    "connect",
+                    "mail.example.test",
+                    2525
+                ],
+                [
+                    "hello"
+                ],
+                [
+                    "xclient",
+                    {
+                        "ADDR": "192.0.2.1"
+                    }
+                ],
+                [
+                    "mail",
+                    "from@example.test",
+                    false
+                ],
+                [
+                    "recipient",
+                    "one@example.test"
+                ],
+                [
+                    "data"
+                ],
+                [
+                    "quit"
+                ],
+                [
+                    "close"
+                ]
+            ],
+            ""
+        ]
+    ],
+    [
+        "mail: SMTP that cannot connect",
+        [
+            false,
+            "SMTP connect() failed. https://github.com/PHPMailer/PHPMailer/wiki/Troubleshooting"
+        ]
+    ],
+    [
+        "mail: sendmail arguments",
+        [
+            [
+                true,
+                [
+                    "-i -t"
+                ],
+                [
+                    "To: One Person <one@example.test>"
+                ],
+                ""
+            ],
+            [
+                true,
+                [
+                    "-ffrom@example.test -i -t"
+                ],
+                [
+                    "To: One Person <one@example.test>"
+                ],
+                "from@example.test"
+            ],
+            [
+                true,
+                [
+                    "-fbounce@example.test -i -t"
+                ],
+                [
+                    "To: One Person <one@example.test>"
+                ],
+                "bounce@example.test"
+            ],
+            [
+                true,
+                [
+                    "-i -t"
+                ],
+                [
+                    "To: One Person <one@example.test>"
+                ],
+                ""
+            ],
+            [
+                true,
+                [
+                    "-fbounce@example.test -i -t"
+                ],
+                [
+                    "To: One Person <one@example.test>"
+                ],
+                "bounce@example.test"
+            ],
+            [
+                true,
+                [
+                    "-i -t"
+                ],
+                [
+                    "To: One Person <one@example.test>"
+                ],
+                "a+b@example.test"
+            ],
+            [
+                true,
+                [
+                    ""
+                ],
+                [
+                    "To: One Person <one@example.test>"
+                ],
+                ""
+            ],
+            [
+                true,
+                [
+                    "-fbounce@example.test"
+                ],
+                [
+                    "To: One Person <one@example.test>"
+                ],
+                "bounce@example.test"
+            ]
+        ]
+    ],
+    [
+        "mail: sendmail takes sendmail_from",
+        [
+            true,
+            [
+                "-finifrom@example.test -i -t"
+            ],
+            [
+                "To: One Person <one@example.test>"
+            ],
+            "inifrom@example.test"
+        ]
+    ],
+    [
+        "mail: sendmail one at a time",
+        [
+            true,
+            [
+                "-i -t",
+                "-i -t"
+            ],
+            [
+                "To: One Person <one@example.test>",
+                "To: two@example.test"
+            ],
+            ""
+        ]
+    ],
+    [
+        "rewrite: year, month and day structures",
+        {
+            "/%year%/%monthnum%/%day%/%postname%/": [
+                "/%year%/",
+                "/%year%/%monthnum%/",
+                "/%year%/%monthnum%/%day%"
+            ],
+            "/%day%/%monthnum%/%year%/%postname%/": [
+                "/%year%",
+                "/%monthnum%/%year%",
+                "/%day%/%monthnum%/%year%"
+            ],
+            "/%monthnum%/%day%/%year%/%postname%/": [
+                "/%year%",
+                "/%monthnum%/%year%",
+                "/%monthnum%/%day%/%year%"
+            ],
+            "/blog/%year%/%monthnum%/%day%/%postname%/": [
+                "/blog/%year%/",
+                "/blog/%year%/%monthnum%/",
+                "/blog/%year%/%monthnum%/%day%"
+            ],
+            "/%post_id%/%year%/%monthnum%/%postname%/": [
+                "/date/%year%/",
+                "/date/%year%/%monthnum%/",
+                "/date/%year%/%monthnum%/%day%"
+            ],
+            "/%postname%/": [
+                "/%year%/",
+                "/%year%/%monthnum%/",
+                "/%year%/%monthnum%/%day%"
+            ]
+        }
+    ],
+    [
+        "rewrite: structures already set",
+        [
+            "/zzd/%year%/%monthnum%/%day%",
+            "/zzd/%year%/",
+            "/zzd/%year%/%monthnum%/",
+            "/zza/%author%",
+            "/zzs/%search%",
+            "/zzp/%pagename%",
+            "/zzf/%feed%",
+            "/zzcf/%feed%"
+        ]
+    ],
+    [
+        "rewrite: structures kept once made",
+        [
+            "/%year%/%monthnum%/%day%",
+            "/author/%author%",
+            "search/%search%",
+            "%pagename%",
+            "feed/%feed%",
+            "comments/feed/%feed%"
+        ]
+    ],
+    [
+        "rewrite: structures without permalinks",
+        [
+            "/zza/%author%",
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "rewrite: the query_string filter is deprecated",
+        [
+            "zzv=a&zzq=1",
+            {
+                "zzv": "a",
+                "zzq": "1"
+            },
+            [
+                [
+                    "query_string",
+                    "query_vars, request",
+                    "2.1.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "rewrite: do_parse_request hears the given extra vars",
+        [
+            false,
+            [
+                {
+                    "zzold": 1
+                },
+                "zznew=2"
+            ],
+            false,
+            [
+                {
+                    "zzold": 1
+                },
+                {
+                    "zzarr": 3
+                }
+            ]
+        ]
+    ],
+    [
+        "rewrite: add_endpoint query vars",
+        [
+            [
+                8191,
+                "zzdoubtf-ep",
+                "zzdoubtf-ep"
+            ],
+            [
+                8191,
+                "zzdoubtf-ep2",
+                false
+            ],
+            [
+                8191,
+                "zzdoubtf-ep3",
+                ""
+            ],
+            [
+                8191,
+                "zzdoubtf-ep4",
+                "zzdoubtf-ep4"
+            ]
+        ]
+    ],
+    [
+        "rewrite: add_permastruct with the old arguments",
+        [
+            {
+                "with_front": false,
+                "ep_mask": 4096,
+                "paged": true,
+                "feed": true,
+                "forcomments": false,
+                "walk_dirs": true,
+                "endpoints": true,
+                "struct": "zz/%zzpd%"
+            },
+            {
+                "with_front": false,
+                "ep_mask": 4096,
+                "paged": true,
+                "feed": true,
+                "forcomments": false,
+                "walk_dirs": true,
+                "endpoints": true,
+                "struct": "zz/%zzpe%"
+            },
+            {
+                "with_front": true,
+                "ep_mask": 0,
+                "paged": true,
+                "feed": true,
+                "forcomments": false,
+                "walk_dirs": true,
+                "endpoints": true,
+                "struct": "/zz/%zzpf%"
+            }
+        ]
+    ],
+    [
+        "rewrite: remove_rewrite_tag keeps the keys",
+        [
+            [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                12
+            ],
+            {
+                "0": "%year%",
+                "2": "%day%",
+                "3": "%hour%",
+                "4": "%minute%",
+                "5": "%second%",
+                "6": "%postname%",
+                "7": "%post_id%",
+                "8": "%author%",
+                "9": "%pagename%",
+                "10": "%search%",
+                "12": "%zzb%"
+            },
+            [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                12
+            ],
+            [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                12
+            ]
+        ]
+    ],
+    [
+        "rewrite: the IIS rule is named for home_url",
+        "WordPress: https://zz-iis.example.test"
+    ],
+    [
+        "rewrite: a new WP_Rewrite has no top rules",
+        [
+            [],
+            [],
+            [],
+            [],
+            []
+        ]
+    ],
+    [
+        "rewrite: init keeps and clears",
+        [
+            {
+                "zztop": "index.php?zz=1"
+            },
+            [],
+            [],
+            [],
+            [
+                "zzps"
+            ],
+            false
+        ]
+    ],
+    [
+        "rewrite: the global top rules",
+        [
+            "^wp-json/?$",
+            "^wp-json/(.*)?",
+            "^index.php/wp-json/?$",
+            "^index.php/wp-json/(.*)?",
+            "^wp-sitemap\\.xml$",
+            "^wp-sitemap\\.xsl$",
+            "^wp-sitemap-index\\.xsl$",
+            "^wp-sitemap-([a-z]+?)-([a-z\\d_-]+?)-(\\d+?)\\.xml$",
+            "^wp-sitemap-([a-z]+?)-(\\d+?)\\.xml$"
+        ]
+    ],
+    [
+        "rewrite: set_category_base unchanged does not init",
+        [
+            true,
+            {
+                "zzbottom": "index.php?zz=2"
+            },
+            true
+        ]
+    ],
+    [
+        "rewrite: set_tag_base unchanged does not init",
+        [
+            true,
+            {
+                "zzbottom": "index.php?zz=2"
+            },
+            true
+        ]
+    ],
+    [
+        "upgrader: fs_connect without a filesystem",
+        [
+            false,
+            [
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "upgrader: fs_connect with no credentials",
+        [
+            false,
+            [
+                false
+            ]
+        ]
+    ],
+    [
+        "upgrader: deactivate_plugin_before_upgrade with no plugin",
+        [
+            [
+                "WP_Error",
+                "bad_request",
+                "Invalid data provided."
+            ],
+            [
+                "WP_Error",
+                "bad_request",
+                "Invalid data provided."
+            ],
+            true
+        ]
+    ],
+    [
+        "upgrader: delete_old_plugin",
+        {
+            "/x.php": [
+                true,
+                [
+                    [
+                        "exists",
+                        "{plugins}/"
+                    ],
+                    [
+                        "delete",
+                        "{plugins}//x.php",
+                        false
+                    ]
+                ]
+            ],
+            "zz-dir/zz.php": [
+                true,
+                [
+                    [
+                        "exists",
+                        "{plugins}/zz-dir/"
+                    ],
+                    [
+                        "delete",
+                        "{plugins}/zz-dir/",
+                        true
+                    ]
+                ]
+            ],
+            "x.php": [
+                true,
+                [
+                    [
+                        "exists",
+                        "{plugins}/"
+                    ],
+                    [
+                        "delete",
+                        "{plugins}/x.php",
+                        false
+                    ]
+                ]
+            ],
+            "absent": [
+                "zzremoved",
+                [
+                    [
+                        "exists",
+                        "{plugins}/zz-dir/"
+                    ]
+                ]
+            ]
+        }
+    ],
+    [
+        "upgrader: delete_old_theme",
+        {
+            "none": [
+                "zzremoved",
+                []
+            ],
+            "absent": [
+                true,
+                [
+                    [
+                        "exists",
+                        "{themes}/zz-doubtf-theme"
+                    ]
+                ]
+            ],
+            "there": [
+                true,
+                [
+                    [
+                        "exists",
+                        "{themes}/zz-doubtf-theme"
+                    ],
+                    [
+                        "delete",
+                        "{themes}/zz-doubtf-theme",
+                        true
+                    ]
+                ]
+            ]
+        }
+    ],
+    [
+        "upgrader: a missing parent theme is looked up",
+        [
+            true,
+            [
+                "parent_theme_search",
+                "parent_theme_not_found"
+            ],
+            [
+                [
+                    "theme_information",
+                    {
+                        "slug": "zz-doubtf-missing-parent",
+                        "fields": {
+                            "sections": false,
+                            "tags": false
+                        },
+                        "locale": "en_US",
+                        "wp_version": "7.1"
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "upgrader: should_update_to_version after a failure",
+        {
+            "critical": false,
+            "same, no retry": false,
+            "same, retry": true,
+            "another": true,
+            "from another version": true,
+            "none": true
+        }
+    ],
+    [
+        "upgrader: an update leaves the update emails",
+        [
+            [
+                true,
+                true
+            ],
+            {
+                "zz-doubtf-uptheme": "1.0",
+                "zz-doubtf-other": "1.0"
+            },
+            {
+                "zz-doubtf-other": "1.0"
+            }
+        ]
+    ],
+    [
+        "wpdb: SAVEQUERIES logs a query",
+        [
+            1,
+            [
+                5,
+                "SELECT 1",
+                true,
+                true,
+                true,
+                []
+            ]
+        ]
+    ],
+    [
+        "wpdb: the custom user tables",
+        [
+            "zzdoubtf_users",
+            "zzdoubtf_usermeta",
+            {
+                "users": "zzdoubtf_users",
+                "usermeta": "zzdoubtf_usermeta"
+            },
+            "zzc_posts"
+        ]
+    ]
+]

@@ -8,23 +8,22 @@ use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Content\Users;
 
+/** The current user: the global a plugin may have set, else who the request is, the global set again (probe taxonomy-blocks-user-doubts). */
 function _wp_get_current_user()
 {
-    $runtime = Runtime::current();
-    $user = $runtime->get('current_user');
-    if ($user instanceof WP_User) {
-        return $user;
+    if (($GLOBALS['current_user'] ?? null) instanceof WP_User) {
+        return $GLOBALS['current_user'];
     }
     // Who the request is, as plugins may say (the engine's own session answers through wp_validate_auth_cookie).
     $id = (int) apply_filters('determine_current_user', false);
-    return wp_set_current_user($id > 0 ? $id : 0);
+    return $GLOBALS['current_user'] = wp_set_current_user($id > 0 ? $id : 0);
 }
 
 /** A reset link mailed to the account a login or email names (the posted user_login when none is given): true, or the refusal. Minn\Runtime\AccountFlows. */
 function retrieve_password($user_login = '')
 {
     if ($user_login === '' && Runtime::booted()) {
-        $user_login = (string) (Runtime::current()->request?->form['user_login'] ?? '');
+        $user_login = (string) ($_POST['user_login'] ?? Runtime::current()->request?->form['user_login'] ?? '');
     }
     return Minn\Runtime\AccountFlows::retrievePassword((string) $user_login);
 }
@@ -138,10 +137,10 @@ function map_meta_cap($cap, $user_id, ...$args)
     return Can::map($cap, $user_id, ...$args);
 }
 
+/** The roles object's own role (the same object each time), or null. */
 function get_role($role)
 {
-    $roles = Runtime::current()->capabilities->roles()->all();
-    return isset($roles[$role]) ? new WP_Role($role, $roles[$role]['capabilities']) : null;
+    return wp_roles()->get_role($role);
 }
 
 /** The site's one roles object ($wp_roles), made the first time it is asked for. */
@@ -225,7 +224,8 @@ function _wp_get_user_contactmethods($user = null)
 /**
  * The sign-in cookie as an authenticate filter: a user already found stays;
  * with no username and no password, the cookie's user, or expired_session
- * when a cookie is there but no longer good; otherwise what came in.
+ * when a cookie is there but no longer good (the secure one when the
+ * sign-in said secure, $auth_secure_cookie); otherwise what came in.
  */
 function wp_authenticate_cookie($user, $username, $password)
 {
@@ -237,7 +237,7 @@ function wp_authenticate_cookie($user, $username, $password)
         if ($user_id) {
             return new WP_User($user_id);
         }
-        if (!empty($_COOKIE[is_ssl() ? SECURE_AUTH_COOKIE : AUTH_COOKIE])) {
+        if (!empty($_COOKIE[empty($GLOBALS['auth_secure_cookie']) ? AUTH_COOKIE : SECURE_AUTH_COOKIE])) {
             return new WP_Error('expired_session', __('Please log in again.'));
         }
     }
@@ -273,10 +273,10 @@ function wp_list_users($args = [])
     echo $output;
 }
 
-/** The twice-daily user count event, scheduled from now when none is. */
+/** The twice-daily user count event, scheduled from now when none is; never while installing. */
 function wp_schedule_update_user_counts()
 {
-    if (!wp_next_scheduled('wp_update_user_counts')) {
+    if (!wp_installing() && !wp_next_scheduled('wp_update_user_counts')) {
         wp_schedule_event(time(), 'twicedaily', 'wp_update_user_counts');
     }
 }
@@ -315,7 +315,7 @@ function send_confirmation_on_profile_email($user_id = 0)
     $request = ['hash' => md5($new_email . time() . wp_rand()), 'newemail' => $new_email];
     update_user_meta($current_user->ID, '_new_email', $request);
     $sitename = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
-    $content = apply_filters('new_user_email_content', "Howdy ###USERNAME###,\n\nYou recently requested to have the email address on your account changed.\n\nIf this is correct, please click on the following link to change it:\n###ADMIN_URL###\n\nYou can safely ignore and delete this email if you do not want to\ntake this action.\n\nThis email has been sent to ###EMAIL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###", $request);
+    $content = apply_filters('new_user_email_content', __("Howdy ###USERNAME###,\n\nYou recently requested to have the email address on your account changed.\n\nIf this is correct, please click on the following link to change it:\n###ADMIN_URL###\n\nYou can safely ignore and delete this email if you do not want to\ntake this action.\n\nThis email has been sent to ###EMAIL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###"), $request);
     $content = str_replace(['###USERNAME###', '###ADMIN_URL###', '###EMAIL###', '###SITENAME###', '###SITEURL###'], [$current_user->user_login, esc_url(admin_url('profile.php?newuseremail=' . $request['hash'])), $new_email, $sitename, home_url()], $content);
     wp_mail($new_email, sprintf(__('[%s] Email Change Request'), $sitename), $content);
 }
@@ -404,37 +404,10 @@ function get_user_count($network_id = null)
     return (int) get_network_option($network_id, 'user_count', -1);
 }
 
-/**
- * How many users there are, and how many hold each role (probe
- * user-remaining). The time strategy lists the roles that have users in
- * their registered order, then none (users with no known role); any other
- * strategy lists none first, then the roles as they are met, user by user.
- * pre_count_users may answer first.
- */
+/** How many users hold each role, by the capabilities rows (Runtime\UserCounts; probes user-remaining, taxonomy-blocks-user-doubts). */
 function count_users($strategy = 'time', $site_id = null)
 {
-    global $wpdb;
-    $answer = apply_filters('pre_count_users', null, $strategy, $site_id);
-    if ($answer !== null) {
-        return $answer;
-    }
-    $roles = array_keys(wp_roles()->get_names());
-    $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->users}");
-    $key = $wpdb->get_blog_prefix($site_id === null ? null : (int) $site_id) . 'capabilities';
-    $counts = [];
-    $holders = 0;
-    foreach ($wpdb->get_col($wpdb->prepare("SELECT meta_value FROM {$wpdb->usermeta} WHERE meta_key = %s ORDER BY user_id", $key)) as $value) {
-        $held = array_values(array_intersect(array_keys((array) maybe_unserialize($value)), $roles));
-        foreach ($held as $role) {
-            $counts[$role] = ($counts[$role] ?? 0) + 1;
-        }
-        $holders += $held === [] ? 0 : 1;
-    }
-    $none = $total - $holders;
-    $avail = $strategy === 'time'
-        ? array_filter(array_merge(array_fill_keys($roles, 0), $counts)) + ['none' => $none]
-        : ['none' => $none] + $counts;
-    return ['total_users' => $total, 'avail_roles' => $avail];
+    return Minn\Runtime\UserCounts::users($strategy, $site_id);
 }
 
 function get_users($args = [])
@@ -454,7 +427,7 @@ function validate_username($username)
 
 function wp_get_password_hint()
 {
-    $hint = 'Hint: The password should be at least twelve characters long. To make it stronger, use upper and lower case letters, numbers, and symbols like ! " ? $ % ^ &amp; ).';
+    $hint = __('Hint: The password should be at least twelve characters long. To make it stronger, use upper and lower case letters, numbers, and symbols like ! " ? $ % ^ &amp; ).');
     return apply_filters('password_hint', $hint);
 }
 
@@ -496,7 +469,8 @@ function wp_signon($credentials = [], $secure_cookie = '')
     if ($secure_cookie === '') {
         $secure_cookie = is_ssl();
     }
-    $secure_cookie = apply_filters('secure_signon_cookie', $secure_cookie, $credentials);
+    // The cookie step reads the global to know which cookie this sign-in is about.
+    $GLOBALS['auth_secure_cookie'] = $secure_cookie = apply_filters('secure_signon_cookie', $secure_cookie, $credentials);
     // A valid sign-in cookie answers too, as the reference lets it during a sign-in.
     add_filter('authenticate', 'wp_authenticate_cookie', 30, 3);
     $user = wp_authenticate($credentials['user_login'], $credentials['user_password']);
@@ -517,7 +491,11 @@ function wp_authenticate_username_password($user, $username, $password)
         return $user;
     }
     if ($username === '' || $password === '') {
-        $error = is_wp_error($user) ? $user : new WP_Error();
+        // An earlier step's refusal is handed on as it is (probe taxonomy-blocks-user-doubts).
+        if (is_wp_error($user)) {
+            return $user;
+        }
+        $error = new WP_Error();
         if ($username === '') {
             $error->add('empty_username', '<strong>Error:</strong> The username field is empty.');
         }
@@ -621,11 +599,9 @@ function sanitize_user_field($field, $value, $user_id, $context)
         return apply_filters("pre_user_{$name}", $value);
     }
     if ($context === 'edit') {
-        $value = apply_filters("edit_user_{$name}", $value, $user_id);
-        if ($field === 'user_url' && is_string($value)) {
-            $value = esc_url($value);
-        }
-        return is_string($value) ? esc_attr($value) : $value;
+        // Escaped for the attribute first; an address then goes through esc_url, so its quotes stay as entities (probe taxonomy-blocks-user-doubts).
+        $value = is_string($value = apply_filters("edit_user_{$name}", $value, $user_id)) ? esc_attr($value) : $value;
+        return $field === 'user_url' && is_string($value) ? esc_url($value) : $value;
     }
     $value = apply_filters("user_{$name}", $value, $user_id, $context);
     if ($context === 'attribute') {
@@ -956,10 +932,12 @@ function _minn_admin_email_due(int $user_id, string $landing, string $login_url)
  * @internal The administration email screen's answer to the signed-in
  * user: 'confirmed' when "The email is correct" came with its nonce (the
  * check waits admin_email_check_interval again), 'later' when "Remind me
- * later" did (admin_email_remind_interval), 'refused' for a stale nonce,
- * else 'screen' with what the screen shows: the address, the nonce field,
- * the remind link's nonce, and what admin_email_confirm and
- * admin_email_confirm_form print. Null for someone who may not see it.
+ * later" did (admin_email_remind_interval; neither writes a date for an
+ * interval of 0 or less), 'refused' for a stale nonce, null (back to sign
+ * in) for a stale reminder link, else 'screen' with what the screen shows:
+ * the address, the nonce field, the remind link's nonce, and what
+ * admin_email_confirm and admin_email_confirm_form print. Null for someone
+ * who may not see it.
  *
  * @return array{0: string, 1: array<string, string>}|null
  */
@@ -969,15 +947,24 @@ function _minn_admin_email_screen(string $confirm_nonce, string $remind_nonce): 
         return null;
     }
     $remind = (int) apply_filters('admin_email_remind_interval', 3 * DAY_IN_SECONDS);
-    if ($remind_nonce !== '' && wp_verify_nonce($remind_nonce, 'remind_me_later_nonce')) {
-        update_option('admin_email_lifespan', time() + $remind);
+    // A stale reminder link goes back to sign in; an interval of 0 or less writes no new date (measured over HTTP, doubts 2026-10-20).
+    if ($remind_nonce !== '') {
+        if (!wp_verify_nonce($remind_nonce, 'remind_me_later_nonce')) {
+            return null;
+        }
+        if ($remind > 0) {
+            update_option('admin_email_lifespan', time() + $remind);
+        }
         return ['later', []];
     }
     if ($confirm_nonce !== '') {
         if (!wp_verify_nonce($confirm_nonce, 'confirm_admin_email')) {
             return ['refused', []];
         }
-        update_option('admin_email_lifespan', time() + (int) apply_filters('admin_email_check_interval', 6 * MONTH_IN_SECONDS));
+        $check = (int) apply_filters('admin_email_check_interval', 6 * MONTH_IN_SECONDS);
+        if ($check > 0) {
+            update_option('admin_email_lifespan', time() + $check);
+        }
         return ['confirmed', []];
     }
     $printed = static function (string $hook, mixed ...$args): string {
@@ -1017,21 +1004,10 @@ function get_users_of_blog($id = '')
     return array_map(static fn (array $row): object => (object) $row, (new Users(Runtime::current()->db))->withCapabilities($wpdb->get_blog_prefix($id ?: get_current_blog_id()) . 'capabilities'));
 }
 
-/** Post counts for several users (as stored, 0 for none), published or also private (Runtime\PostLookup). */
+/** Post counts for several users (as stored, 0 for none), published, and private ones the viewer may count (Runtime\UserCounts). */
 function count_many_users_posts($users, $post_type = 'post', $public_only = false)
 {
-    if (empty($users) || !is_array($users)) {
-        return [];
-    }
-    $pre = apply_filters('pre_count_many_users_posts', null, $users, $post_type, $public_only);
-    if ($pre !== null) {
-        return $pre;
-    }
-    $counts = _minn_post_lookup()->countsByAuthors(array_map('absint', $users), array_map('strval', (array) $post_type), $public_only ? ['publish'] : ['publish', 'private']);
-    foreach ($users as $id) {
-        $counts[$id] ??= 0;
-    }
-    return $counts;
+    return Minn\Runtime\UserCounts::manyUsersPosts($users, $post_type, $public_only);
 }
 
 /** Whether a user may reset their password, through allow_password_reset; false for anything but a user. */

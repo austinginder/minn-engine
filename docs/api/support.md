@@ -186,7 +186,7 @@ encoded; for a textarea, everything encoded; for an inline script, a
 single-quoted string's specials; and an address (esc_url) cleaned, its
 protocol checked against the allowed ones.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ResourceHints`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Media\CompatFields`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ResourceHints`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Media\CompatFields`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\WpdbReads`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -786,7 +786,7 @@ wp_list_sort() promises (loose comparison per field, first difference
 wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
 
-Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentTags`, `Minn\Runtime\DieInput`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\Registered`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\WidgetAreas`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentTags`, `Minn\Runtime\DieInput`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\Registered`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\WidgetAreas`, `Minn\Runtime\WpdbReads`, `Minn\Theme\HeadLinks`
 
 
 ### static `filterParsed(?Closure $filter): void`
@@ -1073,7 +1073,7 @@ here executes the blob; each reader scans for the one shape it needs.
 - const `MAX_DEPTH` = `4096` — The deepest nesting a record may have, PHP's own default (unserialize_max_depth).
 - const `SMALLEST_PAIR` = `6` — The fewest bytes an array or object member can take: a key "i:0;" and a value "N;".
 
-Used by: `Minn\Admin\AdminPlugin`, `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\UploadsSize`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Capabilities`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Extension\Loader`, `Minn\Front\AdminBar`, `Minn\Mail\MailSettings`, `Minn\Ops\Updates`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\StoredObjects`, `Minn\Support\SearchReplace`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\UploadsSize`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Capabilities`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Extension\Loader`, `Minn\Front\AdminBar`, `Minn\Mail\MailSettings`, `Minn\Ops\Updates`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\DeprecatedUserMeta`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\StoredObjects`, `Minn\Runtime\UserCounts`, `Minn\Support\SearchReplace`
 
 
 ### static `stringList(?string $blob): array`
@@ -1186,6 +1186,8 @@ $filter may write a fragment itself (the wp_sprintf filter: the list
 directive %l lives there); otherwise PHP's sprintf fills it, an array
 as nothing, and a fragment it cannot fill stays as written.
 
+Used by: `Minn\Runtime\TermTags`
+
 ### static `format(string $pattern, array $args, Closure $filter): string`
 
 The pattern with its arguments filled in.
@@ -1204,6 +1206,8 @@ letters, digits, $ _ . - and backticks (dropped), plus two-byte UTF-8.
 
 - const `NAME` = `'((?:[0-9a-zA-Z$_.`-]|[\\xC2-\\xDF][\\x80-\\xBF])+)'`
 - const `LEADS` = `array (   0 => 'EXPLAIN(?:\\s+EXTENDED)?\\s+SELECT.*?\\s+FROM',   1 => 'SELECT.*?\\s+FROM',   2 => 'INSERT(?:\\s+(?:LOW_PRIORITY|DELAYED|HIGH_PRIORITY))?(?:\\s+IGNORE)?(?:\\s+INTO)?',   3 => 'REPLACE(?:\\s+(?:LOW_PRIORITY|DELAYED))?(?:\\s+INTO)?',   4 => 'UPDATE(?:\\s+LOW_PRIORITY)?(?:\\s+IGNORE)?',   5 => 'DELETE(?:\\s+(?:LOW_PRIORITY|QUICK|IGNORE))*(?:.+?FROM)?',   6 => '(?:DESCRIBE|DESC|EXPLAIN)',   7 => 'SHOW(?:\\s+FULL)?\\s+(?:COLUMNS|FIELDS|INDEX|INDEXES)\\s+FROM',   8 => 'SHOW\\s+CREATE\\s+TABLE',   9 => 'CREATE(?:\\s+TEMPORARY)?\\s+TABLE(?:\\s+IF\\s+NOT\\s+EXISTS)?',   10 => 'DROP\\s+TABLE(?:\\s+IF\\s+EXISTS)?',   11 => '(?:ALTER|TRUNCATE|OPTIMIZE|REPAIR|CHECK|ANALYZE|RENAME)(?:\\s+TABLE)?',   12 => 'LOCK\\s+TABLES?',   13 => 'LOAD\\s+DATA.*?INTO\\s+TABLE', )` — What leads to the table name in each statement the reference reads, tried in order.
+
+Used by: `Minn\Runtime\WpdbFields`
 
 ### static `of(string $query): ?string`
 
@@ -1227,7 +1231,7 @@ a number of words or characters, named references written as numeric
 ones, stray ampersands encoded, whitespace normalized, a path's last part,
 and a callback run over every value of a nested structure.
 
-Used by: `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\Autosaves`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\QueryArgs`
+Used by: `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\Autosaves`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\TermTags`
 
 ### static `trimWords(mixed $text, mixed $count = 55, mixed $more = NULL): string`
 
@@ -1392,7 +1396,7 @@ off, so "\xE2\x82" counts once.
 - const `BROKEN` = `'\\xE0[\\xA0-\\xBF]|[\\xE1-\\xEC\\xEE\\xEF][\\x80-\\xBF]|\\xED[\\x80-\\x9F]|\\xF0[\\x90-\\xBF][\\x80-\\xBF]?|[\\xF1-\\xF3][\\x80-\\xBF]{1,2}|\\xF4[\\x80-\\x8F][\\x80-\\xBF]?'` — The start of a sequence that breaks off.
 - const `CHARSETS` = `array (   'cp1250' => 'Windows-1250',   'cp1251' => 'Windows-1251',   'cp1256' => 'Windows-1256',   'cp1257' => 'Windows-1257',   'cp850' => 'CP850',   'cp866' => 'CP866',   'latin2' => 'ISO-8859-2',   'latin5' => 'ISO-8859-9',   'latin7' => 'ISO-8859-13',   'greek' => 'ISO-8859-7',   'hebrew' => 'ISO-8859-8',   'koi8r' => 'KOI8-R',   'koi8u' => 'KOI8-U',   'sjis' => 'SJIS',   'cp932' => 'CP932',   'ujis' => 'EUC-JP',   'eucjpms' => 'eucJP-win',   'euckr' => 'EUC-KR',   'gbk' => 'CP936',   'gb2312' => 'EUC-CN',   'gb18030' => 'GB18030',   'big5' => 'BIG-5',   'ucs2' => 'UCS-2',   'utf16' => 'UTF-16',   'utf32' => 'UTF-32', )` — The database charsets a query's text is held to, by the multibyte name of each.
 
-Used by: `Minn\Support\Kses`
+Used by: `Minn\Runtime\WpdbFields`, `Minn\Runtime\WpdbReads`, `Minn\Support\Kses`
 
 ### static `isValid(string $bytes): bool`
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Request;
 use Minn\Objects\Widget;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\WidgetAreas;
@@ -57,9 +58,26 @@ final readonly class WidgetObject
         $serialized = serialize($instance);
         $out = ['encoded' => base64_encode($serialized), 'hash' => Handoff::hash($serialized)];
         if (!empty($object->widget_options['show_instance_in_rest'])) {
-            $out['raw'] = $instance;
+            // Empty settings are an object in JSON, as the reference shows them (probe blocks-rest-widget-doubts).
+            $out['raw'] = $instance === [] ? new \stdClass() : $instance;
         }
         return $out;
+    }
+
+    /**
+     * A widget that is not a widget object saved or deleted through the
+     * update callback its control registered, the fields it is given
+     * posted as the form while it runs (probe blocks-rest-widget-doubts).
+     *
+     * @param array<string, mixed> $fields
+     */
+    public static function runUpdate(string $idBase, array $fields): void
+    {
+        $update = $GLOBALS['wp_registered_widget_updates'][$idBase] ?? null;
+        if (!is_array($update) || !is_callable($update['callback'] ?? null)) {
+            return;
+        }
+        Request::withPostedForm($fields, static fn (): mixed => call_user_func_array($update['callback'], (array) ($update['params'] ?? [])));
     }
 
     private static function form(Widget $object, int $number): string

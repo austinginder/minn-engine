@@ -182,7 +182,8 @@ class WP_REST_Request implements ArrayAccess, \Minn\Objects\RestRequest
         $params = [];
         foreach ($order as $type) {
             if (is_array($this->params[$type])) {
-                $params = array_merge($params, $this->params[$type]);
+                // Keys kept, a later (higher priority) source's value replacing an earlier one.
+                $params = array_replace($params, $this->params[$type]);
             }
         }
         return $params;

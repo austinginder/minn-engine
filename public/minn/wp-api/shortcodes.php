@@ -5,13 +5,7 @@ use Minn\Runtime\Runtime;
 
 function add_shortcode($tag, $callback)
 {
-    if ($tag === '' || $tag === null) {
-        return;
-    }
-    if (preg_match('@[<>&/\[\]\x00-\x20=]@', (string) $tag)) {
-        return;
-    }
-    Runtime::shortcodes()->add((string) $tag, $callback);
+    Runtime::shortcodes()->register($tag, $callback);
 }
 
 function remove_shortcode($tag)

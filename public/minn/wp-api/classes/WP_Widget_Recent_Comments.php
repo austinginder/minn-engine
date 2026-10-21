@@ -7,6 +7,7 @@ class WP_Widget_Recent_Comments extends WP_Widget
     public function __construct()
     {
         parent::__construct('recent-comments', 'Recent Comments', ['classname' => 'widget_recent_comments', 'description' => 'Your site&#8217;s most recent comments.', 'customize_selective_refresh' => true, 'show_instance_in_rest' => true]);
+        $this->alt_option_name = 'widget_recent_comments';
         if (is_active_widget(false, false, $this->id_base) || is_customize_preview()) {
             add_action('wp_head', [$this, 'recent_comments_style']);
         }

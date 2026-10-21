@@ -122,7 +122,7 @@ abstract class WP_REST_Controller
 
     public function get_context_param($args = [])
     {
-        $param_details = ['description' => 'Scope under which the request is made; determines fields present in response.', 'type' => 'string', 'sanitize_callback' => 'sanitize_key', 'validate_callback' => 'rest_validate_request_arg'];
+        $param_details = ['description' => __('Scope under which the request is made; determines fields present in response.'), 'type' => 'string', 'sanitize_callback' => 'sanitize_key', 'validate_callback' => 'rest_validate_request_arg'];
         $schema = $this->get_item_schema();
         if (empty($schema['properties'])) {
             return array_merge($param_details, $args);
@@ -227,7 +227,8 @@ abstract class WP_REST_Controller
             }
         }
         $properties['_links'] = ['type' => 'object'];
-        $fields = array_keys($properties);
+        // _embedded is a field when the request embeds.
+        $fields = [...array_keys($properties), ...(isset($request['_embed']) ? ['_embedded'] : [])];
         $requested = isset($request['_fields']) ? wp_parse_list($request['_fields']) : [];
         return $requested === [] ? $fields : Fields::select($fields, $requested);
     }

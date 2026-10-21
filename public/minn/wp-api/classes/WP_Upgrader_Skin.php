@@ -157,7 +157,8 @@ class Automatic_Upgrader_Skin extends WP_Upgrader_Skin
 
     public function feedback($feedback, ...$args)
     {
-        $line = is_wp_error($feedback) ? $feedback->get_error_message() : _minn_upgrader_line($this->upgrader, $feedback, $args);
+        // An array is no line at all (probe blocks-rest-widget-doubts).
+        $line = is_array($feedback) ? '' : (is_wp_error($feedback) ? $feedback->get_error_message() : _minn_upgrader_line($this->upgrader, $feedback, $args));
         $line = trim(wp_kses((string) $line, ['a' => ['href' => true], 'br' => true, 'em' => true, 'strong' => true]));
         if ($line !== '') {
             $this->messages[] = $line;

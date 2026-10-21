@@ -11,38 +11,19 @@
  */
 
 use Minn\Blocks\Dynamic\Theme\Navigation;
-use Minn\Content\Menus;
+use Minn\Blocks\Dynamic\Theme\NavigationParts;
+use Minn\Runtime\NavigationFallback;
 
 /** @internal colour classes and inline styles: has-text-color and the named colour's class, or the custom one inline; the same for the background */
 function _minn_navigation_colors($text, $custom_text, $background, $custom_background): array
 {
-    $classes = [];
-    $styles = '';
-    foreach ([['text', $text, $custom_text, 'has-text-color', 'has-%s-color', 'color'], ['background', $background, $custom_background, 'has-background', 'has-%s-background-color', 'background-color']] as [, $named, $custom, $flag, $class, $property]) {
-        if (!empty($named) || !empty($custom)) {
-            $classes[] = $flag;
-        }
-        if (!empty($named)) {
-            $classes[] = sprintf($class, $named);
-        } elseif (!empty($custom)) {
-            $styles .= "{$property}: {$custom};";
-        }
-    }
-    return ['css_classes' => $classes, 'inline_styles' => $styles];
-}
-
-/** @internal the overlay colours alongside the main ones, from a source's overlay* keys */
-function _minn_navigation_overlay_colors(array $source): array
-{
-    $overlay = _minn_navigation_colors($source['overlayTextColor'] ?? null, $source['customOverlayTextColor'] ?? null, $source['overlayBackgroundColor'] ?? null, $source['customOverlayBackgroundColor'] ?? null);
-    return ['overlay_css_classes' => $overlay['css_classes'], 'overlay_inline_styles' => $overlay['inline_styles']];
+    return NavigationParts::colors([['named', $text], ['custom', $custom_text]], [['named', $background], ['custom', $custom_background]]);
 }
 
 /** A navigation's colour classes and styles, and its overlay's, from its attributes. */
 function block_core_navigation_build_css_colors($attributes)
 {
-    $attributes = (array) $attributes;
-    return _minn_navigation_colors($attributes['textColor'] ?? null, $attributes['customTextColor'] ?? null, $attributes['backgroundColor'] ?? null, $attributes['customBackgroundColor'] ?? null) + _minn_navigation_overlay_colors($attributes);
+    return NavigationParts::navigationColors($attributes);
 }
 
 /** A navigation's font size class (a custom size rides on its style, not here). */
@@ -140,16 +121,7 @@ function block_core_navigation_add_support_classes_to_container($block_content, 
 /** A navigation's typography presets in the forms older content stored (var:preset|...) read as their values, the font size aside. */
 function block_core_navigation_typographic_presets_backcompatibility($parsed_block)
 {
-    if (($parsed_block['blockName'] ?? '') !== 'core/navigation') {
-        return $parsed_block;
-    }
-    foreach (['textDecoration', 'fontStyle', 'fontWeight', 'textTransform'] as $property) {
-        $value = $parsed_block['attrs']['style']['typography'][$property] ?? null;
-        if (is_string($value) && str_starts_with($value, 'var:preset|')) {
-            $parsed_block['attrs']['style']['typography'][$property] = substr($value, (int) strrpos($value, '|') + 1);
-        }
-    }
-    return $parsed_block;
+    return NavigationParts::typographyBackcompat($parsed_block);
 }
 
 /** Whether inner blocks hold a navigation block, at any depth. */
@@ -175,97 +147,62 @@ function block_core_navigation_block_tree_has_block_type($blocks, $block_type, $
     return false;
 }
 
-/** The post ids the links in inner blocks point to, at any depth. */
+/** The post ids the links in inner blocks point to, at any depth, each once at its first key. */
 function block_core_navigation_get_post_ids($inner_blocks)
 {
-    $ids = [];
-    foreach ($inner_blocks ?? [] as $block) {
-        $ids = [...$ids, ...block_core_navigation_from_block_get_post_ids($block)];
-    }
-    return $ids;
+    return NavigationParts::postIds($inner_blocks);
 }
 
 /** The post ids a block's inner links point to, then its own when it links to a post. */
 function block_core_navigation_from_block_get_post_ids($block)
 {
-    $ids = $block->inner_blocks ? block_core_navigation_get_post_ids($block->inner_blocks) : [];
-    if (($block->attributes['kind'] ?? null) === 'post-type' && isset($block->attributes['id'])) {
-        $ids[] = $block->attributes['id'];
-    }
-    return $ids;
+    return NavigationParts::blockPostIds($block);
 }
 
-/** Menu items as navigation blocks: a link each, a submenu for an item with children (its inner blocks serialized as its content). */
+/** Menu items as navigation blocks (deprecated since 6.3.0): a link each, a submenu for an item with children. */
 function block_core_navigation_parse_blocks_from_menu_items($menu_items, $menu_items_by_parent_id)
 {
-    $blocks = [];
-    foreach ((array) $menu_items as $menu_item) {
-        $block = ['blockName' => 'core/navigation-link', 'attrs' => Menus::linkAttributes((array) $menu_item), 'innerBlocks' => [], 'innerContent' => []];
-        $children = $menu_items_by_parent_id[$menu_item->ID] ?? [];
-        if ($children !== []) {
-            $block['blockName'] = 'core/navigation-submenu';
-            $block['innerBlocks'] = block_core_navigation_parse_blocks_from_menu_items($children, $menu_items_by_parent_id);
-            $block['innerContent'] = array_map('serialize_block', $block['innerBlocks']);
-        }
-        $blocks[] = $block;
-    }
-    return $blocks;
+    _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::parse_blocks_from_menu_items');
+    return NavigationFallback::menuItemBlocks($menu_items, $menu_items_by_parent_id, __FUNCTION__);
 }
 
-/** The classic menu a navigation falls back to: the one in the primary location, else the newest (none when there are no menus). */
+/** The classic menu a navigation falls back to (deprecated since 6.3.0): the primary location's, else the one slugged primary, else the newest. */
 function block_core_navigation_get_classic_menu_fallback()
 {
-    $menus = wp_get_nav_menus();
-    if (empty($menus)) {
-        return null;
-    }
-    $locations = get_nav_menu_locations();
-    foreach (['primary', 'main', 'menu-1'] as $location) {
-        $menu = isset($locations[$location]) ? wp_get_nav_menu_object($locations[$location]) : null;
-        if ($menu) {
-            return $menu;
-        }
-    }
-    usort($menus, static fn ($a, $b) => $b->term_id <=> $a->term_id);
-    return $menus[0];
+    _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::get_classic_menu_fallback');
+    return NavigationFallback::classicMenu();
 }
 
-/** A classic menu's items as serialized navigation blocks. */
+/** A classic menu's items as serialized navigation blocks (deprecated since 6.3.0). */
 function block_core_navigation_get_classic_menu_fallback_blocks($classic_nav_menu)
 {
-    $items = (array) wp_get_nav_menu_items($classic_nav_menu->term_id, ['update_post_term_cache' => false]);
-    _wp_menu_item_classes_by_context($items);
-    $by_parent = [];
-    foreach ($items as $item) {
-        $by_parent[(int) $item->menu_item_parent][] = $item;
-    }
-    return serialize_blocks(block_core_navigation_parse_blocks_from_menu_items($by_parent[0] ?? [], $by_parent));
+    _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::get_classic_menu_fallback_blocks');
+    return NavigationFallback::classicMenuBlocks($classic_nav_menu, 'block_core_navigation_parse_blocks_from_menu_items');
 }
 
-/** The newest published navigation menu, or null. */
+/** The newest published navigation menu, through the query's filters, or null (deprecated since 6.3.0). */
 function block_core_navigation_get_most_recently_published_navigation()
 {
-    $posts = get_posts(['post_type' => 'wp_navigation', 'post_status' => 'publish', 'orderby' => 'date', 'order' => 'DESC', 'numberposts' => 1, 'no_found_rows' => true]);
-    return $posts[0] ?? null;
+    _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::get_most_recently_published_navigation');
+    return NavigationFallback::newest();
 }
 
-/** A classic menu turned into a published navigation menu, once: the new navigation post, or null without a classic menu. */
+/** A classic menu turned into a published navigation menu (deprecated since 6.3.0): the newest navigation then, or null without a classic menu or with an empty one. */
 function block_core_navigation_maybe_use_classic_menu_fallback()
 {
+    _deprecated_function(__FUNCTION__, '6.3.0', 'WP_Navigation_Fallback::create_classic_menu_fallback');
     $menu = block_core_navigation_get_classic_menu_fallback();
-    if (!$menu) {
-        return null;
-    }
-    $id = wp_insert_post(['post_content' => block_core_navigation_get_classic_menu_fallback_blocks($menu), 'post_title' => $menu->name, 'post_name' => $menu->slug, 'post_status' => 'publish', 'post_type' => 'wp_navigation'], true);
-    return is_wp_error($id) ? null : get_post($id);
+    $content = $menu ? block_core_navigation_get_classic_menu_fallback_blocks($menu) : '';
+    $id = $content === '' ? 0 : wp_insert_post(['post_content' => $content, 'post_title' => $menu->name, 'post_name' => $menu->slug, 'post_status' => 'publish', 'post_type' => 'wp_navigation'], true);
+    return !$id || is_wp_error($id) ? null : block_core_navigation_get_most_recently_published_navigation();
 }
 
-/** The blocks a navigation with none of its own renders: the newest navigation menu's, else a page list; through block_core_navigation_render_fallback. */
+/** The blocks a navigation with none of its own renders: the fallback menu's, else a page list while that block is registered; through block_core_navigation_render_fallback. */
 function block_core_navigation_get_fallback_blocks()
 {
-    $navigation = block_core_navigation_get_most_recently_published_navigation();
+    $navigation = WP_Navigation_Fallback::get_fallback();
     $blocks = $navigation ? block_core_navigation_filter_out_empty_blocks(parse_blocks($navigation->post_content)) : [];
-    if ($blocks === []) {
+    if ($blocks === [] && WP_Block_Type_Registry::get_instance()->is_registered('core/page-list')) {
         $blocks = [['blockName' => 'core/page-list', 'innerContent' => [], 'attrs' => []]];
     }
     return apply_filters('block_core_navigation_render_fallback', $blocks);
@@ -273,12 +210,10 @@ function block_core_navigation_get_fallback_blocks()
 
 // Links and submenus.
 
-/** A link's colour classes and styles from its navigation's context: the overlay colours inside a submenu. */
+/** A link's colour classes and styles from its navigation's context (custom, named, the style's): the overlay colours first inside a submenu. */
 function block_core_navigation_link_build_css_colors($context, $attributes, $is_sub_menu = false)
 {
-    $context = (array) $context;
-    $keys = $is_sub_menu ? ['overlayTextColor', 'customOverlayTextColor', 'overlayBackgroundColor', 'customOverlayBackgroundColor'] : ['textColor', 'customTextColor', 'backgroundColor', 'customBackgroundColor'];
-    return _minn_navigation_colors(...array_map(static fn (string $key) => $context[$key] ?? null, $keys));
+    return $is_sub_menu ? NavigationParts::submenuLinkColors($context) : NavigationParts::linkColors($context);
 }
 
 /** A link's font size from its navigation's context: the preset's class, else the custom size (made fluid) inline. */
@@ -327,14 +262,10 @@ function block_core_navigation_submenu_get_submenu_visibility($context)
     return _minn_context_submenu_visibility($context);
 }
 
-/** Whether a navigation item renders: a link to a post only while that post is published. */
+/** Whether a navigation item renders: a link to a post or page only while its status is an allowed one (publish). */
 function block_core_shared_navigation_item_should_render($attributes, $block)
 {
-    if (($attributes['kind'] ?? null) !== 'post-type' || empty($attributes['id'])) {
-        return true;
-    }
-    $post = get_post((int) $attributes['id']);
-    return $post instanceof WP_Post && $post->post_status === 'publish';
+    return NavigationParts::itemRenders($attributes, $block);
 }
 
 /**
@@ -358,15 +289,14 @@ function build_variation_for_navigation_link($entity, $kind)
     return ['name' => $name, 'title' => $title, 'description' => $description, 'attributes' => ['type' => $name, 'kind' => $kind]];
 }
 
-/** The link variations: one for each post type and taxonomy shown in navigation menus. */
+/** The link variations: one for each post type and taxonomy shown in navigation menus, the built-in ones first. */
 function block_core_navigation_link_build_variations()
 {
     $variations = [];
-    foreach (get_post_types(['show_in_nav_menus' => true], 'objects') as $post_type) {
-        $variations[] = build_variation_for_navigation_link($post_type, 'post-type');
-    }
-    foreach (get_taxonomies(['show_in_nav_menus' => true], 'objects') as $taxonomy) {
-        $variations[] = build_variation_for_navigation_link($taxonomy, 'taxonomy');
+    foreach ([[true, 'post-type'], [true, 'taxonomy'], [false, 'post-type'], [false, 'taxonomy']] as [$builtin, $kind]) {
+        foreach ($kind === 'taxonomy' ? get_taxonomies(['show_in_nav_menus' => true, '_builtin' => $builtin], 'objects') : get_post_types(['show_in_nav_menus' => true, '_builtin' => $builtin], 'objects') as $entity) {
+            $variations[] = build_variation_for_navigation_link($entity, $kind);
+        }
     }
     return $variations;
 }
@@ -379,11 +309,10 @@ function block_core_navigation_link_filter_variations($variations, $block_type)
 
 // Page list and home link.
 
-/** A page list's colours and its overlay's, from its navigation's context. */
+/** A page list's colours (named, custom, the style's) and its overlay's, from its navigation's context. */
 function block_core_page_list_build_css_colors($attributes, $context)
 {
-    $context = (array) $context;
-    return _minn_navigation_colors($context['textColor'] ?? null, $context['customTextColor'] ?? null, $context['backgroundColor'] ?? null, $context['customBackgroundColor'] ?? null) + _minn_navigation_overlay_colors($context);
+    return NavigationParts::pageListColors($context);
 }
 
 /** How a page list's submenus open, from its navigation's context. */
@@ -433,9 +362,9 @@ function _minn_page_list_item(array $page, string $visibility, bool $icons, bool
 {
     $parent = !empty($page['children']);
     $open = ['hover' => $icons ? 'open-on-hover-click' : '', 'click' => 'open-on-click', 'always' => 'open-always'][$visibility] ?? '';
-    $classes = array_filter(['wp-block-pages-list__item', !empty($page['is_active']) ? 'current-menu-item' : '', in_array($page['page_id'], $ancestors, true) ? 'current-menu-ancestor' : '', $parent ? 'has-child' : '', $navigation_child ? 'wp-block-navigation-item' : '', $navigation_child ? $open : '', ...($nested ? (array) ($colors['overlay_css_classes'] ?? []) : [])]);
+    $classes = array_filter(['wp-block-pages-list__item', !empty($page['is_active']) ? 'current-menu-item' : '', in_array($page['page_id'], $ancestors, true) ? 'current-menu-ancestor' : '', $parent ? 'has-child' : '', $navigation_child ? 'wp-block-navigation-item' : '', $navigation_child ? $open : '', ...($nested ? (array) ($colors['overlay_css_classes'] ?? []) : []), (int) $page['page_id'] === (int) get_option('page_on_front') ? 'menu-item-home' : '']);
     $style = $nested && !empty($colors['overlay_inline_styles']) ? ' style="' . esc_attr($colors['overlay_inline_styles']) . '"' : '';
-    $title = esc_html($page['title'] ?? '');
+    $title = esc_html(($page['title'] ?? '') === '' ? __('(no title)') : $page['title']);
     $label = esc_attr(($page['title'] ?? '') . ' submenu');
     if ($navigation_child && $parent && $visibility === 'click') {
         $head = '<button aria-label="' . $label . '" class=" wp-block-navigation-item__content wp-block-navigation-submenu__toggle" aria-expanded="false">' . $title . '</button><span class="wp-block-page-list__submenu-icon wp-block-navigation__submenu-icon">' . Navigation::CHEVRON . '</span>';

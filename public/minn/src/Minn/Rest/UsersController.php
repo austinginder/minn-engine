@@ -10,6 +10,7 @@ use Minn\Objects\User;
 use Minn\Objects\UsersQuery;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Refusal;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\UserEvents;
 use Minn\Http\Policy;
@@ -107,19 +108,20 @@ final readonly class UsersController
     }
 
     /**
-     * What a reader who may not list users may not ask the list for: the
-     * edit context, an email or registration order, roles, capabilities;
-     * the authors shorthand is for those who may edit posts.
+     * What a reader who may not list users may not ask the list for, in the
+     * reference's order: roles, capabilities, the edit context, an email or
+     * registration order; the authors shorthand is for those who may edit
+     * the posts of a REST type with authors.
      */
     private function listAllowed(RestRequest $wp, Context $context): void
     {
         $lister = $this->caller->can('list_users');
         $refusals = [
-            ['rest_forbidden_context', 'Sorry, you are not allowed to edit users.', $context->isEdit() && !$lister],
-            ['rest_forbidden_orderby', 'Sorry, you are not allowed to order users by this parameter.', in_array($wp['orderby'], ['email', 'registered_date'], true) && !$lister],
             ['rest_user_cannot_view', 'Sorry, you are not allowed to filter users by role.', !empty($wp['roles']) && !$lister],
             ['rest_user_cannot_view', 'Sorry, you are not allowed to filter users by capability.', !empty($wp['capabilities']) && !$lister],
-            ['rest_forbidden_who', 'Sorry, you are not allowed to query users by this parameter.', ($wp['who'] ?? '') === 'authors' && !$this->caller->can('edit_posts')],
+            ['rest_forbidden_context', 'Sorry, you are not allowed to edit users.', $context->isEdit() && !$lister],
+            ['rest_forbidden_orderby', 'Sorry, you are not allowed to order users by this parameter.', in_array($wp['orderby'], ['email', 'registered_date'], true) && !$lister],
+            ['rest_forbidden_who', 'Sorry, you are not allowed to query users by this parameter.', ($wp['who'] ?? '') === 'authors' && !$this->editsAuthoredPosts()],
         ];
         foreach ($refusals as [$code, $message, $refused]) {
             if ($refused) {
@@ -171,11 +173,27 @@ final readonly class UsersController
         return Reply::item($this->object->view($user), $fields);
     }
 
+    /** Whether the caller may edit the posts of a type shown in REST that has authors. */
+    private function editsAuthoredPosts(): bool
+    {
+        foreach (Registered::postTypes(['show_in_rest' => true], 'objects') as $type) {
+            if (Registered::supports($type->name, 'author') && $this->caller->can((string) $type->cap->edit_posts)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Whether the user has published a post of any type shown in REST. */
     private function hasPublishedContent(int $userId): bool
     {
+        $types = array_values(array_map('strval', Registered::postTypes(['show_in_rest' => true])));
+        if ($types === []) {
+            return false;
+        }
         return (int) $this->db->value(
-            "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_author = ? AND post_status = 'publish' AND post_type IN ('post', 'page')",
-            [$userId],
+            "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_author = ? AND post_status = 'publish' AND post_type IN (" . implode(', ', array_fill(0, count($types), '?')) . ')',
+            [$userId, ...$types],
         ) > 0;
     }
 

@@ -145,6 +145,25 @@ final readonly class TermWriter
         return [$newId, (string) $taxonomy, $children];
     }
 
+    /** The term id a taxonomy row belongs to; null for no such row. */
+    public function rowTermId(int $ttId): ?int
+    {
+        $termId = $this->db->value("SELECT term_id FROM {$this->db->table('term_taxonomy')} WHERE term_taxonomy_id = ?", [$ttId]);
+        return $termId === null ? null : (int) $termId;
+    }
+
+    /** How many taxonomy rows hold a term id, whether their taxonomies are registered or not. */
+    public function rowCount(int $termId): int
+    {
+        return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('term_taxonomy')} WHERE term_id = ?", [$termId]);
+    }
+
+    /** Whether any term id is still held by more than one taxonomy row. */
+    public function anyShared(): bool
+    {
+        return $this->db->value("SELECT term_id FROM {$this->db->table('term_taxonomy')} GROUP BY term_id HAVING COUNT(*) > 1 LIMIT 1") !== null;
+    }
+
     /** Every object filed under a term, whatever it is: the count a taxonomy of links or other non-posts keeps. */
     public function relationshipCount(int $ttId): int
     {

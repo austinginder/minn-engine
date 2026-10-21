@@ -250,6 +250,7 @@ add_action('wp_enqueue_scripts', ['WP_Duotone', 'output_block_styles'], 9);
 add_action('wp_enqueue_scripts', ['WP_Duotone', 'output_global_styles'], 11);
 add_action('wp_footer', ['WP_Duotone', 'output_footer_assets'], 10);
 add_filter('block_type_metadata_settings', ['WP_Duotone', 'migrate_experimental_duotone_support_flag'], 10, 2);
+add_filter('block_type_metadata', 'wp_migrate_old_typography_shape');
 add_filter('register_block_type_args', 'wp_mark_auto_generate_control_attributes', 5);
 // Custom CSS on a block is stripped from what a user who may not edit CSS saves.
 add_action('init', 'wp_custom_css_kses_init', 20);

@@ -103,6 +103,23 @@ final class OEmbed
         return $found['json'] ?? $found['xml'] ?? null;
     }
 
+    /**
+     * URLs standing alone on a line, or alone in a paragraph, handed to the
+     * callback (WP_Embed::autoembed): a newline inside a tag (one split over
+     * lines, or an attribute value) is kept from the line match, so a URL
+     * there stays as written.
+     */
+    public static function autoembed(string $content, callable $callback): string
+    {
+        $parts = \Minn\Html::split($content);
+        foreach ($parts as $i => $part) {
+            $parts[$i] = $i % 2 === 1 ? str_replace("\n", '<!-- wp-line-break -->', $part) : $part;
+        }
+        $content = (string) preg_replace_callback('|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', $callback, implode('', $parts));
+        $content = (string) preg_replace_callback('|(<p(?: [^>]*)?>\s*)(https?://[^\s<>"]+)(\s*<\/p>)|i', $callback, $content);
+        return str_replace('<!-- wp-line-break -->', "\n", $content);
+    }
+
     /** Drops newlines from embed markup while leaving the inside of <pre> blocks untouched. */
     public static function stripNewlines(string $html): string
     {

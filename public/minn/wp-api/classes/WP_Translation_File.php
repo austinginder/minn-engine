@@ -2,6 +2,7 @@
 /** One translation file as plugins see it, over Minn\I18n's readers and the .mo writer. */
 
 use Minn\I18n\Catalog;
+use Minn\I18n\LegacyPluralForms;
 use Minn\I18n\MoFile;
 use Minn\I18n\PhpFile;
 use Minn\I18n\PluralRule;
@@ -26,7 +27,8 @@ class WP_Translation_File
         if (!is_file($file) || !is_readable($file)) {
             return false;
         }
-        $filetype ??= str_ends_with($file, '.php') ? 'php' : 'mo';
+        // Without a type the file's extension names it: anything but mo or php is no translation file (probe blocks-rest-widget-doubts).
+        $filetype ??= pathinfo($file, PATHINFO_EXTENSION);
         return match ($filetype) {
             'mo' => new WP_Translation_File_MO($file),
             'php' => new WP_Translation_File_PHP($file),
@@ -87,8 +89,7 @@ class WP_Translation_File
 
     protected function make_plural_form_function(string $expression): callable
     {
-        $rule = PluralRule::fromExpression(2, $expression);
-        return static fn (int $n): int => $rule->index($n);
+        return LegacyPluralForms::chooser($expression);
     }
 
     protected function import(WP_Translation_File $source): bool
@@ -160,7 +161,8 @@ class WP_Translation_File_MO extends WP_Translation_File
     protected function catalog(): ?Catalog
     {
         $bytes = (string) file_get_contents($this->file);
-        if ($this->detect_endian_and_validate_file(substr($bytes, 0, 4)) === false) {
+        // Shorter than its header is invalid data before any magic number is read.
+        if (strlen($bytes) < 24 || $this->detect_endian_and_validate_file(substr($bytes, 0, 4)) === false) {
             return null;
         }
         if (MoFile::revision($bytes) !== 0) {
@@ -177,7 +179,7 @@ class WP_Translation_File_MO extends WP_Translation_File
         foreach ($this->entries as $key => $translation) {
             $entries[(string) $key] = ['translations' => explode("\0", (string) $translation), 'plural' => null];
         }
-        return MoFile::write($this->headers, $entries);
+        return MoFile::writeAsHeld($this->headers, $entries);
     }
 }
 
@@ -199,7 +201,7 @@ class WP_Translation_File_PHP extends WP_Translation_File
         return '<?php' . PHP_EOL . 'return ' . $this->var_export($this->headers + ['messages' => $this->entries]) . ';' . PHP_EOL;
     }
 
-    /** PHP's own export without its spacing: arrays as [key=>value,...] on one line. */
+    /** PHP's own export without its spacing: arrays as [key=>value,...] on one line, a list without its keys. */
     private function var_export($value): string
     {
         if (!is_array($value)) {
@@ -207,7 +209,7 @@ class WP_Translation_File_PHP extends WP_Translation_File
         }
         $pairs = [];
         foreach ($value as $key => $item) {
-            $pairs[] = var_export($key, true) . '=>' . $this->var_export($item);
+            $pairs[] = (array_is_list($value) ? '' : var_export($key, true) . '=>') . $this->var_export($item);
         }
         return '[' . implode(',', $pairs) . ']';
     }

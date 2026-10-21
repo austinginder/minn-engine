@@ -57,4 +57,27 @@ final class Serializer
         // The escapes are written in lower-case hex.
         return (string) preg_replace_callback('/\\\\u00([0-9A-F]{2})/', static fn (array $m): string => '\\u00' . strtolower($m[1]), $json);
     }
+
+    /**
+     * A parsed block's inner content with each inner block's place (a null)
+     * taken as many times as that block became blocks, as a pattern that
+     * expands does; one that became none keeps its place.
+     *
+     * @param list<string|null> $innerContent
+     * @param list<int> $counts how many blocks each inner block became, in order
+     * @return list<string|null>
+     */
+    public static function spreadInnerContent(array $innerContent, array $counts): array
+    {
+        $out = [];
+        $child = 0;
+        foreach ($innerContent as $chunk) {
+            if ($chunk !== null) {
+                $out[] = $chunk;
+                continue;
+            }
+            array_push($out, ...array_fill(0, max(1, $counts[$child++] ?? 1), null));
+        }
+        return $out;
+    }
 }

@@ -7,7 +7,7 @@ the wp/v2 surface: shapes and controllers
 | [`Api`](#api) | final readonly class | 449 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 124 | Judges a route's declared arguments against the request before the |
-| [`BatchController`](#batchcontroller) | final readonly class | 163 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
+| [`BatchController`](#batchcontroller) | final readonly class | 164 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 89 | wp/v2/block-renderer as the reference answers it (probe |
 | [`BlockTypesController`](#blocktypescontroller) | final readonly class | 133 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
@@ -42,8 +42,8 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 166 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 170 | The WP_Query arguments a post list request makes, as the reference makes |
-| [`PostObject`](#postobject) | final readonly class | 538 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 197 | wp/v2 posts and pages, read side. |
+| [`PostObject`](#postobject) | final readonly class | 561 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostsController`](#postscontroller) | final readonly class | 202 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 528 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
@@ -51,7 +51,7 @@ the wp/v2 surface: shapes and controllers
 | [`RenderedFields`](#renderedfields) | final class | 68 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`Responses`](#responses) | final class | 95 | REST answers as the WordPress layer shapes them: any value made a |
-| [`RestMeta`](#restmeta) | final class | 265 | An object's meta field over REST, from the keys registered to show |
+| [`RestMeta`](#restmeta) | final class | 296 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 263 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
@@ -87,9 +87,9 @@ the wp/v2 surface: shapes and controllers
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
 | [`UserObject`](#userobject) | final readonly class | 103 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 382 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`UsersController`](#userscontroller) | final readonly class | 399 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 | [`ViewConfigPatch`](#viewconfigpatch) | final class | 151 | A patch to a view configuration (WP_View_Config_Data; probe |
-| [`WidgetObject`](#widgetobject) | final readonly class | 55 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
+| [`WidgetObject`](#widgetobject) | final readonly class | 72 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
 | [`WidgetsController`](#widgetscontroller) | final readonly class | 169 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
 
 ## Api
@@ -386,7 +386,7 @@ Route: `POST /batch/v1 (public)`
 
 The requests answered in turn.
 
-Internals: `refusal()` (private, line 91), `invalid()` (private, line 109), `claims()` (private, line 140), `batchablePath()` (private, line 150), `subRequest()` (private, line 168), `error()` (private, line 186), `envelope()` (private, line 192)
+Internals: `refusal()` (private, line 92), `invalid()` (private, line 110), `claims()` (private, line 141), `batchablePath()` (private, line 151), `subRequest()` (private, line 169), `error()` (private, line 187), `envelope()` (private, line 193)
 
 
 ## BatchRequest
@@ -1848,6 +1848,13 @@ hooks it; with a _fields selection, the rendered title, content and
 excerpt only when it asks for them, as the reference renders only
 what is asked.
 
+### `viewWithPassword(Minn\Content\PostRecord $p, mixed $password, ?Minn\Rest\Fields $fields = NULL): array`
+
+The view-context object for a post read with a password: a protected
+post's content and excerpt rendered when the password is its own
+(still marked protected), as the reference's can_access_password_content
+allows; otherwise the plain view.
+
 ### `edit(Minn\Content\PostRecord $p, int $userId, ?Minn\Rest\Fields $fields = NULL): array`
 
 The edit-context object, its raw content given its hooked blocks,
@@ -1882,7 +1889,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 85), `navigationView()` (private, line 96), `blockView()` (private, line 126), `viewFields()` (private, line 158), `viewTerms()` (private, line 213), `typeFields()` (private, line 229), `classList()` (private, line 258), `format()` (private, line 280), `termLinks()` (private, line 324), `editFields()` (private, line 343), `allow()` (private, line 526), `gmt()` (private, line 545)
+Internals: `meta()` (private, line 108), `navigationView()` (private, line 119), `blockView()` (private, line 149), `viewFields()` (private, line 181), `viewTerms()` (private, line 236), `typeFields()` (private, line 252), `classList()` (private, line 281), `format()` (private, line 303), `termLinks()` (private, line 347), `editFields()` (private, line 366), `allow()` (private, line 549), `gmt()` (private, line 568)
 
 
 ## PostsController
@@ -2253,7 +2260,7 @@ The meta field of an object in a context (the one the request answers in, when n
 
 - `@return array<string, mixed>`
 
-### static `value(string $objectType, int $objectId, string $key, array $field, Minn\Objects\RestRequest $request): mixed`
+### static `value(string $objectType, int $objectId, string $key, array $field, Minn\Objects\RestRequest $request, ?callable $prepare = NULL): mixed`
 
 One field's value for an object: a single key's first stored value (its
 default when none), a multiple key's each one, prepared for the response.
@@ -2272,6 +2279,18 @@ Applies a request's meta to an object; the gathered refusals are thrown.
 
 Applies a request's meta to an object, key by key in registration order; the refusals come back. @return list<Errors>
 
+- `@return list<Errors>`
+
+### static `errorsThrough(array $fields, array $meta, array $steps): array`
+
+The refusals of writing a request's meta over the fields given, each
+key deleted, stored or stored as a list through the step of that name
+(WP_REST_Meta_Fields::update_value hands its own methods, so a
+subclass's are the ones that run); a step's true is no refusal.
+
+- `@param array<array-key, array<string, mixed>> $fields`
+- `@param array<array-key, mixed> $meta`
+- `@param array{delete: callable, single: callable, multiple: callable} $steps`
 - `@return list<Errors>`
 
 ### static `fields(string $objectType, string $subtype): array`
@@ -2307,6 +2326,16 @@ A key deleted once the user may delete it (a single key's invalid stored value r
 
 - `@param array<string, mixed> $field`
 
+### static `nullRefused(string $objectType, int $objectId, string $key, array $field): ?Minn\Objects\Errors`
+
+The refusal of null for a single key whose stored value its schema does not accept, or null. @param array<string, mixed> $field
+
+- `@param array<string, mixed> $field`
+
+### static `deleteKey(string $objectType, int $objectId, string $key, string $name): ?Minn\Objects\Errors`
+
+A key deleted once the user may delete it; refusals name the key by its REST name.
+
 ### static `same(string $objectType, string $subtype, string $key, array $field, mixed $stored, mixed $value): bool`
 
 Whether a value sanitizes to what is stored (scalar types compared as the text the store keeps). @param array<string, mixed> $field
@@ -2317,7 +2346,7 @@ Whether a value sanitizes to what is stored (scalar types compared as the text t
 
 A type's empty value: '' for a string, false, 0, or an empty list.
 
-Internals: `update()` (private, line 153), `replaceAll()` (private, line 193), `refused()` (private, line 243), `failed()` (private, line 249), `nullStored()` (private, line 255), `gathered()` (private, line 262), `request()` (private, line 292)
+Internals: `update()` (private, line 174), `replaceAll()` (private, line 214), `refused()` (private, line 274), `failed()` (private, line 280), `nullStored()` (private, line 286), `gathered()` (private, line 293), `request()` (private, line 323)
 
 
 ## RestUrl
@@ -4040,7 +4069,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `listAllowed()` (private, line 114), `totals()` (private, line 138), `hasPublishedContent()` (private, line 174), `validRole()` (private, line 183), `validLocale()` (private, line 198), `assignableRole()` (private, line 210), `validEmail()` (private, line 219), `loginRefusal()` (private, line 406)
+Internals: `listAllowed()` (private, line 116), `totals()` (private, line 140), `editsAuthoredPosts()` (private, line 177), `hasPublishedContent()` (private, line 188), `validRole()` (private, line 201), `validLocale()` (private, line 216), `assignableRole()` (private, line 228), `validEmail()` (private, line 237), `loginRefusal()` (private, line 424)
 
 
 ## ViewConfigPatch
@@ -4111,7 +4140,15 @@ A widget's settings, encoded and signed, and raw when it shows them. @return arr
 
 - `@return array<string, mixed>`
 
-Internals: `form()` (private, line 65)
+### static `runUpdate(string $idBase, array $fields): void`
+
+A widget that is not a widget object saved or deleted through the
+update callback its control registered, the fields it is given
+posted as the form while it runs (probe blocks-rest-widget-doubts).
+
+- `@param array<string, mixed> $fields`
+
+Internals: `form()` (private, line 83)
 
 
 ## WidgetsController

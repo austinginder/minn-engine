@@ -45,8 +45,9 @@ class WP_Widget_Media_Image extends WP_Widget_Media
             $caption = $instance['caption'];
             $width = (int) $instance['width'];
             $classes = 'image ' . $instance['image_classes'];
-            // Width and height are always written, empty when unknown; the image loads lazily (probe widget-classes).
-            $attributes = ['class' => $classes, 'src' => esc_url($instance['url']), 'alt' => $instance['alt'], 'width' => $instance['width'] ?: '', 'height' => $instance['height'] ?: '', 'decoding' => 'async', 'loading' => 'lazy'];
+            // Width and height are always written, empty when unknown; then the loading attributes the image is given (probe widget-classes, blocks-rest-widget-doubts).
+            $attributes = ['class' => $classes, 'src' => esc_url($instance['url']), 'alt' => $instance['alt'], 'width' => $instance['width'] ?: '', 'height' => $instance['height'] ?: ''];
+            $attributes += wp_get_loading_optimization_attributes('img', $attributes, 'widget_media_image');
             $image = '<img' . implode('', array_map(static fn ($name, $value) => ' ' . $name . '="' . esc_attr((string) $value) . '"', array_keys($attributes), $attributes)) . ' />';
         } else {
             return;
@@ -88,7 +89,8 @@ class WP_Widget_Media_Image extends WP_Widget_Media
         }
         $attributes['class'] .= sprintf(' attachment-%1$s size-%1$s', is_array($size) ? implode('x', $size) : $size);
         $source = wp_get_attachment_image_src($attachment->ID, $size);
-        return [wp_get_attachment_image($attachment->ID, $size, false, $attributes), (string) $caption, (int) ($source[1] ?? 0)];
+        // A custom size's caption is as wide as the size asked for.
+        return [wp_get_attachment_image($attachment->ID, $size, false, $attributes), (string) $caption, is_array($size) ? (int) $instance['width'] : (int) ($source[1] ?? 0)];
     }
 
     private function linked(string $image, string $url, array $instance): string

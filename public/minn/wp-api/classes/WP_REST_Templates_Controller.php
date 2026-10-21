@@ -149,6 +149,11 @@ class WP_REST_Templates_Controller extends WP_REST_Controller
             return $saved;
         }
         $template = get_block_template($request['id'], $this->post_type);
+        // The registered fields are saved before the after-insert hooks (probe blocks-rest-widget-doubts).
+        $fields = $this->update_additional_fields_for_object($template, $request);
+        if (is_wp_error($fields)) {
+            return $fields;
+        }
         $request->set_param('context', 'edit');
         $post = get_post($template->wp_id);
         do_action("rest_after_insert_{$this->post_type}", $post, $request, false);
@@ -179,6 +184,10 @@ class WP_REST_Templates_Controller extends WP_REST_Controller
             return new WP_Error('rest_template_insert_error', __('No templates exist with that id.'), ['status' => 400]);
         }
         $template = get_block_template($posts[0]->id, $this->post_type);
+        $fields = $this->update_additional_fields_for_object($template, $request);
+        if (is_wp_error($fields)) {
+            return $fields;
+        }
         $post = get_post($post_id);
         do_action("rest_after_insert_{$this->post_type}", $post, $request, true);
         wp_after_insert_post($post, false, null);
@@ -250,8 +259,9 @@ class WP_REST_Templates_Controller extends WP_REST_Controller
         $this->minn_changed_text($changes, $request, $keeps ? $template : null);
         if ($this->post_type === 'wp_template_part' && isset($request['area'])) {
             $changes->tax_input['wp_template_part_area'] = _filter_block_template_part_area($request['area']);
-        } elseif ($this->post_type === 'wp_template_part' && $keeps) {
-            $changes->tax_input['wp_template_part_area'] = _filter_block_template_part_area((string) $template->area);
+        } elseif ($this->post_type === 'wp_template_part' && ($keeps || $template === null)) {
+            // A new part without an area is uncategorized.
+            $changes->tax_input['wp_template_part_area'] = _filter_block_template_part_area((string) ($template->area ?? ''));
         }
         if (!empty($request['author'])) {
             $author = (int) $request['author'];
@@ -283,7 +293,7 @@ class WP_REST_Templates_Controller extends WP_REST_Controller
         $links = (array) ($data['_links'] ?? []);
         unset($data['_links']);
         $fields = $this->get_fields_for_response($request);
-        $data = array_filter($data, static fn ($field) => rest_is_field_included((string) $field, $fields), ARRAY_FILTER_USE_KEY);
+        $data = $this->add_additional_fields_to_object(array_filter($data, static fn ($field) => rest_is_field_included((string) $field, $fields), ARRAY_FILTER_USE_KEY), $request);
         $response = rest_ensure_response($this->filter_response_by_context($data, $context));
         if (rest_is_field_included('_links', $fields) || rest_is_field_included('_embedded', $fields)) {
             $expanded = [];

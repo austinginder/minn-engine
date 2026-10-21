@@ -12,21 +12,12 @@
 
 // Search.
 
-/** The search block's position and icon classes: where its button sits, an icon button, a hidden field. */
+/** The search block's position and button classes: where its button sits, a button-only field hidden, an icon or a text button when the block says which. */
 function classnames_for_block_core_search($attributes)
 {
-    $classes = [];
     $position = (string) ($attributes['buttonPosition'] ?? '');
-    if ($position !== '') {
-        $classes[] = 'wp-block-search__' . $position;
-    }
-    if (!empty($attributes['buttonUseIcon']) && !in_array($position, ['', 'no-button'], true)) {
-        $classes[] = 'wp-block-search__icon-button';
-    }
-    if ($position === 'button-only' && !empty($attributes['isSearchFieldHidden'])) {
-        $classes[] = 'wp-block-search__searchfield-hidden';
-    }
-    return implode(' ', $classes);
+    $button = in_array($position, ['', 'no-button'], true) || !isset($attributes['buttonUseIcon']) ? [] : [$attributes['buttonUseIcon'] ? 'wp-block-search__icon-button' : 'wp-block-search__text-button'];
+    return implode(' ', [...($position === '' ? [] : ['wp-block-search__' . $position]), ...($position === 'button-only' ? ['wp-block-search__searchfield-hidden'] : []), ...$button]);
 }
 
 /** @internal a border value with a colour preset as its custom property */
@@ -284,7 +275,7 @@ function block_core_image_render_lightbox($block_content, $block, $block_instanc
     }
     _minn_image_lightbox_state($id, (array) ($block['attrs'] ?? []), $figure, $image, $block_instance instanceof WP_Block ? $block_instance->context : []);
     // The overlay's own labels, and its view module.
-    wp_interactivity_config('core/image', ['defaultAriaLabel' => __('Enlarged image'), 'closeButtonText' => __('Close'), 'prevButtonText' => __('Previous'), 'nextButtonText' => __('Next')]);
+    wp_interactivity_config('core/image', ['defaultAriaLabel' => __('Enlarged image'), 'closeButtonText' => esc_html__('Close'), 'prevButtonText' => esc_html_x('Previous', 'previous image in lightbox'), 'nextButtonText' => esc_html_x('Next', 'next image in lightbox')]);
     wp_enqueue_script_module('@wordpress/block-library/image/view');
     if (!has_action('wp_footer', 'block_core_image_print_lightbox_overlay')) {
         add_action('wp_footer', 'block_core_image_print_lightbox_overlay');
@@ -387,11 +378,10 @@ function block_core_latest_posts_migrate_categories($block)
     return $block;
 }
 
-/** A comment's post title for the latest comments block, "(no title)" for none. */
+/** A comment's post title for the latest comments block, as get_the_title gives it; "(no title)" for an empty one (and "0"). */
 function wp_latest_comments_draft_or_post_title($post = 0)
 {
-    $title = get_the_title($post);
-    return $title === '' ? __('(no title)') : esc_html($title);
+    return empty($title = get_the_title($post)) ? __('(no title)') : $title;
 }
 
 /** The excerpt length the post excerpt block asks the excerpt for: more than any it shows, which it trims itself. */
@@ -459,18 +449,25 @@ JS;
 
 // Comment templates and forms.
 
-/** Comments rendered through a comment template's inner blocks, each its list item with its classes, replies in a nested list. */
+/**
+ * Comments rendered through a comment template's inner blocks, each its list
+ * item with its classes. Threaded, replies sit in a nested list one level
+ * deeper (the global $comment_depth, as comment_class reads it); at the
+ * site's depth limit they follow in the parent's item at its own depth.
+ */
 function block_core_comment_template_render_comments($comments, $block)
 {
+    global $comment_depth;
+    $comment_depth = max(1, (int) $comment_depth);
     $markup = '';
     foreach ((array) $comments as $comment) {
-        $inner = new WP_Block($block->parsed_block, ['commentId' => $comment->comment_ID] + (array) $block->context);
-        $content = $inner->render(['dynamic' => false]);
-        $children = $comment->get_children();
-        if (!empty($children) && get_option('thread_comments')) {
-            $content .= '<ol>' . block_core_comment_template_render_comments($children, $block) . '</ol>';
-        }
-        $markup .= sprintf('<li id="comment-%1$s" %2$s>%3$s</li>', $comment->comment_ID, comment_class('', $comment->comment_ID, $comment->comment_post_ID, false), $content);
+        $content = (new WP_Block($block->parsed_block, ['commentId' => $comment->comment_ID] + (array) $block->context))->render(['dynamic' => false]);
+        $children = get_option('thread_comments') ? $comment->get_children() : [];
+        $nested = $children !== [] && $comment_depth < (int) get_option('thread_comments_depth');
+        $comment_depth += (int) $nested;
+        $replies = $children === [] ? '' : block_core_comment_template_render_comments($children, $block);
+        $comment_depth -= (int) $nested;
+        $markup .= sprintf('<li id="comment-%1$s" %2$s>%3$s</li>', $comment->comment_ID, comment_class('', $comment->comment_ID, $comment->comment_post_ID, false), $content . ($nested ? '<ol>' . $replies . '</ol>' : $replies));
     }
     return $markup;
 }
@@ -519,7 +516,9 @@ function register_legacy_post_comments_block()
     if (WP_Block_Type_Registry::get_instance()->is_registered('core/post-comments')) {
         unregister_block_type('core/post-comments');
     }
-    register_block_type('core/post-comments', [
+    // Its metadata goes through block_type_metadata first, as a block.json's would.
+    $metadata = apply_filters('block_type_metadata', [
+        'name' => 'core/post-comments',
         'category' => 'theme',
         'attributes' => ['textAlign' => ['type' => 'string']],
         'uses_context' => ['postId', 'postType'],
@@ -530,9 +529,9 @@ function register_legacy_post_comments_block()
             'color' => ['gradients' => true, 'link' => true, '__experimentalDefaultControls' => ['background' => true, 'text' => true]],
             'inserter' => false,
         ],
-        'style_handles' => ['wp-block-post-comments', 'wp-block-buttons', 'wp-block-button'],
-        'editor_style_handles' => [],
+        'style' => ['wp-block-post-comments', 'wp-block-buttons', 'wp-block-button'],
         'render_callback' => 'render_block_core_comments',
         'skip_inner_blocks' => true,
     ]);
+    register_block_type($metadata['name'], $metadata);
 }

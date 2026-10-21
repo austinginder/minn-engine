@@ -214,33 +214,7 @@ function get_usermeta($user_id, $meta_key = '')
  */
 function update_usermeta($user_id, $meta_key, $meta_value)
 {
-    _deprecated_function(__FUNCTION__, '3.0.0', 'update_user_meta()');
-    $user_id = (int) $user_id;
-    if (!$user_id) {
-        return false;
-    }
-    $key = (string) preg_replace('|[^a-z0-9_]|i', '', (string) $meta_key);
-    $value = is_string($meta_value) ? stripslashes($meta_value) : $meta_value;
-    $stored = (string) maybe_serialize($value);
-    if (empty($stored)) {
-        return delete_usermeta($user_id, $key);
-    }
-    $meta = _minn_meta();
-    $current = $meta->matching('user', $user_id, $key)[0] ?? null;
-    if ($current === null) {
-        $id = $meta->add('user', $user_id, $key, $stored);
-        do_action('added_usermeta', $id, $user_id, $key, $value);
-    } else {
-        do_action('update_usermeta', (string) $current['meta_id'], $user_id, $key, $value);
-        if ($current['meta_value'] === $stored) {
-            return false;
-        }
-        $meta->updateRows('user', [$current['meta_id']], $stored);
-        do_action('updated_usermeta', (string) $current['meta_id'], $user_id, $key, $value);
-    }
-    clean_user_cache($user_id);
-    wp_cache_delete($user_id, 'user_meta');
-    return true;
+    return Minn\Runtime\DeprecatedUserMeta::update($user_id, $meta_key, $meta_value);
 }
 
 /**
@@ -250,24 +224,7 @@ function update_usermeta($user_id, $meta_key, $meta_value)
  */
 function delete_usermeta($user_id, $meta_key, $meta_value = '')
 {
-    _deprecated_function(__FUNCTION__, '3.0.0', 'delete_user_meta()');
-    $user_id = (int) $user_id;
-    if (!$user_id) {
-        return false;
-    }
-    $key = (string) preg_replace('|[^a-z0-9_]|i', '', (string) $meta_key);
-    $value = is_array($meta_value) || is_object($meta_value) ? serialize($meta_value) : trim((string) $meta_value);
-    $meta = _minn_meta();
-    $rows = $meta->find('user', $user_id, $key, $value === '' ? null : $value);
-    if ($rows !== []) {
-        $first = (string) $rows[0]['meta_id'];
-        do_action('delete_usermeta', $first, $user_id, $key, $meta_value);
-        $meta->deleteRows('user', array_column($rows, 'meta_id'));
-        clean_user_cache($user_id);
-        wp_cache_delete($user_id, 'user_meta');
-        do_action('deleted_usermeta', $first, $user_id, $key, $meta_value);
-    }
-    return true;
+    return Minn\Runtime\DeprecatedUserMeta::delete($user_id, $meta_key, $meta_value);
 }
 
 /** Every meta row of the users, as user_id / meta_key / meta_value objects keyed by user. */
@@ -694,12 +651,12 @@ function get_the_attachment_link($id = 0, $fullsize = false, $max_dims = false, 
     return "<a href='{$url}' title='" . esc_attr($post->post_title) . "'>" . get_attachment_innerHTML($post->ID, $fullsize, $max_dims) . '</a>';
 }
 
-/** An image attachment's old thumbnail file, when its metadata names one that exists; through wp_get_attachment_thumb_file. */
+/** A post's old thumbnail file (any post with attachment metadata), when its metadata names one that exists; through wp_get_attachment_thumb_file. */
 function wp_get_attachment_thumb_file($post_id = 0)
 {
     _deprecated_function(__FUNCTION__, '6.1.0');
     $post = get_post((int) $post_id);
-    if (!$post || $post->post_type !== 'attachment') {
+    if (!$post) {
         return false;
     }
     $thumb = wp_get_attachment_metadata($post->ID)['thumb'] ?? '';

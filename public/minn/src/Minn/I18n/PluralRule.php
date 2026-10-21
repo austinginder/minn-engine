@@ -40,6 +40,27 @@ final readonly class PluralRule
         return new self($count, $expression, PluralExpression::parse(rtrim($expression, "; \t\r\n")));
     }
 
+    /**
+     * An expression with each ternary's branches parenthesized, as
+     * parenthesize_plural_exression() writes it: "?" becomes " ? (", ":"
+     * becomes ") : (", the open parentheses closed at each ";" and at the
+     * end, trailing semicolons dropped.
+     */
+    public static function parenthesized(string $expression): string
+    {
+        $written = '';
+        $depth = 0;
+        foreach (str_split(rtrim($expression, ';')) as $char) {
+            [$written, $depth] = match ($char) {
+                '?' => [$written . ' ? (', $depth + 1],
+                ':' => [$written . ') : (', $depth],
+                ';' => [$written . str_repeat(')', $depth) . ';', 0],
+                default => [$written . $char, $depth],
+            };
+        }
+        return $written . str_repeat(')', $depth);
+    }
+
     /** The form a number takes. */
     public function index(int $n): int
     {

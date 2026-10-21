@@ -56,14 +56,15 @@ final class RestMeta
      *
      * @param array<string, mixed> $field
      */
-    public static function value(string $objectType, int $objectId, string $key, array $field, RestRequest $request): mixed
+    public static function value(string $objectType, int $objectId, string $key, array $field, RestRequest $request, ?callable $prepare = null): mixed
     {
         $stored = MetaData::get($objectType, $objectId, $key, false);
         $stored = is_array($stored) ? array_values($stored) : [];
+        $prepared = $prepare === null ? static fn ($value) => self::prepare($value, $field, $request) : static fn ($value) => $prepare($value, $request, $field);
         if ($field['single']) {
-            return self::prepare($stored === [] ? $field['schema']['default'] : $stored[0], $field, $request);
+            return $prepared($stored === [] ? $field['schema']['default'] : $stored[0]);
         }
-        return array_map(static fn ($value) => self::prepare($value, $field, $request), $stored);
+        return array_map($prepared, $stored);
     }
 
     /** Applies the meta a write request names, when it names any. */
@@ -87,18 +88,38 @@ final class RestMeta
     /** Applies a request's meta to an object, key by key in registration order; the refusals come back. @return list<Errors> */
     public static function errors(string $objectType, int $objectId, string $subtype, array $meta): array
     {
+        return self::errorsThrough(self::fields($objectType, $subtype), $meta, [
+            'delete' => static fn (string $key, array $field) => self::delete($objectType, $objectId, $key, $field),
+            'single' => static fn (string $key, array $field, mixed $value) => self::store($objectType, $objectId, $subtype, $key, $field, $value),
+            'multiple' => static fn (string $key, array $field, array $values) => self::storeAll($objectType, $objectId, $subtype, $key, $field, $values),
+        ]);
+    }
+
+    /**
+     * The refusals of writing a request's meta over the fields given, each
+     * key deleted, stored or stored as a list through the step of that name
+     * (WP_REST_Meta_Fields::update_value hands its own methods, so a
+     * subclass's are the ones that run); a step's true is no refusal.
+     *
+     * @param array<array-key, array<string, mixed>> $fields
+     * @param array<array-key, mixed> $meta
+     * @param array{delete: callable, single: callable, multiple: callable} $steps
+     * @return list<Errors>
+     */
+    public static function errorsThrough(array $fields, array $meta, array $steps): array
+    {
         $errors = [];
-        foreach (self::fields($objectType, $subtype) as $key => $field) {
+        foreach ($fields as $key => $field) {
             if (!array_key_exists($field['name'], $meta)) {
                 continue;
             }
             $value = $meta[$field['name']];
             $error = match (true) {
-                $value === null || ($value === [] && !$field['single']) => self::delete($objectType, $objectId, (string) $key, $field),
+                $value === null || ($value === [] && !$field['single']) => $steps['delete']((string) $key, $field),
                 !$field['single'] && is_array($value) && in_array(null, $value, true) => self::nullStored($field['name']),
-                default => self::update($objectType, $objectId, $subtype, (string) $key, $field, $value),
+                default => self::update((string) $key, $field, $value, $steps),
             };
-            if ($error !== null) {
+            if ($error instanceof Errors) {
                 $errors[] = $error;
             }
         }
@@ -149,8 +170,8 @@ final class RestMeta
         return Records::isError(SiteSchema::validate($value, $schema)) ? null : SiteSchema::sanitize($value, $schema);
     }
 
-    /** @param array<string, mixed> $field */
-    private static function update(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?Errors
+    /** A value checked against its field's schema, sanitized and stored through the single or multiple step. @param array<string, mixed> $field @param array<string, callable> $steps */
+    private static function update(string $key, array $field, mixed $value, array $steps): mixed
     {
         $valid = SiteSchema::validate($value, $field['schema'], 'meta.' . $field['name']);
         if (Records::isError($valid)) {
@@ -158,7 +179,7 @@ final class RestMeta
             return $valid;
         }
         $value = SiteSchema::sanitize($value, $field['schema']);
-        return $field['single'] ? self::store($objectType, $objectId, $subtype, $key, $field, $value) : self::storeAll($objectType, $objectId, $subtype, $key, $field, (array) $value);
+        return $field['single'] ? $steps['single']($key, $field, $value) : $steps['multiple']($key, $field, (array) $value);
     }
 
     /** A single key stored: an unchanged value is left alone, then the user must be allowed to edit it. @param array<string, mixed> $field */
@@ -217,9 +238,19 @@ final class RestMeta
     /** A key deleted once the user may delete it (a single key's invalid stored value refuses null). @param array<string, mixed> $field */
     public static function delete(string $objectType, int $objectId, string $key, array $field): ?Errors
     {
-        if ($field['single'] && Records::isError(SiteSchema::validate(MetaData::get($objectType, $objectId, $key, true), $field['schema']))) {
-            return self::nullStored($field['name']);
-        }
+        return self::nullRefused($objectType, $objectId, $key, $field) ?? self::deleteKey($objectType, $objectId, $key, (string) $field['name']);
+    }
+
+    /** The refusal of null for a single key whose stored value its schema does not accept, or null. @param array<string, mixed> $field */
+    public static function nullRefused(string $objectType, int $objectId, string $key, array $field): ?Errors
+    {
+        return $field['single'] && Records::isError(SiteSchema::validate(MetaData::get($objectType, $objectId, $key, true), $field['schema'])) ? self::nullStored($field['name']) : null;
+    }
+
+    /** A key deleted once the user may delete it; refusals name the key by its REST name. */
+    public static function deleteKey(string $objectType, int $objectId, string $key, string $name): ?Errors
+    {
+        $field = ['name' => $name];
         if (!Can::current("delete_{$objectType}_meta", $objectId, $key)) {
             return self::refused('rest_cannot_delete', $field['name']);
         }

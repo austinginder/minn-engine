@@ -109,8 +109,9 @@ function get_rest_url($blog_id = null, $path = '/', $scheme = 'rest')
     }
     $path = '/' . ltrim($path, '/');
     $url = trailingslashit(get_home_url($blog_id, rest_get_url_prefix(), $scheme)) . ltrim($path, '/');
-    if (is_ssl() && isset($_SERVER['SERVER_NAME'])) {
-        // Nothing: the home scheme already matches the request in the engine.
+    // A secure request to the home's own host gets the address over https, whatever the home's scheme.
+    if (is_ssl() && isset($_SERVER['SERVER_NAME']) && parse_url($url, PHP_URL_HOST) === $_SERVER['SERVER_NAME']) {
+        $url = set_url_scheme($url, 'https');
     }
     return apply_filters('rest_url', $url, $path, $blog_id, $scheme);
 }

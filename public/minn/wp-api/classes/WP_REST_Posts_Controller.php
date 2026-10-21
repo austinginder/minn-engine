@@ -573,7 +573,7 @@ class WP_REST_Posts_Controller extends WP_REST_Controller
         $context = !empty($request['context']) ? $request['context'] : 'view';
         $object = WP_REST_Server::minn_engine_api($request)->postObject();
         $record = PostRecord::fromRow((array) get_post($item->ID, ARRAY_A));
-        $data = $context === 'edit' ? $object->edit($record, get_current_user_id()) : $object->view($record);
+        $data = $context === 'edit' ? $object->edit($record, get_current_user_id()) : $object->viewWithPassword($record, $request['password']);
         $links = (array) ($data['_links'] ?? []);
         unset($data['_links']);
         $fields = $this->get_fields_for_response($request);

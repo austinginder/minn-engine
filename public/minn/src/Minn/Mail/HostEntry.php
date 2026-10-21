@@ -31,6 +31,36 @@ final readonly class HostEntry
         return $out;
     }
 
+    /** The port to connect on: the entry's own when it is one (1 to 65535), else the mailer's Port (probe db-mail-rewrite-doubts). */
+    public function portOr(int $default): int
+    {
+        return $this->port !== null && $this->port >= 1 && $this->port <= 65535 ? $this->port : $default;
+    }
+
+    /** Whether a server's STARTTLS offer is taken on its own: never for localhost, nor without OpenSSL. */
+    public function takesOfferedTls(): bool
+    {
+        return $this->host !== 'localhost' && defined('OPENSSL_ALGO_SHA256');
+    }
+
+    /**
+     * The name the mailer gives itself (serverHostname): the configured
+     * Hostname, else the request's SERVER_NAME when one is set (even empty),
+     * else the machine's; one that is not a valid host is
+     * localhost.localdomain.
+     */
+    public static function serverName(string $configured, ?string $serverName): string
+    {
+        $machine = function_exists('gethostname') ? (string) gethostname() : '';
+        $name = match (true) {
+            $configured !== '' => $configured,
+            $serverName !== null => $serverName,
+            $machine !== '' => $machine,
+            default => (string) php_uname('n'),
+        };
+        return self::validHost($name) ? $name : 'localhost.localdomain';
+    }
+
     /** Whether a host name, IPv4 address or bracketed IPv6 address is well formed. */
     public static function validHost(mixed $host): bool
     {

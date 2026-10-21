@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Closure;
 use Minn\Blocks\Block;
 use Minn\Blocks\Serializer;
 
@@ -19,6 +20,37 @@ use Minn\Blocks\Serializer;
  */
 final class BlockHooks
 {
+    /** @var array{present: array<string, true>, used: array<string, int>, position: int}|null the single-instance blocks of the content being written out */
+    private static ?array $single = null;
+
+    /**
+     * Content's blocks written out by $serialize under the single-instance
+     * rule (apply_block_hooks_to_content): a hooked type that does not
+     * support multiple goes in at the first anchor position that names it
+     * only, and nowhere when the content has one already, however deep
+     * (probe taxonomy-blocks-user-doubts).
+     *
+     * @param list<array<string, mixed>> $blocks the parsed content
+     */
+    public static function withSingleInstances(array $blocks, Closure $serialize): string
+    {
+        $outer = self::$single;
+        self::$single = ['present' => self::names($blocks), 'used' => [], 'position' => 0];
+        try {
+            return (string) $serialize();
+        } finally {
+            self::$single = $outer;
+        }
+    }
+
+    /** The traversal moves on to the next anchor position (each before, after, first_child and last_child the visitors ask). */
+    public static function nextPosition(): void
+    {
+        if (self::$single !== null) {
+            self::$single['position']++;
+        }
+    }
+
     /**
      * The blocks hooked to each anchor, by position (get_hooked_blocks), as
      * the registered block types' block_hooks name them.
@@ -103,6 +135,9 @@ final class BlockHooks
         $out = [];
         foreach ((array) $hooks->filter('hooked_block_types', [$hooked[$name][$position] ?? [], $position, $name, $context]) as $type) {
             $type = (string) $type;
+            if (!self::admitted($type)) {
+                continue;
+            }
             $parsed = $hooks->filter('hooked_block', [['blockName' => $type, 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []], $type, $position, $anchor, $context]);
             $out[] = [$type, $hooks->filter("hooked_block_{$type}", [$parsed, $type, $position, $anchor, $context])];
         }
@@ -161,5 +196,44 @@ final class BlockHooks
         }
         $ignored = null;
         return (string) Handoff::blockHooksForPost($content, $postId, 'insert_hooked_blocks', $ignored);
+    }
+
+    /** Whether a hooked type may go in at this position: always, unless it is single-instance and already in the content or put in at another position. */
+    private static function admitted(string $type): bool
+    {
+        if (self::$single === null) {
+            return true;
+        }
+        $object = Handoff::blockTypes()->get_registered($type);
+        if (!is_object($object) || (((array) $object->supports)['multiple'] ?? true) !== false) {
+            return true;
+        }
+        $used = self::$single['used'][$type] ?? null;
+        if (isset(self::$single['present'][$type]) || ($used !== null && $used !== self::$single['position'])) {
+            return false;
+        }
+        self::$single['used'][$type] = self::$single['position'];
+        return true;
+    }
+
+    /**
+     * Every block name in parsed blocks, however deep.
+     *
+     * @param array<mixed> $blocks
+     * @return array<string, true>
+     */
+    private static function names(array $blocks): array
+    {
+        $names = [];
+        foreach ($blocks as $block) {
+            if (!is_array($block)) {
+                continue;
+            }
+            if (isset($block['blockName'])) {
+                $names[(string) $block['blockName']] = true;
+            }
+            $names += self::names((array) ($block['innerBlocks'] ?? []));
+        }
+        return $names;
     }
 }

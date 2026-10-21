@@ -215,12 +215,7 @@ function _minn_resolve_pattern_blocks(array $blocks, array $open): array
             // A pattern of one block names itself on that block: its slug, title, and its description and categories when it has them (probes block-helpers-remaining, rest-block-patterns).
             if (count($resolved) === 1 && is_array($resolved[0])) {
                 $pattern = WP_Block_Patterns_Registry::get_instance()->get_registered($slug) ?? [];
-                $named = ['patternName' => $slug];
-                foreach (['title' => 'name', 'description' => 'description', 'categories' => 'categories'] as $field => $key) {
-                    if (!empty($pattern[$field])) {
-                        $named[$key] = $pattern[$field];
-                    }
-                }
+                $named = ['patternName' => $slug] + array_filter(['name' => $pattern['title'] ?? null, 'description' => $pattern['description'] ?? null, 'categories' => $pattern['categories'] ?? null]);
                 $resolved[0]['attrs']['metadata'] = array_merge((array) ($resolved[0]['attrs']['metadata'] ?? []), $named);
             }
             array_push($out, ...$resolved);
@@ -228,7 +223,10 @@ function _minn_resolve_pattern_blocks(array $blocks, array $open): array
             continue;
         }
         if (!empty($block['innerBlocks'])) {
-            $block['innerBlocks'] = _minn_resolve_pattern_blocks($block['innerBlocks'], $open);
+            // A pattern that became several blocks takes as many places in its parent's inner content (probe taxonomy-blocks-user-doubts).
+            $resolved = array_map(static fn ($inner) => _minn_resolve_pattern_blocks([$inner], $open), $block['innerBlocks']);
+            $block['innerContent'] = Minn\Blocks\Serializer::spreadInnerContent((array) ($block['innerContent'] ?? []), array_map('count', $resolved));
+            $block['innerBlocks'] = array_merge(...$resolved);
         }
         $out[] = $block;
     }
@@ -397,7 +395,7 @@ function wp_get_block_css_selector($block_type, $target = 'root', $fallback = fa
  * styles before the caller's (split on semicolons, each part trimmed, the
  * ends trimmed of semicolons), and the caller's other attributes, the
  * caller's id and aria-label winning. Style, class, id and aria-label come
- * first, in that order.
+ * first, in that order; the supports give nothing else (probe taxonomy-blocks-user-doubts).
  */
 function get_block_wrapper_attributes($extra_attributes = [])
 {
@@ -427,7 +425,7 @@ function get_block_wrapper_attributes($extra_attributes = [])
         unset($new_attributes[$name], $extra_attributes[$name]);
     }
     $normalized = [];
-    foreach ($attributes + $new_attributes + $extra_attributes as $key => $value) {
+    foreach ($attributes + $extra_attributes as $key => $value) {
         $normalized[] = $key . '="' . esc_attr((string) $value) . '"';
     }
     return implode(' ', $normalized);
@@ -684,11 +682,11 @@ function get_hooked_blocks()
     return Minn\Runtime\BlockHooks::hooked();
 }
 
-/** @deprecated 6.3.0 The global styles' SVG filters printed, outside the admin (probe preview-output-helpers). */
+/** @deprecated 6.3.0 The global styles' SVG filters printed, outside the admin or in the block editor (probes preview-output-helpers, taxonomy-blocks-user-doubts). */
 function wp_global_styles_render_svg_filters()
 {
     _deprecated_function(__FUNCTION__, '6.3.0');
-    if (is_admin()) {
+    if (is_admin() && !(get_current_screen()?->is_block_editor())) {
         return;
     }
     $filters = wp_get_global_styles_svg_filters();
@@ -801,28 +799,10 @@ function _block_bindings_post_data_get_value(array $source_args, $block_instance
     };
 }
 
-/** A term's name, description, link, slug or id (as text) for a binding, from the termId and taxonomy in context (probe template-bindings-helpers). */
+/** A term's field for a binding, from a navigation link's own id and type, else the termId and taxonomy in context (Runtime\TermTags::bindingValue). */
 function _block_bindings_term_data_get_value(array $source_args, $block_instance)
 {
-    $id = $block_instance->context['termId'] ?? 0;
-    $term = empty($id) ? null : get_term((int) $id, (string) ($block_instance->context['taxonomy'] ?? ''));
-    if (!$term instanceof WP_Term) {
-        return null;
-    }
-    // A term of a taxonomy the public cannot view is shown only to who may edit it.
-    if (!is_taxonomy_viewable($term->taxonomy) && !current_user_can('edit_term', $term->term_id)) {
-        return null;
-    }
-    return match ($source_args['field'] ?? '') {
-        'id' => (string) $term->term_id,
-        'count' => (string) $term->count,
-        'parent' => (string) $term->parent,
-        'name' => $term->name,
-        'slug' => $term->slug,
-        'description' => $term->description,
-        'link' => get_term_link($term),
-        default => null,
-    };
+    return Minn\Runtime\TermTags::bindingValue($source_args, $block_instance);
 }
 
 // The core bindings sources, each registered by its own function at init, as the reference registers them.
@@ -908,15 +888,15 @@ function register_block_script_handle($metadata, $field_name, $index = 0)
     if ($script_handle_or_path === $script_path) {
         return $script_handle_or_path;
     }
-    $script_handle = generate_block_asset_handle($metadata['name'], $field_name, $index);
-    // A handle already registered stands; a missing file is registered without a source; a view
-    // script is deferred and takes the block's version when it has no asset file (probe block-helpers-remaining).
-    if (wp_script_is($script_handle, 'registered')) {
-        return $script_handle;
-    }
+    // The asset file is read first and may name the handle; a handle already registered stands; a missing file is registered without a
+    // source; a view script is deferred and takes the block's version when it has no asset file (probes block-helpers-remaining, taxonomy-blocks-user-doubts).
     $path = dirname($metadata['file']);
     $script_asset_path = $path . '/' . substr_replace($script_path, '.asset.php', -strlen('.js'));
     $script_asset = file_exists($script_asset_path) ? require $script_asset_path : [];
+    $script_handle = $script_asset['handle'] ?? generate_block_asset_handle($metadata['name'], $field_name, $index);
+    if (wp_script_is($script_handle, 'registered')) {
+        return $script_handle;
+    }
     $script_dependencies = $script_asset['dependencies'] ?? [];
     $version = $script_asset['version'] ?? (!empty($metadata['version']) ? $metadata['version'] : false);
     $result = wp_register_script($script_handle, _minn_block_asset_url($path . '/' . $script_path), $script_dependencies, $version, $field_name === 'viewScript' ? ['strategy' => 'defer'] : []);
@@ -952,7 +932,21 @@ function register_block_style_handle($metadata, $field_name, $index = 0)
     }
     $version = !empty($metadata['version']) ? $metadata['version'] : false;
     $result = wp_register_style($style_handle_name, _minn_block_asset_url($path . '/' . $style_path), [], $version);
-    return $result ? $style_handle_name : false;
+    if (!$result) {
+        return false;
+    }
+    // The file's path goes with the handle; under a right-to-left locale its -rtl file replaces it (probe taxonomy-blocks-user-doubts).
+    $file = realpath($path . '/' . $style_path);
+    if ($file !== false) {
+        $rtl = (string) preg_replace('/\.css$/', '-rtl.css', $file = wp_normalize_path($file));
+        $replaced = is_rtl() && file_exists($rtl);
+        wp_style_add_data($style_handle_name, 'path', $replaced ? $rtl : $file);
+        if ($replaced) {
+            wp_style_add_data($style_handle_name, 'rtl', 'replace');
+            wp_style_add_data($style_handle_name, 'suffix', SCRIPT_DEBUG ? '' : '.min');
+        }
+    }
+    return $style_handle_name;
 }
 
 /**
@@ -991,7 +985,7 @@ function remove_block_asset_path_prefix($asset_handle_or_path)
     return $path;
 }
 
-/** The id a block.json script module field registers under, registering it from the file and its .asset.php on the way. */
+/** The id a block.json script module field registers under, registering it from the file and its .asset.php (else the block's version) on the way. */
 function register_block_script_module_id($metadata, $field_name, $index = 0)
 {
     if (empty($metadata[$field_name])) {
@@ -1012,7 +1006,7 @@ function register_block_script_module_id($metadata, $field_name, $index = 0)
     $asset_path = wp_normalize_path(realpath($asset_raw) ?: $asset_raw);
     $module_path = wp_normalize_path(realpath($path . '/' . $relative) ?: $path . '/' . $relative);
     $uri = str_starts_with($module_path, wp_normalize_path(WP_PLUGIN_DIR)) ? plugins_url(str_replace(wp_normalize_path(WP_PLUGIN_DIR), '', $module_path)) : str_replace(wp_normalize_path(ABSPATH), site_url('/'), $module_path);
-    $asset = file_exists($asset_path) ? require $asset_path : ['dependencies' => [], 'version' => false];
+    $asset = file_exists($asset_path) ? require $asset_path : ['dependencies' => [], 'version' => $metadata['version'] ?? false];
     wp_register_script_module($id, $uri, $asset['dependencies'] ?? [], $asset['version'] ?? false);
     return $id;
 }
@@ -1034,11 +1028,12 @@ function register_block_type_from_metadata($file_or_folder, $args = [])
         }
         $metadata = wp_json_file_decode($metadata_file, ['associative' => true]);
     }
-    if (!is_array($metadata) || empty($metadata['name'])) {
+    // A block.json without a name takes the one the arguments give (probe taxonomy-blocks-user-doubts).
+    if (!is_array($metadata) || empty($metadata['name'] ??= $args['name'] ?? null)) {
         return false;
     }
     $metadata['file'] = wp_normalize_path(realpath($metadata_file) ?: $metadata_file);
-    $metadata = apply_filters('block_type_metadata', $metadata);
+    $metadata = BlockMetadata::translated(apply_filters('block_type_metadata', $metadata));
     $settings = BlockMetadata::settings(
         $metadata,
         static fn (array $meta, string $field, int $index) => register_block_script_handle($meta, $field, $index),
@@ -1173,8 +1168,10 @@ function make_before_block_visitor($hooked_blocks, $context, $callback = 'insert
         _inject_theme_attribute_in_template_part_block($block);
         $markup = '';
         if ($parent_block && !$prev) {
+            Minn\Runtime\BlockHooks::nextPosition();
             $markup .= $callback($parent_block, 'first_child', $hooked_blocks, $context);
         }
+        Minn\Runtime\BlockHooks::nextPosition();
         $markup .= $callback($block, 'before', $hooked_blocks, $context);
         return $markup;
     };
@@ -1183,8 +1180,10 @@ function make_before_block_visitor($hooked_blocks, $context, $callback = 'insert
 function make_after_block_visitor($hooked_blocks, $context, $callback = 'insert_hooked_blocks')
 {
     return static function (&$block, &$parent_block = null, $next = null) use ($hooked_blocks, $context, $callback) {
+        Minn\Runtime\BlockHooks::nextPosition();
         $markup = $callback($block, 'after', $hooked_blocks, $context);
         if ($parent_block && !$next) {
+            Minn\Runtime\BlockHooks::nextPosition();
             $markup .= $callback($parent_block, 'last_child', $hooked_blocks, $context);
         }
         return $markup;
@@ -1257,11 +1256,13 @@ function apply_block_hooks_to_content($content, $context = null, $callback = 'in
     $hooked_blocks = get_hooked_blocks();
     $before = '_inject_theme_attribute_in_template_part_block';
     $after = null;
+    // No context is the global post's; a block that does not support multiple goes in once (Runtime\BlockHooks; probe taxonomy-blocks-user-doubts).
     if ($hooked_blocks !== [] || has_filter('hooked_block_types')) {
-        $before = make_before_block_visitor($hooked_blocks, $context, $callback);
-        $after = make_after_block_visitor($hooked_blocks, $context, $callback);
+        $before = make_before_block_visitor($hooked_blocks, $context ?? get_post(), $callback);
+        $after = make_after_block_visitor($hooked_blocks, $context ?? get_post(), $callback);
     }
-    return traverse_and_serialize_blocks(parse_blocks((string) $content), $before, $after);
+    $blocks = parse_blocks((string) $content);
+    return Minn\Runtime\BlockHooks::withSingleInstances($blocks, static fn () => traverse_and_serialize_blocks($blocks, $before, $after));
 }
 
 /** A template part by its attributes, through the engine's template-part block. */
@@ -1343,7 +1344,7 @@ function _minn_block_template_from(Minn\Theme\TemplateRecord $record, Minn\Theme
     $template->date = $saved ? str_replace('T', ' ', (string) $record->date) : null;
     $template->description = $record->description;
     $template->title = $record->title;
-    $template->is_custom = $record->isPart() || Minn\Theme\TemplateIndex::isCustom($record->slug);
+    $template->is_custom = $record->isPart() || (Minn\Theme\TemplateIndex::isCustom($record->slug) && !$record->suggestion);
     $template->area = $record->area;
     $template->plugin = $record->plugin;
     if ($record->source === 'theme') {
@@ -1505,8 +1506,10 @@ function _add_template_loader_filters()
 
 /**
  * The site editor's template lookup for a new post, on pre_get_posts: it
- * acts on the main query only, and unhooks itself there. Nothing else it
- * does could be observed (probe template-loader-more).
+ * acts on the main query only, and unhooks itself there; a page_id or p the
+ * query was asked for (not one set on it later) naming an auto-draft the
+ * user may edit is looked for among auto-drafts
+ * (probes template-loader-more, taxonomy-blocks-user-doubts).
  */
 function _resolve_template_for_new_post($wp_query)
 {
@@ -1514,6 +1517,11 @@ function _resolve_template_for_new_post($wp_query)
         return;
     }
     remove_action('pre_get_posts', '_resolve_template_for_new_post');
+    // A new post the editor may edit is still an auto-draft: the main query looks among those (probe taxonomy-blocks-user-doubts).
+    $post = get_post((int) (($wp_query->query['page_id'] ?? null) ?: ($wp_query->query['p'] ?? 0)));
+    if ($post !== null && $post->post_status === 'auto-draft' && current_user_can('edit_post', $post->ID)) {
+        $wp_query->set('post_status', 'auto-draft');
+    }
 }
 
 function _block_template_render_without_post_block_context($context)
@@ -1555,7 +1563,8 @@ function _strip_template_file_suffix($template_file)
  * keeps only the first candidate). Its id and markup go to the globals
  * the canvas renders (a signed-in visitor sees the empty-template warning
  * for an empty one) and the canvas is the template; with none, the
- * template given.
+ * template given. The site editor's _wp-find-template request is answered
+ * with the template found, as JSON.
  */
 function locate_block_template($template, $type, array $templates)
 {
@@ -1570,6 +1579,10 @@ function locate_block_template($template, $type, array $templates)
     $block_template = resolve_block_template($type, $templates, $template);
     if (!$block_template) {
         return $template;
+    }
+    // The site editor asking which template a new post gets is answered with it, as JSON (measured over HTTP, doubts 2026-10-20).
+    if (isset($_GET['_wp-find-template'])) {
+        wp_send_json_success($block_template);
     }
     $_wp_current_template_id = $block_template->id;
     $_wp_current_template_content = empty($block_template->content) && is_user_logged_in() ? wp_render_empty_block_template_warning($block_template) : $block_template->content;
@@ -1629,7 +1642,7 @@ function unregister_block_template($template_name)
     return WP_Block_Templates_Registry::get_instance()->unregister($template_name);
 }
 
-/** Theme files (and registered plugin templates, unless a post_type query without slugs) matching the query. */
+/** The saved templates (as their posts build them, hooks applied), theme files and registered plugin templates matching the query. */
 function get_block_templates($query = [], $template_type = 'wp_template')
 {
     $pre = apply_filters('pre_get_block_templates', null, $query, $template_type);
@@ -1644,13 +1657,13 @@ function get_block_templates($query = [], $template_type = 'wp_template')
         if ($record->source === 'plugin') {
             continue;
         }
-        $template = _minn_block_template_from($record, $index);
-        if (_minn_block_template_matches($template, $query)) {
+        $template = $record->wpId > 0 ? _build_block_template_result_from_post($record->wpId) : _minn_block_template_from($record, $index);
+        if ($template instanceof WP_Block_Template && _minn_block_template_matches($template, $query)) {
             $templates[] = $template;
         }
     }
     $themeSlugs = array_map(static fn ($t) => $t->slug, $templates);
-    if ($template_type === 'wp_template' && (empty($query['post_type']) || !empty($query['slug__in']))) {
+    if ($template_type === 'wp_template') {
         foreach (WP_Block_Templates_Registry::get_instance()->get_by_query($query) as $name => $template) {
             if (!in_array($template->slug, $themeSlugs, true) && _minn_block_template_matches($template, $query)) {
                 $templates[$name] = $template;
@@ -1675,11 +1688,17 @@ function _minn_block_template_matches(WP_Block_Template $template, array $query)
     if (isset($query['wp_id']) && (int) $template->wp_id !== (int) $query['wp_id']) {
         return false;
     }
-    // A post type keeps only the templates that declare it (probe rest-templates-controller).
-    return empty($query['post_type']) || $template->type !== 'wp_template' || in_array($query['post_type'], (array) ($template->post_types ?? []), true);
+    // A post type keeps the custom templates that declare it, and the saved custom ones that declare none (probes rest-templates-controller, taxonomy-blocks-user-doubts).
+    return empty($query['post_type']) || $template->type !== 'wp_template' || ($template->is_custom
+        && (in_array($query['post_type'], (array) ($template->post_types ?? []), true) || (empty($template->post_types) && $template->source === 'custom')));
 }
 
-/** A template by "theme//slug": the theme's file, else a plugin's registration under the active theme. */
+/**
+ * A template by "theme//slug" (probe taxonomy-blocks-user-doubts): a row
+ * saved for that theme, whatever theme it is; else the theme's file
+ * through get_block_file_template; else a plugin's registration (by slug
+ * under the active theme, by its own "plugin//slug" name otherwise).
+ */
 function get_block_template($id, $template_type = 'wp_template')
 {
     $pre = apply_filters('pre_get_block_template', null, $id, $template_type);
@@ -1691,22 +1710,9 @@ function get_block_template($id, $template_type = 'wp_template')
         return null;
     }
     [$theme, $slug] = $parts;
-    $template = null;
-    if ($theme === get_stylesheet()) {
-        $index = _minn_template_index();
-        $record = $index?->find($template_type, (string) $id);
-        $template = $record === null || $record->source === 'plugin' || $index === null
-            ? null
-            : _minn_block_template_from($record, $index);
-        if ($template === null && $template_type === 'wp_template') {
-            $template = WP_Block_Templates_Registry::get_instance()->get_by_slug($slug);
-        }
-    } elseif ($template_type === 'wp_template') {
-        // A plugin's own "plugin//slug" name resolves to its registration.
-        $template = WP_Block_Templates_Registry::get_instance()->get_registered((string) $id);
-    }
-    if ($template instanceof WP_Block_Template && $template_type === 'wp_template_part' && is_string($template->content)) {
-        $template->content = _minn_apply_hooks_to_template_part($template->content, $template);
+    $template = Minn\Runtime\TemplateFiles::saved((string) $template_type, $theme, $slug) ?? get_block_file_template($id, $template_type);
+    if ($template === null && $template_type === 'wp_template') {
+        $template = $theme === get_stylesheet() ? WP_Block_Templates_Registry::get_instance()->get_by_slug($slug) : WP_Block_Templates_Registry::get_instance()->get_registered((string) $id);
     }
     return apply_filters('get_block_template', $template, $id, $template_type);
 }
@@ -1798,7 +1804,7 @@ function apply_block_hooks_to_content_from_post_object($content, $post = null, $
     return $classic ? (string) preg_replace('#<!-- /?wp:freeform(?: \{.*?\})? /?-->#', '', $content) : $content;
 }
 
-/** A REST answer's raw content given its hooked blocks (rendered again from it), and a navigation's root ignored list put in its meta. */
+/** A REST answer's raw content given its hooked blocks (a rendered one rendered again from it), and a navigation's root ignored list put in its meta. */
 function insert_hooked_blocks_into_rest_response($response, $post)
 {
     if (empty($response->data['content']['raw'])) {
@@ -1810,14 +1816,17 @@ function insert_hooked_blocks_into_rest_response($response, $post)
         $response->data['meta']['_wp_ignored_hooked_blocks'] = wp_json_encode($at_root);
     }
     $response->data['content']['raw'] = $content;
-    $response->data['content']['rendered'] = apply_filters('the_content', $content);
+    // Only a rendered content the answer already has is rendered again; an empty or missing one stays so (probe taxonomy-blocks-user-doubts).
+    if (!empty($response->data['content']['rendered'])) {
+        $response->data['content']['rendered'] = apply_filters('the_content', $content);
+    }
     return $response;
 }
 
-/** A post about to be saved with its ignored hooked blocks marked in its content; a navigation's root list goes to meta_input. */
+/** A saved post about to be saved again with its ignored hooked blocks marked in its content; a navigation's root list goes to meta_input; a new one stays as it is. */
 function update_ignored_hooked_blocks_postmeta($post)
 {
-    if (!isset($post->post_content, $post->post_type)) {
+    if (!isset($post->post_content, $post->post_type) || empty($post->ID)) {
         return $post;
     }
     $at_root = [];
@@ -1831,17 +1840,22 @@ function update_ignored_hooked_blocks_postmeta($post)
 /**
  * A template or part about to be saved over REST (rest_pre_insert_wp_template,
  * _part) with its ignored hooked blocks marked: an existing one by its
- * saved form, a new one built from the changes (stamped with the time and
+ * saved form with the changes over it, a new one built from the changes (stamped with the time and
  * the current user) and its wp_theme term; that error when it names none.
  */
 function inject_ignored_hooked_blocks_metadata_attributes($changes, $deprecated = null)
 {
+    if ($deprecated !== null) {
+        _deprecated_argument(__FUNCTION__, '6.5.3');
+    }
     // Nothing hooked, nothing marked: the changes go on untouched (probe rest-templates-controller).
     if (!isset($changes->post_content) || (get_hooked_blocks() === [] && !has_filter('hooked_block_types'))) {
         return $changes;
     }
     if (isset($changes->ID)) {
-        $template = _build_block_template_result_from_post(get_post($changes->ID));
+        // The saved template with the pending changes over it is what the hooks hear (probe taxonomy-blocks-user-doubts).
+        $saved = get_post($changes->ID);
+        $template = _build_block_template_result_from_post($saved ? new WP_Post((object) (get_object_vars($changes) + get_object_vars($saved))) : null);
     } else {
         $changes->post_modified = current_time('mysql');
         $changes->post_author = (string) get_current_user_id();
@@ -2109,11 +2123,17 @@ function wp_should_skip_block_supports_serialization($block_type, $feature_set, 
     return is_array($skip) ? in_array($feature, $skip, true) : $skip;
 }
 
-/** Whether a block type supports a border feature (all of them when it declares border support as true); the default when it declares nothing. */
+/**
+ * Whether a block type supports a border feature: all of them when it
+ * declares border support as true, else the feature's own setting, which
+ * counts when it is true or a list (an empty one too); the default counts
+ * only when true or a list (probe taxonomy-blocks-user-doubts).
+ */
 function wp_has_border_feature_support($block_type, $feature, $default_value = false)
 {
-    $support = is_object($block_type) ? ($block_type->supports['__experimentalBorder'] ?? $default_value) : $default_value;
-    return $support === true || (bool) _wp_array_get((array) (is_object($block_type) ? $block_type->supports : []), ['__experimentalBorder', $feature], $default_value);
+    $supports = is_object($block_type) ? (array) $block_type->supports : [];
+    $support = ($supports['__experimentalBorder'] ?? $default_value) === true ? true : _wp_array_get($supports, ['__experimentalBorder', $feature], $default_value);
+    return $support === true || is_array($support);
 }
 
 /** The class a block's own settings presets hang on: wp-settings- and the MD5 of the serialized block. */

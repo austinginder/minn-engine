@@ -240,6 +240,36 @@ final class Upgrade
         file_put_contents(ABSPATH . '.maintenance', '<?php $upgrading = ' . time() . '; ?>');
     }
 
+    /**
+     * An update's own line taken out of the stored list of updates still to
+     * be mailed about (auto_plugin_theme_update_emails), once it is done
+     * (probe db-mail-rewrite-doubts).
+     */
+    public static function forgetUpdateEmail(string $key): void
+    {
+        $emails = Runtime::options()->filtered('auto_plugin_theme_update_emails', []);
+        if (is_array($emails) && array_key_exists($key, $emails)) {
+            unset($emails[$key]);
+            OptionWrites::update('auto_plugin_theme_update_emails', $emails);
+        }
+    }
+
+    /**
+     * Whether a failed core update holds the next one back: a critical
+     * failure does, and so does the same offer failing from the same version
+     * when it is not to be retried.
+     */
+    public static function lastCoreUpdateFailed(string $offered, string $current, mixed $failure): bool
+    {
+        if (!is_array($failure) || $failure === []) {
+            return false;
+        }
+        if (!empty($failure['critical'])) {
+            return true;
+        }
+        return ($failure['current'] ?? null) === $current && ($failure['attempted'] ?? null) === $offered && empty($failure['retry']);
+    }
+
     /** Maintenance mode off; said only when it was on. */
     public static function maintenanceOff(Upgrader $upgrader): void
     {

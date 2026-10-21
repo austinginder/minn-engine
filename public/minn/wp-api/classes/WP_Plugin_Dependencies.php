@@ -10,8 +10,8 @@
  * dependencies in turn, leaving out slugs already on the path: a pair is
  * a dependent and the dependency that needs it back, and a slug that
  * requires itself pairs with itself. The plugins API is asked about
- * missing dependencies only on admin screens, so Minn's update service
- * answers there and nothing is asked anywhere else.
+ * every dependency only on the plugins and plugin install screens, so
+ * Minn's update service answers there and nothing is asked anywhere else.
  */
 class WP_Plugin_Dependencies
 {
@@ -96,14 +96,13 @@ class WP_Plugin_Dependencies
         return $names;
     }
 
-    /** Each dependency's name: the installed plugin's, the plugins API's, or its slug. */
+    /** Each dependency's name: the one the plugins API data was stored with, else the installed plugin's, else its slug. */
     public static function get_dependency_names($plugin_file)
     {
         $plugins = self::get_plugins();
         $names = [];
         foreach (self::get_dependencies($plugin_file) as $slug) {
-            $file = self::get_dependency_filepath($slug);
-            $names[$slug] = $file !== false ? (string) ($plugins[$file]['Name'] ?? $slug) : (string) (self::$dependency_api_data[$slug]['name'] ?? $slug);
+            $names[$slug] = (string) (self::$dependency_api_data[$slug]['Name'] ?? $plugins[self::get_dependency_filepath($slug)]['Name'] ?? $slug);
         }
         return $names;
     }
@@ -123,7 +122,7 @@ class WP_Plugin_Dependencies
         foreach (array_keys((array) self::$dependencies) as $dependent) {
             if (self::has_unmet_dependencies($dependent)) {
                 $on_plugins = (get_current_screen()->base ?? '') === 'plugins';
-                wp_admin_notice('Some required plugins are missing or inactive.' . ($on_plugins ? '' : sprintf(' <a href="%s">Manage plugins</a>.', esc_url(admin_url('plugins.php')))), ['type' => 'warning']);
+                wp_admin_notice(__('Some required plugins are missing or inactive.') . ($on_plugins ? '' : ' ' . sprintf(__('<a href="%s">Manage plugins</a>.'), esc_url(admin_url('plugins.php')))), ['type' => 'warning']);
                 return;
             }
         }
@@ -139,24 +138,33 @@ class WP_Plugin_Dependencies
         $plugins = self::get_plugins();
         $name = static fn (string $slug) => (string) ($plugins[self::get_dependent_filepath($slug)]['Name'] ?? $slug);
         $items = implode('', array_map(static fn (string $pair) => vsprintf('<li><strong>%1$s</strong> requires <strong>%2$s</strong></li>', array_map(static fn ($slug) => esc_html($name($slug)), explode('|', $pair))), $pairs));
-        wp_admin_notice('<p>These plugins cannot be activated because their requirements are invalid.</p><ul>' . $items . '</ul><p>Please contact the plugin authors for more information.</p>', ['type' => 'warning', 'paragraph_wrap' => false]);
+        wp_admin_notice('<p>' . __('These plugins cannot be activated because their requirements are invalid.') . '</p><ul>' . $items . '</ul><p>' . __('Please contact the plugin authors for more information.') . '</p>', ['type' => 'warning', 'paragraph_wrap' => false]);
     }
 
-    /** The plugin install screen asks whether a plugin's dependencies are met before it is activated. */
+    /**
+     * The plugin install screen asks whether an installed plugin's
+     * dependencies are all active before it is activated: the plugin, its
+     * activation link, and the inactive ones by name, or the all clear
+     * (probe blocks-rest-widget-doubts).
+     */
     public static function check_plugin_dependencies_during_ajax()
     {
         check_ajax_referer('updates');
         $slug = sanitize_key(wp_unslash($_POST['slug'] ?? ''));
         if ($slug === '') {
-            wp_send_json_error(['slug' => '', 'pluginName' => '', 'errorCode' => 'no_plugin_specified', 'errorMessage' => 'No plugin specified.']);
+            wp_send_json_error(['slug' => '', 'pluginName' => '', 'errorCode' => 'no_plugin_specified', 'errorMessage' => __('No plugin specified.')]);
         }
         self::initialize();
-        $file = self::get_dependent_filepath($slug);
-        $unmet = $file === false ? [] : array_keys(array_filter(self::get_dependency_names($file), static fn ($name, $dependency) => self::get_dependency_filepath($dependency) === false || !is_plugin_active(self::get_dependency_filepath($dependency)), ARRAY_FILTER_USE_BOTH));
-        if ($unmet !== []) {
-            wp_send_json_error(['slug' => $slug, 'pluginName' => (string) (self::get_plugins()[$file]['Name'] ?? $slug), 'errorCode' => 'unmet_dependencies', 'errorMessage' => sprintf('This plugin requires the following plugins: %s.', implode(', ', $unmet))]);
+        $file = self::get_plugin_dirnames()[$slug] ?? null;
+        if ($file === null) {
+            wp_send_json_error(['slug' => $slug, 'errorCode' => 'plugin_not_installed', 'errorMessage' => __('The plugin is not installed.')]);
         }
-        wp_send_json_success();
+        $data = ['slug' => $slug, 'pluginName' => (string) (self::get_plugins()[$file]['Name'] ?? $slug), 'plugin' => $file, 'activateUrl' => add_query_arg(['_wpnonce' => wp_create_nonce('activate-plugin_' . $file), 'action' => 'activate', 'plugin' => $file], admin_url('plugins.php'))];
+        $inactive = array_filter(self::get_dependency_names($file), static fn ($dependency) => self::get_dependency_filepath($dependency) === false || !is_plugin_active(self::get_dependency_filepath($dependency)), ARRAY_FILTER_USE_KEY);
+        if ($inactive !== []) {
+            wp_send_json_error($data + ['errorCode' => 'inactive_dependencies', 'errorMessage' => sprintf(__('The following plugins must be activated first: %s.'), implode(', ', $inactive)), 'errorData' => $inactive]);
+        }
+        wp_send_json_success($data + ['message' => self::has_dependencies($file) ? __('All required plugins are installed and activated.') : __('The plugin has no required plugins.')]);
     }
 
     protected static function get_plugins()
@@ -208,19 +216,26 @@ class WP_Plugin_Dependencies
         return self::$dependency_filepaths;
     }
 
-    /** What the plugins API says about each dependency, on admin screens only, kept for a day. */
+    /**
+     * What the plugins API says about every dependency, installed or not, on
+     * the plugins and plugin install screens only, cached or not: marked
+     * external and named (Name), kept for a day as each arrives, then by
+     * slug, each slug's asking noted for twelve hours; once a request (probe
+     * blocks-rest-widget-doubts).
+     */
     protected static function get_dependency_api_data()
     {
-        if (!is_admin()) {
-            return;
+        if (is_array(self::$dependency_api_data) || !is_admin() || !in_array($GLOBALS['pagenow'] ?? '', ['plugins.php', 'plugin-install.php'], true)) {
+            return self::$dependency_api_data;
         }
         self::$dependency_api_data = (array) get_site_transient('wp_plugin_dependencies_plugin_data');
         foreach ((array) self::$dependency_slugs as $slug) {
-            if (!isset(self::$dependency_api_data[$slug]) && self::get_dependency_filepath($slug) === false) {
-                $information = plugins_api('plugin_information', (object) ['slug' => $slug, 'fields' => ['short_description' => true, 'icons' => true]]);
-                self::$dependency_api_data[$slug] = is_wp_error($information) ? ['name' => $slug] : (array) $information;
-            }
+            $information = plugins_api('plugin_information', (object) ['slug' => $slug, 'fields' => ['short_description' => true, 'icons' => true]]);
+            set_site_transient("wp_plugin_dependencies_plugin_timeout_{$slug}", true, 12 * HOUR_IN_SECONDS);
+            self::$dependency_api_data[$slug] = is_wp_error($information) ? ['name' => $slug] : (array) $information + ['external' => true, 'Name' => $information->name ?? $slug];
+            set_site_transient('wp_plugin_dependencies_plugin_data', self::$dependency_api_data, DAY_IN_SECONDS);
         }
+        ksort(self::$dependency_api_data);
         set_site_transient('wp_plugin_dependencies_plugin_data', self::$dependency_api_data, DAY_IN_SECONDS);
         return self::$dependency_api_data;
     }

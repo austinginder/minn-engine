@@ -364,7 +364,7 @@ function number_format_i18n($number, $decimals = 0)
 
 function wp_get_word_count_type()
 {
-    return 'words';
+    return isset($GLOBALS['wp_locale']) ? $GLOBALS['wp_locale']->get_word_count_type() : 'words';
 }
 
 function wp_get_list_item_separator()

@@ -113,7 +113,7 @@ final class TypeProps
         $queryVar = $publiclyQueryable !== false ? ($args['query_var'] ?? true) : false;
         $metaBox = $args['meta_box_cb'] ?? ($hierarchical ? 'post_categories_meta_box' : 'post_tags_meta_box');
         $defaultTerm = $args['default_term'] ?? null;
-        return [
+        $props = [
             'label' => isset($args['label']) ? (string) $args['label'] : null,
             'labels' => (array) ($args['labels'] ?? []),
             'description' => $args['description'] ?? '',
@@ -143,6 +143,8 @@ final class TypeProps
             'args' => $args['args'] ?? null,
             '_builtin' => $args['_builtin'] ?? false,
         ];
+        // Any other argument stays on the taxonomy as given (helps, template...), as the reference keeps it (probe taxonomy-blocks-user-doubts).
+        return $props + array_diff_key($args, ['capabilities' => true]);
     }
 
     /**

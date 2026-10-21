@@ -111,7 +111,8 @@ class WP_Embed
     {
         $cachekey = '_oembed_' . md5($url . serialize($attr));
         $cache = get_post_meta($post_ID, $cachekey, true);
-        if (($this->usecache || time() - (int) get_post_meta($post_ID, '_oembed_time_' . substr($cachekey, 8), true) < (int) apply_filters('oembed_ttl', DAY_IN_SECONDS, $url, $attr, $post_ID))) {
+        $ttl = (int) apply_filters('oembed_ttl', DAY_IN_SECONDS, $url, $attr, $post_ID);
+        if ($this->usecache || time() - (int) get_post_meta($post_ID, '_oembed_time_' . substr($cachekey, 8), true) < $ttl) {
             if ($cache === '{{unknown}}') {
                 return $this->maybe_make_link($url);
             }
@@ -119,7 +120,8 @@ class WP_Embed
                 return apply_filters('embed_oembed_html', $cache, $url, $attr, $post_ID);
             }
         }
-        $html = wp_oembed_get($url, $attr + ['discover' => (bool) apply_filters('embed_oembed_discover', true)]);
+        $attr['discover'] = (bool) apply_filters('embed_oembed_discover', true);
+        $html = wp_oembed_get($url, $attr);
         if ($html) {
             update_post_meta($post_ID, $cachekey, $html);
             update_post_meta($post_ID, '_oembed_time_' . substr($cachekey, 8), time());
@@ -141,7 +143,7 @@ class WP_Embed
     public function cache_oembed($post_id)
     {
         $post = get_post($post_id);
-        if (!$post || !in_array($post->post_type, apply_filters('embed_cache_oembed_types', ['post', 'page']), true)) {
+        if (!$post || empty($post->post_content) || !in_array($post->post_type, apply_filters('embed_cache_oembed_types', get_post_types(['show_ui' => true])), true)) {
             return;
         }
         $this->post_ID = (int) $post->ID;
@@ -151,12 +153,10 @@ class WP_Embed
         $this->usecache = true;
     }
 
-    /** URLs standing alone on a line, or alone in a paragraph, become embeds. */
+    /** URLs standing alone on a line, or alone in a paragraph, become embeds (a URL inside a tag stays as written). */
     public function autoembed($content)
     {
-        $content = (string) $content;
-        $content = (string) preg_replace_callback('|^(\s*)(https?://[^\s<>"]+)(\s*)$|im', [$this, 'autoembed_callback'], $content);
-        return (string) preg_replace_callback('|(<p(?: [^>]*)?>\s*)(https?://[^\s<>"]+)(\s*<\/p>)|i', [$this, 'autoembed_callback'], $content);
+        return Minn\Runtime\OEmbed::autoembed((string) $content, [$this, 'autoembed_callback']);
     }
 
     public function autoembed_callback($matches)
@@ -184,7 +184,7 @@ class WP_Embed
         if ($cached && get_post_type($cached) === 'oembed_cache') {
             return (int) $cached;
         }
-        $found = get_posts(['post_type' => 'oembed_cache', 'post_status' => 'publish', 'name' => (string) $cache_key, 'posts_per_page' => 1, 'fields' => 'ids', 'no_found_rows' => true, 'suppress_filters' => true]);
+        $found = get_posts(['post_type' => 'oembed_cache', 'post_status' => 'publish', 'name' => (string) $cache_key, 'posts_per_page' => 1, 'fields' => 'ids', 'no_found_rows' => true, 'suppress_filters' => false]);
         if ($found === []) {
             return null;
         }
@@ -210,7 +210,8 @@ class WP_Embed
                 return apply_filters('embed_oembed_html', $cached->post_content, $url, $attr, null);
             }
         }
-        $html = wp_oembed_get($url, $attr + ['discover' => (bool) apply_filters('embed_oembed_discover', true)]);
+        $attr['discover'] = (bool) apply_filters('embed_oembed_discover', true);
+        $html = wp_oembed_get($url, $attr);
         if ($html || !$cached) {
             $this->keep_outside_post($key, $html ? (string) $html : '{{unknown}}', $cached ? (int) $cached->ID : 0);
         }

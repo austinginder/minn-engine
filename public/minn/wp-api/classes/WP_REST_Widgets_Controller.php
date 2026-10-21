@@ -176,6 +176,8 @@ class WP_REST_Widgets_Controller extends WP_REST_Controller
                 $settings = (array) $widget_object->get_settings();
                 unset($settings[$parsed['number']]);
                 $widget_object->save_settings($settings);
+            } elseif (!$widget_object) {
+                WidgetObject::runUpdate($parsed['id_base'], ['sidebar' => $sidebar_id, "widget-{$parsed['id_base']}" => [], 'the-widget-id' => $widget_id, 'delete_widget' => '1']);
             }
             wp_assign_widget_to_sidebar($widget_id, '');
             $response->set_data(['deleted' => true, 'previous' => $response->get_data()]);
@@ -242,6 +244,8 @@ class WP_REST_Widgets_Controller extends WP_REST_Controller
             }
             $widget_object->_register_one($number);
             $widget_object->updated = false;
+        } elseif (!$widget_object) {
+            WidgetObject::runUpdate($id_base, (array) ($request['form_data'] ?? []));
         }
         do_action('rest_after_save_widget', $widget_id, $sidebar_id, $request, $creating);
         return $widget_id;

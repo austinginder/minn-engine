@@ -4,8 +4,71 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`TextWidgets`](#textwidgets) | final class | 159 | The text and custom HTML widgets' behaviour (WP_Widget_Text, |
 | [`WidgetForms`](#widgetforms) | final class | 203 | The core widgets' settings forms, the markup a widget's form() prints and |
 | [`WidgetTemplates`](#widgettemplates) | final class | 85 | The Underscore templates the Text and Custom HTML widgets print for their |
+
+## TextWidgets
+
+`final class Minn\Widgets\TextWidgets` · `public/minn/src/Minn/Widgets/TextWidgets.php`
+
+The text and custom HTML widgets' behaviour (WP_Widget_Text,
+WP_Widget_Custom_HTML; probes widget-methods, nav-pomo-rest-doubts):
+which text instances are legacy ones the visual editor would change, how
+an update settles the filter and visual flags, and the two widgets'
+output, their filters run with no global post and a gallery inside
+belonging to no post.
+
+- const `KEPT` = `array (   'b' =>    array (   ),   'i' =>    array (   ),   'u' =>    array (   ),   's' =>    array (   ),   'em' =>    array (   ),   'strong' =>    array (   ),   'code' =>    array (   ),   'abbr' =>    array (   ),   'ul' =>    array (   ),   'ol' =>    array (   ),   'li' =>    array (   ),   'a' =>    array (     0 => 'href',   ),   'img' =>    array (     0 => 'src',     1 => 'alt',   ),   'hr' =>    array (   ), )` — The elements the visual editor keeps as written, each with the attributes it keeps.
+- const `VOID` = `array (   0 => 'img',   1 => 'hr', )` — The kept elements that are empty by nature.
+
+### static `isLegacy(mixed $instance): bool`
+
+Whether a text instance is a legacy one: one with a visual flag is
+legacy when the flag is off, one filtered as content never is, nor
+blank text. Otherwise its text is legacy when it has a line break
+without the paragraph filter, a comment, an element or attribute the
+visual editor does not keep, or an element left empty.
+
+### static `settled(array $instance, array $new): array`
+
+An updated text instance's flags settled: filtered when the new one
+asks, visual as the new one says (always for content filtering), and a
+visual instance always filtered.
+
+- `@param array<array-key, mixed> $instance the instance with its title and text set`
+- `@param array<array-key, mixed> $new the settings as submitted`
+- `@return array<array-key, mixed>`
+
+### static `text(object $widget, array $args, array $instance): string`
+
+The text widget's markup: a visual instance (visual and filtered, or
+filtered as content) through widget_text and widget_text_content; any
+other through widget_text, then paragraphs when it asks for them, then
+its shortcodes.
+
+- `@param array<array-key, mixed> $args`
+- `@param array<array-key, mixed> $instance`
+
+### static `customHtml(object $widget, array $args, array $instance): string`
+
+The custom HTML widget's markup: its content through widget_text (as a
+text instance would carry it) and widget_custom_html_content, the text
+widget's class first in the wrapper.
+
+- `@param array<array-key, mixed> $args`
+- `@param array<array-key, mixed> $instance`
+
+### static `galleryAttributes(array $attrs): array`
+
+Gallery attributes inside a text or HTML widget: off a singular view,
+a gallery naming neither an id nor included images belongs to no post (-1).
+
+- `@param array<array-key, mixed> $attrs`
+- `@return array<array-key, mixed>`
+
+Internals: `withoutPost()` (private, line 165)
+
 
 ## WidgetForms
 

@@ -249,15 +249,13 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller
         return apply_filters('rest_prepare_revision', $response, $item, $request);
     }
 
+    /** No date for a zero GMT one, whatever the local date; else the local date when given (probe blocks-rest-widget-doubts). */
     protected function prepare_date_response($date_gmt, $date = NULL)
     {
-        if (isset($date)) {
-            return mysql_to_rfc3339($date);
-        }
         if ($date_gmt === '0000-00-00 00:00:00') {
             return null;
         }
-        return mysql_to_rfc3339($date_gmt);
+        return mysql_to_rfc3339($date ?? $date_gmt);
     }
 
     /**

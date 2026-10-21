@@ -6,6 +6,7 @@ the template blocks a block theme composes with
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 305 | comments, comments-title, comment-template, the comment-* blocks, the comment form, and the legacy post-comments. |
 | [`Navigation`](#navigation) | final readonly class | 554 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`NavigationParts`](#navigationparts) | final class | 197 | The navigation family's small answers for the block_core_navigation_* |
 | [`PostBlocks`](#postblocks) | final readonly class | 281 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 333 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 177 | template-part, pattern, site-title, site-tagline, site-logo. |
@@ -78,6 +79,87 @@ that opens on hover, the init watcher, and its tab index.
 Registers this family's blocks with the renderer.
 
 Internals: `wiring()` (private, line 69), `navigation()` (private, line 95), `responsive()` (private, line 182), `items()` (private, line 219), `groups()` (private, line 241), `filteredItems()` (private, line 268), `linkedPosts()` (private, line 290), `weighLinks()` (private, line 303), `linkable()` (private, line 318), `presetClasses()` (private, line 329), `overlay()` (private, line 361), `link()` (private, line 378), `submenu()` (private, line 413), `overlayClose()` (private, line 442), `pageList()` (private, line 452), `submenuColours()` (private, line 473), `ancestorsOf()` (private, line 489), `pageItems()` (private, line 516), `navParent()` (private, line 547), `menuPost()` (private, line 568), `enqueueView()` (private, line 583)
+
+
+## NavigationParts
+
+`final class Minn\Blocks\Dynamic\Theme\NavigationParts` · `public/minn/src/Minn/Blocks/Dynamic/Theme/NavigationParts.php`
+
+The navigation family's small answers for the block_core_navigation_*
+helpers (probes navigation-blocks, nav-pomo-rest-doubts): colour classes
+and inline styles from a block's attributes or context, the post ids its
+links point to, whether an item renders, and the typography presets older
+content stored.
+
+### static `colors(array $text, array $background): array`
+
+Colour classes and inline styles: for the text and for the background,
+the first candidate set (a [kind, value] pair, kind named or custom)
+wins: has-text-color and the named colour's class, or the custom one
+inline; the same for the background.
+
+- `@param list<array{0: string, 1: mixed}> $text`
+- `@param list<array{0: string, 1: mixed}> $background`
+- `@return array{css_classes: list<string>, inline_styles: string}`
+
+### static `namedFirst(mixed $source, string $prefix = ''): array`
+
+A source's colours with the named one first, the custom one next and,
+when a style key is given, the style's colour last.
+
+- `@return array{css_classes: list<string>, inline_styles: string}`
+
+### static `navigationColors(mixed $attributes): array`
+
+A navigation's colours and its overlay's, from its attributes (no style colours).
+
+- `@return array<string, mixed>`
+
+### static `pageListColors(mixed $context): array`
+
+A page list's colours, the style's own last, and its overlay's, from its navigation's context.
+
+- `@return array<string, mixed>`
+
+### static `linkColors(mixed $context): array`
+
+A link's colours from its navigation's context: the custom colour first,
+then the named one, then the style's.
+
+- `@return array{css_classes: list<string>, inline_styles: string}`
+
+### static `submenuLinkColors(mixed $context): array`
+
+A link's colours inside a submenu: the overlay's custom then named
+colour first, else the link's own.
+
+- `@return array{css_classes: list<string>, inline_styles: string}`
+
+### static `postIds(mixed $blocks): array`
+
+The post ids the links in blocks point to, at any depth (a block's
+inner links before its own), each once at its first key.
+
+- `@return array<int, mixed>`
+
+### static `blockPostIds(mixed $block): array`
+
+The post ids a block's inner links point to, then its own when it links to a post.
+
+- `@return list<mixed>`
+
+### static `itemRenders(mixed $attributes, mixed $block): bool`
+
+Whether a navigation item renders: a link to a post or a page (by its
+kind or its type) only while that post's status is one
+render_block_core_navigation_link_allowed_post_status allows (publish).
+
+### static `typographyBackcompat(mixed $parsedBlock): mixed`
+
+A navigation's typography presets in the forms older content stored
+(var:preset|...) read as their values, strikethrough as line-through.
+
+Internals: `linkCandidates()` (private, line 193), `overlay()` (private, line 208)
 
 
 ## PostBlocks

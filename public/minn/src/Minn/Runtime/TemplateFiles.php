@@ -190,6 +190,18 @@ final class TemplateFiles
     }
 
     /**
+     * The template or part a site saved for a theme (any theme, by its
+     * wp_theme term) under a slug, built as fromPost() builds it, block
+     * hooks applied; null when none is saved (probe taxonomy-blocks-user-doubts).
+     */
+    public static function saved(string $type, string $theme, string $slug): ?object
+    {
+        $id = self::templateIndex()?->savedId($type, $theme, $slug);
+        $template = $id === null ? null : self::fromPost($id);
+        return is_object($template) && !Records::isError($template) ? $template : null;
+    }
+
+    /**
      * A theme file's template by id, past whatever the site saved over it
      * (get_block_file_template): pre_get_block_file_template may answer
      * first; only the active theme's files are found; the template, or null,

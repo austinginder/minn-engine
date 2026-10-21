@@ -54,11 +54,11 @@ class WP_REST_Plugins_Controller extends WP_REST_Controller
 
     public function get_items($request)
     {
-        // Every installed plugin the request matches, each shaped as it is listed.
+        // Every installed plugin that may be read and that the request matches, each shaped as it is listed.
         $plugins = [];
         foreach (get_plugins() as $file => $item) {
             $item['_file'] = $file;
-            if ($this->does_plugin_match_request($request, $item)) {
+            if (!is_wp_error($this->check_read_permission($file)) && $this->does_plugin_match_request($request, $item)) {
                 $plugins[] = $this->prepare_response_for_collection($this->prepare_item_for_response($item, $request));
             }
         }
@@ -123,7 +123,7 @@ class WP_REST_Plugins_Controller extends WP_REST_Controller
 
     public function update_item_permissions_check($request)
     {
-        // Managing plugins, a plugin that is there and may be read, then the status asked for.
+        // Managing plugins, a plugin that is there and may be read, then the status asked for when it changes.
         if (!current_user_can('activate_plugins')) {
             return new WP_Error('rest_cannot_manage_plugins', __('Sorry, you are not allowed to manage plugins for this site.'), ['status' => rest_authorization_required_code()]);
         }
@@ -132,10 +132,11 @@ class WP_REST_Plugins_Controller extends WP_REST_Controller
             return $item;
         }
         $readable = $this->check_read_permission($request['plugin']);
-        if (is_wp_error($readable) || empty($request['status'])) {
+        $status = $this->get_plugin_status($request['plugin']);
+        if (is_wp_error($readable) || empty($request['status']) || $request['status'] === $status) {
             return $readable;
         }
-        return $this->plugin_status_permission_check($request['plugin'], $request['status'], $this->get_plugin_status($request['plugin']));
+        return $this->plugin_status_permission_check($request['plugin'], $request['status'], $status);
     }
 
     public function update_item($request)

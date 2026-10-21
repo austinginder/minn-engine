@@ -164,6 +164,10 @@ class WP_REST_Comments_Controller extends WP_REST_Controller
         if (!$post) {
             return new WP_Error('rest_comment_invalid_post_id', __('Sorry, you are not allowed to create this comment without a post.'), ['status' => 403]);
         }
+        // A note needs the post editable, whether it is closed or a draft.
+        if ($request['type'] === 'note') {
+            return current_user_can('edit_post', $post->ID) ? true : new WP_Error('rest_cannot_create_note', __('Sorry, you are not allowed to create notes for this post.'), ['status' => 403]);
+        }
         if (in_array($post->post_status, ['draft', 'trash'], true)) {
             return new WP_Error('rest_comment_' . $post->post_status . '_post', __('Sorry, you are not allowed to create a comment on this post.'), ['status' => 403]);
         }
@@ -462,19 +466,23 @@ class WP_REST_Comments_Controller extends WP_REST_Controller
         return is_wp_error($valid) ? $valid : $email;
     }
 
+    /** No content to judge is allowed; empty content only through allow_empty_comment, handed the comment data with its defaults (probe blocks-rest-widget-doubts). */
     protected function check_is_comment_content_allowed($prepared_comment)
     {
-        $check = wp_parse_args($prepared_comment, ['comment_content' => '']);
-        if (apply_filters('allow_empty_comment', false, $check)) {
+        if (!isset($prepared_comment['comment_content'])) {
             return true;
         }
-        return $check['comment_content'] !== '';
+        $check = wp_parse_args($prepared_comment, ['comment_post_ID' => 0, 'comment_author' => null, 'comment_author_email' => null, 'comment_author_url' => null, 'comment_parent' => 0, 'user_id' => 0]);
+        return apply_filters('allow_empty_comment', false, $check) || $check['comment_content'] !== '';
     }
 
     protected function check_target_post_permission($post_id, $request, $is_note = false)
     {
-        // Moving a comment to a post is a moderator's, and the post must exist.
-        if (!current_user_can('moderate_comments')) {
+        // A note is for those who may edit its post; moving a comment to a post is a moderator's or the post's editor's, and the post must exist.
+        if ($is_note && !current_user_can('edit_post', (int) $post_id)) {
+            return new WP_Error('rest_cannot_create_note', __('Sorry, you are not allowed to create notes for this post.'), ['status' => rest_authorization_required_code()]);
+        }
+        if (!current_user_can('moderate_comments') && !current_user_can('edit_post', (int) $post_id)) {
             return new WP_Error('rest_cannot_edit', __('Sorry, you are not allowed to edit this comment.'), ['status' => rest_authorization_required_code()]);
         }
         if (!get_post((int) $post_id)) {

@@ -72,6 +72,62 @@ final class WidgetAreas
         return Runtime::hooks()->filter('sidebars_widgets', [$sidebars]);
     }
 
+    /**
+     * A widget's settings in the numbered form (wp_convert_widget_settings,
+     * probe blocks-rest-widget-doubts): settings that are empty or not keyed
+     * by number are a single widget's, made number 2, and the sidebars this
+     * request holds name it by its new id; every result is marked a
+     * multi-widget's. Nothing is stored.
+     *
+     * @return array<int|string, mixed>
+     */
+    public static function convertSettings(string $base, mixed $settings): array
+    {
+        [$converted, $single] = self::numbered($settings);
+        if ($single && is_array($GLOBALS['_wp_sidebars_widgets'] ?? null)) {
+            $GLOBALS['_wp_sidebars_widgets'] = self::renamed($GLOBALS['_wp_sidebars_widgets'], $base);
+        }
+        return $converted;
+    }
+
+    /**
+     * The same conversion as the admin makes it: a single widget's new id
+     * goes into the stored sidebars (not this request's), and the settings
+     * are stored under their option either way.
+     *
+     * @return array<int|string, mixed>
+     */
+    public static function convertStoredSettings(string $base, string $option, mixed $settings): array
+    {
+        [$converted, $single] = self::numbered($settings);
+        if ($single) {
+            self::store(self::renamed(self::stored(), $base));
+        }
+        OptionWrites::update($option, $converted);
+        return $converted;
+    }
+
+    /** @return array{0: array<int|string, mixed>, 1: bool} the settings numbered and marked, and whether they were a single widget's */
+    private static function numbered(mixed $settings): array
+    {
+        $settings = (array) $settings;
+        $single = $settings === [] || array_filter(array_keys($settings), static fn ($key): bool => !is_numeric($key)) !== [];
+        $converted = $single ? [2 => $settings] : $settings;
+        $converted['_multiwidget'] = 1;
+        return [$converted, $single];
+    }
+
+    /** @param array<string, mixed> $sidebars @return array<string, mixed> each sidebar naming the single widget by its numbered id */
+    private static function renamed(array $sidebars, string $base): array
+    {
+        foreach ($sidebars as $id => $widgets) {
+            if (is_array($widgets)) {
+                $sidebars[$id] = array_map(static fn ($widget) => $widget === $base ? "{$base}-2" : $widget, $widgets);
+            }
+        }
+        return $sidebars;
+    }
+
     /** The sidebars stored (wp_set_sidebars_widgets), at array version 3. */
     public static function store(mixed $sidebars): void
     {

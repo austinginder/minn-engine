@@ -12,7 +12,7 @@ class WP_REST_Response extends WP_HTTP_Response implements \Minn\Objects\RestRes
         if (empty($this->links[$rel])) {
             $this->links[$rel] = [];
         }
-        $this->links[$rel][] = ['href' => $href, 'attributes' => $attributes];
+        $this->links[$rel][] = ['href' => $href, 'attributes' => array_diff_key($attributes, ['href' => true])];
     }
 
     public function remove_link($rel, $href = null)
@@ -105,9 +105,9 @@ class WP_REST_Response extends WP_HTTP_Response implements \Minn\Objects\RestRes
         return $error;
     }
 
+    /** The wp curie, then those rest_response_link_curies adds (it starts from none). */
     public function get_curies()
     {
-        $curies = [['name' => 'wp', 'href' => 'https://api.w.org/{rel}', 'templated' => true]];
-        return apply_filters('rest_response_link_curies', $curies);
+        return array_merge([['name' => 'wp', 'href' => 'https://api.w.org/{rel}', 'templated' => true]], (array) apply_filters('rest_response_link_curies', []));
     }
 }

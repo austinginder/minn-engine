@@ -21,7 +21,7 @@ the block parser and renderer
 | [`RenderState`](#renderstate) | final class | 445 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 552 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
-| [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
+| [`Serializer`](#serializer) | final class | 69 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
 | [`StyleEngine`](#styleengine) | final class | 217 | What a block's style object comes to, as the reference's style engine |
 | [`Styles`](#styles) | final class | 161 | The inline style and class names a block's "style" and preset |
@@ -97,7 +97,7 @@ One parsed block. A null name is freeform HTML between blocks. The
 innerContent list holds the block's own HTML chunks in order, with a
 null placeholder wherever an inner block sits.
 
-Used by: `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Serializer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Extension\SeamRunner`, `Minn\Extension\Seams`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Support\Kses`, `Minn\Theme\TemplatePatterns`
+Used by: `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Calendar`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Serializer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Extension\SeamRunner`, `Minn\Extension\Seams`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\NavigationFallback`, `Minn\Support\Kses`, `Minn\Theme\TemplatePatterns`
 
 ```php
 __construct(?string $name, array $attrs, array $innerBlocks, string $innerHtml, array $innerContent)
@@ -1137,7 +1137,7 @@ attributes are JSON with every character that could end the comment or
 open a tag spelled as an escape ("<" "<", "--" "--", a
 backslash "\"), so a value can never break out of its delimiter.
 
-Used by: `Minn\Runtime\BlockHooks`, `Minn\Runtime\TemplateFiles`, `Minn\Support\Kses`
+Used by: `Minn\Runtime\BlockHooks`, `Minn\Runtime\NavigationFallback`, `Minn\Runtime\TemplateFiles`, `Minn\Support\Kses`
 
 ### static `blocks(array $blocks): string`
 
@@ -1156,6 +1156,16 @@ Content wrapped in a block's delimiters; a block with no content is written self
 ### static `attributes(array $attrs): string`
 
 Block attributes as the delimiter carries them.
+
+### static `spreadInnerContent(array $innerContent, array $counts): array`
+
+A parsed block's inner content with each inner block's place (a null)
+taken as many times as that block became blocks, as a pattern that
+expands does; one that became none keeps its place.
+
+- `@param list<string|null> $innerContent`
+- `@param list<int> $counts how many blocks each inner block became, in order`
+- `@return list<string|null>`
 
 
 ## States
@@ -1320,7 +1330,7 @@ their own wrapper (static blocks already carry them in stored markup).
 
 - const `SIDES` = `array (   0 => 'top',   1 => 'right',   2 => 'bottom',   3 => 'left', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Elements`, `Minn\Blocks\Layout`, `Minn\Blocks\Wrapper`, `Minn\Theme\GlobalStyles`, `Minn\Theme\TreeStyles`
+Used by: `Minn\Blocks\Dynamic\Calendar`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Elements`, `Minn\Blocks\Layout`, `Minn\Blocks\Wrapper`, `Minn\Theme\GlobalStyles`, `Minn\Theme\TreeStyles`
 
 ### static `value(string $value): string`
 

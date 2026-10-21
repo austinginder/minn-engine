@@ -64,6 +64,24 @@ final readonly class Request
         return $_COOKIE[$name] ?? null;
     }
 
+    /**
+     * Runs plugin code that reads its fields from the posted form (a widget
+     * control's update callback) with these fields as $_POST and $_REQUEST;
+     * both are as they were after.
+     *
+     * @param array<string, mixed> $fields
+     */
+    public static function withPostedForm(array $fields, \Closure $run): mixed
+    {
+        [$post, $request] = [$_POST, $_REQUEST];
+        [$_POST, $_REQUEST] = [$fields, $fields];
+        try {
+            return $run();
+        } finally {
+            [$_POST, $_REQUEST] = [$post, $request];
+        }
+    }
+
     /** The request PHP received, read once from the superglobals. */
     public static function fromGlobals(): self
     {

@@ -1,7 +1,8 @@
 <?php
 
-use Minn\Runtime\Placeholders;
-use Minn\Runtime\Runtime;
+use Minn\Runtime\WpdbFields;
+use Minn\Runtime\WpdbReads;
+use Minn\Runtime\WpdbSetup;
 
 /**
  * The database object plugin code holds as $wpdb: table names by property,
@@ -70,13 +71,7 @@ class wpdb
 
     public function __construct($dbuser, $dbpassword, $dbname, $dbhost)
     {
-        $this->dbuser = $dbuser;
-        $this->dbpassword = $dbpassword;
-        $this->dbname = $dbname;
-        $this->dbhost = $dbhost;
-        $this->dbh = Runtime::current()->db->connection();
-        $this->init_charset();
-        $this->set_prefix(Runtime::current()->db->prefix());
+        WpdbSetup::construct($this, $dbuser, $dbpassword, $dbname, $dbhost);
     }
 
     /** The connection's charset and collation, from DB_CHARSET and DB_COLLATE as determine_charset settles them. */
@@ -101,24 +96,16 @@ class wpdb
         return ['charset' => $charset, 'collate' => $collate];
     }
 
-    /** The site this object answers for; its tables keep one site's prefix here. The old id. */
+    /** The site this object answers for, its tables named from the base prefix (Minn\Runtime\WpdbSetup::blog). The old id. */
     public function set_blog_id($blog_id, $network_id = 0)
     {
-        $old = $this->blogid;
-        $this->blogid = (int) $blog_id;
-        if (!empty($network_id)) {
-            $this->siteid = (int) $network_id;
-        }
-        return $old;
+        return WpdbSetup::blog($this, $blog_id, $network_id);
     }
 
-    /** Switches the connection to a database; ready stays true while it can. */
+    /** Switches the connection to a database; one it cannot select leaves ready false (Minn\Runtime\WpdbSetup::select). */
     public function select($db, $dbh = null)
     {
-        $dbh ??= $this->dbh;
-        if (!$dbh->select_db((string) $db)) {
-            $this->ready = false;
-        }
+        WpdbSetup::select($this, $db, $dbh);
     }
 
     /** A DB_HOST read into host, port, socket and whether the host is IPv6 (Minn\Support\SqlTable::host); false when nothing parses. */
@@ -127,41 +114,16 @@ class wpdb
         return \Minn\Support\SqlTable::host((string) $host) ?? false;
     }
 
+    /** The table prefix and the tables named from it (Minn\Runtime\WpdbSetup::prefix): the base prefix it had, or invalid_db_prefix. */
     public function set_prefix($prefix, $set_table_names = true)
     {
-        // A prefix is letters, digits and underscores only: anything else would reach every table name.
-        if (preg_match('/[^a-z0-9_]/i', (string) $prefix)) {
-            return new WP_Error('invalid_db_prefix', 'Invalid database prefix');
-        }
-        $old = $this->prefix;
-        $this->prefix = $prefix;
-        $this->base_prefix = $prefix;
-        // The network's tables are named only on a multisite install; on one site they stay empty (probe placeholders-a).
-        if ($set_table_names) {
-            foreach (array_merge($this->tables, $this->global_tables, is_multisite() ? $this->ms_global_tables : []) as $table) {
-                $this->{$table} = $prefix . $table;
-            }
-        }
-        return $old;
+        return WpdbSetup::prefix($this, $prefix, $set_table_names);
     }
 
+    /** A scope's tables, prefixed unless asked not to (Minn\Runtime\WpdbSetup::tables). */
     public function tables($scope = 'all', $prefix = true, $blog_id = 0)
     {
-        $tables = match ($scope) {
-            'blog' => $this->tables,
-            'global' => array_merge($this->global_tables, is_multisite() ? $this->ms_global_tables : []),
-            'ms_global' => $this->ms_global_tables,
-            'old' => is_multisite() ? array_merge($this->old_tables, $this->old_ms_global_tables) : $this->old_tables,
-            default => array_merge($this->global_tables, is_multisite() ? $this->ms_global_tables : [], $this->tables),
-        };
-        if (!$prefix) {
-            return $tables;
-        }
-        $out = [];
-        foreach ($tables as $table) {
-            $out[$table] = $this->prefix . $table;
-        }
-        return $out;
+        return WpdbSetup::tables($this, $scope, $prefix);
     }
 
     public function get_blog_prefix($blog_id = null)
@@ -240,130 +202,40 @@ class wpdb
         return str_replace('%', $this->placeholder_escape(), (string) $query);
     }
 
-    /**
-     * A query with its placeholders filled (Minn\Runtime\Placeholders), every
-     * literal % left as the placeholder escape that query() takes back out.
-     * A query with no placeholder, or a count that does not match the
-     * arguments, or an argument it cannot use, is reported through
-     * _doing_it_wrong; too few arguments empty it (probe wpdb).
-     */
+    /** A query with its placeholders filled and its notices reported (Minn\Runtime\WpdbReads::prepare). */
     public function prepare($query, ...$args)
     {
-        if ($query === null) {
-            return null;
-        }
-        if (isset($args[0]) && is_array($args[0]) && count($args) === 1) {
-            $args = array_values($args[0]);
-        }
-        $prepared = Placeholders::prepare((string) $query, $args, fn (string $value): string => $this->_real_escape($value));
-        foreach ($prepared['unsupported'] as $type) {
-            _doing_it_wrong('wpdb::prepare', sprintf(__('Unsupported value type (%s).'), $type), '4.8.2');
-        }
-        if ($prepared['placeholders'] === 0 && $args === []) {
-            _doing_it_wrong('wpdb::prepare', sprintf(__('The query argument of %s must have a placeholder.'), 'wpdb::prepare()'), '3.9.0');
-        } elseif ($prepared['placeholders'] !== count($args)) {
-            _doing_it_wrong('wpdb::prepare', sprintf(__('The query does not contain the correct number of placeholders (%1$d) for the number of arguments passed (%2$d).'), $prepared['placeholders'], count($args)), '4.8.3');
-        }
-        return $prepared['query'] === null ? '' : $this->add_placeholder_escape($prepared['query']);
+        return WpdbReads::prepare($this, $query, $args);
     }
 
-    /**
-     * Runs a query. One the filter leaves empty ('' or '0') is false before
-     * anything is reset (probe sweep-1020b); one holding text its table
-     * cannot store is not run; a write is told to the engine's request-long
-     * row reads, so they hear plugin writes too.
-     */
+    /** Runs a query (Minn\Runtime\WpdbReads::query): rows read or written, true, or false. */
     public function query($query)
     {
-        $query = apply_filters('query', $this->remove_placeholder_escape((string) $query));
-        if (empty($query)) {
-            return false;
-        }
-        $this->flush();
-        $this->last_query = $query;
-        $invalid = $this->check_current_query && !$this->check_ascii($query) && !\Minn\Support\Utf8::fits($query, $this->query_charset($query));
-        $this->check_current_query = true;
-        try {
-            $result = $invalid ? false : $this->dbh->query($query);
-            $error = $invalid ? 'WordPress database error: Could not perform query because it contains invalid data.' : $this->dbh->error;
-        } catch (\mysqli_sql_exception $e) {
-            [$result, $error] = [false, $e->getMessage()];
-        }
-        $this->num_queries += $invalid ? 0 : 1;
-        if ($result === false) {
-            $this->last_error = $error;
-            $this->print_error();
-            return false;
-        }
-        if (preg_match('/^\s*(create|alter|truncate|drop)\s/i', $query)) {
-            return true;
-        }
-        if (preg_match('/^\s*(insert|delete|update|replace)\s/i', $query)) {
-            $this->rows_affected = (int) $this->dbh->affected_rows;
-            \Minn\Db::wrote($query);
-            $this->insert_id = preg_match('/^\s*(insert|replace)\s/i', $query) ? (int) $this->dbh->insert_id : $this->insert_id;
-            return $this->rows_affected;
-        }
-        if ($result instanceof \mysqli_result) {
-            $this->col_info = $this->last_fields = $result->fetch_fields();
-            $this->last_result = [];
-            while ($row = $result->fetch_object()) {
-                $this->last_result[] = $row;
-            }
-            $this->num_rows = count($this->last_result);
-            $result->free();
-            return $this->num_rows;
-        }
-        return true;
+        return WpdbReads::query($this, $query);
     }
 
+    /** One value of a query or of the last result; null for an empty one (Minn\Runtime\WpdbReads::value). */
     public function get_var($query = null, $x = 0, $y = 0)
     {
-        if ($query !== null) {
-            $this->query($query);
-        }
-        if (!empty($this->last_result[$y])) {
-            $values = array_values(get_object_vars($this->last_result[$y]));
-            return $values[$x] ?? null;
-        }
-        return null;
+        return WpdbReads::value($this, $query, $x, $y);
     }
 
+    /** One row of a query; null with no query (Minn\Runtime\WpdbReads::row). */
     public function get_row($query = null, $output = OBJECT, $y = 0)
     {
-        if ($query !== null) {
-            $this->query($query);
-        }
-        if (!isset($this->last_result[$y])) {
-            return null;
-        }
-        $row = $this->last_result[$y];
-        return match ($output) {
-            ARRAY_A => get_object_vars($row),
-            ARRAY_N => array_values(get_object_vars($row)),
-            default => $row,
-        };
+        return WpdbReads::row($this, $query, $output, $y);
     }
 
+    /** One column of a query or of the last result, read through get_var (Minn\Runtime\WpdbReads::column). */
     public function get_col($query = null, $x = 0)
     {
-        if ($query !== null) {
-            $this->query($query);
-        }
-        $out = [];
-        foreach ((array) $this->last_result as $row) {
-            $values = array_values(get_object_vars($row));
-            $out[] = $values[$x] ?? null;
-        }
-        return $out;
+        return WpdbReads::column($this, $query, $x);
     }
 
+    /** The rows of a query in an output shape; null with no query (Minn\Runtime\WpdbReads::rows). */
     public function get_results($query = null, $output = OBJECT)
     {
-        if ($query !== null) {
-            $this->query($query);
-        }
-        return \Minn\Support\Lists::shapeRows((array) $this->last_result, (string) $output);
+        return WpdbReads::rows($this, $query, $output);
     }
 
     /** Something about each column the last query returned (its name, table, type...), or about one by offset. */
@@ -388,76 +260,28 @@ class wpdb
         return $this->_insert_replace_helper($table, $data, $format, 'REPLACE');
     }
 
+    /** An INSERT or REPLACE of processed fields, prepared once (Minn\Runtime\WpdbFields::insert). */
     public function _insert_replace_helper($table, $data, $format = null, $type = 'INSERT')
     {
-        // Only an INSERT or a REPLACE is built: any other type sends nothing (probe sweep-1018).
-        $data = in_array(strtoupper((string) $type), ['INSERT', 'REPLACE'], true) ? $this->process_fields($table, $data, $format) : false;
-        if ($data === false || $data === []) {
-            return false;
-        }
-        $fields = [];
-        $values = [];
-        foreach ($data as $field => $value) {
-            $fields[] = "`{$field}`";
-            $values[] = $value['value'] === null ? 'NULL' : $this->prepare($value['format'], $value['value']);
-        }
-        $this->check_current_query = false;
-        $sql = "{$type} INTO `{$table}` (" . implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ')';
-        return $this->query($sql);
+        return WpdbFields::insert($this, $table, $data, $format, $type);
     }
 
+    /** Updates the rows a where list matches, prepared once (Minn\Runtime\WpdbFields::update). */
     public function update($table, $data, $where, $format = null, $where_format = null)
     {
-        if (!is_array($data) || !is_array($where)) {
-            return false;
-        }
-        $data = $this->process_fields($table, $data, $format);
-        $where = $this->process_fields($table, $where, $where_format);
-        if ($data === false || $where === false) {
-            return false;
-        }
-        $sets = [];
-        foreach ($data as $field => $value) {
-            $sets[] = "`{$field}` = " . ($value['value'] === null ? 'NULL' : $this->prepare($value['format'], $value['value']));
-        }
-        $conditions = [];
-        foreach ($where as $field => $value) {
-            $conditions[] = $value['value'] === null ? "`{$field}` IS NULL" : "`{$field}` = " . $this->prepare($value['format'], $value['value']);
-        }
-        return $this->query("UPDATE `{$table}` SET " . implode(', ', $sets) . ' WHERE ' . implode(' AND ', $conditions));
+        return WpdbFields::update($this, $table, $data, $where, $format, $where_format);
     }
 
+    /** Deletes the rows a where list matches, prepared once (Minn\Runtime\WpdbFields::delete). */
     public function delete($table, $where, $where_format = null)
     {
-        if (!is_array($where)) {
-            return false;
-        }
-        $where = $this->process_fields($table, $where, $where_format);
-        if ($where === false) {
-            return false;
-        }
-        $conditions = [];
-        foreach ($where as $field => $value) {
-            $conditions[] = $value['value'] === null ? "`{$field}` IS NULL" : "`{$field}` = " . $this->prepare($value['format'], $value['value']);
-        }
-        return $this->query("DELETE FROM `{$table}` WHERE " . implode(' AND ', $conditions));
+        return WpdbFields::delete($this, $table, $where, $where_format);
     }
 
-    /**
-     * The fields with their formats, column charsets and lengths. False, with
-     * last_error naming the field, when a value would not fit its column
-     * unchanged (probe wpdb).
-     */
+    /** The fields with their formats, column charsets and lengths, or false naming each that would not fit (Minn\Runtime\WpdbFields::process). */
     protected function process_fields($table, $data, $format)
     {
-        $data = $this->process_field_lengths($this->process_field_charsets($this->process_field_formats($data, $format), $table), $table);
-        foreach ($this->strip_invalid_text($data) as $field => $value) {
-            if ($value['value'] !== $data[$field]['value']) {
-                $this->last_error = sprintf(__('WordPress database error: Processing the value for the following field failed: %s. The supplied value may be too long or contains invalid data.'), $field);
-                return false;
-            }
-        }
-        return $data;
+        return WpdbFields::process($this, $table, $data, $format);
     }
 
     /** Each field's value with its format: the next one given (the first once they run out), else the field's known type, else %s. */
@@ -473,53 +297,28 @@ class wpdb
         return $out;
     }
 
-    /** Each field with its column's charset (false for a column that holds no text). */
+    /** Each field with its column's charset (false for a column that holds no text), or false for a table that cannot be read. */
     protected function process_field_charsets($data, $table)
     {
-        foreach ((array) $data as $field => $value) {
-            $data[$field]['charset'] = in_array($value['format'], ['%d', '%f'], true) ? false : $this->get_col_charset($table, $field);
-        }
-        return $data;
+        return WpdbFields::charsets($this, $data, $table);
     }
 
-    /** Each field with its column's length (get_col_length). */
+    /** Each field with its column's length (get_col_length), or false for a table that cannot be read. */
     protected function process_field_lengths($data, $table)
     {
-        foreach ((array) $data as $field => $value) {
-            $data[$field]['length'] = in_array($value['format'], ['%d', '%f'], true) ? false : $this->get_col_length($table, $field);
-        }
-        return $data;
+        return WpdbFields::lengths($this, $data, $table);
     }
 
-    /** Each text value cut to what its column keeps: malformed bytes dropped, four-byte characters too for utf8, then cut to the column's length. */
+    /** Each text value cut to what its column keeps (Minn\Runtime\WpdbFields::strip). */
     protected function strip_invalid_text($data)
     {
-        foreach ((array) $data as $field => $value) {
-            if (!is_string($value['value'] ?? null) || empty($value['charset'])) {
-                continue;
-            }
-            $kept = \Minn\Support\Utf8::keptBy($value['value'], (string) $value['charset']);
-            $length = $value['length'] ?? false;
-            // A latin1 column holds any byte, one character each (probe invalid-text).
-            if (is_array($length) && $value['charset'] === 'latin1') {
-                $kept = substr($kept, 0, (int) $length['length']);
-            } elseif (is_array($length)) {
-                $kept = $length['type'] === 'byte' ? mb_strcut($kept, 0, (int) $length['length'], 'UTF-8') : mb_substr($kept, 0, (int) $length['length'], 'UTF-8');
-            }
-            $data[$field]['value'] = $kept;
-        }
-        return $data;
+        return WpdbFields::strip($this, $data);
     }
 
-    /** A query with what its table cannot hold dropped; an ASCII query, or one on a utf8mb4 table, comes back as it was. */
+    /** A query with what its table, or the connection, cannot hold dropped (Minn\Runtime\WpdbFields::stripQuery). */
     protected function strip_invalid_text_from_query($query)
     {
-        if ($this->check_ascii($query)) {
-            return $query;
-        }
-        $table = $this->get_table_from_query($query);
-        $charset = $table ? $this->get_table_charset($table) : false;
-        return in_array($charset, ['utf8', 'utf8mb3'], true) ? \Minn\Support\Utf8::keptBy((string) $query, (string) $charset) : $query;
+        return WpdbFields::stripQuery($this, $query);
     }
 
     /** The table a query names (Minn\Support\SqlTable::of), false when none. */
@@ -534,22 +333,10 @@ class wpdb
         return !preg_match('/[^\x00-\x7F]/', (string) $input_string);
     }
 
-    /** Whether a query can run without charset checks: it is ASCII, or its table's text columns all use a binary or general collation. */
+    /** Whether a query can run without the text check (Minn\Runtime\WpdbFields::safeCollation). */
     protected function check_safe_collation($query)
     {
-        if ($this->check_ascii($query)) {
-            return true;
-        }
-        $table = $this->get_table_from_query($query);
-        if (!$table) {
-            return false;
-        }
-        foreach ($this->columns($table) as $column) {
-            if ($column['collation'] !== '' && !preg_match('/^utf8(?:mb[34])?_(?:bin|general_ci)$/', $column['collation'])) {
-                return false;
-            }
-        }
-        return true;
+        return WpdbFields::safeCollation($this, $query);
     }
 
     /** The last query's column info, read again from what it returned. */
@@ -595,17 +382,10 @@ class wpdb
         $this->last_error = '';
     }
 
+    /** Reports a database error: $EZSQL_ERROR, the log and, while shown, the page (Minn\Runtime\WpdbReads::printError). */
     public function print_error($str = '')
     {
-        if ($str === '') {
-            $str = $this->last_error;
-        }
-        if (!$this->suppress_errors && $str !== '') {
-            error_log("WordPress database error {$str} for query {$this->last_query}");
-        }
-        if ($this->show_errors) {
-            echo '<div id="error"><p class="wpdberror"><strong>WordPress database error:</strong> [' . esc_html($str) . "]<br /><code>" . esc_html((string) $this->last_query) . '</code></p></div>';
-        }
+        echo WpdbReads::printError($this, $str);
         return false;
     }
 
@@ -635,9 +415,10 @@ class wpdb
         return true;
     }
 
+    /** Takes the engine's connection and sets its names (Minn\Runtime\WpdbSetup::connect). */
     public function db_connect($allow_bail = true)
     {
-        return true;
+        return WpdbSetup::connect($this);
     }
 
     public function db_version()
@@ -667,101 +448,22 @@ class wpdb
         return in_array(strtolower((string) $db_cap), ['collation', 'group_concat', 'subqueries', 'set_charset', 'utf8mb4', 'utf8mb4_520', 'identifier_placeholders'], true);
     }
 
-    /**
-     * The charset a table's text columns share (the connection's when it has
-     * none or the table is unknown), kept for the request once worked out;
-     * pre_get_table_charset may answer first (probe hook-inputs-2).
-     */
+    /** The charset a table's text columns share, or the charset failure (Minn\Runtime\WpdbFields::tableCharset). */
     protected function get_table_charset($table)
     {
-        $pre = apply_filters('pre_get_table_charset', null, $table);
-        if ($pre !== null) {
-            return $pre;
-        }
-        $key = strtolower((string) $table);
-        if (isset($this->table_charset[$key])) {
-            return $this->table_charset[$key];
-        }
-        $columns = $this->columns($table);
-        return $this->table_charset[$key] = $columns === [] ? $this->charset : self::shared_charset($columns);
+        return WpdbFields::tableCharset($this, $table);
     }
 
-    /**
-     * The charset a table's columns come to (probe invalid-text): binary when
-     * one holds bytes, false when none holds text, else their one charset;
-     * latin1 beside others does not count, utf8 beside utf8mb4 is utf8, and
-     * any other mixture is ascii.
-     *
-     * @param array<string, array{type: string, collation: string}> $columns
-     */
-    private static function shared_charset(array $columns): string|false
-    {
-        $charsets = [];
-        foreach ($columns as $column) {
-            if (preg_match('/^(?:var)?binary\b|blob$/', $column['type'])) {
-                return 'binary';
-            }
-            if ($column['collation'] !== '') {
-                $charset = explode('_', $column['collation'])[0];
-                $charsets[$charset === 'utf8mb3' ? 'utf8' : $charset] = true;
-            }
-        }
-        if (count($charsets) > 1) {
-            unset($charsets['latin1']);
-        }
-        $charsets = array_keys($charsets);
-        return match (true) {
-            $charsets === [] => false,
-            count($charsets) === 1 => $charsets[0],
-            array_diff($charsets, ['utf8', 'utf8mb4']) === [] => 'utf8',
-            default => 'ascii',
-        };
-    }
-
-    /** The charset a query's text is held to: its table's, the connection's when it names none. */
-    private function query_charset(string $query): string|false
-    {
-        $table = $this->get_table_from_query($query);
-        $charset = $table ? $this->get_table_charset($table) : $this->charset;
-        return is_string($charset) || $charset === false ? $charset : $this->charset;
-    }
-
-    /** A column's charset: false for one that holds no text, the table's for a column it does not have. */
+    /** A column's charset: false for one that holds no text, the table's for a column it does not have (Minn\Runtime\WpdbFields::columnCharset). */
     public function get_col_charset($table, $column)
     {
-        $pre = apply_filters('pre_get_col_charset', null, $table, $column);
-        if ($pre !== null) {
-            return $pre;
-        }
-        // The table's charset is asked the first time a table is looked at; a column it lacks answers with that, kept.
-        $key = strtolower((string) $table);
-        if (!isset($this->table_charset[$key])) {
-            $this->get_table_charset($table);
-        }
-        $found = $this->columns($table)[strtolower((string) $column)] ?? null;
-        if ($found === null) {
-            return $this->table_charset[$key] ?? $this->charset;
-        }
-        return $found['collation'] === '' ? false : explode('_', $found['collation'])[0];
+        return WpdbFields::columnCharset($this, $table, $column);
     }
 
-    /** The most a text or binary column holds: characters for char and varchar, bytes for the binary, blob and text types; false for any other column. */
+    /** The most a text or binary column holds (Minn\Runtime\WpdbFields::columnLength). */
     public function get_col_length($table, $column)
     {
-        return \Minn\Db::columnLength($this->columns($table)[strtolower((string) $column)]['type'] ?? '');
-    }
-
-    /** @return array<string, array{type: string, collation: string}> a table's columns by lower-cased name, read once */
-    private function columns($table): array
-    {
-        $table = strtolower((string) $table);
-        if (!isset($this->col_meta[$table])) {
-            $this->col_meta[$table] = [];
-            foreach ((array) $this->get_results('SHOW FULL COLUMNS FROM `' . str_replace('`', '', $table) . '`') as $row) {
-                $this->col_meta[$table][strtolower((string) $row->Field)] = ['type' => (string) $row->Type, 'collation' => (string) ($row->Collation ?? '')];
-            }
-        }
-        return $this->col_meta[$table];
+        return WpdbFields::columnLength($this, $table, $column);
     }
 
     /** A value cut to what one column keeps (strip_invalid_text). */
@@ -771,20 +473,16 @@ class wpdb
         return $this->strip_invalid_text([$column => $field])[$column]['value'];
     }
 
-    /**
-     * The session's SQL modes: the given ones, or the session's own when none
-     * are, without the modes WordPress cannot run under
-     * (incompatible_sql_modes filters the list).
-     */
+    /** The session's SQL modes, without the incompatible ones (Minn\Runtime\WpdbSetup::sqlMode). */
     public function set_sql_mode($modes = [])
     {
-        $current = empty($modes) ? (string) $this->get_var('SELECT @@SESSION.sql_mode') : implode(',', (array) $modes);
-        $incompatible = (array) apply_filters('incompatible_sql_modes', \Minn\Db::INCOMPATIBLE_MODES);
-        \Minn\Db::current()->setModes(\Minn\Db::compatibleModes($current, array_map('strval', $incompatible)));
+        WpdbSetup::sqlMode($this, $modes);
     }
 
+    /** A connection's charset and names (Minn\Runtime\WpdbSetup::charset). */
     public function set_charset($dbh, $charset = null, $collate = null)
     {
+        WpdbSetup::charset($this, $dbh, $charset, $collate);
     }
 
     public function timer_start()

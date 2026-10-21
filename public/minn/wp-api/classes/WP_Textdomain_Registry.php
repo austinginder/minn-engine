@@ -14,8 +14,10 @@ class WP_Textdomain_Registry
     protected $cached_mo_files = [];
     protected $domains_with_translations = [];
 
+    /** An upgrade that installs translations forgets the listings of the folders they went to. */
     public function init()
     {
+        add_action('upgrader_process_complete', [$this, 'invalidate_mo_files_cache'], 10, 2);
     }
 
     /** The folder a domain's files for a locale come from (false for none), as lang_dir_for_domain leaves it. */
@@ -33,9 +35,10 @@ class WP_Textdomain_Registry
         return !isset($this->all[$domain]) || $domain === 'default' || isset($this->custom_paths[$domain]) || !empty(array_filter($this->all[$domain]));
     }
 
+    /** A domain's folder for a locale set, trailing-slashed; an empty one is none (false). */
     public function set($domain, $locale, $path)
     {
-        $this->all[$domain][$locale] = $path && is_string($path) ? rtrim($path, '/') . '/' : $path;
+        $this->all[$domain][$locale] = $path ? rtrim((string) $path, '/') . '/' : false;
         $this->current[$domain] = $this->all[$domain][$locale];
     }
 
@@ -44,25 +47,21 @@ class WP_Textdomain_Registry
         $this->custom_paths[$domain] = rtrim((string) $path, '/');
     }
 
-    /** The translation files in a folder, unless pre_get_language_files_from_path answers for it. */
+    /** The translation files in a folder, unless pre_get_language_files_from_path answers for it; listed once a request (Runtime\Translations::folderFiles). */
     public function get_language_files_from_path($path)
     {
-        $pre = apply_filters('pre_get_language_files_from_path', null, $path);
-        if ($pre !== null) {
-            return $pre;
-        }
-        $path = rtrim((string) $path, '/');
-        return array_values(array_filter(array_merge((array) glob($path . '/*.mo'), (array) glob($path . '/*.l10n.php'))));
+        return Minn\Runtime\Translations::folderFiles((string) $path);
     }
 
+    /** The listings of the folders an upgrade installed translations to, forgotten (Runtime\Translations::forgetFolders). */
     public function invalidate_mo_files_cache($upgrader, $hook_extra)
     {
-        $this->cached_mo_files = [];
+        Minn\Runtime\Translations::forgetFolders($hook_extra);
     }
 
     private function get_paths_for_domain($domain)
     {
-        $paths = [defined('WP_LANG_DIR') ? WP_LANG_DIR . '/plugins' : ''];
+        $paths = defined('WP_LANG_DIR') ? [WP_LANG_DIR . '/plugins', WP_LANG_DIR . '/themes'] : [];
         if (isset($this->custom_paths[$domain])) {
             $paths[] = $this->custom_paths[$domain];
         }

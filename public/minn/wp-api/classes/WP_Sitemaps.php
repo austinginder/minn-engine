@@ -139,8 +139,9 @@ class WP_Sitemaps_Renderer
 
     public function __construct()
     {
-        $this->stylesheet = (string) $this->get_sitemap_stylesheet_url();
-        $this->stylesheet_index = (string) $this->get_sitemap_index_stylesheet_url();
+        // Each stylesheet kept as the processing instruction the documents print (probe blocks-rest-widget-doubts).
+        $this->stylesheet = SitemapXml::stylesheet(esc_url((string) $this->get_sitemap_stylesheet_url()));
+        $this->stylesheet_index = SitemapXml::stylesheet(esc_url((string) $this->get_sitemap_index_stylesheet_url()));
     }
 
     public function get_sitemap_stylesheet_url()
@@ -163,7 +164,7 @@ class WP_Sitemaps_Renderer
 
     public function get_sitemap_index_xml($sitemaps)
     {
-        return SitemapXml::index(array_map(static fn ($entry) => array_map('strval', (array) $entry), (array) $sitemaps), $this->stylesheet_index !== '' ? esc_url($this->stylesheet_index) : null);
+        return SitemapXml::index(array_map(static fn ($entry) => array_map('strval', (array) $entry), (array) $sitemaps), (string) $this->stylesheet_index);
     }
 
     public function render_sitemap($url_list)
@@ -174,7 +175,7 @@ class WP_Sitemaps_Renderer
 
     public function get_sitemap_xml($url_list)
     {
-        return SitemapXml::urlset(array_map(static fn ($entry) => array_map('strval', (array) $entry), (array) $url_list), $this->stylesheet !== '' ? esc_url($this->stylesheet) : null);
+        return SitemapXml::urlset(array_map(static fn ($entry) => array_map('strval', (array) $entry), (array) $url_list), (string) $this->stylesheet);
     }
 }
 
@@ -222,12 +223,9 @@ abstract class WP_Sitemaps_Provider implements \Minn\Objects\SitemapProvider
     public function get_sitemap_type_data()
     {
         $data = [];
+        // Each subtype named by its key; with none, one unnamed.
         $subtypes = $this->get_object_subtypes();
-        if (empty($subtypes)) {
-            $subtypes = [''];
-        }
-        foreach ($subtypes as $subtype) {
-            $name = is_object($subtype) ? $subtype->name : (string) $subtype;
+        foreach (empty($subtypes) ? ['' => null] : $subtypes as $name => $subtype) {
             $data[] = ['name' => $name, 'pages' => $this->get_max_num_pages($name)];
         }
         return $data;

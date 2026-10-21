@@ -17,6 +17,47 @@ use Minn\Objects\User;
  */
 final class Translations
 {
+    /**
+     * The translation files in a folder (WP_Textdomain_Registry::get_language_files_from_path):
+     * the folder as pre_get_language_files_from_path hears it, trailing
+     * slash and all, may answer; else its .mo and .l10n.php files, listed
+     * once a request in the translation_files cache group.
+     *
+     * @return mixed the files, or what the filter answered
+     */
+    public static function folderFiles(string $path): mixed
+    {
+        $path = rtrim($path, '/') . '/';
+        $pre = Runtime::hooks()->filter('pre_get_language_files_from_path', [null, $path]);
+        if ($pre !== null) {
+            return $pre;
+        }
+        $cached = Handoff::cacheGet(md5($path), 'translation_files');
+        if (is_array($cached)) {
+            return $cached;
+        }
+        $files = array_values(array_filter(array_merge((array) glob($path . '*.mo'), (array) glob($path . '*.l10n.php'))));
+        Handoff::cacheSet(md5($path), $files, 'translation_files');
+        return $files;
+    }
+
+    /**
+     * After an upgrade that installed translations, the listings of the
+     * folders they went to are forgotten (WP_Textdomain_Registry::invalidate_mo_files_cache):
+     * the plugins or themes language folder, else the language folder itself.
+     */
+    public static function forgetFolders(mixed $hookExtra): void
+    {
+        $hookExtra = (array) $hookExtra;
+        if (($hookExtra['type'] ?? '') !== 'translation' || !defined('WP_LANG_DIR')) {
+            return;
+        }
+        foreach ((array) ($hookExtra['translations'] ?? []) as $translation) {
+            $folder = ['plugin' => '/plugins', 'theme' => '/themes'][((array) $translation)['type'] ?? ''] ?? '';
+            Handoff::cacheDelete(md5(WP_LANG_DIR . $folder . '/'), 'translation_files');
+        }
+    }
+
     /** The locale in force (determine_locale): a switched one, else pre_determine_locale, else the configured one through determine_locale. */
     public static function locale(): string
     {

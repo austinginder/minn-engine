@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use DateTimeImmutable;
+use Minn\Runtime\SiteTime;
+
 /**
  * What the sitemaps share with WP_Sitemaps, which serves them: the two
  * stylesheets browsers get when they open a sitemap, their CSS
@@ -44,9 +47,9 @@ final class Sitemaps
             . '</xsl:stylesheet>' . "\n";
     }
 
-    /** A GMT date as a sitemap dates it (W3C, UTC). */
+    /** A GMT date as a sitemap dates it: W3C, in the site's timezone (probe blocks-rest-widget-doubts). */
     public static function w3c(string $gmt): string
     {
-        return gmdate('Y-m-d\TH:i:s', (int) strtotime($gmt . ' UTC')) . '+00:00';
+        return (new DateTimeImmutable('@' . (int) strtotime($gmt . ' UTC')))->setTimezone(SiteTime::zone())->format(DATE_ATOM);
     }
 }

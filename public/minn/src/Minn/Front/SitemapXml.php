@@ -19,7 +19,7 @@ final class SitemapXml
      *
      * @param list<array<string, string|null>> $entries each a map of element name => text; null values are skipped
      */
-    public static function index(array $entries, ?string $stylesheet): string
+    public static function index(array $entries, string $stylesheet): string
     {
         return self::document($stylesheet, self::element('sitemapindex', self::elements('sitemap', $entries), ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'));
     }
@@ -29,7 +29,7 @@ final class SitemapXml
      *
      * @param list<array<string, string|null>> $entries
      */
-    public static function urlset(array $entries, ?string $stylesheet): string
+    public static function urlset(array $entries, string $stylesheet): string
     {
         return self::document($stylesheet, self::element('urlset', self::elements('url', $entries), ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'));
     }
@@ -55,9 +55,15 @@ final class SitemapXml
         return $inner === '' ? "<{$tag}{$attributes}/>" : "<{$tag}{$attributes}>{$inner}</{$tag}>";
     }
 
-    private static function document(?string $stylesheet, string $body): string
+    /** The processing instruction naming a stylesheet, as the renderer keeps it; nothing for no address. */
+    public static function stylesheet(string $url): string
     {
-        $declaration = $stylesheet === null ? '' : '<?xml-stylesheet type="text/xsl" href="' . Html::attr($stylesheet) . '" ?>' . "\n";
-        return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . $declaration . $body . "\n";
+        return $url === '' ? '' : '<?xml-stylesheet type="text/xsl" href="' . Html::attr($url) . '" ?>';
+    }
+
+    /** The document: the XML declaration, the stylesheet instruction when there is one, the body. */
+    private static function document(string $stylesheet, string $body): string
+    {
+        return '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . ($stylesheet === '' ? '' : $stylesheet . "\n") . $body . "\n";
     }
 }

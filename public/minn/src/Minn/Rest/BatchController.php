@@ -75,7 +75,8 @@ final readonly class BatchController
             $early[$i] = $this->refusal($subs[$i]);
         }
         if (($body['validation'] ?? 'normal') === 'require-all-validate') {
-            $failed = array_map(fn (int $i) => $early[$i] ?? $this->invalid($subs[$i]), array_keys($subs));
+            // A refusal among the failures carries no headers (probe nav-pomo-rest-doubts).
+            $failed = array_map(fn (int $i) => $early[$i] === null ? $this->invalid($subs[$i]) : array_replace($early[$i], ['headers' => []]), array_keys($subs));
             if (array_filter($failed) !== []) {
                 return Reply::item(['failed' => 'validation', 'responses' => $failed], null, 207);
             }

@@ -4,7 +4,6 @@ use Minn\Rest\RuntimePrepare;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Rest\Api;
-use Minn\Rest\BatchRequest;
 use Minn\Rest\Links;
 use Minn\Rest\RouteCatalogue;
 use Minn\Rest\RouteIndex;
@@ -56,14 +55,16 @@ class WP_REST_Server implements \Minn\Objects\RestServer
 
     protected function json_error($code, $message, $status = null)
     {
-        $status = $status ? (int) $status : 500;
-        return wp_json_encode(['code' => $code, 'message' => $message, 'data' => ['status' => $status]]);
+        if ($status) {
+            $this->set_status($status);
+        }
+        return wp_json_encode(['code' => $code, 'message' => $message]);
     }
 
+    /** No options, JSON_PRETTY_PRINT when the request carries _pretty (any value); through rest_json_encode_options. */
     protected function get_json_encode_options(WP_REST_Request $request)
     {
-        $options = 0;
-        return apply_filters('rest_json_encode_options', $options, $request);
+        return apply_filters('rest_json_encode_options', $request->has_param('_pretty') ? JSON_PRETTY_PRINT : 0, $request);
     }
 
     public function register_route($route_namespace, $route, $route_args, $override = false)
@@ -264,9 +265,9 @@ class WP_REST_Server implements \Minn\Objects\RestServer
     {
         $this->dispatching_requests[] = $request;
         $result = apply_filters('rest_pre_dispatch', null, $this, $request);
-        if ($result !== null) {
+        if (!empty($result)) {
             array_pop($this->dispatching_requests);
-            return $result;
+            return is_wp_error($result) ? $this->error_to_response($result) : rest_ensure_response($result);
         }
         $error = null;
         $matched = $this->match_request_to_handler($request);
@@ -463,29 +464,18 @@ class WP_REST_Server implements \Minn\Objects\RestServer
     }
 
     /**
-     * Runs several requests in one round trip. Captured shape: HTTP 207
-     * with `responses`, one enveloped {body, status, headers} per entry in
-     * request order. Which methods a batch accepts is the route's own
-     * schema (the Store API allows POST, PUT, PATCH and DELETE), so a bad
-     * method is refused by parameter validation before this runs.
+     * Runs several requests in one round trip, as the engine's batch/v1
+     * route does (Rest\BatchController): HTTP 207 with `responses`, one
+     * enveloped {body, status, headers} per entry in request order; a route
+     * that does not take part in batches answers rest_batch_not_allowed, and
+     * require-all-validate answers every failure with nothing run.
      */
     public function serve_batch_request_v1($batch_request)
     {
-        $responses = [];
-        foreach (BatchRequest::describe($batch_request['requests'] ?? []) as $described) {
-            $single = new WP_REST_Request($described['method'], $described['path']);
-            if ($described['query'] !== []) {
-                $single->set_query_params($described['query']);
-            }
-            if ($described['body'] !== null) {
-                $single->set_body_params($described['body']);
-            }
-            if ($described['headers'] !== null) {
-                $single->set_headers($described['headers']);
-            }
-            $responses[] = $this->envelope_response($this->dispatch($single), false)->get_data();
-        }
-        return new WP_REST_Response(['responses' => $responses], 207);
+        $request = new WP_REST_Request('POST', '/batch/v1');
+        $request->set_header('content-type', 'application/json');
+        $request->set_body(wp_json_encode(['validation' => $batch_request['validation'] ?? 'normal', 'requests' => $batch_request['requests'] ?? []]));
+        return $this->engine_response($request) ?? new WP_REST_Response(['responses' => []], 207);
     }
 
     public function get_index($request)
@@ -617,15 +607,10 @@ class WP_REST_Server implements \Minn\Objects\RestServer
         return (string) (Runtime::current()->request?->body ?? '');
     }
 
+    /** The request headers in $_SERVER's form: the HTTP_ ones without their prefix, the three CONTENT_ ones, and a redirect's authorization when there is no other. */
     public function get_headers($server)
     {
-        $headers = [];
-        foreach ($server as $key => $value) {
-            if (str_starts_with($key, 'HTTP_')) {
-                $headers[substr($key, 5)] = $value;
-            }
-        }
-        return $headers;
+        return Minn\Runtime\RequestHeaders::fromServer((array) $server);
     }
 
     protected function get_json_last_error()

@@ -13,6 +13,8 @@
 use Minn\Blocks\Block as MinnBlock;
 use Minn\Blocks\Renderer as MinnRenderer;
 use Minn\Blocks\Wrapper;
+use Minn\Blocks\Dynamic\Calendar;
+use Minn\Blocks\Styles;
 
 // Render callbacks.
 
@@ -438,7 +440,7 @@ function render_block_core_legacy_widget($attributes)
         $instance = (array) unserialize($serialized, ['allowed_classes' => false]);
     }
     ob_start();
-    the_widget($class, $instance);
+    the_widget($class, $instance, ['widget_id' => false, 'widget_name' => _minn_widget_factory()->widgets[$class]->name]);
     return (string) ob_get_clean();
 }
 
@@ -673,7 +675,7 @@ function render_block_core_query_pagination_numbers($attributes, $content, $bloc
         return '';
     }
     $state = _minn_query_pagination_state($block);
-    if ($state['pages'] < 2 || $state['page'] > $state['pages']) {
+    if ($state['pages'] < 2 || (!$state['inherit'] && $state['page'] > $state['pages'])) {
         return '';
     }
     $args = ['current' => $state['page'], 'total' => $state['pages'], 'prev_next' => false];
@@ -712,19 +714,17 @@ function render_block_core_query_pagination_previous($attributes, $content, $blo
 /**
  * @internal Where a pagination block's query stands: the page it is on, the
  * pages it has, whether it follows the main query, and the request parameter
- * a block's own query pages by (capped by its pages setting).
+ * a block's own query pages by; both capped by the query's pages setting.
  */
 function _minn_query_pagination_state(WP_Block $block): array
 {
     $context = (array) $block->context;
-    if (!empty($context['query']['inherit'])) {
-        return ['inherit' => true, 'page' => max(1, (int) ($GLOBALS['paged'] ?? 0)), 'pages' => (int) ($GLOBALS['wp_query']->max_num_pages ?? 0), 'param' => ''];
-    }
-    $param = isset($context['queryId']) ? 'query-' . $context['queryId'] . '-page' : 'query-page';
-    $page = empty($_GET[$param]) ? 1 : (int) $_GET[$param];
-    $pages = (int) (new WP_Query(build_query_vars_from_query_block($block, $page)))->max_num_pages;
     $cap = (int) ($context['query']['pages'] ?? 0);
-    return ['inherit' => false, 'page' => $page, 'pages' => $cap > 0 ? min($cap, $pages) : $pages, 'param' => $param];
+    $inherit = !empty($context['query']['inherit']);
+    $param = $inherit ? '' : (isset($context['queryId']) ? 'query-' . $context['queryId'] . '-page' : 'query-page');
+    $page = $inherit ? max(1, (int) ($GLOBALS['paged'] ?? 0)) : (empty($_GET[$param]) ? 1 : (int) $_GET[$param]);
+    $pages = $inherit ? (int) ($GLOBALS['wp_query']->max_num_pages ?? 0) : (int) (new WP_Query(build_query_vars_from_query_block($block, $page)))->max_num_pages;
+    return ['inherit' => $inherit, 'page' => $page, 'pages' => $cap > 0 ? min($cap, $pages) : $pages, 'param' => $param];
 }
 
 /**
@@ -788,7 +788,7 @@ function _minn_site_logo_markup(array $attributes): string
     $width = (int) ($attributes['width'] ?? 0);
     $resize = static function ($image) use ($width) {
         if (is_array($image) && $width > 0 && !empty($image[1]) && !empty($image[2])) {
-            $image[2] = (int) round($image[2] * $width / $image[1]);
+            $image[2] = (int) ($image[2] * $width / $image[1]);
             $image[1] = $width;
         }
         return $image;
@@ -1354,10 +1354,10 @@ function _sync_custom_logo_to_site_logo($value)
     return $value;
 }
 
-/** When the theme mods are updated without a custom logo they had, the site_logo option goes too. */
+/** When the theme mods are updated without a custom logo they had, the site_logo option goes too (not while the option itself is going). */
 function _delete_site_logo_on_remove_custom_logo($old_value, $value)
 {
-    if (isset($old_value['custom_logo']) && !isset($value['custom_logo'])) {
+    if (empty($GLOBALS['_ignore_site_logo_changes']) && isset($old_value['custom_logo']) && !isset($value['custom_logo'])) {
         delete_option('site_logo');
     }
 }
@@ -1378,16 +1378,12 @@ function _delete_site_logo_on_remove_custom_logo_on_setup_theme()
     add_action("delete_option_theme_mods_{$theme}", '_delete_site_logo_on_remove_theme_mods');
 }
 
-/** Deleting the site_logo option removes the custom logo theme mod, holding back the hook that would delete the option in turn. */
+/** Deleting the site_logo option removes the custom logo theme mod, the global $_ignore_site_logo_changes holding back the hook that would delete the option in turn. */
 function _delete_custom_logo_on_remove_site_logo()
 {
-    $hook = 'update_option_theme_mods_' . get_option('stylesheet');
-    $priority = has_action($hook, '_delete_site_logo_on_remove_custom_logo');
-    remove_action($hook, '_delete_site_logo_on_remove_custom_logo', $priority === false ? 10 : $priority);
+    $GLOBALS['_ignore_site_logo_changes'] = true;
     remove_theme_mod('custom_logo');
-    if ($priority !== false) {
-        add_action($hook, '_delete_site_logo_on_remove_custom_logo', $priority, 2);
-    }
+    $GLOBALS['_ignore_site_logo_changes'] = false;
 }
 
 function register_block_core_site_logo_setting()
@@ -1665,8 +1661,9 @@ JS;
 /** @internal the post's author: their avatar, the byline, their name (linked to their posts when asked) and their bio when asked */
 function _minn_block_post_author(MinnBlock $block, MinnRenderer $renderer): string
 {
+    // The post's author read as a field (its post_author filter heard); without a post, an author archive's author (probe blocks-rest-widget-doubts).
     $post = $renderer->context()->post();
-    $user = $post === null ? false : get_userdata($post->authorId);
+    $user = get_userdata($post === null ? (is_author() ? get_queried_object_id() : 0) : (int) get_post_field('post_author', $post->id));
     if (!$user) {
         return '';
     }
@@ -1690,7 +1687,7 @@ function _minn_block_post_author(MinnBlock $block, MinnRenderer $renderer): stri
 function _minn_block_post_author_biography(MinnBlock $block, MinnRenderer $renderer): string
 {
     $post = $renderer->context()->post();
-    $bio = $post === null ? '' : (string) get_the_author_meta('description', $post->authorId);
+    $bio = $post === null && !is_author() ? '' : (string) get_the_author_meta('description', $post === null ? get_queried_object_id() : (int) get_post_field('post_author', $post->id));
     return $bio === '' ? '' : Wrapper::open('div', 'wp-block-post-author-biography', $block) . $bio . '</div>';
 }
 
@@ -1711,7 +1708,7 @@ function _minn_block_post_comments_link(MinnBlock $block, MinnRenderer $renderer
     }
     $text = $count === 0 ? __('No comments') : sprintf(_n('%s comment', '%s comments', $count), number_format_i18n($count));
     $href = $count === 0 ? get_permalink($post->id) . '#respond' : get_comments_link($post->id);
-    return Wrapper::open('div', 'wp-block-post-comments-link', $block) . '<a href=' . esc_url($href) . '>' . $text . '<span class="screen-reader-text"> on ' . get_the_title($post->id) . '</span></a></div>';
+    return Wrapper::open('div', 'wp-block-post-comments-link', $block, linkColorClass: true) . '<a href=' . esc_url($href) . '>' . $text . '<span class="screen-reader-text"> on ' . get_the_title($post->id) . '</span></a></div>';
 }
 
 /** @internal how long the post takes to read (a range of minutes by default) at the block's reading speed, or how many words it has */
@@ -1721,10 +1718,12 @@ function _minn_block_post_time_to_read(MinnBlock $block, MinnRenderer $renderer)
     if ($post === null) {
         return '';
     }
-    $words = block_core_post_time_to_read_word_count((string) get_post_field('post_content', $post->id), 'words');
+    // The global post's content counted as the locale counts (words or characters), as the reference reads it.
+    $type = wp_get_word_count_type();
+    $words = block_core_post_time_to_read_word_count((string) get_the_content(), $type);
     $text = match ((string) $block->attr('displayMode', 'time')) {
         'time' => _minn_minutes_to_read($words / max(1, (int) $block->attr('averageReadingSpeed', 189)), (bool) $block->attr('displayAsRange', true)),
-        'words' => sprintf(_n('%s word', '%s words', $words), number_format_i18n($words)),
+        'words' => $type === 'words' ? sprintf(_n('%s word', '%s words', $words), number_format_i18n($words)) : sprintf(_n('%s character', '%s characters', $words), number_format_i18n($words)),
         default => '',
     };
     return Wrapper::open('div', 'wp-block-post-time-to-read', $block) . $text . '</div>';
@@ -1768,7 +1767,7 @@ function _minn_block_read_more(MinnBlock $block, MinnRenderer $renderer): string
         return '';
     }
     $content = (string) $block->attr('content', '');
-    $open = Wrapper::open('a', 'wp-block-read-more', $block);
+    $open = Wrapper::open('a', 'wp-block-read-more', $block, extraClasses: empty($block->attrs['justifyContent']) ? [] : ['is-justified-' . $block->attrs['justifyContent']]);
     // An untitled post is named by its id for screen readers (probe sweep-1020b).
     $title = get_the_title($post->id);
     $title = $title !== '' ? $title : sprintf(__('untitled post %s'), $post->id);
@@ -1783,14 +1782,15 @@ function _minn_block_loginout(MinnBlock $block, MinnRenderer $renderer): string
     $redirect = $block->attr('redirectToCurrent', true) ? $current : '';
     $in = is_user_logged_in();
     $html = $in || !$block->attr('displayLoginAsForm', false) ? wp_loginout($redirect, false) : wp_login_form(['echo' => false, 'redirect' => $redirect]);
-    return Wrapper::open('div', 'wp-block-loginout', $block, extraClasses: [$in ? 'logged-in' : 'logged-out']) . $html . '</div>';
+    return Wrapper::open('div', 'wp-block-loginout', $block, extraClasses: $in ? ['logged-in'] : ['logged-out', ...($block->attr('displayLoginAsForm', false) ? ['has-login-form'] : [])]) . $html . '</div>';
 }
 
-/** @internal the link to the front page, marked current there */
+/** @internal the link to the front page, marked current there, in a list item with the navigation's colours and the block's classes */
 function _minn_block_home_link(MinnBlock $block, MinnRenderer $renderer): string
 {
     $label = (string) $block->attr('label', '');
-    return '<li class="wp-block-navigation-item wp-block-home-link"><a class="wp-block-home-link__content wp-block-navigation-item__content" href="' . esc_url(home_url()) . '" rel="home"' . (is_front_page() ? ' aria-current="page"' : '') . ' >' . ($label !== '' ? wp_kses_post($label) : __('Home')) . '</a></li>';
+    $context = (array) ($renderer->ownInstance()->context ?? []);
+    return '<li ' . _minn_as_rendered($block->toArray(), static fn (): string => block_core_home_link_build_li_wrapper_attributes($context)) . '><a class="wp-block-home-link__content wp-block-navigation-item__content" href="' . esc_url(home_url()) . '" rel="home"' . (is_front_page() ? ' aria-current="page"' : '') . ' >' . ($label !== '' ? wp_kses_post($label) : __('Home')) . '</a></li>';
 }
 
 /** @internal a widget group: its title in the sidebar's heading markup (an h2 elsewhere), then its blocks */
@@ -1820,10 +1820,13 @@ function discard_sidebar_being_rendered()
 {
 }
 
-/** @internal the calendar of the month being viewed (the block's month where the permalinks can link one) */
+/** @internal the calendar of the month being viewed (the block's month where the permalinks can link one), its colours on its table; with no published posts, a note to signed-in readers only */
 function _minn_block_calendar(MinnBlock $block, MinnRenderer $renderer): string
 {
     global $monthnum, $year;
+    if (!block_core_calendar_has_published_posts()) {
+        return is_user_logged_in() ? '<div>' . __('The calendar block is hidden because there are no published posts.') . '</div>' : '';
+    }
     $viewing = [$monthnum, $year];
     $structure = (string) get_option('permalink_structure');
     if (isset($block->attrs['month'], $block->attrs['year']) && str_contains($structure, '%monthnum%') && str_contains($structure, '%year%')) {
@@ -1831,7 +1834,7 @@ function _minn_block_calendar(MinnBlock $block, MinnRenderer $renderer): string
     }
     $calendar = get_calendar(['display' => false]);
     [$monthnum, $year] = $viewing;
-    return Wrapper::open('div', 'wp-block-calendar', $block) . $calendar . '</div>';
+    return Wrapper::open('div', 'wp-block-calendar', Calendar::withoutColours($block), styleFirst: true, extraClasses: array_filter([Styles::align($block->attrs)])) . Calendar::colourTable($block, (string) $calendar) . '</div>';
 }
 
 // The breadcrumbs block's helpers (probe breadcrumbs).

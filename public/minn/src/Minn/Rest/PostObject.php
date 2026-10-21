@@ -49,6 +49,29 @@ final readonly class PostObject
     }
 
     /**
+     * The view-context object for a post read with a password: a protected
+     * post's content and excerpt rendered when the password is its own
+     * (still marked protected), as the reference's can_access_password_content
+     * allows; otherwise the plain view.
+     */
+    public function viewWithPassword(PostRecord $p, mixed $password, ?Fields $fields = null): array
+    {
+        $stored = \Minn\Runtime\Records::post($p->id);
+        if (!$p->isProtected() || !is_string($password) || $password !== $p->password || !$stored instanceof \Minn\Objects\Post) {
+            return $this->view($p, $fields);
+        }
+        $open = clone $stored;
+        $open->post_password = '';
+        $object = $this->viewFields(PostRecord::fromPost($open), $fields);
+        foreach (['content', 'excerpt'] as $field) {
+            if (isset($object[$field])) {
+                $object[$field]['protected'] = true;
+            }
+        }
+        return RuntimePrepare::postItem('rest_prepare_' . $p->type, $object, $p->id, $p->type);
+    }
+
+    /**
      * The edit-context object, its raw content given its hooked blocks,
      * through rest_prepare_{type} when a plugin hooks it; with a _fields
      * selection, rendered only as far as it asks.

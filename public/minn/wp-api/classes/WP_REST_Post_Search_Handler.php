@@ -41,9 +41,12 @@ class WP_REST_Post_Search_Handler extends WP_REST_Search_Handler
             $data['id'] = (int) $post->ID;
         }
         if (in_array('title', $fields, true)) {
+            // A title without its Protected: or Private: prefix; none for a type without titles.
             add_filter('protected_title_format', [$this, 'protected_title_format']);
-            $data['title'] = get_the_title($post->ID);
+            add_filter('private_title_format', [$this, 'protected_title_format']);
+            $data['title'] = post_type_supports($post->post_type, 'title') ? get_the_title($post->ID) : '';
             remove_filter('protected_title_format', [$this, 'protected_title_format']);
+            remove_filter('private_title_format', [$this, 'protected_title_format']);
         }
         if (in_array('url', $fields, true)) {
             $data['url'] = get_permalink($post->ID);

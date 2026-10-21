@@ -59,6 +59,24 @@ final class Shortcodes
         $this->tags[$tag] = $callback;
     }
 
+    /**
+     * A shortcode added as add_shortcode() adds it: an empty name, or one
+     * with a space or a reserved character, is refused with a notice.
+     */
+    public function register(mixed $tag, mixed $callback): void
+    {
+        $tag = (string) $tag;
+        if ($tag === '') {
+            Notices::doingItWrong('add_shortcode', Gettext::text('Invalid shortcode name: Empty name given.'), '4.4.0');
+            return;
+        }
+        if (preg_match('@[<>&/\[\]\x00-\x20=]@', $tag)) {
+            Notices::doingItWrong('add_shortcode', sprintf(Gettext::text('Invalid shortcode name: %1$s. Do not use spaces or reserved characters: %2$s'), $tag, '& / < > [ ] ='), '4.4.0');
+            return;
+        }
+        $this->add($tag, $callback);
+    }
+
     /** Forgets a shortcode. */
     public function remove(string $tag): void
     {

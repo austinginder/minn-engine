@@ -683,7 +683,10 @@ Facts worth keeping:
   unknown user or when the user cannot `edit_user`; `wp_get_post_revision`
   answers null for a missing post and for one that is not a revision.
 - `delete_theme` of a theme that is not on disk is true; an empty slug is
-  false. `_wp_oembed_get_object` is a singleton `WP_oEmbed` whose provider
+  false. `delete_theme` refuses the active theme, its parent and a path
+  outside the themes folder (`could_not_remove_theme`), where WordPress
+  deletes them and leaves the refusal to its callers: a deliberate
+  difference, kept as the safer answer (Austin, 2026-10-20). `_wp_oembed_get_object` is a singleton `WP_oEmbed` whose provider
   table is `data/oembed-providers.json` (captured from the reference).
 
 ## Connectors, the old-post comment closer, and plugin_loaded
@@ -18161,11 +18164,40 @@ in the runtime's model:
   `-`, `.`, `~` decoded, the rest upper-cased) and keep their lifetime in the cached data.
 - **Translation files** are read by their class; an MO of another revision is refused everywhere.
 
+The rest were fixed file by file the same day, four agents to a wave, each fix pinned in one
+probe per group: `admin-doubts`, `query-comment-misc-doubts`, `functions-formatting-doubts`,
+`media-template-doubts` (wave 1's files), then `taxonomy-blocks-user-doubts`,
+`db-mail-rewrite-doubts`, `blocks-rest-widget-doubts`, `nav-pomo-rest-doubts` (wave 2's). The
+logic they touched moved into `src/Minn` as it was fixed (the facade fell from 3,838 to 3,753
+definitions holding logic, 30,100 to 29,291 lines). What they changed in the runtime's model:
+
+- **`wpdb` connects as the reference does**: the constructor connects and sets the connection's
+  charset and collation (`SET NAMES … COLLATE …`); its writers prepare one statement each with
+  nulls inline; readers check the query's collation first (`Runtime\WpdbReads`,
+  `WpdbFields`, `WpdbSetup`).
+- **Term caches are the reference's groups**: an object's terms are cached in
+  `{taxonomy}_relationships` and cleared by `wp_set_object_terms` / `wp_remove_object_terms`.
+- **Rewrite structures** fold empty steps (`/%year%/`), are made once and kept on the object, and
+  `init()` keeps the top rules (`Runtime\RewriteStructs`, `RewriteRules::builtins`).
+- **`script_concat_settings`** reads `can_compress_scripts` on every call, and the printing
+  functions call it.
+- **`delete_theme` refuses the active theme, its parent and a path outside the themes folder**
+  (`could_not_remove_theme`) where WordPress deletes them: kept as the safer answer (Austin,
+  2026-10-20).
+
 Left open.
 
-- The real doubts outside `post.php` and `comment.php`, and outside security, with their measured
-  values: `query.php`, admin, misc, functions, formatting, pluggable, media, template (wave 1)
-  and taxonomy, blocks, PHPMailer, WP_Rewrite, user, the REST classes (wave 2).
+- `locate_block_template` answers a `_wp-find-template` request with the template's JSON, but the
+  engine's front page goes through `Theme\PageRenderer`, so over HTTP the engine still serves the
+  page.
+- The `core/post-author-name` block does not fall back to the queried author on an author
+  archive.
+- `WP_Block::render()` adds the `wp-elements-N` class; the reference adds it in `render_block()`.
+- `WP_REST_Plugins_Controller::is_filesystem_available` answers true: the engine's
+  `request_filesystem_credentials` has no credentials flow.
+- `PHPMailer::addAddress` refuses a Unicode local part (`öne@example.test`) the reference accepts.
+- `WP_Upgrader::create_lock` writes its lock through the option layer, so the `query` filter hears
+  other SQL; the lock and its race are the same.
 - Hostile files the reference reads as nothing more than their size (the FLV, Matroska and
   AVI built by the sweep) give a few more fields on the engine.
 
@@ -18270,5 +18302,11 @@ rows that are `open` or `austin`.
 | 17998 | The side-effect diff, second round (10-20) | REST comments: a named author's details, an unknown author, the name and address required, the two argument rounds | done | probe `rest-comment-author` (38 rows) |
 | 17998 | The side-effect diff, second round (10-20) | statements carrying text that is not UTF-8 ran and stored "?" | done | `Minn\Db::invalidText`, probe `invalid-text` |
 | 17714 | The template part's four rows (10-19) | a navigation naming no menu on a site with none: no menu post made during the render | done | "A navigation's fallback menu, made during the render (2026-10-19)": the renderer asks `WP_Navigation_Fallback::get_fallback` through `Handoff::navigationFallback` (probe `navigation-fallback`) |
-| 18098 | The security sweep (10-20) | the facade review's doubts: 228 measured (194 real, of which 3 fixed in the sweep); 274 to measure; the real ones to fix | open | measured values in ~/Documents/minn-facade-review/doubts-2026-10-20 (outside the repo); next: the second wave, then fixes file by file (post.php, comment.php, functions.php, admin.php first) |
+| 18098 | The security sweep (10-20) | the facade review's doubts: 228 measured (194 real, of which 3 fixed in the sweep); 274 to measure; the real ones to fix | done | all 502 measured; the real ones fixed and pinned (findings 22 to 38 of the review; probes `post-doubts`, `comment-doubts` and the eight `*-doubts` probes), the few left are their own rows below |
+| 18098 | The security sweep (10-20) | `locate_block_template`'s `_wp-find-template` JSON is not served over HTTP (the front page goes through `PageRenderer`) | open | a branch in the front renderer |
+| 18098 | The security sweep (10-20) | `core/post-author-name` ignores the queried author on an author archive | open | `PostBlocks` |
+| 18098 | The security sweep (10-20) | the `wp-elements-N` class is added in `WP_Block::render()`, not `render_block()` | open | renderer-wide |
+| 18098 | The security sweep (10-20) | `WP_REST_Plugins_Controller::is_filesystem_available` answers true | open | needs `request_filesystem_credentials`' credentials flow |
+| 18098 | The security sweep (10-20) | `PHPMailer::addAddress` refuses a Unicode local part the reference accepts | open | address validation |
+| 18098 | The security sweep (10-20) | `WP_Upgrader::create_lock`'s SQL as the `query` filter hears it | accepted | the lock, its expiry and its race are the reference's; only the statements differ, and matching them means writing the option outside the option layer |
 | 18098 | The security sweep (10-20) | crafted FLV, Matroska and AVI files the reference reads as only their size give a few more fields on the engine | accepted | nothing a plugin reads; the readers end quickly and never throw on them (unit `media-av`) |

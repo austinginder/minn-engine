@@ -7,23 +7,25 @@ sending mail and the notices the engine sends
 | [`AddressRules`](#addressrules) | final class | 91 | Email addresses: the checks a mailer can apply (PHP's filter, the |
 | [`ChangeNotices`](#changenotices) | final class | 30 | The notices the reference mails a user when their password or email |
 | [`Composer`](#composer) | final class | 253 | A message as the reference's mailer writes it: the header block (Date, |
+| [`CustomHeaders`](#customheaders) | final class | 28 | A mailer's custom headers changed in place (PHPMailer::replaceCustomHeader, |
 | [`DataLines`](#datalines) | final class | 28 | A message cut into the lines SMTP DATA sends. Any line break (CRLF, CR |
 | [`DebugOutput`](#debugoutput) | final class | 38 | Where a mailer's debug text goes, as its Debugoutput setting names it: |
 | [`Dkim`](#dkim) | final class | 110 | DKIM signatures (RFC 6376) as the reference's mailer writes them: |
 | [`Draft`](#draft) | final readonly class | 66 | Everything a message is composed from: the transport it goes out on |
 | [`HeaderWords`](#headerwords) | final class | 112 | Header text as mail carries it (RFC 2047): left alone when it is plain |
-| [`HostEntry`](#hostentry) | final readonly class | 36 | One entry of a mailer's Host setting ("host", "host:port", |
+| [`HostEntry`](#hostentry) | final readonly class | 66 | One entry of a mailer's Host setting ("host", "host:port", |
 | [`HtmlMessage`](#htmlmessage) | final class | 55 | What a mailer reads out of an HTML message: the images it can carry |
 | [`MailHeaders`](#mailheaders) | final readonly class | 83 | The headers argument of wp_mail() read the way the reference reads it: |
 | [`MailLog`](#maillog) | final class | 45 | The engine's development transport: each message as one JSON line |
 | [`MailSettings`](#mailsettings) | final readonly class | 71 | How mail leaves the site, from the minn_mail option (JSON or a serialized |
 | [`Mailer`](#mailer) | final readonly class | 102 | Sends a Message through the configured transport. Failures are logged |
-| [`MailerStrings`](#mailerstrings) | final class | 34 | The mailer's English messages, keyed as plugins look them up |
+| [`MailerStrings`](#mailerstrings) | final class | 47 | The mailer's English messages, keyed as plugins look them up |
 | [`Message`](#message) | final readonly class | 18 | One outgoing plain-text email. |
 | [`MimeTypes`](#mimetypes) | final class | 43 | The MIME type a mailer gives an attachment by its file extension (the |
 | [`Notices`](#notices) | final readonly class | 99 | The messages the engine itself sends, worded as the reference words them |
 | [`PathParts`](#pathparts) | final class | 22 | A path's parts the way a mailer names attachments, safe for multibyte |
-| [`Smime`](#smime) | final class | 27 | S/MIME signing of a composed MIME entity with a certificate and key on |
+| [`SendmailLine`](#sendmailline) | final class | 13 | The command a mailer pipes a message to for sendmail and qmail (probe |
+| [`Smime`](#smime) | final class | 41 | S/MIME signing of a composed MIME entity with a certificate and key on |
 | [`Smtp`](#smtp) | final readonly class | 33 | Delivery over SMTP for the engine's own mail when WordPress's mail |
 | [`SmtpSession`](#smtpsession) | final class | 461 | One SMTP conversation as the reference's client holds it: the socket, |
 | [`TextWrap`](#textwrap) | final class | 118 | Word wrapping for mail text. Lines break at spaces once they would pass |
@@ -128,7 +130,7 @@ The MIME header for the message's type: the content type (with its boundary) and
 
 ### static `mailOnlyHeaders(Minn\Mail\Draft $d): string`
 
-The To and Subject lines PHP's mail() takes as arguments, written after the headers in the sent copy.
+The To and Subject lines PHP's mail() takes as arguments, written after the headers in the sent copy; no To is undisclosed recipients.
 
 ### static `addressLine(Minn\Mail\Draft $d, string $name, array $list): string`
 
@@ -151,6 +153,24 @@ Header text with any line break taken out.
 The message id given when it is well formed, else one made from the id and the host name.
 
 Internals: `encodingFor()` (private, line 133), `partHead()` (private, line 145), `related()` (private, line 155), `alternative()` (private, line 161), `end()` (private, line 167), `calendar()` (private, line 176), `date()` (private, line 186), `attachAll()` (private, line 193), `attachmentHead()` (private, line 214), `attachmentData()` (private, line 232), `extraLines()` (private, line 251)
+
+
+## CustomHeaders
+
+`final class Minn\Mail\CustomHeaders` · `public/minn/src/Minn/Mail/CustomHeaders.php`
+
+A mailer's custom headers changed in place (PHPMailer::replaceCustomHeader,
+probe db-mail-rewrite-doubts): the first header of the name takes the new
+value and the others of that name go; a name nothing has is not added. A
+name or value with a line break, or an empty name, changes nothing and
+refuses without an error when a header would have taken it.
+
+### static `replace(array $headers, mixed $name, mixed $value): array`
+
+Whether the replacement held, and the headers after it.
+
+- `@param list<array{0: string, 1: string}>|array<int, array{0: string, 1: string}> $headers`
+- `@return array{0: bool, 1: array<int, array{0: string, 1: string}>}`
 
 
 ## DataLines
@@ -363,6 +383,21 @@ __construct(string $prefix, string $host, ?int $port)
 The entries of a Host setting, null where one cannot be read.
 
 - `@return list<array{0: string, 1: self|null}> the trimmed entry text and its reading`
+
+### `portOr(int $default): int`
+
+The port to connect on: the entry's own when it is one (1 to 65535), else the mailer's Port (probe db-mail-rewrite-doubts).
+
+### `takesOfferedTls(): bool`
+
+Whether a server's STARTTLS offer is taken on its own: never for localhost, nor without OpenSSL.
+
+### static `serverName(string $configured, ?string $serverName): string`
+
+The name the mailer gives itself (serverHostname): the configured
+Hostname, else the request's SERVER_NAME when one is set (even empty),
+else the machine's; one that is not a valid host is
+localhost.localdomain.
 
 ### static `validHost(mixed $host): bool`
 
@@ -590,7 +625,15 @@ The messages WordPress's mailer subclass loads.
 
 - `@return array<string, string>`
 
-Internals: `set()` (private, line 41)
+### static `word(array $language, string $key): string`
+
+One message by key from a loaded set (PHPMailer::lang): the key itself
+when the set lacks it; a failed SMTP connect points to the
+troubleshooting page.
+
+- `@param array<string, string> $language`
+
+Internals: `set()` (private, line 54)
 
 
 ## Message
@@ -690,6 +733,21 @@ The path's four parts.
 - `@return array{dirname: string, basename: string, extension: string, filename: string}`
 
 
+## SendmailLine
+
+`final class Minn\Mail\SendmailLine` · `public/minn/src/Minn/Mail/SendmailLine.php`
+
+The command a mailer pipes a message to for sendmail and qmail (probe
+db-mail-rewrite-doubts): sendmail reads the recipients from the message
+and ignores lone dots (-i -t), qmail takes nothing more; the envelope
+sender goes as -f only when it is a valid, shell-safe address, whatever
+the sendmail options say.
+
+### static `command(string $path, string $kind, ?string $sender): string`
+
+The command line for a mailer kind ("sendmail" or "qmail"), the sender given only when it may be passed.
+
+
 ## Smime
 
 `final class Minn\Mail\Smime` · `public/minn/src/Minn/Mail/Smime.php`
@@ -703,6 +761,11 @@ back as new MIME headers (multipart/signed) and the signed body.
 The signed entity's MIME headers and body, or null when signing fails.
 
 - `@return array{0: string, 1: string}|null`
+
+### static `entityHeaders(string $mimeHeaders, string $body): string`
+
+The MIME headers of the entity that is signed: a multipart entity whose
+body is 7-bit clean is not declared 8bit (probe db-mail-rewrite-doubts).
 
 
 ## Smtp

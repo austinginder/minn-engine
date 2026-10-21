@@ -211,7 +211,12 @@ final readonly class PostsController
         if ($row->status !== 'publish' && !$this->caller->can('read_post', $postId)) {
             throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
         }
-        return self::withAlternate(Reply::item($this->object->view($row, $fields), $fields), $row);
+        // A protected post's password opens its content; a wrong one is refused.
+        $password = $request->query['password'] ?? null;
+        if ($row->isProtected() && is_string($password) && $password !== '' && $password !== $row->password) {
+            throw new RestError('rest_post_incorrect_password', 'Incorrect post password.', 403);
+        }
+        return self::withAlternate(Reply::item($this->object->viewWithPassword($row, $password, $fields), $fields), $row);
     }
 
     /** A viewable type's single post points at its page on the site. */

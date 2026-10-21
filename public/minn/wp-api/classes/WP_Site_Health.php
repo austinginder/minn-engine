@@ -42,9 +42,7 @@ class WP_Site_Health
         add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action('site_health_tab_content', [$this, 'show_site_health_tab']);
         add_action('wp_site_health_scheduled_check', [$this, 'wp_cron_scheduled_check']);
-        if (!wp_installing() && !wp_next_scheduled('wp_site_health_scheduled_check')) {
-            wp_schedule_event(time() + DAY_IN_SECONDS, 'weekly', 'wp_site_health_scheduled_check');
-        }
+        $this->maybe_create_scheduled_event();
     }
 
     public function show_site_health_tab($tab)
@@ -263,10 +261,10 @@ class WP_Site_Health
         return [];
     }
 
+    /** Every test the screen runs, through site_status_tests (probe blocks-rest-widget-doubts). */
     public static function get_tests()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Site_Health::get_tests');
-        return null;
+        return Minn\Admin\SiteHealthTests::all(self::get_instance(), static fn (string $test): string => rest_url('wp-site-health/v1/tests/' . $test));
     }
 
     /** The Site Health screen's body class; any other screen's classes pass through. */
@@ -312,10 +310,10 @@ class WP_Site_Health
         return null;
     }
 
+    /** The weekly check scheduled, unless the site is installing or it is already. */
     public function maybe_create_scheduled_event()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Site_Health::maybe_create_scheduled_event');
-        return null;
+        return wp_installing() ? null : Minn\Admin\SiteHealthTests::scheduleWeeklyCheck();
     }
 
     public function wp_cron_scheduled_check()

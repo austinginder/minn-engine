@@ -1,0 +1,1000 @@
+[
+    [
+        "wp_list_categories: the \"all\" link of a type-only taxonomy, and of category",
+        [
+            "SITE/zzdoubtet-cpts/",
+            "SITE/"
+        ]
+    ],
+    [
+        "default_term over another stored term: stored is the default, term count; again",
+        [
+            [
+                true,
+                2
+            ],
+            true,
+            2
+        ]
+    ],
+    [
+        "tag cloud labels: callback with topic_count_text",
+        [
+            "zzdoubtet a (1 TCT)",
+            "zzdoubtet b (3 TCTs)"
+        ]
+    ],
+    [
+        "tag cloud labels: single_text and multiple_text",
+        [
+            "zzdoubtet a (single)",
+            "zzdoubtet b (multiple)"
+        ]
+    ],
+    [
+        "tag cloud labels: single_text with a placeholder",
+        [
+            "zzdoubtet a (1 one)",
+            "zzdoubtet b (3 many)"
+        ]
+    ],
+    [
+        "tag cloud labels: single_text with a callback",
+        [
+            "zzdoubtet a (CB 1)",
+            "zzdoubtet b (CB 3)"
+        ]
+    ],
+    [
+        "tag cloud labels: default_topic_count_text as the callback",
+        [
+            "zzdoubtet a (1 item)",
+            "zzdoubtet b (3 items)"
+        ]
+    ],
+    [
+        "_split_shared_term with another term's row: ids, objects",
+        [
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "wp_term_is_shared with a row in an unregistered taxonomy, and of a plain term",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "_split_shared_term of the last shared term: split, finished_splitting_shared_terms",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "_update_term_count_on_transition_post_status, publish and private counted",
+        [
+            "private<-publish:0",
+            "publish<-private:0",
+            "draft<-private:2",
+            "private<-draft:2",
+            "draft<-pending:0"
+        ]
+    ],
+    [
+        "_wp_reset_invalid_menu_item_parent of an object, a string, a number, null, an array",
+        [
+            [
+                "object",
+                "stdClass"
+            ],
+            "abc",
+            5,
+            null,
+            {
+                "ID": 3,
+                "menu_item_parent": 0
+            }
+        ]
+    ],
+    [
+        "clean_object_term_cache: caches, last_changed moved, fired; and with invalidation suspended",
+        [
+            [
+                [
+                    false,
+                    false,
+                    {
+                        "zz": [
+                            "1"
+                        ]
+                    }
+                ],
+                true,
+                1
+            ],
+            [
+                [
+                    [
+                        7
+                    ],
+                    [
+                        8
+                    ],
+                    {
+                        "zz": [
+                            "1"
+                        ]
+                    }
+                ],
+                false,
+                0
+            ]
+        ]
+    ],
+    [
+        "get_category as ARRAY_A: keys",
+        [
+            "term_id",
+            "name",
+            "slug",
+            "term_group",
+            "term_taxonomy_id",
+            "taxonomy",
+            "description",
+            "parent",
+            "count",
+            "filter",
+            "cat_ID",
+            "category_count",
+            "category_description",
+            "cat_name",
+            "category_nicename",
+            "category_parent"
+        ]
+    ],
+    [
+        "get_object_taxonomies of an attachment: names, objects",
+        [
+            [
+                "zzdoubtet_cnt",
+                "zzdoubtet_img"
+            ],
+            [
+                "zzdoubtet_cnt",
+                "zzdoubtet_img"
+            ]
+        ]
+    ],
+    [
+        "get_tag_link of the default category and a custom term",
+        [
+            "SITE/category/uncategorized/",
+            true,
+            "",
+            ""
+        ]
+    ],
+    [
+        "get_tags: an invalid taxonomy, nothing found, what the filter heard",
+        [
+            [
+                "WP_Error",
+                "invalid_taxonomy"
+            ],
+            [],
+            [
+                "error"
+            ]
+        ]
+    ],
+    [
+        "get_taxonomy_labels with helps and no_tagcloud: flat, hierarchical",
+        [
+            [
+                "HELPS",
+                "NOTC",
+                "No tags"
+            ],
+            [
+                "HELPS",
+                "NOTC",
+                "No categories"
+            ]
+        ]
+    ],
+    [
+        "register_taxonomy with helps and no_tagcloud",
+        [
+            "HELPS2",
+            "NOTC2"
+        ]
+    ],
+    [
+        "get_taxonomy_labels: a filter giving the name only",
+        [
+            31,
+            "ZZ Labs3",
+            "Tag",
+            "Add Tag",
+            "Tags",
+            "All Tags"
+        ]
+    ],
+    [
+        "get_term_parents_list with link and inclusive as \"false\", false, \"0\", \"no\"",
+        [
+            "zzdoubtet Parent/zzdoubtet Child/",
+            "zzdoubtet Parent/zzdoubtet Child/",
+            "zzdoubtet Parent/zzdoubtet Child/",
+            "<a href=\"SITE/zzdoubtet_h/zzdoubtet-parent/\">zzdoubtet Parent</a>/<a href=\"SITE/zzdoubtet_h/zzdoubtet-child/\">zzdoubtet Child</a>/<a href=\"SITE/zzdoubtet_h/zzdoubtet-grand/\">zzdoubtet Grand</a>/"
+        ]
+    ],
+    [
+        "get_the_category_by_ID of a tag, a custom term, 0, a missing id, a filtered error",
+        [
+            "zzdoubtet tag",
+            "zzdoubtet Parent",
+            [
+                "WP_Error",
+                "invalid_term"
+            ],
+            "",
+            [
+                "WP_Error",
+                "zzdoubtet_err"
+            ]
+        ]
+    ],
+    [
+        "get_the_category_list with no categories, and what the_category heard",
+        [
+            "Uncategorized",
+            [
+                [
+                    "Uncategorized",
+                    ", ",
+                    ""
+                ]
+            ]
+        ]
+    ],
+    [
+        "get_the_category_list and get_category_link under plain permalinks",
+        [
+            "<a href=\"SITE/category/uncategorized/\" rel=\"category tag\">Uncategorized</a>",
+            "SITE/category/uncategorized/"
+        ]
+    ],
+    [
+        "get_the_category_list and get_category_link with the rewrite set up again under plain permalinks",
+        [
+            false,
+            "<a href=\"SITE/?cat=ID\" rel=\"category\">Uncategorized</a>",
+            "SITE/?cat=ID",
+            true
+        ]
+    ],
+    [
+        "get_the_taxonomies: own template, passed template, three tags",
+        [
+            "ZZT Tags => [zzdoubtet a|SITE/zzdoubtet_tt/zzdoubtet-a/], [zzdoubtet b|SITE/zzdoubtet_tt/zzdoubtet-b/], and [zzdoubtet c|SITE/zzdoubtet_tt/zzdoubtet-c/]",
+            "ZZT Tags => [zzdoubtet a|SITE/zzdoubtet_tt/zzdoubtet-a/], [zzdoubtet b|SITE/zzdoubtet_tt/zzdoubtet-b/], and [zzdoubtet c|SITE/zzdoubtet_tt/zzdoubtet-c/]",
+            "Tags: <a href=\"SITE/tag/zzdoubtet-x1/\">zzdoubtet x1</a>, <a href=\"SITE/tag/zzdoubtet-x2/\">zzdoubtet x2</a>, and <a href=\"SITE/tag/zzdoubtet-x3/\">zzdoubtet x3</a>."
+        ]
+    ],
+    [
+        "get_the_taxonomies: two tags",
+        "Tags: <a href=\"SITE/tag/zzdoubtet-x1/\">zzdoubtet x1</a> and <a href=\"SITE/tag/zzdoubtet-x2/\">zzdoubtet x2</a>."
+    ],
+    [
+        "get_the_taxonomies of an attachment",
+        [
+            "zzdoubtet_img"
+        ]
+    ],
+    [
+        "is_object_in_term: \"2024\" by name, \"2025\" by slug, int 2024, its id as a string, object 0, \"abc\"",
+        [
+            true,
+            true,
+            false,
+            true,
+            [
+                "WP_Error",
+                "invalid_object"
+            ],
+            [
+                "WP_Error",
+                "invalid_object"
+            ]
+        ]
+    ],
+    [
+        "term_description: by id and object, and the filters heard",
+        [
+            [
+                "<p>zz desc</p>\n [tax]",
+                "<p>zz desc</p>\n [tax]"
+            ],
+            [
+                [
+                    "term_description",
+                    "<p>zz desc</p>\n",
+                    3,
+                    "zzdoubtet_s1",
+                    "display"
+                ],
+                [
+                    "zzdoubtet_s1_description",
+                    "<p>zz desc</p>\n",
+                    2,
+                    "display"
+                ],
+                [
+                    "term_description",
+                    "<p>zz desc</p>\n",
+                    3,
+                    "zzdoubtet_s1",
+                    "display"
+                ],
+                [
+                    "zzdoubtet_s1_description",
+                    "<p>zz desc</p>\n",
+                    2,
+                    "display"
+                ]
+            ]
+        ]
+    ],
+    [
+        "the_tags with the_tags and term_links-post_tag filters",
+        "[the_tags:Tags: <a href rel=\"tag\">zzdoubtet x1</a>, <a href rel=\"tag\">zzdoubtet x2</a>, EXTRA][the_tags:B:<a href rel=\"tag\">zzdoubtet x1</a>|<a href rel=\"tag\">zzdoubtet x2</a>|EXTRA:A]"
+    ],
+    [
+        "update_object_term_cache: A s1, A tpl, B s1, B tpl",
+        [
+            [
+                "id"
+            ],
+            [
+                "id",
+                "id",
+                "id"
+            ],
+            [
+                "zzdoubtet-sentinel"
+            ],
+            []
+        ]
+    ],
+    [
+        "get_object_term_cache after: B s1, A tpl names",
+        [
+            [],
+            [
+                "zzdoubtet tpl 1",
+                "zzdoubtet tpl 2",
+                "zzdoubtet tpl 3"
+            ]
+        ]
+    ],
+    [
+        "get_object_term_cache after the terms change",
+        false
+    ],
+    [
+        "wp_check_term_hierarchy_for_loops over a loop above: result, parents of L1, L2, L3 (as names)",
+        [
+            true,
+            [
+                "L2",
+                0,
+                0
+            ],
+            0
+        ]
+    ],
+    [
+        "wp_delete_nav_menu of a ghost menu, and of a real one, and the action count",
+        [
+            false,
+            true,
+            1,
+            false
+        ]
+    ],
+    [
+        "wp_dropdown_categories on a category archive: the selected option",
+        "viewed"
+    ],
+    [
+        "wp_dropdown_categories hierarchical with counts",
+        [
+            [
+                "dp",
+                "1"
+            ],
+            [
+                "dc",
+                "1"
+            ],
+            [
+                "dg",
+                "1"
+            ]
+        ]
+    ],
+    [
+        "wp_generate_tag_cloud order RAND, orderby random, orderby count, orderby zz",
+        [
+            "shuffled",
+            [
+                "ecadb"
+            ],
+            [
+                "ecadb"
+            ],
+            [
+                "ecadb"
+            ]
+        ]
+    ],
+    [
+        "wp_generate_tag_cloud of no tags: flat, array, filter runs",
+        [
+            "",
+            [],
+            0
+        ]
+    ],
+    [
+        "has-children class kept at depths 0, 1, 2, 5 for depth -1; depth 0; depth 2",
+        [
+            [
+                false,
+                false,
+                false,
+                false
+            ],
+            true,
+            [
+                true,
+                false
+            ]
+        ]
+    ],
+    [
+        "wp_tag_cloud edit links",
+        [
+            "SITE/wp-admin/term.php?taxonomy=zzdoubtet_cloud&#038;tag_ID=ID&#038;post_type=post",
+            "SITE/wp-admin/term.php?taxonomy=zzdoubtet_cloud&#038;tag_ID=ID&#038;post_type=post",
+            "SITE/wp-admin/term.php?taxonomy=zzdoubtet_cloud&#038;tag_ID=ID&#038;post_type=post"
+        ]
+    ],
+    [
+        "wp_tag_cloud with search, slug, name__like",
+        [
+            [
+                "beta"
+            ],
+            [
+                "gamma"
+            ],
+            [
+                "alpha"
+            ]
+        ]
+    ],
+    [
+        "wp_tag_cloud format array echoed: printed, returned",
+        [
+            "",
+            3
+        ]
+    ],
+    [
+        "wp_get_current_user: a swapped global, then none (id, global set)",
+        [
+            true,
+            0,
+            true
+        ]
+    ],
+    [
+        "count_many_users_posts by viewer: all u1, u2, public u1, u2",
+        {
+            "nobody": [
+                1,
+                0,
+                1,
+                0
+            ],
+            "u1": [
+                2,
+                0,
+                1,
+                0
+            ],
+            "u2": [
+                1,
+                1,
+                1,
+                0
+            ],
+            "admin": [
+                2,
+                1,
+                1,
+                0
+            ]
+        }
+    ],
+    [
+        "count_users deltas (total, none, subscriber, the unknown role): time, memory",
+        {
+            "time": [
+                2,
+                1,
+                0,
+                null
+            ],
+            "memory": [
+                2,
+                1,
+                0,
+                1
+            ]
+        }
+    ],
+    [
+        "get_role is the roles object's role",
+        [
+            true,
+            true,
+            true,
+            null
+        ]
+    ],
+    [
+        "retrieve_password from the posted user_login: unknown, known, mail to",
+        [
+            [
+                "WP_Error",
+                "invalidcombo"
+            ],
+            true,
+            [
+                "zzdoubteu_one@example.com"
+            ]
+        ]
+    ],
+    [
+        "sanitize_user_field user_url, edit and display",
+        [
+            [
+                "http://ex.com/a%20b&quot;&lt;x&gt;",
+                "http://ex.com/a%20bx"
+            ],
+            [
+                "http://x.com/a&quot;b",
+                "http://x.com/ab"
+            ],
+            [
+                "",
+                ""
+            ],
+            [
+                "https://ok.example/p?q=1&#038;r=2",
+                "https://ok.example/p?q=1&#038;r=2"
+            ],
+            [
+                "http://ex.com/a&#039;b",
+                "http://ex.com/a&#039;b"
+            ]
+        ]
+    ],
+    [
+        "the email change mail and the password hint through gettext; mail to",
+        [
+            [
+                "Howdy ###USERNAME###",
+                "Hint: The password s"
+            ],
+            [
+                "zzdoubteu_new@example.com"
+            ]
+        ]
+    ],
+    [
+        "wp_authenticate_cookie with auth_secure_cookie: a bad secure cookie, a bad plain one",
+        [
+            [
+                "WP_Error",
+                "expired_session"
+            ],
+            null
+        ]
+    ],
+    [
+        "wp_authenticate_username_password after an earlier error, empty fields",
+        [
+            "zz_prev"
+        ]
+    ],
+    [
+        "wp_schedule_update_user_counts, then while installing",
+        [
+            [
+                "wp_update_user_counts",
+                "twicedaily"
+            ]
+        ]
+    ],
+    [
+        "wp_signon: cookie step before, during, after; signed in; auth_secure_cookie after",
+        [
+            false,
+            30,
+            30,
+            true,
+            true
+        ]
+    ],
+    [
+        "filter_block_core_template_part_attributes by context",
+        [
+            "header",
+            "div",
+            "",
+            "",
+            "",
+            "header",
+            null,
+            "",
+            "script"
+        ]
+    ],
+    [
+        "filter_block_kses_value of a template part, and filter_block_content",
+        [
+            {
+                "tagName": "",
+                "x": {
+                    "tagName": ""
+                },
+                "y": "aside"
+            },
+            {
+                "tagName": "script"
+            },
+            "<!-- wp:template-part {\"tagName\":\"\",\"slug\":\"zz\"} /-->"
+        ]
+    ],
+    [
+        "wp_has_border_feature_support",
+        [
+            [
+                false,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false
+            ],
+            [
+                true,
+                false,
+                false,
+                false
+            ],
+            [
+                false,
+                true,
+                false,
+                true,
+                false
+            ],
+            true
+        ]
+    ],
+    [
+        "get_block_wrapper_attributes with a support giving other attributes",
+        "style=\"color:red\" class=\"wp-block-zzdoubteb-wrap zz-sup\" id=\"eid\" aria-label=\"sal\" data-x=\"1\" title=\"ET\""
+    ],
+    [
+        "wp_global_styles_render_svg_filters on the front, an admin screen, the block editor (printed)",
+        [
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "register_block_script_module_id without an asset file: ids, versions",
+        [
+            "zzdoubteb-mod-view-script-module",
+            "zzdoubteb-mod2-view-script-module",
+            [
+                "1.2.3",
+                "7.1.3"
+            ]
+        ]
+    ],
+    [
+        "register_block_script_handle naming its own handle; with the generated one taken",
+        [
+            "zzdoubteb-custom-handle",
+            [
+                "3",
+                "index.js"
+            ],
+            "zzdoubteb-pre-custom",
+            [
+                "3",
+                "index.js"
+            ],
+            "none"
+        ]
+    ],
+    [
+        "register_block_style_handle: path, rtl, suffix; ltr then rtl",
+        [
+            [
+                "style.css",
+                false,
+                false
+            ],
+            [
+                "style-rtl.css",
+                "replace",
+                ".min"
+            ]
+        ]
+    ],
+    [
+        "register_block_type_from_metadata: a name from args, the strings asked in context, the typography supports, the migration filter",
+        [
+            "zzdoubteb/noname",
+            [
+                [
+                    "ZZ Title",
+                    "block title"
+                ],
+                [
+                    "ZZ Desc",
+                    "block description"
+                ],
+                [
+                    "zzkey",
+                    "block keyword"
+                ]
+            ],
+            {
+                "typography": {
+                    "fontSize": true,
+                    "lineHeight": true
+                }
+            },
+            10
+        ]
+    ],
+    [
+        "term data binding: navigation link by attributes, submenu by tag, both given, a paragraph, count and parent",
+        [
+            "zzdoubteb Cat",
+            "zzdoubteb Tag",
+            "zzdoubteb Cat",
+            null,
+            "zzdoubteb-tag",
+            null,
+            null
+        ]
+    ],
+    [
+        "resolve_pattern_blocks inside a group: inner content, serialized",
+        [
+            [
+                "<div class=\"wp-block-group\">",
+                null,
+                null,
+                null,
+                "</div>"
+            ],
+            "<!-- wp:group --><div class=\"wp-block-group\"><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>b</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>c</p><!-- /wp:paragraph --></div><!-- /wp:group -->"
+        ]
+    ],
+    [
+        "_resolve_template_for_new_post: admin by page_id, admin by p, visitor",
+        [
+            "auto-draft",
+            "auto-draft",
+            ""
+        ]
+    ],
+    [
+        "apply_block_hooks_to_content with no context: with a global post, without",
+        [
+            "WP_Post",
+            "NULL"
+        ]
+    ],
+    [
+        "a single-instance hooked block: two anchors, one there already, one nested, marked",
+        [
+            1,
+            1,
+            1,
+            1
+        ]
+    ],
+    [
+        "insert_hooked_blocks_into_rest_response: rendered empty, missing, given",
+        [
+            [
+                "",
+                1
+            ],
+            [
+                "missing",
+                1
+            ],
+            [
+                "rebuilt",
+                1
+            ]
+        ]
+    ],
+    [
+        "update_ignored_hooked_blocks_postmeta without an id: navigation, post",
+        [
+            "<!-- wp:paragraph --><p>u</p><!-- /wp:paragraph -->",
+            "<!-- wp:paragraph --><p>u</p><!-- /wp:paragraph -->"
+        ]
+    ],
+    [
+        "inject_ignored_hooked_blocks_metadata_attributes: deprecated, the template the hooks heard, the content",
+        [
+            [
+                [
+                    "inject_ignored_hooked_blocks_metadata_attributes",
+                    "6.5.3"
+                ]
+            ],
+            [
+                [
+                    "zzdoubteb-pending",
+                    "Pending Title",
+                    "twentytwentyfive//zzdoubteb-pending"
+                ]
+            ],
+            "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"zzdoubteb/single\"]}} --><p>t</p><!-- /wp:paragraph -->"
+        ]
+    ],
+    [
+        "get_block_templates: saved rows of two dates",
+        [
+            "zzdoubteb-dated-new",
+            "zzdoubteb-dated-old"
+        ]
+    ],
+    [
+        "get_block_templates for pages, for posts",
+        [
+            [
+                "zzdoubteb-inject",
+                "zzdoubteb-custom",
+                "page-no-title"
+            ],
+            [
+                "zzdoubteb-inject",
+                "zzdoubteb-custom",
+                "zzdoubteb-plug"
+            ]
+        ]
+    ],
+    [
+        "get_block_templates: the site's own, in order, custom or not",
+        [
+            [
+                "zzdoubteb-inject",
+                true,
+                "custom"
+            ],
+            [
+                "zzdoubteb-custom",
+                true,
+                "custom"
+            ],
+            [
+                "page-zzdoubteb",
+                false,
+                "custom"
+            ],
+            [
+                "zzdoubteb-plug",
+                true,
+                "plugin"
+            ]
+        ]
+    ],
+    [
+        "get_block_template of another theme's saved template",
+        [
+            "zzdoubteb-other",
+            "zzdoubteb-other-theme",
+            "custom"
+        ]
+    ],
+    [
+        "get_block_template: the file template filters heard",
+        [
+            [
+                "pre_get_block_file_template",
+                "page-no-title"
+            ],
+            [
+                "get_block_file_template",
+                "page-no-title"
+            ],
+            [
+                "pre_get_block_file_template",
+                "header"
+            ],
+            [
+                "get_block_file_template",
+                "header"
+            ],
+            [
+                "pre_get_block_file_template",
+                "zzdoubteb-plug"
+            ],
+            [
+                "get_block_file_template",
+                "zzdoubteb-plug"
+            ]
+        ]
+    ],
+    [
+        "a saved plugin template: from the post, fetched, listed",
+        [
+            [
+                "zzdoubteb",
+                "Plug Title",
+                "Plug Desc",
+                "plugin"
+            ],
+            [
+                "zzdoubteb",
+                "Plug Title",
+                "Plug Desc",
+                "plugin"
+            ],
+            [
+                [
+                    "zzdoubteb",
+                    "Plug Title",
+                    "Plug Desc",
+                    "plugin"
+                ]
+            ]
+        ]
+    ],
+    [
+        "hooked block markers in saved templates: listed, fetched",
+        {
+            "zzdoubteb-custom": [
+                2,
+                2
+            ],
+            "zzdoubteb-part": [
+                2,
+                2
+            ]
+        }
+    ]
+]

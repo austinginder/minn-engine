@@ -1,0 +1,2432 @@
+[
+    [
+        "classic fallback: a menu in main (newest wins)",
+        "zzdoubth-menu-b"
+    ],
+    [
+        "classic fallback: a menu in menu-1",
+        "zzdoubth-menu-b"
+    ],
+    [
+        "classic fallback: a menu in primary",
+        "zzdoubth-menu-a"
+    ],
+    [
+        "classic fallback: a menu slugged primary before a newer one",
+        "primary"
+    ],
+    [
+        "classic fallback: deprecation notices",
+        [
+            [
+                "block_core_navigation_get_classic_menu_fallback",
+                "WP_Navigation_Fallback::get_classic_menu_fallback",
+                "6.3.0"
+            ],
+            [
+                "block_core_navigation_get_classic_menu_fallback",
+                "WP_Navigation_Fallback::get_classic_menu_fallback",
+                "6.3.0"
+            ],
+            [
+                "block_core_navigation_get_classic_menu_fallback",
+                "WP_Navigation_Fallback::get_classic_menu_fallback",
+                "6.3.0"
+            ],
+            [
+                "block_core_navigation_get_classic_menu_fallback",
+                "WP_Navigation_Fallback::get_classic_menu_fallback",
+                "6.3.0"
+            ]
+        ]
+    ],
+    [
+        "fallback blocks: no navigation, a classic menu",
+        [
+            [
+                "core/navigation-submenu"
+            ],
+            [
+                [
+                    "zzdoubth-menu-a",
+                    "zzdoubth-menu-a",
+                    "publish",
+                    "<!-- wp:navigation-submenu {\"className\":\" menu-item menu-item-type-custom menu-item-object-custom\",\"description\":\"\",\"id\":null,\"kind\":\"custom\",\"label\":\"zzdoubth link\",\"opensInNewTab\":false,\"rel\":null,\"title\":\"\",\"type\":\"custom\",\"url\":\"https://example.com/zz\"} --><!-- wp:navigation-link {\"className\":\" menu-item menu-item-type-custom menu-item-object-custom\",\"description\":\"\",\"id\":null,\"kind\":\"custom\",\"label\":\"zzdoubth child\",\"opensInNewTab\":false,\"rel\":null,\"title\":\"\",\"type\":\"custom\",\"url\":\"https://example.com/zz/child\"} /--><!-- /wp:navigation-submenu -->"
+                ]
+            ],
+            []
+        ]
+    ],
+    [
+        "maybe_use_classic_menu_fallback with an empty menu",
+        [
+            null,
+            [],
+            [
+                [
+                    "block_core_navigation_maybe_use_classic_menu_fallback",
+                    "WP_Navigation_Fallback::create_classic_menu_fallback",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_get_classic_menu_fallback",
+                    "WP_Navigation_Fallback::get_classic_menu_fallback",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_get_classic_menu_fallback_blocks",
+                    "WP_Navigation_Fallback::get_classic_menu_fallback_blocks",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_parse_blocks_from_menu_items",
+                    "WP_Navigation_Fallback::parse_blocks_from_menu_items",
+                    "6.3.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "fallback blocks: no navigation, an empty classic menu",
+        [
+            [
+                {
+                    "blockName": "core/page-list",
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": "",
+                    "innerContent": []
+                }
+            ],
+            [
+                [
+                    "Navigation",
+                    "navigation-2",
+                    "publish",
+                    "<!-- wp:page-list /-->"
+                ]
+            ]
+        ]
+    ],
+    [
+        "fallback blocks: page list not registered",
+        [
+            [],
+            [
+                [
+                    "Navigation",
+                    "navigation-2",
+                    "publish",
+                    ""
+                ]
+            ]
+        ]
+    ],
+    [
+        "fallback blocks: told not to make one",
+        [
+            [
+                {
+                    "blockName": "core/page-list",
+                    "innerContent": [],
+                    "attrs": []
+                }
+            ],
+            []
+        ]
+    ],
+    [
+        "maybe_use_classic_menu_fallback with items",
+        [
+            [
+                "zzdoubth-menu-a",
+                "publish"
+            ],
+            [
+                [
+                    "zzdoubth-menu-a",
+                    "zzdoubth-menu-a",
+                    "publish",
+                    "<!-- wp:navigation-submenu {\"className\":\" menu-item menu-item-type-custom menu-item-object-custom\",\"description\":\"\",\"id\":null,\"kind\":\"custom\",\"label\":\"zzdoubth link\",\"opensInNewTab\":false,\"rel\":null,\"title\":\"\",\"type\":\"custom\",\"url\":\"https://example.com/zz\"} --><!-- wp:navigation-link {\"className\":\" menu-item menu-item-type-custom menu-item-object-custom\",\"description\":\"\",\"id\":null,\"kind\":\"custom\",\"label\":\"zzdoubth child\",\"opensInNewTab\":false,\"rel\":null,\"title\":\"\",\"type\":\"custom\",\"url\":\"https://example.com/zz/child\"} /--><!-- /wp:navigation-submenu -->"
+                ]
+            ],
+            [
+                [
+                    "block_core_navigation_maybe_use_classic_menu_fallback",
+                    "WP_Navigation_Fallback::create_classic_menu_fallback",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_get_classic_menu_fallback",
+                    "WP_Navigation_Fallback::get_classic_menu_fallback",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_get_classic_menu_fallback_blocks",
+                    "WP_Navigation_Fallback::get_classic_menu_fallback_blocks",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_parse_blocks_from_menu_items",
+                    "WP_Navigation_Fallback::parse_blocks_from_menu_items",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_parse_blocks_from_menu_items",
+                    "WP_Navigation_Fallback::parse_blocks_from_menu_items",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_get_most_recently_published_navigation",
+                    "WP_Navigation_Fallback::get_most_recently_published_navigation",
+                    "6.3.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "classic menu blocks and parsed items: deprecation notices",
+        [
+            "markup",
+            2,
+            [
+                [
+                    "block_core_navigation_get_classic_menu_fallback_blocks",
+                    "WP_Navigation_Fallback::get_classic_menu_fallback_blocks",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_parse_blocks_from_menu_items",
+                    "WP_Navigation_Fallback::parse_blocks_from_menu_items",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_parse_blocks_from_menu_items",
+                    "WP_Navigation_Fallback::parse_blocks_from_menu_items",
+                    "6.3.0"
+                ],
+                [
+                    "block_core_navigation_parse_blocks_from_menu_items",
+                    "WP_Navigation_Fallback::parse_blocks_from_menu_items",
+                    "6.3.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "most recent navigation with posts_where hiding the newest",
+        "zzdoubth nav one"
+    ],
+    [
+        "most recent navigation",
+        "zzdoubth nav two"
+    ],
+    [
+        "fallback blocks: the newest navigation is empty",
+        [
+            [
+                "core/page-list"
+            ],
+            []
+        ]
+    ],
+    [
+        "get_post_ids",
+        [
+            5,
+            7
+        ]
+    ],
+    [
+        "from_block_get_post_ids of the submenu",
+        [
+            5,
+            7,
+            5
+        ]
+    ],
+    [
+        "get_post_ids keeps the first keys",
+        {
+            "0": 5,
+            "2": 7
+        }
+    ],
+    [
+        "typographic presets",
+        [
+            {
+                "textDecoration": "line-through",
+                "fontStyle": "italic",
+                "fontWeight": "700",
+                "textTransform": "uppercase"
+            },
+            {
+                "textDecoration": "line-through",
+                "fontStyle": "italic",
+                "fontWeight": "700",
+                "textTransform": "uppercase"
+            },
+            {
+                "textDecoration": "underline",
+                "fontStyle": "italic",
+                "fontWeight": "700",
+                "textTransform": "uppercase"
+            },
+            {
+                "textDecoration": "underline",
+                "fontStyle": "italic",
+                "fontWeight": "700",
+                "textTransform": "uppercase"
+            },
+            {
+                "textDecoration": "none",
+                "fontStyle": "italic",
+                "fontWeight": "700",
+                "textTransform": "uppercase"
+            }
+        ]
+    ],
+    [
+        "link and page list colours",
+        {
+            "main only": [
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color",
+                        "has-background",
+                        "has-blue-background-color"
+                    ],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color",
+                        "has-background",
+                        "has-blue-background-color"
+                    ],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color",
+                        "has-background",
+                        "has-blue-background-color"
+                    ],
+                    "inline_styles": "",
+                    "overlay_css_classes": [],
+                    "overlay_inline_styles": ""
+                }
+            ],
+            "main custom only": [
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #111;background-color: #222;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #111;background-color: #222;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #111;background-color: #222;",
+                    "overlay_css_classes": [],
+                    "overlay_inline_styles": ""
+                }
+            ],
+            "style colours": [
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #333;background-color: #444;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #333;background-color: #444;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #333;background-color: #444;",
+                    "overlay_css_classes": [],
+                    "overlay_inline_styles": ""
+                }
+            ],
+            "named and custom": [
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #555;background-color: #666;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #555;background-color: #666;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color",
+                        "has-background",
+                        "has-blue-background-color"
+                    ],
+                    "inline_styles": "",
+                    "overlay_css_classes": [],
+                    "overlay_inline_styles": ""
+                }
+            ],
+            "named and style": [
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color"
+                    ],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color"
+                    ],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color"
+                    ],
+                    "inline_styles": "",
+                    "overlay_css_classes": [],
+                    "overlay_inline_styles": ""
+                }
+            ],
+            "overlay": [
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color"
+                    ],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-green-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "background-color: #888;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color"
+                    ],
+                    "inline_styles": "",
+                    "overlay_css_classes": [
+                        "has-text-color",
+                        "has-green-color",
+                        "has-background"
+                    ],
+                    "overlay_inline_styles": "background-color: #888;"
+                }
+            ],
+            "overlay custom and named": [
+                {
+                    "css_classes": [],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [
+                        "has-text-color"
+                    ],
+                    "inline_styles": "color: #999;"
+                },
+                {
+                    "css_classes": [],
+                    "inline_styles": "",
+                    "overlay_css_classes": [
+                        "has-text-color",
+                        "has-green-color"
+                    ],
+                    "overlay_inline_styles": ""
+                }
+            ],
+            "nothing": [
+                {
+                    "css_classes": [],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [],
+                    "inline_styles": "",
+                    "overlay_css_classes": [],
+                    "overlay_inline_styles": ""
+                }
+            ],
+            "custom and style": [
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #121;background-color: #565;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #121;background-color: #565;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "color: #121;background-color: #565;",
+                    "overlay_css_classes": [],
+                    "overlay_inline_styles": ""
+                }
+            ],
+            "overlay text, main background": [
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background",
+                        "has-blue-background-color"
+                    ],
+                    "inline_styles": "color: #123;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-green-color",
+                        "has-background",
+                        "has-blue-background-color"
+                    ],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-background",
+                        "has-blue-background-color"
+                    ],
+                    "inline_styles": "color: #123;",
+                    "overlay_css_classes": [
+                        "has-text-color",
+                        "has-green-color"
+                    ],
+                    "overlay_inline_styles": ""
+                }
+            ],
+            "overlay background only": [
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color"
+                    ],
+                    "inline_styles": ""
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color",
+                        "has-background"
+                    ],
+                    "inline_styles": "background-color: #abc;"
+                },
+                {
+                    "css_classes": [
+                        "has-text-color",
+                        "has-red-color"
+                    ],
+                    "inline_styles": "",
+                    "overlay_css_classes": [
+                        "has-background"
+                    ],
+                    "overlay_inline_styles": "background-color: #abc;"
+                }
+            ],
+            "style background only": [
+                {
+                    "css_classes": [
+                        "has-background"
+                    ],
+                    "inline_styles": "background-color: #def;"
+                },
+                {
+                    "css_classes": [
+                        "has-background"
+                    ],
+                    "inline_styles": "background-color: #def;"
+                },
+                {
+                    "css_classes": [
+                        "has-background"
+                    ],
+                    "inline_styles": "background-color: #def;",
+                    "overlay_css_classes": [],
+                    "overlay_inline_styles": ""
+                }
+            ]
+        }
+    ],
+    [
+        "link variations order",
+        [
+            "post",
+            "page",
+            "category",
+            "tag",
+            "post_format",
+            "zz_cpt",
+            "zz_tax"
+        ]
+    ],
+    [
+        "should_render",
+        {
+            "page draft, no kind": false,
+            "post draft, no kind": false,
+            "custom draft": true,
+            "taxonomy, a draft id": true,
+            "post-type draft": false,
+            "post-type live": true,
+            "post-type missing": false,
+            "no id": true,
+            "id as a string": false,
+            "custom kind, page type": false,
+            "unknown type, no kind": true,
+            "taxonomy kind, page type": false,
+            "category type, no kind": true,
+            "no kind, no type": true,
+            "post-type kind, custom type": false,
+            "page live, no kind": true,
+            "draft allowed": true,
+            "draft allowed, custom": true,
+            "draft allowed, missing post": false,
+            "filter heard": [
+                [
+                    [
+                        "publish"
+                    ],
+                    {
+                        "id": "draft",
+                        "kind": "post-type"
+                    },
+                    null
+                ],
+                [
+                    [
+                        "publish"
+                    ],
+                    {
+                        "id": "N",
+                        "kind": "post-type"
+                    },
+                    null
+                ]
+            ]
+        }
+    ],
+    [
+        "nested page list: the front page and an empty title",
+        [
+            "<li class=\"wp-block-pages-list__item menu-item-home\"><a class=\"wp-block-pages-list__item__link\" href=\"https://example.com/home\">zzdoubth home</a></li><li class=\"wp-block-pages-list__item current-menu-item\"><a class=\"wp-block-pages-list__item__link\" href=\"https://example.com/empty\" aria-current=\"page\">(no title)</a></li>",
+            "<li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-click zz-o menu-item-home\" style=\"color: red;\"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://example.com/home\">zzdoubth home</a></li><li class=\"wp-block-pages-list__item current-menu-item wp-block-navigation-item open-on-click zz-o\" style=\"color: red;\"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"https://example.com/empty\" aria-current=\"page\">(no title)</a></li>",
+            "<li class=\"wp-block-pages-list__item menu-item-home\"><a class=\"wp-block-pages-list__item__link\" href=\"https://example.com/home\">zzdoubth home</a></li><li class=\"wp-block-pages-list__item current-menu-item\"><a class=\"wp-block-pages-list__item__link\" href=\"https://example.com/empty\" aria-current=\"page\">(no title)</a></li>"
+        ]
+    ],
+    [
+        "parenthesize_plural_exression",
+        [
+            "n==1  ? ( 0 ) : ( 1)",
+            "n==1  ? ( 0 ) : ( 1); x",
+            "n==1  ? ( 0 ) : ( 1)",
+            "n==1  ? ( 0 ) : ( n==2  ? ( 1 ) : ( 2))",
+            "a  ? ( b ) : ( c); d  ? ( e ) : ( f)",
+            "",
+            "n",
+            "n  ? ( 1 ) : ( 0)"
+        ]
+    ],
+    [
+        "Translation_Entry::__construct",
+        [
+            {
+                "is_plural": true,
+                "context": null,
+                "singular": "a",
+                "plural": null,
+                "translations": [],
+                "translator_comments": "",
+                "extracted_comments": "",
+                "references": [],
+                "flags": [],
+                "foo": "bar"
+            },
+            true,
+            {
+                "is_plural": false,
+                "context": "c",
+                "singular": "a",
+                "plural": null,
+                "translations": [],
+                "translator_comments": "",
+                "extracted_comments": "",
+                "references": [],
+                "flags": []
+            },
+            {
+                "is_plural": false,
+                "context": null,
+                "singular": null,
+                "plural": null,
+                "translations": [],
+                "translator_comments": "",
+                "extracted_comments": "",
+                "references": [],
+                "flags": []
+            }
+        ]
+    ],
+    [
+        "Translation_Entry::merge_with",
+        [
+            {
+                "0": "a",
+                "1": "b",
+                "3": "c"
+            },
+            {
+                "0": "r1",
+                "1": "r2",
+                "3": "r3"
+            },
+            "xy"
+        ]
+    ],
+    [
+        "translate and translate_plural",
+        {
+            "Translations": [
+                [
+                    "",
+                    "",
+                    "none",
+                    "F",
+                    "missing"
+                ],
+                [
+                    [
+                        "uno",
+                        "",
+                        "tres",
+                        "four",
+                        "nope"
+                    ],
+                    [
+                        "",
+                        "dos",
+                        "threes",
+                        "fours",
+                        "nopes"
+                    ]
+                ]
+            ],
+            "MO": [
+                [
+                    "",
+                    "",
+                    "none",
+                    "F",
+                    "missing"
+                ],
+                [
+                    [
+                        "uno",
+                        "",
+                        "tres",
+                        "four",
+                        "nope"
+                    ],
+                    [
+                        "",
+                        "dos",
+                        "threes",
+                        "fours",
+                        "nopes"
+                    ]
+                ]
+            ],
+            "Gettext_Translations": [
+                [
+                    "",
+                    "",
+                    "none",
+                    "F",
+                    "missing"
+                ],
+                [
+                    [
+                        "uno",
+                        "",
+                        "tres",
+                        "four",
+                        "nope"
+                    ],
+                    [
+                        "",
+                        "dos",
+                        "threes",
+                        "fours",
+                        "nopes"
+                    ]
+                ]
+            ]
+        }
+    ],
+    [
+        "MO::export with overrides, and plain",
+        [
+            149,
+            "3hIElQAAAAADAAAAHAAAADQAAAAAAAAATAAAAAAAAABMAAAABQAAAE0AAAAMAAAAUwAAACUAAABgAAAABQAAAIYAAAAIAAAAjAAAAAB6em86YgB6em86Y3R4BGEAYXMAWC1aejogMQpQcm9qZWN0LUlkLVZlcnNpb246IHp6ZG91YnRoCgB6enQ6QgB6enQ6QQBBcwA=",
+            125,
+            "a59b9ef0d4caeb8248ede38472b069d9"
+        ]
+    ],
+    [
+        "delete_usermeta",
+        [
+            [
+                "0",
+                true,
+                [],
+                [
+                    [
+                        "delete_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "0",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "deleted_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "0",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                " x ",
+                true,
+                [
+                    "a",
+                    "b"
+                ],
+                [
+                    [
+                        "delete_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "x",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "deleted_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "x",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                "missing",
+                true,
+                [
+                    "a",
+                    "b"
+                ],
+                [
+                    [
+                        "delete_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "missing",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "deleted_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "missing",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                "",
+                true,
+                [],
+                [
+                    [
+                        "delete_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "deleted_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                [
+                    "z"
+                ],
+                true,
+                [
+                    "a",
+                    "s:8:\"s:1:\"z\";\";"
+                ],
+                [
+                    [
+                        "delete_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "a:1:{i:0;s:1:\"z\";}",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "deleted_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "a:1:{i:0;s:1:\"z\";}",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                "b",
+                true,
+                [
+                    "a"
+                ],
+                [
+                    [
+                        "delete_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "b",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "deleted_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "b",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                null,
+                true,
+                [],
+                [
+                    [
+                        "delete_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "deleted_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "update_usermeta",
+        [
+            [
+                "c",
+                true,
+                [
+                    "c",
+                    "c"
+                ],
+                [
+                    [
+                        "update_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "c",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "updated_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "c",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                "a",
+                false,
+                [
+                    "a"
+                ],
+                [
+                    [
+                        "update_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "a",
+                        "string",
+                        "cached"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "arr": 1
+                },
+                true,
+                [
+                    "a:1:{s:3:\"arr\";i:1;}"
+                ],
+                [
+                    [
+                        "update_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "a:1:{s:3:\"arr\";i:1;}",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "updated_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "a:1:{s:3:\"arr\";i:1;}",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                "new",
+                true,
+                [
+                    "new"
+                ],
+                [
+                    [
+                        "added_usermeta",
+                        "new row",
+                        "zzdoubth_k",
+                        "new",
+                        "integer",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                "",
+                true,
+                [],
+                [
+                    [
+                        "delete_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "deleted_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ],
+            [
+                "x\\y",
+                true,
+                [
+                    "xy"
+                ],
+                [
+                    [
+                        "update_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "xy",
+                        "string",
+                        "cached"
+                    ],
+                    [
+                        "updated_usermeta",
+                        "row 0",
+                        "zzdoubth_k",
+                        "xy",
+                        "string",
+                        "cache clean"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "wp_get_attachment_thumb_file of a post",
+        "UPLOADS/zzdoubth-thumb.jpg"
+    ],
+    [
+        "wp_get_attachment_thumb_file without array metadata",
+        false
+    ],
+    [
+        "autoembed: URLs inside a tag and an attribute, and alone",
+        "<div\nhttps://zzdoubth.example/in-tag\nclass=\"zz\">x</div>\n<a title=\"\nhttps://zzdoubth.example/in-attr\n\">y</a>\n<iframe src=\"https://zzdoubth.example/alone\"></iframe>\n"
+    ],
+    [
+        "inside a post: oembed_ttl calls, first and cached",
+        [
+            1,
+            1
+        ]
+    ],
+    [
+        "discover as the providers are asked",
+        [
+            [
+                "https://zzdoubth.example/discover-in",
+                true
+            ],
+            [
+                "https://zzdoubth.example/discover-out",
+                true
+            ],
+            [
+                "https://zzdoubth.example/discover-off",
+                false
+            ],
+            [
+                "https://zzdoubth.example/discover-off-in",
+                false
+            ]
+        ]
+    ],
+    [
+        "discover in the attributes embed_oembed_html hears",
+        [
+            true,
+            true,
+            "unset",
+            true,
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "cache_oembed of a show_ui type",
+        [
+            [
+                false,
+                [
+                    "post",
+                    "page",
+                    "attachment",
+                    "wp_block",
+                    "zzdoubth_ui",
+                    "wp_navigation"
+                ]
+            ],
+            2,
+            "the post",
+            true
+        ]
+    ],
+    [
+        "cache_oembed of an empty post",
+        [
+            null,
+            true
+        ]
+    ],
+    [
+        "find_oembed_post_id with posts_where hiding it, then without",
+        [
+            null,
+            true
+        ]
+    ],
+    [
+        "dispatch with an early rest_pre_dispatch answer",
+        {
+            "empty string": [
+                [
+                    "response",
+                    200,
+                    {
+                        "real": true
+                    }
+                ],
+                [
+                    "response",
+                    200,
+                    {
+                        "real": true
+                    }
+                ]
+            ],
+            "zero": [
+                [
+                    "response",
+                    200,
+                    {
+                        "real": true
+                    }
+                ],
+                [
+                    "response",
+                    200,
+                    {
+                        "real": true
+                    }
+                ]
+            ],
+            "false": [
+                [
+                    "response",
+                    200,
+                    {
+                        "real": true
+                    }
+                ],
+                [
+                    "response",
+                    200,
+                    {
+                        "real": true
+                    }
+                ]
+            ],
+            "empty array": [
+                [
+                    "response",
+                    200,
+                    {
+                        "real": true
+                    }
+                ],
+                [
+                    "response",
+                    200,
+                    {
+                        "real": true
+                    }
+                ]
+            ],
+            "array": [
+                [
+                    "response",
+                    200,
+                    {
+                        "zz": 1
+                    }
+                ],
+                [
+                    "response",
+                    200,
+                    {
+                        "zz": 1
+                    }
+                ]
+            ],
+            "string": [
+                [
+                    "response",
+                    200,
+                    "zzs"
+                ],
+                [
+                    "response",
+                    200,
+                    "zzs"
+                ]
+            ],
+            "error": [
+                [
+                    "response",
+                    418,
+                    {
+                        "code": "zz_early",
+                        "message": "Early.",
+                        "data": {
+                            "status": 418
+                        }
+                    }
+                ],
+                [
+                    "response",
+                    418,
+                    {
+                        "code": "zz_early",
+                        "message": "Early.",
+                        "data": {
+                            "status": 418
+                        }
+                    }
+                ]
+            ],
+            "error without status": [
+                [
+                    "response",
+                    500,
+                    {
+                        "code": "zz_early",
+                        "message": "Early.",
+                        "data": null
+                    }
+                ],
+                [
+                    "response",
+                    500,
+                    {
+                        "code": "zz_early",
+                        "message": "Early.",
+                        "data": null
+                    }
+                ]
+            ],
+            "response": [
+                [
+                    "response",
+                    201,
+                    {
+                        "r": 1
+                    }
+                ],
+                [
+                    "response",
+                    201,
+                    {
+                        "r": 1
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "get_headers",
+        [
+            {
+                "X_ZZ": "a",
+                "CONTENT_TYPE": "text/zz",
+                "CONTENT_LENGTH": "3",
+                "CONTENT_MD5": "md",
+                "AUTHORIZATION": "Basic zz"
+            },
+            {
+                "AUTHORIZATION": "Bearer one"
+            },
+            {
+                "AUTHORIZATION": ""
+            }
+        ]
+    ],
+    [
+        "get_json_encode_options",
+        {
+            "none": 0,
+            "_pretty=1": 128,
+            "_pretty=0": 128,
+            "_pretty empty": 128,
+            "in the body": 128
+        }
+    ],
+    [
+        "json_error",
+        [
+            "{\"code\":\"zz_code\",\"message\":\"Zz message\"}",
+            "{\"code\":\"zz_code\",\"message\":\"Zz message\"}",
+            [
+                404
+            ]
+        ]
+    ],
+    [
+        "serve_batch_request_v1 called directly",
+        [
+            [
+                "response",
+                207,
+                {
+                    "failed": "validation",
+                    "responses": [
+                        {
+                            "body": {
+                                "code": "rest_batch_not_allowed",
+                                "message": "The requested route does not support batch requests.",
+                                "data": {
+                                    "status": 400
+                                }
+                            },
+                            "status": 400,
+                            "headers": []
+                        },
+                        {
+                            "body": {
+                                "code": "rest_batch_not_allowed",
+                                "message": "The requested route does not support batch requests.",
+                                "data": {
+                                    "status": 400
+                                }
+                            },
+                            "status": 400,
+                            "headers": []
+                        }
+                    ]
+                }
+            ],
+            0,
+            [
+                "response",
+                207,
+                {
+                    "responses": [
+                        {
+                            "body": {
+                                "code": "rest_batch_not_allowed",
+                                "message": "The requested route does not support batch requests.",
+                                "data": {
+                                    "status": 400
+                                }
+                            },
+                            "status": 400,
+                            "headers": {
+                                "Allow": "GET, POST"
+                            }
+                        }
+                    ]
+                }
+            ],
+            0
+        ]
+    ],
+    [
+        "text widget: is_legacy_instance",
+        [
+            [
+                "",
+                false,
+                false
+            ],
+            [
+                "plain",
+                false,
+                false
+            ],
+            [
+                "a\nb",
+                true,
+                false
+            ],
+            [
+                "<b>x</b> y",
+                false,
+                false
+            ],
+            [
+                "<a href=\"x\">y</a>",
+                false,
+                false
+            ],
+            [
+                "<p>x</p>",
+                true,
+                true
+            ],
+            [
+                "<div>x</div>",
+                true,
+                true
+            ],
+            [
+                "<!-- c -->x",
+                true,
+                true
+            ],
+            [
+                "<script>x</script>",
+                true,
+                true
+            ],
+            [
+                "<span style=\"c\">x</span>",
+                true,
+                true
+            ],
+            [
+                "<img src=\"x\" alt=\"a\">",
+                false,
+                false
+            ],
+            [
+                "<img src=\"x\" width=\"1\">",
+                true,
+                true
+            ],
+            [
+                "<b></b>",
+                true,
+                true
+            ],
+            [
+                "<b>&nbsp;</b>",
+                false,
+                false
+            ],
+            [
+                "<ul><li>x</li></ul>",
+                false,
+                false
+            ],
+            [
+                "<i/>",
+                true,
+                true
+            ],
+            [
+                "<title>x</title>",
+                true,
+                true
+            ],
+            [
+                "<html>",
+                false,
+                false
+            ],
+            [
+                "</p>",
+                false,
+                false
+            ],
+            [
+                "\n",
+                false,
+                false
+            ],
+            [
+                "<b>0</b>",
+                false,
+                false
+            ],
+            [
+                "<a href=\"x\"><img src=\"y\"></a>",
+                true,
+                true
+            ],
+            [
+                "<abbr title=\"t\">x</abbr>",
+                true,
+                true
+            ],
+            [
+                "<![CDATA[x]]>",
+                false,
+                false
+            ],
+            [
+                "<b>a</b>\n<i>b</i>",
+                true,
+                false
+            ],
+            [
+                "instances",
+                false,
+                false,
+                true,
+                false,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "text widget: update",
+        {
+            "filter content": {
+                "title": "t",
+                "text": "x",
+                "filter": true,
+                "visual": true
+            },
+            "visual, filter off": {
+                "title": "t",
+                "text": "x",
+                "filter": true,
+                "visual": true
+            },
+            "nothing, old visual": {
+                "visual": true,
+                "filter": true,
+                "zz": 1,
+                "title": "t",
+                "text": "x"
+            },
+            "filter on": {
+                "title": "t",
+                "text": "x",
+                "filter": true
+            },
+            "visual off": {
+                "visual": false,
+                "title": "t",
+                "text": "x",
+                "filter": true
+            },
+            "nothing": {
+                "title": "t",
+                "text": "x",
+                "filter": false
+            },
+            "empty": {
+                "title": "",
+                "text": "",
+                "filter": false
+            }
+        }
+    ],
+    [
+        "text widget: widget",
+        {
+            "legacy, no filter": [
+                "<section class=\"widget\">\t\t\t<div class=\"textwidget\">ZZSC\nb</div>\n\t\t</section>",
+                [
+                    [
+                        "[zzdoubth_sc]\nb",
+                        "no post",
+                        {
+                            "text": "[zzdoubth_sc]\nb"
+                        }
+                    ]
+                ],
+                [],
+                true
+            ],
+            "legacy, filter": [
+                "<section class=\"widget\">\t\t\t<div class=\"textwidget\">ZZSC\n<p>b</p>\n</div>\n\t\t</section>",
+                [
+                    [
+                        "[zzdoubth_sc]\n<p>b</p>",
+                        "no post",
+                        {
+                            "text": "[zzdoubth_sc]\n<p>b</p>",
+                            "filter": true
+                        }
+                    ]
+                ],
+                [],
+                true
+            ],
+            "one line": [
+                "<section class=\"widget\">\t\t\t<div class=\"textwidget\">ZZSC</div>\n\t\t</section>",
+                [
+                    [
+                        "[zzdoubth_sc]",
+                        "no post",
+                        {
+                            "text": "[zzdoubth_sc]"
+                        }
+                    ]
+                ],
+                [],
+                true
+            ],
+            "visual": [
+                "<section class=\"widget\">\t\t\t<div class=\"textwidget\"><p>ZZSC<br />\nb</p>\n</div>\n\t\t</section>",
+                [
+                    [
+                        "[zzdoubth_sc]\nb",
+                        "no post",
+                        {
+                            "text": "[zzdoubth_sc]\nb",
+                            "visual": true,
+                            "filter": true
+                        }
+                    ]
+                ],
+                [],
+                true
+            ],
+            "gallery": [
+                "<section class=\"widget\">\t\t\t<div class=\"textwidget\">\n</div>\n\t\t</section>",
+                [
+                    [
+                        "[gallery]",
+                        "no post",
+                        {
+                            "text": "[gallery]",
+                            "filter": true
+                        }
+                    ]
+                ],
+                [
+                    -1
+                ],
+                true
+            ]
+        }
+    ],
+    [
+        "custom html widget: widget",
+        [
+            "<section class=\"widget_text widget\"><h2>zz</h2><div class=\"textwidget custom-html-widget\">[zzdoubth_sc] <b>x</b></div></section>",
+            [
+                [
+                    "[zzdoubth_sc] <b>x</b>",
+                    "no post",
+                    {
+                        "title": "zz",
+                        "text": "[zzdoubth_sc] <b>x</b>",
+                        "filter": false,
+                        "visual": false
+                    }
+                ]
+            ],
+            true
+        ]
+    ],
+    [
+        "gallery attributes in the text and HTML widgets",
+        [
+            [
+                {
+                    "id": -1,
+                    "include": ""
+                },
+                {
+                    "id": -1,
+                    "include": ""
+                }
+            ],
+            [
+                {
+                    "id": -1,
+                    "include": ""
+                },
+                {
+                    "id": -1,
+                    "include": ""
+                }
+            ],
+            [
+                {
+                    "id": -1
+                },
+                {
+                    "id": -1
+                }
+            ],
+            [
+                {
+                    "id": 5
+                },
+                {
+                    "id": 5
+                }
+            ],
+            [
+                {
+                    "include": "1,2"
+                },
+                {
+                    "include": "1,2"
+                }
+            ],
+            [
+                {
+                    "id": 0,
+                    "include": "3"
+                },
+                {
+                    "id": 0,
+                    "include": "3"
+                }
+            ],
+            [
+                "singular",
+                {
+                    "id": 0,
+                    "include": ""
+                },
+                []
+            ]
+        ]
+    ],
+    [
+        "tag cloud widget: update",
+        [
+            {
+                "title": "t",
+                "count": 1,
+                "taxonomy": ""
+            },
+            {
+                "title": "",
+                "count": 0,
+                "taxonomy": ""
+            },
+            {
+                "title": "",
+                "count": 0,
+                "taxonomy": "category"
+            }
+        ]
+    ],
+    [
+        "recent comments widget: alt_option_name",
+        "widget_recent_comments"
+    ],
+    [
+        "meta widget: wp_meta",
+        "Comments feed</a></li>\n\n\t\t\t<li><a href=\"https://wordpress.org/\">WordPress.org</a></li><li>zzdoubth meta</li>\n\t\t</ul>\n\n\t\t"
+    ],
+    [
+        "WP_REST_Response: add_link with an href attribute, get_curies",
+        [
+            {
+                "zz": [
+                    {
+                        "href": "https://a.test/x",
+                        "attributes": {
+                            "title": "T"
+                        }
+                    }
+                ]
+            },
+            [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
+            ],
+            [
+                []
+            ],
+            [
+                {
+                    "name": "wp",
+                    "href": "https://api.w.org/{rel}",
+                    "templated": true
+                }
+            ]
+        ]
+    ],
+    [
+        "WP_REST_Meta_Fields: overridden steps",
+        [
+            {
+                "zzdoubth_m": "ZZ:\"abc\"",
+                "zzdoubth_multi": [],
+                "zzdoubth_gone": "ZZ:\"g\""
+            },
+            [
+                "fields",
+                "prepare"
+            ],
+            [
+                "fields",
+                "update zzdoubth_m",
+                "fields",
+                "update multi zzdoubth_multi",
+                "fields",
+                "delete zzdoubth_gone"
+            ],
+            null,
+            "new",
+            [
+                "a",
+                "b"
+            ],
+            []
+        ]
+    ],
+    [
+        "search handler: titles",
+        [
+            [
+                "zzdoubth private",
+                "",
+                "zzdoubth protected"
+            ],
+            [
+                [
+                    "zzdoubth protected",
+                    "post"
+                ]
+            ]
+        ]
+    ],
+    [
+        "block patterns: a registered field",
+        [
+            "zzf",
+            "zzf"
+        ]
+    ],
+    [
+        "autosave: revisioned meta",
+        [
+            "integer",
+            [
+                [
+                    "metaval2"
+                ],
+                []
+            ],
+            true,
+            [
+                "metaval2"
+            ],
+            [
+                "orig"
+            ]
+        ]
+    ],
+    [
+        "terms controller",
+        [
+            {
+                "anonymous": [
+                    false,
+                    false,
+                    false
+                ],
+                "administrator": [
+                    false,
+                    false,
+                    true
+                ]
+            },
+            {
+                "name": "n",
+                "slug": "s",
+                "taxonomy": "zzx",
+                "description": "d",
+                "parent": 0
+            }
+        ]
+    ],
+    [
+        "plugins controller: get_items with a read check refusing one",
+        [
+            false,
+            true
+        ]
+    ],
+    [
+        "plugins controller: update permission with activation denied",
+        {
+            "active": [
+                true,
+                false
+            ],
+            "inactive": [
+                true,
+                true
+            ]
+        }
+    ],
+    [
+        "users: anonymous read of a user with only a REST type post",
+        [
+            [
+                200,
+                "ok"
+            ],
+            [
+                200,
+                "ok"
+            ]
+        ]
+    ],
+    [
+        "users: list permission checks",
+        {
+            "doc editor, who=authors": [
+                200,
+                "ok",
+                ""
+            ],
+            "contributor, roles and edit": [
+                403,
+                "rest_user_cannot_view",
+                "Sorry, you are not allowed to filter users by role."
+            ],
+            "contributor, edit and orderby": [
+                403,
+                "rest_forbidden_context",
+                "Sorry, you are not allowed to edit users."
+            ],
+            "contributor, capabilities and roles": [
+                403,
+                "rest_user_cannot_view",
+                "Sorry, you are not allowed to filter users by role."
+            ],
+            "contributor, who and edit": [
+                403,
+                "rest_forbidden_context",
+                "Sorry, you are not allowed to edit users."
+            ],
+            "plain, who=authors": [
+                403,
+                "rest_forbidden_who",
+                "Sorry, you are not allowed to query users by this parameter."
+            ],
+            "contributor, orderby and roles": [
+                403,
+                "rest_user_cannot_view",
+                "Sorry, you are not allowed to filter users by role."
+            ],
+            "contributor, capabilities and edit": [
+                403,
+                "rest_user_cannot_view",
+                "Sorry, you are not allowed to filter users by capability."
+            ],
+            "author, who=authors": [
+                200,
+                "ok",
+                ""
+            ],
+            "contributor, who=authors": [
+                200,
+                "ok",
+                ""
+            ]
+        }
+    ],
+    [
+        "posts: sticky as an author",
+        [
+            [
+                "error",
+                "rest_cannot_assign_sticky"
+            ],
+            [
+                "error",
+                "rest_cannot_assign_sticky"
+            ],
+            [
+                403,
+                "rest_cannot_assign_sticky"
+            ],
+            [
+                403,
+                "rest_cannot_assign_sticky"
+            ]
+        ]
+    ],
+    [
+        "posts: a protected post read with its password",
+        {
+            "right status": [
+                200,
+                "ok",
+                ""
+            ],
+            "right": [
+                [
+                    true,
+                    "secret body",
+                    true,
+                    "secret excerpt"
+                ],
+                [
+                    true,
+                    "secret body",
+                    true,
+                    "secret excerpt"
+                ]
+            ],
+            "wrong status": [
+                403,
+                "rest_post_incorrect_password",
+                "Incorrect post password."
+            ],
+            "wrong": [
+                [
+                    null,
+                    "missing",
+                    null,
+                    "missing"
+                ],
+                [
+                    true,
+                    "",
+                    true,
+                    ""
+                ]
+            ],
+            "none status": [
+                200,
+                "ok",
+                ""
+            ],
+            "none": [
+                [
+                    true,
+                    "",
+                    true,
+                    ""
+                ],
+                [
+                    true,
+                    "",
+                    true,
+                    ""
+                ]
+            ],
+            "administrator, no password": [
+                true,
+                ""
+            ]
+        }
+    ],
+    [
+        "textdomain registry: invalidate_mo_files_cache",
+        [
+            [
+                true,
+                true,
+                true
+            ],
+            [
+                true,
+                false,
+                true
+            ],
+            [
+                false,
+                true,
+                false
+            ]
+        ]
+    ],
+    [
+        "textdomain registry",
+        [
+            [
+                "DIR/sub/",
+                "DIR/sub/",
+                "DIR/sub/",
+                "DIR/sub/"
+            ],
+            [
+                "zzdoubth-de_DE.mo",
+                "zzdoubth-fr_FR.mo"
+            ],
+            [
+                "zzdoubth-de_DE.mo",
+                "zzdoubth-fr_FR.mo"
+            ],
+            [
+                "zzdoubth-de_DE.mo",
+                "zzdoubth-fr_FR.mo"
+            ],
+            [
+                "LANG/plugins",
+                "LANG/themes",
+                "DIR/custom"
+            ],
+            false,
+            false,
+            "DIR/x/"
+        ]
+    ],
+    [
+        "translation controller",
+        [
+            [
+                true,
+                true,
+                true
+            ],
+            [
+                true,
+                false,
+                false
+            ],
+            true,
+            [
+                true,
+                false,
+                false
+            ],
+            [
+                true,
+                true,
+                false,
+                "bonjour"
+            ],
+            [
+                true,
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "is_serialized and maybe_serialize",
+        [
+            [
+                "s:1:\"x\";garbage",
+                false,
+                true,
+                false,
+                "s:15:\"s:1:\"x\";garbage\";"
+            ],
+            [
+                "i:5;x",
+                false,
+                true,
+                false,
+                "s:5:\"i:5;x\";"
+            ],
+            [
+                "a:1:{i:0;s:1:\"x\";garbage",
+                false,
+                true,
+                false,
+                "s:24:\"a:1:{i:0;s:1:\"x\";garbage\";"
+            ],
+            [
+                "a:1:{xxxx",
+                false,
+                false,
+                false,
+                "a:1:{xxxx"
+            ],
+            [
+                "E:3:\"a:b\";",
+                true,
+                true,
+                true,
+                "s:10:\"E:3:\"a:b\";\";"
+            ],
+            [
+                "b:1;",
+                true,
+                true,
+                true,
+                "s:4:\"b:1;\";"
+            ],
+            [
+                "N;",
+                true,
+                true,
+                true,
+                "s:2:\"N;\";"
+            ],
+            [
+                "s:1:\"x\";",
+                true,
+                true,
+                true,
+                "s:8:\"s:1:\"x\";\";"
+            ],
+            [
+                " s:1:\"x\"; ",
+                true,
+                true,
+                true,
+                "s:10:\" s:1:\"x\"; \";"
+            ],
+            [
+                "O:8:\"stdClass\":0:{}",
+                true,
+                true,
+                true,
+                "s:19:\"O:8:\"stdClass\":0:{}\";"
+            ],
+            [
+                "d:1.5;",
+                true,
+                true,
+                true,
+                "s:6:\"d:1.5;\";"
+            ],
+            [
+                "x",
+                false,
+                false,
+                false,
+                "x"
+            ]
+        ]
+    ],
+    [
+        "add_shortcode with bad tags",
+        [
+            [
+                [
+                    "",
+                    false
+                ],
+                [
+                    null,
+                    false
+                ],
+                [
+                    "zz tag",
+                    false
+                ],
+                [
+                    "zz/tag",
+                    false
+                ],
+                [
+                    "zz[tag",
+                    false
+                ],
+                [
+                    "zz<tag",
+                    false
+                ],
+                [
+                    "zz=tag",
+                    false
+                ],
+                [
+                    "zz&tag",
+                    false
+                ],
+                [
+                    "zzdoubth_ok",
+                    true
+                ]
+            ],
+            [
+                [
+                    "add_shortcode",
+                    "Invalid shortcode name: Empty name given."
+                ],
+                [
+                    "add_shortcode",
+                    "Invalid shortcode name: Empty name given."
+                ],
+                [
+                    "add_shortcode",
+                    "Invalid shortcode name: zz tag. Do not use spaces or reserved characters: & / < > [ ] ="
+                ],
+                [
+                    "add_shortcode",
+                    "Invalid shortcode name: zz/tag. Do not use spaces or reserved characters: & / < > [ ] ="
+                ],
+                [
+                    "add_shortcode",
+                    "Invalid shortcode name: zz[tag. Do not use spaces or reserved characters: & / < > [ ] ="
+                ],
+                [
+                    "add_shortcode",
+                    "Invalid shortcode name: zz<tag. Do not use spaces or reserved characters: & / < > [ ] ="
+                ],
+                [
+                    "add_shortcode",
+                    "Invalid shortcode name: zz=tag. Do not use spaces or reserved characters: & / < > [ ] ="
+                ],
+                [
+                    "add_shortcode",
+                    "Invalid shortcode name: zz&tag. Do not use spaces or reserved characters: & / < > [ ] ="
+                ]
+            ],
+            [
+                "Invalid shortcode name: Empty name given.",
+                "Invalid shortcode name: %1$s. Do not use spaces or reserved characters: %2$s"
+            ]
+        ]
+    ],
+    [
+        "users: edit context with list_users, reassigning to itself",
+        [
+            [
+                403,
+                "rest_forbidden_context"
+            ],
+            [
+                400,
+                "rest_user_invalid_reassign",
+                true
+            ]
+        ]
+    ]
+]

@@ -39,10 +39,11 @@ final class FrontLifecycle
      * @param array<string, mixed> $vars the variables the engine resolved
      * @param array<string, mixed> $given the query string and form, where a plugin's own variables are read
      * @param (\Closure(list<string>): array<string, mixed>)|null $parse the reference's parse vars for the public vars, when the request is known
+     * @param mixed $extraVars the extra vars parse_request was given, as given, which do_parse_request hears (the object's own when null)
      */
-    public static function parseRequest(Environment $wp, array $vars, array $given, ?\Closure $parse = null): bool
+    public static function parseRequest(Environment $wp, array $vars, array $given, ?\Closure $parse = null, mixed $extraVars = null): bool
     {
-        if (!Runtime::hooks()->filter('do_parse_request', [true, $wp, $wp->extra_query_vars])) {
+        if (!Runtime::hooks()->filter('do_parse_request', [true, $wp, $extraVars ?? $wp->extra_query_vars])) {
             return false;
         }
         $known = (array) $wp->public_query_vars;

@@ -136,7 +136,12 @@ class WP_REST_Autosaves_Controller extends WP_REST_Revisions_Controller
     {
         $post = get_post((int) $post_data['ID']);
         $fields = array_intersect_key((array) wp_unslash($post_data), array_flip(['post_title', 'post_content', 'post_excerpt']));
-        return Minn\Runtime\Autosaves::saveSlot($post, get_current_user_id(), array_map('strval', $fields));
+        $saved = Minn\Runtime\Autosaves::saveSlot($post, get_current_user_id(), array_map('strval', $fields));
+        // The revisioned meta given is kept on the autosave, whether or not its fields changed.
+        foreach (is_int($saved) && $saved > 0 ? array_intersect_key((array) $meta, array_flip(wp_post_revision_meta_keys($post->post_type))) : [] as $key => $value) {
+            update_metadata('post', $saved, $key, wp_slash($value));
+        }
+        return $saved;
     }
 
     /** A revision's shape, with where to preview the draft in the edit context. */

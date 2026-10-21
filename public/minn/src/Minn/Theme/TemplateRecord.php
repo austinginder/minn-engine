@@ -28,6 +28,7 @@ final readonly class TemplateRecord
         public string $status = 'publish',
         public ?string $area = null,
         public ?string $plugin = null,
+        public bool $suggestion = false,
     ) {
     }
 

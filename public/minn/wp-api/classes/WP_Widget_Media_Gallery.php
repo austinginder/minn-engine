@@ -29,11 +29,9 @@ class WP_Widget_Media_Gallery extends WP_Widget_Media
         echo gallery_shortcode($atts);
     }
 
+    /** Content is a list of ids, every one an attachment (probe blocks-rest-widget-doubts). */
     protected function has_content($instance)
     {
-        if (!parent::has_content($instance)) {
-            return !empty($instance['ids']);
-        }
-        return true;
+        return !empty($instance['ids']) && count(array_filter((array) $instance['ids'], static fn ($id) => get_post_type($id) === 'attachment')) === count((array) $instance['ids']);
     }
 }

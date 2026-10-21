@@ -55,11 +55,46 @@ final class MoFile
      */
     public static function write(array $headers, array $entries): string
     {
+        $pairs = [];
+        foreach ($entries as $key => $entry) {
+            $pairs[$entry['plural'] === null ? (string) $key : $key . "\0" . $entry['plural']] = implode("\0", $entry['translations']);
+        }
+        return self::writePairs(self::headerBlock($headers), $pairs);
+    }
+
+    /**
+     * A .mo file's bytes for a header block and its originals and
+     * translations as written (MO::export with its export_* steps), sorted.
+     *
+     * @param array<array-key, string> $pairs each original to its translations
+     */
+    public static function writePairs(string $headerBlock, array $pairs): string
+    {
+        $pairs = ['' => $headerBlock] + $pairs;
+        ksort($pairs, SORT_STRING);
+        return self::packed($pairs);
+    }
+
+    /**
+     * A .mo file's bytes for headers and entries kept in the order they are
+     * held, the header block first (WP_Translation_File_MO::export, probe
+     * blocks-rest-widget-doubts).
+     *
+     * @param array<string, string> $headers
+     * @param array<string, array{translations: list<string>, plural: ?string}> $entries
+     */
+    public static function writeAsHeld(array $headers, array $entries): string
+    {
         $pairs = ['' => self::headerBlock($headers)];
         foreach ($entries as $key => $entry) {
             $pairs[$entry['plural'] === null ? (string) $key : $key . "\0" . $entry['plural']] = implode("\0", $entry['translations']);
         }
-        ksort($pairs, SORT_STRING);
+        return self::packed($pairs);
+    }
+
+    /** @param array<array-key, string> $pairs each original to its translations, in the file's order */
+    private static function packed(array $pairs): string
+    {
         $count = count($pairs);
         $originalsAt = 28;
         $translationsAt = $originalsAt + $count * 8;

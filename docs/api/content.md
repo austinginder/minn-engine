@@ -39,7 +39,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
-| [`TermLinks`](#termlinks) | final class | 37 | A post's terms rendered as links, in the two shapes the reference |
+| [`TermLinks`](#termlinks) | final class | 38 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 220 |  |
 | [`TextFilters`](#textfilters) | final class | 145 | The small text filters the reference runs over content, titles and |
@@ -80,7 +80,7 @@ held newline keeps the block rules from reaching past it.
 - const `HELD_NEWLINE` = `' <> '` — A newline inside a tag, comment or CDATA section while paragraphs are made.
 - const `RAW_NEWLINE` = `''` — A newline inside script, style, svg or math while line breaks are added.
 
-Used by: `Minn\Theme\ClassicContent`
+Used by: `Minn\Theme\ClassicContent`, `Minn\Widgets\TextWidgets`
 
 ### static `apply(string $text, bool $lineBreaks = true): string`
 
@@ -677,7 +677,7 @@ Classic nav_menu terms and nav_menu_item posts. The front uses these
 when a navigation block has no inner blocks and no wp_navigation post;
 REST serves the same rows as wp/v2/menus and menu-items.
 
-Used by: `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\Services`, `Minn\Runtime\MenuEvents`
+Used by: `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\Services`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\NavigationFallback`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, ?Minn\Content\PostWriter $writer = NULL, ?Minn\Content\Site $site = NULL)
@@ -1925,15 +1925,16 @@ Anchor tags for these terms joined by a separator, the way the reference prints 
 
 - `@param list<array{name: string, url: string}> $terms`
 
-### static `categories(array $categories, string $separator): string`
+### static `categories(array $categories, string $separator, string $rel = 'category tag'): string`
 
 The category list: an unordered list when the separator is empty,
-a joined run otherwise. Both carry rel="category tag". A row may bring
+a joined run otherwise. Both carry the rel given ("category tag" under
+pretty permalinks, "category" under plain ones). A row may bring
 markup to go before its link (its parents) and the space before rel.
 
 - `@param list<array{name: string, url: string, before?: string, space?: string}> $categories`
 
-Internals: `anchor()` (private, line 50)
+Internals: `anchor()` (private, line 51)
 
 
 ## TermRecord

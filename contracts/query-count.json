@@ -1,12 +1,12 @@
 {
-    "measured": "2026-10-12",
-    "runs": 5,
+    "measured": "2026-10-21",
+    "runs": 3,
     "pages": {
         "/": {
             "engine": {
-                "Com_select": 27,
-                "Com_stmt_execute": 24,
-                "Questions": 29
+                "Com_select": 26,
+                "Com_stmt_execute": 19,
+                "Questions": 30
             },
             "reference": {
                 "Com_select": 38,
@@ -16,9 +16,9 @@
         },
         "/hello-world/": {
             "engine": {
-                "Com_select": 41,
-                "Com_stmt_execute": 30,
-                "Questions": 43
+                "Com_select": 37,
+                "Com_stmt_execute": 25,
+                "Questions": 41
             },
             "reference": {
                 "Com_select": 44,
@@ -28,8 +28,8 @@
         },
         "/category/uncategorized/": {
             "engine": {
-                "Com_select": 32,
-                "Com_stmt_execute": 28,
+                "Com_select": 30,
+                "Com_stmt_execute": 21,
                 "Questions": 34
             },
             "reference": {
@@ -40,8 +40,8 @@
         },
         "/wp-json/wp/v2/posts": {
             "engine": {
-                "Com_select": 26,
-                "Com_stmt_execute": 24,
+                "Com_select": 24,
+                "Com_stmt_execute": 21,
                 "Questions": 29
             },
             "reference": {
@@ -53,8 +53,8 @@
         "/?s=hello": {
             "engine": {
                 "Com_select": 28,
-                "Com_stmt_execute": 23,
-                "Questions": 30
+                "Com_stmt_execute": 20,
+                "Questions": 32
             },
             "reference": {
                 "Com_select": 40,

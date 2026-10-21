@@ -1,5 +1,6 @@
 <?php
 
+use Minn\Runtime\RewriteStructs;
 use Minn\Runtime\Runtime;
 
 /**
@@ -41,30 +42,10 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
         $this->init();
     }
 
+    /** Set up from the stored structure; the top rules stay, the bottom, external and endpoint rules go (Minn\Runtime\RewriteStructs::init). */
     public function init()
     {
-        $this->permalink_structure = (string) get_option('permalink_structure');
-        $this->extra_rules_top = [
-            '^wp-json/?$' => 'index.php?rest_route=/',
-            '^wp-json/(.*)?' => 'index.php?rest_route=/$matches[1]',
-            '^index.php/wp-json/?$' => 'index.php?rest_route=/',
-            '^index.php/wp-json/(.*)?' => 'index.php?rest_route=/$matches[1]',
-            '^wp-sitemap\\.xml$' => 'index.php?sitemap=index',
-            '^wp-sitemap\\.xsl$' => 'index.php?sitemap-stylesheet=sitemap',
-            '^wp-sitemap-index\\.xsl$' => 'index.php?sitemap-stylesheet=index',
-            '^wp-sitemap-([a-z]+?)-([a-z\\d_-]+?)-(\\d+?)\\.xml$' => 'index.php?sitemap=$matches[1]&sitemap-subtype=$matches[2]&paged=$matches[3]',
-            '^wp-sitemap-([a-z]+?)-(\\d+?)\\.xml$' => 'index.php?sitemap=$matches[1]&paged=$matches[2]',
-            '^minn-admin(/.*)?$' => 'index.php?minn_admin=1',
-        ];
-        $this->front = substr($this->permalink_structure, 0, (int) strpos($this->permalink_structure, '%'));
-        $this->root = '';
-        if ($this->using_index_permalinks()) {
-            $this->root = $this->index . '/';
-        }
-        unset($this->author_structure, $this->date_structure, $this->page_structure, $this->search_structure, $this->feed_structure, $this->comment_feed_structure);
-        $this->use_trailing_slashes = str_ends_with($this->permalink_structure, '/');
-        $this->use_verbose_rules = false;
-        $this->use_verbose_page_rules = Minn\Runtime\RewriteRules::verbosePages($this->permalink_structure);
+        RewriteStructs::init($this);
     }
 
     public function using_permalinks()
@@ -107,35 +88,20 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
         return $this->generate_rewrite_rules($this->get_page_permastruct(), EP_PAGES, true, true, false, false);
     }
 
+    /** The date structure, the one set or made once (Minn\Runtime\RewriteStructs::date). */
     public function get_date_permastruct()
     {
-        if (empty($this->permalink_structure)) {
-            return false;
-        }
-        $endians = ['%year%/%monthnum%/%day%', '%day%/%monthnum%/%year%', '%monthnum%/%day%/%year%'];
-        $date = '%year%/%monthnum%/%day%';
-        foreach ($endians as $endian) {
-            if (str_contains($this->permalink_structure, $endian)) {
-                $date = $endian;
-                break;
-            }
-        }
-        // A post id among the structure's first three tags would read as a date, so dates move under date/ (probe rewrite-generate).
-        preg_match_all('/%.+?%/', $this->permalink_structure, $tokens);
-        $front = in_array('%post_id%', array_slice($tokens[0], 0, 3), true) ? $this->front . 'date/' : $this->front;
-        return $front . $date;
+        return RewriteStructs::date($this);
     }
 
     public function get_year_permastruct()
     {
-        $structure = $this->get_date_permastruct();
-        return $structure === false ? false : str_replace(['%monthnum%', '%day%'], '', $structure);
+        return RewriteStructs::dateWithout($this, ['%monthnum%', '%day%']);
     }
 
     public function get_month_permastruct()
     {
-        $structure = $this->get_date_permastruct();
-        return $structure === false ? false : str_replace('%day%', '', $structure);
+        return RewriteStructs::dateWithout($this, ['%day%']);
     }
 
     public function get_day_permastruct()
@@ -166,42 +132,27 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
 
     public function get_author_permastruct()
     {
-        if (empty($this->permalink_structure)) {
-            return false;
-        }
-        return $this->front . $this->author_base . '/%author%';
+        return RewriteStructs::made($this, 'author');
     }
 
     public function get_search_permastruct()
     {
-        if (empty($this->permalink_structure)) {
-            return false;
-        }
-        return $this->root . $this->search_base . '/%search%';
+        return RewriteStructs::made($this, 'search');
     }
 
     public function get_page_permastruct()
     {
-        if (empty($this->permalink_structure)) {
-            return false;
-        }
-        return $this->root . '%pagename%';
+        return RewriteStructs::made($this, 'page');
     }
 
     public function get_feed_permastruct()
     {
-        if (empty($this->permalink_structure)) {
-            return false;
-        }
-        return $this->root . $this->feed_base . '/%feed%';
+        return RewriteStructs::made($this, 'feed');
     }
 
     public function get_comment_feed_permastruct()
     {
-        if (empty($this->permalink_structure)) {
-            return false;
-        }
-        return $this->root . $this->comments_base . '/' . $this->feed_base . '/%feed%';
+        return RewriteStructs::made($this, 'comment_feed');
     }
 
     public function add_rewrite_tag($tag, $regex, $query)
@@ -217,15 +168,10 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
         }
     }
 
+    /** A tag removed, its place in each list left empty (Minn\Runtime\RewriteStructs::removeTag). */
     public function remove_rewrite_tag($tag)
     {
-        $position = array_search($tag, $this->rewritecode, true);
-        if ($position !== false) {
-            unset($this->rewritecode[$position], $this->rewritereplace[$position], $this->queryreplace[$position]);
-            $this->rewritecode = array_values($this->rewritecode);
-            $this->rewritereplace = array_values($this->rewritereplace);
-            $this->queryreplace = array_values($this->queryreplace);
-        }
+        RewriteStructs::removeTag($this, $tag);
     }
 
     public function generate_rewrite_rules($permalink_structure, $ep_mask = EP_NONE, $paged = true, $feed = true, $forcomments = false, $walk_dirs = true, $endpoints = true)
@@ -294,7 +240,7 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
         if (!$this->using_permalinks()) {
             return '';
         }
-        $rule = "\n\t\t\t<rule name=\"WordPress: " . esc_attr(get_option('home')) . "\" patternSyntax=\"Wildcard\">\n\t\t\t\t<match url=\"*\" />\n\t\t\t\t\t<conditions>\n"
+        $rule = "\n\t\t\t<rule name=\"WordPress: " . esc_attr(home_url()) . "\" patternSyntax=\"Wildcard\">\n\t\t\t\t<match url=\"*\" />\n\t\t\t\t\t<conditions>\n"
             . "\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsFile\" negate=\"true\" />\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsDirectory\" negate=\"true\" />\n"
             . "\t\t\t\t\t</conditions>\n\t\t\t\t<action type=\"Rewrite\" url=\"index.php\" />\n\t\t\t</rule>";
         if ($add_parent_tags) {
@@ -329,7 +275,7 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
 
     public function add_endpoint($name, $places, $query_var = true)
     {
-        if ($query_var === true) {
+        if ($query_var === true || $query_var === null) {
             $query_var = $name;
         }
         $this->endpoints[] = [$places, $name, $query_var];
@@ -338,21 +284,10 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
         }
     }
 
+    /** A permanent structure under the front or the root, from an arguments array or the old with_front and ep_mask (Minn\Runtime\RewriteStructs::permastruct). */
     public function add_permastruct($name, $struct, $args = [])
     {
-        if (!is_array($args)) {
-            $args = ['with_front' => $args];
-        }
-        $defaults = ['with_front' => true, 'ep_mask' => EP_NONE, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true];
-        $args = array_intersect_key($args, $defaults);
-        $args = wp_parse_args($args, $defaults);
-        if ($args['with_front']) {
-            $struct = $this->front . $struct;
-        } else {
-            $struct = $this->root . $struct;
-        }
-        $args['struct'] = $struct;
-        $this->extra_permastructs[$name] = $args;
+        $this->extra_permastructs[$name] = RewriteStructs::permastruct($this, $struct, array_slice(func_get_args(), 2));
     }
 
     public function remove_permastruct($name)
@@ -399,14 +334,12 @@ class WP_Rewrite implements \Minn\Objects\Rewrite
 
     public function set_category_base($category_base)
     {
-        update_option('category_base', $category_base);
-        $this->init();
+        RewriteStructs::setBase($this, 'category_base', $category_base);
     }
 
     public function set_tag_base($tag_base)
     {
-        update_option('tag_base', $tag_base);
-        $this->init();
+        RewriteStructs::setBase($this, 'tag_base', $tag_base);
     }
 }
 
@@ -457,7 +390,7 @@ class WP implements \Minn\Objects\Environment
         if (is_string($extra_query_vars) && $extra_query_vars !== '') {
             parse_str($extra_query_vars, $extra);
         }
-        return Minn\Theme\FrontLifecycle::parseRequest($this, [], [], fn (array $public): array => $this->minn_parse($public, $extra));
+        return Minn\Theme\FrontLifecycle::parseRequest($this, [], [], fn (array $public): array => $this->minn_parse($public, $extra), $extra_query_vars);
     }
 
     /** @internal the parse itself, once no plugin has taken it over */
@@ -493,7 +426,7 @@ class WP implements \Minn\Objects\Environment
     {
         $this->query_string = Minn\Front\RequestParse::queryString((array) $this->query_vars);
         if (has_filter('query_string')) {
-            $this->query_string = (string) apply_filters('query_string', $this->query_string);
+            $this->query_string = (string) apply_filters_deprecated('query_string', [$this->query_string], '2.1.0', 'query_vars, request');
             parse_str($this->query_string, $this->query_vars);
         }
     }

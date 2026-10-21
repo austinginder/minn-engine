@@ -47,7 +47,7 @@ final class TermLists
     }
 
     /**
-     * The tags in the cloud's order (by name, or by count; random shuffles)
+     * The tags in the cloud's order (by name, or by count; RAND shuffles)
      * and cut to the number asked for. Keys survive the sort; taking the
      * first N renumbers the numeric ones before they name the tags.
      *
@@ -129,13 +129,14 @@ final class TermLists
 
     /**
      * By name (natural, case-insensitive) only for "name"; every other value
-     * sorts by count. Only "DESC", in capitals, reverses.
+     * sorts by count. Only "DESC", in capitals, reverses; the order "RAND"
+     * shuffles (probe taxonomy-blocks-user-doubts).
      *
      * @param array<array-key, array<string, mixed>> $terms
      */
     private static function sorted(array $terms, string $orderby, string $order): array
     {
-        if ($orderby === 'random') {
+        if ($order === 'RAND') {
             shuffle($terms);
             return $terms;
         }

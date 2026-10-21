@@ -16,7 +16,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 99 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 110 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 111 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 44 | The engine's own pieces of a page's head: its block stylesheet link, |
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
@@ -34,10 +34,10 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Teaser`](#teaser) | enum | 5 | What a post's full text does with the part before its more tag |
 | [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
-| [`TemplateIndex`](#templateindex) | final class | 304 | Every block template and template part the site offers, in the order the |
+| [`TemplateIndex`](#templateindex) | final class | 324 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
-| [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
+| [`TemplateRecord`](#templaterecord) | final readonly class | 35 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 121 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 250 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 358 | The active block theme on disk, read as data: theme.json, the templates |
@@ -406,7 +406,7 @@ in the reference's order and let them change what the query asks.
 
 Used by: `Minn\Theme\MainQueryBridge`
 
-### static `parseRequest(Minn\Objects\Environment $wp, array $vars, array $given, ?Closure $parse = NULL): bool`
+### static `parseRequest(Minn\Objects\Environment $wp, array $vars, array $given, ?Closure $parse = NULL, mixed $extraVars = NULL): bool`
 
 Parses the request: false when a plugin's do_parse_request took the
 parse over (the main query then does not run). The query string is
@@ -1109,7 +1109,7 @@ Internals: `chain()` (private, line 45), `single()` (private, line 64), `taxonom
 
 Every block template and template part the site offers, in the order the
 reference lists them: the rows the site editor saved first (newest post
-date first), then the theme's own files in the order the directory hands
+date first, those of one date in the order they were saved), then the theme's own files in the order the directory hands
 them back, then whatever a plugin registered. A saved row shadows the
 theme file of the same slug and reports has_theme_file so the file can
 be restored by deleting the row.
@@ -1151,8 +1151,8 @@ _get_block_templates_files describes it (fileInfo).
 
 One theme file: its slug, path, theme (the parent's for a file the
 child does not have) and type; a part's title (when theme.json gives
-one) and area; a custom template's title and post types. Null when
-the theme has no such file.
+one) and area; a custom template's title and post types (pages when
+it names none). Null when the theme has no such file.
 
 - `@return array<string, mixed>|null`
 
@@ -1161,6 +1161,10 @@ the theme has no such file.
 The post types a custom template declares; none for any other template.
 
 - `@return list<string>`
+
+### `savedId(string $type, string $theme, string $slug): ?int`
+
+The id of a template or part saved for any theme by slug, its wp_theme term naming the theme; null for none.
 
 ### `themeSlug(): string`
 
@@ -1198,7 +1202,7 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
-Internals: `savedRows()` (private, line 207), `pluginRows()` (private, line 222), `fromRow()` (private, line 231), `fromFile()` (private, line 257), `fromPlugin()` (private, line 279), `fileTitle()` (private, line 304), `savedArea()` (private, line 313)
+Internals: `savedRows()` (private, line 222), `pluginRows()` (private, line 237), `fromRow()` (private, line 246), `fromFile()` (private, line 277), `fromPlugin()` (private, line 299), `fileTitle()` (private, line 324), `savedArea()` (private, line 333)
 
 
 ## TemplatePartTheme
@@ -1254,7 +1258,7 @@ The id every caller uses is "<theme>//<slug>" in all three cases.
 Used by: `Minn\Rest\Api`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`
 
 ```php
-__construct(string $theme, string $slug, string $type, string $content, string $title, string $description, string $source, ?string $origin, bool $hasThemeFile, int $author, ?string $modified, ?string $date, int $wpId, string $status = 'publish', ?string $area = NULL, ?string $plugin = NULL)
+__construct(string $theme, string $slug, string $type, string $content, string $title, string $description, string $source, ?string $origin, bool $hasThemeFile, int $author, ?string $modified, ?string $date, int $wpId, string $status = 'publish', ?string $area = NULL, ?string $plugin = NULL, bool $suggestion = false)
 ```
 
 - readonly `string $theme`
@@ -1273,6 +1277,7 @@ __construct(string $theme, string $slug, string $type, string $content, string $
 - readonly `string $status`
 - readonly `?string $area`
 - readonly `?string $plugin`
+- readonly `bool $suggestion`
 
 ### `id(): string`
 

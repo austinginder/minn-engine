@@ -21,8 +21,9 @@ class WP_Widget_Meta extends WP_Widget
             . "\t\t\t<li>" . wp_loginout('', false) . "</li>\n"
             . "\t\t\t<li><a href=\"" . esc_url(get_bloginfo('rss2_url')) . "\">Entries feed</a></li>\n"
             . "\t\t\t<li><a href=\"" . esc_url(get_bloginfo('comments_rss2_url')) . "\">Comments feed</a></li>\n\n\t\t\t"
-            . apply_filters('widget_meta_poweredby', '<li><a href="https://wordpress.org/">WordPress.org</a></li>' . "\n", $instance)
-            . "\t\t</ul>\n\n\t\t" . $close;
+            . apply_filters('widget_meta_poweredby', '<li><a href="https://wordpress.org/">WordPress.org</a></li>', $instance);
+        do_action('wp_meta');
+        echo "\n\t\t</ul>\n\n\t\t" . $close;
         echo $args['after_widget'];
     }
 

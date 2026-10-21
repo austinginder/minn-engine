@@ -29,31 +29,39 @@ class WP_Translation_Controller
 
     public function load_file(string $translation_file, string $textdomain = 'default', ?string $locale = null): bool
     {
-        // A readable .mo or .php file loads; one that does not parse is accepted but kept out, as the reference drops it the first time it is read (probe translation-classes).
-        if (!is_readable($translation_file) || !in_array(pathinfo($translation_file, PATHINFO_EXTENSION), ['mo', 'php'], true)) {
+        // A readable .mo or .php file loads, by its real path (a link or a relative path is the same file); one that does not parse is accepted but kept out, as the reference drops it the first time it is read (probe translation-classes).
+        $file = realpath($translation_file);
+        if ($file === false || !is_readable($file) || !in_array(pathinfo($file, PATHINFO_EXTENSION), ['mo', 'php'], true)) {
             return false;
         }
-        $catalog = TranslationFiles::read($translation_file);
+        $catalog = TranslationFiles::read($file);
         if ($catalog !== null) {
-            Runtime::textDomains()->add($textdomain, $translation_file, $catalog);
+            Runtime::textDomains()->add($textdomain, $file, $catalog);
         }
         $this->loaded_translations[$locale ?? $this->current_locale][$textdomain] = true;
+        $this->loaded_files[$file][$locale ?? $this->current_locale][$textdomain] = true;
         return true;
     }
 
     /** The file taken out of the domain; true whether or not it was loaded, as on the reference (probe translation-classes). */
     public function unload_file($file, string $textdomain = 'default', ?string $locale = null): bool
     {
-        Runtime::textDomains()->unloadFile($textdomain, $file instanceof WP_Translation_File ? $file->get_file() : (string) $file);
+        $path = $file instanceof WP_Translation_File ? $file->get_file() : (string) $file;
+        Runtime::textDomains()->unloadFile($textdomain, realpath($path) ?: $path);
         return true;
     }
 
+    /** A domain unloaded: for one locale, only the files loaded for it; for none, every file. */
     public function unload_textdomain(string $textdomain = 'default', ?string $locale = null): bool
     {
-        foreach (array_keys($this->loaded_translations) as $loaded) {
+        foreach ($locale === null ? array_keys($this->loaded_translations) : [$locale] as $loaded) {
             unset($this->loaded_translations[$loaded][$textdomain]);
         }
-        return Runtime::textDomains()->unload($textdomain);
+        if ($locale === null) {
+            return Runtime::textDomains()->unload($textdomain);
+        }
+        $files = array_keys(array_filter($this->loaded_files, static fn (array $locales): bool => isset($locales[$locale][$textdomain])));
+        return array_filter(array_map(static fn (string $file): bool => Runtime::textDomains()->unloadFile($textdomain, $file), $files)) !== [];
     }
 
     /** Whether a domain is loaded for a locale (the current one when none is given); a domain loaded without a locale on record answers for any. */

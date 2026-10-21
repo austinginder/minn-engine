@@ -27,12 +27,12 @@ abstract class WP_REST_Meta_Fields
         register_rest_field($this->get_rest_field_type(), 'meta', ['get_callback' => [$this, 'get_value'], 'update_callback' => [$this, 'update_value'], 'schema' => $this->get_field_schema()]);
     }
 
-    /** Every registered key's value for an object, keyed by REST name, whatever the request's context. */
+    /** Every registered key's value for an object, keyed by REST name, whatever the request's context, through prepare_value_for_response. */
     public function get_value($object_id, $request)
     {
         $out = [];
         foreach ($this->get_registered_fields() as $key => $field) {
-            $out[$field['name']] = RestMeta::value((string) $this->get_meta_type(), (int) $object_id, (string) $key, $field, $request);
+            $out[$field['name']] = RestMeta::value((string) $this->get_meta_type(), (int) $object_id, (string) $key, $field, $request, $this->prepare_value_for_response(...));
         }
         return $out;
     }
@@ -42,10 +42,10 @@ abstract class WP_REST_Meta_Fields
         return RestMeta::prepare($value, (array) $args + ['single' => true, 'schema' => [], 'prepare_callback' => null], $request);
     }
 
-    /** The meta a request names, written key by key; null, or every refusal in one error. */
+    /** The meta a request names, written key by key through this object's own update and delete methods; null, or every refusal in one error. */
     public function update_value($meta, $object_id)
     {
-        $errors = RestMeta::errors((string) $this->get_meta_type(), (int) $object_id, (string) $this->get_meta_subtype(), (array) $meta);
+        $errors = RestMeta::errorsThrough((array) $this->get_registered_fields(), (array) $meta, ['delete' => fn ($key, $field) => RestMeta::nullRefused((string) $this->get_meta_type(), (int) $object_id, $key, $field) ?? $this->delete_meta_value($object_id, $key, $field['name']), 'single' => fn ($key, $field, $value) => $this->update_meta_value($object_id, $key, $field['name'], $value), 'multiple' => fn ($key, $field, $values) => $this->update_multi_meta_value($object_id, $key, $field['name'], $values)]);
         $first = array_shift($errors);
         foreach ($errors as $error) {
             $first->merge_from($error);
@@ -55,7 +55,7 @@ abstract class WP_REST_Meta_Fields
 
     protected function delete_meta_value($object_id, $meta_key, $name)
     {
-        return RestMeta::delete((string) $this->get_meta_type(), (int) $object_id, (string) $meta_key, $this->field_for((string) $meta_key, (string) $name)) ?? true;
+        return RestMeta::deleteKey((string) $this->get_meta_type(), (int) $object_id, (string) $meta_key, (string) $name) ?? true;
     }
 
     protected function update_multi_meta_value($object_id, $meta_key, $name, $values)

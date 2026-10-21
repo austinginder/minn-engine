@@ -5,6 +5,7 @@ dynamic core blocks that render from data
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Archives`](#archives) | final readonly class | 29 | core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts). |
+| [`Calendar`](#calendar) | final class | 36 | The calendar block's colours: the reference puts them on the calendar's |
 | [`Dates`](#dates) | final class | 15 | Site-local dates the way the dynamic blocks print them. |
 | [`LatestComments`](#latestcomments) | final readonly class | 71 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
 | [`LatestPosts`](#latestposts) | final readonly class | 148 | core/latest-posts: the newest published posts as a list or a grid, each with |
@@ -29,6 +30,27 @@ __construct(Minn\Db $db, Minn\Front\Permalinks $permalinks)
 ### `render(Minn\Blocks\Block $block, Minn\Blocks\Renderer $renderer): string`
 
 The block's HTML.
+
+
+## Calendar
+
+`final class Minn\Blocks\Dynamic\Calendar` · `public/minn/src/Minn/Blocks/Dynamic/Calendar.php`
+
+The calendar block's colours: the reference puts them on the calendar's
+table, not on the block's wrapper. A colour preset is a pair of classes;
+a custom colour, only where no preset is named, is its marker class and
+a declaration in the table's style attribute (probe
+blocks-rest-widget-doubts). Gradients are not carried.
+
+- const `COLOURS` = `array (   'textColor' =>    array (     0 => 'text',     1 => 'has-text-color',     2 => 'color',     3 => '-color',   ),   'backgroundColor' =>    array (     0 => 'background',     1 => 'has-background',     2 => 'background-color',     3 => '-background-color',   ), )`
+
+### static `withoutColours(Minn\Blocks\Block $block): Minn\Blocks\Block`
+
+The block with its colours taken off, for the wrapper.
+
+### static `colourTable(Minn\Blocks\Block $block, string $calendar): string`
+
+The calendar's markup with the block's colours on its table.
 
 
 ## Dates

@@ -23,26 +23,16 @@ class WP_Widget_Custom_HTML extends WP_Widget
         );
     }
 
+    /** The stored markup through widget_text (as a text instance) and widget_custom_html_content, the text widget's class first in the wrapper (Widgets\TextWidgets::customHtml). */
     public function widget($args, $instance)
     {
-        $instance = wp_parse_args($instance, $this->default_instance);
-        $title = apply_filters('widget_title', (string) $instance['title'], $instance, $this->id_base);
-        // The text widget's class goes first in the wrapper's class, so themes style both alike.
-        echo preg_replace('/(?<=\sclass=["\'])/', 'widget_text ', (string) ($args['before_widget'] ?? ''));
-        if ($title !== '') {
-            echo ($args['before_title'] ?? '') . $title . ($args['after_title'] ?? '');
-        }
-        // The text widget's filter first, then the Custom HTML widget's own.
-        $content = apply_filters('widget_text', (string) $instance['content'], $instance, $this);
-        echo '<div class="textwidget custom-html-widget">' . apply_filters('widget_custom_html_content', $content, $instance, $this) . '</div>';
-        echo $args['after_widget'] ?? '';
+        echo Minn\Widgets\TextWidgets::customHtml($this, (array) $args, (array) $instance);
     }
 
-    /** As the text widget's: a gallery here belongs to no post (probe widget-methods). */
+    /** As the text widget's: a gallery here belongs to no post off a singular view (probe widget-methods). */
     public function _filter_gallery_shortcode_attrs($attrs)
     {
-        $attrs['id'] ??= -1;
-        return $attrs;
+        return Minn\Widgets\TextWidgets::galleryAttributes((array) $attrs);
     }
 
     public function enqueue_admin_scripts()

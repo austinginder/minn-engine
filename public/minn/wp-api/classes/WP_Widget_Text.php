@@ -1,5 +1,6 @@
 <?php
 
+use Minn\Widgets\TextWidgets;
 use Minn\Widgets\WidgetForms;
 use Minn\Widgets\WidgetTemplates;
 /**
@@ -22,36 +23,16 @@ class WP_Widget_Text extends WP_Widget
         $this->registered = true;
     }
 
+    /** Whether an instance is a legacy one the visual editor would change (Widgets\TextWidgets::isLegacy). */
     public function is_legacy_instance($instance)
     {
-        if (isset($instance['visual'])) {
-            return !$instance['visual'];
-        }
-        return ($instance['filter'] ?? '') !== 'content';
+        return TextWidgets::isLegacy($instance);
     }
 
+    /** The widget: a visual instance through the content filters, any other through wpautop when it asks and then its shortcodes (Widgets\TextWidgets::text). */
     public function widget($args, $instance)
     {
-        $title = apply_filters('widget_title', empty($instance['title']) ? '' : $instance['title'], $instance, $this->id_base);
-        $text = !empty($instance['text']) ? $instance['text'] : '';
-        $visual = !$this->is_legacy_instance($instance);
-        if ($visual) {
-            $instance['filter'] = true;
-            $instance['visual'] = true;
-        }
-        $text = apply_filters('widget_text', $text, $instance, $this);
-        if ($visual) {
-            $text = apply_filters('widget_text_content', $text, $instance, $this);
-        } elseif (!empty($instance['filter'])) {
-            $text = wpautop($text);
-        }
-        echo $args['before_widget'];
-        if ($title) {
-            echo $args['before_title'] . $title . $args['after_title'];
-        }
-        $text = preg_replace_callback('#<(video|iframe|object|embed)\s[^>]*>#i', [$this, 'inject_video_max_width_style'], $text);
-        echo "\t\t\t<div class=\"textwidget\">" . $text . "</div>\n\t\t";
-        echo $args['after_widget'];
+        echo TextWidgets::text($this, (array) $args, (array) $instance);
     }
 
     public function inject_video_max_width_style($matches)
@@ -67,18 +48,13 @@ class WP_Widget_Text extends WP_Widget
         $instance['title'] = sanitize_text_field((string) ($new_instance['title'] ?? ''));
         $text = (string) ($new_instance['text'] ?? '');
         $instance['text'] = current_user_can('unfiltered_html') ? $text : wp_kses_post($text);
-        $instance['filter'] = !empty($new_instance['filter']);
-        if (isset($new_instance['visual'])) {
-            $instance['visual'] = !empty($new_instance['visual']);
-        }
-        return $instance;
+        return TextWidgets::settled((array) $instance, (array) $new_instance);
     }
 
-    /** A gallery in the widget belongs to no post: its id is -1 unless the shortcode named one (probe widget-methods). */
+    /** A gallery in the widget belongs to no post off a singular view: its id is -1 unless the shortcode named an id or images (probe widget-methods). */
     public function _filter_gallery_shortcode_attrs($attrs)
     {
-        $attrs['id'] ??= -1;
-        return $attrs;
+        return TextWidgets::galleryAttributes((array) $attrs);
     }
 
     /** What the widget's preview in the Customizer needs for a playlist, its templates included. */

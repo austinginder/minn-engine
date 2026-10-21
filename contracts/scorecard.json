@@ -5,22 +5,22 @@
         "fixed": 80
     },
     "sql": {
-        "measured": "2026-10-12",
+        "measured": "2026-10-21",
         "pages": {
             "/": [
-                27,
+                26,
                 38
             ],
             "/hello-world/": [
-                41,
+                37,
                 44
             ],
             "/category/uncategorized/": [
-                32,
+                30,
                 43
             ],
             "/wp-json/wp/v2/posts": [
-                26,
+                24,
                 41
             ],
             "/?s=hello": [
@@ -240,14 +240,14 @@
         },
         "facadeLogicCeiling": {
             "label": "Facade functions and methods holding logic",
-            "ceiling": 3838,
+            "ceiling": 3753,
             "started": 3865,
             "since": "db6aa5a6",
             "rose": false
         },
         "facadeLogicLinesCeiling": {
             "label": "Lines of logic in the facade",
-            "ceiling": 30100,
+            "ceiling": 29300,
             "started": 30383,
             "since": "db6aa5a6",
             "rose": false
@@ -261,9 +261,9 @@
         }
     },
     "open": {
-        "done": 68,
-        "accepted": 21,
-        "open": 3,
+        "done": 69,
+        "accepted": 22,
+        "open": 7,
         "austin": 0
     },
     "run": {
@@ -277,13 +277,13 @@
     },
     "gate": {
         "deadEndCalls": 0,
-        "deadEndsByHand": 70,
+        "deadEndsByHand": 68,
         "deadEndsByHandAreas": {
             "customizer": 20,
-            "admin": 43,
+            "admin": 41,
             "editor": 7
         },
-        "deadEndsByHandProven": 177,
+        "deadEndsByHandProven": 179,
         "floor": {
             "version": "8.3",
             "newest": "8.5",
@@ -300,11 +300,11 @@
         "duplicated": {
             "window": 100,
             "stretches": 115,
-            "lines": 2079,
-            "of": 185778
+            "lines": 2071,
+            "of": 186086
         },
         "engine": {
-            "of": 109124,
+            "of": 110071,
             "php": {
                 "strict": {
                     "window": 40,
@@ -313,8 +313,8 @@
                 },
                 "sensitive": {
                     "window": 30,
-                    "stretches": 70,
-                    "lines": 303
+                    "stretches": 71,
+                    "lines": 306
                 }
             },
             "assets": {
@@ -331,45 +331,54 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76654,
+            "of": 76015,
             "window": 80,
-            "stretches": 110,
-            "lines": 2925
+            "stretches": 108,
+            "lines": 2901
         }
     },
     "facadeLogic": {
-        "functions": 3496,
-        "methods": 3815,
-        "delegates": 3473,
-        "logicFunctions": 1808,
-        "logicMethods": 2030,
-        "logicLines": 30056,
+        "functions": 3494,
+        "methods": 3811,
+        "delegates": 3552,
+        "logicFunctions": 1781,
+        "logicMethods": 1972,
+        "logicLines": 29291,
         "kept": 0,
         "review": {
-            "doubts": 306,
-            "reviewed": 3199,
+            "doubts": 118,
+            "reviewed": 3115,
             "stale": 0,
             "verdicts": {
-                "delegate": 143,
-                "move": 1527,
-                "keep": 1514,
-                "remove": 15
+                "delegate": 148,
+                "move": 1469,
+                "keep": 1484,
+                "remove": 14
             },
             "keep": {
                 "scope": 114,
-                "shape": 288,
-                "compose": 601,
-                "contract": 498,
-                "library": 13
+                "shape": 285,
+                "compose": 598,
+                "contract": 476,
+                "library": 11
             },
             "gates": {
-                "subclass": 322,
+                "subclass": 302,
                 "pluggable": 25,
-                "unprobed": 157,
-                "globals": 168,
+                "unprobed": 147,
+                "globals": 170,
                 "refs": 27
             },
-            "unreviewed": 639
+            "unreviewed": 638
         }
+    },
+    "behaviour": {
+        "sideEffects": {
+            "probes": 408,
+            "differing": 1,
+            "rows": 1
+        },
+        "restFuzz": null,
+        "cliFeatures": null
     }
 }

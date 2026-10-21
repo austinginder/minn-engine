@@ -27,13 +27,10 @@ class WP_Widget_Tag_Cloud extends WP_Widget
         echo $args['after_widget'];
     }
 
+    /** The new settings alone: the title sanitized, the count as 1 or 0, the taxonomy unslashed ('' when none is given). */
     public function update($new_instance, $old_instance)
     {
-        $instance = $old_instance;
-        $instance['title'] = sanitize_text_field((string) ($new_instance['title'] ?? ''));
-        $instance['count'] = !empty($new_instance['count']) ? 1 : 0;
-        $instance['taxonomy'] = stripslashes((string) ($new_instance['taxonomy'] ?? 'post_tag'));
-        return $instance;
+        return ['title' => sanitize_text_field((string) ($new_instance['title'] ?? '')), 'count' => !empty($new_instance['count']) ? 1 : 0, 'taxonomy' => stripslashes((string) ($new_instance['taxonomy'] ?? ''))];
     }
 
     public function _get_current_taxonomy($instance)

@@ -99,16 +99,21 @@ final readonly class MenuEvents
         return false;
     }
 
-    /** wp_delete_nav_menu: the items through wp_delete_post, the term through wp_delete_term, the locations let go, then wp_delete_nav_menu. */
-    public function deleteMenu(int $menuId): void
+    /** wp_delete_nav_menu: the items through wp_delete_post, the term through wp_delete_term (what it gave, unless true), the locations let go, then wp_delete_nav_menu. */
+    public function deleteMenu(int $menuId): mixed
     {
         foreach ($this->menus->items($menuId) as $item) {
             (new PostEvents())->deleteForGood($item->id);
         }
-        TermWrites::delete($menuId, 'nav_menu');
+        // A menu whose term is not there is not deleted, and nobody is told (probe taxonomy-blocks-user-doubts).
+        $deleted = TermWrites::delete($menuId, 'nav_menu');
+        if ($deleted !== true) {
+            return $deleted;
+        }
         // The locations are written back whether or not the menu held one, so a theme with none gains an empty list, and a location the menu held keeps its key, set to 0 (tests/tools/side-effects.php, rest-menu-save, theme-tags).
         ThemeMods::set('nav_menu_locations', array_map(static fn ($assigned) => (int) $assigned === $menuId ? 0 : $assigned, NavMenu::locations()));
         Runtime::hooks()->action('wp_delete_nav_menu', [$menuId]);
+        return true;
     }
 
     /**

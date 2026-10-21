@@ -34,7 +34,18 @@
  *   code identical to the reference's source;
  * - facadeLogic: the facade's functions and methods that hold logic
  *   rather than hand over to the engine, and their lines
- *   (contracts/api/facade-logic.json, tests/tools/facade-logic.php).
+ *   (contracts/api/facade-logic.json, tests/tools/facade-logic.php), with
+ *   the review's progress and the doubts it raised still open (each
+ *   settled by a probe: fixed to the reference, or kept with a reason);
+ * - behaviour: the hunts for differences no symbol count shows. sideEffects
+ *   are the api probes whose database writes differ from the reference's
+ *   (contracts/fixtures/effects/divergences.json, tests/tools/side-effects.php);
+ *   restFuzz is the differential REST fuzzer's last pass
+ *   (contracts/rest-fuzz.json, summary: routes, requests, differences)
+ *   and cliFeatures WP-CLI's own feature tests on both stacks
+ *   (contracts/cli-features.json, summary: scenarios, passedReference,
+ *   passedEngine, passedBoth); either is
+ *   null until its tool has written its file.
  *
  * php tests/tools/scorecard.php [--run-log=<run-all log>]
  */
@@ -164,6 +175,13 @@ $review = json_decode((string) shell_exec('php ' . escapeshellarg(__DIR__ . '/fa
 if ($facadeLogic !== null && is_array($review['summary'] ?? null)) {
     $facadeLogic['review'] = array_intersect_key($review['summary'], array_flip(['reviewed', 'unreviewed', 'stale', 'verdicts', 'keep', 'gates', 'doubts']));
 }
+// The hunts for behaviour no symbol count shows: probe writes, the REST fuzzer, WP-CLI's own tests.
+$effects = $json('contracts/fixtures/effects/divergences.json');
+$behaviour = [
+    'sideEffects' => $effects === null ? null : ['probes' => count((array) $effects['probes']), 'differing' => count((array) $effects['differences']), 'rows' => array_sum(array_map('count', (array) $effects['differences']))],
+    'restFuzz' => $json('contracts/rest-fuzz.json')['summary'] ?? null,
+    'cliFeatures' => $json('contracts/cli-features.json')['summary'] ?? null,
+];
 $coverage = ($lines = $json('contracts/line-coverage.json')) === null ? null : ['measured' => $lines['measured'], 'percent' => $lines['percent'], 'lines' => $lines['lines'], 'covered' => $lines['covered'], 'parts' => $lines['parts']];
 
 // The leanness ceilings the style suite holds (each only falls), with the value each started at and whether one ever rose.
@@ -257,6 +275,7 @@ $card = [
     'gate' => is_array($gate) ? $gate : null,
     'clones' => is_array($clones) ? $clones : null,
     'facadeLogic' => $facadeLogic,
+    'behaviour' => $behaviour,
 ];
 file_put_contents("{$root}/contracts/scorecard.json", json_encode($card, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 printf("security %d/%d fixed; sql %s; hooks %s; coverage %s; open %s\n",
@@ -269,9 +288,13 @@ printf("leanness: %d ratchets, %d risen; run %s\n",
     count($ceilings), count(array_filter($ceilings, static fn (array $c): bool => $c['rose'])),
     $run === null ? 'not recorded' : "{$run['green']} of {$run['suites']} suites green, {$run['checks']} checks" . ($run['red'] === [] ? '' : ' (red: ' . implode(', ', $run['red']) . ')') . (isset($run['engineWarnings']) ? ", {$run['engineWarnings']} engine warnings" : ''));
 printf("WordPress names in the engine: %s\n", $wordpressNames === null ? 'unmeasured' : "{$wordpressNames['functionCalls']} calls to {$wordpressNames['functions']} functions, {$wordpressNames['hookApi']} hook API calls, {$wordpressNames['classReferences']} references to {$wordpressNames['classes']} classes, in {$wordpressNames['files']} files (target 0, 0, 0)");
+printf("behaviour: side effects %s; REST fuzz %s; WP-CLI feature tests %s\n",
+    $behaviour['sideEffects'] === null ? 'unmeasured' : "{$behaviour['sideEffects']['differing']} of {$behaviour['sideEffects']['probes']} probes write otherwise ({$behaviour['sideEffects']['rows']} rows)",
+    $behaviour['restFuzz'] === null ? 'to build' : json_encode($behaviour['restFuzz']),
+    $behaviour['cliFeatures'] === null ? 'to build' : json_encode($behaviour['cliFeatures']));
 printf("facade logic: %s\n", $facadeLogic === null ? 'unmeasured' : sprintf('%d functions and %d methods hold logic, %d lines; %d delegates; %d kept on purpose (only falls)%s',
     $facadeLogic['logicFunctions'], $facadeLogic['logicMethods'], $facadeLogic['logicLines'], $facadeLogic['delegates'], $facadeLogic['kept'],
-    isset($facadeLogic['review']) ? sprintf('; reviewed %d, %d left (%d move, %d delegate, %d keep, %d remove)', $facadeLogic['review']['reviewed'], $facadeLogic['review']['unreviewed'], $facadeLogic['review']['verdicts']['move'], $facadeLogic['review']['verdicts']['delegate'], $facadeLogic['review']['verdicts']['keep'], $facadeLogic['review']['verdicts']['remove']) : ''));
+    isset($facadeLogic['review']) ? sprintf('; reviewed %d, %d left (%d move, %d delegate, %d keep, %d remove)', $facadeLogic['review']['reviewed'], $facadeLogic['review']['unreviewed'], $facadeLogic['review']['verdicts']['move'], $facadeLogic['review']['verdicts']['delegate'], $facadeLogic['review']['verdicts']['keep'], $facadeLogic['review']['verdicts']['remove']) . "; {$facadeLogic['review']['doubts']} doubts open" : ''));
 printf("gate: %s\n", !is_array($gate) ? 'gate-scan.php failed' : sprintf('%d calls into stubbed dead ends, %d unproven dead ends written by hand, PHP %s floor (%d lint failures, %d names only newer PHP has), %d hygiene hits',
     $gate['deadEndCalls'], $gate['deadEndsByHand'], $gate['floor']['version'], $gate['floor']['lintFailures'], $gate['floor']['unknown'], $gate['hygiene']['hits']));
 printf("clones: %s\n", !is_array($clones) ? 'clone-scan.php failed' : sprintf('%d duplicated lines; %s',

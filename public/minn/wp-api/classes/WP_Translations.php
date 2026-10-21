@@ -28,13 +28,16 @@ class WP_Translations
     private function make_entry($original, $translations): Translation_Entry
     {
         [$context, $singular] = str_contains((string) $original, "\x04") ? explode("\x04", (string) $original, 2) : [null, (string) $original];
-        return new Translation_Entry(['singular' => $singular, 'context' => $context, 'translations' => explode("\0", (string) $translations)]);
+        // An entry with more than one translation is a plural one, its plural form not known here.
+        return new Translation_Entry(['singular' => $singular, 'context' => $context, 'translations' => $list = explode("\0", (string) $translations), 'is_plural' => count($list) > 1]);
     }
 
     public function translate_plural($singular, $plural, $count = 1, $context = '')
     {
-        $translation = $this->controller->translate_plural([(string) $singular, (string) $plural], (int) $count, (string) $context, $this->textdomain);
-        return $translation !== false ? $translation : ((int) $count === 1 ? $singular : $plural);
+        // Either form missing, the singular is the answer, untranslated.
+        $missing = $singular === null || $plural === null;
+        $translation = $missing ? false : $this->controller->translate_plural([(string) $singular, (string) $plural], (int) $count, (string) $context, $this->textdomain);
+        return $translation !== false ? $translation : ($missing || (int) $count === 1 ? $singular : $plural);
     }
 
     public function translate($singular, $context = '')

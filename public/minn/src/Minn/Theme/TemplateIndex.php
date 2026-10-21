@@ -13,7 +13,7 @@ use Minn\Runtime\BlockTemplates;
 /**
  * Every block template and template part the site offers, in the order the
  * reference lists them: the rows the site editor saved first (newest post
- * date first), then the theme's own files in the order the directory hands
+ * date first, those of one date in the order they were saved), then the theme's own files in the order the directory hands
  * them back, then whatever a plugin registered. A saved row shadows the
  * theme file of the same slug and reports has_theme_file so the file can
  * be restored by deleting the row.
@@ -96,8 +96,8 @@ final class TemplateIndex
     /**
      * One theme file: its slug, path, theme (the parent's for a file the
      * child does not have) and type; a part's title (when theme.json gives
-     * one) and area; a custom template's title and post types. Null when
-     * the theme has no such file.
+     * one) and area; a custom template's title and post types (pages when
+     * it names none). Null when the theme has no such file.
      *
      * @return array<string, mixed>|null
      */
@@ -115,10 +115,9 @@ final class TemplateIndex
         }
         $declared = $this->theme->customTemplate($slug);
         if ($declared !== null) {
+            // A custom template that names no post types is for pages (probe taxonomy-blocks-user-doubts).
             $info['title'] = (string) ($declared['title'] ?? '');
-            if (isset($declared['postTypes'])) {
-                $info['postTypes'] = (array) $declared['postTypes'];
-            }
+            $info['postTypes'] = (array) ($declared['postTypes'] ?? ['page']);
         }
         return $info;
     }
@@ -131,6 +130,22 @@ final class TemplateIndex
     public function postTypes(string $slug): array
     {
         return array_values(array_map('strval', (array) ($this->theme->customTemplate($slug)['postTypes'] ?? [])));
+    }
+
+    /** The id of a template or part saved for any theme by slug, its wp_theme term naming the theme; null for none. */
+    public function savedId(string $type, string $theme, string $slug): ?int
+    {
+        $id = $this->db->value(
+            "SELECT p.ID FROM {$this->db->table('posts')} p
+             JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID
+             JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+             JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
+             WHERE p.post_type = ? AND p.post_name = ? AND p.post_status = 'publish'
+               AND tt.taxonomy = 'wp_theme' AND t.slug = ?
+             ORDER BY p.post_date DESC, p.ID ASC LIMIT 1",
+            [$type, $slug, $theme],
+        );
+        return $id === null ? null : (int) $id;
     }
 
     /** The theme the index reads. */
@@ -213,7 +228,7 @@ final class TemplateIndex
              JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
              WHERE p.post_type = ? AND p.post_status = 'publish'
                AND tt.taxonomy = 'wp_theme' AND t.slug = ?
-             ORDER BY p.post_date DESC, p.ID DESC",
+             ORDER BY p.post_date DESC, p.ID ASC",
             [$type, $this->theme->slug],
         ));
     }
@@ -231,17 +246,20 @@ final class TemplateIndex
     private function fromRow(array $row, string $type): TemplateRecord
     {
         $slug = (string) $row['post_name'];
-        $origin = $this->db->value(
-            "SELECT meta_value FROM {$this->db->table('postmeta')} WHERE post_id = ? AND meta_key = 'origin' LIMIT 1",
+        $meta = array_column($this->db->rows(
+            "SELECT meta_key, meta_value FROM {$this->db->table('postmeta')} WHERE post_id = ? AND meta_key IN ('origin', 'is_wp_suggestion') ORDER BY meta_id",
             [(int) $row['ID']],
-        );
+        ), 'meta_value', 'meta_key');
+        $origin = $meta['origin'] ?? null;
+        // A row saved over a plugin's template takes the plugin, and the title and description it leaves empty, from the registration (probe taxonomy-blocks-user-doubts).
+        $registered = $origin === 'plugin' && $type === self::TEMPLATE ? $this->registered?->bySlug($slug) : null;
         return new TemplateRecord(
             theme: $this->theme->slug,
             slug: $slug,
             type: $type,
             content: (string) $row['post_content'],
-            title: (string) $row['post_title'],
-            description: (string) $row['post_excerpt'],
+            title: (string) $row['post_title'] !== '' ? (string) $row['post_title'] : (string) ($registered['title'] ?? ''),
+            description: (string) $row['post_excerpt'] !== '' ? (string) $row['post_excerpt'] : (string) ($registered['description'] ?? ''),
             source: 'custom',
             origin: $origin === null ? null : (string) $origin,
             hasThemeFile: $this->hasFile($type, $slug),
@@ -251,6 +269,8 @@ final class TemplateIndex
             wpId: (int) $row['ID'],
             status: (string) $row['post_status'],
             area: $type === self::PART ? $this->savedArea((int) $row['ID'], $slug) : null,
+            plugin: $registered === null ? null : (string) $registered['plugin'],
+            suggestion: !empty($meta['is_wp_suggestion']),
         );
     }
 

@@ -243,24 +243,7 @@ function the_widget($widget, $instance = [], $args = [])
 
 function wp_convert_widget_settings($base_name, $option_name, $settings)
 {
-    $single = false;
-    $changed = false;
-    if (empty($settings)) {
-        $single = true;
-    } else {
-        foreach (array_keys($settings) as $number) {
-            if (!is_numeric($number)) {
-                $single = true;
-                break;
-            }
-        }
-    }
-    if ($single) {
-        $settings = [2 => $settings];
-    }
-    // Settings already numbered get the marker too (probe widgets-remaining).
-    $settings['_multiwidget'] = 1;
-    return $settings;
+    return is_admin() ? Minn\Runtime\WidgetAreas::convertStoredSettings((string) $base_name, (string) $option_name, $settings) : Minn\Runtime\WidgetAreas::convertSettings((string) $base_name, $settings);
 }
 
 /**

@@ -30,11 +30,9 @@ class Translation_Entry
             return;
         }
         foreach ((array) $args as $name => $value) {
-            if (property_exists($this, (string) $name)) {
-                $this->$name = $value;
-            }
+            $this->$name = $value;
         }
-        $this->is_plural = $this->plural !== null && $this->plural !== '';
+        $this->is_plural = $this->is_plural || ($this->plural !== null && $this->plural !== '');
         foreach (['translations', 'references', 'flags'] as $list) {
             $this->$list = is_array($this->$list) ? $this->$list : [];
         }
@@ -53,8 +51,8 @@ class Translation_Entry
 
     public function merge_with(&$other)
     {
-        $this->flags = array_values(array_unique(array_merge($this->flags, $other->flags)));
-        $this->references = array_values(array_unique(array_merge($this->references, $other->references)));
+        $this->flags = array_unique(array_merge($this->flags, $other->flags));
+        $this->references = array_unique(array_merge($this->references, $other->references));
         if ($this->extracted_comments !== $other->extracted_comments) {
             $this->extracted_comments .= $other->extracted_comments;
         }
@@ -120,7 +118,7 @@ class Translations
     {
         $entry = new Translation_Entry(['singular' => $singular, 'context' => $context]);
         $found = $this->translate_entry($entry);
-        return $found && ($found->translations[0] ?? '') !== '' ? $found->translations[0] : $singular;
+        return $found && isset($found->translations[0]) ? $found->translations[0] : $singular;
     }
 
     public function select_plural_form($count)
@@ -138,8 +136,8 @@ class Translations
         $entry = new Translation_Entry(['singular' => $singular, 'plural' => $plural, 'context' => $context]);
         $found = $this->translate_entry($entry);
         $index = $this->select_plural_form($count);
-        $form = $found && $index >= 0 && $index < $this->get_plural_forms_count() ? ($found->translations[$index] ?? '') : '';
-        return $form !== '' ? $form : ((int) $count === 1 ? $singular : $plural);
+        $form = $found && $index >= 0 && $index < $this->get_plural_forms_count() ? ($found->translations[$index] ?? null) : null;
+        return $form ?? ((int) $count === 1 ? $singular : $plural);
     }
 
     public function merge_with(&$other)
@@ -186,11 +184,10 @@ class Gettext_Translations extends Translations
         return PluralRule::fromExpression((int) $nplurals, (string) $expression)->chooser();
     }
 
-    /** An expression with each ternary's branches parenthesized, as the reference writes it: "?" becomes " ? (", ":" becomes ") : (", the parentheses closed at the end. */
+    /** An expression with each ternary's branches parenthesized, as the reference writes it: "?" becomes " ? (", ":" becomes ") : (", the parentheses closed at each ";" and at the end, the trailing ";" dropped. */
     public function parenthesize_plural_exression($expression)
     {
-        $depth = substr_count((string) $expression, '?');
-        return str_replace(['?', ':'], [' ? (', ') : ('], (string) $expression) . str_repeat(')', $depth);
+        return PluralRule::parenthesized((string) $expression);
     }
 
     public function make_headers($translation)
@@ -247,11 +244,11 @@ class MO extends Gettext_Translations
 
     public function export()
     {
-        $entries = [];
+        $pairs = [];
         foreach (array_filter($this->entries, [$this, 'is_entry_good_for_export']) as $entry) {
-            $entries[(string) $entry->key()] = ['translations' => array_values($entry->translations), 'plural' => $entry->is_plural ? (string) $entry->plural : null];
+            $pairs[(string) $this->export_original($entry)] = (string) $this->export_translations($entry);
         }
-        return MoFile::write($this->headers, $entries);
+        return MoFile::writePairs((string) $this->export_headers(), $pairs);
     }
 
     public function is_entry_good_for_export($entry)

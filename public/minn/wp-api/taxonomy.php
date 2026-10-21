@@ -66,11 +66,11 @@ function get_taxonomies($args = [], $output = 'names', $operator = 'and')
 
 function get_object_taxonomies($object_type, $output = 'names')
 {
-    // A post is asked by its type; an attachment by its file's types too.
-    if (is_object($object_type)) {
-        $object_type = $object_type->post_type === 'attachment' ? get_attachment_taxonomies($object_type) : $object_type->post_type;
+    // A post is asked by its type; an attachment by its file's types too (probe taxonomy-blocks-user-doubts).
+    if (is_object($object_type) && $object_type->post_type === 'attachment') {
+        return get_attachment_taxonomies($object_type, $output);
     }
-    return Registered::objectTaxonomies($object_type, $output);
+    return Registered::objectTaxonomies(is_object($object_type) ? $object_type->post_type : $object_type, $output);
 }
 
 /**
@@ -80,27 +80,7 @@ function get_object_taxonomies($object_type, $output = 'names')
  */
 function get_attachment_taxonomies($attachment, $output = 'names')
 {
-    $attachment = is_int($attachment) ? get_post($attachment) : (is_array($attachment) ? (object) $attachment : $attachment);
-    if (!is_object($attachment)) {
-        return [];
-    }
-    $file = wp_basename((string) get_attached_file($attachment->ID ?? 0));
-    $objects = ['attachment'];
-    if (str_contains($file, '.')) {
-        $objects[] = 'attachment:' . substr($file, strrpos($file, '.') + 1);
-    }
-    $mime = (string) ($attachment->post_mime_type ?? '');
-    if ($mime !== '') {
-        $objects[] = 'attachment:' . $mime;
-        foreach (array_filter(explode('/', $mime)) as $half) {
-            $objects[] = "attachment:{$half}";
-        }
-    }
-    $taxonomies = [];
-    foreach ($objects as $object) {
-        $taxonomies = array_merge($taxonomies, (array) get_object_taxonomies($object, $output));
-    }
-    return $output === 'names' ? array_values(array_unique($taxonomies)) : $taxonomies;
+    return Minn\Runtime\TermTags::attachmentTaxonomies($attachment, $output);
 }
 
 function register_taxonomy($taxonomy, $object_type, $args = [])
@@ -124,17 +104,12 @@ function register_taxonomy($taxonomy, $object_type, $args = [])
 }
 
 /**
- * @internal A taxonomy's default term, settled as it registers (probe
- * taxonomy-default-term): nothing while default_term_{taxonomy} names a term
- * that is there; otherwise a term of that name is kept, or the term is made,
- * and its id stored.
+ * @internal A taxonomy's default term, settled as it registers (probes
+ * taxonomy-default-term, taxonomy-blocks-user-doubts): a term of that name is
+ * kept, or the term is made, and its id stored, over any other term stored.
  */
 function _minn_default_term(string $taxonomy, array $term): void
 {
-    $stored = (int) get_option("default_term_{$taxonomy}");
-    if ($stored > 0 && term_exists($stored, $taxonomy)) {
-        return;
-    }
     $found = term_exists((string) $term['name'], $taxonomy);
     if (!is_array($found)) {
         $found = wp_insert_term((string) $term['name'], $taxonomy, ['slug' => (string) $term['slug'], 'description' => (string) $term['description']]);
@@ -182,12 +157,16 @@ function unregister_taxonomy_for_object_type($taxonomy, $object_type)
     return $removed;
 }
 
-/** A taxonomy's full labels from its own, then taxonomy_labels_{$name} (Runtime\Registry::taxonomyLabels; probe taxonomy-remaining). */
+/**
+ * A taxonomy's full labels from its own (the old helps and no_tagcloud as two
+ * of them), then taxonomy_labels_{$name}, what it gives merged over them
+ * (Runtime\Registry::taxonomyLabels; probes taxonomy-remaining, taxonomy-blocks-user-doubts).
+ */
 function get_taxonomy_labels($tax)
 {
     $name = (string) ($tax->name ?? '');
-    $labels = Runtime::registry()->taxonomyLabels((array) ($tax->labels ?? []), isset($tax->label) ? (string) $tax->label : null, empty($tax->hierarchical) ? 'post_tag' : 'category', $name);
-    return apply_filters("taxonomy_labels_{$name}", (object) $labels);
+    $labels = Runtime::registry()->taxonomyLabels((array) ($tax->labels ?? []) + array_filter(['separate_items_with_commas' => $tax->helps ?? null, 'not_found' => $tax->no_tagcloud ?? null], 'is_string'), isset($tax->label) ? (string) $tax->label : null, empty($tax->hierarchical) ? 'post_tag' : 'category', $name);
+    return (object) array_merge($labels, (array) apply_filters("taxonomy_labels_{$name}", (object) $labels));
 }
 
 /** @internal a fetched term's numbers as integers: its id, group, taxonomy id, parent and count */
@@ -263,13 +242,13 @@ function get_tags($args = '')
 {
     $args = wp_parse_args($args, ['taxonomy' => 'post_tag']);
     $terms = get_terms($args);
-    return is_wp_error($terms) ? [] : apply_filters('get_tags', $terms, $args);
+    return $terms === [] ? [] : apply_filters('get_tags', $terms, $args);
 }
 
 function get_category($category, $output = OBJECT, $filter = 'raw')
 {
     $term = get_term($category, 'category', $output, $filter);
-    if ($term instanceof WP_Term) {
+    if ($term instanceof WP_Term || is_array($term)) {
         _make_cat_compat($term);
     }
     return $term;
@@ -328,7 +307,7 @@ function get_category_link($category)
 
 function get_tag_link($tag)
 {
-    $term = $tag instanceof WP_Term ? $tag : get_term((int) $tag, 'post_tag');
+    $term = $tag instanceof WP_Term ? $tag : get_term((int) $tag);
     return $term instanceof WP_Term ? get_term_link($term) : '';
 }
 
@@ -563,13 +542,10 @@ function clean_term_cache($ids, $taxonomy = '', $clean_taxonomy = true)
     Minn\Runtime\TermLookup::cleanCache($ids, $taxonomy, $clean_taxonomy);
 }
 
+/** Each taxonomy's cached relationships of the objects let go, and the terms' last_changed moved; nothing while invalidation is suspended. */
 function clean_object_term_cache($object_ids, $object_type)
 {
-    Minn\Content\RowCache::forget('post_terms');
-    foreach ((array) $object_ids as $id) {
-        wp_cache_delete((int) $id, 'post_meta');
-    }
-    do_action('clean_object_term_cache', (array) $object_ids, $object_type);
+    Minn\Runtime\TermTags::cleanObjects($object_ids, $object_type);
 }
 
 function wp_update_term_count($terms, $taxonomy, $do_deferred = false)
@@ -612,30 +588,10 @@ function wp_cache_set_terms_last_changed()
     wp_cache_set('last_changed', microtime(), 'terms');
 }
 
-/**
- * A term two taxonomies share, split (probe hook-inputs): the taxonomy row
- * named gets a term of its own, its children follow, split_shared_term
- * says so, and the split is recorded for wp_get_split_term(); a term held
- * by one taxonomy keeps its id.
- */
+/** A term two taxonomies share, split (Runtime\TermWrites::splitShared; probes hook-inputs, taxonomy-blocks-user-doubts). */
 function _split_shared_term($term_id, $term_taxonomy_id, $record = true)
 {
-    $term_id = (int) (is_object($term_id) ? $term_id->term_id : $term_id);
-    $term_taxonomy_id = (int) (is_object($term_taxonomy_id) ? $term_taxonomy_id->term_taxonomy_id : $term_taxonomy_id);
-    $split = _minn_term_writer()->split($term_id, $term_taxonomy_id);
-    if ($split === null) {
-        return $term_id;
-    }
-    [$new_term_id, $taxonomy, $children] = $split;
-    clean_term_cache([$term_id, $new_term_id, ...$children], $taxonomy);
-    do_action('split_shared_term', $term_id, $new_term_id, $term_taxonomy_id, $taxonomy);
-    if ($record) {
-        $splits = get_option('_split_terms', []);
-        $splits = is_array($splits) ? $splits : [];
-        $splits[$term_id][$taxonomy] = $new_term_id;
-        update_option('_split_terms', $splits);
-    }
-    return $new_term_id;
+    return Minn\Runtime\TermWrites::splitShared($term_id, $term_taxonomy_id, $record);
 }
 
 /** A term made ready for an edit form, '' for none (probe taxonomy-remaining). */
@@ -648,13 +604,11 @@ function get_term_to_edit($id, $taxonomy)
     return is_object($term) ? sanitize_term($term, $taxonomy, 'edit') : '';
 }
 
+/** A term's description as displayed, through term_description and {taxonomy}_description; '' for no term. */
 function term_description($term = 0, $deprecated = null)
 {
-    if (!$term) {
-        $term = get_queried_object();
-    }
-    $term = $term instanceof WP_Term ? $term : get_term($term);
-    return $term instanceof WP_Term ? apply_filters('term_description', $term->description, $term) : '';
+    $description = get_term_field('description', $term ?: get_queried_object());
+    return is_wp_error($description) ? '' : $description;
 }
 
 function category_description($category = 0)
@@ -712,19 +666,10 @@ function wp_unique_term_slug($slug, $term)
     return Minn\Runtime\TermWrites::uniqueSlug($slug, $term);
 }
 
-/** The default on wp_update_term_parent: no term may sit under itself, however far down; such a parent becomes 0. */
+/** The default on wp_update_term_parent: no term may sit under itself, however far down, and a loop above is broken (Runtime\TermWrites). */
 function wp_check_term_hierarchy_for_loops($parent_term, $term_id, $taxonomy)
 {
-    $parent = (int) $parent_term;
-    $term_id = (int) $term_id;
-    $seen = [];
-    for ($at = $parent; $at > 0 && !isset($seen[$at]); $at = (int) (_minn_term_row($at, (string) $taxonomy)['parent'] ?? 0)) {
-        if ($at === $term_id) {
-            return 0;
-        }
-        $seen[$at] = true;
-    }
-    return $parent;
+    return Minn\Runtime\TermWrites::parentWithoutLoops($parent_term, $term_id, $taxonomy);
 }
 
 /** Recounts the published objects behind each term_taxonomy id. */
@@ -743,7 +688,8 @@ function _update_generic_term_count($terms, $taxonomy)
 /**
  * The default on transition_post_status: each of the type's taxonomies is
  * asked which statuses it counts (update_post_term_count_statuses), and a
- * move into or out of one recounts the post's terms there (probe hook-inputs).
+ * move into or out of one recounts the post's terms there; a move between two
+ * counted statuses recounts nothing (probes hook-inputs, taxonomy-blocks-user-doubts).
  */
 function _update_term_count_on_transition_post_status($new_status, $old_status, $post)
 {
@@ -752,7 +698,7 @@ function _update_term_count_on_transition_post_status($new_status, $old_status, 
     }
     foreach ((array) get_object_taxonomies($post->post_type, 'objects') as $taxonomy) {
         $counted = (array) apply_filters('update_post_term_count_statuses', ['publish'], $taxonomy);
-        if (!in_array($new_status, $counted, true) && !in_array($old_status, $counted, true)) {
+        if (in_array($new_status, $counted, true) === in_array($old_status, $counted, true)) {
             continue;
         }
         $tt_ids = wp_get_object_terms($post->ID, $taxonomy->name, ['fields' => 'tt_ids']);
@@ -774,11 +720,11 @@ function update_termmeta_cache($term_ids)
     return update_meta_cache('term', $term_ids);
 }
 
-/** The category's name, or "" for an id no category has. */
+/** A term's name by id, whatever its taxonomy; the error get_term gives (0 is one), or "" for an id no term has. */
 function get_the_category_by_ID($cat_id)
 {
-    $term = get_term((int) $cat_id, 'category');
-    return $term instanceof WP_Term ? (string) $term->name : '';
+    $term = get_term((int) $cat_id);
+    return $term instanceof WP_Term ? (string) $term->name : (is_wp_error($term) ? $term : '');
 }
 
 /** The queried category's name, with a prefix, printed or returned; null off a category archive. */
@@ -833,7 +779,7 @@ function _minn_category_list_body(array $categories, array $r): string
     }
     $output = '';
     if (!empty($r['show_option_all'])) {
-        $all = esc_url(get_option('show_on_front') === 'page' && get_option('page_for_posts') ? get_permalink(get_option('page_for_posts')) : home_url('/'));
+        $all = esc_url(Minn\Runtime\TermTags::allLink((string) $r['taxonomy']));
         $output = $list ? "<li class='cat-item-all'><a href='{$all}'>{$r['show_option_all']}</a></li>" : "<a href='{$all}'>{$r['show_option_all']}</a>" . $r['separator'];
     }
     if (empty($r['current_category']) && (is_category() || is_tax() || is_tag())) {
@@ -863,25 +809,24 @@ function cat_is_ancestor_of($cat1, $cat2)
     return term_is_ancestor_of($cat1, $cat2, 'category');
 }
 
-/** The tag cloud for a taxonomy's terms; nothing at all when there are none. */
+/** The tag cloud for a taxonomy's terms, found by every argument given, linked to view or to edit; an array is returned, never printed; nothing at all when there are none. */
 function wp_tag_cloud($args = '')
 {
     $args = wp_parse_args($args, ['smallest' => 8, 'largest' => 22, 'unit' => 'pt', 'number' => 45, 'format' => 'flat', 'separator' => "\n", 'orderby' => 'name', 'order' => 'ASC', 'exclude' => '', 'include' => '', 'link' => 'view', 'taxonomy' => 'post_tag', 'post_type' => '', 'echo' => true, 'show_count' => 0]);
-    $tags = get_terms(array_merge(['taxonomy' => $args['taxonomy'], 'orderby' => 'count', 'order' => 'DESC'], array_intersect_key($args, array_flip(['number', 'exclude', 'include', 'hide_empty']))));
+    $tags = get_terms(array_merge($args, ['orderby' => 'count', 'order' => 'DESC']));
     if (!is_array($tags) || $tags === []) {
         return null;
     }
     foreach ($tags as $tag) {
-        $tag->link = (string) get_term_link($tag);
+        $tag->link = (string) ($args['link'] === 'edit' ? get_edit_term_link($tag, $tag->taxonomy, $args['post_type']) : get_term_link($tag));
         $tag->id = (int) $tag->term_id;
     }
     $return = wp_generate_tag_cloud($tags, $args);
     $return = apply_filters('wp_tag_cloud', $return, $args);
-    if ($args['echo']) {
-        echo $return;
-        return null;
+    if (!$args['echo'] || $args['format'] === 'array') {
+        return $return;
     }
-    return $return;
+    echo $return;
 }
 
 function wp_generate_tag_cloud($tags, $args = '')
@@ -900,23 +845,20 @@ function wp_generate_tag_cloud($tags, $args = '')
         $out = $out === null ? [] : explode("\n", $out);
     }
     $out ??= '';
-    return $args['filter'] ? apply_filters('wp_generate_tag_cloud', $out, $tags, $args) : $out;
+    return $args['filter'] && $tags ? apply_filters('wp_generate_tag_cloud', $out, $tags, $args) : $out;
 }
 
 /**
  * @internal One tag as the cloud reads it (probe template-tags-remaining):
  * its own id if it has one (else the cloud uses its key), its count
- * through the scale callback, the count as words for the label (the text
- * callback, else the nooped plural, "%s item" by default), and its link
- * escaped as a URL.
+ * through the scale callback, the count as words for the label
+ * (Runtime\TermTags::cloudCountText), and its link escaped as a URL.
  */
 function _minn_tag_cloud_row($tag, array $args): array
 {
     $count = (int) ($tag->count ?? 0);
-    $text = is_callable($args['topic_count_text_callback'])
-        ? call_user_func($args['topic_count_text_callback'], $count, $tag, $args)
-        : sprintf(translate_nooped_plural(is_array($args['topic_count_text']) ? $args['topic_count_text'] : _n_noop('%s item', '%s items'), $count), number_format_i18n($count));
-    return ['id' => $tag->id ?? null, 'scaled' => call_user_func($args['topic_count_scale_callback'], $count), 'text' => (string) $text, 'link' => esc_url((string) ($tag->link ?? ''))] + (array) $tag;
+    $text = Minn\Runtime\TermTags::cloudCountText($count, $tag, $args);
+    return ['id' => $tag->id ?? null, 'scaled' => call_user_func($args['topic_count_scale_callback'], $count), 'text' => $text, 'link' => esc_url((string) ($tag->link ?? ''))] + (array) $tag;
 }
 
 
@@ -928,8 +870,8 @@ function _minn_tag_cloud_row($tag, array $args): array
  */
 function wp_dropdown_categories($args = '')
 {
-    $r = wp_parse_args($args, ['show_option_all' => '', 'show_option_none' => '', 'orderby' => 'id', 'order' => 'ASC', 'show_count' => 0, 'hide_empty' => 1, 'child_of' => 0, 'exclude' => '', 'echo' => 1, 'selected' => 0, 'hierarchical' => 0, 'name' => 'cat', 'id' => '', 'class' => 'postform', 'depth' => 0, 'tab_index' => 0, 'taxonomy' => 'category', 'hide_if_empty' => false, 'option_none_value' => -1, 'value_field' => 'term_id', 'required' => false, 'aria_describedby' => '']);
-    $query = $r;
+    $r = wp_parse_args($args, ['show_option_all' => '', 'show_option_none' => '', 'orderby' => 'id', 'order' => 'ASC', 'show_count' => 0, 'hide_empty' => 1, 'child_of' => 0, 'exclude' => '', 'echo' => 1, 'selected' => is_category() ? get_queried_object_id() : 0, 'hierarchical' => 0, 'name' => 'cat', 'id' => '', 'class' => 'postform', 'depth' => 0, 'tab_index' => 0, 'taxonomy' => 'category', 'hide_if_empty' => false, 'option_none_value' => -1, 'value_field' => 'term_id', 'required' => false, 'aria_describedby' => '']);
+    $query = $r + ['pad_counts' => $r['show_count'] && $r['hierarchical']];
     unset($query['name']);
     $categories = get_terms($query);
     $categories = is_array($categories) ? $categories : [];
@@ -962,28 +904,10 @@ function _get_term_children($term_id, $terms, $taxonomy, &$ancestors = [])
     return Minn\Runtime\TermLookup::descendants($term_id, $terms, $taxonomy, $ancestors);
 }
 
-/** Whether the object has one of the terms (ids, slugs, or names), or any term of the taxonomy at all. */
+/** Whether the object has one of the terms (ids; names and slugs, digit strings too), or any term of the taxonomy at all; an error for no object. */
 function is_object_in_term($object_id, $taxonomy, $terms = null)
 {
-    if (!taxonomy_exists((string) $taxonomy)) {
-        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
-    }
-    $object_terms = wp_get_object_terms([(int) $object_id], [(string) $taxonomy]);
-    if (is_wp_error($object_terms)) {
-        return $object_terms;
-    }
-    if (empty($terms)) {
-        return $object_terms !== [];
-    }
-    foreach ((array) $terms as $wanted) {
-        foreach ($object_terms as $term) {
-            $held = is_object($term) ? [(int) $term->term_id, (string) $term->slug, (string) $term->name] : [(int) $term];
-            if (in_array(is_numeric($wanted) ? (int) $wanted : (string) $wanted, $held, true)) {
-                return true;
-            }
-        }
-    }
-    return false;
+    return Minn\Runtime\TermTags::objectInTerm($object_id, $taxonomy, $terms);
 }
 
 /** The term's ancestor chain as links (or names), each followed by the separator, the probed shape. */
@@ -995,7 +919,7 @@ function get_term_parents_list($term_id, $taxonomy, $args = [])
         return is_wp_error($term) ? $term : '';
     }
     $chain = array_reverse(get_ancestors($term->term_id, (string) $taxonomy, 'taxonomy'));
-    if ($args['inclusive']) {
+    if (wp_validate_boolean($args['inclusive'])) {
         $chain[] = $term->term_id;
     }
     $out = '';
@@ -1005,7 +929,7 @@ function get_term_parents_list($term_id, $taxonomy, $args = [])
             continue;
         }
         $name = $args['format'] === 'slug' ? $ancestor->slug : $ancestor->name;
-        $out .= ($args['link'] ? '<a href="' . esc_url((string) get_term_link($ancestor)) . '">' . esc_html($name) . '</a>' : esc_html($name)) . $args['separator'];
+        $out .= (wp_validate_boolean($args['link']) ? '<a href="' . esc_url((string) get_term_link($ancestor)) . '">' . esc_html($name) . '</a>' : esc_html($name)) . $args['separator'];
     }
     return $out;
 }
@@ -1016,16 +940,11 @@ function the_category($separator = '', $parents = '', $post_id = false)
     echo get_the_category_list($separator, $parents, $post_id);
 }
 
-/** The post's tag links, rel="tag"; nothing prints for a post without tags (probed). */
+/** The post's tag list (get_the_tag_list, "Tags: " before it by default) printed; nothing for a post without tags. */
 function the_tags($before = null, $sep = ', ', $after = '')
 {
-    $post = get_post();
-    $tags = $post === null ? [] : (get_the_terms($post->ID, 'post_tag') ?: []);
-    if (!is_array($tags) || $tags === []) {
-        return;
-    }
-    $links = array_map(static fn ($t) => '<a href="' . esc_url((string) get_term_link($t)) . '" rel="tag">' . esc_html($t->name) . '</a>', $tags);
-    echo ($before ?? 'Tags: ') . implode((string) $sep, $links) . $after;
+    $list = get_the_tag_list($before ?? __('Tags: '), $sep, $after);
+    echo is_wp_error($list) ? '' : $list;
 }
 
 /**
@@ -1062,19 +981,20 @@ function get_the_tag_list($before = '', $sep = '', $after = '', $post_id = 0)
 /**
  * A post's categories as links. With no separator the reference emits a
  * `post-categories` list; with one it joins bare links. Both carry
- * rel="category tag".
+ * rel="category tag" ("category" under plain permalinks); a post without
+ * any is "Uncategorized", no post at all "" (probes plugin-surface, taxonomy-blocks-user-doubts).
  */
 function get_the_category_list($separator = '', $parents = '', $post_id = false)
 {
     $categories = apply_filters('the_category_list', get_the_category($post_id), $post_id);
     if (empty($categories)) {
-        return apply_filters('the_category', '', $separator, $parents);
+        return apply_filters('the_category', is_object_in_taxonomy((string) get_post_type($post_id), 'category') ? __('Uncategorized') : '', $separator, $parents);
     }
     $rows = [];
     foreach ($categories as $category) {
         $rows[] = _minn_category_list_row($category, (string) $separator, (string) $parents);
     }
-    return apply_filters('the_category', TermLinks::categories($rows, (string) $separator), $separator, $parents);
+    return apply_filters('the_category', TermLinks::categories($rows, (string) $separator, $GLOBALS['wp_rewrite']->using_permalinks() ? 'category tag' : 'category'), $separator, $parents);
 }
 
 /**
@@ -1121,22 +1041,18 @@ function wp_update_nav_menu_object($menu_id = 0, $menu_data = [])
     return _minn_menu_events()->saveMenu((int) $menu_id, (array) $menu_data);
 }
 
-/** A menu deleted with its items, as the reference deletes one (Runtime\MenuEvents). */
+/** A menu deleted with its items, as the reference deletes one (Runtime\MenuEvents): what deleting its term gave. */
 function wp_delete_nav_menu($menu)
 {
     $object = wp_get_nav_menu_object($menu);
-    if (!$object) {
-        return false;
-    }
-    _minn_menu_events()->deleteMenu((int) $object->term_id);
-    return true;
+    return $object ? _minn_menu_events()->deleteMenu((int) $object->term_id) : false;
 }
 
 /** A menu item made (id 0) or changed, as the reference saves one (Runtime\MenuEvents): its id or the refusal. */
 /** A menu item that names itself as its parent (ID and parent equal, loosely, and set) gets no parent. Any other parent is kept. */
 function _wp_reset_invalid_menu_item_parent($menu_item_data)
 {
-    if (!empty($menu_item_data['ID']) && !empty($menu_item_data['menu_item_parent']) && (int) $menu_item_data['ID'] === (int) $menu_item_data['menu_item_parent']) {
+    if (is_array($menu_item_data) && !empty($menu_item_data['ID']) && !empty($menu_item_data['menu_item_parent']) && (int) $menu_item_data['ID'] === (int) $menu_item_data['menu_item_parent']) {
         $menu_item_data['menu_item_parent'] = 0;
     }
     return $menu_item_data;
@@ -1191,51 +1107,16 @@ function get_object_term_cache($id, $taxonomy)
     return Minn\Runtime\TermTags::cached($id, $taxonomy);
 }
 
+/** Each taxonomy's term ids of the objects not yet cached, kept in {taxonomy}_relationships. */
 function update_object_term_cache($object_ids, $object_type)
 {
-    $types = get_object_taxonomies((string) $object_type);
-    foreach ((array) $object_ids as $id) {
-        $terms = [];
-        foreach ($types as $taxonomy) {
-            $found = wp_get_object_terms((int) $id, $taxonomy);
-            $terms[$taxonomy] = is_wp_error($found) ? [] : $found;
-        }
-        wp_cache_set((int) $id, $terms, 'minn_object_terms');
-    }
+    Minn\Runtime\TermTags::cacheObjects($object_ids, $object_type);
 }
 
+/** A post's taxonomies as sentences of term links, by each taxonomy's own templates over the ones given (Runtime\TermTags::taxonomies). */
 function get_the_taxonomies($post = 0, $args = [])
 {
-    $post = get_post($post);
-    if (!$post) {
-        return [];
-    }
-    $args = wp_parse_args($args, ['template' => '%s: %l.', 'term_template' => '<a href="%1$s">%2$s</a>']);
-    $out = [];
-    foreach (get_object_taxonomies((string) $post->post_type) as $taxonomy) {
-        $terms = get_object_term_cache((int) $post->ID, $taxonomy);
-        $terms = $terms === false ? wp_get_object_terms((int) $post->ID, $taxonomy) : $terms;
-        if (is_wp_error($terms) || $terms === []) {
-            continue;
-        }
-        $object = get_taxonomy($taxonomy);
-        $links = [];
-        foreach ($terms as $term) {
-            $links[] = sprintf($args['term_template'], esc_attr((string) get_term_link($term)), $term->name);
-        }
-        $out[$taxonomy] = str_replace(['%s', '%l'], [$object->labels->name ?? $taxonomy, _minn_join_list($links)], $args['template']);
-    }
-    return $out;
-}
-
-/** @internal a list read the way a sentence reads it */
-function _minn_join_list(array $items): string
-{
-    if (count($items) < 2) {
-        return (string) ($items[0] ?? '');
-    }
-    $last = array_pop($items);
-    return implode(', ', $items) . ' and ' . $last;
+    return Minn\Runtime\TermTags::taxonomies($post, $args);
 }
 
 /** The default on delete_post: the menu items that point at a deleted post go with it. */
@@ -1327,13 +1208,10 @@ function wp_get_term_taxonomy_parent_id($term_id, $taxonomy)
     return $term instanceof WP_Term ? (int) $term->parent : false;
 }
 
-/** Whether a term id is shared between taxonomies: never once the site has split its shared terms. */
+/** Whether a term id is shared between taxonomies, registered or not: never once the site has split its shared terms. */
 function wp_term_is_shared($term_id)
 {
-    if (get_option('finished_splitting_shared_terms')) {
-        return false;
-    }
-    return count(get_terms(['include' => [(int) $term_id], 'hide_empty' => false, 'fields' => 'tt_ids', 'taxonomy' => array_keys(get_taxonomies())])) > 1;
+    return Minn\Runtime\TermWrites::isShared($term_id);
 }
 
 /** Terms keep no cache here to fill. */
@@ -1463,11 +1341,11 @@ function _nav_menu_item_id_use_once($id, $item)
     return $id;
 }
 
-/** The has-children class is dropped at the depth where a menu stops. */
+/** The has-children class is dropped at the depth where a menu stops, and at every depth of a flat (negative depth) menu. */
 function wp_nav_menu_remove_menu_item_has_children_class($classes, $menu_item, $args = false, $depth = false)
 {
     $limit = is_object($args) ? (int) ($args->depth ?? 0) : 0;
-    return $limit > 0 && (int) $depth + 1 >= $limit ? array_diff((array) $classes, ['menu-item-has-children']) : $classes;
+    return $limit < 0 || ($limit > 0 && (int) $depth + 1 >= $limit) ? array_diff((array) $classes, ['menu-item-has-children']) : $classes;
 }
 
 /** The core taxonomies registered again from the engine's registry, in the reference's order (probe tail-helpers). */

@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1629
+        "delegates": 1654
     },
     "functions": {
         "__": {
@@ -43,6 +43,10 @@
         "_autop_newline_preservation_helper": {
             "file": "formatting.php",
             "statement": "return str_replace(\"\\n\", '<WPPreserveNewline />', $matches[0]);"
+        },
+        "_block_bindings_term_data_get_value": {
+            "file": "blocks.php",
+            "statement": "return Minn\\Runtime\\TermTags::bindingValue($source_args, $block_instance);"
         },
         "_block_template_add_skip_link": {
             "file": "blocks.php",
@@ -400,6 +404,10 @@
             "file": "media.php",
             "statement": "return array_keys(wp_get_missing_image_subsizes($attachment_id));"
         },
+        "_minn_navigation_colors": {
+            "file": "core-blocks-navigation.php",
+            "statement": "return NavigationParts::colors([['named', $text], ['custom', $custom_text]], [['named', $background], ['custom', $custom_background]]);"
+        },
         "_minn_neutralize_inner_extensions": {
             "file": "formatting.php",
             "statement": "return Minn\\Runtime\\FileNames::neutralizeInnerExtensions($filename);"
@@ -599,6 +607,10 @@
         "_set_cron_array": {
             "file": "cron.php",
             "statement": "return Minn\\Runtime\\CronEvents::store($cron, $wp_error);"
+        },
+        "_split_shared_term": {
+            "file": "taxonomy.php",
+            "statement": "return Minn\\Runtime\\TermWrites::splitShared($term_id, $term_taxonomy_id, $record);"
         },
         "_strip_template_file_suffix": {
             "file": "blocks.php",
@@ -920,6 +932,10 @@
             "file": "admin.php",
             "statement": "Minn\\Runtime\\RegisteredSettings::addError($setting, $code, $message, $type);"
         },
+        "add_shortcode": {
+            "file": "shortcodes.php",
+            "statement": "Runtime::shortcodes()->register($tag, $callback);"
+        },
         "add_site_option": {
             "file": "option.php",
             "statement": "return add_network_option(null, $option, $value);"
@@ -1052,6 +1068,10 @@
             "file": "core-blocks-navigation.php",
             "statement": "return block_core_navigation_block_tree_has_block_type($inner_blocks, 'core/navigation');"
         },
+        "block_core_navigation_build_css_colors": {
+            "file": "core-blocks-navigation.php",
+            "statement": "return NavigationParts::navigationColors($attributes);"
+        },
         "block_core_navigation_build_css_font_sizes": {
             "file": "core-blocks-navigation.php",
             "statement": "return ['css_classes' => empty($attributes['fontSize']) ? [] : ['has-' . $attributes['fontSize'] . '-font-size'], 'inline_styles' => ''];"
@@ -1059,6 +1079,18 @@
         "block_core_navigation_filter_out_empty_blocks": {
             "file": "blocks.php",
             "statement": "return array_filter((array) $parsed_blocks, static fn ($block) => isset($block['blockName']));"
+        },
+        "block_core_navigation_from_block_get_post_ids": {
+            "file": "core-blocks-navigation.php",
+            "statement": "return NavigationParts::blockPostIds($block);"
+        },
+        "block_core_navigation_get_post_ids": {
+            "file": "core-blocks-navigation.php",
+            "statement": "return NavigationParts::postIds($inner_blocks);"
+        },
+        "block_core_navigation_link_build_css_colors": {
+            "file": "core-blocks-navigation.php",
+            "statement": "return $is_sub_menu ? NavigationParts::submenuLinkColors($context) : NavigationParts::linkColors($context);"
         },
         "block_core_navigation_link_filter_variations": {
             "file": "core-blocks-navigation.php",
@@ -1076,6 +1108,14 @@
             "file": "core-blocks-navigation.php",
             "statement": "return Navigation::CHEVRON;"
         },
+        "block_core_navigation_typographic_presets_backcompatibility": {
+            "file": "core-blocks-navigation.php",
+            "statement": "return NavigationParts::typographyBackcompat($parsed_block);"
+        },
+        "block_core_page_list_build_css_colors": {
+            "file": "core-blocks-navigation.php",
+            "statement": "return NavigationParts::pageListColors($context);"
+        },
         "block_core_page_list_get_submenu_visibility": {
             "file": "core-blocks-navigation.php",
             "statement": "return _minn_context_submenu_visibility($context);"
@@ -1091,6 +1131,10 @@
         "block_core_query_ensure_interactivity_dependency": {
             "file": "deprecated.php",
             "statement": "_deprecated_function(__FUNCTION__, '6.5.0', 'wp_register_script_module');"
+        },
+        "block_core_shared_navigation_item_should_render": {
+            "file": "core-blocks-navigation.php",
+            "statement": "return NavigationParts::itemRenders($attributes, $block);"
         },
         "block_core_shared_navigation_render_submenu_icon": {
             "file": "core-blocks-navigation.php",
@@ -1208,6 +1252,10 @@
             "file": "comment.php",
             "statement": "Minn\\Runtime\\CommentWrites::cleanCache($ids);"
         },
+        "clean_object_term_cache": {
+            "file": "taxonomy.php",
+            "statement": "Minn\\Runtime\\TermTags::cleanObjects($object_ids, $object_type);"
+        },
         "clean_post_cache": {
             "file": "post.php",
             "statement": "Minn\\Runtime\\PostCaches::clean($post);"
@@ -1316,6 +1364,14 @@
             "file": "admin.php",
             "statement": "return WP_Screen::get($hook_name);"
         },
+        "count_many_users_posts": {
+            "file": "user.php",
+            "statement": "return Minn\\Runtime\\UserCounts::manyUsersPosts($users, $post_type, $public_only);"
+        },
+        "count_users": {
+            "file": "user.php",
+            "statement": "return Minn\\Runtime\\UserCounts::users($strategy, $site_id);"
+        },
         "current_action": {
             "file": "hooks.php",
             "statement": "return current_filter();"
@@ -1419,6 +1475,10 @@
         "delete_user_meta": {
             "file": "user.php",
             "statement": "return delete_metadata('user', $user_id, $meta_key, $meta_value);"
+        },
+        "delete_usermeta": {
+            "file": "deprecated.php",
+            "statement": "return Minn\\Runtime\\DeprecatedUserMeta::delete($user_id, $meta_key, $meta_value);"
         },
         "deslash": {
             "file": "upgrade.php",
@@ -1659,6 +1719,10 @@
         "get_attachment_link": {
             "file": "post.php",
             "statement": "return PostLinks::attachmentLink($post, $leavename);"
+        },
+        "get_attachment_taxonomies": {
+            "file": "taxonomy.php",
+            "statement": "return Minn\\Runtime\\TermTags::attachmentTaxonomies($attachment, $output);"
         },
         "get_author_posts_url": {
             "file": "post.php",
@@ -2232,6 +2296,10 @@
             "file": "theme.php",
             "statement": "return ThemeSupports::features();"
         },
+        "get_role": {
+            "file": "user.php",
+            "statement": "return wp_roles()->get_role($role);"
+        },
         "get_sample_permalink": {
             "file": "post.php",
             "statement": "return Minn\\Runtime\\PostLinks::sampleFor($post, $title, $name);"
@@ -2415,6 +2483,10 @@
         "get_the_tags": {
             "file": "taxonomy.php",
             "statement": "return Minn\\Runtime\\TermTags::tags($post);"
+        },
+        "get_the_taxonomies": {
+            "file": "taxonomy.php",
+            "statement": "return Minn\\Runtime\\TermTags::taxonomies($post, $args);"
         },
         "get_the_terms": {
             "file": "taxonomy.php",
@@ -2744,6 +2816,10 @@
             "file": "taxonomy.php",
             "statement": "return Minn\\Runtime\\Registered::objectInTaxonomy($object_type, $taxonomy);"
         },
+        "is_object_in_term": {
+            "file": "taxonomy.php",
+            "statement": "return Minn\\Runtime\\TermTags::objectInTerm($object_id, $taxonomy, $terms);"
+        },
         "is_page": {
             "file": "query.php",
             "statement": "return _minn_main_query()->is_page($page);"
@@ -2930,11 +3006,11 @@
         },
         "make_after_block_visitor": {
             "file": "blocks.php",
-            "statement": "return static function (&$block, &$parent_block = null, $next = null) use ($hooked_blocks, $context, $callback) {\n        $markup = $callback($block, 'after', $hooked_blocks, $context);\n        if ($parent_block && !$next) {\n            $markup .= $callback($parent_block, 'last_child', $hooked_blocks, $context);\n        }\n        return $markup;\n    };"
+            "statement": "return static function (&$block, &$parent_block = null, $next = null) use ($hooked_blocks, $context, $callback) {\n        Minn\\Runtime\\BlockHooks::nextPosition();\n        $markup = $callback($block, 'after', $hooked_blocks, $context);\n        if ($parent_block && !$next) {\n            Minn\\Runtime\\BlockHooks::nextPosition();\n            $markup .= $callback($parent_block, 'last_child', $hooked_blocks, $context);\n        }\n        return $markup;\n    };"
         },
         "make_before_block_visitor": {
             "file": "blocks.php",
-            "statement": "return static function (&$block, &$parent_block = null, $prev = null) use ($hooked_blocks, $context, $callback) {\n        _inject_theme_attribute_in_template_part_block($block);\n        $markup = '';\n        if ($parent_block && !$prev) {\n            $markup .= $callback($parent_block, 'first_child', $hooked_blocks, $context);\n        }\n        $markup .= $callback($block, 'before', $hooked_blocks, $context);\n        return $markup;\n    };"
+            "statement": "return static function (&$block, &$parent_block = null, $prev = null) use ($hooked_blocks, $context, $callback) {\n        _inject_theme_attribute_in_template_part_block($block);\n        $markup = '';\n        if ($parent_block && !$prev) {\n            Minn\\Runtime\\BlockHooks::nextPosition();\n            $markup .= $callback($parent_block, 'first_child', $hooked_blocks, $context);\n        }\n        Minn\\Runtime\\BlockHooks::nextPosition();\n        $markup .= $callback($block, 'before', $hooked_blocks, $context);\n        return $markup;\n    };"
         },
         "make_clickable": {
             "file": "formatting.php",
@@ -4584,6 +4660,10 @@
             "file": "option.php",
             "statement": "return SiteOptions::update($option, $value, $network_id);"
         },
+        "update_object_term_cache": {
+            "file": "taxonomy.php",
+            "statement": "Minn\\Runtime\\TermTags::cacheObjects($object_ids, $object_type);"
+        },
         "update_option": {
             "file": "option.php",
             "statement": "return OptionWrites::update($option, $value, $autoload);"
@@ -4623,6 +4703,10 @@
         "update_user_meta": {
             "file": "user.php",
             "statement": "return update_metadata('user', $user_id, $meta_key, $meta_value, $prev_value);"
+        },
+        "update_usermeta": {
+            "file": "deprecated.php",
+            "statement": "return Minn\\Runtime\\DeprecatedUserMeta::update($user_id, $meta_key, $meta_value);"
         },
         "upload_is_user_over_quota": {
             "file": "admin.php",
@@ -4904,6 +4988,10 @@
             "file": "functions.php",
             "statement": "return Minn\\Runtime\\FileNames::checkUpload($file, $filename, $mimes);"
         },
+        "wp_check_term_hierarchy_for_loops": {
+            "file": "taxonomy.php",
+            "statement": "return Minn\\Runtime\\TermWrites::parentWithoutLoops($parent_term, $term_id, $taxonomy);"
+        },
         "wp_check_term_meta_support_prefilter": {
             "file": "taxonomy.php",
             "statement": "return (int) get_option('db_version') < 34370 ? false : $check;"
@@ -4943,6 +5031,10 @@
         "wp_constrain_dimensions": {
             "file": "media.php",
             "statement": "return Minn\\Runtime\\AttachmentImages::constrain($current_width, $current_height, $max_width, $max_height);"
+        },
+        "wp_convert_widget_settings": {
+            "file": "widgets.php",
+            "statement": "return is_admin() ? Minn\\Runtime\\WidgetAreas::convertStoredSettings((string) $base_name, (string) $option_name, $settings) : Minn\\Runtime\\WidgetAreas::convertSettings((string) $base_name, $settings);"
         },
         "wp_count_attachments": {
             "file": "post.php",
@@ -5482,7 +5574,7 @@
         },
         "wp_get_word_count_type": {
             "file": "l10n.php",
-            "statement": "return 'words';"
+            "statement": "return isset($GLOBALS['wp_locale']) ? $GLOBALS['wp_locale']->get_word_count_type() : 'words';"
         },
         "wp_get_wp_version": {
             "file": "functions.php",
@@ -5759,6 +5851,10 @@
         "wp_kses_version": {
             "file": "kses.php",
             "statement": "return '0.2.2';"
+        },
+        "wp_latest_comments_draft_or_post_title": {
+            "file": "core-blocks-content.php",
+            "statement": "return empty($title = get_the_title($post)) ? __('(no title)') : $title;"
         },
         "wp_lazy_loading_enabled": {
             "file": "media.php",
@@ -6267,6 +6363,10 @@
         "wp_suspend_cache_addition": {
             "file": "functions.php",
             "statement": "return Deferrals::cacheAddition($suspend);"
+        },
+        "wp_term_is_shared": {
+            "file": "taxonomy.php",
+            "statement": "return Minn\\Runtime\\TermWrites::isShared($term_id);"
         },
         "wp_theme_get_element_class_name": {
             "file": "theme.php",

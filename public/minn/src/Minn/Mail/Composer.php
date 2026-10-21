@@ -93,10 +93,10 @@ final class Composer
         return $head . ($d->encoding === '8bit' ? "Content-Transfer-Encoding: 8bit{$eol}" : '');
     }
 
-    /** The To and Subject lines PHP's mail() takes as arguments, written after the headers in the sent copy. */
+    /** The To and Subject lines PHP's mail() takes as arguments, written after the headers in the sent copy; no To is undisclosed recipients. */
     public static function mailOnlyHeaders(Draft $d): string
     {
-        return self::addressLine($d, 'To', $d->to) . $d->eol . 'Subject: ' . $d->encodeHeader(self::secure(trim($d->subject))) . $d->eol;
+        return ($d->to === [] ? 'To: undisclosed-recipients:;' : self::addressLine($d, 'To', $d->to)) . $d->eol . 'Subject: ' . $d->encodeHeader(self::secure(trim($d->subject))) . $d->eol;
     }
 
     /**

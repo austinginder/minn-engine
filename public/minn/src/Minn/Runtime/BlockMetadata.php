@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Closure;
+use Minn\I18n\Gettext;
 
 /**
  * block.json to the settings a block type registers with: the property
@@ -18,6 +19,49 @@ final class BlockMetadata
     private const SCRIPTS = ['editorScript' => 'editor_script_handles', 'script' => 'script_handles', 'viewScript' => 'view_script_handles'];
     private const STYLES = ['editorStyle' => 'editor_style_handles', 'style' => 'style_handles', 'viewStyle' => 'view_style_handles'];
     private const POSITIONS = ['before' => 'before', 'after' => 'after', 'firstChild' => 'first_child', 'lastChild' => 'last_child'];
+    /** The block.json strings a text domain translates, each with its context (get_block_metadata_i18n_schema). */
+    private const I18N = ['title' => 'block title', 'description' => 'block description', 'keywords' => ['block keyword'], 'styles' => [['label' => 'block style label']], 'variations' => [['title' => 'block variation title', 'description' => 'block variation description', 'keywords' => ['block variation keyword']]]];
+
+    /**
+     * A block.json's strings in its text domain, each asked in its context
+     * (title as "block title", keywords as "block keyword"...); a block
+     * without a text domain is left as it is (probe taxonomy-blocks-user-doubts).
+     *
+     * @param array<string, mixed> $metadata
+     * @return array<string, mixed>
+     */
+    public static function translated(array $metadata): array
+    {
+        if (empty($metadata['textdomain'])) {
+            return $metadata;
+        }
+        foreach (self::I18N as $key => $schema) {
+            if (isset($metadata[$key])) {
+                $metadata[$key] = self::translatedValue($metadata[$key], $schema, (string) $metadata['textdomain']);
+            }
+        }
+        return $metadata;
+    }
+
+    /** One value by its piece of the schema: a string in its context, a list item by item, an object key by key. */
+    private static function translatedValue(mixed $value, mixed $schema, string $domain): mixed
+    {
+        if (is_string($schema)) {
+            return is_string($value) ? Gettext::inContext($value, $schema, $domain) : $value;
+        }
+        if (!is_array($value) || !is_array($schema)) {
+            return $value;
+        }
+        if (array_is_list($schema)) {
+            return array_map(static fn (mixed $item): mixed => self::translatedValue($item, $schema[0], $domain), $value);
+        }
+        foreach ($schema as $key => $part) {
+            if (isset($value[$key])) {
+                $value[$key] = self::translatedValue($value[$key], $part, $domain);
+            }
+        }
+        return $value;
+    }
 
     /**
      * Block settings from a block.json, the way the reference maps its properties.

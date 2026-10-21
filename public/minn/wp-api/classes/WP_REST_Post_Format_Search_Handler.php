@@ -22,11 +22,11 @@ class WP_REST_Post_Format_Search_Handler extends WP_REST_Search_Handler
         $args = empty($request['search']) ? [] : ['search' => $request['search']];
         $args = apply_filters('rest_post_format_search_query', $args, $request);
         $search = (string) ($args['search'] ?? '');
-        $labels = get_post_format_strings();
+        // The formats with a term, in the formats' own order, matched by their label or their slug.
+        $terms = (array) get_terms(['taxonomy' => 'post_format', 'hide_empty' => false, 'fields' => 'slugs']);
         $found = [];
-        foreach ((array) get_terms(['taxonomy' => 'post_format', 'hide_empty' => false, 'fields' => 'slugs']) as $slug) {
-            $format = str_replace('post-format-', '', (string) $slug);
-            if (isset($labels[$format]) && ($search === '' || stripos($labels[$format], $search) !== false)) {
+        foreach (get_post_format_strings() as $format => $label) {
+            if (in_array('post-format-' . $format, $terms, true) && ($search === '' || stripos($label, $search) !== false || stripos($format, $search) !== false)) {
                 $found[] = $format;
             }
         }

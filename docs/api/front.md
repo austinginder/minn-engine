@@ -43,9 +43,9 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SingleQueries`](#singlequeries) | final readonly class | 117 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
 | [`SitemapRequest`](#sitemaprequest) | final class | 79 | A sitemap request at template_redirect, as the reference's sitemaps |
-| [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
+| [`SitemapXml`](#sitemapxml) | final class | 55 | The two sitemap documents, index and URL set, from entry maps; one |
 | [`Sitemaps`](#sitemaps) | final class | 40 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
-| [`TermLists`](#termlists) | final class | 134 | A term's parent chain and the tag cloud, built from term rows the caller |
+| [`TermLists`](#termlists) | final class | 135 | A term's parent chain and the tag cloud, built from term rows the caller |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
 | [`ToolbarMenus`](#toolbarmenus) | final class | 339 | The nodes WordPress puts on the toolbar itself, as the reference adds |
 | [`ToolbarTree`](#toolbartree) | final class | 90 | WP_Admin_Bar's nodes bound into the tree they print as, as the reference |
@@ -1514,19 +1514,23 @@ builder for the engine's routes and the facade's renderer. An element
 with nothing inside closes itself, at every level, as the reference's
 XML writer prints it (probe sitemap-classes).
 
-### static `index(array $entries, ?string $stylesheet): string`
+### static `index(array $entries, string $stylesheet): string`
 
 A sitemap index document.
 
 - `@param list<array<string, string|null>> $entries each a map of element name => text; null values are skipped`
 
-### static `urlset(array $entries, ?string $stylesheet): string`
+### static `urlset(array $entries, string $stylesheet): string`
 
 A sitemap urlset document.
 
 - `@param list<array<string, string|null>> $entries`
 
-Internals: `elements()` (private, line 37), `element()` (private, line 53), `document()` (private, line 58)
+### static `stylesheet(string $url): string`
+
+The processing instruction naming a stylesheet, as the renderer keeps it; nothing for no address.
+
+Internals: `elements()` (private, line 37), `element()` (private, line 53), `document()` (private, line 65)
 
 
 ## Sitemaps
@@ -1556,9 +1560,9 @@ The stylesheet the sitemap index links: one column, the sitemaps.
 
 ### static `w3c(string $gmt): string`
 
-A GMT date as a sitemap dates it (W3C, UTC).
+A GMT date as a sitemap dates it: W3C, in the site's timezone (probe blocks-rest-widget-doubts).
 
-Internals: `xsl()` (private, line 36)
+Internals: `xsl()` (private, line 39)
 
 
 ## TermLists
@@ -1593,7 +1597,7 @@ label), and its link already escaped.
 
 ### static `cloudTags(array $tags, array $args): array`
 
-The tags in the cloud's order (by name, or by count; random shuffles)
+The tags in the cloud's order (by name, or by count; RAND shuffles)
 and cut to the number asked for. Keys survive the sort; taking the
 first N renumbers the numeric ones before they name the tags.
 
@@ -1619,7 +1623,7 @@ of them), in the format asked for, or null for none.
 
 - `@param list<array<string, mixed>> $data`
 
-Internals: `sorted()` (private, line 136)
+Internals: `sorted()` (private, line 137)
 
 
 ## ToolbarMarkup

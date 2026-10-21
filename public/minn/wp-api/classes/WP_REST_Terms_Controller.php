@@ -51,9 +51,9 @@ class WP_REST_Terms_Controller extends WP_REST_Controller
 
     public function check_read_terms_permission_for_post($post, $request)
     {
-        // A post's terms are readable when the post is, by its own type's controller.
+        // A post's terms are readable when its type is in the taxonomy and the post is readable, by its own type's controller.
         $type = get_post_type_object($post->post_type);
-        if (!$type) {
+        if (!$type || !is_object_in_taxonomy($post->post_type, $this->taxonomy)) {
             return false;
         }
         $controller = $type->get_rest_controller();
@@ -231,10 +231,10 @@ class WP_REST_Terms_Controller extends WP_REST_Controller
 
     public function prepare_item_for_database($request)
     {
-        // The name, slug, description and (in a hierarchical taxonomy) the parent the request sets, a missing parent as none; then rest_pre_insert_{taxonomy}.
+        // The name, slug, taxonomy, description and (in a hierarchical taxonomy) the parent the request sets, a missing parent as none; then rest_pre_insert_{taxonomy}.
         $prepared = new stdClass();
         $schema = $this->get_item_schema();
-        foreach (['name', 'slug', 'description'] as $field) {
+        foreach (['name', 'slug', 'taxonomy', 'description'] as $field) {
             if (isset($request[$field]) && !empty($schema['properties'][$field])) {
                 $prepared->{$field} = $request[$field];
             }

@@ -1,0 +1,1934 @@
+[
+    [
+        "site logo removal: state during the update, after",
+        [
+            [
+                [
+                    true,
+                    10
+                ]
+            ],
+            false,
+            5,
+            "kept"
+        ]
+    ],
+    [
+        "calendar: no posts (anon, subscriber, admin); colours on wrapper and table",
+        [
+            "",
+            "<div>The calendar block is hidden because there are no published posts.</div>",
+            "<div>The calendar block is hidden because there are no published posts.</div>",
+            [
+                [
+                    "<div class=\"wp-block-calendar\">",
+                    "<table id=\"wp-calendar\" class=\"wp-calendar-table has-text-color has-contrast-color has-background has-base-background-color\">"
+                ],
+                [
+                    "<div class=\"wp-block-calendar\">",
+                    "<table style=\"color:#112233;background-color:#445566;\" id=\"wp-calendar\" class=\"wp-calendar-table has-text-color has-background\">"
+                ],
+                [
+                    "<div class=\"wp-block-calendar\">",
+                    "<table id=\"wp-calendar\" class=\"wp-calendar-table has-background has-base-background-color\">"
+                ],
+                [
+                    "<div class=\"alignwide zzc wp-block-calendar\">",
+                    "<table style=\"color:#112233;\" id=\"wp-calendar\" class=\"wp-calendar-table has-text-color\">"
+                ],
+                [
+                    "<div class=\"wp-block-calendar\">",
+                    "<table id=\"wp-calendar\" class=\"wp-calendar-table\">"
+                ],
+                [
+                    "<div class=\"wp-block-calendar has-small-font-size\">",
+                    "<table id=\"wp-calendar\" class=\"wp-calendar-table\">"
+                ],
+                [
+                    "<div style=\"font-size:13px\" class=\"wp-block-calendar\">",
+                    "<table id=\"wp-calendar\" class=\"wp-calendar-table\">"
+                ]
+            ]
+        ]
+    ],
+    [
+        "home link: class, navigation colours",
+        [
+            "<li class=\"wp-block-navigation-item zzcls wp-block-home-link\">",
+            "<li class=\"has-text-color has-contrast-color has-background has-base-background-color wp-block-navigation-item wp-block-home-link\">",
+            "<li class=\"wp-block-navigation-item wp-block-home-link\">",
+            "<li style=\"background-color: #654321\" class=\"has-text-color has-contrast-color has-background wp-block-navigation-item zzcls wp-block-home-link\">",
+            "<li style=\"font-size:12px;background-color: #654321\" class=\"has-background wp-block-navigation-item wp-block-home-link\">"
+        ]
+    ],
+    [
+        "loginout: form class",
+        "<div class=\"logged-out has-login-form wp-block-loginout\">"
+    ],
+    [
+        "post author on an author archive",
+        [
+            "<div class=\"wp-block-post-author\"><div class=\"wp-block-post-author__avatar\"><img alt='' src='https://secure.gravatar.com/avatar/539f68e4440ff715efaedf3ab51b52ea8f3852d69ba897a768d10025abd4badb?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/539f68e4440ff715efaedf3ab51b52ea8f3852d69ba897a768d10025abd4badb?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy' decoding='async'/></div><div class=\"wp-block-post-author__content\"><p class=\"wp-block-post-author__name\">ZZ Doubt G1</p></div></div>",
+            "<div class=\"wp-block-post-author-biography\">ZZ bio text</div>"
+        ]
+    ],
+    [
+        "post comments link: link colour class",
+        "<div class=\"has-link-color wp-elements-N wp-block-post-comments-link\">"
+    ],
+    [
+        "time to read: word count types",
+        {
+            "words": [
+                "words",
+                "300 words",
+                "3 minutes"
+            ],
+            "characters_excluding_spaces": [
+                "characters_excluding_spaces",
+                "1,500 characters",
+                "15 minutes"
+            ],
+            "characters_including_spaces": [
+                "characters_including_spaces",
+                "1,799 characters",
+                "18 minutes"
+            ],
+            "context only": "0 words",
+            "global and other context": "300 words",
+            "protected global": "13 words",
+            "no context": ""
+        }
+    ],
+    [
+        "read more: content and justification",
+        "<a class=\"is-justified-center wp-block-read-more\" href=\"{home}/zz-doubt-g-post/\" target=\"_self\">x()<b>Go</b><span class=\"screen-reader-text\">: ZZ Doubt G Post</span></a>"
+    ],
+    [
+        "site logo height",
+        [
+            "<img width=\"100\" height=\"66\" />",
+            "<img width=\"100\" height=\"67\" />",
+            "<img width=\"100\" height=\"150\" />",
+            "<img width=\"3\" height=\"2\" />"
+        ]
+    ],
+    [
+        "query pagination: inherit with a pages cap",
+        {
+            "page 2 cap 2": [
+                1,
+                1,
+                null,
+                true
+            ],
+            "page 5 cap 2": [
+                2,
+                0,
+                null,
+                true
+            ],
+            "page 2 cap 0": [
+                4,
+                1,
+                "3",
+                true
+            ],
+            "page 20 cap 0": [
+                0,
+                0,
+                null,
+                true
+            ],
+            "page 1 cap 1": [
+                0,
+                0,
+                null,
+                null
+            ]
+        }
+    ],
+    [
+        "legacy widget by base: widget args",
+        [
+            "zzw",
+            {
+                "before_widget": "<div class=\"widget widget_zzdoubtgw\">",
+                "after_widget": "</div>",
+                "before_title": "<h2 class=\"widgettitle\">",
+                "after_title": "</h2>",
+                "widget_id": false,
+                "widget_name": "ZZ Doubt Widget"
+            }
+        ]
+    ],
+    [
+        "comment template threading",
+        {
+            "1:2": "<li id=\"comment-{c1}\" class=\"comment even thread-even depth-1\">zz c1 <ol><li id=\"comment-{c2}\" class=\"comment odd alt depth-2\">zz c2 <li id=\"comment-{c3}\" class=\"comment even depth-2\">zz c3 </li></li></ol></li><li id=\"comment-{c4}\" class=\"comment odd alt thread-odd thread-alt depth-1\">zz c4 </li><li id=\"comment-{c5}\" class=\"comment even thread-even depth-1\">zz c5 </li>",
+            "1:5": "<li id=\"comment-{c1}\" class=\"comment odd alt thread-odd thread-alt depth-1\">zz c1 <ol><li id=\"comment-{c2}\" class=\"comment even depth-2\">zz c2 <ol><li id=\"comment-{c3}\" class=\"comment odd alt depth-3\">zz c3 </li></ol></li></ol></li><li id=\"comment-{c4}\" class=\"comment even thread-even depth-1\">zz c4 </li><li id=\"comment-{c5}\" class=\"comment odd alt thread-odd thread-alt depth-1\">zz c5 </li>",
+            "0:2": "<li id=\"comment-{c1}\" class=\"comment even thread-even depth-1\">zz c1 </li><li id=\"comment-{c4}\" class=\"comment odd alt thread-odd thread-alt depth-1\">zz c4 </li><li id=\"comment-{c5}\" class=\"comment even thread-even depth-1\">zz c5 </li>"
+        }
+    ],
+    [
+        "search classes",
+        [
+            "wp-block-search__button-outside wp-block-search__text-button",
+            "wp-block-search__button-only wp-block-search__searchfield-hidden",
+            "wp-block-search__button-only wp-block-search__searchfield-hidden",
+            "wp-block-search__no-button",
+            "wp-block-search__button-inside wp-block-search__icon-button",
+            "",
+            "",
+            "wp-block-search__button-inside",
+            "wp-block-search__button-outside wp-block-search__icon-button",
+            "wp-block-search__button-only wp-block-search__searchfield-hidden wp-block-search__text-button",
+            "wp-block-search__button-only wp-block-search__searchfield-hidden wp-block-search__icon-button",
+            "wp-block-search__no-button",
+            "wp-block-search__button-inside wp-block-search__text-button",
+            "wp-block-search__button-only wp-block-search__searchfield-hidden wp-block-search__icon-button",
+            "wp-block-search__button-inside wp-block-search__text-button",
+            "wp-block-search__button-outside"
+        ]
+    ],
+    [
+        "latest comments post title",
+        [
+            "(no title)",
+            "(no title)",
+            "A &amp; <b>B</b>",
+            "<i>x</i> \"q\" & y"
+        ]
+    ],
+    [
+        "legacy post comments registration filters",
+        [
+            [
+                [
+                    "block_type_metadata",
+                    "core/post-comments",
+                    [
+                        "name",
+                        "category",
+                        "attributes",
+                        "uses_context",
+                        "supports",
+                        "style",
+                        "render_callback",
+                        "skip_inner_blocks"
+                    ]
+                ],
+                [
+                    "register_block_type_args",
+                    "core/post-comments"
+                ]
+            ],
+            [
+                "theme",
+                [
+                    "wp-block-post-comments",
+                    "wp-block-buttons",
+                    "wp-block-button"
+                ],
+                [],
+                [
+                    "postId",
+                    "postType"
+                ],
+                "render_block_core_comments",
+                true,
+                [
+                    "textAlign",
+                    "lock",
+                    "metadata"
+                ],
+                {
+                    "html": false,
+                    "align": [
+                        "wide",
+                        "full"
+                    ],
+                    "typography": {
+                        "fontSize": true,
+                        "lineHeight": true,
+                        "__experimentalFontStyle": true,
+                        "__experimentalFontWeight": true,
+                        "__experimentalLetterSpacing": true,
+                        "__experimentalTextTransform": true,
+                        "__experimentalDefaultControls": {
+                            "fontSize": true
+                        }
+                    },
+                    "color": {
+                        "gradients": true,
+                        "link": true,
+                        "__experimentalDefaultControls": {
+                            "background": true,
+                            "text": true
+                        }
+                    },
+                    "inserter": false
+                }
+            ]
+        ]
+    ],
+    [
+        "translation file create by extension",
+        {
+            "x.txt NULL": false,
+            "x.txt 'mo'": "WP_Translation_File_MO",
+            "x.mo NULL": "WP_Translation_File_MO",
+            "x.mo 'xx'": false,
+            "x.mo 'MO'": false,
+            "y.php NULL": "WP_Translation_File_PHP",
+            "y.mo 'php'": "WP_Translation_File_PHP"
+        }
+    ],
+    [
+        "translation file parse by class",
+        {
+            "y.mo as php": [
+                {
+                    "zzx": "X"
+                },
+                null,
+                0
+            ],
+            "y.php as mo": [
+                {
+                    "ctx\u0004zzc": "C",
+                    "zza": "A",
+                    "zzapple": "pomme\u0000pommes",
+                    "zzb": "B"
+                },
+                null,
+                0
+            ],
+            "r1.mo as mo": [
+                [],
+                "Unsupported revision",
+                0
+            ],
+            "r2.mo as mo": [
+                [],
+                "Unsupported revision",
+                0
+            ],
+            "bad.mo as mo": [
+                [],
+                "Invalid data",
+                0
+            ]
+        }
+    ],
+    [
+        "translation transform order and lists",
+        [
+            [
+                "",
+                "zzz",
+                "aaa",
+                "mmm"
+            ],
+            [
+                "",
+                "ctx^zzc",
+                "zza",
+                "zzapple",
+                "zzb"
+            ],
+            "<?php|return ['messages'=>['zero','one']];|",
+            "<?php|return ['messages'=>['zzz'=>'Z','aaa'=>'A','mmm'=>'M']];|"
+        ]
+    ],
+    [
+        "translation file plural form functions",
+        {
+            "abc": [
+                1,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "(n": [
+                1,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n ** 2": [
+                1,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n = 1": [
+                1,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "(n==1) ? 0 : 1 )": [
+                1,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n % 0": [
+                "DivisionByZeroError",
+                "DivisionByZeroError",
+                "DivisionByZeroError",
+                "DivisionByZeroError",
+                "DivisionByZeroError",
+                "DivisionByZeroError"
+            ],
+            "n>1 ? 2": [
+                "Exception",
+                "Exception",
+                "Exception",
+                "Exception",
+                "Exception",
+                "Exception"
+            ],
+            "n > 1;": [
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n ==": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "1": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n != 1": [
+                1,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            " n>1 ": [
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n>1;;": [
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "(n>1);": [
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n>1 ;": [
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n?1:0": [
+                0,
+                1,
+                1,
+                1,
+                1,
+                1
+            ],
+            "!n": [
+                1,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2": [
+                2,
+                0,
+                1,
+                2,
+                2,
+                1
+            ],
+            "": [
+                "Exception",
+                "Exception",
+                "Exception",
+                "Exception",
+                "Exception",
+                "Exception"
+            ],
+            "n > 1 ? 1 : 0;": [
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n>1\n": [
+                1,
+                0,
+                1,
+                1,
+                1,
+                1
+            ],
+            "n>-1": [
+                1,
+                0,
+                1,
+                1,
+                1,
+                1
+            ]
+        }
+    ],
+    [
+        "translations entries and plurals",
+        [
+            "WP_Translations",
+            [
+                [
+                    "zzapple",
+                    null,
+                    true,
+                    [
+                        "pomme",
+                        "pommes"
+                    ]
+                ],
+                [
+                    "zzone",
+                    null,
+                    false,
+                    [
+                        "un"
+                    ]
+                ]
+            ],
+            "zzone",
+            null,
+            "pommes",
+            "zzx"
+        ]
+    ],
+    [
+        "upgrader skins: feedback array, error lines",
+        [
+            [
+                "zz line"
+            ],
+            [
+                [
+                    [
+                        "Msg one Data one",
+                        "Msg one b Data one",
+                        "Msg two Data one",
+                        "Msg three Data one"
+                    ],
+                    "",
+                    [],
+                    "Msg one Data one, Msg one b Data one, Msg two Data one, Msg three Data one",
+                    "<script>jQuery('.waiting-3').hide();</script>"
+                ],
+                [
+                    [
+                        "First without data",
+                        "Second with data"
+                    ],
+                    "",
+                    [],
+                    "First without data, Second with data",
+                    "<script>jQuery('.waiting-3').hide();</script>"
+                ],
+                [
+                    [
+                        "Html data bold &amp; x"
+                    ],
+                    "",
+                    [],
+                    "Html data bold &amp; x",
+                    "<script>jQuery('.waiting-3').hide();</script>"
+                ],
+                [
+                    [
+                        "zz string error"
+                    ],
+                    "",
+                    [],
+                    false,
+                    "<script>jQuery('.waiting-3').hide();</script>"
+                ]
+            ]
+        ]
+    ],
+    [
+        "active and valid plugins: odd entries",
+        [
+            "{plugins}/minn-admin/minn-admin.php",
+            "{plugins}/./minn-admin/minn-admin.php"
+        ]
+    ],
+    [
+        "rest url: http home on an https request",
+        {
+            "same host": [
+                "https://{host}/wp-json/x",
+                "http://{host}/wp-json",
+                "http://{host}/wp-json"
+            ],
+            "other host": [
+                "http://{host}/wp-json/x",
+                "http://{host}/wp-json",
+                "http://{host}/wp-json"
+            ]
+        }
+    ],
+    [
+        "convert widget settings: sidebars renamed",
+        [
+            {
+                "2": {
+                    "title": "T"
+                },
+                "_multiwidget": 1
+            },
+            {
+                "zzdoubtg-side": [
+                    "zzdoubtg2-2",
+                    "other-3"
+                ],
+                "wp_inactive_widgets": []
+            },
+            "absent",
+            {
+                "2": [],
+                "_multiwidget": 1
+            },
+            {
+                "zzdoubtg-side": [
+                    "zzdoubtg2-2",
+                    "other-3"
+                ]
+            },
+            {
+                "3": {
+                    "title": "N"
+                },
+                "_multiwidget": 1
+            },
+            {
+                "2": {
+                    "title": "A"
+                },
+                "_multiwidget": 1
+            },
+            [
+                {
+                    "zzdoubtg-store": [
+                        "zzdoubtg2-2",
+                        "zzx-2"
+                    ],
+                    "array_version": 3
+                },
+                {
+                    "2": {
+                        "title": "A"
+                    },
+                    "_multiwidget": 1
+                },
+                {
+                    "zzdoubtg-side": [
+                        "zzdoubtg2",
+                        "other-3"
+                    ],
+                    "wp_inactive_widgets": []
+                }
+            ],
+            {
+                "3": {
+                    "title": "N"
+                },
+                "_multiwidget": 1
+            },
+            {
+                "3": {
+                    "title": "N"
+                },
+                "_multiwidget": 1
+            }
+        ]
+    ],
+    [
+        "comment content allowed: the filter data",
+        [
+            [
+                false,
+                true,
+                true,
+                false
+            ],
+            [
+                {
+                    "comment_post_ID": 0,
+                    "comment_author": null,
+                    "comment_author_email": null,
+                    "comment_author_url": null,
+                    "comment_parent": 0,
+                    "user_id": 0,
+                    "comment_content": ""
+                },
+                {
+                    "comment_post_ID": 0,
+                    "comment_author": null,
+                    "comment_author_email": null,
+                    "comment_author_url": null,
+                    "comment_parent": 0,
+                    "user_id": 0,
+                    "comment_content": "   "
+                },
+                {
+                    "comment_post_ID": 5,
+                    "comment_author": null,
+                    "comment_author_email": null,
+                    "comment_author_url": null,
+                    "comment_parent": 0,
+                    "user_id": 0,
+                    "comment_content": "",
+                    "zzextra": 1
+                }
+            ]
+        ]
+    ],
+    [
+        "comments controller permissions",
+        {
+            "anon": {
+                "read protected": [
+                    false,
+                    false
+                ],
+                "target own": [
+                    [
+                        "rest_cannot_edit",
+                        401,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        401,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target own closed": [
+                    [
+                        "rest_cannot_edit",
+                        401,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        401,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target admin post": [
+                    [
+                        "rest_cannot_edit",
+                        401,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        401,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target protected": [
+                    [
+                        "rest_cannot_edit",
+                        401,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        401,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target missing": [
+                    [
+                        "rest_cannot_edit",
+                        401,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        401,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "create own": [
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ],
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ]
+                ],
+                "create own closed": [
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ],
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ]
+                ],
+                "create admin post": [
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ],
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ]
+                ],
+                "create admin closed": [
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ],
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ]
+                ],
+                "create draft": [
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ],
+                    [
+                        "rest_comment_login_required",
+                        401,
+                        "Sorry, you must be logged in to comment."
+                    ]
+                ]
+            },
+            "subscriber": {
+                "read protected": [
+                    false,
+                    false
+                ],
+                "target own": [
+                    [
+                        "rest_cannot_edit",
+                        403,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target own closed": [
+                    [
+                        "rest_cannot_edit",
+                        403,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target admin post": [
+                    [
+                        "rest_cannot_edit",
+                        403,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target protected": [
+                    [
+                        "rest_cannot_edit",
+                        403,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target missing": [
+                    [
+                        "rest_cannot_edit",
+                        403,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "create own": [
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ],
+                    true
+                ],
+                "create own closed": [
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ],
+                    [
+                        "rest_comment_closed",
+                        403,
+                        "Sorry, comments are closed for this item."
+                    ]
+                ],
+                "create admin post": [
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ],
+                    true
+                ],
+                "create admin closed": [
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ],
+                    [
+                        "rest_comment_closed",
+                        403,
+                        "Sorry, comments are closed for this item."
+                    ]
+                ],
+                "create draft": [
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ],
+                    [
+                        "rest_comment_draft_post",
+                        403,
+                        "Sorry, you are not allowed to create a comment on this post."
+                    ]
+                ]
+            },
+            "author": {
+                "read protected": [
+                    false,
+                    false
+                ],
+                "target own": [
+                    true,
+                    true
+                ],
+                "target own closed": [
+                    true,
+                    true
+                ],
+                "target admin post": [
+                    [
+                        "rest_cannot_edit",
+                        403,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target protected": [
+                    [
+                        "rest_cannot_edit",
+                        403,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "target missing": [
+                    [
+                        "rest_cannot_edit",
+                        403,
+                        "Sorry, you are not allowed to edit this comment."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "create own": [
+                    true,
+                    true
+                ],
+                "create own closed": [
+                    true,
+                    [
+                        "rest_comment_closed",
+                        403,
+                        "Sorry, comments are closed for this item."
+                    ]
+                ],
+                "create admin post": [
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ],
+                    true
+                ],
+                "create admin closed": [
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ],
+                    [
+                        "rest_comment_closed",
+                        403,
+                        "Sorry, comments are closed for this item."
+                    ]
+                ],
+                "create draft": [
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ],
+                    [
+                        "rest_comment_draft_post",
+                        403,
+                        "Sorry, you are not allowed to create a comment on this post."
+                    ]
+                ]
+            },
+            "admin": {
+                "read protected": [
+                    true,
+                    true
+                ],
+                "target own": [
+                    true,
+                    true
+                ],
+                "target own closed": [
+                    true,
+                    true
+                ],
+                "target admin post": [
+                    true,
+                    true
+                ],
+                "target protected": [
+                    true,
+                    true
+                ],
+                "target missing": [
+                    [
+                        "rest_comment_invalid_post_id",
+                        403,
+                        "Sorry, you are not allowed to create this comment without a post."
+                    ],
+                    [
+                        "rest_cannot_create_note",
+                        403,
+                        "Sorry, you are not allowed to create notes for this post."
+                    ]
+                ],
+                "create own": [
+                    true,
+                    true
+                ],
+                "create own closed": [
+                    true,
+                    [
+                        "rest_comment_closed",
+                        403,
+                        "Sorry, comments are closed for this item."
+                    ]
+                ],
+                "create admin post": [
+                    true,
+                    true
+                ],
+                "create admin closed": [
+                    true,
+                    [
+                        "rest_comment_closed",
+                        403,
+                        "Sorry, comments are closed for this item."
+                    ]
+                ],
+                "create draft": [
+                    true,
+                    [
+                        "rest_comment_draft_post",
+                        403,
+                        "Sorry, you are not allowed to create a comment on this post."
+                    ]
+                ]
+            }
+        }
+    ],
+    [
+        "revision dates",
+        [
+            null,
+            null,
+            "2020-01-02T05:04:05",
+            "2020-01-02T03:04:05",
+            null
+        ]
+    ],
+    [
+        "revision delete: parent not editable",
+        [
+            "rest_cannot_read",
+            403,
+            "Sorry, you are not allowed to view revisions of this post."
+        ]
+    ],
+    [
+        "request params by priority",
+        {
+            "5": "q5",
+            "a": "ba",
+            "7": "b7",
+            "9": "b9"
+        }
+    ],
+    [
+        "controller context description and _embedded",
+        [
+            "ZZ-TRANSLATED",
+            [
+                [
+                    "id",
+                    "_embedded",
+                    "id"
+                ],
+                [
+                    true,
+                    [
+                        "_links",
+                        "_embedded"
+                    ]
+                ],
+                [
+                    "id",
+                    "id"
+                ],
+                [
+                    false,
+                    [
+                        "tags",
+                        "_links"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "post format search",
+        {
+            "aside": [
+                "aside"
+            ],
+            "a": [
+                "aside",
+                "image",
+                "audio"
+            ],
+            "zznote": [
+                "aside"
+            ],
+            "": [
+                "aside",
+                "link",
+                "image",
+                "video",
+                "audio"
+            ]
+        }
+    ],
+    [
+        "request args checked; attachment mime types",
+        [
+            {
+                "typed": [
+                    true,
+                    "rest_invalid_param",
+                    "abc"
+                ],
+                "own sanitize": [
+                    true,
+                    true,
+                    "abc"
+                ],
+                "own validate": [
+                    true,
+                    "rest_invalid_param",
+                    "abc"
+                ],
+                "enum": [
+                    true,
+                    "rest_invalid_param",
+                    "abc"
+                ]
+            },
+            [
+                [
+                    13,
+                    true
+                ],
+                "unset",
+                [
+                    1,
+                    true
+                ]
+            ]
+        ]
+    ],
+    [
+        "templates: a registered field on create and update",
+        [
+            "got",
+            [
+                [
+                    "update",
+                    "zzv",
+                    "WP_Block_Template",
+                    "zzdoubtg_field",
+                    "wp_template"
+                ],
+                [
+                    "rest_after_insert"
+                ],
+                [
+                    "update",
+                    "zzu",
+                    "WP_Block_Template",
+                    "zzdoubtg_field",
+                    "wp_template"
+                ],
+                [
+                    "rest_after_insert"
+                ],
+                [
+                    "updated field",
+                    "got"
+                ]
+            ]
+        ]
+    ],
+    [
+        "template part without an area",
+        [
+            [
+                "wp_theme",
+                "wp_template_part_area"
+            ],
+            "uncategorized",
+            [
+                "uncategorized"
+            ]
+        ]
+    ],
+    [
+        "widgets: a plain widget saved and deleted through its control",
+        [
+            [
+                "zzdoubtg3plain",
+                "zzsaved",
+                true
+            ],
+            [
+                [
+                    "deleted",
+                    "previous"
+                ],
+                "wp_inactive_widgets"
+            ],
+            null,
+            true,
+            [
+                [
+                    [],
+                    {
+                        "widget-zzdoubtg3plain": {
+                            "title": "zzsaved"
+                        },
+                        "zzextra": "y"
+                    },
+                    {
+                        "widget-zzdoubtg3plain": {
+                            "title": "zzsaved"
+                        },
+                        "zzextra": "y"
+                    }
+                ],
+                [
+                    [],
+                    [],
+                    []
+                ],
+                [
+                    [],
+                    {
+                        "sidebar": "wp_inactive_widgets",
+                        "widget-zzdoubtg3plain": [],
+                        "the-widget-id": "zzdoubtg3plain",
+                        "delete_widget": "1"
+                    },
+                    {
+                        "sidebar": "wp_inactive_widgets",
+                        "widget-zzdoubtg3plain": [],
+                        "the-widget-id": "zzdoubtg3plain",
+                        "delete_widget": "1"
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "widgets: an empty instance raw",
+        [
+            "{}",
+            "{\"title\":\"zzt\"}"
+        ]
+    ],
+    [
+        "oembed handler scripts",
+        [
+            "https://zz.example/zzpre.js",
+            "https://zz.example/zzduring.js"
+        ]
+    ],
+    [
+        "sitemap lastmod in the site timezone",
+        [
+            "2026-08-27T22:21:33-04:00"
+        ]
+    ],
+    [
+        "sitemap type data by subtype keys",
+        [
+            [
+                {
+                    "name": "alpha",
+                    "pages": 1
+                },
+                {
+                    "name": "beta",
+                    "pages": 1
+                },
+                {
+                    "name": "gamma",
+                    "pages": 1
+                }
+            ],
+            [
+                "alpha",
+                "beta",
+                "gamma"
+            ],
+            [
+                {
+                    "name": "",
+                    "pages": 1
+                }
+            ]
+        ]
+    ],
+    [
+        "sitemap renderer stylesheets",
+        [
+            [
+                "<?xml-stylesheet type=\"text/xsl\" href=\"{home}/wp-sitemap.xsl\" ?>",
+                "<?xml-stylesheet type=\"text/xsl\" href=\"{home}/wp-sitemap-index.xsl\" ?>"
+            ],
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"{home}/wp-sitemap.xsl\" ?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://zz.example/a</loc></url></urlset>\n",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"{home}/wp-sitemap-index.xsl\" ?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><sitemap><loc>https://zz.example/s.xml</loc></sitemap></sitemapindex>\n"
+        ]
+    ],
+    [
+        "image widget: custom caption width, loading attributes",
+        [
+            [
+                "123",
+                "500",
+                "45"
+            ],
+            "<img class=\"image \" src=\"https://zz.example/a.png\" alt=\"\" width=\"10\" height=\"20\" decoding=\"async\" loading=\"lazy\" />",
+            "<img class=\"image \" src=\"https://zz.example/a.png\" alt=\"\" width=\"10\" height=\"20\" loading=\"eager\" fetchpriority=\"high\" />",
+            [
+                [
+                    "img",
+                    "widget_media_image",
+                    [
+                        "class",
+                        "src",
+                        "alt",
+                        "width",
+                        "height"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "gallery widget content",
+        [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true
+        ]
+    ],
+    [
+        "recent posts widget link",
+        ""
+    ],
+    [
+        "rss widget",
+        [
+            "",
+            "",
+            " Zz feed description | http://zzfeed.example/feed2"
+        ]
+    ],
+    [
+        "plugin dependencies: api data on the plugins screen",
+        [
+            {
+                "zzdoubtg2-dep": {
+                    "name": "API zzdoubtg2-dep",
+                    "slug": "zzdoubtg2-dep",
+                    "external": true,
+                    "Name": "API zzdoubtg2-dep"
+                },
+                "zzdoubtg2-l1": {
+                    "name": "API zzdoubtg2-l1",
+                    "slug": "zzdoubtg2-l1",
+                    "external": true,
+                    "Name": "API zzdoubtg2-l1"
+                },
+                "zzdoubtg2-l2": {
+                    "name": "API zzdoubtg2-l2",
+                    "slug": "zzdoubtg2-l2",
+                    "external": true,
+                    "Name": "API zzdoubtg2-l2"
+                },
+                "zzdoubtg2-missing": {
+                    "name": "API zzdoubtg2-missing",
+                    "slug": "zzdoubtg2-missing",
+                    "external": true,
+                    "Name": "API zzdoubtg2-missing"
+                },
+                "zzdoubtg2-on": {
+                    "name": "API zzdoubtg2-on",
+                    "slug": "zzdoubtg2-on",
+                    "external": true,
+                    "Name": "API zzdoubtg2-on"
+                }
+            },
+            [
+                "zzdoubtg2-dep",
+                "zzdoubtg2-missing",
+                "zzdoubtg2-l2",
+                "zzdoubtg2-l1",
+                "zzdoubtg2-on"
+            ],
+            [
+                {
+                    "zzdoubtg2-dep": {
+                        "name": "API zzdoubtg2-dep",
+                        "slug": "zzdoubtg2-dep",
+                        "external": true,
+                        "Name": "API zzdoubtg2-dep"
+                    }
+                },
+                {
+                    "zzdoubtg2-dep": {
+                        "name": "API zzdoubtg2-dep",
+                        "slug": "zzdoubtg2-dep",
+                        "external": true,
+                        "Name": "API zzdoubtg2-dep"
+                    },
+                    "zzdoubtg2-missing": {
+                        "name": "API zzdoubtg2-missing",
+                        "slug": "zzdoubtg2-missing",
+                        "external": true,
+                        "Name": "API zzdoubtg2-missing"
+                    }
+                },
+                {
+                    "zzdoubtg2-dep": {
+                        "name": "API zzdoubtg2-dep",
+                        "slug": "zzdoubtg2-dep",
+                        "external": true,
+                        "Name": "API zzdoubtg2-dep"
+                    },
+                    "zzdoubtg2-missing": {
+                        "name": "API zzdoubtg2-missing",
+                        "slug": "zzdoubtg2-missing",
+                        "external": true,
+                        "Name": "API zzdoubtg2-missing"
+                    },
+                    "zzdoubtg2-l2": {
+                        "name": "API zzdoubtg2-l2",
+                        "slug": "zzdoubtg2-l2",
+                        "external": true,
+                        "Name": "API zzdoubtg2-l2"
+                    }
+                },
+                {
+                    "zzdoubtg2-dep": {
+                        "name": "API zzdoubtg2-dep",
+                        "slug": "zzdoubtg2-dep",
+                        "external": true,
+                        "Name": "API zzdoubtg2-dep"
+                    },
+                    "zzdoubtg2-missing": {
+                        "name": "API zzdoubtg2-missing",
+                        "slug": "zzdoubtg2-missing",
+                        "external": true,
+                        "Name": "API zzdoubtg2-missing"
+                    },
+                    "zzdoubtg2-l2": {
+                        "name": "API zzdoubtg2-l2",
+                        "slug": "zzdoubtg2-l2",
+                        "external": true,
+                        "Name": "API zzdoubtg2-l2"
+                    },
+                    "zzdoubtg2-l1": {
+                        "name": "API zzdoubtg2-l1",
+                        "slug": "zzdoubtg2-l1",
+                        "external": true,
+                        "Name": "API zzdoubtg2-l1"
+                    }
+                },
+                {
+                    "zzdoubtg2-dep": {
+                        "name": "API zzdoubtg2-dep",
+                        "slug": "zzdoubtg2-dep",
+                        "external": true,
+                        "Name": "API zzdoubtg2-dep"
+                    },
+                    "zzdoubtg2-missing": {
+                        "name": "API zzdoubtg2-missing",
+                        "slug": "zzdoubtg2-missing",
+                        "external": true,
+                        "Name": "API zzdoubtg2-missing"
+                    },
+                    "zzdoubtg2-l2": {
+                        "name": "API zzdoubtg2-l2",
+                        "slug": "zzdoubtg2-l2",
+                        "external": true,
+                        "Name": "API zzdoubtg2-l2"
+                    },
+                    "zzdoubtg2-l1": {
+                        "name": "API zzdoubtg2-l1",
+                        "slug": "zzdoubtg2-l1",
+                        "external": true,
+                        "Name": "API zzdoubtg2-l1"
+                    },
+                    "zzdoubtg2-on": {
+                        "name": "API zzdoubtg2-on",
+                        "slug": "zzdoubtg2-on",
+                        "external": true,
+                        "Name": "API zzdoubtg2-on"
+                    }
+                },
+                {
+                    "zzdoubtg2-dep": {
+                        "name": "API zzdoubtg2-dep",
+                        "slug": "zzdoubtg2-dep",
+                        "external": true,
+                        "Name": "API zzdoubtg2-dep"
+                    },
+                    "zzdoubtg2-l1": {
+                        "name": "API zzdoubtg2-l1",
+                        "slug": "zzdoubtg2-l1",
+                        "external": true,
+                        "Name": "API zzdoubtg2-l1"
+                    },
+                    "zzdoubtg2-l2": {
+                        "name": "API zzdoubtg2-l2",
+                        "slug": "zzdoubtg2-l2",
+                        "external": true,
+                        "Name": "API zzdoubtg2-l2"
+                    },
+                    "zzdoubtg2-missing": {
+                        "name": "API zzdoubtg2-missing",
+                        "slug": "zzdoubtg2-missing",
+                        "external": true,
+                        "Name": "API zzdoubtg2-missing"
+                    },
+                    "zzdoubtg2-on": {
+                        "name": "API zzdoubtg2-on",
+                        "slug": "zzdoubtg2-on",
+                        "external": true,
+                        "Name": "API zzdoubtg2-on"
+                    }
+                }
+            ],
+            {
+                "zzdoubtg2-dep": "API zzdoubtg2-dep",
+                "zzdoubtg2-missing": "API zzdoubtg2-missing"
+            },
+            {
+                "dep": [
+                    true,
+                    true
+                ],
+                "missing": [
+                    true,
+                    true
+                ],
+                "l1": [
+                    true,
+                    true
+                ],
+                "l2": [
+                    true,
+                    true
+                ],
+                "on": [
+                    true,
+                    true
+                ]
+            }
+        ]
+    ],
+    [
+        "plugin dependencies: the ajax check",
+        {
+            "zzdoubtg2-a": {
+                "success": false,
+                "data": {
+                    "slug": "zzdoubtg2-a",
+                    "pluginName": "ZZ A Header",
+                    "plugin": "zzdoubtg2-a/zzdoubtg2-a.php",
+                    "activateUrl": "https://{host}/wp-admin/plugins.php?_wpnonce={nonce}&action=activate&plugin=zzdoubtg2-a/zzdoubtg2-a.php",
+                    "errorCode": "inactive_dependencies",
+                    "errorMessage": "The following plugins must be activated first: API zzdoubtg2-dep, API zzdoubtg2-missing.",
+                    "errorData": {
+                        "zzdoubtg2-dep": "API zzdoubtg2-dep",
+                        "zzdoubtg2-missing": "API zzdoubtg2-missing"
+                    },
+                    "nonce for activate-plugin_": 1
+                }
+            },
+            "zzdoubtg2-none": {
+                "success": true,
+                "data": {
+                    "slug": "zzdoubtg2-none",
+                    "pluginName": "ZZ None Header",
+                    "plugin": "zzdoubtg2-none/zzdoubtg2-none.php",
+                    "activateUrl": "https://{host}/wp-admin/plugins.php?_wpnonce={nonce}&action=activate&plugin=zzdoubtg2-none/zzdoubtg2-none.php",
+                    "message": "The plugin has no required plugins.",
+                    "nonce for activate-plugin_": 1
+                }
+            },
+            "zzdoubtg2-ok": {
+                "success": true,
+                "data": {
+                    "slug": "zzdoubtg2-ok",
+                    "pluginName": "ZZ Ok Header",
+                    "plugin": "zzdoubtg2-ok/zzdoubtg2-ok.php",
+                    "activateUrl": "https://{host}/wp-admin/plugins.php?_wpnonce={nonce}&action=activate&plugin=zzdoubtg2-ok/zzdoubtg2-ok.php",
+                    "message": "All required plugins are installed and activated.",
+                    "nonce for activate-plugin_": 1
+                }
+            },
+            "": {
+                "success": false,
+                "data": {
+                    "slug": "",
+                    "pluginName": "",
+                    "errorCode": "no_plugin_specified",
+                    "errorMessage": "No plugin specified."
+                }
+            },
+            "zzdoubtg2-unknown": {
+                "success": false,
+                "data": {
+                    "slug": "zzdoubtg2-unknown",
+                    "errorCode": "plugin_not_installed",
+                    "errorMessage": "The plugin is not installed."
+                }
+            },
+            "zzdoubtg2-dep": {
+                "success": true,
+                "data": {
+                    "slug": "zzdoubtg2-dep",
+                    "pluginName": "ZZ Dep Header",
+                    "plugin": "zzdoubtg2-dep/zzdoubtg2-dep.php",
+                    "activateUrl": "https://{host}/wp-admin/plugins.php?_wpnonce={nonce}&action=activate&plugin=zzdoubtg2-dep/zzdoubtg2-dep.php",
+                    "message": "The plugin has no required plugins.",
+                    "nonce for activate-plugin_": 1
+                }
+            },
+            "zzdoubtg2-l1": {
+                "success": false,
+                "data": {
+                    "slug": "zzdoubtg2-l1",
+                    "pluginName": "ZZ Loop One",
+                    "plugin": "zzdoubtg2-l1/zzdoubtg2-l1.php",
+                    "activateUrl": "https://{host}/wp-admin/plugins.php?_wpnonce={nonce}&action=activate&plugin=zzdoubtg2-l1/zzdoubtg2-l1.php",
+                    "errorCode": "inactive_dependencies",
+                    "errorMessage": "The following plugins must be activated first: API zzdoubtg2-l2.",
+                    "errorData": {
+                        "zzdoubtg2-l2": "API zzdoubtg2-l2"
+                    },
+                    "nonce for activate-plugin_": 1
+                }
+            }
+        }
+    ],
+    [
+        "plugin dependencies: notice texts",
+        [
+            [
+                "Some required plugins are missing or inactive.",
+                "These plugins cannot be activated because their requirements are invalid.",
+                "circular: These plugins cannot be activated because their requirements are invalid.",
+                "Please contact the plugin authors for more information.",
+                "circular: Please contact the plugin authors for more information."
+            ],
+            "<div class=\"notice notice-warning\"><p>These plugins cannot be activated because their requirements are invalid.</p><ul><li><strong>ZZ Loop One</strong> requires <strong>ZZ Loop Two</strong></li><li><strong>ZZ Loop Two</strong> requires <strong>ZZ Loop One</strong></li></ul><p>Please contact the plugin authors for more information.</p></div>"
+        ]
+    ],
+    [
+        "site health tests",
+        [
+            {
+                "direct": {
+                    "wordpress_version": {
+                        "label": "WordPress Version",
+                        "test": "wordpress_version"
+                    },
+                    "plugin_version": {
+                        "label": "Plugin Versions",
+                        "test": "plugin_version"
+                    },
+                    "theme_version": {
+                        "label": "Theme Versions",
+                        "test": "theme_version"
+                    },
+                    "php_version": {
+                        "label": "PHP Version",
+                        "test": "php_version"
+                    },
+                    "php_extensions": {
+                        "label": "PHP Extensions",
+                        "test": "php_extensions"
+                    },
+                    "php_default_timezone": {
+                        "label": "PHP Default Timezone",
+                        "test": "php_default_timezone"
+                    },
+                    "php_sessions": {
+                        "label": "PHP Sessions",
+                        "test": "php_sessions"
+                    },
+                    "sql_server": {
+                        "label": "Database Server version",
+                        "test": "sql_server"
+                    },
+                    "ssl_support": {
+                        "label": "Secure communication",
+                        "test": "ssl_support"
+                    },
+                    "scheduled_events": {
+                        "label": "Scheduled events",
+                        "test": "scheduled_events"
+                    },
+                    "http_requests": {
+                        "label": "HTTP Requests",
+                        "test": "http_requests"
+                    },
+                    "rest_availability": {
+                        "label": "REST API availability",
+                        "test": "rest_availability",
+                        "skip_cron": true
+                    },
+                    "debug_enabled": {
+                        "label": "Debugging enabled",
+                        "test": "is_in_debug_mode"
+                    },
+                    "file_uploads": {
+                        "label": "File uploads",
+                        "test": "file_uploads"
+                    },
+                    "plugin_theme_auto_updates": {
+                        "label": "Plugin and theme auto-updates",
+                        "test": "plugin_theme_auto_updates"
+                    },
+                    "update_temp_backup_writable": {
+                        "label": "Plugin and theme temporary backup directory access",
+                        "test": "update_temp_backup_writable"
+                    },
+                    "available_updates_disk_space": {
+                        "label": "Available disk space",
+                        "test": "available_updates_disk_space"
+                    },
+                    "autoloaded_options": {
+                        "label": "Autoloaded options",
+                        "test": "autoloaded_options"
+                    },
+                    "insecure_registration": {
+                        "label": "Open Registration with privileged default role",
+                        "test": "insecure_registration"
+                    },
+                    "search_engine_visibility": {
+                        "label": "Search Engine Visibility",
+                        "test": "search_engine_visibility"
+                    },
+                    "opcode_cache": {
+                        "label": "Opcode cache",
+                        "test": "opcode_cache"
+                    },
+                    "persistent_object_cache": {
+                        "label": "Persistent object cache",
+                        "test": "persistent_object_cache"
+                    }
+                },
+                "async": {
+                    "dotorg_communication": {
+                        "label": "Communication with WordPress.org",
+                        "test": "{home}/wp-json/wp-site-health/v1/tests/dotorg-communication",
+                        "has_rest": true,
+                        "async_direct_test": "callable"
+                    },
+                    "background_updates": {
+                        "label": "Background updates",
+                        "test": "{home}/wp-json/wp-site-health/v1/tests/background-updates",
+                        "has_rest": true,
+                        "async_direct_test": "callable"
+                    },
+                    "loopback_requests": {
+                        "label": "Loopback request",
+                        "test": "{home}/wp-json/wp-site-health/v1/tests/loopback-requests",
+                        "has_rest": true,
+                        "async_direct_test": "callable"
+                    },
+                    "https_status": {
+                        "label": "HTTPS status",
+                        "test": "{home}/wp-json/wp-site-health/v1/tests/https-status",
+                        "has_rest": true,
+                        "async_direct_test": "callable"
+                    },
+                    "authorization_header": {
+                        "label": "Authorization header",
+                        "test": "{home}/wp-json/wp-site-health/v1/tests/authorization-header",
+                        "has_rest": true,
+                        "headers": "callable",
+                        "skip_cron": true
+                    },
+                    "page_cache": {
+                        "label": "Page cache",
+                        "test": "{home}/wp-json/wp-site-health/v1/tests/page-cache",
+                        "has_rest": true,
+                        "async_direct_test": "callable"
+                    }
+                }
+            },
+            1,
+            true
+        ]
+    ],
+    [
+        "site health scheduled check",
+        [
+            [
+                "wp_site_health_scheduled_check",
+                "weekly",
+                true
+            ]
+        ]
+    ]
+]

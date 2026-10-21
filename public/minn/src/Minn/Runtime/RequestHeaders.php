@@ -40,6 +40,30 @@ final class RequestHeaders
         Response::emitStatus($line, (int) $code);
     }
 
+    /**
+     * A request's headers from server variables (WP_REST_Server::get_headers):
+     * the HTTP_ ones without their prefix, CONTENT_TYPE, CONTENT_LENGTH and
+     * CONTENT_MD5 as named, and REDIRECT_HTTP_AUTHORIZATION as AUTHORIZATION
+     * when there is no HTTP_AUTHORIZATION.
+     *
+     * @param array<array-key, mixed> $server
+     * @return array<string, mixed>
+     */
+    public static function fromServer(array $server): array
+    {
+        $headers = [];
+        foreach ($server as $key => $value) {
+            if (str_starts_with((string) $key, 'HTTP_')) {
+                $headers[substr((string) $key, 5)] = $value;
+            } elseif (in_array($key, ['CONTENT_TYPE', 'CONTENT_LENGTH', 'CONTENT_MD5'], true)) {
+                $headers[$key] = $value;
+            } elseif ($key === 'REDIRECT_HTTP_AUTHORIZATION' && !isset($server['HTTP_AUTHORIZATION'])) {
+                $headers['AUTHORIZATION'] = $value;
+            }
+        }
+        return $headers;
+    }
+
     /** The no-cache headers sent now (nocache_headers); one set to false (Last-Modified) is taken off instead. */
     public static function noCache(): void
     {

@@ -66,7 +66,7 @@ class WP_Upgrader implements \Minn\Objects\Upgrader
         ];
     }
 
-    /** Minn's filesystem is the direct one; the skin may still answer for the credentials. */
+    /** Minn's filesystem is the direct one; the skin may still answer for the credentials, and is asked again, as an error, when they do not connect. */
     public function fs_connect($directories = [], $allow_relaxed_file_ownership = false)
     {
         $directories = (array) $directories;
@@ -75,7 +75,8 @@ class WP_Upgrader implements \Minn\Objects\Upgrader
             return false;
         }
         if (!WP_Filesystem($credentials, $directories[0] ?? '', $allow_relaxed_file_ownership)) {
-            return new WP_Error('fs_unavailable', $this->strings['fs_unavailable']);
+            $this->skin->request_filesystem_credentials(true, $directories[0] ?? '', $allow_relaxed_file_ownership);
+            return false;
         }
         return true;
     }
@@ -270,6 +271,7 @@ class Plugin_Upgrader extends WP_Upgrader
             return $this->result;
         }
         wp_clean_plugins_cache($args['clear_update_cache']);
+        Upgrade::forgetUpdateEmail((string) $plugin);
         return true;
     }
 
@@ -342,7 +344,10 @@ class Plugin_Upgrader extends WP_Upgrader
             return $response;
         }
         $file = (string) ($plugin['plugin'] ?? '');
-        if ($file !== '' && is_plugin_active($file)) {
+        if ($file === '') {
+            return new WP_Error('bad_request', $this->strings['bad_request']);
+        }
+        if (is_plugin_active($file)) {
             PluginActivation::deactivate([$file], null);
         }
         return $response;
@@ -424,7 +429,7 @@ class Core_Upgrader extends WP_Upgrader
     public static function should_update_to_version($offered_ver)
     {
         $current = wp_get_wp_version();
-        if (version_compare((string) $offered_ver, $current, '<=')) {
+        if (version_compare((string) $offered_ver, $current, '<=') || Upgrade::lastCoreUpdateFailed((string) $offered_ver, $current, get_site_option('auto_core_update_failed'))) {
             return false;
         }
         $branch = static fn (string $version): string => implode('.', array_slice(preg_split('/[.-]/', $version) ?: [], 0, 2));
@@ -500,6 +505,8 @@ class Theme_Upgrader extends WP_Upgrader
             $this->skin->feedback('parent_theme_currently_installed', $installed->display('Name'), $installed->display('Version'));
             return $install_result;
         }
+        // The directory is asked about the parent; installing it from there is not done yet.
+        themes_api('theme_information', ['slug' => $parent, 'fields' => ['sections' => false, 'tags' => false]]);
         $this->skin->feedback('parent_theme_not_found', $parent);
         add_filter('install_theme_complete_actions', [$this, 'hide_activate_preview_actions']);
         return $install_result;
@@ -565,6 +572,7 @@ class Theme_Upgrader extends WP_Upgrader
             return $this->result;
         }
         wp_clean_themes_cache($args['clear_update_cache']);
+        Upgrade::forgetUpdateEmail((string) $theme);
         return true;
     }
 
@@ -644,13 +652,16 @@ class Theme_Upgrader extends WP_Upgrader
         }
         $slug = (string) ($theme['theme'] ?? '');
         if ($slug === '') {
-            return false;
-        }
-        $path = trailingslashit((string) get_theme_root($slug)) . $slug;
-        if (!file_exists($path)) {
             return $removed;
         }
-        return Minn\Support\Files::deleteTree($path);
+        // Through the filesystem a theme update set up, as the reference deletes, else straight on disk.
+        global $wp_filesystem;
+        $fs = is_object($wp_filesystem) ? $wp_filesystem : null;
+        $path = ($fs ? trailingslashit((string) $fs->wp_themes_dir($slug)) : trailingslashit((string) get_theme_root($slug))) . $slug;
+        if (!($fs ? $fs->exists($path) : file_exists($path))) {
+            return true;
+        }
+        return $fs ? $fs->delete($path, true) : Minn\Support\Files::deleteTree($path);
     }
 
     /** The installed (or named) theme, or false when there is none to name. */

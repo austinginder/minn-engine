@@ -89,7 +89,7 @@ class WP_REST_Block_Patterns_Controller extends WP_REST_Controller
         if (isset($data['content'])) {
             $data['content'] = serialize_blocks(resolve_pattern_blocks(parse_blocks($data['content'])));
         }
-        return rest_ensure_response($data);
+        return rest_ensure_response($this->add_additional_fields_to_object($data, $request));
     }
 
     /** The pattern fields captured from the reference (data/rest-schemas.json). */

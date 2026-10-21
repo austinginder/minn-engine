@@ -29,29 +29,21 @@ class WP_Navigation_Fallback
      * The navigation menu to fall back to (probe tail-helpers): the newest
      * published one; else, unless wp_navigation_should_create_fallback says
      * not, one made from a classic menu or, without one, a default page list,
-     * then the newest published again.
+     * then the newest published again (Runtime\NavigationFallback).
      */
     public static function get_fallback()
     {
-        $create = apply_filters('wp_navigation_should_create_fallback', true);
-        $fallback = static::get_most_recently_published_navigation();
-        if ($fallback || !$create) {
-            return $fallback;
-        }
-        if (!block_core_navigation_maybe_use_classic_menu_fallback()) {
-            static::create_default_fallback();
-        }
-        return static::get_most_recently_published_navigation();
+        return Minn\Runtime\NavigationFallback::fallback();
     }
 
     private static function get_most_recently_published_navigation()
     {
-        return block_core_navigation_get_most_recently_published_navigation();
+        return Minn\Runtime\NavigationFallback::newest();
     }
 
     /** A published navigation menu listing the site's pages, titled Navigation. */
     private static function create_default_fallback()
     {
-        return wp_insert_post(['post_type' => 'wp_navigation', 'post_title' => _x('Navigation', 'Title of a Navigation menu'), 'post_content' => '<!-- wp:page-list /-->', 'post_status' => 'publish'], true);
+        return Minn\Runtime\NavigationFallback::createDefault();
     }
 }

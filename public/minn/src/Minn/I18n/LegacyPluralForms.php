@@ -26,6 +26,25 @@ final class LegacyPluralForms
     private const LEVELS = [['(', ')'], ['?:', '?'], ['||'], ['&&'], ['==', '!='], ['<', '<=', '>', '>='], ['%']];
 
     /**
+     * The form chooser a translation file makes of an expression
+     * (make_plural_form_function): closing semicolons dropped, the
+     * expression read as above, and English (n != 1) for one it refuses. A
+     * chooser that cannot run a number throws, as the reference's does
+     * (probe blocks-rest-widget-doubts).
+     *
+     * @return \Closure(int): int
+     */
+    public static function chooser(string $expression): \Closure
+    {
+        try {
+            $tokens = self::parse(rtrim($expression, ';'));
+        } catch (Exception) {
+            $tokens = self::parse('n != 1');
+        }
+        return static fn (int $n): int => self::execute($tokens, $n);
+    }
+
+    /**
      * The expression as postfix tokens: ['var'], ['value', int] or ['op', string].
      *
      * @return list<array{0: string, 1?: int|string}>

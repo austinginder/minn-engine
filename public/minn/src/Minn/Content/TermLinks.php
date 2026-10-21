@@ -33,14 +33,15 @@ final class TermLinks
 
     /**
      * The category list: an unordered list when the separator is empty,
-     * a joined run otherwise. Both carry rel="category tag". A row may bring
+     * a joined run otherwise. Both carry the rel given ("category tag" under
+     * pretty permalinks, "category" under plain ones). A row may bring
      * markup to go before its link (its parents) and the space before rel.
      *
      * @param list<array{name: string, url: string, before?: string, space?: string}> $categories
      */
-    public static function categories(array $categories, string $separator): string
+    public static function categories(array $categories, string $separator, string $rel = 'category tag'): string
     {
-        $links = array_map(static fn (array $c): string => ($c['before'] ?? '') . self::anchor($c['url'], $c['name'], 'category tag', $c['space'] ?? ' '), $categories);
+        $links = array_map(static fn (array $c): string => ($c['before'] ?? '') . self::anchor($c['url'], $c['name'], $rel, $c['space'] ?? ' '), $categories);
         if ($separator !== '') {
             return implode($separator, $links);
         }

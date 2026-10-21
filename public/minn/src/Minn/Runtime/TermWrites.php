@@ -107,6 +107,71 @@ final class TermWrites
     }
 
     /**
+     * A term two taxonomies share, split (_split_shared_term): the taxonomy
+     * row named gets a term of its own, its children follow, split_shared_term
+     * says so, the split is recorded for wp_get_split_term() when asked, and
+     * once no shared term is left finished_splitting_shared_terms is set. A
+     * row held by one taxonomy keeps its term, and a row of another term
+     * gives that term's id (probe taxonomy-blocks-user-doubts).
+     */
+    public static function splitShared(mixed $termId, mixed $ttId, mixed $record = true): int
+    {
+        $termId = (int) (is_object($termId) ? $termId->term_id : $termId);
+        $ttId = (int) (is_object($ttId) ? $ttId->term_taxonomy_id : $ttId);
+        $writer = self::writer();
+        $split = $writer->split($termId, $ttId);
+        if ($split === null) {
+            return $writer->rowTermId($ttId) ?? $termId;
+        }
+        [$newId, $taxonomy, $children] = $split;
+        TermLookup::cleanCache([$termId, $newId, ...$children], $taxonomy);
+        Runtime::hooks()->action('split_shared_term', [$termId, $newId, $ttId, $taxonomy]);
+        $options = Runtime::options();
+        if ($record) {
+            $splits = $options->filtered('_split_terms', []);
+            $splits = is_array($splits) ? $splits : [];
+            $splits[$termId][$taxonomy] = $newId;
+            OptionWrites::update('_split_terms', $splits);
+        }
+        if (!$options->filtered('finished_splitting_shared_terms') && !$writer->anyShared()) {
+            OptionWrites::update('finished_splitting_shared_terms', true);
+        }
+        return $newId;
+    }
+
+    /** Whether a term id is held by more than one taxonomy row, registered or not (wp_term_is_shared); never once splitting has finished. */
+    public static function isShared(mixed $termId): bool
+    {
+        return !Runtime::options()->filtered('finished_splitting_shared_terms') && self::writer()->rowCount((int) $termId) > 1;
+    }
+
+    /**
+     * The default on wp_update_term_parent (wp_check_term_hierarchy_for_loops):
+     * a parent at or under the term itself becomes 0; a loop already above
+     * the parent is broken, each term in it moved to the top level, and the
+     * parent kept (probe taxonomy-blocks-user-doubts).
+     */
+    public static function parentWithoutLoops(mixed $parent, mixed $termId, mixed $taxonomy): int
+    {
+        $parent = (int) $parent;
+        $termId = (int) $termId;
+        $walked = [];
+        $query = self::query();
+        for ($at = $parent; $at > 0 && !in_array($at, $walked, true); $at = (int) ($query->row($at, (string) $taxonomy)['parent'] ?? 0)) {
+            if ($at === $termId) {
+                return 0;
+            }
+            $walked[] = $at;
+        }
+        if ($at > 0) {
+            foreach (array_slice($walked, (int) array_search($at, $walked, true)) as $looped) {
+                self::update($looped, $taxonomy, ['parent' => 0]);
+            }
+        }
+        return $parent;
+    }
+
+    /**
      * Terms counted (wp_update_term_count): put off while counting is
      * deferred; asked with $deferred, what was put off is counted now.
      */
@@ -212,6 +277,7 @@ final class TermWrites
         $keep = $append ? array_values(array_unique([...$old, ...array_map('intval', $ttIds)])) : array_map('intval', $ttIds);
         self::writer()->relate($objectId, $keep, $old, (string) $taxonomy, static fn (array $ids) => self::updateCount($ids, (string) $taxonomy));
         Handoff::cacheDelete($objectId, 'post_meta');
+        Handoff::cacheDelete($objectId, "{$taxonomy}_relationships");
         Runtime::hooks()->action('set_object_terms', [$objectId, $terms, $ttIds, $taxonomy, $append, $old]);
         return $ttIds;
     }
@@ -229,6 +295,7 @@ final class TermWrites
                 $ttIds[] = (int) $info['term_taxonomy_id'];
             }
         }
+        Handoff::cacheDelete((int) $objectId, "{$taxonomy}_relationships");
         return self::writer()->unrelate((int) $objectId, $ttIds, (string) $taxonomy, static fn (array $ids) => self::updateCount($ids, (string) $taxonomy));
     }
 
