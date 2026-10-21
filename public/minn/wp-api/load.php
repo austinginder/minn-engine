@@ -9,6 +9,10 @@ use Minn\Runtime\{DebugMode, Runtime, SiteUrls};
 
 function is_admin()
 {
+    // A current screen says whether the request is the admin's, as the reference reads it (probe admin-doubts).
+    if (($GLOBALS['current_screen'] ?? null) instanceof WP_Screen) {
+        return (bool) $GLOBALS['current_screen']->in_admin();
+    }
     return Minn\Runtime\Runtime::booted() ? Minn\Runtime\Runtime::current()->isAdmin : Minn\Runtime\EarlyRequest::isAdmin();
 }
 

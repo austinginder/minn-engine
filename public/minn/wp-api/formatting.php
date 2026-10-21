@@ -433,11 +433,12 @@ function wp_is_numeric_array($data)
 
 function _wp_array_get($input_array, $path, $default_value = null)
 {
+    // A path is a list of string or integer keys; any other key finds nothing.
     if (!is_array($path) || $path === []) {
         return $default_value;
     }
     foreach ($path as $key) {
-        if (!is_array($input_array) || !array_key_exists($key, $input_array)) {
+        if (!is_string($key) && !is_int($key) || !is_array($input_array) || !array_key_exists($key, $input_array)) {
             return $default_value;
         }
         $input_array = $input_array[$key];
@@ -447,7 +448,7 @@ function _wp_array_get($input_array, $path, $default_value = null)
 
 function _wp_array_set(&$input_array, $path, $value = null)
 {
-    if (!is_array($input_array) || !is_array($path) || $path === []) {
+    if (!is_array($input_array) || !is_array($path) || $path === [] || array_filter($path, static fn ($key) => !is_string($key) && !is_int($key) && $key !== null) !== []) {
         return;
     }
     $ref = &$input_array;
@@ -510,10 +511,15 @@ function convert_chars($content, $deprecated = '')
 
 function convert_smilies($text)
 {
-    if (!get_option('use_smilies') || (string) $text === '') {
+    // smilies_init's search ($wp_smiliessearch) finds them, an empty one nothing; a process that never ran init builds it now.
+    if (!isset($GLOBALS['wp_smiliessearch']) && !did_action('init')) {
+        smilies_init();
+    }
+    $search = $GLOBALS['wp_smiliessearch'] ?? '';
+    if (!get_option('use_smilies') || empty($search) || (string) $text === '') {
         return $text;
     }
-    return Minn\Content\TextFilters::smilies((string) $text, _minn_smilies(), static fn (string $file, string $code): string => translate_smiley([$code]));
+    return Minn\Content\TextFilters::smilies((string) $text, static fn (string $run): string => (string) preg_replace_callback($search, 'translate_smiley', $run));
 }
 
 /** @internal The smilies table, from the reference's own (data/smilies.json), through the smilies filter. */
@@ -722,31 +728,24 @@ function wp_parse_str($input_string, &$result)
 /** htmlentities that keeps named references and decimal numeric ones the reader already knows. */
 function htmlentities2($text)
 {
+    // An ampersand opening what looks like a reference (two to seven word characters, or two or three digits) is kept.
     $translation = get_html_translation_table(HTML_ENTITIES, ENT_QUOTES);
-    $encoded = strtr((string) $text, $translation);
-    return (string) preg_replace_callback('/&amp;(#[0-9]+|[a-zA-Z][a-zA-Z0-9]*);/', static function (array $m) use ($translation): string {
-        $entity = '&' . $m[1] . ';';
-        if ($m[1][0] === '#' || in_array($entity, $translation, true)) {
-            return $entity;
-        }
-        return $m[0];
-    }, $encoded);
+    unset($translation['&']);
+    return strtr((string) preg_replace('/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,3};)/', '&amp;', (string) $text), $translation);
 }
 
 /** Hides an address from harvesters as numeric entities; hex_encoding 1 mixes hex in, 0 mixes plain characters in. */
 function antispambot($email_address, $hex_encoding = 0)
 {
+    // Each character at random: a decimal reference, itself, or (with hex encoding) its bytes %-escaped; past those, nothing.
     $out = '';
     foreach (mb_str_split((string) $email_address) as $char) {
-        $pick = random_int(0, 1 + (int) (bool) $hex_encoding);
-        $code = mb_ord($char);
-        if ($pick === 0 && $hex_encoding == 0) {
-            $out .= $char;
-        } elseif ($pick === 2) {
-            $out .= '&#x' . dechex($code) . ';';
-        } else {
-            $out .= '&#' . $code . ';';
-        }
+        $out .= match (random_int(0, 1 + (int) $hex_encoding)) {
+            0 => '&#' . mb_ord($char) . ';',
+            1 => $char,
+            2 => '%' . implode('%', str_split(bin2hex($char), 2)),
+            default => '',
+        };
     }
     return str_replace('@', '&#64;', $out);
 }
@@ -754,11 +753,13 @@ function antispambot($email_address, $hex_encoding = 0)
 /** Seconds east of UTC for an ISO 8601 zone designator; Z and anything unreadable are 0. */
 function iso8601_timezone_to_offset($timezone)
 {
-    if (!preg_match('/^([+-])(\d{2}):?(\d{2})$/', (string) $timezone, $m)) {
+    // "Z" is 0; otherwise hours from the two characters after the sign and minutes from the next two (so "+05:30" is five hours).
+    $timezone = (string) $timezone;
+    if ($timezone === 'Z') {
         return 0;
     }
-    $seconds = ((int) $m[2] * 3600) + ((int) $m[3] * 60);
-    return $m[1] === '-' ? -$seconds : $seconds;
+    $seconds = (int) substr($timezone, 1, 2) * 3600 + (int) substr($timezone, 3, 2) * 60;
+    return str_starts_with($timezone, '+') ? $seconds : -$seconds;
 }
 
 /** Unwraps a paragraph that holds nothing but one registered shortcode (with its closing tag). */
@@ -852,7 +853,7 @@ function wp_embed_excerpt_more($more_string)
     if (!is_embed()) {
         return $more_string;
     }
-    $link = sprintf('<a href="%1$s" class="wp-embed-more" target="_top">%2$s</a>', esc_url(get_permalink()), sprintf('Continue reading %s', '<span class="screen-reader-text">' . get_the_title() . '</span>'));
+    $link = sprintf('<a href="%1$s" class="wp-embed-more" target="_top">%2$s</a>', esc_url(get_permalink()), sprintf(__('Continue reading %s'), '<span class="screen-reader-text">' . get_the_title() . '</span>'));
     return ' &hellip; ' . $link;
 }
 
@@ -872,8 +873,8 @@ function wp_privacy_anonymize_data($type, $data = '')
         'url' => 'https://site.invalid',
         'ip' => wp_privacy_anonymize_ip($data),
         'date' => '0000-00-00 00:00:00',
-        'text' => '[deleted]',
-        'longtext' => 'This content was deleted by the author.',
+        'text' => __('[deleted]'),
+        'longtext' => __('This content was deleted by the author.'),
         default => '',
     };
     return apply_filters('wp_privacy_anonymize_data', $anonymous, $type, $data);
@@ -1092,7 +1093,8 @@ function _split_str_by_whitespace($text, $goal)
         $chunks[] = substr($text, 0, $at + 1);
         $text = substr($text, $at + 1);
     }
-    return $text === '' ? $chunks : [...$chunks, $text];
+    // A remainder that reads as empty ("" or "0") is dropped.
+    return $text ? [...$chunks, $text] : $chunks;
 }
 
 /** Deprecated since 2.8: esc_html, or _wp_specialchars when given more than the text. */
@@ -1204,7 +1206,7 @@ function _make_clickable_rel_attr($url)
     if (in_array($scheme, ['http', 'https'], true) && $host !== strtolower((string) wp_parse_url(home_url(), PHP_URL_HOST))) {
         $words[] = 'nofollow';
     }
-    if (doing_filter('comment_text')) {
+    if (current_filter() === 'comment_text') {
         $words[] = 'ugc';
     }
     $rel = apply_filters('make_clickable_rel', implode(' ', $words), $url);
@@ -1251,10 +1253,10 @@ function translate_smiley($matches)
     $smiley = trim((string) reset($matches));
     $table = _minn_smilies();
     if (!isset($table[$smiley])) {
-        return '';
+        return null;
     }
     $file = (string) $table[$smiley];
-    if (preg_match('/\.(?:png|gif|jpe?g|svg|webp)$/i', $file) !== 1) {
+    if (preg_match('/\.(?:jpe?g|jpe|gif|png|webp|avif)$/i', $file) !== 1) {
         return $file;
     }
     $src = apply_filters('smilies_src', includes_url("images/smilies/{$file}"), $file, site_url());
@@ -1281,7 +1283,7 @@ function wp_pre_kses_less_than_callback($matches)
  */
 function iso8601_to_datetime($date_string, $timezone = 'user')
 {
-    if (preg_match('#^(\d{4})-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?(\d\d)(?:\.\d+)?(Z|[+-]\d\d(?::?\d\d)?)?$#i', (string) $date_string, $m) !== 1) {
+    if (!in_array(strtolower((string) $timezone), ['user', 'gmt'], true) || preg_match('#^(\d{4})-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?(\d\d)(?:\.\d+)?(Z|[+-]\d\d(?::?\d\d)?)?$#i', (string) $date_string, $m) !== 1) {
         return false;
     }
     $offset = $m[7] ?? '';
@@ -1306,6 +1308,7 @@ function wp_staticize_emoji_for_email($mail)
             [$name, $value] = explode(':', trim((string) $header), 2);
             if (strtolower(trim($name)) === 'content-type') {
                 $type = trim(explode(';', $value)[0]);
+                break;
             }
         }
     }

@@ -1,15 +1,15 @@
 {
-    "generated": "2026-10-20",
+    "generated": "2026-10-21",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 689,
-        "composes": 2119,
-        "leaf": 1006,
+        "minn": 703,
+        "composes": 2113,
+        "leaf": 1001,
         "noop": 3177,
         "placeholder": 0,
-        "deadend": 1767,
-        "functions": 8680,
-        "minnMethods": 1444,
+        "deadend": 1766,
+        "functions": 8682,
+        "minnMethods": 1468,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -11694,10 +11694,11 @@
         },
         "WP_Filesystem": {
             "file": "admin.php",
-            "lines": 26,
+            "lines": 37,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "apply_filters",
                 "get_filesystem_method",
                 "is_wp_error"
             ],
@@ -14085,15 +14086,6 @@
                 "wp_mkdir_p"
             ]
         },
-        "WP_Image_Editor::make_subsize": {
-            "file": "classes/WP_Image_Editor.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "is_wp_error"
-            ]
-        },
         "WP_Image_Editor::maybe_exif_rotate": {
             "file": "classes/WP_Image_Editor.php",
             "lines": 25,
@@ -14214,6 +14206,15 @@
             "composes": [
                 "__",
                 "wp_get_image_mime"
+            ]
+        },
+        "WP_Image_Editor_GD::make_subsize": {
+            "file": "classes/WP_Image_Editor.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
             ]
         },
         "WP_Image_Editor_GD::multi_resize": {
@@ -26398,6 +26399,7 @@
             "minn": [],
             "composes": [
                 "post_type_exists",
+                "sanitize_key",
                 "taxonomy_exists"
             ],
             "deadend": "admin"
@@ -34367,11 +34369,13 @@
         },
         "_ajax_wp_die_handler": {
             "file": "functions.php",
-            "lines": 12,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_wp_die_process_input"
+                "_wp_die_process_input",
+                "nocache_headers",
+                "status_header"
             ]
         },
         "_autop_newline_preservation_helper": {
@@ -35296,23 +35300,27 @@
         },
         "_json_wp_die_handler": {
             "file": "functions.php",
-            "lines": 9,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_wp_die_process_input",
                 "header",
+                "nocache_headers",
+                "status_header",
                 "wp_json_encode"
             ]
         },
         "_jsonp_wp_die_handler": {
             "file": "functions.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_wp_die_process_input",
                 "header",
+                "nocache_headers",
+                "status_header",
                 "wp_json_encode"
             ]
         },
@@ -35424,7 +35432,7 @@
             "minn": [],
             "composes": [
                 "apply_filters",
-                "doing_filter",
+                "current_filter",
                 "esc_attr",
                 "home_url",
                 "wp_parse_url"
@@ -35680,14 +35688,16 @@
         },
         "_minn_archive_is_current": {
             "file": "template.php",
-            "lines": 9,
-            "kind": "leaf",
+            "lines": 12,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "is_archive"
+            ]
         },
         "_minn_archive_rows": {
             "file": "template.php",
-            "lines": 12,
+            "lines": 13,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Posts::__construct",
@@ -35712,9 +35722,11 @@
         },
         "_minn_archive_title_parts": {
             "file": "query.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\DocumentTitle::formatArchive"
+            ],
             "composes": [
                 "__",
                 "_x",
@@ -35991,7 +36003,7 @@
         },
         "_minn_block_head_defaults": {
             "file": "template.php",
-            "lines": 17,
+            "lines": 18,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -36412,7 +36424,7 @@
         },
         "_minn_calendar_month": {
             "file": "template.php",
-            "lines": 14,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -36471,7 +36483,7 @@
         },
         "_minn_classic_head_defaults": {
             "file": "template.php",
-            "lines": 21,
+            "lines": 24,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -36534,7 +36546,7 @@
         },
         "_minn_comment_form_body": {
             "file": "comment.php",
-            "lines": 40,
+            "lines": 37,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -36747,6 +36759,16 @@
             "minn": [],
             "composes": []
         },
+        "_minn_date_link": {
+            "file": "template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "home_url",
+                "user_trailingslashit"
+            ]
+        },
         "_minn_db_delta": {
             "file": "upgrade.php",
             "lines": 1,
@@ -36847,7 +36869,7 @@
         },
         "_minn_enclosure_type": {
             "file": "functions.php",
-            "lines": 10,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -36885,7 +36907,7 @@
         },
         "_minn_extra_feed": {
             "file": "template.php",
-            "lines": 15,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -37203,6 +37225,7 @@
                 "get_object_term_cache",
                 "get_post_format",
                 "get_post_meta",
+                "get_terms_to_edit",
                 "is_sticky",
                 "post_type_supports",
                 "wp_get_object_terms",
@@ -37564,7 +37587,7 @@
         },
         "_minn_old_slug_link": {
             "file": "query.php",
-            "lines": 25,
+            "lines": 26,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -37644,7 +37667,7 @@
         },
         "_minn_pdf_previews": {
             "file": "media.php",
-            "lines": 19,
+            "lines": 23,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -38265,6 +38288,16 @@
             "minn": [],
             "composes": []
         },
+        "_minn_settings_page": {
+            "file": "admin.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_deprecated_argument"
+            ]
+        },
         "_minn_shortcode_galleries": {
             "file": "media.php",
             "lines": 15,
@@ -38829,7 +38862,7 @@
         },
         "_minn_wp_title_parts": {
             "file": "query.php",
-            "lines": 13,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -38842,7 +38875,9 @@
                 "is_archive",
                 "is_author",
                 "is_category",
+                "is_front_page",
                 "is_home",
+                "is_page",
                 "is_post_type_archive",
                 "is_search",
                 "is_singular",
@@ -38949,12 +38984,14 @@
         },
         "_oembed_rest_pre_serve_request": {
             "file": "misc.php",
-            "lines": 9,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_oembed_create_xml",
-                "get_option"
+                "get_option",
+                "get_status_header_desc",
+                "status_header"
             ]
         },
         "_override_custom_logo_theme_mod": {
@@ -39473,7 +39510,7 @@
         },
         "_split_str_by_whitespace": {
             "file": "formatting.php",
-            "lines": 13,
+            "lines": 14,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -39718,10 +39755,11 @@
         },
         "_wp_admin_html_begin": {
             "file": "admin.php",
-            "lines": 2,
+            "lines": 4,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "do_action",
                 "esc_attr",
                 "get_bloginfo",
                 "get_language_attributes",
@@ -39780,7 +39818,7 @@
         },
         "_wp_array_get": {
             "file": "formatting.php",
-            "lines": 10,
+            "lines": 11,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -39902,7 +39940,7 @@
         },
         "_wp_check_existing_file_names": {
             "file": "functions.php",
-            "lines": 9,
+            "lines": 12,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -40164,14 +40202,15 @@
         },
         "_wp_die_process_input": {
             "file": "functions.php",
-            "lines": 35,
-            "kind": "composes",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\DieInput::process"
+            ],
             "composes": [
                 "_canonical_charset",
                 "get_option",
-                "is_wp_error",
-                "wp_parse_args"
+                "is_wp_error"
             ]
         },
         "_wp_emoji_list": {
@@ -40436,12 +40475,13 @@
         },
         "_wp_image_editor_choose": {
             "file": "media.php",
-            "lines": 19,
+            "lines": 22,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
-                "wp_cache_get"
+                "wp_cache_get",
+                "wp_cache_set"
             ]
         },
         "_wp_image_meta_replace_original": {
@@ -40586,7 +40626,7 @@
         },
         "_wp_make_subsizes": {
             "file": "media.php",
-            "lines": 24,
+            "lines": 30,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -41475,15 +41515,20 @@
         },
         "add_menu_page": {
             "file": "admin.php",
-            "lines": 27,
-            "kind": "composes",
-            "minn": [],
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\AdminMenu::positionKey"
+            ],
             "composes": [
+                "__",
+                "_doing_it_wrong",
                 "add_action",
                 "current_user_can",
                 "get_plugin_page_hookname",
                 "plugin_basename",
-                "sanitize_title"
+                "sanitize_title",
+                "set_url_scheme"
             ],
             "deadend": "admin"
         },
@@ -41497,10 +41542,15 @@
         },
         "add_meta_box": {
             "file": "admin.php",
-            "lines": 8,
-            "kind": "leaf",
-            "minn": [],
-            "composes": [],
+            "lines": 11,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\MetaBoxes::add"
+            ],
+            "composes": [
+                "convert_to_screen",
+                "get_current_screen"
+            ],
             "deadend": "admin"
         },
         "add_metadata": {
@@ -41705,18 +41755,21 @@
         },
         "add_settings_field": {
             "file": "admin.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": [],
-            "deadend": "admin"
-        },
-        "add_settings_section": {
-            "file": "admin.php",
             "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_settings_page"
+            ],
+            "deadend": "admin"
+        },
+        "add_settings_section": {
+            "file": "admin.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_settings_page",
                 "wp_parse_args"
             ],
             "deadend": "admin"
@@ -41741,10 +41794,12 @@
         },
         "add_submenu_page": {
             "file": "admin.php",
-            "lines": 35,
+            "lines": 37,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
+                "_doing_it_wrong",
                 "add_action",
                 "current_user_can",
                 "get_plugin_page_hookname",
@@ -41951,20 +42006,16 @@
         },
         "antispambot": {
             "file": "formatting.php",
-            "lines": 13,
+            "lines": 11,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "apache_mod_loaded": {
             "file": "functions.php",
-            "lines": 6,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::context->request",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Support\\WebServer::isApache"
-            ],
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "apply_block_core_search_border_style": {
@@ -42143,7 +42194,7 @@
         },
         "attachment_url_to_postid": {
             "file": "media.php",
-            "lines": 16,
+            "lines": 17,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\PostLookup::__construct",
@@ -42153,6 +42204,7 @@
             "composes": [
                 "apply_filters",
                 "parse_url",
+                "read",
                 "wp_get_upload_dir"
             ]
         },
@@ -43377,10 +43429,12 @@
         },
         "check_admin_referer": {
             "file": "pluggable.php",
-            "lines": 8,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
+                "_doing_it_wrong",
                 "do_action",
                 "wp_nonce_ays",
                 "wp_verify_nonce"
@@ -43388,12 +43442,13 @@
         },
         "check_ajax_referer": {
             "file": "pluggable.php",
-            "lines": 13,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "do_action",
                 "wp_die",
+                "wp_doing_ajax",
                 "wp_verify_nonce"
             ]
         },
@@ -43552,13 +43607,15 @@
         },
         "clean_dirsize_cache": {
             "file": "functions.php",
-            "lines": 9,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "get_transient",
                 "set_transient",
                 "untrailingslashit",
+                "wp_trigger_error",
                 "wp_using_ext_object_cache"
             ]
         },
@@ -43954,12 +44011,12 @@
         },
         "comments_popup_link": {
             "file": "comment.php",
-            "lines": 24,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Front\\ListingLinks::anchor"
-            ],
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
             "composes": [
+                "__",
+                "_n",
                 "apply_filters",
                 "comments_open",
                 "esc_attr",
@@ -43969,7 +44026,9 @@
                 "get_comments_number_text",
                 "get_permalink",
                 "get_the_title",
-                "pings_open"
+                "number_format_i18n",
+                "pings_open",
+                "post_password_required"
             ]
         },
         "comments_popup_script": {
@@ -44094,15 +44153,15 @@
         },
         "convert_smilies": {
             "file": "formatting.php",
-            "lines": 4,
+            "lines": 9,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\TextFilters::smilies"
             ],
             "composes": [
-                "_minn_smilies",
+                "did_action",
                 "get_option",
-                "translate_smiley"
+                "smilies_init"
             ]
         },
         "convert_to_screen": {
@@ -44115,10 +44174,11 @@
         },
         "copy_dir": {
             "file": "misc.php",
-            "lines": 4,
+            "lines": 12,
             "kind": "minn",
             "minn": [
-                "Minn\\Support\\FileTree::copy"
+                "Minn\\Support\\FileTree::copy",
+                "Minn\\Support\\FileTree::copyThrough"
             ],
             "composes": [
                 "__"
@@ -44364,7 +44424,7 @@
         },
         "date_i18n": {
             "file": "functions.php",
-            "lines": 7,
+            "lines": 3,
             "kind": "minn",
             "minn": [
                 "Minn\\I18n\\LocalDates::format"
@@ -44686,6 +44746,7 @@
                 "Minn\\Runtime\\ThemeSwitch::delete"
             ],
             "composes": [
+                "__",
                 "get_stylesheet",
                 "get_template"
             ],
@@ -44965,7 +45026,7 @@
         },
         "do_enclose": {
             "file": "functions.php",
-            "lines": 27,
+            "lines": 26,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -44974,6 +45035,7 @@
                 "add_post_meta",
                 "apply_filters",
                 "get_post",
+                "parse_url",
                 "wp_extract_urls",
                 "wp_get_http_headers"
             ]
@@ -45038,10 +45100,15 @@
         "do_meta_boxes": {
             "file": "admin.php",
             "lines": 18,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\MetaBoxMarkup::open"
+            ],
             "composes": [
-                "esc_attr"
+                "convert_to_screen",
+                "esc_attr",
+                "get_hidden_meta_boxes",
+                "postbox_classes"
             ],
             "deadend": "admin"
         },
@@ -45284,6 +45351,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "apply_filters",
                 "esc_attr",
                 "esc_url",
@@ -45539,9 +45607,11 @@
         },
         "esc_xml": {
             "file": "template.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Escape::xml"
+            ],
             "composes": [
                 "apply_filters",
                 "wp_check_invalid_utf8"
@@ -45650,10 +45720,12 @@
         },
         "file_is_displayable_image": {
             "file": "media.php",
-            "lines": 5,
-            "kind": "leaf",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
-            "composes": [],
+            "composes": [
+                "apply_filters"
+            ],
             "deadend": "admin"
         },
         "file_is_valid_image": {
@@ -46490,7 +46562,7 @@
         },
         "gallery_shortcode": {
             "file": "media.php",
-            "lines": 29,
+            "lines": 34,
             "kind": "minn",
             "minn": [
                 "Minn\\Media\\Gallery::defaultStyle",
@@ -46505,7 +46577,9 @@
                 "_minn_gallery_item",
                 "apply_filters",
                 "current_theme_supports",
-                "get_post"
+                "get_post",
+                "is_feed",
+                "wp_get_attachment_link"
             ]
         },
         "gd_edit_image_support": {
@@ -46699,9 +46773,11 @@
         },
         "get_admin_page_parent": {
             "file": "admin.php",
-            "lines": 4,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\AdminMenu::parentOf"
+            ],
             "composes": [],
             "deadend": "admin"
         },
@@ -47475,9 +47551,13 @@
         },
         "get_calendar": {
             "file": "template.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
+            "lines": 17,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Posts::__construct",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::db"
+            ],
             "composes": [
                 "_minn_calendar",
                 "_minn_calendar_month",
@@ -48079,13 +48159,15 @@
         },
         "get_compat_media_markup": {
             "file": "media.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Media\\CompatFields::markup"
+            ],
             "composes": [
+                "__",
                 "apply_filters",
-                "get_post",
-                "wp_parse_args"
+                "get_post"
             ],
             "deadend": "admin"
         },
@@ -48240,18 +48322,13 @@
         },
         "get_day_link": {
             "file": "template.php",
-            "lines": 6,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::isPretty"
-            ],
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
             "composes": [
+                "_minn_date_link",
                 "apply_filters",
                 "current_time",
-                "home_url",
-                "user_trailingslashit",
                 "zeroise"
             ]
         },
@@ -49131,18 +49208,13 @@
         },
         "get_month_link": {
             "file": "template.php",
-            "lines": 5,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::isPretty"
-            ],
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
             "composes": [
+                "_minn_date_link",
                 "apply_filters",
                 "current_time",
-                "home_url",
-                "user_trailingslashit",
                 "zeroise"
             ]
         },
@@ -49325,7 +49397,7 @@
         },
         "get_oembed_response_data_for_url": {
             "file": "misc.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -49636,8 +49708,10 @@
         "get_plugin_page_hookname": {
             "file": "admin.php",
             "lines": 12,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\AdminMenu::hookName"
+            ],
             "composes": [
                 "get_admin_page_parent"
             ],
@@ -50077,7 +50151,7 @@
         },
         "get_post_type_archive_template": {
             "file": "template.php",
-            "lines": 6,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -50541,14 +50615,16 @@
         },
         "get_search_form": {
             "file": "template.php",
-            "lines": 30,
+            "lines": 33,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_x",
                 "apply_filters",
                 "current_theme_supports",
                 "do_action",
                 "esc_attr",
+                "esc_attr_x",
                 "esc_url",
                 "get_search_query",
                 "home_url",
@@ -50612,7 +50688,7 @@
         },
         "get_settings_errors": {
             "file": "admin.php",
-            "lines": 13,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -50808,11 +50884,13 @@
         },
         "get_submit_button": {
             "file": "admin.php",
-            "lines": 32,
-            "kind": "composes",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\SubmitButton::input"
+            ],
             "composes": [
-                "esc_attr"
+                "__"
             ],
             "deadend": "admin"
         },
@@ -51358,7 +51436,7 @@
         },
         "get_the_block_template_html": {
             "file": "template.php",
-            "lines": 9,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -52177,18 +52255,13 @@
         },
         "get_year_link": {
             "file": "template.php",
-            "lines": 4,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::isPretty"
-            ],
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
             "composes": [
+                "_minn_date_link",
                 "apply_filters",
-                "current_time",
-                "home_url",
-                "user_trailingslashit"
+                "current_time"
             ]
         },
         "global_terms_enabled": {
@@ -52572,7 +52645,7 @@
         },
         "htmlentities2": {
             "file": "formatting.php",
-            "lines": 9,
+            "lines": 4,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -52600,30 +52673,37 @@
         },
         "iframe_footer": {
             "file": "admin.php",
-            "lines": 9,
+            "lines": 6,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action",
-                "get_current_screen",
-                "wp_auth_check_html"
+                "do_action"
             ],
             "deadend": "admin"
         },
         "iframe_header": {
             "file": "admin.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\IframeMarkup::headerBody",
+                "Minn\\Admin\\IframeMarkup::headerScript"
+            ],
             "composes": [
                 "__",
                 "_wp_admin_html_begin",
+                "admin_url",
+                "apply_filters",
                 "do_action",
                 "esc_attr",
                 "esc_html",
+                "esc_js",
                 "get_bloginfo",
                 "get_current_screen",
-                "replace",
+                "get_user_locale",
+                "get_user_option",
+                "is_rtl",
+                "sanitize_html_class",
                 "show_admin_bar"
             ],
             "deadend": "admin"
@@ -52807,7 +52887,7 @@
         },
         "img_caption_shortcode": {
             "file": "media.php",
-            "lines": 33,
+            "lines": 35,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\RenderState::current",
@@ -53062,8 +53142,8 @@
         },
         "is_admin": {
             "file": "load.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\EarlyRequest::isAdmin",
                 "Minn\\Runtime\\Runtime::booted",
@@ -54095,7 +54175,7 @@
         },
         "iso8601_timezone_to_offset": {
             "file": "formatting.php",
-            "lines": 5,
+            "lines": 7,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -54273,7 +54353,8 @@
             "lines": 4,
             "kind": "minn",
             "minn": [
-                "Minn\\Support\\FileTree::files"
+                "Minn\\Support\\FileTree::files",
+                "Minn\\Support\\FileTree::filesWithHidden"
             ],
             "composes": [],
             "deadend": "admin"
@@ -54425,7 +54506,7 @@
         },
         "locate_template": {
             "file": "template.php",
-            "lines": 18,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -54663,7 +54744,7 @@
         },
         "media_handle_upload": {
             "file": "media.php",
-            "lines": 14,
+            "lines": 15,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -54695,16 +54776,18 @@
         },
         "media_sideload_image": {
             "file": "media.php",
-            "lines": 18,
+            "lines": 24,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
+                "add_post_meta",
+                "apply_filters",
                 "download_url",
                 "esc_attr",
                 "esc_url",
                 "is_wp_error",
                 "media_handle_sideload",
-                "parse_url",
                 "wp_basename",
                 "wp_get_attachment_url"
             ],
@@ -54864,9 +54947,11 @@
         },
         "menu_page_url": {
             "file": "admin.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\AdminMenu::pageBase"
+            ],
             "composes": [
                 "add_query_arg",
                 "admin_url",
@@ -55057,7 +55142,7 @@
         },
         "move_dir": {
             "file": "misc.php",
-            "lines": 21,
+            "lines": 26,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -56298,11 +56383,12 @@
         },
         "print_footer_scripts": {
             "file": "script-loader.php",
-            "lines": 3,
+            "lines": 4,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
+                "script_concat_settings",
                 "wp_scripts"
             ]
         },
@@ -56318,11 +56404,12 @@
         },
         "print_late_styles": {
             "file": "script-loader.php",
-            "lines": 3,
+            "lines": 4,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
+                "script_concat_settings",
                 "wp_print_styles"
             ]
         },
@@ -57864,9 +57951,14 @@
         "remove_meta_box": {
             "file": "admin.php",
             "lines": 10,
-            "kind": "leaf",
-            "minn": [],
-            "composes": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\MetaBoxes::remove"
+            ],
+            "composes": [
+                "convert_to_screen",
+                "get_current_screen"
+            ],
             "deadend": "admin"
         },
         "remove_option_update_handler": {
@@ -60067,10 +60159,12 @@
         },
         "script_concat_settings": {
             "file": "script-loader.php",
-            "lines": 4,
-            "kind": "leaf",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_site_option"
+            ]
         },
         "search_theme_directories": {
             "file": "theme.php",
@@ -60221,7 +60315,7 @@
         },
         "set_current_screen": {
             "file": "admin.php",
-            "lines": 2,
+            "lines": 5,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -60329,15 +60423,20 @@
         },
         "set_screen_options": {
             "file": "admin.php",
-            "lines": 25,
-            "kind": "composes",
-            "minn": [],
+            "lines": 30,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\ScreenOptions::isCore",
+                "Minn\\Admin\\ScreenOptions::pageSized"
+            ],
             "composes": [
                 "add_query_arg",
                 "apply_filters",
                 "check_admin_referer",
+                "post_type_exists",
                 "remove_query_arg",
                 "sanitize_key",
+                "taxonomy_exists",
                 "update_user_meta",
                 "wp_get_current_user",
                 "wp_get_referer",
@@ -63365,9 +63464,11 @@
         },
         "verify_file_signature": {
             "file": "misc.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
+            "lines": 11,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Signatures::check"
+            ],
             "composes": [
                 "__",
                 "esc_html",
@@ -63480,12 +63581,17 @@
         },
         "wp_add_dashboard_widget": {
             "file": "admin.php",
-            "lines": 5,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "add_meta_box",
-                "get_current_screen"
+                "add_query_arg",
+                "current_user_can",
+                "esc_url",
+                "get_current_screen",
+                "remove_query_arg"
             ],
             "deadend": "admin"
         },
@@ -63585,7 +63691,7 @@
         },
         "wp_add_privacy_policy_content": {
             "file": "admin.php",
-            "lines": 5,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -64905,11 +65011,19 @@
             ]
         },
         "wp_auth_check_load": {
-            "file": "deadends.php",
-            "lines": 2,
-            "kind": "deadend",
+            "file": "admin.php",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
-            "composes": [],
+            "composes": [
+                "add_action",
+                "apply_filters",
+                "get_current_screen",
+                "is_admin",
+                "is_user_logged_in",
+                "wp_enqueue_script",
+                "wp_enqueue_style"
+            ],
             "deadend": "admin"
         },
         "wp_authenticate": {
@@ -65168,12 +65282,12 @@
         },
         "wp_cache_get_last_changed": {
             "file": "functions.php",
-            "lines": 6,
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "wp_cache_get",
-                "wp_cache_set"
+                "wp_cache_set_last_changed"
             ]
         },
         "wp_cache_get_multiple": {
@@ -65745,6 +65859,7 @@
                 "__",
                 "apply_filters",
                 "clean_comment_cache",
+                "esc_html",
                 "get_comments",
                 "wp_privacy_anonymize_data"
             ]
@@ -66803,7 +66918,7 @@
         },
         "wp_die": {
             "file": "functions.php",
-            "lines": 21,
+            "lines": 20,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -67000,6 +67115,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "esc_url",
                 "get_permalink",
                 "get_the_title",
@@ -67233,13 +67349,16 @@
         },
         "wp_enqueue_emoji_styles": {
             "file": "functions.php",
-            "lines": 4,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "has_action",
                 "is_admin",
-                "remove_action"
+                "remove_action",
+                "wp_add_inline_style",
+                "wp_enqueue_style",
+                "wp_register_style"
             ]
         },
         "wp_enqueue_global_styles": {
@@ -67278,14 +67397,17 @@
         },
         "wp_enqueue_img_auto_sizes_contain_css_fix": {
             "file": "template.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
+                "has_action",
+                "remove_action",
                 "wp_add_inline_style",
                 "wp_enqueue_style",
-                "wp_register_style"
+                "wp_register_style",
+                "wp_styles"
             ]
         },
         "wp_enqueue_media": {
@@ -67449,7 +67571,7 @@
         },
         "wp_filesize": {
             "file": "misc.php",
-            "lines": 5,
+            "lines": 6,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -67591,7 +67713,7 @@
         },
         "wp_finalize_template_enhancement_output_buffer": {
             "file": "template.php",
-            "lines": 6,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -67894,12 +68016,12 @@
         },
         "wp_get_admin_notice": {
             "file": "functions.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\AdminNotice::markup"
+            ],
             "composes": [
-                "__",
-                "_doing_it_wrong",
                 "apply_filters",
                 "esc_attr",
                 "wp_parse_args"
@@ -68017,6 +68139,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "apply_filters",
                 "esc_attr",
                 "esc_html",
@@ -68208,11 +68331,15 @@
         },
         "wp_get_code_editor_settings": {
             "file": "admin.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\CodeEditor::settings"
+            ],
             "composes": [
-                "apply_filters"
+                "apply_filters",
+                "includes_url",
+                "wp_check_filetype"
             ]
         },
         "wp_get_comment_fields_max_lengths": {
@@ -68305,6 +68432,7 @@
                 "get_posts",
                 "get_stylesheet",
                 "get_theme_mod",
+                "sanitize_title",
                 "set_theme_mod"
             ]
         },
@@ -68471,8 +68599,8 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "apply_filters",
-                "untrailingslashit",
+                "add_filter",
+                "remove_filter",
                 "wp_upload_dir"
             ]
         },
@@ -69193,12 +69321,13 @@
         },
         "wp_get_registered_image_subsizes": {
             "file": "media.php",
-            "lines": 7,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_minn_image_sizes",
-                "get_intermediate_image_sizes"
+                "get_intermediate_image_sizes",
+                "get_option"
             ]
         },
         "wp_get_revision_ui_diff": {
@@ -69723,7 +69852,7 @@
         },
         "wp_getimagesize": {
             "file": "media.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -69821,7 +69950,7 @@
         },
         "wp_hash_password": {
             "file": "pluggable.php",
-            "lines": 2,
+            "lines": 5,
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\Password::hash"
@@ -69849,11 +69978,12 @@
         },
         "wp_heartbeat_settings": {
             "file": "template.php",
-            "lines": 6,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "admin_url",
+                "is_admin",
                 "is_user_logged_in",
                 "wp_create_nonce"
             ]
@@ -69943,17 +70073,25 @@
         },
         "wp_iframe": {
             "file": "admin.php",
-            "lines": 19,
-            "kind": "composes",
-            "minn": [],
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Admin\\IframeMarkup::iframeBody",
+                "Minn\\Admin\\IframeMarkup::iframeEnd",
+                "Minn\\Admin\\IframeMarkup::iframeScript"
+            ],
             "composes": [
                 "__",
                 "_wp_admin_html_begin",
+                "admin_url",
                 "do_action",
                 "esc_attr",
                 "esc_html",
+                "esc_js",
                 "get_bloginfo",
-                "replace"
+                "get_user_option",
+                "is_rtl",
+                "sanitize_html_class"
             ],
             "deadend": "admin"
         },
@@ -70021,7 +70159,7 @@
         },
         "wp_image_src_get_dimensions": {
             "file": "media.php",
-            "lines": 17,
+            "lines": 18,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -70095,7 +70233,7 @@
         },
         "wp_img_tag_add_width_and_height_attr": {
             "file": "media.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -70689,8 +70827,7 @@
             "minn": [],
             "composes": [
                 "apply_filters",
-                "is_admin",
-                "wp_doing_ajax"
+                "is_admin"
             ]
         },
         "wp_is_site_url_using_https": {
@@ -71431,6 +71568,7 @@
                 "Minn\\Login\\LoginForm::embedded"
             ],
             "composes": [
+                "__",
                 "apply_filters",
                 "is_ssl",
                 "wp_login_url",
@@ -71452,6 +71590,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "apply_filters",
                 "esc_url",
                 "is_user_logged_in",
@@ -71775,7 +71914,7 @@
         },
         "wp_media_personal_data_exporter": {
             "file": "media.php",
-            "lines": 8,
+            "lines": 15,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PersonalData::item"
@@ -72161,6 +72300,7 @@
             "lines": 26,
             "kind": "minn",
             "minn": [
+                "Minn\\Mail\\Mailer::commentHeaders",
                 "Minn\\Mail\\Mailer::newComment",
                 "Minn\\Mail\\Mailer::newNote",
                 "Minn\\Mail\\Mailer::noticesFor",
@@ -72172,10 +72312,15 @@
                 "admin_url",
                 "apply_filters",
                 "get_comment",
+                "get_current_user_id",
+                "get_option",
                 "get_permalink",
                 "get_post",
                 "get_userdata",
+                "network_home_url",
+                "user_can",
                 "wp_mail",
+                "wp_parse_url",
                 "wp_specialchars_decode"
             ]
         },
@@ -72188,7 +72333,7 @@
         },
         "wp_oembed_add_discovery_links": {
             "file": "template.php",
-            "lines": 9,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -72197,10 +72342,11 @@
             ],
             "composes": [
                 "apply_filters",
+                "doing_action",
                 "esc_attr_x",
                 "esc_url",
+                "get_oembed_endpoint_url",
                 "get_permalink",
-                "home_url",
                 "is_singular"
             ]
         },
@@ -72281,7 +72427,7 @@
         },
         "wp_opcache_invalidate": {
             "file": "misc.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -72291,11 +72437,15 @@
         },
         "wp_opcache_invalidate_directory": {
             "file": "misc.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\FileTree::listedFiles"
+            ],
             "composes": [
-                "wp_opcache_invalidate"
+                "__",
+                "wp_opcache_invalidate",
+                "wp_trigger_error"
             ],
             "deadend": "admin"
         },
@@ -72616,14 +72766,14 @@
         },
         "wp_post_revision_title": {
             "file": "misc.php",
-            "lines": 18,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "admin_url",
+                "__",
                 "current_user_can",
                 "date_i18n",
-                "esc_url",
+                "get_edit_post_link",
                 "get_post",
                 "wp_is_post_autosave",
                 "wp_is_post_revision"
@@ -72689,7 +72839,7 @@
         },
         "wp_preload_resources": {
             "file": "template.php",
-            "lines": 17,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -72844,12 +72994,13 @@
         },
         "wp_print_head_scripts": {
             "file": "script-loader.php",
-            "lines": 4,
+            "lines": 5,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "did_action",
                 "do_action",
+                "script_concat_settings",
                 "wp_scripts"
             ]
         },
@@ -72948,6 +73099,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "apply_filters",
                 "wp_privacy_anonymize_ip"
             ]
@@ -73178,15 +73330,17 @@
         },
         "wp_redirect": {
             "file": "pluggable.php",
-            "lines": 15,
+            "lines": 18,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::set"
             ],
             "composes": [
+                "__",
                 "apply_filters",
                 "header",
+                "wp_die",
                 "wp_sanitize_redirect"
             ]
         },
@@ -73214,7 +73368,8 @@
             "minn": [],
             "composes": [
                 "_minn_request_uri",
-                "esc_attr",
+                "esc_url",
+                "remove_query_arg",
                 "wp_unslash"
             ]
         },
@@ -73254,12 +73409,14 @@
         },
         "wp_register": {
             "file": "template.php",
-            "lines": 12,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "admin_url",
                 "apply_filters",
+                "current_user_can",
                 "esc_url",
                 "get_option",
                 "is_user_logged_in",
@@ -74210,12 +74367,9 @@
         },
         "wp_reset_vars": {
             "file": "misc.php",
-            "lines": 5,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request"
-            ],
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
             "composes": [],
             "deadend": "admin"
         },
@@ -74250,18 +74404,16 @@
         },
         "wp_resource_hints": {
             "file": "template.php",
-            "lines": 29,
+            "lines": 4,
             "kind": "minn",
             "minn": [
+                "Minn\\Front\\ResourceHints::render",
                 "Minn\\Runtime\\AssetQueue::follow",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::request"
             ],
             "composes": [
-                "apply_filters",
-                "esc_attr",
-                "esc_url",
-                "parse_url"
+                "apply_filters"
             ]
         },
         "wp_restore_group_inner_container": {
@@ -74718,10 +74870,12 @@
         },
         "wp_send_json": {
             "file": "functions.php",
-            "lines": 12,
+            "lines": 15,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
+                "_doing_it_wrong",
                 "get_option",
                 "header",
                 "status_header",
@@ -74821,7 +74975,7 @@
         },
         "wp_set_auth_cookie": {
             "file": "pluggable.php",
-            "lines": 16,
+            "lines": 17,
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\AuthCookies::__construct",
@@ -74833,7 +74987,9 @@
                 "Minn\\Runtime\\Runtime::current"
             ],
             "composes": [
-                "is_ssl"
+                "get_option",
+                "is_ssl",
+                "wp_parse_url"
             ]
         },
         "wp_set_client_side_media_processing_flag": {
@@ -75459,7 +75615,7 @@
         },
         "wp_sprintf_l": {
             "file": "misc.php",
-            "lines": 20,
+            "lines": 24,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -75479,10 +75635,12 @@
         },
         "wp_star_rating": {
             "file": "template.php",
-            "lines": 24,
+            "lines": 20,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
+                "_n",
                 "number_format_i18n",
                 "wp_parse_args"
             ],
@@ -75540,7 +75698,7 @@
         },
         "wp_staticize_emoji_for_email": {
             "file": "formatting.php",
-            "lines": 17,
+            "lines": 18,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -75550,7 +75708,7 @@
         },
         "wp_stream_image": {
             "file": "media.php",
-            "lines": 5,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -75736,11 +75894,14 @@
         },
         "wp_tempnam": {
             "file": "functions.php",
-            "lines": 3,
+            "lines": 5,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "get_temp_dir"
+                "get_temp_dir",
+                "trailingslashit",
+                "wp_generate_password",
+                "wp_unique_filename"
             ],
             "deadend": "admin"
         },
@@ -76085,10 +76246,12 @@
         },
         "wp_unique_prefixed_id": {
             "file": "functions.php",
-            "lines": 3,
-            "kind": "leaf",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_trigger_error"
+            ]
         },
         "wp_unique_term_slug": {
             "file": "taxonomy.php",

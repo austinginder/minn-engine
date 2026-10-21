@@ -35,6 +35,20 @@ final readonly class Mailer
         return self::forSite(new Site(Db::current()))->send(Message::to($to, $subject, $body));
     }
 
+    /**
+     * The headers a comment notice is sent with, as the reference writes
+     * them: from the commenter's name (the site's when they gave none) at
+     * wordpress@ the site's host (no www.), plain text in the site's
+     * charset, replies to the commenter's address when there is one, the
+     * bare address for a nameless commenter (probe functions-formatting-doubts).
+     */
+    public static function commentHeaders(string $author, string $email, string $host, string $charset, string $siteName): string
+    {
+        $from = 'wordpress@' . (string) preg_replace('/^www\./', '', strtolower($host));
+        $headers = 'From: "' . ($author !== '' ? $author : $siteName) . "\" <{$from}>\nContent-Type: text/plain; charset=\"{$charset}\"\n";
+        return $email === '' ? $headers : $headers . 'Reply-To: ' . ($author === '' ? $email : "\"{$email}\" <{$email}>") . "\n";
+    }
+
     /** The engine's own notices, worded once, from this site's name and address. */
     public static function noticesFor(Site $site): Notices
     {

@@ -454,7 +454,11 @@
         "probe:comment-doubts",
         "probe:rest-notes",
         "probe:feed-urls",
-        "probe:sweep-1020b"
+        "probe:sweep-1020b",
+        "probe:query-comment-misc-doubts",
+        "probe:admin-doubts",
+        "probe:functions-formatting-doubts",
+        "probe:media-template-doubts"
     ],
     "hooks": {
         "_get_page_link": {
@@ -522,6 +526,7 @@
             "probe:media": "not fired",
             "probe:media-cover": "not fired",
             "probe:media-remaining": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-registry": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:nav-menu-remaining": "not fired",
@@ -696,21 +701,6 @@
             "probe:the-content": "not fired",
             "probe:wp-request": "not fired"
         },
-        "admin_body_class": {
-            "probe:symbols": "not fired"
-        },
-        "admin_head-{*}": {
-            "probe:symbols": "fired here only"
-        },
-        "admin_print_footer_scripts-{*}": {
-            "probe:symbols": "fired here only"
-        },
-        "admin_print_scripts-{*}": {
-            "probe:symbols": "fired here only"
-        },
-        "admin_print_styles-{*}": {
-            "probe:symbols": "fired here only"
-        },
         "admin_url": {
             "probe:comment-remaining": "not fired",
             "probe:http-remaining": "not fired",
@@ -718,9 +708,6 @@
             "probe:upgrader": "not fired"
         },
         "admin_viewport_meta": {
-            "probe:symbols": "not fired"
-        },
-        "admin_xml_ns": {
             "probe:symbols": "not fired"
         },
         "alloptions": {
@@ -843,10 +830,8 @@
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
             "probe:plugin-dependencies": "fired here only",
-            "probe:post-block-hooks": "not fired",
             "probe:preset-slugs": "not fired",
             "probe:preview-output-helpers": "not fired",
-            "probe:query-loop": "not fired",
             "probe:query-pagination": "not fired",
             "probe:rest": "not fired",
             "probe:rest-autosaves": "not fired",
@@ -875,10 +860,6 @@
             "probe:template-bindings-helpers": "not fired",
             "probe:theme-json-insecure": "not fired",
             "probe:upgrader": "not fired"
-        },
-        "auth_cookie": {
-            "probe:deprecated": "not fired",
-            "probe:sweep-1020b": "not fired"
         },
         "auth_cookie_malformed": {
             "http:admin-ajax": "not fired",
@@ -917,8 +898,7 @@
             "http:rest-users": "not fired",
             "http:robots": "not fired",
             "http:sitemap-index": "not fired",
-            "http:sitemap-posts": "not fired",
-            "probe:plugin-surface": "not fired"
+            "http:sitemap-posts": "not fired"
         },
         "auth_cookie_valid": {
             "http:admin-ajax": "not fired",
@@ -1102,6 +1082,7 @@
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:comment-helpers": "not fired",
             "probe:rest-block-patterns": "not fired",
             "probe:rest-sidebar-classes": "not fired",
@@ -1139,6 +1120,7 @@
             "http:rest-posts": "not fired",
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:audit-lows": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
@@ -1180,6 +1162,7 @@
             "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -1258,6 +1241,7 @@
         },
         "clean_object_term_cache": {
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
@@ -1304,6 +1288,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:general-template-more": "not fired",
@@ -1328,6 +1313,7 @@
             "probe:media-cover": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-api": "not fired",
             "probe:meta-registry": "not fired",
             "probe:misc-helpers": "not fired",
@@ -1364,6 +1350,7 @@
             "probe:post-template-remaining": "not fired",
             "probe:privacy": "not fired",
             "probe:query-clauses": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-compat": "not fired",
             "probe:query-keys": "not fired",
             "probe:query-loop": "not fired",
@@ -1481,7 +1468,7 @@
             "probe:widget-factory": "not fired"
         },
         "comment_notification_notify_author": {
-            "probe:comment-remaining": "not fired",
+            "probe:query-comment-misc-doubts": "fired here only",
             "probe:rest-comments-controller": "not fired"
         },
         "comment_notification_recipients": {
@@ -1679,6 +1666,7 @@
             "probe:formatting-callbacks": "not fired",
             "probe:formatting-remaining": "not fired",
             "probe:front-query": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:functions-utils": "not fired",
             "probe:general-template-more": "not fired",
@@ -1728,6 +1716,7 @@
             "probe:loose-functions": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-api": "not fired",
             "probe:meta-caps": "not fired",
             "probe:meta-registry": "not fired",
@@ -1781,6 +1770,7 @@
             "probe:preset-slugs": "not fired",
             "probe:query-args": "not fired",
             "probe:query-clause-internals": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-compat": "not fired",
             "probe:query-keys": "not fired",
             "probe:query-loop": "not fired",
@@ -1999,11 +1989,13 @@
             "probe:core-blocks": "not fired",
             "probe:filter-inputs": "fired here only",
             "probe:hook-inputs-2": "fired here only",
+            "probe:media-template-doubts": "fired here only",
             "probe:rest-post-lists": "not fired",
             "probe:rest-posts-controller": "not fired",
             "probe:widget-factory": "not fired"
         },
         "date_query_valid_columns": {
+            "probe:functions-formatting-doubts": "not fired",
             "probe:privacy": "not fired"
         },
         "date_rewrite_rules": {
@@ -2030,7 +2022,6 @@
             "probe:av-shortcodes": "not fired",
             "probe:block-helpers-remaining": "not fired",
             "probe:block-hooks": "not fired",
-            "probe:block-supports": "not fired",
             "probe:content-blocks": "not fired",
             "probe:content-tags": "not fired",
             "probe:create-initial-rest-routes": "not fired",
@@ -2070,7 +2061,6 @@
             "probe:widgets-more": "not fired"
         },
         "default_site_option_{*}": {
-            "probe:admin": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-helpers-remaining": "not fired",
@@ -2078,7 +2068,6 @@
             "probe:block-hooks-rest": "not fired",
             "probe:block-instances": "not fired",
             "probe:block-renderers-rendered": "not fired",
-            "probe:block-supports": "not fired",
             "probe:breadcrumbs": "not fired",
             "probe:comment-blocks": "not fired",
             "probe:comments-pagination": "not fired",
@@ -2102,7 +2091,6 @@
             "probe:legacy-comments": "not fired",
             "probe:loose-classes": "not fired",
             "probe:loose-functions": "not fired",
-            "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
             "probe:namespaced-type": "not fired",
@@ -2112,7 +2100,6 @@
             "probe:playlist-block": "not fired",
             "probe:plugin-queue3": "not fired",
             "probe:plugin-queue5": "not fired",
-            "probe:plugin-queue8": "not fired",
             "probe:plugin-surface": "not fired",
             "probe:plugin-surface2": "not fired",
             "probe:post-block-hooks": "not fired",
@@ -2136,7 +2123,6 @@
             "probe:runtime-internals": "not fired",
             "probe:script-l10n": "not fired",
             "probe:script-loader-helpers": "not fired",
-            "probe:script-printing": "not fired",
             "probe:script-tags": "not fired",
             "probe:small-hooks": "not fired",
             "probe:sweep-1018": "not fired",
@@ -2159,6 +2145,7 @@
             "probe:deprecated": "not fired",
             "probe:deprecated-remaining": "not fired",
             "probe:hook-inputs": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:page-template-save": "not fired",
             "probe:patch-security": "not fired",
             "probe:placeholders-a": "not fired",
@@ -2574,10 +2561,12 @@
             "probe:wp-comment-query-sql": "not fired"
         },
         "deprecated_argument_run": {
-            "probe:functions": "not fired"
+            "probe:functions": "not fired",
+            "probe:media-template-doubts": "not fired"
         },
         "deprecated_argument_trigger_error": {
-            "probe:functions": "not fired"
+            "probe:functions": "not fired",
+            "probe:media-template-doubts": "not fired"
         },
         "deprecated_file_included": {
             "probe:comments-template": "not fired",
@@ -2720,8 +2709,7 @@
             "probe:script-tags": "not fired",
             "probe:theme-json-presets": "not fired",
             "probe:user-remaining": "not fired",
-            "probe:widgets": "not fired",
-            "probe:wp-user-query-sql": "not fired"
+            "probe:widgets": "not fired"
         },
         "doing_it_wrong_trigger_error": {
             "probe:create-initial-rest-routes": "not fired",
@@ -2739,8 +2727,7 @@
             "probe:script-tags": "not fired",
             "probe:theme-json-presets": "not fired",
             "probe:user-remaining": "not fired",
-            "probe:widgets": "not fired",
-            "probe:wp-user-query-sql": "not fired"
+            "probe:widgets": "not fired"
         },
         "dynamic_sidebar": {
             "probe:rest-widgets": "not fired",
@@ -3020,18 +3007,6 @@
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired"
         },
-        "file_is_displayable_image": {
-            "probe:attachment-model": "not fired",
-            "probe:image-pipeline": "not fired",
-            "probe:media": "not fired",
-            "probe:media-cover": "not fired",
-            "probe:rest-attachments-controller": "not fired",
-            "probe:rest-attachments-sideload": "not fired",
-            "probe:rest-media-actions": "not fired",
-            "probe:rest-media-save": "not fired",
-            "probe:runtime-internals": "not fired",
-            "probe:sweep-1020": "not fired"
-        },
         "filesystem_method": {
             "probe:plugin-uninstall": "not fired"
         },
@@ -3066,6 +3041,7 @@
             "http:rest-search": "not fired",
             "probe:category-menu-helpers": "not fired",
             "probe:embed-helpers": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:global-styles-unfiltered": "not fired",
             "probe:hook-inputs": "not fired",
             "probe:nav-menu-remaining": "not fired",
@@ -3088,6 +3064,7 @@
             "http:rest-search": "not fired",
             "probe:global-styles-unfiltered": "not fired",
             "probe:hook-inputs-2": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:patch-security": "not fired",
             "probe:privacy": "not fired",
             "probe:rest-batch": "not fired",
@@ -3394,6 +3371,7 @@
             "http:front-home": "not fired",
             "http:rest-posts": "not fired",
             "probe:comment-remaining": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:pluggable-remaining": "not fired",
             "probe:rest-post-lists": "not fired",
             "probe:rest-posts-controller": "not fired",
@@ -3427,6 +3405,7 @@
             "probe:widget-factory": "not fired"
         },
         "get_date_sql": {
+            "probe:functions-formatting-doubts": "not fired",
             "probe:privacy": "not fired"
         },
         "get_default_comment_status": {
@@ -3438,9 +3417,11 @@
             "probe:comment-helpers": "not fired"
         },
         "get_edit_user_link": {
-            "http:admin-front-single": "not fired"
+            "http:admin-front-single": "not fired",
+            "probe:query-comment-misc-doubts": "not fired"
         },
         "get_enclosed": {
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired"
         },
         "get_header_image": {
@@ -3462,6 +3443,7 @@
             "probe:media-cover": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:permalinks": "not fired",
             "probe:playlist-block": "not fired",
             "probe:plugin-helpers": "not fired",
@@ -3473,6 +3455,7 @@
             "probe:post-template-more": "not fired",
             "probe:post-template-remaining": "not fired",
             "probe:privacy": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest-attachments-controller": "not fired",
             "probe:rest-attachments-sideload": "not fired",
             "probe:rest-media-actions": "not fired",
@@ -3487,7 +3470,8 @@
         },
         "get_media_item_args": {
             "probe:attachment-model": "not fired",
-            "probe:media": "not fired"
+            "probe:media": "not fired",
+            "probe:media-template-doubts": "not fired"
         },
         "get_meta_sql": {
             "http:rest-pages": "not fired",
@@ -3643,6 +3627,7 @@
             "http:rest-posts": "not fired",
             "http:rest-search": "not fired",
             "http:sitemap-posts": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:archive-links": "not fired",
             "probe:attachment-model": "not fired",
@@ -3676,6 +3661,7 @@
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
             "probe:functions": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:general-template-more": "not fired",
@@ -4132,6 +4118,7 @@
             "probe:post-insert-filters": "not fired",
             "probe:post-remaining": "not fired",
             "probe:post-template-more": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:refused-writes": "not fired",
             "probe:rest": "not fired",
             "probe:rest-autosaves": "not fired",
@@ -4197,6 +4184,7 @@
             "probe:filter-inputs": "not fired",
             "probe:filter-inputs-2": "not fired",
             "probe:filter-inputs-3": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:general-template-more": "not fired",
             "probe:general-template-remaining": "not fired",
             "probe:hook-inputs": "not fired",
@@ -4211,6 +4199,7 @@
             "probe:loose-functions": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-registry": "not fired",
             "probe:nav-menu-remaining": "not fired",
             "probe:output-helpers": "not fired",
@@ -4233,6 +4222,7 @@
             "probe:post-template-more": "not fired",
             "probe:post-template-remaining": "not fired",
             "probe:privacy": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-pagination": "not fired",
             "probe:query-remaining": "not fired",
             "probe:rest-attachments-controller": "not fired",
@@ -4510,6 +4500,7 @@
         "gettext_with_context": {
             "probe:abilities-lookup": "not fired",
             "probe:admin": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-helpers-remaining": "not fired",
             "probe:block-hooks": "not fired",
@@ -4550,6 +4541,7 @@
         "gettext_with_context_{*}": {
             "probe:abilities-lookup": "not fired",
             "probe:admin": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-helpers-remaining": "not fired",
             "probe:block-hooks": "not fired",
@@ -4706,6 +4698,7 @@
             "probe:namespaced-type": "not fired",
             "probe:oembed": "not fired",
             "probe:patch-security": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest": "not fired",
             "probe:rest-attachments-controller": "not fired",
             "probe:rest-attachments-sideload": "not fired",
@@ -4751,6 +4744,7 @@
             "http:rest-posts": "not fired",
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:audit-lows": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
@@ -4792,6 +4786,7 @@
             "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -4862,6 +4857,7 @@
         "hooked_block_types": {
             "probe:deprecated": "not fired",
             "probe:hook-inputs": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:navigation-blocks": "not fired",
             "probe:page-template-save": "not fired",
             "probe:placeholders-a": "not fired",
@@ -4928,6 +4924,12 @@
         "image_memory_limit": {
             "probe:plugin-queue3": "fired here only"
         },
+        "image_save_pre": {
+            "probe:media-template-doubts": "2 arguments, not 1"
+        },
+        "image_sideload_extensions": {
+            "probe:media-template-doubts": "1 arguments, not 2"
+        },
         "in_widget_form": {
             "probe:rest-sidebar-classes": "not fired",
             "probe:rest-widgets": "not fired"
@@ -4977,9 +4979,11 @@
             "probe:editor-styles": "not fired",
             "probe:facade-stubs": "fired here only",
             "probe:filter-inputs": "fired here only",
+            "probe:functions-formatting-doubts": "fired here only",
             "probe:hook-inputs": "fired here only",
             "probe:icons": "fired here only",
             "probe:identity-internals": "fired here only",
+            "probe:media-template-doubts": "fired here only",
             "probe:notices": "fired here only",
             "probe:output-helpers": "fired here only",
             "probe:patch-security": "fired here only",
@@ -5033,7 +5037,9 @@
             "http:front-single": "not fired",
             "probe:embed-helpers": "not fired",
             "probe:embed-remaining": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:oembed": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest-embed-details": "not fired"
         },
         "is_post_status_viewable": {
@@ -5104,6 +5110,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:functions": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:general-template-more": "not fired",
             "probe:general-template-remaining": "not fired",
@@ -5125,6 +5132,7 @@
             "probe:media-cover": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-registry": "not fired",
             "probe:misc-helpers": "not fired",
             "probe:namespaced-type": "not fired",
@@ -5284,6 +5292,7 @@
             "probe:media": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-registry": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:patch-security": "not fired",
@@ -5294,7 +5303,6 @@
             "probe:plugin-queue2": "not fired",
             "probe:plugin-queue5": "not fired",
             "probe:post-template-more": "not fired",
-            "probe:post-template-remaining": "not fired",
             "probe:query-remaining": "not fired",
             "probe:registry-rewrites": "not fired",
             "probe:reset-key-changes": "not fired",
@@ -5484,6 +5492,7 @@
             "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -5527,7 +5536,6 @@
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:sweep-rules": "not fired",
-            "probe:symbols": "not fired",
             "probe:tabs-render": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:template-part-lookup": "not fired",
@@ -5871,12 +5879,9 @@
             "probe:filter-inputs-2": "fired here only",
             "probe:latest-posts": "fired here only",
             "probe:media-tags": "fired here only",
-            "probe:output-helpers": "not fired",
             "probe:plugin-queue8": "not fired",
             "probe:refused-writes": "not fired",
-            "probe:template-family": "fired here only",
-            "probe:theme-symbols": "not fired",
-            "probe:upgrader": "not fired"
+            "probe:template-family": "fired here only"
         },
         "max_srcset_image_width": {
             "http:admin-front-home": "not fired",
@@ -5895,7 +5900,8 @@
         },
         "media_meta": {
             "probe:attachment-model": "not fired",
-            "probe:media": "not fired"
+            "probe:media": "not fired",
+            "probe:media-template-doubts": "not fired"
         },
         "mejs_settings": {
             "http:admin-ajax": "not fired",
@@ -5934,6 +5940,7 @@
             "probe:feed-tags": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:general-template-more": "not fired",
@@ -5945,6 +5952,7 @@
             "probe:loose-classes": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:misc-helpers": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:navigation-blocks": "not fired",
@@ -6048,6 +6056,7 @@
             "probe:link-template-remaining": "not fired",
             "probe:link-template-tags": "not fired",
             "probe:media": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:nav-menu-items": "not fired",
             "probe:nav-menu-remaining": "not fired",
             "probe:navigation-blocks": "not fired",
@@ -6066,6 +6075,7 @@
             "probe:post-more": "not fired",
             "probe:post-template-more": "not fired",
             "probe:privacy": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-compat": "not fired",
             "probe:query-keys": "not fired",
             "probe:query-pagination": "not fired",
@@ -6137,6 +6147,7 @@
             "probe:abilities-lookup": "not fired",
             "probe:abilities-registry": "not fired",
             "probe:abilities-rest-controllers": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:builtin-type-caps": "not fired",
             "probe:create-initial-rest-routes": "not fired",
             "probe:editor-styles": "not fired",
@@ -6263,6 +6274,7 @@
             "http:rest-pages": "not fired",
             "http:rest-post": "not fired",
             "probe:admin": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:audit-lows": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
@@ -6290,7 +6302,6 @@
             "probe:feed-tags": "not fired",
             "probe:feed-templates": "not fired",
             "probe:feed-templates-more": "not fired",
-            "probe:filter-inputs-2": "not fired",
             "probe:general-template-more": "not fired",
             "probe:hook-inputs": "not fired",
             "probe:icon-term-template": "not fired",
@@ -6298,7 +6309,6 @@
             "probe:legacy-comments": "not fired",
             "probe:loose-classes": "not fired",
             "probe:loose-functions": "not fired",
-            "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
             "probe:namespaced-type": "not fired",
@@ -6354,7 +6364,6 @@
             "probe:template-part-lookup": "not fired",
             "probe:theme-remaining": "not fired",
             "probe:theme-symbols": "not fired",
-            "probe:theme-tags": "not fired",
             "probe:widget-factory": "not fired",
             "probe:widget-methods": "not fired",
             "probe:widgets-more": "not fired"
@@ -6377,6 +6386,7 @@
             "http:rest-pages": "not fired",
             "http:rest-post": "not fired",
             "probe:admin": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:audit-lows": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
@@ -6404,7 +6414,6 @@
             "probe:feed-tags": "not fired",
             "probe:feed-templates": "not fired",
             "probe:feed-templates-more": "not fired",
-            "probe:filter-inputs-2": "not fired",
             "probe:general-template-more": "not fired",
             "probe:hook-inputs": "not fired",
             "probe:icon-term-template": "not fired",
@@ -6412,7 +6421,6 @@
             "probe:legacy-comments": "not fired",
             "probe:loose-classes": "not fired",
             "probe:loose-functions": "not fired",
-            "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
             "probe:namespaced-type": "not fired",
@@ -6468,7 +6476,6 @@
             "probe:template-part-lookup": "not fired",
             "probe:theme-remaining": "not fired",
             "probe:theme-symbols": "not fired",
-            "probe:theme-tags": "not fired",
             "probe:widget-factory": "not fired",
             "probe:widget-methods": "not fired",
             "probe:widgets-more": "not fired"
@@ -6479,6 +6486,7 @@
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:blocks": "not fired",
             "probe:query-loop": "not fired",
             "probe:rest-block-patterns": "not fired",
@@ -6494,6 +6502,7 @@
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:blocks": "not fired",
             "probe:query-loop": "not fired",
             "probe:rest-block-patterns": "not fired",
@@ -6508,8 +6517,7 @@
             "http:login": "not fired",
             "http:login-lost": "not fired",
             "http:login-refused": "not fired",
-            "http:lostpassword-nobody": "not fired",
-            "probe:bootstrap-guards": "not fired"
+            "http:lostpassword-nobody": "not fired"
         },
         "nonce_life": {
             "http:admin-ajax": "not fired",
@@ -6538,32 +6546,13 @@
             "probe:breadcrumbs": "not fired",
             "probe:comment-remaining": "not fired",
             "probe:comments-pagination": "not fired",
-            "probe:filter-inputs-2": "not fired",
             "probe:link-template-remaining": "not fired",
             "probe:pluggable-remaining": "not fired",
             "probe:plugin-surface2": "not fired",
             "probe:query-pagination": "not fired",
             "probe:rest-batch": "not fired",
             "probe:rest-post-lists": "not fired",
-            "probe:rest-posts-controller": "not fired",
-            "probe:theme-tags": "not fired"
-        },
-        "oembed_discovery_links": {
-            "http:admin-front-home": "not fired",
-            "http:front-404": "not fired",
-            "http:front-author": "not fired",
-            "http:front-category": "not fired",
-            "http:front-home": "not fired",
-            "http:front-search": "not fired",
-            "probe:block-supports": "not fired",
-            "probe:media": "not fired",
-            "probe:rest-sidebar-classes": "not fired"
-        },
-        "oembed_endpoint_url": {
-            "http:admin-front-single": "not fired",
-            "http:front-page": "not fired",
-            "http:front-single": "not fired",
-            "probe:embed-remaining": "not fired"
+            "probe:rest-posts-controller": "not fired"
         },
         "oembed_providers": {
             "probe:blocks": "fired here only",
@@ -6966,6 +6955,7 @@
         "post_limits": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -6998,6 +6988,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -7120,6 +7111,7 @@
         "post_limits_request": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -7152,6 +7144,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -7301,7 +7294,6 @@
             "probe:rest-protected-comments": "not fired",
             "probe:security-parity": "not fired",
             "probe:sweep-1020b": "not fired",
-            "probe:theme-tags": "not fired",
             "probe:widget-factory": "not fired"
         },
         "post_rewrite_rules": {
@@ -7387,9 +7379,11 @@
             "probe:deprecated": "not fired",
             "probe:facade-stubs": "not fired",
             "probe:filter-inputs": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:hook-inputs-2": "not fired",
             "probe:icons": "not fired",
             "probe:identity-internals": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:output-helpers": "not fired",
             "probe:password-rehash": "not fired",
             "probe:patch-security": "not fired",
@@ -7438,6 +7432,7 @@
             "http:admin-front-single": "not fired",
             "http:front-single": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
@@ -7499,6 +7494,7 @@
             "probe:media": "not fired",
             "probe:media-cover": "not fired",
             "probe:media-remaining": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-api": "not fired",
             "probe:meta-registry": "not fired",
             "probe:misc-helpers": "not fired",
@@ -7584,6 +7580,7 @@
         "posts_clauses": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -7616,6 +7613,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -7738,6 +7736,7 @@
         "posts_clauses_request": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -7770,6 +7769,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -7892,6 +7892,7 @@
         "posts_distinct": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -7924,6 +7925,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -8046,6 +8048,7 @@
         "posts_distinct_request": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -8078,6 +8081,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -8200,6 +8204,7 @@
         "posts_fields": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -8232,6 +8237,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -8354,6 +8360,7 @@
         "posts_fields_request": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -8386,6 +8393,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -8508,6 +8516,7 @@
         "posts_groupby": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -8540,6 +8549,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -8662,6 +8672,7 @@
         "posts_groupby_request": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -8694,6 +8705,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -8816,6 +8828,7 @@
         "posts_join": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -8848,6 +8861,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -8970,6 +8984,7 @@
         "posts_join_paged": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -9002,6 +9017,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -9124,6 +9140,7 @@
         "posts_join_request": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -9156,6 +9173,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -9278,6 +9296,7 @@
         "posts_orderby": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -9310,6 +9329,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -9432,6 +9452,7 @@
         "posts_orderby_request": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -9464,6 +9485,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -9650,6 +9672,7 @@
         "posts_request": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -9682,6 +9705,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -9804,6 +9828,7 @@
         "posts_request_ids": {
             "http:front-embed": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -9839,6 +9864,7 @@
             "probe:filter-inputs": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:hook-inputs": "not fired",
             "probe:icon-term-template": "not fired",
@@ -9953,6 +9979,7 @@
         },
         "posts_results": {
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -9986,6 +10013,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -10112,6 +10140,7 @@
         "posts_search": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -10144,6 +10173,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -10334,6 +10364,7 @@
         "posts_where": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -10366,6 +10397,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -10488,6 +10520,7 @@
         "posts_where_paged": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -10520,6 +10553,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -10642,6 +10676,7 @@
         "posts_where_request": {
             "http:rest-post": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -10674,6 +10709,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -10891,12 +10927,15 @@
             "probe:admin-bar-remaining": "not fired",
             "probe:attachment-model": "not fired",
             "probe:link-template-remaining": "not fired",
+            "probe:media-template-doubts": "fired here only",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:symbols": "not fired"
         },
         "pre_get_col_charset": {
             "probe:account-flows": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:application-passwords-api": "not fired",
             "probe:attachment-model": "not fired",
@@ -10967,6 +11006,7 @@
             "probe:media-cover": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-api": "not fired",
             "probe:meta-registry": "not fired",
             "probe:misc-helpers": "not fired",
@@ -11352,6 +11392,7 @@
             "probe:feed-templates-more": "not fired",
             "probe:filter-inputs": "not fired",
             "probe:filter-inputs-2": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:general-template-more": "not fired",
             "probe:hook-inputs-2": "not fired",
             "probe:icon-term-template": "not fired",
@@ -11364,6 +11405,7 @@
             "probe:loose-functions": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-registry": "not fired",
             "probe:output-helpers": "not fired",
             "probe:patch-security": "not fired",
@@ -11382,6 +11424,7 @@
             "probe:post-insert-filters": "not fired",
             "probe:post-more": "not fired",
             "probe:post-template-more": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest-attachments-controller": "not fired",
             "probe:rest-autosaves": "not fired",
             "probe:rest-comment-author": "not fired",
@@ -11420,6 +11463,7 @@
             "probe:account-flows": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:application-passwords-api": "not fired",
             "probe:attachment-model": "not fired",
@@ -11490,6 +11534,7 @@
             "probe:media-cover": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-api": "not fired",
             "probe:meta-registry": "not fired",
             "probe:misc-helpers": "not fired",
@@ -11909,7 +11954,6 @@
             "probe:rest-menus-controller": "not fired"
         },
         "pre_post_{*}": {
-            "probe:plugin-symbols": "not fired",
             "probe:rest-menu-save": "not fired",
             "probe:rest-menus-controller": "not fired",
             "probe:rest-template-create": "not fired"
@@ -11926,6 +11970,7 @@
             "probe:filter-inputs": "not fired",
             "probe:filter-inputs-2": "not fired",
             "probe:post-block-hooks": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest-block-controllers": "not fired",
             "probe:rest-registry-controllers": "not fired",
             "probe:rest-search-handlers": "not fired",
@@ -11936,7 +11981,6 @@
             "probe:wp-theme": "not fired"
         },
         "pre_site_option": {
-            "probe:admin": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-helpers-remaining": "not fired",
@@ -11944,7 +11988,6 @@
             "probe:block-hooks-rest": "not fired",
             "probe:block-instances": "not fired",
             "probe:block-renderers-rendered": "not fired",
-            "probe:block-supports": "not fired",
             "probe:breadcrumbs": "not fired",
             "probe:comment-blocks": "not fired",
             "probe:comments-pagination": "not fired",
@@ -11968,7 +12011,6 @@
             "probe:legacy-comments": "not fired",
             "probe:loose-classes": "not fired",
             "probe:loose-functions": "not fired",
-            "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
             "probe:namespaced-type": "not fired",
@@ -11978,7 +12020,6 @@
             "probe:playlist-block": "not fired",
             "probe:plugin-queue3": "not fired",
             "probe:plugin-queue5": "not fired",
-            "probe:plugin-queue8": "not fired",
             "probe:plugin-surface": "not fired",
             "probe:plugin-surface2": "not fired",
             "probe:post-block-hooks": "not fired",
@@ -12002,7 +12043,6 @@
             "probe:runtime-internals": "not fired",
             "probe:script-l10n": "not fired",
             "probe:script-loader-helpers": "not fired",
-            "probe:script-printing": "not fired",
             "probe:script-tags": "not fired",
             "probe:small-hooks": "not fired",
             "probe:sweep-1018": "not fired",
@@ -12018,7 +12058,6 @@
             "probe:widgets-more": "not fired"
         },
         "pre_site_option_{*}": {
-            "probe:admin": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-helpers-remaining": "not fired",
@@ -12026,7 +12065,6 @@
             "probe:block-hooks-rest": "not fired",
             "probe:block-instances": "not fired",
             "probe:block-renderers-rendered": "not fired",
-            "probe:block-supports": "not fired",
             "probe:breadcrumbs": "not fired",
             "probe:comment-blocks": "not fired",
             "probe:comments-pagination": "not fired",
@@ -12050,7 +12088,6 @@
             "probe:legacy-comments": "not fired",
             "probe:loose-classes": "not fired",
             "probe:loose-functions": "not fired",
-            "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
             "probe:namespaced-type": "not fired",
@@ -12060,7 +12097,6 @@
             "probe:playlist-block": "not fired",
             "probe:plugin-queue3": "not fired",
             "probe:plugin-queue5": "not fired",
-            "probe:plugin-queue8": "not fired",
             "probe:plugin-surface": "not fired",
             "probe:plugin-surface2": "not fired",
             "probe:post-block-hooks": "not fired",
@@ -12084,7 +12120,6 @@
             "probe:runtime-internals": "not fired",
             "probe:script-l10n": "not fired",
             "probe:script-loader-helpers": "not fired",
-            "probe:script-printing": "not fired",
             "probe:script-tags": "not fired",
             "probe:small-hooks": "not fired",
             "probe:sweep-1018": "not fired",
@@ -12148,6 +12183,7 @@
             "probe:fonts": "not fired",
             "probe:loose-classes": "not fired",
             "probe:media": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:navigation-blocks": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -12219,14 +12255,11 @@
             "http:robots": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
-            "probe:admin": "fired here only",
             "probe:block-supports": "not fired",
             "probe:media": "not fired",
             "probe:plugin-uninstall": "not fired",
             "probe:rest-sidebar-classes": "not fired",
-            "probe:sanitize-option": "fired here only",
             "probe:script-printing": "not fired",
-            "probe:sweep-1020": "fired here only",
             "probe:theme-json-css": "not fired"
         },
         "pre_unschedule_event": {
@@ -12392,6 +12425,7 @@
             "probe:fonts": "not fired",
             "probe:loose-classes": "not fired",
             "probe:media": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:navigation-blocks": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -12432,7 +12466,6 @@
         },
         "preview_post_link": {
             "probe:hook-inputs-2": "not fired",
-            "probe:post-template-remaining": "not fired",
             "probe:rest-autosaves": "not fired",
             "probe:sweep-1020": "not fired"
         },
@@ -12464,10 +12497,14 @@
             "probe:symbols": "not fired"
         },
         "print_late_styles": {
+            "probe:admin-doubts": "not fired",
             "probe:symbols": "not fired"
         },
         "print_scripts_array": {
             "probe:symbols": "not fired"
+        },
+        "print_styles_array": {
+            "probe:admin-doubts": "not fired"
         },
         "privacy_policy_url": {
             "http:login": "not fired",
@@ -12631,12 +12668,10 @@
             "http:admin-front-single": "not fired",
             "probe:application-passwords-api": "not fired",
             "probe:hook-inputs": "not fired",
-            "probe:media": "not fired",
             "probe:pluggable-remaining": "not fired",
             "probe:plugin-surface": "not fired",
             "probe:reset-key-changes": "not fired",
-            "probe:rest-media-save": "not fired",
-            "probe:upgrader": "not fired"
+            "probe:rest-media-save": "not fired"
         },
         "recovery_mode_email_link_ttl": {
             "http:admin-ajax": "not fired",
@@ -13560,6 +13595,7 @@
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:blocks": "not fired",
             "probe:query-loop": "not fired",
             "probe:rest-block-patterns": "not fired",
@@ -13623,6 +13659,7 @@
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:auth-cookies": "not fired",
@@ -13654,6 +13691,7 @@
             "probe:feed-templates": "not fired",
             "probe:feed-templates-more": "not fired",
             "probe:filter-inputs-3": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:general-template-more": "not fired",
             "probe:hook-inputs": "not fired",
@@ -13667,6 +13705,7 @@
             "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -13683,6 +13722,7 @@
             "probe:post-template-remaining": "not fired",
             "probe:preset-slugs": "not fired",
             "probe:preview-output-helpers": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-loop": "not fired",
             "probe:rest": "not fired",
             "probe:rest-attachments-controller": "not fired",
@@ -13731,14 +13771,6 @@
         "sanitize_email": {
             "probe:rest": "fired here only",
             "probe:rest-comment-lists": "fired here only"
-        },
-        "sanitize_file_name": {
-            "probe:plugin-queue2": "not fired",
-            "probe:upgrader": "not fired"
-        },
-        "sanitize_file_name_chars": {
-            "probe:plugin-queue2": "not fired",
-            "probe:upgrader": "not fired"
         },
         "sanitize_html_class": {
             "http:admin-front-home": "not fired",
@@ -13789,14 +13821,12 @@
             "probe:rest-server-methods": "not fired",
             "probe:rest-sidebar-classes": "not fired",
             "probe:schema-and-menus": "not fired",
-            "probe:symbols": "not fired",
             "probe:tail-helpers": "not fired",
             "probe:template-family": "not fired"
         },
         "sanitize_key": {
             "probe:block-supports-remaining": "not fired",
             "probe:default-presets": "not fired",
-            "probe:plugin-dependencies": "not fired",
             "probe:preset-slugs": "not fired",
             "probe:script-loader-helpers": "not fired",
             "probe:script-printing": "not fired",
@@ -13948,6 +13978,7 @@
         },
         "sanitize_trackback_urls": {
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
@@ -13995,6 +14026,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:general-template-more": "not fired",
@@ -14019,6 +14051,7 @@
             "probe:media-cover": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-api": "not fired",
             "probe:meta-registry": "not fired",
             "probe:misc-helpers": "not fired",
@@ -14055,6 +14088,7 @@
             "probe:post-template-more": "not fired",
             "probe:post-template-remaining": "not fired",
             "probe:privacy": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-keys": "not fired",
             "probe:query-loop": "not fired",
             "probe:query-pagination": "not fired",
@@ -14196,6 +14230,7 @@
             "probe:filter-inputs": "not fired",
             "probe:filter-inputs-2": "not fired",
             "probe:post-block-hooks": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest-block-controllers": "not fired",
             "probe:rest-registry-controllers": "not fired",
             "probe:rest-search-handlers": "not fired",
@@ -14351,14 +14386,12 @@
         "show_admin_bar": {
             "probe:post-doubts": "not fired",
             "probe:post-template-remaining": "not fired",
-            "probe:rest-sidebar-classes": "fired here only",
-            "probe:symbols": "fired here only"
+            "probe:rest-sidebar-classes": "fired here only"
         },
         "sidebars_widgets": {
             "probe:theme-switch": "fired here only"
         },
         "site_option_{*}": {
-            "probe:admin": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
             "probe:block-helpers-remaining": "not fired",
@@ -14366,7 +14399,6 @@
             "probe:block-hooks-rest": "not fired",
             "probe:block-instances": "not fired",
             "probe:block-renderers-rendered": "not fired",
-            "probe:block-supports": "not fired",
             "probe:breadcrumbs": "not fired",
             "probe:comment-blocks": "not fired",
             "probe:comments-pagination": "not fired",
@@ -14390,7 +14422,6 @@
             "probe:legacy-comments": "not fired",
             "probe:loose-classes": "not fired",
             "probe:loose-functions": "not fired",
-            "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
             "probe:namespaced-type": "not fired",
@@ -14400,7 +14431,6 @@
             "probe:playlist-block": "not fired",
             "probe:plugin-queue3": "not fired",
             "probe:plugin-queue5": "not fired",
-            "probe:plugin-queue8": "not fired",
             "probe:plugin-surface": "not fired",
             "probe:plugin-surface2": "not fired",
             "probe:post-block-hooks": "not fired",
@@ -14424,7 +14454,6 @@
             "probe:runtime-internals": "not fired",
             "probe:script-l10n": "not fired",
             "probe:script-loader-helpers": "not fired",
-            "probe:script-printing": "not fired",
             "probe:script-tags": "not fired",
             "probe:small-hooks": "not fired",
             "probe:sweep-1018": "not fired",
@@ -14458,6 +14487,7 @@
         },
         "split_the_query": {
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -14564,7 +14594,6 @@
             "http:rest-search": "not fired",
             "http:rest-types": "not fired",
             "http:rest-users": "not fired",
-            "probe:bootstrap-guards": "not fired",
             "probe:pluggable-remaining": "not fired"
         },
         "strict_redirect_guess_404_permalink": {
@@ -15126,9 +15155,6 @@
             "probe:widget-classes": "not fired",
             "probe:wp-theme": "not fired"
         },
-        "terms_to_edit": {
-            "probe:placeholders-admin": "not fired"
-        },
         "the_author": {
             "http:front-author": "not fired",
             "probe:general-template-remaining": "not fired"
@@ -15160,9 +15186,7 @@
             "probe:sweep-1020": "not fired"
         },
         "the_permalink": {
-            "probe:embed-remaining": "not fired",
-            "probe:hook-inputs-2": "not fired",
-            "probe:widgets": "not fired"
+            "probe:embed-remaining": "not fired"
         },
         "the_post": {
             "probe:query-pagination": "not fired",
@@ -15170,6 +15194,7 @@
         },
         "the_posts": {
             "http:rest-search": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:block-bindings": "not fired",
@@ -15203,6 +15228,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:hook-inputs": "not fired",
@@ -15347,6 +15373,7 @@
             "probe:blocks": "not fired",
             "probe:builtin-type-caps": "not fired",
             "probe:comment-helpers": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:global-styles-unfiltered": "not fired",
             "probe:latest-posts": "not fired",
             "probe:post-block-hooks": "not fired",
@@ -15432,6 +15459,7 @@
             "probe:latest-posts": "not fired",
             "probe:loose-classes": "not fired",
             "probe:media": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:navigation-blocks": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -15560,7 +15588,6 @@
             "probe:hook-inputs-2": "not fired"
         },
         "title_save_pre": {
-            "probe:plugin-symbols": "not fired",
             "probe:rest-menu-save": "not fired",
             "probe:rest-menus-controller": "not fired",
             "probe:rest-template-create": "not fired"
@@ -15599,14 +15626,11 @@
             "http:robots": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
-            "probe:admin": "fired here only",
             "probe:block-supports": "not fired",
             "probe:media": "not fired",
             "probe:plugin-uninstall": "not fired",
             "probe:rest-sidebar-classes": "not fired",
-            "probe:sanitize-option": "fired here only",
             "probe:script-printing": "not fired",
-            "probe:sweep-1020": "fired here only",
             "probe:theme-json-css": "not fired"
         },
         "transition_post_status": {
@@ -15636,6 +15660,7 @@
         "update_option_{*}": {
             "probe:filter-inputs-2": "not fired",
             "probe:post-block-hooks": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest-search-handlers": "not fired",
             "probe:template-loading": "not fired"
         },
@@ -15681,6 +15706,7 @@
         "updated_option": {
             "probe:filter-inputs-2": "not fired",
             "probe:post-block-hooks": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest-search-handlers": "not fired",
             "probe:template-loading": "not fired"
         },
@@ -15691,11 +15717,11 @@
             "http:rest-posts": "not fired",
             "probe:kses-split": "fired here only",
             "probe:rest-post-lists": "not fired",
-            "probe:rest-posts-controller": "not fired",
-            "probe:upgrader": "not fired"
+            "probe:rest-posts-controller": "not fired"
         },
         "upload_mimes": {
             "probe:abilities-lookup": "not fired",
+            "probe:admin-doubts": "fired here only",
             "probe:block-renderers": "fired here only",
             "probe:block-renderers-rendered": "fired here only",
             "probe:content-blocks": "fired here only",
@@ -15710,7 +15736,6 @@
             "probe:post-doubts": "fired here only",
             "probe:tail-helpers": "fired here only",
             "probe:template-family": "fired here only",
-            "probe:upgrader": "not fired",
             "probe:widgets": "fired here only"
         },
         "upload_size_limit": {
@@ -15734,10 +15759,12 @@
             "probe:deprecated": "not fired",
             "probe:facade-stubs": "not fired",
             "probe:filter-inputs": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:hook-inputs": "not fired",
             "probe:hook-inputs-2": "not fired",
             "probe:icons": "not fired",
             "probe:identity-internals": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:notices": "not fired",
             "probe:output-helpers": "not fired",
             "probe:password-rehash": "not fired",
@@ -15804,12 +15831,9 @@
             "probe:filter-inputs-2": "fired here only",
             "probe:latest-posts": "fired here only",
             "probe:media-tags": "fired here only",
-            "probe:output-helpers": "not fired",
             "probe:plugin-queue8": "not fired",
             "probe:refused-writes": "not fired",
-            "probe:template-family": "fired here only",
-            "probe:theme-symbols": "not fired",
-            "probe:upgrader": "not fired"
+            "probe:template-family": "fired here only"
         },
         "user_trailingslashit": {
             "http:admin-rest-me": "not fired",
@@ -16012,6 +16036,7 @@
             "probe:latest-posts": "fired here only",
             "probe:media": "fired here only",
             "probe:media-tags": "fired here only",
+            "probe:media-template-doubts": "fired here only",
             "probe:plugin-helpers": "fired here only",
             "probe:plugin-queue2": "fired here only",
             "probe:plugin-queue5": "fired here only",
@@ -16030,9 +16055,6 @@
             "http:ajax": "not fired",
             "http:ajax-heartbeat": "not fired"
         },
-        "wp_auth_check_load": {
-            "probe:symbols": "not fired"
-        },
         "wp_authenticate_application_password_errors": {
             "probe:application-passwords-api": "1 arguments, not 4"
         },
@@ -16041,6 +16063,7 @@
             "probe:account-flows": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:audit-lows": "not fired",
             "probe:auth-cookies": "not fired",
@@ -16072,6 +16095,7 @@
             "probe:filter-inputs-2": "not fired",
             "probe:filter-inputs-3": "not fired",
             "probe:functions": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:functions-utils": "not fired",
             "probe:general-template-remaining": "not fired",
@@ -16089,6 +16113,7 @@
             "probe:link-template-tags": "not fired",
             "probe:loose-classes": "not fired",
             "probe:media": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:nav-menu-items": "not fired",
             "probe:nav-menu-remaining": "not fired",
             "probe:notices": "not fired",
@@ -16122,6 +16147,7 @@
             "probe:preview-output-helpers": "not fired",
             "probe:privacy": "not fired",
             "probe:query-clauses": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-loop": "not fired",
             "probe:reset-key-changes": "not fired",
             "probe:rest-app-passwords-class": "not fired",
@@ -16239,6 +16265,7 @@
             "http:robots": "not fired",
             "http:sitemap-index": "not fired",
             "http:sitemap-posts": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:application-passwords-api": "not fired",
             "probe:attachment-model": "not fired",
@@ -16313,7 +16340,6 @@
             "probe:meta-api": "not fired",
             "probe:meta-registry": "not fired",
             "probe:misc-helpers": "not fired",
-            "probe:multisite-classes": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:nav-menu-items": "not fired",
             "probe:nav-menu-remaining": "not fired",
@@ -16350,11 +16376,9 @@
             "probe:preset-slugs": "not fired",
             "probe:query-clause-internals": "not fired",
             "probe:query-clauses": "not fired",
-            "probe:query-compat": "not fired",
             "probe:query-keys": "not fired",
             "probe:query-loop": "not fired",
             "probe:query-pagination": "not fired",
-            "probe:query-remaining": "not fired",
             "probe:refused-writes": "not fired",
             "probe:rest": "not fired",
             "probe:rest-api-helpers": "not fired",
@@ -16460,6 +16484,7 @@
         },
         "wp_checkdate": {
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:admin-terms": "not fired",
             "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
@@ -16508,6 +16533,7 @@
             "probe:filter-inputs-3": "not fired",
             "probe:fonts": "not fired",
             "probe:footnotes": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:gallery-captions": "not fired",
             "probe:general-template-more": "not fired",
             "probe:general-template-remaining": "not fired",
@@ -16531,6 +16557,7 @@
             "probe:media-cover": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-api": "not fired",
             "probe:meta-registry": "not fired",
             "probe:misc-helpers": "not fired",
@@ -16569,6 +16596,7 @@
             "probe:privacy": "not fired",
             "probe:query-clause-internals": "not fired",
             "probe:query-clauses": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-keys": "not fired",
             "probe:query-loop": "not fired",
             "probe:query-pagination": "not fired",
@@ -16664,9 +16692,6 @@
             "probe:rest-posts-controller": "not fired",
             "probe:tail-helpers": "not fired"
         },
-        "wp_count_comments": {
-            "probe:comment-remaining": "fired here only"
-        },
         "wp_dashboard_widgets": {
             "probe:symbols": "not fired"
         },
@@ -16683,9 +16708,11 @@
             "probe:blocks": "not fired",
             "probe:breadcrumbs": "not fired",
             "probe:filter-inputs": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:latest-posts": "not fired",
             "probe:post-template-more": "not fired",
             "probe:privacy": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest-post-lists": "not fired",
             "probe:rest-posts-controller": "not fired",
             "probe:sitemap-classes": "not fired",
@@ -16711,6 +16738,7 @@
             "http:sitemap-posts": "fired here only",
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:audit-lows": "not fired",
             "probe:av-shortcodes": "not fired",
             "probe:block-bindings": "not fired",
@@ -16750,6 +16778,7 @@
             "probe:loose-functions": "not fired",
             "probe:media": "not fired",
             "probe:media-remaining": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -16820,6 +16849,7 @@
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:av-shortcodes": "not fired",
@@ -16868,6 +16898,7 @@
             "probe:media": "not fired",
             "probe:media-player": "not fired",
             "probe:media-remaining": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:namespaced-type": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -16888,6 +16919,7 @@
             "probe:post-template-remaining": "not fired",
             "probe:preset-slugs": "not fired",
             "probe:preview-output-helpers": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-loop": "not fired",
             "probe:rest": "not fired",
             "probe:rest-api-helpers": "not fired",
@@ -17243,16 +17275,10 @@
         "wp_internal_hosts": {
             "probe:comment-blocks": "not fired",
             "probe:comment-remaining": "not fired",
-            "probe:comment-walker": "not fired",
             "probe:content-filters": "not fired",
-            "probe:filter-inputs-2": "not fired",
             "probe:formatting-callbacks": "not fired",
             "probe:functions": "not fired",
-            "probe:hook-inputs-2": "not fired",
-            "probe:legacy-comments": "not fired",
-            "probe:plugin-surface2": "not fired",
-            "probe:theme-tags": "not fired",
-            "probe:widgets": "not fired"
+            "probe:functions-formatting-doubts": "not fired"
         },
         "wp_is_application_passwords_available": {
             "http:ajax": "not fired",
@@ -17375,6 +17401,7 @@
         "wp_kses_allowed_html": {
             "http:login-refused": "not fired",
             "http:lostpassword-nobody": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:core-block-callbacks": "fired here only",
             "probe:hook-inputs-2": "fired here only"
         },
@@ -17416,6 +17443,7 @@
             "probe:latest-posts": "not fired",
             "probe:loose-classes": "not fired",
             "probe:media": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:module-tags": "not fired",
             "probe:navigation-fallback": "not fired",
             "probe:navigation-overlay": "not fired",
@@ -17457,8 +17485,7 @@
             "probe:tail-helpers": "not fired",
             "probe:template-part-lookup": "not fired",
             "probe:upgrader": "fired here only",
-            "probe:user-remaining": "not fired",
-            "probe:wp-user-query-sql": "not fired"
+            "probe:user-remaining": "not fired"
         },
         "wp_lazy_loading_enabled": {
             "probe:custom-header": "not fired",
@@ -17528,6 +17555,7 @@
             "probe:filter-inputs": "not fired",
             "probe:filter-inputs-2": "not fired",
             "probe:filter-inputs-3": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:general-template-more": "not fired",
             "probe:general-template-remaining": "not fired",
             "probe:hook-inputs-2": "not fired",
@@ -17541,6 +17569,7 @@
             "probe:loose-functions": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-registry": "not fired",
             "probe:nav-menu-remaining": "not fired",
             "probe:output-helpers": "not fired",
@@ -17560,6 +17589,7 @@
             "probe:post-more": "not fired",
             "probe:post-template-more": "not fired",
             "probe:post-template-remaining": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-pagination": "not fired",
             "probe:query-remaining": "not fired",
             "probe:rest-attachments-controller": "not fired",
@@ -17615,7 +17645,6 @@
             "probe:template-family": "not fired"
         },
         "wp_opcache_invalidate_file": {
-            "probe:plugin-queue7": "fired here only",
             "probe:upgrader": "not fired"
         },
         "wp_parse_str": {
@@ -17638,6 +17667,7 @@
             "probe:abilities-registry": "not fired",
             "probe:abilities-rest-controllers": "not fired",
             "probe:admin": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:archive-links": "not fired",
             "probe:attachment-model": "not fired",
             "probe:av-shortcodes": "not fired",
@@ -17654,6 +17684,7 @@
             "probe:cpt-rules": "not fired",
             "probe:embed-remaining": "not fired",
             "probe:feed-links": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:general-template-remaining": "not fired",
             "probe:hook-inputs-2": "not fired",
             "probe:icon-term-template": "not fired",
@@ -17767,14 +17798,18 @@
             "http:front-single": "not fired",
             "probe:core-blocks": "not fired",
             "probe:legacy-comments": "not fired",
-            "probe:plugin-surface2": "not fired"
+            "probe:media-template-doubts": "not fired",
+            "probe:plugin-surface2": "not fired",
+            "probe:query-comment-misc-doubts": "not fired"
         },
         "wp_required_field_message": {
             "http:admin-front-single": "not fired",
             "http:front-single": "not fired",
             "probe:core-blocks": "not fired",
             "probe:legacy-comments": "not fired",
-            "probe:plugin-surface2": "not fired"
+            "probe:media-template-doubts": "not fired",
+            "probe:plugin-surface2": "not fired",
+            "probe:query-comment-misc-doubts": "not fired"
         },
         "wp_resource_hints": {
             "probe:symbols": "not fired"
@@ -17856,6 +17891,7 @@
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
             "probe:admin-bar-remaining": "not fired",
+            "probe:admin-doubts": "not fired",
             "probe:attachment-model": "not fired",
             "probe:audit-lows": "not fired",
             "probe:block-helpers-remaining": "not fired",
@@ -17904,6 +17940,7 @@
             "probe:formatting-remaining": "not fired",
             "probe:front-query": "not fired",
             "probe:functions": "not fired",
+            "probe:functions-formatting-doubts": "not fired",
             "probe:functions-remaining": "not fired",
             "probe:functions-utils": "not fired",
             "probe:gallery-captions": "not fired",
@@ -17936,6 +17973,7 @@
             "probe:media-meta": "not fired",
             "probe:media-remaining": "not fired",
             "probe:media-tags": "not fired",
+            "probe:media-template-doubts": "not fired",
             "probe:meta-registry": "not fired",
             "probe:misc-helpers": "not fired",
             "probe:namespaced-type": "not fired",
@@ -17973,6 +18011,7 @@
             "probe:post-template-more": "not fired",
             "probe:post-template-remaining": "not fired",
             "probe:privacy": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:query-compat": "not fired",
             "probe:query-loop": "not fired",
             "probe:query-pagination": "not fired",
@@ -18571,10 +18610,6 @@
             "probe:sweep-1020b": "not fired",
             "probe:widget-factory": "not fired"
         },
-        "wp_unique_filename": {
-            "probe:plugin-queue2": "not fired",
-            "probe:upgrader": "not fired"
-        },
         "wp_unique_post_slug": {
             "probe:rest-menu-save": "not fired",
             "probe:rest-menus-controller": "not fired",
@@ -18630,6 +18665,7 @@
             "probe:latest-posts": "fired here only",
             "probe:media": "fired here only",
             "probe:media-tags": "fired here only",
+            "probe:media-template-doubts": "fired here only",
             "probe:plugin-helpers": "fired here only",
             "probe:plugin-queue2": "fired here only",
             "probe:plugin-queue5": "fired here only",
@@ -18686,6 +18722,7 @@
             "probe:placeholders-admin": "not fired",
             "probe:plugin-queue3": "not fired",
             "probe:post-remaining": "not fired",
+            "probe:query-comment-misc-doubts": "not fired",
             "probe:rest-embed-details": "not fired",
             "probe:widgets": "not fired"
         },

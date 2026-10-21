@@ -22,34 +22,25 @@ function add_menu_page($page_title, $menu_title, $capability, $menu_slug, $callb
     if ($callback !== '' && is_callable($callback) && current_user_can($capability)) {
         add_action($hookname, $callback);
     }
-    if ($icon_url === '') {
-        $icon_url = 'dashicons-admin-generic';
-        $icon_class = '';
-    } else {
-        $icon_class = str_starts_with((string) $icon_url, 'dashicons-') ? '' : 'menu-icon-generic ';
-    }
+    // No icon is the generic dashicon with its class; a taken position moves on by a fraction (probe admin-doubts).
+    $icon_class = $icon_url === '' ? 'menu-icon-generic ' : '';
+    $icon_url = $icon_url === '' ? 'dashicons-admin-generic' : set_url_scheme((string) $icon_url);
     $row = [$menu_title, $capability, $menu_slug, $page_title, 'menu-top ' . $icon_class . $hookname, $hookname, $icon_url];
-    $menu = &$GLOBALS['menu'];
-    $menu = is_array($menu) ? $menu : [];
-    if ($position === null || !is_numeric($position)) {
-        $menu[] = $row;
-    } else {
-        $position = (int) $position;
-        while (isset($menu[$position])) {
-            $position++;
-        }
-        $menu[$position] = $row;
-        ksort($menu);
+    $GLOBALS['menu'] = is_array($GLOBALS['menu'] ?? null) ? $GLOBALS['menu'] : [];
+    $key = Minn\Admin\AdminMenu::positionKey($GLOBALS['menu'], $position, $menu_slug, (string) $menu_title);
+    if ($key === null && $position !== null) {
+        _doing_it_wrong(__FUNCTION__, sprintf(__('The seventh parameter passed to %s should be numeric representing menu position.'), '<code>add_menu_page()</code>'), '6.0.0');
     }
+    $key === null ? $GLOBALS['menu'][] = $row : $GLOBALS['menu'][$key] = $row;
     $GLOBALS['_registered_pages'][$hookname] = true;
+    $GLOBALS['_parent_pages'][$menu_slug] = false;
     return $hookname;
 }
 
 function add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback = '', $position = null)
 {
     $menu_slug = plugin_basename($menu_slug);
-    $parent_slug = plugin_basename($parent_slug);
-    $parentFile = $GLOBALS['_parent_pages'][$parent_slug] ?? $parent_slug;
+    $parentFile = plugin_basename((string) $parent_slug);
     if (!current_user_can($capability)) {
         $GLOBALS['_wp_submenu_nopriv'][$parentFile][$menu_slug] = true;
         return false;
@@ -64,6 +55,9 @@ function add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $
         }
     }
     $row = [$menu_title, $capability, $menu_slug, $page_title];
+    if ($position !== null && !is_numeric($position)) {
+        _doing_it_wrong(__FUNCTION__, sprintf(__('The seventh parameter passed to %s should be numeric representing menu position.'), '<code>add_submenu_page()</code>'), '5.3.0');
+    }
     if ($position === null || !is_numeric($position)) {
         $submenu[$parentFile][] = $row;
     } else {
@@ -163,12 +157,8 @@ function remove_submenu_page($menu_slug, $submenu_slug)
 
 function menu_page_url($menu_slug, $display = true)
 {
-    $url = '';
-    if (isset($GLOBALS['_parent_pages'][$menu_slug])) {
-        $parent = $GLOBALS['_parent_pages'][$menu_slug];
-        $url = $parent && $parent !== 'admin.php' ? admin_url(add_query_arg('page', $menu_slug, $parent)) : admin_url('admin.php?page=' . $menu_slug);
-        $url = esc_url($url);
-    }
+    $base = Minn\Admin\AdminMenu::pageBase((string) $menu_slug, (array) ($GLOBALS['_parent_pages'] ?? []));
+    $url = $base === null ? '' : esc_url(admin_url($base === 'admin.php' ? 'admin.php?page=' . $menu_slug : add_query_arg('page', $menu_slug, $base)));
     if ($display) {
         echo $url;
     }
@@ -188,7 +178,7 @@ function get_plugin_page_hookname($plugin_page, $parent_page)
     } elseif (isset($GLOBALS['admin_page_hooks'][$parent])) {
         $page_type = $GLOBALS['admin_page_hooks'][$parent];
     }
-    return $page_type . '_page_' . (string) preg_replace('|[^a-zA-Z0-9_:.]|', '-', (string) $plugin_page);
+    return Minn\Admin\AdminMenu::hookName($page_type, (string) $plugin_page);
 }
 
 function get_plugin_page_hook($plugin_page, $parent_page)
@@ -197,12 +187,14 @@ function get_plugin_page_hook($plugin_page, $parent_page)
     return has_action($hook) ? $hook : null;
 }
 
+/** The page's parent: one named is mapped through the real parents; otherwise worked out from the menus and kept in $parent_file (probe admin-doubts). */
 function get_admin_page_parent($parent_page = '')
 {
-    if ($parent_page !== '' && $parent_page !== 'admin.php') {
-        return $parent_page;
+    $real = (array) ($GLOBALS['_wp_real_parent_file'] ?? []);
+    if (!empty($parent_page) && $parent_page !== 'admin.php') {
+        return $real[$parent_page] ?? $parent_page;
     }
-    return (string) ($GLOBALS['parent_file'] ?? '');
+    return $GLOBALS['parent_file'] = Minn\Admin\AdminMenu::parentOf((array) ($GLOBALS['menu'] ?? []), (array) ($GLOBALS['submenu'] ?? []), (string) ($GLOBALS['pagenow'] ?? ''), (string) ($GLOBALS['plugin_page'] ?? ''), (string) ($GLOBALS['typenow'] ?? ''), $real);
 }
 
 function get_admin_page_title()
@@ -218,6 +210,9 @@ function get_current_screen()
 function set_current_screen($hook_name = '')
 {
     $GLOBALS['current_screen'] = WP_Screen::get($hook_name);
+    // The screen's type and taxonomy are the request's too (probe admin-doubts).
+    $GLOBALS['typenow'] = $GLOBALS['current_screen']->post_type;
+    $GLOBALS['taxnow'] = $GLOBALS['current_screen']->taxonomy;
     do_action('current_screen', $GLOBALS['current_screen']);
 }
 
@@ -228,14 +223,17 @@ function convert_to_screen($hook_name)
 
 function add_meta_box($id, $title, $callback, $screen = null, $context = 'advanced', $priority = 'default', $callback_args = null)
 {
-    $screenId = $screen instanceof WP_Screen ? $screen->id : ($screen === null ? ($GLOBALS['current_screen']->id ?? 'post') : (is_array($screen) ? null : (string) $screen));
     if (is_array($screen)) {
         foreach ($screen as $one) {
             add_meta_box($id, $title, $callback, $one, $context, $priority, $callback_args);
         }
         return;
     }
-    $GLOBALS['wp_meta_boxes'][$screenId][$context][$priority][$id] = ['id' => $id, 'title' => $title, 'callback' => $callback, 'args' => $callback_args];
+    // No screen named and none current files nothing; a box filed before is moved (Admin\MetaBoxes).
+    $screen = empty($screen) ? get_current_screen() : convert_to_screen($screen);
+    if ($screen instanceof WP_Screen) {
+        $GLOBALS['wp_meta_boxes'][$screen->id] = Minn\Admin\MetaBoxes::add((array) ($GLOBALS['wp_meta_boxes'][$screen->id] ?? []), (string) $context, (string) $priority, (string) $id, ['id' => $id, 'title' => $title, 'callback' => $callback, 'args' => $callback_args]);
+    }
 }
 
 function remove_meta_box($id, $screen, $context)
@@ -246,52 +244,70 @@ function remove_meta_box($id, $screen, $context)
         }
         return;
     }
-    $screenId = $screen instanceof WP_Screen ? $screen->id : (string) $screen;
-    foreach (['high', 'core', 'default', 'low'] as $priority) {
-        $GLOBALS['wp_meta_boxes'][$screenId][$context][$priority][$id] = false;
+    $screen = empty($screen) ? get_current_screen() : convert_to_screen($screen);
+    if ($screen instanceof WP_Screen) {
+        $GLOBALS['wp_meta_boxes'][$screen->id] = Minn\Admin\MetaBoxes::remove((array) ($GLOBALS['wp_meta_boxes'][$screen->id] ?? []), (string) $context, (string) $id);
     }
 }
 
 function do_meta_boxes($screen, $context, $data_object)
 {
-    $screenId = $screen instanceof WP_Screen ? $screen->id : (string) $screen;
+    $screen = convert_to_screen($screen);
+    $hidden = get_hidden_meta_boxes($screen);
     $count = 0;
-    echo '<div id="' . esc_attr($context) . '-sortables" class="meta-box-sortables">' . "\n";
+    echo '<div id="' . esc_attr($context) . '-sortables" class="meta-box-sortables">';
     foreach (['high', 'core', 'default', 'low'] as $priority) {
-        foreach ((array) ($GLOBALS['wp_meta_boxes'][$screenId][$context][$priority] ?? []) as $box) {
+        foreach ((array) ($GLOBALS['wp_meta_boxes'][$screen->id][$context][$priority] ?? []) as $box) {
             if ($box === false || empty($box['title'])) {
                 continue;
             }
             $count++;
-            echo '<div id="' . esc_attr($box['id']) . '" class="postbox">' . "\n";
-            echo '<div class="postbox-header"><h2 class="hndle">' . $box['title'] . "</h2></div>\n";
-            echo '<div class="inside">' . "\n";
+            // The reference's frame (Admin\MetaBoxMarkup): closed and hidden boxes say so in their classes (probe admin-doubts).
+            echo Minn\Admin\MetaBoxMarkup::open((string) $box['id'], (string) $box['title'], postbox_classes($box['id'], $screen->id) . (in_array($box['id'], $hidden, true) ? ' hide-if-js' : ''));
             call_user_func($box['callback'], $data_object, $box);
             echo "</div>\n</div>\n";
         }
     }
-    echo "</div>\n";
+    echo '</div>';
     return $count;
 }
 
 function wp_add_dashboard_widget($widget_id, $widget_name, $callback, $control_callback = null, $callback_args = null, $context = 'normal', $priority = 'core')
 {
-    $screen = get_current_screen();
-    if ($screen === null) {
-        return;
+    // The configure (or, while editing, cancel) link, the widget's name in its arguments, the side for two core widgets (probe admin-doubts).
+    $args = (array) $callback_args + ['__widget_basename' => $widget_name];
+    if ($control_callback && is_callable($control_callback) && current_user_can('edit_dashboard')) {
+        $GLOBALS['wp_dashboard_control_callbacks'][$widget_id] = $control_callback;
+        $editing = isset($_GET['edit']) && $_GET['edit'] === $widget_id;
+        $widget_name .= $editing ? ' <span class="postbox-title-action"><a href="' . esc_url(remove_query_arg('edit')) . '">' . __('Cancel') . '</a></span>' : ' <span class="postbox-title-action"><a href="' . esc_url(add_query_arg('edit', $widget_id)) . "#{$widget_id}" . '" class="edit-box open-box">' . __('Configure') . '</a></span>';
+        $callback = $editing ? '_wp_dashboard_control_callback' : $callback;
     }
-    add_meta_box($widget_id, $widget_name, $callback, $screen, $context, $priority, $callback_args);
+    $context = in_array($widget_id, ['dashboard_quick_press', 'dashboard_primary'], true) ? 'side' : $context;
+    $priority = $widget_id === 'dashboard_php_nag' ? 'high' : $priority;
+    add_meta_box($widget_id, $widget_name, $callback, get_current_screen(), $context, $priority, $args);
 }
 
 function add_settings_section($id, $title, $callback, $page, $args = [])
 {
+    $page = _minn_settings_page(__FUNCTION__, $page);
     $defaults = ['id' => $id, 'title' => $title, 'callback' => $callback, 'before_section' => '', 'after_section' => '', 'section_class' => ''];
     $GLOBALS['wp_settings_sections'][$page][$id] = wp_parse_args($args, $defaults);
 }
 
 function add_settings_field($id, $title, $callback, $page, $section = 'default', $args = [])
 {
+    $page = _minn_settings_page(__FUNCTION__, $page);
     $GLOBALS['wp_settings_fields'][$page][$section][$id] = ['id' => $id, 'title' => $title, 'callback' => $callback, 'args' => $args];
+}
+
+/** @internal a retired settings page's replacement (misc is general, privacy is reading), with the deprecation notice (probe admin-doubts) */
+function _minn_settings_page(string $function, $page)
+{
+    $retired = ['misc' => ['general', '3.0.0'], 'privacy' => ['reading', '3.5.0']][$page] ?? null;
+    if ($retired !== null) {
+        _deprecated_argument($function, $retired[1], sprintf(__('The "%s" options group has been removed. Use another settings group.'), $page));
+    }
+    return $retired[0] ?? $page;
 }
 
 function do_settings_sections($page)
@@ -349,15 +365,16 @@ function add_settings_error($setting, $code, $message, $type = 'error')
 
 function get_settings_errors($setting = '', $sanitize = false)
 {
-    $errors = (array) ($GLOBALS['wp_settings_errors'] ?? []);
     if ($sanitize) {
         sanitize_option($setting, get_option($setting));
     }
-    $stored = get_transient('settings_errors');
-    if ($stored !== false && is_array($stored)) {
-        $errors = array_merge($errors, $stored);
+    // Errors a save kept come back once, on the page the save sent the browser to (probe admin-doubts).
+    $stored = isset($_GET['settings-updated']) ? get_transient('settings_errors') : false;
+    if (is_array($stored)) {
+        $GLOBALS['wp_settings_errors'] = array_merge((array) ($GLOBALS['wp_settings_errors'] ?? []), $stored);
         delete_transient('settings_errors');
     }
+    $errors = (array) ($GLOBALS['wp_settings_errors'] ?? []);
     if ($setting === '') {
         return $errors;
     }
@@ -396,40 +413,11 @@ function settings_fields($option_group)
     wp_nonce_field("{$option_group}-options");
 }
 
+/** A settings form's submit button (Admin\SubmitButton): the translated "Save Changes" for no text, wrapped in its paragraph unless told not to. */
 function get_submit_button($text = '', $type = 'primary large', $name = 'submit', $wrap = true, $other_attributes = '')
 {
-    if (!is_array($type)) {
-        $type = explode(' ', (string) $type);
-    }
-    $classes = ['button'];
-    foreach ($type as $t) {
-        if ($t === 'primary' || $t === 'small' || $t === 'large') {
-            $classes[] = 'button-' . $t;
-        } elseif ($t !== 'secondary' && $t !== 'button-secondary' && $t !== '') {
-            $classes[] = $t;
-        }
-    }
-    $class = implode(' ', array_unique($classes));
-    $text = $text === '' || $text === null ? 'Save Changes' : $text;
-    $id = $name;
-    if (is_array($other_attributes) && isset($other_attributes['id'])) {
-        $id = $other_attributes['id'];
-        unset($other_attributes['id']);
-    }
-    $attributes = '';
-    if (is_array($other_attributes)) {
-        foreach ($other_attributes as $attribute => $value) {
-            $attributes .= $attribute . '="' . esc_attr($value) . '" ';
-        }
-    } elseif (!empty($other_attributes)) {
-        $attributes = $other_attributes;
-    }
-    $button = '<input type="submit" name="' . esc_attr($name) . '" id="' . esc_attr($id) . '" class="' . esc_attr($class);
-    $button .= '" value="' . esc_attr($text) . '" ' . $attributes . ' />';
-    if ($wrap) {
-        $button = '<p class="submit">' . $button . '</p>';
-    }
-    return $button;
+    $button = Minn\Admin\SubmitButton::input(empty($text) ? __('Save Changes') : (string) $text, is_array($type) ? array_values($type) : explode(' ', (string) $type), (string) $name, is_array($other_attributes) ? $other_attributes : (string) $other_attributes);
+    return $wrap ? '<p class="submit">' . $button . '</p>' : $button;
 }
 
 function submit_button($text = '', $type = 'primary', $name = 'submit', $wrap = true, $other_attributes = '')
@@ -469,7 +457,7 @@ function __return_empty_string()
 
 function is_super_admin($user_id = false)
 {
-    $user = $user_id === false ? wp_get_current_user() : get_userdata($user_id);
+    $user = empty($user_id) ? wp_get_current_user() : get_userdata($user_id);
     if (!$user || !$user->exists()) {
         return false;
     }
@@ -559,14 +547,10 @@ function is_plugin_paused($plugin)
     return false;
 }
 
+/** The code editor's settings (Admin\CodeEditor): the mode for the type or file, the caller's settings over the defaults (probe admin-doubts). */
 function wp_get_code_editor_settings($args)
 {
-    $settings = ['codemirror' => ['indentUnit' => 4, 'indentWithTabs' => true, 'inputStyle' => 'contenteditable', 'lineNumbers' => true, 'lineWrapping' => true, 'styleActiveLine' => true, 'continueComments' => true, 'extraKeys' => ['Ctrl-Space' => 'autocomplete', 'Ctrl-/' => 'toggleComment', 'Cmd-/' => 'toggleComment', 'Alt-F' => 'findPersistent', 'Ctrl-F' => 'findPersistent', 'Cmd-F' => 'findPersistent'], 'direction' => 'ltr', 'gutters' => []], 'csslint' => ['errors' => true, 'box-model' => true, 'display-property-grouping' => true, 'duplicate-properties' => true, 'known-properties' => true, 'outline-none' => true], 'jshint' => ['esversion' => 11, 'module' => false, 'boss' => true, 'curly' => true, 'eqeqeq' => true, 'eqnull' => true, 'expr' => true, 'immed' => true, 'noarg' => true, 'nonbsp' => true, 'quotmark' => 'single', 'undef' => true, 'unused' => true, 'browser' => true, 'globals' => ['_' => false, 'Backbone' => false, 'jQuery' => false, 'JSON' => false, 'wp' => false, 'export' => false, 'module' => false, 'require' => false, 'WorkerGlobalScope' => false, 'self' => false, 'OffscreenCanvas' => false, 'Promise' => false]], 'htmlhint' => ['tagname-lowercase' => true, 'attr-lowercase' => true, 'attr-value-double-quotes' => false, 'doctype-first' => false, 'tag-pair' => true, 'spec-char-escape' => true, 'id-unique' => true, 'src-not-empty' => true, 'attr-no-duplication' => true, 'alt-require' => true, 'space-tab-mixed-disabled' => 'tab', 'attr-unsafe-chars' => true]];
-    $type = $args['type'] ?? 'text/html';
-    $settings['codemirror']['mode'] = $type;
-    if ($type === 'text/css') {
-        $settings['codemirror'] += ['lint' => false, 'autoCloseBrackets' => true, 'matchBrackets' => true];
-    }
+    $settings = Minn\Admin\CodeEditor::settings((array) $args, includes_url('js/codemirror/espree.min.js') . '?ver=9.6.1', static fn (string $file): string => (string) wp_check_filetype($file)['type']);
     return apply_filters('wp_code_editor_settings', $settings, $args);
 }
 
@@ -601,18 +585,23 @@ function set_screen_options()
     }
     check_admin_referer('screen-options-nonce', 'screenoptionnonce');
     $user = wp_get_current_user();
-    if (!$user) {
+    $option = (string) ($_POST['wp_screen_options']['option'] ?? '');
+    $value = $_POST['wp_screen_options']['value'] ?? '';
+    if (!$user->exists() || sanitize_key($option) !== $option) {
         return;
     }
-    $option = $_POST['wp_screen_options']['option'];
-    $value = $_POST['wp_screen_options']['value'];
-    if (sanitize_key($option) !== $option) {
-        return;
-    }
-    $value = apply_filters('set_screen_option', false, $option, $value);
-    $value = apply_filters("set_screen_option_{$option}", $value, $option, $value);
-    if ($value === false) {
-        return;
+    // A core list's page size is a number from 1 to 999, saved without filters; any other option is its plugin's to accept (Admin\ScreenOptions).
+    if (Minn\Admin\ScreenOptions::isCore($option, static fn (string $name): bool => post_type_exists($name) || taxonomy_exists($name))) {
+        $value = (int) $value;
+        if ($value < 1 || $value > 999) {
+            return;
+        }
+    } else {
+        $chosen = Minn\Admin\ScreenOptions::pageSized($option) ? apply_filters('set-screen-option', false, $option, $value) : false;
+        $value = apply_filters("set_screen_option_{$option}", $chosen, $option, $value);
+        if ($value === false) {
+            return;
+        }
     }
     update_user_meta($user->ID, $option, $value);
     $url = remove_query_arg(['pagenum', 'apage', 'paged'], wp_get_referer());
@@ -628,69 +617,73 @@ function wp_dashboard_setup()
     do_action('wp_dashboard_setup');
 }
 
-/** The bare admin document an iframe callback prints into. */
+/** The bare admin document an iframe callback prints into: the media popup's globals and hooks, then the callback (Admin\IframeMarkup, probe admin-doubts). */
 function wp_iframe($content_func, ...$args)
 {
     _wp_admin_html_begin();
-    echo '<title>' . esc_html(get_bloginfo('name')) . ' &rsaquo; ' . esc_html(__('Uploads')) . ' &#8212; ' . esc_html(__('WordPress')) . '</title>' . "\n";
-    echo '<style type="text/css">.hidden{display:none}</style>' . "\n";
+    echo Minn\Admin\IframeMarkup::iframeScript(esc_html(get_bloginfo('name')) . ' &rsaquo; ' . esc_html(__('Uploads')) . ' &#8212; ' . esc_html(__('WordPress')), esc_js(admin_url('admin-ajax.php')), (int) is_rtl());
     do_action('admin_enqueue_scripts', 'media-upload-popup');
-    do_action('admin_print_styles-media-upload-popup');
-    do_action('admin_print_styles');
-    do_action('admin_print_scripts-media-upload-popup');
-    do_action('admin_print_scripts');
-    do_action('admin_head-media-upload-popup');
-    do_action('admin_head');
+    foreach (['admin_print_styles-media-upload-popup', 'admin_print_styles', 'admin_print_scripts-media-upload-popup', 'admin_print_scripts', 'admin_head-media-upload-popup', 'admin_head'] as $hook) {
+        do_action($hook);
+    }
     if (is_string($content_func)) {
         do_action("admin_head_{$content_func}");
     }
-    $body_id_attr = isset($GLOBALS['body_id']) ? ' id="' . esc_attr($GLOBALS['body_id']) . '"' : '';
-    echo '</head>' . "\n" . '<body' . $body_id_attr . ' class="wp-core-ui no-js">' . "\n";
-    echo "<script type=\"text/javascript\">document.body.className = document.body.className.replace('no-js', 'js');</script>\n";
+    echo Minn\Admin\IframeMarkup::iframeBody(isset($GLOBALS['body_id']) ? ' id="' . esc_attr($GLOBALS['body_id']) . '"' : '', 'admin-color-' . sanitize_html_class((string) get_user_option('admin_color'), 'modern'));
     call_user_func_array($content_func, $args);
     do_action('admin_print_footer_scripts');
-    echo "<script type=\"text/javascript\">if(typeof wpOnload==='function')wpOnload();</script>\n</body>\n</html>\n";
+    echo Minn\Admin\IframeMarkup::iframeEnd();
 }
 
 function _wp_admin_html_begin()
 {
     $admin_html_class = is_admin_bar_showing() ? 'wp-toolbar' : '';
-    echo '<!DOCTYPE html>' . "\n" . '<html class="' . esc_attr($admin_html_class) . '"' . get_language_attributes() . '>' . "\n" . '<head>' . "\n" . '<meta http-equiv="Content-Type" content="' . esc_attr(get_bloginfo('html_type')) . '; charset=' . esc_attr(get_option('blog_charset')) . '" />' . "\n";
+    echo '<!DOCTYPE html>' . "\n" . '<html class="' . esc_attr($admin_html_class) . '"' . "\n\t";
+    do_action('admin_xml_ns');
+    echo get_language_attributes() . '>' . "\n" . '<head>' . "\n" . '<meta http-equiv="Content-Type" content="' . esc_attr(get_bloginfo('html_type')) . '; charset=' . esc_attr(get_option('blog_charset')) . '" />' . "\n\t";
 }
 
+/** A bare admin page's head and body opening: the admin globals, the page's hooks by its suffix, its body classes (Admin\IframeMarkup, probe admin-doubts). */
 function iframe_header($title = '', $deprecated = false)
 {
     show_admin_bar(false);
-    $current_screen = get_current_screen();
+    $suffix = (string) ($GLOBALS['hook_suffix'] ?? '');
+    $screen = get_current_screen();
+    $number = (array) ($GLOBALS['wp_locale']->number_format ?? []);
     _wp_admin_html_begin();
-    echo '<title>' . esc_html(get_bloginfo('name')) . ' &rsaquo; ' . esc_html($title) . ' &#8212; ' . esc_html(__('WordPress')) . '</title>' . "\n";
-    echo '<meta name="viewport" content="width=device-width,initial-scale=1.0">' . "\n";
-    if ($current_screen) {
-        do_action("admin_enqueue_scripts", $current_screen->id);
-        do_action("admin_print_styles-{$current_screen->id}");
-        do_action('admin_print_styles');
-        do_action("admin_print_scripts-{$current_screen->id}");
-        do_action('admin_print_scripts');
-        do_action("admin_head-{$current_screen->id}");
+    echo Minn\Admin\IframeMarkup::headerScript(esc_html(get_bloginfo('name')) . ' &rsaquo; ' . $title . ' &#8212; ' . esc_html(__('WordPress')), ['ajaxurl' => esc_js(admin_url('admin-ajax.php')), 'pagenow' => esc_js((string) ($screen->id ?? '')), 'typenow' => esc_js((string) ($screen->post_type ?? '')), 'adminpage' => esc_js($suffix), 'thousands' => (string) ($number['thousands_sep'] ?? ','), 'decimal' => (string) ($number['decimal_point'] ?? '.'), 'rtl' => (int) is_rtl()]);
+    do_action('admin_enqueue_scripts', $suffix);
+    foreach (["admin_print_styles-{$suffix}", 'admin_print_styles', "admin_print_scripts-{$suffix}", 'admin_print_scripts', "admin_head-{$suffix}", 'admin_head'] as $hook) {
+        do_action($hook);
     }
-    do_action('admin_head');
-    $admin_body_class = $current_screen ? preg_replace('/[^a-z0-9_-]+/i', '-', $current_screen->id) : '';
-    $admin_body_class .= ' iframe';
-    echo '</head>' . "\n" . '<body class="wp-admin wp-core-ui no-js ' . esc_attr($admin_body_class) . '">' . "\n";
-    echo "<script type=\"text/javascript\">document.body.className = document.body.className.replace('no-js', 'js');</script>\n";
+    $classes = preg_replace('/[^a-z0-9_-]+/i', '-', $suffix) . ' locale-' . sanitize_html_class(strtolower(str_replace('_', '-', get_user_locale()))) . ' admin-color-' . sanitize_html_class((string) get_user_option('admin_color'), 'modern');
+    echo Minn\Admin\IframeMarkup::headerBody(isset($GLOBALS['body_id']) ? ' id="' . esc_attr($GLOBALS['body_id']) . '"' : '', trim(apply_filters('admin_body_class', '') . ' ' . $classes));
 }
 
+/** The session-expired dialog for a signed-in user or an admin page, but not the update screens: its script, style and markup in both footers (probe admin-doubts). */
+function wp_auth_check_load()
+{
+    if (!is_admin() && !is_user_logged_in()) {
+        return;
+    }
+    $screen = get_current_screen();
+    if (apply_filters('wp_auth_check_load', !$screen || !in_array($screen->id, ['update', 'update-network', 'update-core'], true), $screen)) {
+        wp_enqueue_style('wp-auth-check');
+        wp_enqueue_script('wp-auth-check');
+        add_action('admin_print_footer_scripts', 'wp_auth_check_html', 5);
+        add_action('wp_print_footer_scripts', 'wp_auth_check_html', 5);
+    }
+}
+
+/** The iframe's foot: the footer hooks for the page's suffix, hidden, then the onload call (probe admin-doubts). */
 function iframe_footer()
 {
-    echo "\t" . '<div class="hidden">' . "\n";
-    wp_auth_check_html();
-    do_action('admin_footer', '');
-    $current_screen = get_current_screen();
-    if ($current_screen) {
-        do_action("admin_print_footer_scripts-{$current_screen->id}");
-    }
+    $suffix = (string) ($GLOBALS['hook_suffix'] ?? '');
+    echo "\t" . '<div class="hidden">' . "\n\t";
+    do_action('admin_footer', $suffix);
+    do_action("admin_print_footer_scripts-{$suffix}");
     do_action('admin_print_footer_scripts');
-    echo "\t</div>\n<script type=\"text/javascript\">if(typeof wpOnload==='function')wpOnload();</script>\n</body>\n</html>\n";
+    echo "\t</div>\n<script>if(typeof wpOnload==='function')wpOnload();</script>\n</body>\n</html>\n\t";
 }
 
 
@@ -766,11 +759,22 @@ function WP_Filesystem($args = false, $context = false, $allow_relaxed_file_owne
     if (!$method) {
         return false;
     }
-    $method = "WP_Filesystem_$method";
-    if (!class_exists($method)) {
+    // A method whose class is not loaded yet is asked for its file first; a file that is not there is nothing (probe admin-doubts).
+    $class = "WP_Filesystem_$method";
+    if (!class_exists($class, false)) {
+        $default = ABSPATH . 'wp-admin/includes/class-wp-filesystem-' . $method . '.php';
+        $file = apply_filters('filesystem_method_file', $default, $method);
+        if ($file !== $default || !class_exists($class)) {
+            if (!is_file($file)) {
+                return null;
+            }
+            require_once $file;
+        }
+    }
+    if (!class_exists($class)) {
         return false;
     }
-    $wp_filesystem = new $method($args);
+    $wp_filesystem = new $class($args);
     if (!defined('FS_CHMOD_DIR')) {
         define('FS_CHMOD_DIR', (fileperms(ABSPATH) & 0777 | 0755));
     }
@@ -877,7 +881,7 @@ function delete_theme($stylesheet, $redirect = '')
     if (get_stylesheet() === $stylesheet || get_template() === $stylesheet) {
         return new WP_Error('could_not_remove_theme', 'Could not fully remove the theme.');
     }
-    return Minn\Runtime\ThemeSwitch::delete((string) $stylesheet) ? true : new WP_Error('could_not_remove_theme', 'Could not fully remove the theme.');
+    return Minn\Runtime\ThemeSwitch::delete((string) $stylesheet) ? true : new WP_Error('could_not_remove_theme', sprintf(__('Could not fully remove the theme %s.'), $stylesheet));
 }
 
 function _wp_oembed_get_object()
@@ -991,8 +995,10 @@ function get_importers()
 /** A plugin's suggested privacy policy text, taken only in the admin from admin_init on. */
 function wp_add_privacy_policy_content($plugin_name, $policy_text)
 {
-    if (!is_admin() || (!doing_action('admin_init') && !did_action('admin_init'))) {
-        _doing_it_wrong(__FUNCTION__, sprintf(__('The suggested privacy policy content should be added only in wp-admin by using the %s (or later) action.'), '<code>admin_init</code>'), '4.9.7');
+    // Outside the admin, and in it before admin_init, each its own notice (probe admin-doubts).
+    $early = !doing_action('admin_init') && !did_action('admin_init');
+    if (!is_admin() || $early) {
+        _doing_it_wrong(__FUNCTION__, sprintf(is_admin() ? __('The suggested privacy policy content should be added by using the %s (or later) action. Please see the inline documentation.') : __('The suggested privacy policy content should be added only in wp-admin by using the %s (or later) action.'), '<code>admin_init</code>'), '4.9.7');
         return;
     }
     WP_Privacy_Policy_Content::add($plugin_name, $policy_text);
@@ -1031,7 +1037,7 @@ function _minn_inline_extras(WP_Post $post, WP_Post_Type $type): string
         $terms = get_object_term_cache($post->ID, $taxonomy->name) ?: (array) wp_get_object_terms($post->ID, $taxonomy->name);
         $out .= $taxonomy->hierarchical
             ? '<div class="post_category" id="' . $taxonomy->name . '_' . $post->ID . '">' . implode(',', wp_list_pluck($terms, 'term_id')) . '</div>'
-            : '<div class="tags_input" id="' . $taxonomy->name . '_' . $post->ID . '">' . esc_textarea(implode(', ', wp_list_pluck($terms, 'name'))) . '</div>';
+            : '<div class="tags_input" id="' . $taxonomy->name . '_' . $post->ID . '">' . esc_textarea(str_replace(',', ', ', (string) get_terms_to_edit($post->ID, $taxonomy->name))) . '</div>';
     }
     $out .= $type->hierarchical ? '' : '<div class="sticky">' . (is_sticky($post->ID) ? 'sticky' : '') . '</div>';
     $out .= post_type_supports($post->post_type, 'post-formats') ? '<div class="post_format">' . esc_html((string) get_post_format($post->ID)) . '</div>' : '';

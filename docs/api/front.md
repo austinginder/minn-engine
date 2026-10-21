@@ -36,6 +36,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`RequestParse`](#requestparse) | final class | 68 | The query vars the reference's request parse sets for an address |
 | [`Resolution`](#resolution) | final readonly class | 116 | The outcome of resolving a public URL: which kind of thing it names, |
 | [`Resolver`](#resolver) | final readonly class | 325 | Turns a public URL into a Resolution the way the reference's request |
+| [`ResourceHints`](#resourcehints) | final class | 56 | The resource hint links wp_head prints (wp_resource_hints): each relation |
 | [`RuleRoutes`](#ruleroutes) | final readonly class | 156 | What a matched rewrite rule's query vars name, as the reference's main |
 | [`RuleTable`](#ruletable) | final class | 100 | An address read as WordPress's request parse reads it (suites |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
@@ -1266,6 +1267,31 @@ searches include.
 - `@return list<string>`
 
 Internals: `resolvePath()` (private, line 100), `canonical()` (private, line 132), `pagedMove()` (private, line 195), `missing()` (private, line 215), `endpointIn()` (private, line 258), `segments()` (private, line 270), `resolveQueryVars()` (private, line 281), `rootVars()` (private, line 306), `archives()` (private, line 333), `attachments()` (private, line 339), `elsewhere()` (private, line 345), `readable()` (private, line 350)
+
+
+## ResourceHints
+
+`final class Minn\Front\ResourceHints` · `public/minn/src/Minn/Front/ResourceHints.php`
+
+The resource hint links wp_head prints (wp_resource_hints): each relation
+(dns-prefetch, preconnect, prefetch, prerender) handed to the filter with
+what the engine found, its entries printed once each. A plain address
+prints rel first; an entry given as attributes prints its href, the
+attributes the reference keeps (as, crossorigin, pr, type; a bare word
+for a numeric key) and rel last. dns-prefetch names only the host,
+preconnect the scheme and host, the others the whole address (probe
+media-template-doubts).
+
+- const `KEPT` = `array (   0 => 'as',   1 => 'crossorigin',   2 => 'href',   3 => 'pr',   4 => 'type', )`
+
+### static `render(array $dnsPrefetch, Closure $filter): string`
+
+The links, one a line.
+
+- `@param list<string> $dnsPrefetch the external hosts the queued assets use`
+- `@param Closure(array, string): mixed $filter the wp_resource_hints filter`
+
+Internals: `address()` (private, line 49), `withAttributes()` (private, line 63)
 
 
 ## RuleRoutes

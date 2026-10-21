@@ -246,6 +246,7 @@ function _minn_wp_title_parts(): array
     $title = match (true) {
         is_search() => ['Search Results ', ' ' . strip_tags((string) get_search_query(false))],
         is_404() => [__('Page not found')],
+        is_front_page() && is_page() => [],
         is_home() || is_singular() => [(string) single_post_title('', false)],
         is_category() || is_tag() => [(string) single_term_title('', false)],
         is_tax() && $object instanceof WP_Term => [(string) (get_taxonomy($object->taxonomy)->labels->name ?? ''), (string) single_term_title('', false)],
@@ -261,7 +262,7 @@ function _minn_wp_title_parts(): array
 function _minn_wp_title_date(): array
 {
     $m = (string) get_query_var('m');
-    [$year, $month, $day] = $m !== '' ? [substr($m, 0, 4), substr($m, 4, 2), substr($m, 6, 2)] : [(string) get_query_var('year'), (int) get_query_var('monthnum') ? zeroise((int) get_query_var('monthnum'), 2) : '', ''];
+    [$year, $month, $day] = $m !== '' ? [substr($m, 0, 4), substr($m, 4, 2), ltrim(substr($m, 6, 2), '0')] : [(string) get_query_var('year'), (int) get_query_var('monthnum') ? zeroise((int) get_query_var('monthnum'), 2) : '', ''];
     if ($m === '' && $month === '') {
         return [];
     }
@@ -299,7 +300,8 @@ function _minn_archive_title_parts(): array
         is_month() => [_x('Month:', 'date archive title prefix'), get_the_date(_x('F Y', 'monthly archives date format'))],
         is_day() => [_x('Day:', 'date archive title prefix'), get_the_date(_x('F j, Y', 'daily archives date format'))],
         is_post_type_archive() => [_x('Archives:', 'post type archive title prefix'), (string) post_type_archive_title('', false)],
-        is_tax() && $object instanceof WP_Term => [(get_taxonomy($object->taxonomy)->labels->singular_name ?? '') . ':', (string) single_term_title('', false)],
+        is_tax('post_format') => ['', Minn\Runtime\DocumentTitle::formatArchive($object instanceof WP_Term ? $object->slug : '') ?? __('Archives')],
+        is_tax() && $object instanceof WP_Term => [sprintf(_x('%s:', 'taxonomy term archive title prefix'), get_taxonomy($object->taxonomy)->labels->singular_name ?? ''), (string) single_term_title('', false)],
         default => ['', __('Archives')],
     };
 }
@@ -468,7 +470,8 @@ function _minn_old_slug_link()
         }
         $post_type = reset($post_type);
     }
-    $post_type = (string) ($post_type ?: 'post');
+    // No type named: an attachment's address is an attachment, a pagename a page (probe query-comment-misc-doubts).
+    $post_type = (string) ($post_type ?: (get_query_var('attachment') ? 'attachment' : (get_query_var('pagename') ? 'page' : 'post')));
     // A hierarchical type's addresses keep no former names.
     if (is_post_type_hierarchical($post_type)) {
         return false;

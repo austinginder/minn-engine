@@ -5,7 +5,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 165 | Application passwords as the reference stores them: a serialized list in |
-| [`AuthCookies`](#authcookies) | final readonly class | 107 | The three cookies a sign-in sets: the auth cookie on the admin and |
+| [`AuthCookies`](#authcookies) | final readonly class | 110 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 26 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
@@ -22,7 +22,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 83 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 178 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
-| [`SignIn`](#signin) | final readonly class | 65 | The door itself: what a sign-in surface needs beyond checking a |
+| [`SignIn`](#signin) | final readonly class | 67 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
 
 ## ApplicationPasswords
@@ -124,8 +124,10 @@ The sign-in cookies as the reference settles them (suite login-hooks):
 their life through auth_cookie_expiration (two days, or fourteen when
 remembered, the cookies then kept twelve hours past it); the auth
 cookie's security through secure_auth_cookie, and the logged-in
-cookie's through secure_logged_in_cookie (secure only over HTTPS); a
-session made for that life when none is given; then set_auth_cookie
+cookie's through secure_logged_in_cookie (secure only when $https,
+which wp_set_auth_cookie answers by the home address's scheme); a
+session made for that life when none is given; each cookie through
+auth_cookie; then set_auth_cookie
 and set_logged_in_cookie told the values, and send_auth_cookies asked
 whether to send them. Signing in always runs under the booted
 runtime (its sessions are WordPress's), so the hooks always run.
@@ -895,7 +897,7 @@ Ends every session of a user (a password reset) and clears the cookies from the 
 
 The response with the sign-in cookies cleared.
 
-Internals: `open()` (private, line 57)
+Internals: `open()` (private, line 58)
 
 
 ## TypeCapabilities

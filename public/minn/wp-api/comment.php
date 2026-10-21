@@ -1018,30 +1018,27 @@ function _minn_comment_form_body(array $args, WP_Post $post): void
     } else {
         echo $args['comment_notes_before'];
     }
-    $fields = ['comment' => $args['comment_field']];
-    if (!is_user_logged_in()) {
-        $fields += (array) $args['fields'];
-        // A signed-out reader's fields always offer the consent box, a plugin's own fields included.
-        if (!isset($fields['cookies']) && get_option('show_comments_cookies_opt_in') && has_action('set_comment_cookies', 'wp_set_comment_cookies')) {
-            $fields['cookies'] = _minn_comment_cookies_field($args['format'] === 'html5');
-        }
+    // Every field goes through comment_form_fields; a signed-in reader is shown only the comment field and the fields a
+    // plugin adds. The hooks around the fields frame the ones shown, the comment field aside (probe query-comment-misc-doubts).
+    $fields = ['comment' => $args['comment_field']] + (array) $args['fields'];
+    if (!isset($fields['cookies']) && get_option('show_comments_cookies_opt_in') && has_action('set_comment_cookies', 'wp_set_comment_cookies')) {
+        $fields['cookies'] = _minn_comment_cookies_field($args['format'] === 'html5');
     }
     $fields = apply_filters('comment_form_fields', $fields);
-    $names = array_keys($fields);
-    $first = true;
+    $signedIn = is_user_logged_in();
+    $shown = array_values(array_filter(array_keys($fields), static fn ($name) => $name !== 'comment' && !($signedIn && ($name === 'cookies' || isset($args['fields'][$name])))));
     foreach ($fields as $name => $field) {
         if ($name === 'comment') {
             echo apply_filters('comment_form_field_comment', $field);
             echo $args['comment_notes_after'];
-            continue;
-        }
-        if ($first) {
-            do_action('comment_form_before_fields');
-            $first = false;
-        }
-        echo apply_filters("comment_form_field_{$name}", $field) . "\n";
-        if ($name === end($names)) {
-            do_action('comment_form_after_fields');
+        } elseif (in_array($name, $shown, true)) {
+            if (!$signedIn && $name === $shown[0]) {
+                do_action('comment_form_before_fields');
+            }
+            echo apply_filters("comment_form_field_{$name}", $field) . "\n";
+            if ($name === end($shown)) {
+                do_action('comment_form_after_fields');
+            }
         }
     }
     $button = sprintf($args['submit_button'], esc_attr($args['name_submit']), esc_attr($args['id_submit']), esc_attr($args['class_submit']), esc_attr($args['label_submit']));
@@ -1144,30 +1141,23 @@ function comments_link($deprecated = '', $deprecated_2 = '')
 
 function comments_popup_link($zero = false, $one = false, $more = false, $css_class = '', $none = false)
 {
-    $number = get_comments_number();
+    // Each text not given is its default, the title for screen readers in it; a closed post with none says so, a protected one asks for its password (probe query-comment-misc-doubts).
+    [$title, $number] = [get_the_title(), (int) get_comments_number()];
+    $zero = $zero === false ? sprintf(__('No Comments<span class="screen-reader-text"> on %s</span>'), $title) : $zero;
+    $one = $one === false ? sprintf(__('1 Comment<span class="screen-reader-text"> on %s</span>'), $title) : $one;
+    $more = $more === false ? sprintf(_n('%1$s Comment<span class="screen-reader-text"> on %2$s</span>', '%1$s Comments<span class="screen-reader-text"> on %2$s</span>', $number), number_format_i18n($number), $title) : $more;
+    $none = $none === false ? sprintf(__('Comments Off<span class="screen-reader-text"> on %s</span>'), $title) : $none;
     if ($number === 0 && !comments_open() && !pings_open()) {
-        if ($none !== false) {
-            echo '<span' . ($css_class !== '' ? ' class="' . esc_attr($css_class) . '"' : '') . '>' . ($none === '' ? 'Comments Off' : $none) . '</span>';
-        }
+        echo '<span' . ($css_class !== '' ? ' class="' . esc_attr($css_class) . '"' : '') . '>' . $none . '</span>';
         return;
     }
-    // Only the defaults carry the screen-reader title; a theme that supplies
-    // its own wording is left alone.
-    // With no comments yet the link goes to the form, through respond_link; the anchor's own attributes come
-    // through comments_popup_link_attributes (probe filter-inputs-2).
-    $href = (int) $number === 0 ? (string) apply_filters('respond_link', get_permalink() . '#respond', get_the_ID()) : get_comments_link();
-    $attributes = (string) apply_filters('comments_popup_link_attributes', '');
-    if ($zero === false && $one === false && $more === false) {
-        $text = get_comments_number_text();
-        $text .= '<span class="screen-reader-text"> on ' . get_the_title() . '</span>';
-        echo '<a href="' . esc_url($href) . '"' . ($attributes !== '' ? ' ' . $attributes : '') . '>' . $text . '</a>';
+    if (post_password_required()) {
+        echo __('Enter your password to view comments.');
         return;
     }
-    echo Minn\Front\ListingLinks::anchor(
-        esc_url($href),
-        ($css_class !== '' ? 'class="' . esc_attr($css_class) . '" ' : '') . $attributes,
-        get_comments_number_text($zero === false ? '' : $zero, $one === false ? '' : $one, $more === false ? '' : $more),
-    );
+    // With no comments yet the link goes to the form, through respond_link; the anchor's own attributes come through comments_popup_link_attributes (probe filter-inputs-2).
+    $href = $number === 0 ? (string) apply_filters('respond_link', get_permalink() . '#respond', get_the_ID()) : get_comments_link();
+    echo '<a href="' . esc_url($href) . '"' . ($css_class !== '' ? ' class="' . esc_attr($css_class) . '" ' : '') . apply_filters('comments_popup_link_attributes', '') . '>' . get_comments_number_text($zero, $one, $more) . '</a>';
 }
 
 function get_the_comments_navigation($args = [])
@@ -1409,7 +1399,7 @@ function wp_comments_personal_data_eraser($email_address, $page = 1)
         $answer = apply_filters('wp_anonymize_comment', true, $comment, $anonymized);
         if ($answer !== true) {
             $result['items_retained'] = true;
-            $result['messages'][] = is_string($answer) && $answer !== '' ? $answer : sprintf(__('Comment %d contains personal data but could not be anonymized.'), $comment->comment_ID);
+            $result['messages'][] = esc_html(is_string($answer) && $answer !== '' ? $answer : sprintf(__('Comment %d contains personal data but could not be anonymized.'), $comment->comment_ID));
             continue;
         }
         if ($wpdb->update($wpdb->comments, $anonymized, ['comment_ID' => $comment->comment_ID])) {

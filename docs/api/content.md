@@ -42,7 +42,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TermLinks`](#termlinks) | final class | 37 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 220 |  |
-| [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
+| [`TextFilters`](#textfilters) | final class | 145 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 287 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 326 |  |
@@ -2081,7 +2081,6 @@ comments, each from its observed rules (contracts/runtime.md "The content
 filters", "The comment form"): smilies, the capital P, insecure home
 addresses, the feed's embed clean-up, and a comment's links and spans.
 
-- const `IMAGE` = `'/\\.(png|gif|jpe?g|svg|webp)$/i'`
 - const `IGNORED` = `array (   0 => 'code',   1 => 'pre',   2 => 'script',   3 => 'style',   4 => 'textarea', )`
 
 ### static `smiliesSearch(array $codes): string`
@@ -2093,14 +2092,13 @@ whitespace, a no-break space or the line's ends (probe functions-utils).
 
 - `@param list<string> $codes`
 
-### static `smilies(string $text, array $table, Closure $image): string`
+### static `smilies(string $text, Closure $run): string`
 
-Smilies become their emoji, or an image for the few that have one: a
-code only counts as a whole word between spaces, and nothing inside a
-code, pre, script, style or textarea element, or inside a tag, changes.
+Text with $run applied to each stretch outside a tag and outside a
+code, pre, script, style or textarea element, as convert_smilies
+runs the smilies search over it.
 
-- `@param array<string, string> $table code => emoji, or an image file name`
-- `@param Closure(string $file, string $code): string $image the <img> for an image smiley`
+- `@param Closure(string): string $run`
 
 ### static `capitalP(string $text): string`
 
@@ -2140,7 +2138,7 @@ without keeps its attributes as written and takes rel at the end.
 
 A span keeps no class in a comment (where a note's mention would be faked); slashed text in, slashed out.
 
-Internals: `ignoring()` (private, line 67), `words()` (private, line 76), `attributes()` (private, line 164)
+Internals: `ignoring()` (private, line 65), `attributes()` (private, line 148)
 
 
 ## Texturize

@@ -6,6 +6,8 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 |---|---|---|---|
 | [`ActivityChart`](#activitychart) | final readonly class | 65 | The overview's activity chart: published posts and pages plus every |
 | [`ActivityFeed`](#activityfeed) | final readonly class | 212 | What happened lately, as the overview and the bell tell it: the caller's |
+| [`AdminMenu`](#adminmenu) | final class | 75 | The admin menu's arithmetic, as plugins' menu calls see it on the |
+| [`AdminNotice`](#adminnotice) | final class | 25 | An admin notice's markup, as wp_get_admin_notice builds it on the |
 | [`AdminPlugin`](#adminplugin) | final class | 135 | Minn Admin's home on a site is wp-content/plugins/minn-admin: the same |
 | [`AdminTypes`](#admintypes) | final class | 85 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
 | [`App`](#app) | final readonly class | 106 | The Minn Admin app on disk the engine serves the shell and assets from: |
@@ -13,22 +15,28 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 257 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 46 | What the app bundle answers for: the user guide it carries, the |
+| [`CodeEditor`](#codeeditor) | final class | 96 | The code editor's settings as wp_get_code_editor_settings gives them |
 | [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 45 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
+| [`IframeMarkup`](#iframemarkup) | final class | 41 | The fixed markup of the two bare admin documents plugins print into, as |
 | [`LanguageChoices`](#languagechoices) | final class | 42 | The language picker's markup. English always leads the list and carries the |
 | [`LanguageController`](#languagecontroller) | final readonly class | 108 | Languages: what is installed, what a person reads in, what the site defaults to. |
 | [`LegacyPackController`](#legacypackcontroller) | final readonly class | 49 | The Minn Legacy Pack installed for an editor that needs it |
+| [`MetaBoxMarkup`](#metaboxmarkup) | final class | 23 | A meta box's frame as do_meta_boxes prints it on the reference (probe |
+| [`MetaBoxes`](#metaboxes) | final class | 56 | One screen's meta boxes as add_meta_box files them on the reference |
 | [`Notifications`](#notifications) | final readonly class | 191 | The bell feed: pending and recent comments, translation offers and a |
 | [`OverviewController`](#overviewcontroller) | final readonly class | 140 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
 | [`PackagesController`](#packagescontroller) | final readonly class | 119 | Adding and removing themes and extensions from the Extensions view. |
 | [`PostListMarkup`](#postlistmarkup) | final class | 39 | The markup a post list writes beside each post, as the reference writes |
 | [`PreferencesController`](#preferencescontroller) | final readonly class | 133 | A person's own settings in minn-admin/v1: their appearance, the views |
 | [`RenderController`](#rendercontroller) | final readonly class | 52 | The editor's island previews: block markup rendered by the same |
+| [`ScreenOptions`](#screenoptions) | final class | 27 | Which screen option a save keeps for itself, as set_screen_options tells |
 | [`SessionsController`](#sessionscontroller) | final readonly class | 72 | A person's sign-in sessions, read from the same session_tokens store |
 | [`SiteController`](#sitecontroller) | final readonly class | 90 | The small Settings-view routes of minn-admin/v1: the site logo, the |
 | [`StructureController`](#structurecontroller) | final readonly class | 159 | The Structure view of minn-admin/v1: post types, taxonomies, and the |
+| [`SubmitButton`](#submitbutton) | final class | 37 | A settings form's submit input as get_submit_button builds it: "button" |
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
 | [`ThemesController`](#themescontroller) | final readonly class | 99 | The theme inventory of minn-admin/v1: every theme on disk with its |
 | [`Translations`](#translations) | final readonly class | 237 | Languages for the admin. A person's locale is their `locale` user meta, |
@@ -115,6 +123,69 @@ A post's stored title, empty when the post is gone.
 A user's display name, empty when the user is gone.
 
 Internals: `ownPosts()` (private, line 98), `latestComments()` (private, line 143), `publishedBetween()` (private, line 171), `commentsBetween()` (private, line 196)
+
+
+## AdminMenu
+
+`final class Minn\Admin\AdminMenu` · `public/minn/src/Minn/Admin/AdminMenu.php`
+
+The admin menu's arithmetic, as plugins' menu calls see it on the
+reference (probe admin-doubts): where a top-level entry is filed, the hook
+a plugin page runs on, the file a plugin page's address is built on, and
+the parent of the page being shown. The menu arrays themselves stay the
+globals plugins read; this class only works things out from them.
+
+### static `hookName(string $type, string $page): string`
+
+The hook a plugin page runs on: its type, "_page_", and the page with every ".php" taken out.
+
+### static `positionKey(array $menu, mixed $position, string $slug, string $title): string|int|null`
+
+The key a top-level entry is filed under: null (appended) without a
+numeric position; the position itself when it is free; a taken one
+moved on by a fraction drawn from the slug and title, written as text.
+
+- `@param array<int|string, mixed> $menu`
+
+### static `pageBase(string $slug, array $parents): ?string`
+
+The file a plugin page's address is built on: admin.php for a
+top-level page, one under another plugin page or under none; the
+parent's own file otherwise; null for a page never registered.
+
+- `@param array<string, string|false> $parents the page => parent map ($_parent_pages)`
+
+### static `parentOf(array $menu, array $submenu, string $pagenow, string $pluginPage, string $typenow, array $realParents): string`
+
+The parent file of the page being shown: for a plugin page, the
+top-level entry that is the page or the submenu holding it; otherwise
+the submenu holding the current file (with "?post_type=" and the type
+when there is one); each mapped through the real parents, '' when
+nothing holds it.
+
+- `@param array<int|string, mixed> $menu`
+- `@param array<string, mixed> $submenu`
+- `@param array<string, string> $realParents`
+
+
+## AdminNotice
+
+`final class Minn\Admin\AdminNotice` · `public/minn/src/Minn/Admin/AdminNotice.php`
+
+An admin notice's markup, as wp_get_admin_notice builds it on the
+reference (probe functions-formatting-doubts): a type is a string,
+trimmed, and one holding a space is a mistake; extra classes come only
+from a list; an attribute that is true is a bare name, a value under a
+number is a bare name too, an empty one is left out.
+
+### static `markup(string $message, array $args, Closure $attr): array`
+
+The notice's div and its inner part (the message, in a paragraph
+unless paragraph_wrap is off), escaped by $attr.
+
+- `@param array<string, mixed> $args the parsed and filtered arguments`
+- `@param Closure(string): string $attr the attribute escaper`
+- `@return array{0: string, 1: string}`
 
 
 ## AdminPlugin
@@ -434,6 +505,31 @@ The app's bundled user guide.
 Internals: `bundled()` (private, line 63)
 
 
+## CodeEditor
+
+`final class Minn\Admin\CodeEditor` · `public/minn/src/Minn/Admin/CodeEditor.php`
+
+The code editor's settings as wp_get_code_editor_settings gives them
+(probe admin-doubts): CodeMirror's defaults and the three linters', the
+mode and its helpers from the content type (named, or worked out from the
+file's extension), then the caller's own settings merged over each part.
+
+- const `EXTENSIONS` = `array (   'css' => 'text/css',   'scss' => 'text/x-scss',   'less' => 'text/x-less',   'sass' => 'text/x-sass',   'js' => 'text/javascript',   'mjs' => 'text/javascript',   'jsx' => 'text/jsx',   'json' => 'application/json',   'php' => 'application/x-httpd-php',   'phtml' => 'application/x-httpd-php',   'php3' => 'application/x-httpd-php',   'php4' => 'application/x-httpd-php',   'php5' => 'application/x-httpd-php',   'php7' => 'application/x-httpd-php',   'phps' => 'application/x-httpd-php',   'svg' => 'application/svg+xml',   'xml' => 'text/xml',   'md' => 'text/x-gfm',   'sh' => 'text/x-sh',   'bash' => 'text/x-sh',   'sql' => 'text/x-sql',   'html' => 'text/html',   'htm' => 'text/html',   'yml' => 'text/x-yaml',   'yaml' => 'text/x-yaml',   'diff' => 'text/x-diff',   'patch' => 'text/x-diff',   'conf' => 'text/nginx', )` — A file extension => the content type it is edited as.
+
+### static `settings(array $args, string $espreeUrl, Closure $mimeOf): array`
+
+The settings for one editor: $args' type, else its file's (the
+extension, else $mimeOf the file, else text/plain); the caller's
+codemirror, csslint, jshint and htmlhint settings merged over the
+defaults.
+
+- `@param array<string, mixed> $args`
+- `@param Closure(string): string $mimeOf a file's content type, '' when unknown`
+- `@return array<string, array<string, mixed>>`
+
+Internals: `mode()` (private, line 62), `defaults()` (private, line 96)
+
+
 ## Dashboard
 
 `final readonly class Minn\Admin\Dashboard` · `public/minn/src/Minn/Admin/Dashboard.php`
@@ -585,6 +681,42 @@ False when the id names nothing this person could hide.
 Shows a hidden view again.
 
 
+## IframeMarkup
+
+`final class Minn\Admin\IframeMarkup` · `public/minn/src/Minn/Admin/IframeMarkup.php`
+
+The fixed markup of the two bare admin documents plugins print into, as
+iframe_header and wp_iframe print it on the reference (probe
+admin-doubts): the globals the admin scripts read (ajaxurl, pagenow and
+the rest), the body's opening with the no-js switch, and the onload call
+at the end. What hooks print goes between these pieces.
+
+- const `LOAD_EVENT` = `'addLoadEvent = function(func){if(typeof jQuery!==\'undefined\')jQuery(function(){func();});else if(typeof wpOnload!==\'function\'){wpOnload=func;}else{var oldonload=wpOnload;wpOnload=function(){oldonload();func();}}};'`
+
+### static `headerScript(string $title, array $page): string`
+
+iframe_header's head after its title: the load-event helper, the
+thickbox closer and the admin globals.
+
+- `@param array{ajaxurl: string, pagenow: string, typenow: string, adminpage: string, thousands: string, decimal: string, rtl: int} $page`
+
+### static `headerBody(string $idAttribute, string $classes): string`
+
+iframe_header's body opening, the no-js class switched to js.
+
+### static `iframeScript(string $title, string $ajaxurl, int $rtl): string`
+
+wp_iframe's head after the document opening: its title, the load-event helper and the media popup's globals.
+
+### static `iframeBody(string $idAttribute, string $classes): string`
+
+wp_iframe's body opening, the no-js class switched to js.
+
+### static `iframeEnd(): string`
+
+The onload call that closes wp_iframe's document.
+
+
 ## LanguageChoices
 
 `final class Minn\Admin\LanguageChoices` · `public/minn/src/Minn/Admin/LanguageChoices.php`
@@ -686,6 +818,53 @@ Route: `POST /minn-admin/v1/legacy-pack/install (floor edit_posts + install_plug
 Installs the pack when the site lacks it, and activates it; the pack's state after.
 
 Internals: `release()` (private, line 63)
+
+
+## MetaBoxMarkup
+
+`final class Minn\Admin\MetaBoxMarkup` · `public/minn/src/Minn/Admin/MetaBoxMarkup.php`
+
+A meta box's frame as do_meta_boxes prints it on the reference (probe
+admin-doubts): a labelled region, its title as a heading the three
+handle buttons (move up, move down, show or hide) describe, each with
+its tooltip, then the box's inside, which the caller fills.
+
+### static `open(string $id, string $title, string $classes): string`
+
+The box up to the start of its inside: the region, the header with its title, and the handle buttons.
+
+Internals: `button()` (private, line 32)
+
+
+## MetaBoxes
+
+`final class Minn\Admin\MetaBoxes` · `public/minn/src/Minn/Admin/MetaBoxes.php`
+
+One screen's meta boxes as add_meta_box files them on the reference
+(probe admin-doubts): context => priority => id => box, a removed box
+kept as false so it stays removed.
+
+- const `PRIORITIES` = `array (   0 => 'high',   1 => 'core',   2 => 'default',   3 => 'low', )`
+
+### static `add(array $boxes, string $context, string $priority, string $id, array $box): array`
+
+The screen's boxes with one filed. The context is made first. A box
+filed already is taken out of wherever it was, except at "core": a
+removed box stays removed, one filed at "default" moves to "core" as
+it was, and any other is left alone. At "sorted" the box keeps its
+own title, callback and arguments.
+
+- `@param array<string, mixed> $boxes`
+- `@param array{id: string, title: mixed, callback: mixed, args: mixed} $box`
+- `@return array<string, mixed>`
+
+### static `remove(array $boxes, string $context, string $id): array`
+
+The screen's boxes with one removed from a context: false at every
+priority, so a later add at "core" leaves it out.
+
+- `@param array<string, mixed> $boxes`
+- `@return array<string, mixed>`
 
 
 ## Notifications
@@ -945,6 +1124,30 @@ The stylesheets previews are scoped under: the engine's own, the theme's, and th
 Internals: `styles()` (private, line 66)
 
 
+## ScreenOptions
+
+`final class Minn\Admin\ScreenOptions` · `public/minn/src/Minn/Admin/ScreenOptions.php`
+
+Which screen option a save keeps for itself, as set_screen_options tells
+them apart on the reference (probe admin-doubts): a core list's page size
+is saved as a number from 1 to 999 without asking any filter; any other
+option is the plugin's to accept through its filters.
+
+- const `CORE` = `array (   0 => 'edit_per_page',   1 => 'users_per_page',   2 => 'edit_comments_per_page',   3 => 'upload_per_page',   4 => 'edit_tags_per_page',   5 => 'plugins_per_page',   6 => 'export_personal_data_requests_per_page',   7 => 'remove_personal_data_requests_per_page',   8 => 'sites_network_per_page',   9 => 'users_network_per_page',   10 => 'site_users_network_per_page',   11 => 'plugins_network_per_page',   12 => 'themes_network_per_page',   13 => 'site_themes_network_per_page', )` — The core lists' page sizes that are not named after a post type or taxonomy.
+
+### static `isCore(string $option, Closure $registered): bool`
+
+Whether an option is a core list's page size: one of those above, or
+a name that is a post type or taxonomy once "edit_" and "_per_page"
+are taken out of it.
+
+- `@param Closure(string): bool $registered whether a post type or taxonomy has that name`
+
+### static `pageSized(string $option): bool`
+
+Whether a plugin's option is a page size or the column count, which the general set-screen-option filter is asked about first.
+
+
 ## SessionsController
 
 `final readonly class Minn\Admin\SessionsController` · `public/minn/src/Minn/Admin/SessionsController.php`
@@ -1056,6 +1259,26 @@ Route: `GET /minn-admin/v1/taxonomies (floor edit_posts)`
 Every taxonomy with its counts.
 
 Internals: `stamp()` (private, line 152), `publicTypes()` (private, line 165), `termCount()` (private, line 170), `postCount()` (private, line 175)
+
+
+## SubmitButton
+
+`final class Minn\Admin\SubmitButton` · `public/minn/src/Minn/Admin/SubmitButton.php`
+
+A settings form's submit input as get_submit_button builds it: "button"
+and a class for each type (primary, small and large prefixed with
+"button-", secondary meaning none), the id given among the other
+attributes or the name, the other attributes escaped one by one (or a
+string of them as given).
+
+### static `input(string $text, array $types, string $name, array|string $otherAttributes): string`
+
+The input element.
+
+- `@param list<string> $types`
+- `@param array<string, mixed>|string $otherAttributes`
+
+Internals: `attr()` (private, line 49)
 
 
 ## SystemController

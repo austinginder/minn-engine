@@ -1,0 +1,669 @@
+[
+    [
+        "date links by structure",
+        {
+            "/%postname%/": [
+                "{home}/2024/",
+                "{home}/2024/03/",
+                "{home}/2024/03/05/",
+                true,
+                true
+            ],
+            "/blog/%postname%/": [
+                "{home}/blog/2024/",
+                "{home}/blog/2024/03/",
+                "{home}/blog/2024/03/05/",
+                true,
+                true
+            ],
+            "/%post_id%/": [
+                "{home}/date/2024/",
+                "{home}/date/2024/03/",
+                "{home}/date/2024/03/05/",
+                true,
+                true
+            ],
+            "/archives/%post_id%": [
+                "{home}/archives/date/2024",
+                "{home}/archives/date/2024/03",
+                "{home}/archives/date/2024/03/05",
+                true,
+                true
+            ],
+            "": [
+                "{home}/?m=2024",
+                "{home}/?m=202403",
+                "{home}/?m=20240305",
+                true,
+                true
+            ]
+        }
+    ],
+    [
+        "esc_xml",
+        {
+            "0": "a &amp; b &lt;c&gt;",
+            "1": "<![CDATA[ a & <b> ]]> &amp; x",
+            "2": "x <![CDATA[1&2]]> y <![CDATA[3]]>",
+            "3": "&lt;![CDATA[ open &amp; &lt;x&gt;",
+            "4": " ©&amp;zz; &#038; &#x26;",
+            "5": "a&apos;b&quot;c",
+            "refs": [
+                "&#038;",
+                "&#038;",
+                "&#009;",
+                "&#x26;",
+                "&#x26;",
+                "&amp;#0;",
+                "&amp;#99999999;",
+                "&amp;#xZZ;",
+                "&#065;"
+            ]
+        }
+    ],
+    [
+        "get_blogs_of_user",
+        [
+            [],
+            0
+        ]
+    ],
+    [
+        "get_post_type_archive_template",
+        [
+            "",
+            "template-canvas.php",
+            "",
+            ""
+        ]
+    ],
+    [
+        "the calendar: its month and a type with no posts",
+        {
+            "empty type": [
+                null,
+                [
+                    null,
+                    ""
+                ]
+            ],
+            "page type": true,
+            "caption m 2024": "January 2024",
+            "caption m 20243": "January 2024",
+            "caption m 202403": "March 2024",
+            "caption m 20240315": "March 2024",
+            "caption year": "current",
+            "caption year month": "May 2022",
+            "caption m and year month": "May 2022",
+            "caption w year": "current",
+            "caption w": "current",
+            "caption month only": "current"
+        }
+    ],
+    [
+        "get_search_form: labels, false, a null filter",
+        [
+            "<form role=\"search\" method=\"get\" class=\"search-form\" action=\"{home}/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">[T]Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"[T]Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"[T]Search\" />\n\t\t\t</form>",
+            [
+                "<form role=\"search\" method=\"get\" class=\"search-form\" action=\"{home}/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">[T]Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"[T]Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"[T]Search\" />\n\t\t\t</form>",
+                true
+            ],
+            "<form role=\"search\" method=\"get\" class=\"search-form\" action=\"{home}/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">[T]Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"[T]Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"[T]Search\" />\n\t\t\t</form>"
+        ]
+    ],
+    [
+        "wp_loginout and wp_register for a visitor",
+        [
+            "<a href=\"{home}/wp-login.php\">[T]Log in</a>",
+            ""
+        ]
+    ],
+    [
+        "wp_register signed in, without read",
+        [
+            "<li><a href=\"{home}/wp-admin/\">[T]Site Admin</a></li>",
+            "",
+            "<a href=\"{home}/wp-login.php?action=logout&#038;_wpnonce=N\">[T]Log out</a>"
+        ]
+    ],
+    [
+        "wp_login_form labels",
+        4
+    ],
+    [
+        "wp_star_rating",
+        [
+            "<div class=\"star-rating\"><span class=\"screen-reader-text\">[T]3.0 rating</span><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-half\" aria-hidden=\"true\"></div><div class=\"star star-empty\" aria-hidden=\"true\"></div></div>",
+            "<div class=\"star-rating\"><span class=\"screen-reader-text\">[T]3.3 rating</span><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-half\" aria-hidden=\"true\"></div><div class=\"star star-empty\" aria-hidden=\"true\"></div></div>",
+            "<div class=\"star-rating\"><span class=\"screen-reader-text\">[T]3.5 rating</span><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-half\" aria-hidden=\"true\"></div><div class=\"star star-empty\" aria-hidden=\"true\"></div></div>",
+            "<div class=\"star-rating\"><span class=\"screen-reader-text\">[N1]3.5 rating based on 1 rating</span><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-half\" aria-hidden=\"true\"></div><div class=\"star star-empty\" aria-hidden=\"true\"></div></div>",
+            "<div class=\"star-rating\"><span class=\"screen-reader-text\">[N7]3.5 rating based on 7 ratings</span><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-half\" aria-hidden=\"true\"></div><div class=\"star star-empty\" aria-hidden=\"true\"></div></div>",
+            "<div class=\"star-rating\"><span class=\"screen-reader-text\">[T]3.5 rating</span><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-half\" aria-hidden=\"true\"></div><div class=\"star star-empty\" aria-hidden=\"true\"></div></div>",
+            "<div class=\"star-rating\"><span class=\"screen-reader-text\">[T]5.0 rating</span><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-full\" aria-hidden=\"true\"></div><div class=\"star star-half\" aria-hidden=\"true\"></div></div>"
+        ]
+    ],
+    [
+        "get_upload_iframe_src: the global post_ID, never the global post",
+        [
+            "{home}/wp-admin/media-upload.php?post_id=0&type=image&TB_iframe=1",
+            "{home}/wp-admin/media-upload.php?post_id=77&type=image&TB_iframe=1",
+            "{home}/wp-admin/media-upload.php?post_id=5&type=image&TB_iframe=1",
+            "{home}/wp-admin/media-upload.php?post_id=77&TB_iframe=1"
+        ]
+    ],
+    [
+        "the_weekday_date across posts",
+        [
+            [
+                "",
+                "<b>Monday</b>"
+            ],
+            [
+                "",
+                ""
+            ],
+            [
+                "",
+                "<b>Tuesday</b>"
+            ]
+        ]
+    ],
+    [
+        "wp_heartbeat_settings",
+        [
+            {
+                "ajaxurl": "{home}/wp-admin/admin-ajax.php"
+            },
+            {
+                "x": 1,
+                "ajaxurl": "{home}/wp-admin/admin-ajax.php"
+            }
+        ]
+    ],
+    [
+        "wp_resource_hints",
+        [
+            [
+                "dns-prefetch",
+                "preconnect",
+                "prefetch",
+                "prerender"
+            ],
+            [
+                "<link rel='dns-prefetch' href='//zzmed-dns.example' />",
+                "<link rel='dns-prefetch' href='//zzmed-dns2.example' />",
+                "<link rel='preconnect' href='https://zzmed-pre.example' />",
+                "<link href='https://zzmed-pre2.example' crossorigin='anonymous' as='font' type='font/woff2' pr='0.5' rel='preconnect' />",
+                "<link href='https://zzmed-pre3.example' crossorigin rel='preconnect' />",
+                "<link rel='prefetch' href='https://zzmed-fetch.example/next.html' />",
+                "<link rel='prerender' href='https://zzmed-render.example/next.html' />"
+            ]
+        ]
+    ],
+    [
+        "oEmbed discovery off a singular page",
+        [
+            "",
+            [
+                ""
+            ]
+        ]
+    ],
+    [
+        "oEmbed discovery: the endpoint filter",
+        [
+            "<link rel=\"alternate\" title=\"oEmbed (JSON)\" type=\"application/json+oembed\" href=\"{home}/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fminn.localhost%2Fhello-world%2F&#038;zzmed=json\" />\n<link rel=\"alternate\" title=\"oEmbed (XML)\" type=\"text/xml+oembed\" href=\"{home}/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fminn.localhost%2Fhello-world%2F&#038;format=xml&#038;zzmed=xml\" />\n"
+        ]
+    ],
+    [
+        "wp_preload_resources",
+        [
+            "<link rel='preload' href='https://zzmed.example/a.css' as='style' />",
+            "<link rel='preload' href='https://zzmed.example/b.png' as='image' imagesrcset='b.png 1x, b2.png 2x' imagesizes='50vw' fetchpriority='high' />",
+            "<link rel='preload' imagesrcset='d.png 1x' as='image' />",
+            "<link rel='preload' href='https://zzmed.example/e.woff2' as='font' type='font/woff2' crossorigin />",
+            "<link rel='preload' href='https://zzmed.example/f.js' as='script' media='all' zzbare />",
+            "<link rel='preload' href='https://zzmed.example/g.css' />"
+        ]
+    ],
+    [
+        "wp_get_archives",
+        {
+            "count and after": "\t<b>b</b><a href='{home}/2019/02/?post_type=zzmed_arc'>February 2019</a>&nbsp;(2)<i>a</i>\n\t<b>b</b><a href='{home}/2018/07/?post_type=zzmed_arc'>July 2018</a>&nbsp;(1)<i>a</i>\n",
+            "count, html": "\t<li><a href='{home}/2019/02/?post_type=zzmed_arc'>February 2019</a>&nbsp;(2)<i>a</i></li>\n\t<li><a href='{home}/2018/07/?post_type=zzmed_arc'>July 2018</a>&nbsp;(1)<i>a</i></li>\n",
+            "yearly count": "\t<li><a href='{home}/2019/?post_type=zzmed_arc'>2019</a>&nbsp;(2)</li>\n\t<li><a href='{home}/2018/?post_type=zzmed_arc'>2018</a>&nbsp;(1)</li>\n",
+            "option": "\t<option value='{home}/2019/?post_type=zzmed_arc'> 2019 &nbsp;(2)</option>\n\t<option value='{home}/2018/?post_type=zzmed_arc'> 2018 &nbsp;(1)</option>\n",
+            "period set, not an archive": "\t<li><a href='{home}/2019/02/?post_type=zzmed_arc'>February 2019</a></li>\n\t<li><a href='{home}/2018/07/?post_type=zzmed_arc'>July 2018</a></li>\n",
+            "on the month archive": "\t<li><a href='{home}/2019/02/?post_type=zzmed_arc' aria-current=\"page\">February 2019</a></li>\n\t<li><a href='{home}/2018/07/?post_type=zzmed_arc'>July 2018</a></li>\n | \t<li><a href='{home}/2019/?post_type=zzmed_arc' aria-current=\"page\">2019</a></li>\n\t<li><a href='{home}/2018/?post_type=zzmed_arc'>2018</a></li>\n"
+        }
+    ],
+    [
+        "feed_links_extra on a single post",
+        {
+            "open, plain": [
+                [
+                    [
+                        "comments",
+                        true
+                    ],
+                    [
+                        "extra",
+                        true
+                    ]
+                ],
+                "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Minn &raquo; zzmed open Comments Feed\" href=\"{home}/zzmed-open/feed/\" />\n"
+            ],
+            "open, comments feed off": [
+                [
+                    [
+                        "comments",
+                        true
+                    ],
+                    [
+                        "extra",
+                        false
+                    ]
+                ],
+                ""
+            ],
+            "closed, plain": [
+                [
+                    [
+                        "comments",
+                        true
+                    ],
+                    [
+                        "extra",
+                        true
+                    ]
+                ],
+                ""
+            ],
+            "closed, comments feed off": [
+                [
+                    [
+                        "comments",
+                        true
+                    ],
+                    [
+                        "extra",
+                        false
+                    ]
+                ],
+                ""
+            ]
+        }
+    ],
+    [
+        "get_the_block_template_html: shortcodes and blocks",
+        "<div class=\"wp-site-blocks\"><p class=\"wp-block-paragraph\">zzmed from a shortcode</p>\nzzmed late ran</div>"
+    ],
+    [
+        "wp_finalize_template_enhancement_output_buffer by response type",
+        {
+            "text/html": [
+                "<p>zz</p><!-- zzmed enhanced -->",
+                [
+                    "<p>zz</p><!-- zzmed enhanced -->"
+                ]
+            ],
+            "application/json": [
+                "<p>zz</p>",
+                [
+                    "<p>zz</p>"
+                ]
+            ],
+            "text/plain": [
+                "<p>zz</p>",
+                [
+                    "<p>zz</p>"
+                ]
+            ],
+            "application/xhtml+xml": [
+                "<p>zz</p><!-- zzmed enhanced -->",
+                [
+                    "<p>zz</p><!-- zzmed enhanced -->"
+                ]
+            ],
+            "TEXT/HTML": [
+                "<p>zz</p>",
+                [
+                    "<p>zz</p>"
+                ]
+            ],
+            "": [
+                "<p>zz</p>",
+                [
+                    "<p>zz</p>"
+                ]
+            ]
+        }
+    ],
+    [
+        "locate_template with the template path globals",
+        [
+            "{dir}/child/zzmed-child.php",
+            "{dir}/parent/zzmed-parent.php",
+            "",
+            ""
+        ]
+    ],
+    [
+        "wp_enqueue_img_auto_sizes_contain_css_fix",
+        {
+            "removed": [
+                false,
+                false
+            ],
+            "kept": [
+                [
+                    "wp-img-auto-sizes-contain",
+                    "zzmed-first"
+                ],
+                true,
+                false
+            ]
+        }
+    ],
+    [
+        "attachment_url_to_postid: what the filter hears",
+        [
+            true,
+            true,
+            "[[\"attachment_url_to_postid\",[null,\"https:\\/\\/zzmed.example\\/nope.png\"]],[\"attachment_url_to_postid\",[\"{id}\",\"https:\\/\\/minn.localhost\\/wp-content\\/uploads\\/2026\\/10\\/zzmed-small.png\"]]]"
+        ]
+    ],
+    [
+        "file_is_displayable_image",
+        [
+            true,
+            false,
+            true,
+            3
+        ]
+    ],
+    [
+        "wp_getimagesize of a 0x0 GIF",
+        false
+    ],
+    [
+        "wp_get_attachment_link: missing, and no address",
+        [
+            "[T]Missing Attachment",
+            "[T]Missing Attachment"
+        ]
+    ],
+    [
+        "wp_get_loading_attr_default",
+        [
+            false,
+            false,
+            "lazy",
+            "lazy",
+            "lazy"
+        ]
+    ],
+    [
+        "wp_get_registered_image_subsizes: a size from options, a 0x0 size",
+        [
+            {
+                "width": 50,
+                "height": 40,
+                "crop": true
+            },
+            false
+        ]
+    ],
+    [
+        "wp_image_src_get_dimensions",
+        [
+            [
+                3,
+                2
+            ],
+            [
+                3,
+                2
+            ],
+            [
+                3,
+                2
+            ],
+            [
+                3,
+                2
+            ],
+            [
+                1,
+                1
+            ]
+        ]
+    ],
+    [
+        "wp_img_tag_add_width_and_height_attr: a query on the address, a filter saying yes",
+        [
+            "<img width=\"3\" height=\"2\" src alt=\"\">",
+            "<img src alt=\"\">"
+        ]
+    ],
+    [
+        "wp_omit_loading_attr_threshold through its filter",
+        7
+    ],
+    [
+        "wp_get_attachment_image_srcset: the srcset meta filter",
+        [
+            "wp_calculate_image_srcset_meta"
+        ]
+    ],
+    [
+        "wp_media_personal_data_exporter: an upload without an address",
+        [
+            1,
+            {
+                "data": [],
+                "done": true
+            }
+        ]
+    ],
+    [
+        "get_compat_media_markup: fields without their own row",
+        "<input type=\"hidden\" name=\"attachments[{id}][menu_order]\" value=\"0\" /><p class=\"media-types media-types-required-info\"><span class=\"required-field-message\">Required fields are marked <span class=\"required\">*</span></span></p><table class=\"compat-attachment-fields\">\t\t<tr class='compat-field-zzmed_text'>\t\t\t<th scope='row' class='label'><label for='attachments-{id}-zzmed_text'><span class='alignleft'>ZZ Label</span><br class='clear' /></label></th>\n\t\t\t<td class='field'><input type='text' class='text' id='attachments-{id}-zzmed_text' name='attachments[{id}][zzmed_text]' value='zz value'  /><p class='help'>zz help</p></td>\n\t\t</tr>\n\t\t<tr class='compat-field-zzmed_html'>\t\t\t<th scope='row' class='label'><label for='attachments-{id}-zzmed_html'><span class='alignleft'>ZZ Html</span><br class='clear' /></label></th>\n\t\t\t<td class='field'><b>zz html</b></td>\n\t\t</tr>\n<tr><td>zz own row</td></tr></table>"
+    ],
+    [
+        "_wp_image_editor_choose",
+        [
+            "WP_Image_Editor_Imagick",
+            false,
+            "WP_Image_Editor_GD",
+            false,
+            true
+        ]
+    ],
+    [
+        "wp_get_image_editor of a text file and a missing one",
+        [
+            [
+                "invalid_image",
+                "improper image header `{file}' @ error/txt.c/ReadTXTImage/418"
+            ],
+            [
+                "error_loading_image",
+                "File does not exist?"
+            ]
+        ]
+    ],
+    [
+        "wp_stream_image of a GD image",
+        [
+            true,
+            true,
+            [
+                "image_save_pre"
+            ]
+        ]
+    ],
+    [
+        "get_compat_media_markup: each kind of field",
+        {
+            "none": "",
+            "textarea required": "<input type=\"hidden\" name=\"attachments[{id}][menu_order]\" value=\"0\" /><p class=\"media-types media-types-required-info\"><span class=\"required-field-message\">Required fields are marked <span class=\"required\">*</span></span></p><table class=\"compat-attachment-fields\">\t\t<tr class='compat-field-zz_ta form-required'>\t\t\t<th scope='row' class='label'><label for='attachments-{id}-zz_ta'><span class='alignleft'>TA</span> <span class=\"required\">*</span><br class='clear' /></label></th>\n\t\t\t<td class='field'><textarea id='attachments-{id}-zz_ta' name='attachments[{id}][zz_ta]' required>a'b\"<c></textarea></td>\n\t\t</tr>\n</table>",
+            "hidden after a text field": "<input type=\"hidden\" name=\"attachments[{id}][menu_order]\" value=\"0\" /><p class=\"media-types media-types-required-info\"><span class=\"required-field-message\">Required fields are marked <span class=\"required\">*</span></span></p><table class=\"compat-attachment-fields\">\t\t<tr class='compat-field-zz_t'>\t\t\t<th scope='row' class='label'><label for='attachments-{id}-zz_t'><span class='alignleft'>T</span><br class='clear' /></label></th>\n\t\t\t<td class='field'><input type='text' class='text' id='attachments-{id}-zz_t' name='attachments[{id}][zz_t]' value='tv'  /></td>\n\t\t</tr>\n</table><input type=\"hidden\" name=\"attachments[{id}][zz_h]\" value=\"hv\" />\n",
+            "extra rows": "<input type=\"hidden\" name=\"attachments[{id}][menu_order]\" value=\"0\" /><p class=\"media-types media-types-required-info\"><span class=\"required-field-message\">Required fields are marked <span class=\"required\">*</span></span></p><table class=\"compat-attachment-fields\">\t\t<tr class='compat-field-zz_t'>\t\t\t<th scope='row' class='label'><label for='attachments-{id}-zz_t'><span class='alignleft'>T</span><br class='clear' /></label></th>\n\t\t\t<td class='field'><input type='text' class='text' id='attachments-{id}-zz_t' name='attachments[{id}][zz_t]' value='v'  /></td>\n\t\t</tr>\n\t\t<tr><td></td><td class='zzrow'>zz extra</td></tr>\n</table>",
+            "text with quotes, required": "<input type=\"hidden\" name=\"attachments[{id}][menu_order]\" value=\"0\" /><p class=\"media-types media-types-required-info\"><span class=\"required-field-message\">Required fields are marked <span class=\"required\">*</span></span></p><table class=\"compat-attachment-fields\">\t\t<tr class='compat-field-zz_q form-required'>\t\t\t<th scope='row' class='label'><label for='attachments-{id}-zz_q'><span class='alignleft'>Q<b></span> <span class=\"required\">*</span><br class='clear' /></label></th>\n\t\t\t<td class='field'><input type='text' class='text' id='attachments-{id}-zz_q' name='attachments[{id}][zz_q]' value='a&#039;b&quot;&lt;c&gt;&amp;'  required /><p class='help'>one help</p></td>\n\t\t</tr>\n</table>",
+            "only hidden": "<input type=\"hidden\" name=\"attachments[{id}][menu_order]\" value=\"0\" /><input type=\"hidden\" name=\"attachments[{id}][zz_h]\" value=\"h&#039;v&quot;\" />\n",
+            "another input": "<input type=\"hidden\" name=\"attachments[{id}][menu_order]\" value=\"0\" /><p class=\"media-types media-types-required-info\"><span class=\"required-field-message\">Required fields are marked <span class=\"required\">*</span></span></p><table class=\"compat-attachment-fields\">\t\t<tr class='compat-field-zz_u'>\t\t\t<th scope='row' class='label'><label for='attachments-{id}-zz_u'><span class='alignleft'>U</span><br class='clear' /></label></th>\n\t\t\t<td class='field'><select></select></td>\n\t\t</tr>\n\t\t<tr class='compat-field-zz_h2'>\t\t\t<th scope='row' class='label'><label for='attachments-{id}-zz_h2'><span class='alignleft'>L</span><br class='clear' /></label></th>\n\t\t\t<td class='field'><i>h</i><p class='help'>one</p>\n<p class='help'>two</p></td>\n\t\t</tr>\n</table>"
+        }
+    ],
+    [
+        "img_caption_shortcode without HTML5 captions",
+        [
+            "<div id=\"attachment_zzmed1\" style=\"width: 110px\" class=\"wp-caption alignnone\"><img aria-describedby=\"caption-attachment-zzmed1\" src=\"a.png\" alt=\"\"><p id=\"caption-attachment-zzmed1\" class=\"wp-caption-text\">zz cap</p></div>",
+            "<div style=\"width: 110px\" class=\"wp-caption alignnone\"><a href=\"#\"><img aria-describedby=\"zzmedcap\" src=\"b.png\"></a><p id=\"zzmedcap\" class=\"wp-caption-text\">zz cap</p></div>",
+            "<div style=\"width: 110px\" class=\"wp-caption alignnone\"><img src=\"c.png\"><p class=\"wp-caption-text\">zz cap</p></div>"
+        ]
+    ],
+    [
+        "gallery_shortcode: filter order, and in a feed",
+        [
+            [
+                "post_gallery",
+                "shortcode_atts_gallery"
+            ],
+            "\n<a href='{home}/zzmed-g1/'><img width=\"2\" height=\"2\" src=\"{home}/wp-content/uploads/{ym}/zzmed-g1.png\" class=\"attachment-full size-full\" alt=\"\" decoding=\"async\" loading=\"lazy\" /></a>\n<a href='{home}/zzmed-g2/'><img width=\"2\" height=\"2\" src=\"{home}/wp-content/uploads/{ym}/zzmed-g2.png\" class=\"attachment-full size-full\" alt=\"\" decoding=\"async\" loading=\"lazy\" /></a>\n"
+        ]
+    ],
+    [
+        "media_handle_sideload: the parent's month, an IPTC title, an ID in the post data",
+        "upload_error"
+    ],
+    [
+        "media_handle_upload of a $_FILES entry a plugin set",
+        [
+            "upload_error",
+            "Specified file failed upload test."
+        ]
+    ],
+    [
+        "media_sideload_image: image addresses only, the file named for the match, the source kept",
+        [
+            {
+                "https://zzmed.example/a.png": [
+                    "https://zzmed.example/a.png",
+                    "a",
+                    "a.jpg"
+                ],
+                "https://zzmed.example/f.JPG?x=1": [
+                    "https://zzmed.example/f.JPG?x=1",
+                    "f",
+                    "f.jpg"
+                ],
+                "https://zzmed.example/g.jpg.php": [
+                    "https://zzmed.example/g.jpg.php",
+                    "g",
+                    "g.jpg"
+                ],
+                "https://zzmed.example/h.avif": [
+                    "image_sideload_failed",
+                    "Invalid image URL."
+                ],
+                "https://zzmed.example/file.txt": [
+                    "image_sideload_failed",
+                    "Invalid image URL."
+                ],
+                "https://zzmed.example/noext": [
+                    "image_sideload_failed",
+                    "Invalid image URL."
+                ]
+            },
+            [
+                "https://zzmed.example/a.png",
+                "https://zzmed.example/f.JPG?x=1",
+                "https://zzmed.example/g.jpg.php"
+            ],
+            [
+                "jpg",
+                "jpeg",
+                "jpe",
+                "png",
+                "gif",
+                "webp"
+            ]
+        ]
+    ],
+    [
+        "an empty file uploaded and sideloaded",
+        [
+            {
+                "error": "Specified file failed upload test."
+            },
+            {
+                "error": "File is empty. Please upload something more substantial. This error could also be caused by uploads being disabled in your php.ini file or by post_max_size being defined as smaller than upload_max_filesize in php.ini."
+            }
+        ]
+    ],
+    [
+        "wp_get_missing_image_subsizes",
+        {
+            "no metadata": [],
+            "empty": [],
+            "no width": [],
+            "3x2": [],
+            "150x150": [],
+            "151x100": [],
+            "300x300": [],
+            "1200x800 with medium": []
+        }
+    ],
+    [
+        "_wp_make_subsizes with an editor that has no make_subsize",
+        [
+            [
+                "load",
+                "multi_resize:thumbnail,zzmed_a"
+            ],
+            [
+                "thumbnail",
+                "zzmed_a"
+            ]
+        ]
+    ],
+    [
+        "PDF previews",
+        {
+            "default": {
+                "0": "sizes",
+                "1": "filesize",
+                "sizes": {
+                    "full": [
+                        711,
+                        533,
+                        "pdf.jpg"
+                    ],
+                    "medium": [
+                        300,
+                        225,
+                        "pdf-300x225.jpg"
+                    ],
+                    "thumbnail": [
+                        150,
+                        112,
+                        "pdf-150x112.jpg"
+                    ]
+                }
+            },
+            "no fallback sizes": [
+                "filesize"
+            ]
+        }
+    ],
+    [
+        "wp_heartbeat_settings on an admin screen",
+        [
+            true,
+            {
+                "x": 1
+            }
+        ]
+    ]
+]

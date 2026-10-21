@@ -41,15 +41,12 @@ function wp_date($format, $timestamp = null, $timezone = null)
     return SiteTime::format($format, $timestamp, $timezone);
 }
 
+/** The timestamp arrives pre-offset ("WordPress local"): its digits print as-is in the site's zone, $gmt only choosing the "now" a missing one stands for; "U" alone is the timestamp itself (probe functions-formatting-doubts). */
 function date_i18n($format, $timestamp_with_offset = false, $gmt = false)
 {
-    $timestamp = is_numeric($timestamp_with_offset) ? (int) $timestamp_with_offset : current_time('timestamp', $gmt);
-    // The timestamp arrives pre-offset ("WordPress local"): its digits print
-    // as-is, attached to the site timezone only for timezone-name formats.
-    $timezone = $gmt ? new DateTimeZone('UTC') : wp_timezone();
-    $datetime = date_create(gmdate('Y-m-d H:i:s', $timestamp), $timezone);
-    $date = Minn\I18n\LocalDates::format($datetime, (string) $format);
-    return apply_filters('date_i18n', $date, $format, $timestamp_with_offset, $gmt);
+    $timestamp = is_numeric($timestamp_with_offset) ? $timestamp_with_offset : current_time('timestamp', $gmt);
+    $date = $format === 'U' ? $timestamp : Minn\I18n\LocalDates::format(date_create(gmdate('Y-m-d H:i:s', (int) $timestamp), wp_timezone()), (string) $format);
+    return apply_filters('date_i18n', $date, $format, $timestamp, $gmt);
 }
 
 function get_gmt_from_date($date_string, $format = 'Y-m-d H:i:s')
@@ -81,7 +78,7 @@ function get_weekstartend($mysqlstring, $start_of_week = '')
 {
     $time = strtotime((string) $mysqlstring);
     $weekday = (int) date('w', $time);
-    $start_of_week = $start_of_week === '' ? (int) get_option('start_of_week') : (int) $start_of_week;
+    $start_of_week = is_numeric($start_of_week) ? (int) $start_of_week : (int) get_option('start_of_week');
     $offset = ($weekday - $start_of_week + 7) % 7;
     $start = strtotime(date('Y-m-d', $time)) - $offset * DAY_IN_SECONDS;
     return ['start' => $start, 'end' => $start + WEEK_IN_SECONDS - 1];
@@ -161,7 +158,7 @@ function wp_upload_bits($name, $deprecated, $bits, $time = null)
     if (file_put_contents($new_file, $bits) === false) {
         return ['error' => sprintf('Could not write file %s', $new_file)];
     }
-    @chmod($new_file, 0644);
+    @chmod($new_file, fileperms(dirname($new_file)) & 0666);
     $url = $upload['url'] . '/' . $filename;
     return apply_filters('wp_handle_upload', ['file' => $new_file, 'url' => $url, 'type' => $wp_filetype['type'], 'error' => false], 'sideload');
 }
@@ -193,11 +190,14 @@ function wp_is_stream($path)
     return $pos !== false && in_array(substr((string) $path, 0, $pos), stream_get_wrappers(), true);
 }
 
+/** "<name>-<six random characters>.tmp", the name a unique id when none is given; the file is made. */
 function wp_tempnam($filename = '', $dir = '')
 {
-    $dir = $dir === '' ? get_temp_dir() : (string) $dir;
-    $name = basename((string) $filename) ?: 'file';
-    return tempnam($dir, pathinfo($name, PATHINFO_FILENAME));
+    $dir = trailingslashit($dir === '' ? get_temp_dir() : (string) $dir);
+    $name = pathinfo(basename((string) $filename), PATHINFO_FILENAME);
+    $name = wp_unique_filename($dir, ($name === '' ? uniqid() : $name) . '-' . wp_generate_password(6, false) . '.tmp');
+    touch($dir . $name);
+    return $dir . $name;
 }
 
 function get_temp_dir()
@@ -329,11 +329,10 @@ function wp_trigger_error($function_name, $message, $error_level = E_USER_NOTICE
     trigger_error($raised, $error_level);
 }
 
+/** Off Apache ($is_apache) no module is loaded, whatever default the caller offers. */
 function apache_mod_loaded($mod, $default_value = false)
 {
-    // Off Apache no module is loaded, whatever default the caller offers.
-    $software = Minn\Runtime\Runtime::current()->context->request?->server['software'] ?? '';
-    if (!Minn\Support\WebServer::isApache((string) $software)) {
+    if (empty($GLOBALS['is_apache'])) {
         return false;
     }
     return function_exists('apache_get_modules') ? in_array($mod, apache_get_modules(), true) : $default_value;
@@ -451,6 +450,9 @@ function cache_javascript_headers()
 
 function wp_send_json($response, $status_code = null, $flags = 0)
 {
+    if (defined('REST_REQUEST') && REST_REQUEST) {
+        _doing_it_wrong(__FUNCTION__, sprintf(__('Return a %1$s or %2$s object from your callback when using the REST API.'), 'WP_REST_Response', 'WP_Error'), '5.5.0');
+    }
     if (!headers_sent()) {
         header('Content-Type: application/json; charset=' . get_option('blog_charset'));
         if ($status_code !== null) {
@@ -515,7 +517,7 @@ function wp_is_mobile()
 function wp_is_site_protected_by_basic_auth($context = '')
 {
     if ($context === '') {
-        $context = wp_doing_ajax() || is_admin() ? 'admin' : (isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] === 'wp-login.php' ? 'login' : 'front');
+        $context = is_admin() ? 'admin' : (isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] === 'wp-login.php' ? 'login' : 'front');
     }
     $is_protected = !empty($_SERVER['PHP_AUTH_USER']) || !empty($_SERVER['PHP_AUTH_PW']);
     return (bool) apply_filters('wp_is_site_protected_by_basic_auth', $is_protected, $context);
@@ -542,7 +544,9 @@ function wp_extract_urls($content)
  * content-type is audio or video. Kept quirks: the length is read from
  * Content-Length as written, and the type stored is the one the link's
  * extension matched, carried over from the last link that had one (the
- * last type in the list when the extension matches none).
+ * last type in the list when the extension matches none). A bare host is
+ * never asked; the type decided on is the extension's when it names one,
+ * else the one served as Content-Type (probe functions-formatting-doubts).
  */
 function do_enclose($content, $post)
 {
@@ -561,12 +565,11 @@ function do_enclose($content, $post)
     $mime = '';
     foreach ((array) apply_filters('enclosure_links', $links, $post->ID) as $link) {
         $url = (string) preg_replace('/#.*$/s', '', (string) $link);
-        $headers = in_array($url, $enclosed, true) ? false : wp_get_http_headers($url);
+        $headers = in_array($url, $enclosed, true) || in_array(parse_url($url, PHP_URL_PATH) ?? '', ['', '/'], true) ? false : wp_get_http_headers($url);
         if (!$headers) {
             continue;
         }
-        _minn_enclosure_type($url, $mime);
-        $type = (string) ($headers['content-type'] ?? '');
+        $type = _minn_enclosure_type($url, $mime) ?? (string) ($headers['Content-Type'] ?? '');
         $slash = strpos($type, '/');
         if ($slash !== false && in_array(substr($type, 0, $slash), ['audio', 'video'], true)) {
             add_post_meta($post->ID, 'enclosure', $url . "\n" . (isset($headers['Content-Length']) ? (int) $headers['Content-Length'] : 0) . "\n" . $mime . "\n");
@@ -590,19 +593,20 @@ function _minn_kept_enclosures(int $post_id, array $urls): array
     return $kept;
 }
 
-/** @internal Sets $mime to the type the address's extension matches, the last in the list when none does; untouched without an extension. */
-function _minn_enclosure_type(string $url, string &$mime): void
+/** @internal Sets $mime to the type the address's extension matches, the last in the list when none does; untouched without an extension. The matched type, or null. */
+function _minn_enclosure_type(string $url, string &$mime): ?string
 {
     $extension = pathinfo((string) parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
     if ($extension === '') {
-        return;
+        return null;
     }
     foreach (wp_get_mime_types() as $extensions => $type) {
         $mime = $type;
         if (preg_match('!^(' . $extensions . ')$!i', $extension) === 1) {
-            return;
+            return $type;
         }
     }
+    return null;
 }
 
 /** A URL's headers from a HEAD request, whatever the status; false when the request fails (probe functions-remaining). */
@@ -699,6 +703,10 @@ function wp_unique_id($prefix = '')
 function wp_unique_prefixed_id($prefix = '')
 {
     static $ids = [];
+    if (!is_string($prefix)) {
+        wp_trigger_error(__FUNCTION__, sprintf('The prefix must be a string. "%s" data type given.', gettype($prefix)));
+        $prefix = '';
+    }
     $ids[$prefix] = ($ids[$prefix] ?? 0) + 1;
     return $prefix . $ids[$prefix];
 }
@@ -706,17 +714,13 @@ function wp_unique_prefixed_id($prefix = '')
 function wp_cache_get_last_changed($group)
 {
     $last = wp_cache_get('last_changed', $group);
-    if (!$last) {
-        $last = microtime();
-        wp_cache_set('last_changed', $last, $group);
-    }
-    return $last;
+    return $last ?: wp_cache_set_last_changed($group);
 }
 
 function _get_non_cached_ids($object_ids, $cache_group)
 {
     $ids = [];
-    foreach ((array) $object_ids as $id) {
+    foreach (array_filter((array) $object_ids, '_validate_cache_id') as $id) {
         $id = (int) $id;
         if (!in_array($id, $ids, true) && wp_cache_get($id, (string) $cache_group) === false) {
             $ids[] = $id;
@@ -748,16 +752,8 @@ function wp_get_wp_version()
 function wp_get_admin_notice($message, $args = [])
 {
     $args = apply_filters('wp_admin_notice_args', wp_parse_args($args, ['type' => '', 'dismissible' => false, 'id' => '', 'additional_classes' => [], 'attributes' => [], 'paragraph_wrap' => true]), $message);
-    if (is_string($args['type']) && str_contains($args['type'], ' ')) {
-        _doing_it_wrong(__FUNCTION__, __('The <code>type</code> key must be a string without spaces.'), '6.4.0');
-    }
-    $classes = array_merge(['notice'], $args['type'] !== '' ? ['notice-' . $args['type']] : [], $args['dismissible'] ? ['is-dismissible'] : [], (array) $args['additional_classes']);
-    $attributes = ($args['id'] !== '' ? ' id="' . esc_attr($args['id']) . '"' : '') . ' class="' . esc_attr(implode(' ', $classes)) . '"';
-    foreach ((array) $args['attributes'] as $name => $value) {
-        $attributes .= ' ' . esc_attr($name) . ($value === true ? '' : '="' . esc_attr((string) $value) . '"');
-    }
-    $paragraph = $args['paragraph_wrap'] ? "<p>{$message}</p>" : $message;
-    return apply_filters('wp_admin_notice_markup', '<div' . $attributes . '>' . $paragraph . '</div>', $paragraph, $args);
+    [$markup, $paragraph] = Minn\Admin\AdminNotice::markup((string) $message, $args, static fn (string $text): string => esc_attr($text));
+    return apply_filters('wp_admin_notice_markup', $markup, $paragraph, $args);
 }
 
 function wp_admin_notice($message, $args = [])
@@ -856,7 +852,7 @@ function wp_nonce_ays($action)
 
 function wp_referer_field($display = true)
 {
-    $field = '<input type="hidden" name="_wp_http_referer" value="' . esc_attr(wp_unslash(_minn_request_uri())) . '" />';
+    $field = '<input type="hidden" name="_wp_http_referer" value="' . esc_url(remove_query_arg('_wp_http_referer', wp_unslash(_minn_request_uri()))) . '" />';
     if ($display) {
         echo $field;
     }
@@ -930,8 +926,7 @@ function wp_die($message = '', $title = '', $args = [])
 {
     if (is_int($args)) {
         $args = ['response' => $args];
-    }
-    if (is_int($title)) {
+    } elseif (is_int($title)) {
         $args = ['response' => $title];
         $title = '';
     }
@@ -1003,41 +998,8 @@ function _canonical_charset($charset)
 
 function _wp_die_process_input($message, $title = '', $args = [])
 {
-    $original = $args;
-    $defaults = ['response' => 0, 'code' => '', 'exit' => true, 'back_link' => false, 'link_url' => '', 'link_text' => '', 'text_direction' => 'ltr', 'charset' => 'utf-8', 'additional_errors' => []];
-    if (is_wp_error($message)) {
-        $errors = [];
-        foreach ($message->get_error_codes() as $code) {
-            $data = $message->get_error_data($code);
-            $errors[] = ['code' => $code, 'message' => $message->get_error_message($code), 'data' => $data];
-        }
-        $data = $errors[0]['data'] ?? [];
-        // The first error's status is the response unless the caller names one; of its data, only wp_die's own arguments carry over (probe functions-remaining).
-        if (is_array($data) && isset($data['status'])) {
-            $defaults['response'] = $data['status'];
-        }
-        $args = wp_parse_args($args, array_intersect_key(is_array($data) ? $data : [], $defaults) + $defaults);
-        $args['code'] = $errors[0]['code'] ?? '';
-        $message = $errors[0]['message'] ?? '';
-        if ($title === '' && isset($errors[0]['data']['title'])) {
-            $title = $errors[0]['data']['title'];
-        }
-        $args['additional_errors'] = array_slice($errors, 1);
-    } else {
-        $args = wp_parse_args($args, $defaults);
-    }
-    if ($args['response'] === 0) {
-        $args['response'] = 500;
-    }
-    if ($title === '') {
-        $title = 'WordPress &rsaquo; Error';
-    }
-    if (empty($args['code'])) {
-        $args['code'] = 'wp_die';
-    }
-    // The charset is the site's unless the caller names one, in its usual spelling either way (probe functions-remaining).
-    $args['charset'] = _canonical_charset(array_key_exists('charset', (array) $original) ? (string) $args['charset'] : (string) get_option('blog_charset'));
-    return [$message, $title, $args];
+    $errors = !is_wp_error($message) ? null : array_merge([], ...array_map(static fn ($code) => array_map(static fn ($text) => ['code' => $code, 'message' => $text, 'data' => $message->get_error_data($code)], $message->get_error_messages($code)), $message->get_error_codes()));
+    return Minn\Runtime\DieInput::process($message, $errors, $title, $args, (string) get_option('blog_charset'), static fn (string $charset): string => _canonical_charset($charset));
 }
 
 /** The error as an XML document (a feed's, or any request that asked for XML), its status and no caching. */
@@ -1087,8 +1049,9 @@ function _ajax_wp_die_handler($message, $title = '', $args = [])
     // An ajax answer is a 200 unless the caller names a status; null (wp_send_json's) keeps the one already set.
     $status = is_array($args) && array_key_exists('response', $args) ? $args['response'] : 200;
     [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
-    if (!headers_sent() && $status !== null) {
-        http_response_code((int) $status);
+    if (!headers_sent()) {
+        $status === null || status_header((int) $status);
+        nocache_headers();
     }
     if (is_scalar($message)) {
         echo (string) $message;
@@ -1102,7 +1065,8 @@ function _json_wp_die_handler($message, $title = '', $args = [])
 {
     [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
     if (!headers_sent()) {
-        http_response_code((int) $args['response']);
+        status_header((int) $args['response']);
+        nocache_headers();
         header('Content-Type: application/json; charset=' . $args['charset']);
     }
     echo wp_json_encode(['code' => $args['code'], 'message' => $message, 'data' => ['status' => $args['response']], 'additional_errors' => $args['additional_errors']]);
@@ -1116,7 +1080,8 @@ function _jsonp_wp_die_handler($message, $title = '', $args = [])
 {
     [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
     if (!headers_sent()) {
-        http_response_code((int) $args['response']);
+        status_header((int) $args['response']);
+        nocache_headers();
         header('Content-Type: application/javascript; charset=' . $args['charset']);
         header('X-Content-Type-Options: nosniff');
     }
@@ -1241,13 +1206,16 @@ function print_emoji_detection_script()
 {
 }
 
-/** The emoji styles, enqueued while print_emoji_styles is hooked; it never is on Minn, which prints no emoji plumbing. */
+/** The emoji styles: the old print_emoji_styles hook gives way to a registered style holding the same rules inline, enqueued (probe functions-formatting-doubts). */
 function wp_enqueue_emoji_styles()
 {
     $action = is_admin() ? 'admin_print_styles' : 'wp_print_styles';
     if (has_action($action, 'print_emoji_styles')) {
         remove_action($action, 'print_emoji_styles');
     }
+    wp_register_style('wp-emoji-styles', false);
+    wp_add_inline_style('wp-emoji-styles', "\n\timg.wp-smiley, img.emoji {\n\t\tdisplay: inline !important;\n\t\tborder: none !important;\n\t\tbox-shadow: none !important;\n\t\theight: 1em !important;\n\t\twidth: 1em !important;\n\t\tmargin: 0 0.07em !important;\n\t\tvertical-align: -0.1em !important;\n\t\tbackground: none !important;\n\t\tpadding: 0 !important;\n\t}");
+    wp_enqueue_style('wp-emoji-styles');
 }
 
 /** @deprecated 6.4.0 The emoji styles, printed once per request (probe deprecated-remaining). */
@@ -1394,7 +1362,7 @@ function global_terms_enabled()
     return false;
 }
 
-/** A duration as words ("1 hour, 2 minutes, 3 seconds") from [H:]MM:SS (a leading minus ignored); false for anything else. */
+/** A duration as words ("1 hour, 2 minutes, 3 seconds") from [H:]MM:SS (a leading minus ignored), an hours part said even when 0; false for anything else. */
 function human_readable_duration($duration = '')
 {
     if (empty($duration) || !is_string($duration)) {
@@ -1404,7 +1372,7 @@ function human_readable_duration($duration = '')
     if (!preg_match('/^(?:(\d+):)?([0-5]?\d):([0-5]?\d)$/', $duration, $m)) {
         return false;
     }
-    $parts = (int) $m[1] > 0 ? [sprintf(_n('%s hour', '%s hours', (int) $m[1]), (int) $m[1])] : [];
+    $parts = $m[1] !== '' ? [sprintf(_n('%s hour', '%s hours', (int) $m[1]), (int) $m[1])] : [];
     $parts[] = sprintf(_n('%s minute', '%s minutes', (int) $m[2]), (int) $m[2]);
     $parts[] = sprintf(_n('%s second', '%s seconds', (int) $m[3]), (int) $m[3]);
     return implode(', ', $parts);
@@ -1419,13 +1387,13 @@ function wp_get_webp_info($filename)
     return Minn\Media\WebpInfo::read((string) @file_get_contents((string) $filename, false, null, 0, 40));
 }
 
-/** The folder fonts upload to (uploads/fonts), through font_dir. */
+/** The folder fonts upload to (uploads/fonts), through font_dir: the uploads folder read through the font filter, so later upload_dir filters see the fonts folder. */
 function wp_get_font_dir()
 {
-    $uploads = wp_upload_dir(null, false);
-    $path = untrailingslashit((string) $uploads['basedir']) . '/fonts';
-    $url = untrailingslashit((string) $uploads['baseurl']) . '/fonts';
-    return apply_filters('font_dir', ['path' => $path, 'url' => $url, 'subdir' => '', 'basedir' => $path, 'baseurl' => $url, 'error' => false]);
+    add_filter('upload_dir', '_wp_filter_font_directory');
+    $font_dir = wp_upload_dir(null, false);
+    remove_filter('upload_dir', '_wp_filter_font_directory');
+    return $font_dir;
 }
 
 /** WP_HOME, when wp-config.php defines it, stands for the home option (hooked on option_home; probe functions-utils). */
@@ -1455,6 +1423,9 @@ function _wp_check_existing_file_names($filename, $files)
 {
     $filename = (string) $filename;
     $dot = strrpos($filename, '.');
+    if ($dot === 0 || $filename === '') {
+        return false;
+    }
     $pattern = '/^' . preg_quote($dot === false ? $filename : substr($filename, 0, $dot), '/') . '-(?:\d+x\d+|scaled|rotated)' . preg_quote($dot === false ? '' : substr($filename, $dot), '/') . '$/i';
     foreach ((array) $files as $file) {
         if (preg_match($pattern, (string) $file) === 1) {
@@ -1500,6 +1471,10 @@ function wp_find_hierarchy_loop_tortoise_hare($callback, $start, $override = [],
 /** Drops a folder and every folder above it from the dirsize cache; folders below it and beside it keep their sizes. */
 function clean_dirsize_cache($path)
 {
+    if (!is_string($path) || $path === '') {
+        wp_trigger_error('', sprintf(__('%1$s only accepts a non-empty path string, received %2$s.'), '<code>clean_dirsize_cache()</code>', '<code>' . gettype($path) . '</code>'));
+        return;
+    }
     $cache = get_transient('dirsize_cache');
     if (!is_array($cache) || $cache === []) {
         return;
@@ -1625,7 +1600,7 @@ function wp_privacy_personal_data_cleanup_requests()
     $pending = get_posts(['post_type' => 'user_request', 'post_status' => 'request-pending', 'posts_per_page' => -1]);
     foreach ($pending as $request) {
         if (strtotime($request->post_modified_gmt . ' UTC') < $before) {
-            wp_update_post(['ID' => $request->ID, 'post_status' => 'request-failed']);
+            wp_update_post(['ID' => $request->ID, 'post_status' => 'request-failed', 'post_password' => '']);
         }
     }
 }

@@ -43,29 +43,29 @@ function user_trailingslashit($url, $type_of_url = '')
 
 function get_year_link($year)
 {
-    $year = $year === false || $year === '' || $year === null ? current_time('Y') : (int) $year;
-    $permalinks = Runtime::current()->get('permalinks');
-    $link = $permalinks !== null && $permalinks->isPretty() ? home_url(user_trailingslashit('/' . $year, 'year')) : home_url('?m=' . $year);
-    return apply_filters('year_link', $link, $year);
+    $year = empty($year) ? current_time('Y') : (int) $year;
+    return apply_filters('year_link', _minn_date_link('year', ['%year%' => $year], '?m=' . $year), $year);
 }
 
 function get_month_link($year, $month)
 {
-    $year = $year === false || $year === '' || $year === null ? current_time('Y') : (int) $year;
-    $month = $month === false || $month === '' || $month === null ? current_time('m') : (int) $month;
-    $permalinks = Runtime::current()->get('permalinks');
-    $link = $permalinks !== null && $permalinks->isPretty() ? home_url(user_trailingslashit('/' . $year . '/' . zeroise($month, 2), 'month')) : home_url('?m=' . $year . zeroise($month, 2));
-    return apply_filters('month_link', $link, $year, $month);
+    $year = empty($year) ? current_time('Y') : (int) $year;
+    $month = empty($month) ? current_time('m') : (int) $month;
+    return apply_filters('month_link', _minn_date_link('month', ['%year%' => $year, '%monthnum%' => zeroise($month, 2)], '?m=' . $year . zeroise($month, 2)), $year, $month);
 }
 
 function get_day_link($year, $month, $day)
 {
-    $year = $year === false || $year === '' || $year === null ? current_time('Y') : (int) $year;
-    $month = $month === false || $month === '' || $month === null ? current_time('m') : (int) $month;
-    $day = $day === false || $day === '' || $day === null ? current_time('j') : (int) $day;
-    $permalinks = Runtime::current()->get('permalinks');
-    $link = $permalinks !== null && $permalinks->isPretty() ? home_url(user_trailingslashit('/' . $year . '/' . zeroise($month, 2) . '/' . zeroise($day, 2), 'day')) : home_url('?m=' . $year . zeroise($month, 2) . zeroise($day, 2));
-    return apply_filters('day_link', $link, $year, $month, $day);
+    $year = empty($year) ? current_time('Y') : (int) $year;
+    $month = empty($month) ? current_time('m') : (int) $month;
+    $day = empty($day) ? current_time('j') : (int) $day;
+    return apply_filters('day_link', _minn_date_link('day', ['%year%' => $year, '%monthnum%' => zeroise($month, 2), '%day%' => zeroise($day, 2)], '?m=' . $year . zeroise($month, 2) . zeroise($day, 2)), $year, $month, $day);
+}
+
+/** @internal a date archive's address on the rewrite object's date structure (its front, "date/" before a numeric one), else the plain query (probe media-template-doubts) */
+function _minn_date_link(string $type, array $parts, string $plain): string
+{
+    return empty($struct = $GLOBALS['wp_rewrite']->{"get_{$type}_permastruct"}()) ? home_url($plain) : home_url(user_trailingslashit((string) preg_replace('#/{2,}#', '/', strtr((string) $struct, $parts)), $type));
 }
 
 /** Sets the template path globals: $wp_stylesheet_path and $wp_template_path, the active theme's directories. */
@@ -101,7 +101,8 @@ function locate_template($template_names, $load = false, $load_once = true, $arg
             continue;
         }
         // The engine's own theme-compat stands where the reference's wp-includes/theme-compat would.
-        foreach ([get_stylesheet_directory(), get_template_directory(), MINN_ENGINE_DIR . '/wp-api/theme-compat'] as $dir) {
+        // The template path globals (wp_set_template_globals) when set, else the theme's folders.
+        foreach ([$GLOBALS['wp_stylesheet_path'] ?? get_stylesheet_directory(), $GLOBALS['wp_template_path'] ?? get_template_directory(), MINN_ENGINE_DIR . '/wp-api/theme-compat'] as $dir) {
             $file = $dir . '/' . $template_name;
             if (file_exists($file) && (_wp_is_template_path_allowed($template_name) || str_starts_with((string) realpath($file), realpath($dir) . '/'))) {
                 $located = $file;
@@ -191,7 +192,8 @@ function get_search_form($args = [])
     // As the reference reads it (probe filter-inputs): pre_get_search_form with the arguments as given, then the
     // arguments through search_form_args and the markup's format through search_form_format.
     do_action('pre_get_search_form', $args);
-    $args = apply_filters('search_form_args', wp_parse_args($args, ['echo' => true, 'aria_label' => '']));
+    // The older form, get_search_form(false), returns without printing.
+    $args = apply_filters('search_form_args', wp_parse_args(is_array($args) ? $args : ['echo' => (bool) $args], ['echo' => true, 'aria_label' => '']));
     $format = apply_filters('search_form_format', current_theme_supports('html5', 'search-form') ? 'html5' : 'xhtml', $args);
     // A theme's own searchform.php wins over the default form, as the reference loads it.
     $template = locate_template(['searchform.php']);
@@ -204,15 +206,17 @@ function get_search_form($args = [])
         $action = esc_url(home_url('/'));
         $form = $format === 'html5'
             ? '<form role="search"' . $ariaLabel . ' method="get" class="search-form" action="' . $action . '">'
-                . "\n\t\t\t\t<label>\n\t\t\t\t\t" . '<span class="screen-reader-text">Search for:</span>'
-                . "\n\t\t\t\t\t" . '<input type="search" class="search-field" placeholder="Search &hellip;" value="' . get_search_query() . '" name="s" />'
-                . "\n\t\t\t\t</label>\n\t\t\t\t" . '<input type="submit" class="search-submit" value="Search" />' . "\n\t\t\t</form>"
+                . "\n\t\t\t\t<label>\n\t\t\t\t\t" . '<span class="screen-reader-text">' . _x('Search for:', 'label') . '</span>'
+                . "\n\t\t\t\t\t" . '<input type="search" class="search-field" placeholder="' . esc_attr_x('Search &hellip;', 'placeholder') . '" value="' . get_search_query() . '" name="s" />'
+                . "\n\t\t\t\t</label>\n\t\t\t\t" . '<input type="submit" class="search-submit" value="' . esc_attr_x('Search', 'submit button') . '" />' . "\n\t\t\t</form>"
             : '<form role="search"' . $ariaLabel . ' method="get" id="searchform" class="searchform" action="' . $action . '">'
-                . "\n\t\t\t\t<div>\n\t\t\t\t\t" . '<label class="screen-reader-text" for="s">Search for:</label>'
+                . "\n\t\t\t\t<div>\n\t\t\t\t\t" . '<label class="screen-reader-text" for="s">' . _x('Search for:', 'label') . '</label>'
                 . "\n\t\t\t\t\t" . '<input type="text" value="' . get_search_query() . '" name="s" id="s" />'
-                . "\n\t\t\t\t\t" . '<input type="submit" id="searchsubmit" value="Search" />' . "\n\t\t\t\t</div>\n\t\t\t</form>";
+                . "\n\t\t\t\t\t" . '<input type="submit" id="searchsubmit" value="' . esc_attr_x('Search', 'submit button') . '" />' . "\n\t\t\t\t</div>\n\t\t\t</form>";
     }
-    $form = apply_filters('get_search_form', $form, $args);
+    // A filter answering null leaves the form as it was.
+    $filtered = apply_filters('get_search_form', $form, $args);
+    $form = $filtered === null ? $form : $filtered;
     if ($args['echo']) {
         echo $form;
         return null;
@@ -222,7 +226,7 @@ function get_search_form($args = [])
 
 function get_upload_iframe_src($type = null, $post_id = null, $tab = null)
 {
-    $post_id = $post_id ?? get_the_ID();
+    $post_id = empty($post_id) ? (int) ($GLOBALS['post_ID'] ?? 0) : $post_id;
     $upload_iframe_src = add_query_arg('post_id', (int) $post_id, admin_url('media-upload.php'));
     if ($type && $type !== 'media') {
         $upload_iframe_src = add_query_arg('type', $type, $upload_iframe_src);
@@ -280,19 +284,15 @@ function wp_print_script_tag($attributes)
 function wp_star_rating($args = [])
 {
     $args = wp_parse_args($args, ['rating' => 0, 'type' => 'rating', 'number' => 0, 'echo' => true]);
-    if ($args['type'] === 'percent') {
-        $rating = round($args['rating'] / 10, 0) / 2;
-    } else {
-        $rating = round($args['rating'], 1);
-    }
+    // A comma is a decimal point; the stars count the rating as given, the text shows it to one place (probe media-template-doubts).
+    $rating = (float) str_replace(',', '.', (string) $args['rating']);
+    $rating = $args['type'] === 'percent' ? round($rating / 10, 0) / 2 : $rating;
     $full = (int) floor($rating);
     $half = (int) ceil($rating - $full);
     $empty = 5 - $full - $half;
-    if ($args['number']) {
-        $title = sprintf('%1$s rating based on %2$s ratings', number_format_i18n($rating, 1), number_format_i18n($args['number']));
-    } else {
-        $title = sprintf('%s rating', number_format_i18n($rating, 1));
-    }
+    $title = $args['number']
+        ? sprintf(_n('%1$s rating based on %2$s rating', '%1$s rating based on %2$s ratings', (int) $args['number']), number_format_i18n($rating, 1), number_format_i18n($args['number']))
+        : sprintf(__('%s rating'), number_format_i18n($rating, 1));
     $output = '<div class="star-rating">';
     $output .= '<span class="screen-reader-text">' . $title . '</span>';
     $output .= str_repeat('<div class="star star-full" aria-hidden="true"></div>', $full);
@@ -373,18 +373,7 @@ function wp_make_link_relative($link)
 
 function esc_xml($text)
 {
-    $safe = wp_check_invalid_utf8((string) $text);
-    $safe = preg_replace_callback('/&([A-Za-z][A-Za-z0-9]*);/', static function (array $m): string {
-        $name = $m[1];
-        if (in_array($name, ['amp', 'lt', 'gt', 'quot', 'apos'], true)) {
-            return '&' . $name . ';';
-        }
-        $decoded = html_entity_decode($m[0], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        return $decoded === $m[0] ? '&amp;' . $name . ';' : $decoded;
-    }, $safe);
-    $safe = preg_replace('/&(?!(?:amp|lt|gt|quot|apos|#\d+|#[xX][0-9a-fA-F]+);)/', '&amp;', $safe);
-    $safe = str_replace(['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&apos;'], $safe);
-    return apply_filters('esc_xml', $safe, $text);
+    return apply_filters('esc_xml', Minn\Support\Escape::xml(wp_check_invalid_utf8((string) $text)), $text);
 }
 
 function sanitize_hex_color($color)
@@ -565,8 +554,9 @@ function get_archive_template()
 function get_post_type_archive_template()
 {
     $type = (array) get_query_var('post_type');
+    // No type, an unregistered one, or one without an archive has no template of its own.
     $object = get_post_type_object((string) reset($type));
-    if ($object !== null && empty($object->has_archive)) {
+    if ($object === null || empty($object->has_archive)) {
         return '';
     }
     return get_archive_template();
@@ -588,6 +578,8 @@ function _minn_classic_head_defaults()
     }
     add_action('wp_head', '_wp_render_title_tag', 1, 0);
     add_action('wp_head', 'wp_robots', 1, 0);
+    add_action('wp_head', 'wp_preload_resources', 1, 0);
+    add_action('wp_head', 'wp_print_auto_sizes_contain_css_fix', 1, 0);
     add_action('wp_head', 'wp_resource_hints', 2, 0);
     add_action('wp_head', 'feed_links', 2, 1);
     add_action('wp_head', 'feed_links_extra', 3, 1);
@@ -595,6 +587,7 @@ function _minn_classic_head_defaults()
     add_action('wp_head', 'wp_oembed_add_discovery_links', 4, 0);
     add_action('wp_head', 'rest_output_link_wp_head', 10, 0);
     add_action('wp_head', 'rsd_link', 10, 0);
+    add_action('wp_head', 'locale_stylesheet', 10, 0);
     add_action('wp_head', 'wp_generator', 10, 0);
     add_action('wp_head', 'rel_canonical', 10, 0);
     add_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
@@ -615,6 +608,7 @@ function _minn_block_head_defaults(): void
     add_action('wp_head', '_wp_render_title_tag', 1, 0);
     add_action('wp_head', 'wp_robots', 1, 0);
     add_action('wp_head', 'wp_preload_resources', 1, 0);
+    add_action('wp_head', 'wp_print_auto_sizes_contain_css_fix', 1, 0);
     add_action('wp_head', 'wp_resource_hints', 2, 0);
     add_action('wp_head', 'feed_links', 2, 1);
     add_action('wp_head', 'feed_links_extra', 3, 1);
@@ -650,20 +644,26 @@ function _minn_classic_bar_footer()
     }
 }
 
-/** The style that sizes auto-sized images before they load, first in the queue, once a request (the first call decides), unless wp_img_tag_add_auto_sizes turns them off. */
+/**
+ * The style that sizes auto-sized images before they load, first in the
+ * queue, unless wp_img_tag_add_auto_sizes turns them off. The old print
+ * callback (wp_head, 1) still hooked is the sign to go ahead, and it is
+ * taken off; a plugin that removed it opted out (probe media-template-doubts).
+ */
 function wp_enqueue_img_auto_sizes_contain_css_fix()
 {
-    static $done = false;
-    if ($done) {
+    $priority = has_action('wp_head', 'wp_print_auto_sizes_contain_css_fix');
+    if ($priority === false) {
         return;
     }
-    $done = true;
+    remove_action('wp_head', 'wp_print_auto_sizes_contain_css_fix', $priority);
     if (!apply_filters('wp_img_tag_add_auto_sizes', true)) {
         return;
     }
     wp_register_style('wp-img-auto-sizes-contain', false, [], false);
     wp_add_inline_style('wp-img-auto-sizes-contain', 'img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}');
     wp_enqueue_style('wp-img-auto-sizes-contain');
+    wp_styles()->queue = array_values(array_unique(['wp-img-auto-sizes-contain', ...wp_styles()->queue]));
 }
 
 /** The reference renders the title tag itself when the theme declares title-tag support. */
@@ -703,10 +703,14 @@ function _minn_extra_feed(array $args, string $site, string $sep): array
 {
     $object = get_queried_object();
     $post = is_singular() ? get_post() : null;
+    if ($post instanceof WP_Post) {
+        // Both filters run for a single post, the general answer handed to the post's own (probe media-template-doubts).
+        $show = apply_filters('feed_links_extra_show_post_comments_feed', apply_filters('feed_links_show_comments_feed', true));
+        return $show && (comments_open($post) || pings_open($post) || (int) $post->comment_count > 0)
+            ? [sprintf($args['singletitle'], $site, $sep, the_title_attribute(['echo' => false, 'post' => $post])), (string) get_post_comments_feed_link($post->ID)] : ['', ''];
+    }
     $type = get_query_var('post_type');
     [$kind, $title, $href] = match (true) {
-        $post instanceof WP_Post => (comments_open($post) || pings_open($post) || (int) $post->comment_count > 0) && apply_filters('feed_links_show_comments_feed', true)
-            ? ['post_comments', sprintf($args['singletitle'], $site, $sep, the_title_attribute(['echo' => false, 'post' => $post])), get_post_comments_feed_link($post->ID)] : ['', '', ''],
         is_post_type_archive() => ['post_type_archive', sprintf($args['posttypetitle'], $site, $sep, post_type_archive_title('', false)), get_post_type_archive_feed_link((string) (is_array($type) ? reset($type) : $type))],
         is_category() && $object instanceof WP_Term => ['category', sprintf($args['cattitle'], $site, $sep, $object->name), get_category_feed_link($object->term_id)],
         is_tag() && $object instanceof WP_Term => ['tag', sprintf($args['tagtitle'], $site, $sep, $object->name), get_tag_feed_link($object->term_id)],
@@ -719,41 +723,16 @@ function _minn_extra_feed(array $args, string $site, string $sep): array
 }
 
 /**
- * Resource hints: dns-prefetch for the hosts of enqueued assets away from
- * the page's own host, plus what the wp_resource_hints filter adds
- * (preconnect entries print their full URL, the reference's shape).
+ * Resource hints (Front\ResourceHints): dns-prefetch for the hosts of
+ * enqueued assets away from the page's own host, and what the
+ * wp_resource_hints filter adds for each of the four relations.
  */
 function wp_resource_hints()
 {
     $own = (string) (Runtime::current()->request?->host ?? '');
     // The registries read as they stand, not used: the reference reads the globals.
     $hosts = static fn (string $kind): array => Minn\Runtime\AssetQueue::follow($kind, $GLOBALS[$kind === 'script' ? 'wp_scripts' : 'wp_styles'] ?? null)->externalHosts($own);
-    $hints = ['dns-prefetch' => array_values(array_unique([...$hosts('script'), ...$hosts('style')])), 'preconnect' => []];
-    foreach ($hints as $relation => $urls) {
-        $urls = apply_filters('wp_resource_hints', $urls, $relation);
-        $unique = [];
-        foreach ($urls as $url) {
-            $attrs = is_array($url) ? $url : ['href' => $url];
-            $href = (string) ($attrs['href'] ?? '');
-            if ($href === '' || isset($unique[$href])) {
-                continue;
-            }
-            $unique[$href] = true;
-            if ($relation === 'dns-prefetch') {
-                $host = (string) (parse_url($href, PHP_URL_HOST) ?: $href);
-                echo "<link rel='dns-prefetch' href='//" . esc_attr(ltrim($host, '/')) . "' />\n";
-                continue;
-            }
-            $extra = '';
-            foreach ($attrs as $name => $value) {
-                if ($name === 'href') {
-                    continue;
-                }
-                $extra .= is_int($name) ? ' ' . esc_attr((string) $value) : ' ' . esc_attr((string) $name) . "='" . esc_attr((string) $value) . "'";
-            }
-            echo "<link href='" . esc_url($href) . "'" . $extra . " rel='" . esc_attr($relation) . "' />\n";
-        }
-    }
+    echo Minn\Front\ResourceHints::render(array_values(array_unique([...$hosts('script'), ...$hosts('style')])), static fn (array $urls, string $relation) => apply_filters('wp_resource_hints', $urls, $relation));
 }
 
 /**
@@ -778,21 +757,24 @@ function wp_site_icon()
 }
 
 /**
- * The reference registers this on wp_head at BOTH 4 and 10 and prints once
- * (the discovery links appear ahead of the styles); the guard keeps the
- * second firing quiet while a plugin's remove_action() at either priority
- * still finds a registration.
+ * The discovery links through get_oembed_endpoint_url, and off a singular
+ * page an empty string, each through oembed_discovery_links. The reference
+ * registers this on wp_head at BOTH 4 and 10 and prints once there; the
+ * guard keeps the second firing in wp_head quiet while a plugin's
+ * remove_action() at either priority still finds a registration.
  */
 function wp_oembed_add_discovery_links()
 {
-    if (!is_singular() || Runtime::current()->get('oembed_discovery_printed')) {
+    if (doing_action('wp_head') && Runtime::current()->get('oembed_discovery_printed')) {
         return;
     }
-    Runtime::current()->set('oembed_discovery_printed', true);
-    $permalink = (string) get_permalink();
-    $base = home_url('/wp-json/oembed/1.0/embed');
-    $output = '<link rel="alternate" title="' . esc_attr_x('oEmbed (JSON)', 'oEmbed resource link name') . '" type="application/json+oembed" href="' . esc_url($base . '?url=' . urlencode($permalink)) . '" />' . "\n";
-    $output .= '<link rel="alternate" title="' . esc_attr_x('oEmbed (XML)', 'oEmbed resource link name') . '" type="text/xml+oembed" href="' . esc_url($base . '?url=' . urlencode($permalink) . '&format=xml') . '" />' . "\n";
+    $output = '';
+    if (is_singular()) {
+        doing_action('wp_head') && Runtime::current()->set('oembed_discovery_printed', true);
+        $permalink = (string) get_permalink();
+        $output = '<link rel="alternate" title="' . esc_attr_x('oEmbed (JSON)', 'oEmbed resource link name') . '" type="application/json+oembed" href="' . esc_url(get_oembed_endpoint_url($permalink)) . '" />' . "\n";
+        $output .= '<link rel="alternate" title="' . esc_attr_x('oEmbed (XML)', 'oEmbed resource link name') . '" type="text/xml+oembed" href="' . esc_url(get_oembed_endpoint_url($permalink, 'xml')) . '" />' . "\n";
+    }
     echo apply_filters('oembed_discovery_links', $output);
 }
 
@@ -848,6 +830,10 @@ function get_calendar($args = [])
         $args = ['initial' => (bool) $legacy[0], 'display' => $legacy[1] ?? true];
     }
     $args = apply_filters('get_calendar_args', wp_parse_args($args, ['initial' => true, 'display' => true, 'post_type' => 'post']));
+    // A type with no published posts has no calendar, shown or returned.
+    if (!(new Posts(Runtime::current()->db))->hasPublished((string) $args['post_type'])) {
+        return null;
+    }
     [$year, $month] = _minn_calendar_month();
     $output = apply_filters('get_calendar', _minn_calendar($year, $month, (bool) $args['initial'], (string) $args['post_type']), $args);
     if ($args['display']) {
@@ -864,14 +850,12 @@ function _minn_calendar_month(): array
     $m = (string) ($GLOBALS['m'] ?? ($query instanceof WP_Query ? $query->get('m') : ''));
     $year = (int) ($GLOBALS['year'] ?? ($query instanceof WP_Query ? $query->get('year') : 0));
     $month = (int) ($GLOBALS['monthnum'] ?? ($query instanceof WP_Query ? $query->get('monthnum') : 0));
-    if (strlen($m) >= 6) {
-        return [(int) substr($m, 0, 4), (int) substr($m, 4, 2)];
-    }
+    // A year and month win; then m's year and month, a year alone in m meaning its January; a year alone shows this month (probe media-template-doubts).
     if ($year > 0 && $month > 0) {
         return [$year, $month];
     }
-    if ($year > 0) {
-        return [$year, (int) current_time('m')];
+    if (strlen($m) >= 4) {
+        return [(int) substr($m, 0, 4), strlen($m) >= 6 ? (int) substr($m, 4, 2) : 1];
     }
     return [(int) current_time('Y'), (int) current_time('m')];
 }
@@ -969,7 +953,7 @@ function wp_get_archives($args = '')
     $join = (string) apply_filters('getarchives_join', '', $r);
     $output = '';
     foreach (_minn_archive_rows($type, (string) $r['post_type'], (string) $r['order'], $limit, $where, $join) as $row) {
-        $after = $r['show_post_count'] && $row['count'] > 0 ? '&nbsp;(' . $row['count'] . ')' : $r['after'];
+        $after = ($r['show_post_count'] && $row['count'] > 0 ? '&nbsp;(' . $row['count'] . ')' : '') . $r['after'];
         $output .= get_archives_link($row['url'], $row['text'], $r['format'], $r['before'], $after, _minn_archive_is_current($type, $row, $r));
     }
     if ($r['echo']) {
@@ -979,10 +963,13 @@ function wp_get_archives($args = '')
     return $output;
 }
 
-/** @internal whether an archive row is the period the query is on, or the post being shown */
+/** @internal whether an archive row is the period the archive page is on, or the post being shown */
 function _minn_archive_is_current(string $type, array $row, array $r): bool
 {
     $period = $row['period'] ?? [];
+    if (in_array($type, ['yearly', 'monthly', 'daily', 'weekly'], true) && !is_archive()) {
+        return false;
+    }
     return match ($type) {
         'yearly' => (int) $r['year'] === ($period['year'] ?? -1),
         'monthly' => (int) $r['year'] === ($period['year'] ?? -1) && (int) $r['monthnum'] === ($period['month'] ?? -1),
@@ -999,7 +986,8 @@ function _minn_archive_rows(string $type, string $postType, string $order, int $
     $archives = new Archives(
         new Posts(Runtime::current()->db),
         static fn (string $format, string $datetime): string => date_i18n($format, (int) strtotime($datetime)),
-        static fn (int $y, ?int $m, ?int $d): string => $d !== null ? get_day_link($y, $m, $d) : ($m !== null ? get_month_link($y, $m) : get_year_link($y)),
+        // Another type's periods name it (probe media-template-doubts).
+        static fn (int $y, ?int $m, ?int $d): string => $postType === 'post' ? ($d !== null ? get_day_link($y, $m, $d) : ($m !== null ? get_month_link($y, $m) : get_year_link($y))) : add_query_arg('post_type', $postType, $d !== null ? get_day_link($y, $m, $d) : ($m !== null ? get_month_link($y, $m) : get_year_link($y))),
         static fn (string $datetime): array => get_weekstartend($datetime, get_option('start_of_week')),
     );
     if ($type === 'postbypost' || $type === 'alpha') {
@@ -1016,10 +1004,10 @@ function wp_login_form($args = [])
         'echo' => true,
         'redirect' => (is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? ''),
         'form_id' => 'loginform',
-        'label_username' => 'Username or Email Address',
-        'label_password' => 'Password',
-        'label_remember' => 'Remember Me',
-        'label_log_in' => 'Log In',
+        'label_username' => __('Username or Email Address'),
+        'label_password' => __('Password'),
+        'label_remember' => __('Remember Me'),
+        'label_log_in' => __('Log In'),
         'id_username' => 'user_login',
         'id_password' => 'user_pass',
         'id_remember' => 'rememberme',
@@ -1046,8 +1034,8 @@ function wp_login_form($args = [])
 function wp_loginout($redirect = '', $display = true)
 {
     $link = is_user_logged_in()
-        ? '<a href="' . esc_url(wp_logout_url($redirect)) . '">Log out</a>'
-        : '<a href="' . esc_url(wp_login_url($redirect)) . '">Log in</a>';
+        ? '<a href="' . esc_url(wp_logout_url($redirect)) . '">' . __('Log out') . '</a>'
+        : '<a href="' . esc_url(wp_login_url($redirect)) . '">' . __('Log in') . '</a>';
     $link = apply_filters('loginout', $link);
     if (!$display) {
         return $link;
@@ -1059,10 +1047,11 @@ function wp_register($before = '<li>', $after = '</li>', $display = true)
 {
     if (!is_user_logged_in()) {
         $link = get_option('users_can_register')
-            ? $before . '<a href="' . esc_url(wp_registration_url()) . '">Register</a>' . $after
+            ? $before . '<a href="' . esc_url(wp_registration_url()) . '">' . __('Register') . '</a>' . $after
             : '';
     } else {
-        $link = $before . '<a href="' . esc_url(admin_url()) . '">Site Admin</a>' . $after;
+        // Only a user who may read gets the admin link.
+        $link = current_user_can('read') ? $before . '<a href="' . esc_url(admin_url()) . '">' . __('Site Admin') . '</a>' . $after : '';
     }
     $link = apply_filters('register', $link);
     if (!$display) {
@@ -1194,16 +1183,16 @@ function the_weekday()
 /** Prints the current post's weekday once per day in a loop ($previousweekday), between before and after; the_weekday_date filters it. */
 function the_weekday_date($before = '', $after = '')
 {
-    global $previousweekday;
+    // Printed when the loop's day (setup_postdata's $currentday) differs from the last one printed.
+    global $currentday, $previousweekday;
     $post = get_post();
     if (!$post) {
         return;
     }
-    $weekday = $GLOBALS['wp_locale']->get_weekday(get_post_time('w', false, $post));
     $out = '';
-    if ($previousweekday !== $weekday) {
-        $out = $before . $weekday . $after;
-        $previousweekday = $weekday;
+    if ($currentday !== $previousweekday) {
+        $out = $before . $GLOBALS['wp_locale']->get_weekday(get_post_time('w', false, $post)) . $after;
+        $previousweekday = $currentday;
     }
     echo apply_filters('the_weekday_date', $out, $before, $after);
 }
@@ -1227,25 +1216,28 @@ function wp_dependencies_unique_hosts()
 
 /**
  * Prints a <link rel='preload'> for each resource wp_preload_resources asks
- * for: each needs an href or an imagesrcset and is printed once; only href,
- * as, crossorigin, type, media, imagesrcset, imagesizes and fetchpriority are
- * kept, in the order given.
+ * for: each needs an href (or, as an image, an imagesrcset) and is printed
+ * once; only href, as, crossorigin, type, media, fetchpriority and, for an
+ * image, imagesrcset and imagesizes are kept, in the order given, a
+ * numeric key's value as a bare attribute (probe media-template-doubts).
  */
 function wp_preload_resources()
 {
     $resources = apply_filters('wp_preload_resources', []);
     $unique = [];
     foreach (is_array($resources) ? $resources : [] as $resource) {
-        $key = is_array($resource) ? ($resource['href'] ?? $resource['imagesrcset'] ?? null) : null;
+        $image = is_array($resource) && ($resource['as'] ?? '') === 'image';
+        $key = is_array($resource) ? ($resource['href'] ?? ($image ? $resource['imagesrcset'] ?? null : null)) : null;
         if (is_string($key) && !isset($unique[$key])) {
-            $unique[$key] = $resource;
+            $unique[$key] = [$resource, $image];
         }
     }
-    foreach ($unique as $resource) {
+    foreach ($unique as [$resource, $image]) {
         $html = [];
         foreach ($resource as $name => $value) {
-            if (is_scalar($value) && in_array($name, ['href', 'as', 'crossorigin', 'type', 'media', 'imagesrcset', 'imagesizes', 'fetchpriority'], true)) {
-                $html[] = $name . "='" . ($name === 'href' ? esc_url((string) $value, ['http', 'https']) : esc_attr((string) $value)) . "'";
+            $kept = is_int($name) || in_array($name, ['href', 'as', 'crossorigin', 'type', 'media', 'fetchpriority'], true) || ($image && in_array($name, ['imagesrcset', 'imagesizes'], true));
+            if (is_scalar($value) && $kept) {
+                $html[] = is_int($name) ? esc_attr((string) $value) : $name . "='" . ($name === 'href' ? esc_url((string) $value, ['http', 'https']) : esc_attr((string) $value)) . "'";
             }
         }
         printf("<link rel='preload' %s />\n", implode(' ', $html));
@@ -1278,16 +1270,22 @@ function wp_finalize_template_enhancement_output_buffer(string $output, int $pha
     if (($phase & PHP_OUTPUT_HANDLER_CLEAN) !== 0) {
         return $output;
     }
-    $filtered = apply_filters('wp_template_enhancement_output_buffer', $output, $output);
+    // Only an HTML response (its Content-Type sent, else PHP's default_mimetype) is filtered (probe media-template-doubts).
+    $sent = preg_grep('/^content-type:/i', headers_list());
+    $type = trim(explode(';', $sent ? substr((string) end($sent), 13) : (string) ini_get('default_mimetype'))[0]);
+    $filtered = in_array($type, ['text/html', 'application/xhtml+xml'], true) ? apply_filters('wp_template_enhancement_output_buffer', $output, $output) : $output;
     do_action('wp_finalized_template_enhancement_output_buffer', $filtered);
     return $filtered;
 }
 
-/** The heartbeat's settings: the admin-ajax address, and the heartbeat nonce for someone signed in (probe placeholder-helpers). */
+/** The heartbeat's settings: the admin-ajax address off the admin, and the heartbeat nonce for someone signed in (probes placeholder-helpers, media-template-doubts). */
 function wp_heartbeat_settings($settings)
 {
+    // The admin pages set ajaxurl themselves; only the front end is told it.
     $settings = (array) $settings;
-    $settings['ajaxurl'] = admin_url('admin-ajax.php');
+    if (!is_admin()) {
+        $settings['ajaxurl'] = admin_url('admin-ajax.php');
+    }
     if (is_user_logged_in()) {
         $settings['nonce'] = wp_create_nonce('heartbeat-nonce');
     }
@@ -1309,7 +1307,8 @@ function get_the_block_template_html()
     }
     $embed = _minn_wp_embed();
     $content = shortcode_unautop($embed->autoembed($embed->run_shortcode((string) $_wp_current_template_content)));
-    $content = convert_smilies(wptexturize(do_shortcode(do_blocks($content))));
+    // Shortcodes run before the blocks render, so a shortcode's block markup renders too (probe media-template-doubts).
+    $content = convert_smilies(wptexturize(do_blocks(do_shortcode($content))));
     $content = str_replace(']]>', ']]&gt;', wp_filter_content_tags($content, 'template'));
     return '<div class="wp-site-blocks">' . $content . '</div>';
 }

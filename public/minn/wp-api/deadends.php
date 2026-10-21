@@ -3043,12 +3043,6 @@ function wp_ajax_wp_remove_post_lock()
     return null;
 }
 
-function wp_auth_check_load()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_auth_check_load');
-    return null;
-}
-
 function wp_autosave($post_data)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_autosave');

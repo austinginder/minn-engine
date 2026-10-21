@@ -39,8 +39,10 @@ final readonly class AuthCookies
      * their life through auth_cookie_expiration (two days, or fourteen when
      * remembered, the cookies then kept twelve hours past it); the auth
      * cookie's security through secure_auth_cookie, and the logged-in
-     * cookie's through secure_logged_in_cookie (secure only over HTTPS); a
-     * session made for that life when none is given; then set_auth_cookie
+     * cookie's through secure_logged_in_cookie (secure only when $https,
+     * which wp_set_auth_cookie answers by the home address's scheme); a
+     * session made for that life when none is given; each cookie through
+     * auth_cookie; then set_auth_cookie
      * and set_logged_in_cookie told the values, and send_auth_cookies asked
      * whether to send them. Signing in always runs under the booted
      * runtime (its sessions are WordPress's), so the hooks always run.
@@ -57,8 +59,9 @@ final readonly class AuthCookies
         // The session is made as WordPress makes it, so session_token_manager and attach_session_information have their say.
         $token = $token !== '' ? $token : Handoff::sessionTokens($user->id)->create($expiration);
         $scheme = $secure ? 'secure_auth' : 'auth';
-        $auth = self::mint($user, $expiration, $token, $scheme);
-        $loggedIn = self::mint($user, $expiration, $token, 'logged_in');
+        // Each cookie through auth_cookie, as the reference makes them (probe functions-formatting-doubts).
+        $auth = (string) Runtime::hooks()->filter('auth_cookie', [self::mint($user, $expiration, $token, $scheme), $user->id, $expiration, $scheme, $token]);
+        $loggedIn = (string) Runtime::hooks()->filter('auth_cookie', [self::mint($user, $expiration, $token, 'logged_in'), $user->id, $expiration, 'logged_in', $token]);
         Runtime::hooks()->action('set_auth_cookie', [$auth, $expire, $expiration, $user->id, $scheme, $token]);
         Runtime::hooks()->action('set_logged_in_cookie', [$loggedIn, $expire, $expiration, $user->id, 'logged_in', $token]);
         $send = (bool) Runtime::hooks()->filter('send_auth_cookies', [true, $expire, $expiration, $user->id, $scheme, $token]);

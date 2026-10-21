@@ -6,6 +6,7 @@ uploads, image sizes and attachment metadata
 |---|---|---|---|
 | [`AvifInfo`](#avifinfo) | final class | 142 | An AVIF file's primary image as wp_get_avif_info reports it (probe |
 | [`Canvas`](#canvas) | final readonly class | 168 | One GD bitmap and the operations the media layer needs on it. Every |
+| [`CompatFields`](#compatfields) | final class | 50 | The attachment's extra fields as the media modal's compat form prints |
 | [`FileTypes`](#filetypes) | final class | 75 | File types as WordPress knows them (data/mime.json): every extension's |
 | [`Gallery`](#gallery) | final class | 73 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
@@ -113,6 +114,27 @@ The bitmap written line by line from now on, as it is by default.
 Writes the image to the output in a format, at a quality.
 
 Internals: `affordable()` (private, line 60), `memoryLimit()` (private, line 72), `flipped()` (private, line 134), `encode()` (private, line 171)
+
+
+## CompatFields
+
+`final class Minn\Media\CompatFields` · `public/minn/src/Minn/Media/CompatFields.php`
+
+The attachment's extra fields as the media modal's compat form prints
+them (get_compat_media_markup), measured on the reference (probe
+media-template-doubts): a hidden menu order, the required-fields note and
+a table of rows, a field's own "tr" as given, then its hidden fields. A
+text input's value is escaped; a textarea's value, a label and an html
+field print as given; any other input prints the field's entry of that
+name. Nothing at all when there are no fields.
+
+### static `markup(int $id, int $menuOrder, array $fields, string $requiredNote): string`
+
+The form's markup.
+
+- `@param array<string, mixed> $fields what attachment_fields_to_edit answered`
+
+Internals: `row()` (private, line 50)
 
 
 ## FileTypes

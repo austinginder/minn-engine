@@ -288,6 +288,10 @@
             "file": "cron.php",
             "statement": "return $wp_error ? new WP_Error($code, $message) : false;"
         },
+        "_minn_date_link": {
+            "file": "template.php",
+            "statement": "return empty($struct = $GLOBALS['wp_rewrite']->{\"get_{$type}_permastruct\"}()) ? home_url($plain) : home_url(user_trailingslashit((string) preg_replace('#/{2,}#', '/', strtr((string) $struct, $parts)), $type));"
+        },
         "_minn_db_delta": {
             "file": "upgrade.php",
             "statement": "return new DbDelta(Runtime::current()->db);"
@@ -915,10 +919,6 @@
         "add_settings_error": {
             "file": "admin.php",
             "statement": "Minn\\Runtime\\RegisteredSettings::addError($setting, $code, $message, $type);"
-        },
-        "add_settings_field": {
-            "file": "admin.php",
-            "statement": "$GLOBALS['wp_settings_fields'][$page][$section][$id] = ['id' => $id, 'title' => $title, 'callback' => $callback, 'args' => $args];"
         },
         "add_site_option": {
             "file": "option.php",
@@ -1551,6 +1551,10 @@
         "esc_url_raw": {
             "file": "formatting.php",
             "statement": "return sanitize_url($url, $protocols);"
+        },
+        "esc_xml": {
+            "file": "template.php",
+            "statement": "return apply_filters('esc_xml', Minn\\Support\\Escape::xml(wp_check_invalid_utf8((string) $text)), $text);"
         },
         "excerpt_remove_footnotes": {
             "file": "blocks.php",
@@ -2611,10 +2615,6 @@
         "is_404": {
             "file": "query.php",
             "statement": "return _minn_main_query()->is_404();"
-        },
-        "is_admin": {
-            "file": "load.php",
-            "statement": "return Minn\\Runtime\\Runtime::booted() ? Minn\\Runtime\\Runtime::current()->isAdmin : Minn\\Runtime\\EarlyRequest::isAdmin();"
         },
         "is_allowed_http_origin": {
             "file": "http.php",

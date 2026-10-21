@@ -106,8 +106,7 @@
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "puts an instance of the filtered method's class in the global $wp_filesystem plugins write through, defines the FS_ constants and connects",
-                "doubt": "a method whose class is not loaded is refused without the filesystem_method_file filter WordPress asks for its file",
-                "body": "c51dc6cc5b40"
+                "body": "4300f5bf6be9"
             },
             "_draft_or_post_title": {
                 "verdict": "keep",
@@ -119,8 +118,13 @@
                 "verdict": "move",
                 "to": "Minn\\Admin\\PostListMarkup",
                 "why": "builds quick edit's further fields by rules (parent, template, order, each quick-edit taxonomy's terms, sticky, format) and buffers add_inline_data; markup PostListMarkup::inline should build",
-                "doubt": "tag names skip get_terms_to_edit and its terms_to_edit filter",
-                "body": "defbfb177458"
+                "body": "e0b613ee3b1c"
+            },
+            "_minn_settings_page": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "maps a retired settings page (misc, privacy) to its replacement with the reference's deprecation notice; composes _deprecated_argument and __()",
+                "body": "edd5a09503c3"
             },
             "_post_states": {
                 "verdict": "keep",
@@ -132,8 +136,7 @@
                 "verdict": "move",
                 "to": "Minn\\Admin\\IframeShell",
                 "why": "prints the admin document's doctype, html tag (the toolbar class, the language attributes) and charset meta; markup by rules",
-                "doubt": "no space separates the class attribute from the language attributes (they print run together), and the admin_xml_ns action is not fired",
-                "body": "966631bd78d6"
+                "body": "e648adda4416"
             },
             "_wp_oembed_get_object": {
                 "verdict": "move",
@@ -160,15 +163,13 @@
                     "globals"
                 ],
                 "why": "builds the top-level row by rules (the hook name, the default icon and its class, the next free position) and records it in $menu, $admin_page_hooks and $_registered_pages, hooking the callback for a user who may; the rules move, the globals stay the store plugins edit",
-                "doubt": "a taken position moves to the next free integer and the menu is ksorted where WordPress keeps a fractional string key; the generic icon class goes on custom icons rather than on the default one; $_parent_pages[slug] = false is never set, so menu_page_url answers '' for a top-level page",
-                "body": "99b76df4c320"
+                "body": "3342559415ee"
             },
             "add_meta_box": {
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "files the box under its screen's id, context and priority in the global $wp_meta_boxes plugins read and edit, once per screen of a list",
-                "doubt": "a box marked removed comes back when re-added at core priority, a box already filed under another context or priority is not moved (it is kept twice), and with no screen and no current screen it is filed under 'post' where WordPress adds nothing",
-                "body": "20f2820bb669"
+                "body": "40a7924f76c4"
             },
             "add_screen_option": {
                 "verdict": "keep",
@@ -176,12 +177,20 @@
                 "why": "get_current_screen, then its add_option, nothing without a screen",
                 "body": "e7f9eeed1d66"
             },
+            "add_settings_field": {
+                "verdict": "keep",
+                "reason": "scope",
+                "gates": [
+                    "globals"
+                ],
+                "why": "files the field in the $wp_settings_fields global plugins read, under the page _minn_settings_page maps",
+                "body": "3f0b40447fdb"
+            },
             "add_settings_section": {
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "files the section, its arguments laid over the defaults, in the global $wp_settings_sections plugins read",
-                "doubt": "the removed misc and privacy pages are not mapped to general and reading with their deprecation notices",
-                "body": "b37bbf455036"
+                "body": "996eacf9a0b0"
             },
             "add_submenu_page": {
                 "verdict": "move",
@@ -190,8 +199,7 @@
                     "globals"
                 ],
                 "why": "refuses a user without the capability (noting $_wp_submenu_nopriv), seeds the parent's own row, inserts at the position and records the hook in $submenu, $_registered_pages and $_parent_pages; the rules move, the globals stay the store plugins edit",
-                "doubt": "the parent is remapped through $_parent_pages where WordPress maps it through $_wp_real_parent_file, so a submenu under another submenu's slug lands under that page's parent; a non-numeric position is taken silently where WordPress gives _doing_it_wrong",
-                "body": "b310eb158868"
+                "body": "82da1ab67011"
             },
             "deactivate_plugins": {
                 "verdict": "delegate",
@@ -203,8 +211,8 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\ThemeSwitch",
                 "why": "refuses the active theme or its parent before ThemeSwitch::delete; that guard belongs in delete, the could_not_remove_theme WP_Error stays",
-                "doubt": "WordPress's delete_theme does not refuse the active theme itself (its callers do), and its failure message names the theme",
-                "body": "9622d192577f"
+                "doubt": "the active theme (and a path outside the themes folder) is refused here, where WordPress deletes it and leaves the refusal to its callers; kept as the safer answer (Austin to decide)",
+                "body": "ccf4ebeb1494"
             },
             "do_meta_boxes": {
                 "verdict": "move",
@@ -214,8 +222,8 @@
                     "globals"
                 ],
                 "why": "prints a context's boxes from $wp_meta_boxes by priority in the postbox markup around each callback and counts them; markup by rules",
-                "doubt": "renders the classic editor's meta box columns, an admin screen Minn leaves out; WordPress also applies the user's meta-box-order, the sorted priority, the hidden and postbox_classes classes and the move and toggle buttons, none of which is here",
-                "body": "0f5f7630d5ec"
+                "doubt": "WordPress applies a user's saved meta-box-order on a page's first do_meta_boxes call only; not applied here (a fresh first call was not measurable); Minn Admin leaves the screen out",
+                "body": "422bb4a35e6a"
             },
             "do_settings_fields": {
                 "verdict": "move",
@@ -246,8 +254,7 @@
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "answers the parent given, else the $parent_file global the admin screen sets; reading that global is the point",
-                "doubt": "a given parent is not mapped through $_wp_real_parent_file, and with none given WordPress works the parent out from $pagenow, $plugin_page, $menu and $submenu (and sets $parent_file) where this only returns $parent_file",
-                "body": "63c342880402"
+                "body": "69bfba64950f"
             },
             "get_column_headers": {
                 "verdict": "move",
@@ -302,8 +309,8 @@
                     "globals"
                 ],
                 "why": "names a plugin page's hook (toplevel, the parent's hook name or admin, then the cleaned slug) from $admin_page_hooks; a naming rule beside the menu registry",
-                "doubt": "every character outside [a-zA-Z0-9_:.] becomes a hyphen where WordPress only strips .php, so a dir/page.php slug names a different hook; core parents are never seeded into $admin_page_hooks (_minn_admin_page_hooks is defined but unused), so an options page hooks as admin_page_x, not settings_page_x",
-                "body": "00e19bb8551f"
+                "doubt": "core parents are not seeded from the admin menu, which shows only in a live wp-admin",
+                "body": "d34f2ed0ce7c"
             },
             "get_post_states": {
                 "verdict": "move",
@@ -321,36 +328,32 @@
                     "globals"
                 ],
                 "why": "merges $wp_settings_errors with the errors stored in the settings_errors transient (deleting it) after an optional sanitize, filtered by setting; stored state beside RegisteredSettings::addError",
-                "doubt": "the transient is read on every call where WordPress reads it only after a save (settings-updated in the query), and it is merged into a local copy, not $wp_settings_errors, so a second call loses those errors once the transient is gone",
-                "body": "85cc341ec32d"
+                "body": "37206fb9e4da"
             },
             "get_submit_button": {
                 "verdict": "move",
                 "to": "Minn\\Admin\\Buttons",
                 "why": "turns the type into button classes by rule, folds the id out of the attributes and builds the submit input, wrapped by the flag; markup by rules",
-                "doubt": "the default 'Save Changes' is not translated, and a '0' text stays where WordPress's empty() test replaces it",
-                "body": "ba8739a3595f"
+                "body": "0cbf2dbd4c31"
             },
             "iframe_footer": {
                 "verdict": "move",
                 "to": "Minn\\Admin\\IframeShell",
                 "why": "closes the iframe document: a hidden block with the auth check and the footer actions, then the onload script; one document with iframe_header",
-                "doubt": "it calls wp_auth_check_html itself where WordPress hooks it in only for a signed-in user through wp_auth_check_load and its filter, and admin_footer gets '' and the footer hook the screen id where WordPress passes $hook_suffix",
-                "body": "30661dc488a1"
+                "body": "3baea6511d37"
             },
             "iframe_header": {
                 "verdict": "move",
                 "to": "Minn\\Admin\\IframeShell",
                 "why": "hides the toolbar and prints the iframe document's head: the title, the viewport, the screen's admin hooks and a body class from the screen id; a document built by rules",
-                "doubt": "with no screen admin_enqueue_scripts and the suffixed hooks are skipped, and they are named from the screen id, not $hook_suffix; admin_body_class, the locale and rtl classes, $body_id, the colors style and the ajaxurl script are left out; the admin iframe shell is a screen Minn leaves out",
-                "body": "d65792b25049"
+                "doubt": "the admin's default assets (load-scripts, heartbeat, emoji, the colour scheme) come from wp-admin's default hooks, which the engine does not add",
+                "body": "88c4032d981e"
             },
             "is_super_admin": {
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "the current or given user asked has_cap('delete_users'), the single-site rule, through the public user functions and their filters",
-                "doubt": "an id of 0 or null looks that id up where WordPress takes any falsy id as the current user",
-                "body": "0e043d8947bc"
+                "body": "f00895ec6795"
             },
             "menu_page_url": {
                 "verdict": "move",
@@ -359,8 +362,7 @@
                     "globals"
                 ],
                 "why": "looks the page's parent up in $_parent_pages and builds its address by rule (the parent's script with page=, or admin.php); the escaping and the display flag stay",
-                "doubt": "the test is the parent being admin.php where WordPress asks whether the parent is itself a registered page, so a submenu under a plugin's top-level menu gets wp-admin/my-top?page=sub instead of admin.php?page=sub",
-                "body": "a52ba06b9cd0"
+                "body": "eccadf532d30"
             },
             "plugins_api": {
                 "verdict": "delegate",
@@ -403,8 +405,7 @@
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "marks the box false at every priority of its screen and context in the global $wp_meta_boxes plugins read; editing the global is the point",
-                "doubt": "an empty screen is filed under '' where WordPress uses the current screen",
-                "body": "12dcdb4fa8e3"
+                "body": "2fc057945563"
             },
             "remove_submenu_page": {
                 "verdict": "keep",
@@ -422,8 +423,7 @@
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "puts the screen for the hook in the global $current_screen and fires current_screen; it repeats WP_Screen::set_current_screen, which it could call",
-                "doubt": "WordPress also sets $typenow and $taxnow from the screen; neither is set here nor in WP_Screen::set_current_screen",
-                "body": "79015c8e958f"
+                "body": "23b9d051210b"
             },
             "set_screen_options": {
                 "verdict": "move",
@@ -432,8 +432,7 @@
                     "globals"
                 ],
                 "why": "handles the Screen Options form from $_POST: the nonce, the option name check, the filters, the user meta write and the redirect; request handling and a stored write",
-                "doubt": "it fires set_screen_option where WordPress's older filter is set-screen-option (only for _page options and layout_columns), and the core per-page options are not accepted as integers 1 to 999, so they are dropped unless filtered; the Screen Options form belongs to admin list screens Minn leaves out",
-                "body": "ea8b1b7a005a"
+                "body": "3156550e4e48"
             },
             "settings_errors": {
                 "verdict": "move",
@@ -473,15 +472,19 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "add_meta_box on the current screen with the widget's context and priority, nothing without a screen",
-                "doubt": "the __widget_basename callback argument and the control callback ($wp_dashboard_control_callbacks, the Configure link) are dropped, and core widget ids are not moved to side or high",
-                "body": "924408c93100"
+                "body": "5d298b9e2231"
             },
             "wp_add_privacy_policy_content": {
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "a _doing_it_wrong outside the admin or before admin_init, else WP_Privacy_Policy_Content::add",
-                "doubt": "in the admin before admin_init WordPress words the notice differently (use the admin_init action, see the inline documentation); one message serves both cases here",
-                "body": "1d63a6b4bb38"
+                "body": "e713977a899f"
+            },
+            "wp_auth_check_load": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "queues the session-expired dialog's style and script and hooks its markup on both footers for a signed-in user or the admin, never on the update screens; all hook and asset calls",
+                "body": "4c0f6adff510"
             },
             "wp_clean_plugins_cache": {
                 "verdict": "keep",
@@ -499,8 +502,7 @@
                 "verdict": "move",
                 "to": "Minn\\Admin\\CodeEditor",
                 "why": "the CodeMirror, CSSLint, JSHint and HTMLHint defaults and the mode chosen by type, then wp_code_editor_settings; editor configuration by rules",
-                "doubt": "every type but CSS gets its MIME type as the mode (WordPress maps HTML to htmlmixed, and JavaScript, JSON, PHP, SQL and others to their modes with lint options per type), no type defaults to text/html, and $args['file'] and the args' codemirror, csslint, jshint and htmlhint overrides are ignored",
-                "body": "508f67f56128"
+                "body": "f66361e36890"
             },
             "wp_iframe": {
                 "verdict": "move",
@@ -509,8 +511,8 @@
                     "globals"
                 ],
                 "why": "prints the media popup's admin document around the callback: the head, the title, the admin head and footer actions and $body_id on the body; a document built by rules",
-                "doubt": "the colors and deprecated-media styles and the ajaxurl, pagenow and isRtl script WordPress prints are left out; the media upload popup is an admin screen Minn leaves out",
-                "body": "ba42f3eac0ca"
+                "doubt": "the admin's default assets (load-scripts, heartbeat, emoji, the colour scheme) come from wp-admin's default hooks, which the engine does not add",
+                "body": "dc1078dcd11b"
             },
             "wp_version_check": {
                 "verdict": "move",
@@ -4395,12 +4397,6 @@
                 "why": "makes the folder through wp_mkdir_p and calls the writer",
                 "body": "78750685d698"
             },
-            "WP_Image_Editor::make_subsize": {
-                "verdict": "keep",
-                "reason": "contract",
-                "why": "one size through $this->resize and save, the state restored",
-                "body": "93223383f3a8"
-            },
             "WP_Image_Editor::maybe_exif_rotate": {
                 "verdict": "move",
                 "to": "Minn\\Media\\PhotoMeta",
@@ -4475,6 +4471,15 @@
                 ],
                 "why": "opens the file as a canvas with its type, then $this->set_quality",
                 "body": "3eefb9f92e16"
+            },
+            "WP_Image_Editor_GD::make_subsize": {
+                "verdict": "keep",
+                "reason": "shape",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "one sub-size made on the GD editor through its own resize and save, the state kept and restored; it lives on the GD class because the reference's base editor has none (an editor without it gets multi_resize)",
+                "body": "93223383f3a8"
             },
             "WP_Image_Editor_GD::multi_resize": {
                 "verdict": "keep",
@@ -11955,8 +11960,7 @@
                 "verdict": "move",
                 "to": "Minn\\Front\\CommentFormMarkup",
                 "why": "the form element, logged-in or notes line, the field list with the cookies box, each field filter and the before and after actions, the submit field and id fields; markup by rules",
-                "doubt": "comment_form_after_fields never fires when the comment field is last (the common move-it-down snippet); a signed-in user's comment_form_fields sees only the comment field yet prints any field a plugin adds",
-                "body": "63544c5291ad"
+                "body": "7fff3c907b18"
             },
             "_minn_comment_form_fields": {
                 "verdict": "move",
@@ -12056,8 +12060,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostTags",
                 "why": "chooses the comments-off span, the respond or comments address, the default wording with the screen-reader title and the anchor with its attributes filter; markup by rules",
-                "doubt": "$none false prints nothing where the API prints Comments Off with the title; an unset $zero, $one or $more becomes '' and blanks that text instead of its default; no password-required message",
-                "body": "5adb30da764c"
+                "body": "71de3c8daf34"
             },
             "comments_template": {
                 "verdict": "keep",
@@ -12303,8 +12306,7 @@
                     "globals"
                 ],
                 "why": "pages through the person's comments, asks wp_anonymize_comment and writes the anonymised columns through $wpdb with the cache cleared; erasure work for the engine",
-                "doubt": "a plugin's refusal message is not passed through esc_html, and a row the update fails to change is not reported as retained",
-                "body": "8590034cbbe0"
+                "body": "90641cead3d7"
             },
             "wp_comments_personal_data_exporter": {
                 "verdict": "move",
@@ -14768,8 +14770,7 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\Clickable",
                 "why": "decides nofollow and ugc for a made link and fires make_clickable_rel; the rel rule of make_clickable",
-                "doubt": "WordPress asks wp_is_internal_link (the wp_internal_hosts filter) and current_filter() === 'comment_text'; here only the home host counts and doing_filter is true inside nested filters too",
-                "body": "86da6926530a"
+                "body": "944c58c6a7ff"
             },
             "_make_email_clickable_cb": {
                 "verdict": "move",
@@ -14814,15 +14815,13 @@
                 "verdict": "move",
                 "to": "Minn\\Support\\Text",
                 "why": "cuts text into chunks at the last whitespace before the goal, or the first after it; a text algorithm for Support\\Text",
-                "doubt": "WordPress drops a last chunk of '0' (its truthiness test); here it is kept",
-                "body": "76347824109b"
+                "body": "efce70fb0ecb"
             },
             "_wp_array_get": {
                 "verdict": "move",
                 "to": "Minn\\Support\\Lists",
                 "why": "walks a key path into nested arrays with a default; Blocks\\StyleEngine::at and Blocks\\Selector::at hold private copies of the same walk",
-                "doubt": "WordPress answers the default when a path element is not a string, integer or null; here an array element throws in array_key_exists",
-                "body": "13a70cacd15f"
+                "body": "a8f9f40e96f4"
             },
             "_wp_array_set": {
                 "verdict": "move",
@@ -14831,8 +14830,7 @@
                     "refs"
                 ],
                 "why": "sets a value at a key path by reference, making the arrays on the way; the setting half of the path walk",
-                "doubt": "WordPress leaves the array alone when any path element is not a string, integer or null; here such a key is cast or throws",
-                "body": "2af8d2713387"
+                "body": "f7c840c5181c"
             },
             "_wp_emoji_list": {
                 "verdict": "delegate",
@@ -14886,8 +14884,7 @@
                 "verdict": "move",
                 "to": "Minn\\Support\\Email",
                 "why": "scrambles an address character by character into plain, decimal or hex references at random, @ always encoded; an address rule for Support\\Email",
-                "doubt": "WordPress's third choice is a %XX percent escape (for mailto hrefs) and a character may stay plain with hex encoding on; here hex encoding gives &#x..; references and never plain text",
-                "body": "9cdfe9d26928"
+                "body": "a12f21a261f4"
             },
             "attribute_escape": {
                 "verdict": "keep",
@@ -14914,8 +14911,8 @@
                     "globals"
                 ],
                 "why": "the use_smilies option check and the table lookup in front of TextFilters::smilies; reading the option and choosing the table are engine work",
-                "doubt": "WordPress converts nothing until smilies_init has built $wp_smiliessearch and replaces through that pattern; here the filtered defaults apply earlier and a plugin's own $wp_smiliessearch is never read",
-                "body": "c332de8cd7ff"
+                "doubt": "before init the engine builds the search itself and converts, where WordPress converts nothing until smilies_init",
+                "body": "03004b045219"
             },
             "esc_sql": {
                 "verdict": "keep",
@@ -14940,8 +14937,7 @@
                 "verdict": "move",
                 "to": "Minn\\Support\\Entities",
                 "why": "encodes every character with an entity, then restores known named and numeric references; an encoding rule for Support\\Entities",
-                "doubt": "WordPress keeps the ampersand itself and escapes one only when no short name ([A-Za-z]{0,4}\\w{2,3};) or two-to-three digit reference follows, known or not; here unknown names are escaped and longer numeric references kept",
-                "body": "e6bd38de4439"
+                "body": "1c9ff4cb1d4a"
             },
             "human_time_diff": {
                 "verdict": "move",
@@ -14954,15 +14950,13 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\SiteTime",
                 "why": "parses an ISO 8601 offset into seconds; a time rule beside iso8601_to_datetime's",
-                "doubt": "WordPress reads the minutes from the fourth character on, so +05:30 counts five hours there, and answers a float; here the colon form gives 19800",
-                "body": "0b1680357f19"
+                "body": "acdd54ef14ac"
             },
             "iso8601_to_datetime": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\SiteTime",
                 "why": "parses an ISO 8601 date with its offset (or the site zone) and writes it in the site zone or GMT; site time conversion beside SiteTime::toGmt",
-                "doubt": "WordPress answers false for a timezone argument other than 'gmt' or 'user'; here anything but gmt reads as user",
-                "body": "bf4d018d9a7d"
+                "body": "78ad26b66859"
             },
             "like_escape": {
                 "verdict": "move",
@@ -15023,8 +15017,7 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\TextFilters",
                 "why": "looks the code up in the smiley table and builds the image markup through smilies_src for an image file, else the emoji; the image half of TextFilters::smilies",
-                "doubt": "WordPress's image extensions are jpg, jpeg, jpe, gif, png, webp (and avif); svg counting as an image here, and jpe and avif not, looks off",
-                "body": "35b18f681748"
+                "body": "e0e3238d8326"
             },
             "url_shorten": {
                 "verdict": "move",
@@ -15049,8 +15042,7 @@
                 "verdict": "move",
                 "to": "Minn\\Front\\EmbedCard",
                 "why": "on an embed, builds the Continue reading link markup to the permalink; a piece of the embed card",
-                "doubt": "'Continue reading %s' is not translated; WordPress runs it through __()",
-                "body": "8d7967438506"
+                "body": "7ad989fc620c"
             },
             "wp_filter_object_list": {
                 "verdict": "keep",
@@ -15101,8 +15093,7 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\PersonalData",
                 "why": "the anonymous stand-in for each data type (the IP through wp_privacy_anonymize_ip) and its filter; personal data rules",
-                "doubt": "the text and longtext stand-ins are not translated; WordPress runs both through __()",
-                "body": "a9fb3461c406"
+                "body": "220f2c50b4ed"
             },
             "wp_replace_in_html_tags": {
                 "verdict": "move",
@@ -15138,8 +15129,7 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\Emoji",
                 "why": "reads the mail's content type from its headers (the parse MailHeaders::parse already does), filters it and staticizes the emoji of an HTML message; beside Emoji::staticize",
-                "doubt": "WordPress stops at the first Content-Type header; this loop lets the last one win",
-                "body": "1e82a8bc6801"
+                "body": "5ea0cd083a29"
             },
             "wp_targeted_link_rel": {
                 "verdict": "move",
@@ -15165,8 +15155,7 @@
                 "verdict": "keep",
                 "reason": "shape",
                 "why": "echoes a scalar message with the status the caller named (200 by default, null keeps the one set), then exits by the flag",
-                "doubt": "the status goes out through http_response_code, so status_header's filter never hears it and no no-cache headers are sent",
-                "body": "4bfe28f6ae73"
+                "body": "e09e9dd67d83"
             },
             "_canonical_charset": {
                 "verdict": "move",
@@ -15193,8 +15182,8 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "asks the cache, which a drop-in may provide, for each id and keeps the misses",
-                "doubt": "a non-integer id is cast without _validate_cache_id's notice, and the cache is asked id by id where the API asks wp_cache_get_multiple once",
-                "body": "30df0136f118"
+                "doubt": "the cache is asked id by id where the API asks wp_cache_get_multiple once",
+                "body": "4222b1eb614e"
             },
             "_http_build_query": {
                 "verdict": "move",
@@ -15206,15 +15195,13 @@
                 "verdict": "keep",
                 "reason": "shape",
                 "why": "turns the processed die arguments into the JSON error body with its headers, then exits by the flag",
-                "doubt": "the status goes out through http_response_code, so status_header's filter never hears it and no no-cache headers are sent; the first error's data.error never reaches the body",
-                "body": "08efc06acc53"
+                "body": "123af1e791d3"
             },
             "_jsonp_wp_die_handler": {
                 "verdict": "keep",
                 "reason": "shape",
                 "why": "the JSON error body wrapped in the _jsonp callback the request named, with its headers, then exits by the flag",
-                "doubt": "the status goes out through http_response_code, so status_header's filter never hears it and no no-cache headers are sent",
-                "body": "a439b2d181ef"
+                "body": "dc8f12601785"
             },
             "_minn_dirsize": {
                 "verdict": "move",
@@ -15234,7 +15221,7 @@
                     "refs"
                 ],
                 "why": "matches the URL's extension against the MIME table, writing the type through a reference; part of do_enclose, its table lookup a Media\\FileTypes job",
-                "body": "9fc8a1da3de8"
+                "body": "1f89a78a38e2"
             },
             "_minn_etc_zone_order": {
                 "verdict": "move",
@@ -15287,15 +15274,13 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\FileNames",
                 "why": "tests a list of names for the file's sized, scaled or rotated variants by regex; a unique-name rule beside FileNames::unique",
-                "doubt": "a name that is only an extension ('.jpg') is tested against '-WxH.jpg' where the API answers false at once",
-                "body": "109777222f5f"
+                "body": "d1f03d5ed79d"
             },
             "_wp_die_process_input": {
                 "verdict": "move",
                 "to": "Minn\\Http\\DiePage",
                 "why": "settles the die arguments by rule (status from the error data, defaults, 500, title, code, the site charset); the WP_Error unpacking stays as the call's wrapper",
-                "doubt": "a code holding several messages gives only its first where the API lists each, a caller's code is overwritten by the error's, and the default title is not translated",
-                "body": "876ffa7d3f4d"
+                "body": "cae4efae1c98"
             },
             "_wp_timezone_choice_usort_callback": {
                 "verdict": "move",
@@ -15326,8 +15311,8 @@
                 "verdict": "move",
                 "to": "Minn\\Support\\WebServer",
                 "why": "deciding Apache from the server software and looking up the module list is web-server knowledge beside WebServer::isApache",
-                "doubt": "a module missing from apache_get_modules() answers false where the API falls back to its phpinfo check and then the default, and the $is_apache global plugins may set is not read",
-                "body": "2216c61bf0b2"
+                "doubt": "no phpinfo fallback when apache_get_modules is missing",
+                "body": "b92407c1093b"
             },
             "cache_javascript_headers": {
                 "verdict": "move",
@@ -15342,15 +15327,13 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\DirectorySizes",
                 "why": "drops a path and its parents from the dirsize_cache transient, the store recurse_dirsize keeps",
-                "doubt": "a non-string or empty path is not warned about as the API does",
-                "body": "2e0b1646fa14"
+                "body": "50d68eb68a1e"
             },
             "date_i18n": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\SiteTime",
                 "why": "works out the timestamp and zone, formats through LocalDates and fires date_i18n; it belongs beside SiteTime::format (wp_date), which does the same for a true timestamp",
-                "doubt": "the filter hears the raw argument (false when omitted) where the API passes the resolved timestamp, and format 'U' prints the real epoch rather than the offset timestamp given",
-                "body": "646ee1d47f8c"
+                "body": "84283f3f012e"
             },
             "dead_db": {
                 "verdict": "keep",
@@ -15362,8 +15345,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Enclosures",
                 "why": "finds the content's links, drops stale enclosure meta, asks each new link's headers and stores audio and video as enclosure meta; engine work over posts, meta and HTTP",
-                "doubt": "the audio/video test reads only the served Content-Type where the API lets the extension's type replace it, and links with no path or query are not skipped",
-                "body": "34a40b587408"
+                "body": "32297b7cf5f7"
             },
             "do_favicon": {
                 "verdict": "keep",
@@ -15381,8 +15363,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\SiteTime",
                 "why": "week arithmetic over the site's start_of_week option is site-time behaviour",
-                "doubt": "a non-numeric $start_of_week is cast to 0 (Sunday) where the API falls back to the option",
-                "body": "eca666a72242"
+                "body": "c2c3fefc985e"
             },
             "global_terms_enabled": {
                 "verdict": "keep",
@@ -15394,8 +15375,7 @@
                 "verdict": "move",
                 "to": "Minn\\Support\\Time",
                 "why": "parses hh:mm:ss and words each part with plural forms; duration wording beside Support\\Time::span",
-                "doubt": "a zero hour part (0:05:30) is dropped where the API words it as 0 hours",
-                "body": "3db66105fc4a"
+                "body": "0a72cc5fa4dc"
             },
             "is_lighttpd_before_150": {
                 "verdict": "move",
@@ -15475,8 +15455,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "wp_cache_get then wp_cache_set, which a drop-in may provide",
-                "doubt": "a missing value is set directly, so the wp_cache_set_last_changed action never fires as it does when the API calls wp_cache_set_last_changed",
-                "body": "e8807dab4945"
+                "body": "51131afa8a51"
             },
             "wp_cache_set_last_changed": {
                 "verdict": "keep",
@@ -15494,15 +15473,13 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "picks the handler by request kind through public predicates and the per-kind handler filters plugins use to replace it, then calls it",
-                "doubt": "an int $title overrides an int $args, where the API takes $args first and ignores the title",
-                "body": "16dde44b6ae1"
+                "body": "57231980a82b"
             },
             "wp_enqueue_emoji_styles": {
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "unhooks print_emoji_styles through has_action and remove_action; Minn prints no emoji plumbing",
-                "doubt": "having unhooked print_emoji_styles it enqueues no wp-emoji-styles inline style in its place, as the API does",
-                "body": "cf5cfb7060fc"
+                "body": "7d2ed5d24548"
             },
             "wp_extract_urls": {
                 "verdict": "move",
@@ -15532,8 +15509,8 @@
                 "verdict": "move",
                 "to": "Minn\\Admin\\AdminNotice",
                 "why": "builds the notice div's classes and attributes from the arguments by rule, with its filters; markup the engine should render",
-                "doubt": "an attribute set to false prints name=\"\" and a numeric key prints 0=\"x\", where the API drops false and prints a bare value for a numeric key; the type is not trimmed",
-                "body": "4d029eabf6e5"
+                "doubt": "the id is escaped here where WordPress prints it raw (stricter)",
+                "body": "481de3934a56"
             },
             "wp_get_default_extension_for_mime_type": {
                 "verdict": "move",
@@ -15557,8 +15534,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "rebuilds what _wp_filter_font_directory makes; it should be wp_font_dir(false), so the upload_dir filters run around the font folder as the API runs them",
-                "doubt": "upload_dir filters never hear the font folder, which they do through wp_font_dir",
-                "body": "71e5ab1a502a"
+                "body": "fef8607d4e4d"
             },
             "wp_get_http_headers": {
                 "verdict": "keep",
@@ -15609,8 +15585,8 @@
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "reads $pagenow and the PHP_AUTH superglobals as plugins left them, then the filter decides",
-                "doubt": "an ajax request counts as admin and the login page is tested last, where the API tests wp-login.php first and asks only is_admin()",
-                "body": "cae3b30fabbd"
+                "doubt": "is_admin() is asked before the login page where the API tests wp-login.php first",
+                "body": "98d7ae6ba1e1"
             },
             "wp_is_stream": {
                 "verdict": "move",
@@ -15677,15 +15653,13 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\PersonalData",
                 "why": "finds pending requests older than the key expiry and marks them failed; request lifecycle work for the engine",
-                "doubt": "a failed request keeps its post_password (the confirmation key), which the API clears when it fails one",
-                "body": "06036ea067b4"
+                "body": "7a2f49d0e932"
             },
             "wp_referer_field": {
                 "verdict": "keep",
                 "reason": "shape",
                 "why": "the hidden input around the request URI the engine resolves, echoed by the display flag",
-                "doubt": "a request URI already carrying _wp_http_referer is echoed whole; the API may strip that argument first and escape the value as a URL",
-                "body": "08fc0e3ea9cc"
+                "body": "bf5a864dc591"
             },
             "wp_remote_fopen": {
                 "verdict": "keep",
@@ -15722,8 +15696,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "headers, wp_json_encode, then wp_die for ajax (so its handler filter applies) or exit; every step is a public function or plain output",
-                "doubt": "no _doing_it_wrong when called while serving a REST request, as the API warns",
-                "body": "bc4a70ae4471"
+                "body": "dd81518c2ada"
             },
             "wp_send_json_error": {
                 "verdict": "keep",
@@ -15753,8 +15726,7 @@
                 "verdict": "move",
                 "to": "Minn\\Support\\Files",
                 "why": "names and creates a temporary file by its own rules; file creation belongs in Support\\Files",
-                "doubt": "PHP's tempnam names (prefix plus random, no extension) differ from the API's name-XXXXXX.tmp made unique in the folder, and an empty name becomes 'file' where the API uses a unique id",
-                "body": "0d73fb2af52d"
+                "body": "8f55d4bf70b8"
             },
             "wp_timezone_override_offset": {
                 "verdict": "move",
@@ -15772,8 +15744,8 @@
                 "verdict": "move",
                 "to": "Minn\\Blocks\\RenderState",
                 "why": "a per-prefix counter kept in a function static; RenderState already keeps the request's id counter",
-                "doubt": "the static outlives the request in a long-lived worker, and a non-string prefix is not warned about as the API does",
-                "body": "41ca4413c73c"
+                "doubt": "the static outlives the request in a long-lived worker",
+                "body": "6b0eb065efc3"
             },
             "wp_update_php_annotation": {
                 "verdict": "keep",
@@ -15785,8 +15757,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\FileUpload",
                 "why": "the whole sideload of raw bytes (type check, wp_upload_bits refusal, folder, unique name, write, wp_handle_upload) mirrors FileUpload::handle and belongs beside it",
-                "doubt": "the dirsize cache is never cleared for the new file, and the file gets 0644 where the API derives its permissions from the folder's",
-                "body": "7f58a0a429b2"
+                "body": "ba03fd0a44eb"
             },
             "wp_widget_description": {
                 "verdict": "keep",
@@ -16529,6 +16500,15 @@
                 "why": "starts the cache and its groups through the cache API a drop-in may define, and hands a drop-in the options group",
                 "body": "97e27d1db15d"
             },
+            "is_admin": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Runtime",
+                "gates": [
+                    "globals"
+                ],
+                "why": "a current screen's in_admin() answers when one is set (the $current_screen global), else the engine's request; the screen read stays where the global lives",
+                "body": "fd2f13746dfb"
+            },
             "is_login": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\RequestKind",
@@ -16931,8 +16911,7 @@
                     "unprobed"
                 ],
                 "why": "renders the -pdf.jpg preview, stores it as full and makes the fallback sizes from it",
-                "doubt": "renders the preview even when no fallback size is registered (WordPress then skips the editor) and forces every fallback size uncropped, not only thumbnail",
-                "body": "d161b4559d9d"
+                "body": "8cd80a31c023"
             },
             "_minn_playlist_attachments": {
                 "verdict": "move",
@@ -16987,8 +16966,7 @@
                 "verdict": "move",
                 "to": "Minn\\Media\\ImageEditors",
                 "why": "filters the editor class list and picks the first that passes test, type and method checks; a selection rule the engine can run over class names",
-                "doubt": "ignores output_mime_type where WordPress prefers an editor that also writes the output type, and the cache entry and key it reads are never used",
-                "body": "c6521610103a"
+                "body": "dac5919e45f8"
             },
             "_wp_image_meta_replace_original": {
                 "verdict": "move",
@@ -17006,8 +16984,7 @@
                     "unprobed"
                 ],
                 "why": "orders the missing sizes, rotates once and saves the meta after each size; the subsize loop",
-                "doubt": "only medium and large go first where WordPress also puts thumbnail and medium_large ahead, and an editor without make_subsize gets no multi_resize fallback",
-                "body": "a8c5dbeda8b6"
+                "body": "3617727ef2c9"
             },
             "_wp_post_thumbnail_class_filter": {
                 "verdict": "keep",
@@ -17025,8 +17002,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Attachments",
                 "why": "turns the URL into an uploads-relative path (scheme swap, base strip) and looks it up; the lookup is already PostLookup::attachmentIdByFile",
-                "doubt": "the attachment_url_to_postid filter gets 0 for no match where WordPress passes null",
-                "body": "9543b15bebd6"
+                "body": "7470e4700ab7"
             },
             "delete_post_thumbnail": {
                 "verdict": "keep",
@@ -17038,8 +17014,7 @@
                 "verdict": "move",
                 "to": "Minn\\Media\\ImageMime",
                 "why": "reads the header and checks the type against the displayable list; a file rule for the engine",
-                "doubt": "the file_is_displayable_image filter never fires and AVIF is missing from the displayable types",
-                "body": "199b63608003"
+                "body": "23ad78ca13da"
             },
             "file_is_valid_image": {
                 "verdict": "move",
@@ -17051,8 +17026,7 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\MediaShortcodes",
                 "why": "the [gallery] shortcode: ids, attributes, post_gallery, the attachment query, items, the tags a post may hold (KsesRules::galleryTags) and style before Gallery::render; shortcode behaviour beside [video] and [audio]",
-                "doubt": "no is_feed branch, and shortcode_atts_gallery fires before post_gallery",
-                "body": "a89b820fe89c"
+                "body": "4aad789184f1"
             },
             "get_adjacent_image_link": {
                 "verdict": "move",
@@ -17067,8 +17041,7 @@
                     "unprobed"
                 ],
                 "why": "builds the compat form markup from the attachment fields; markup by rules for the modal model",
-                "doubt": "attachment_fields_to_edit gets [] instead of the default fields, and only fields carrying their own tr are rendered",
-                "body": "a6a192213cad"
+                "body": "7a6bfc98a659"
             },
             "get_image_tag": {
                 "verdict": "move",
@@ -17152,8 +17125,7 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\MediaShortcodes",
                 "why": "the [caption] shortcode: an attribute's caption through wp_kses post or the caption split from the content, the filter, a given id or caption id as a class given once a page (RenderState::uniqueCaptionId; probe sweep-1020), width and class, figure or div markup",
-                "doubt": "the non-HTML5 form never adds aria-describedby to the img",
-                "body": "eb81d0e9fc16"
+                "body": "1c3585aa1803"
             },
             "is_local_attachment": {
                 "verdict": "keep",
@@ -17178,8 +17150,7 @@
                     "unprobed"
                 ],
                 "why": "takes the request's file, picks the upload time from the parent post and creates the attachment; engine upload flow",
-                "doubt": "reads the engine's request files, not $_FILES as plugins may have changed it, and the title comes from the stored file name, not the sanitized original name or the EXIF title",
-                "body": "540731c51c55"
+                "body": "5219dcd1f0c9"
             },
             "media_sideload_image": {
                 "verdict": "move",
@@ -17188,8 +17159,7 @@
                     "unprobed"
                 ],
                 "why": "downloads, sideloads, cleans up on failure and answers by return type; an engine flow with a markup shape at the end",
-                "doubt": "no image_sideload_extensions check (WordPress refuses a non-image URL with 'Invalid image URL.') and no _source_url meta is stored",
-                "body": "1db8e5a3a8ad"
+                "body": "59a712174c44"
             },
             "remove_image_size": {
                 "verdict": "keep",
@@ -17280,8 +17250,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\AttachmentImages",
                 "why": "picks the link text (text, image, title, file name), filters the attributes and builds the anchor; markup by rules beside AttachmentImages::image",
-                "doubt": "'Missing Attachment' is returned untranslated, and an attachment with no file URL is not treated as missing",
-                "body": "f7bb78a6e77b"
+                "body": "76c23fdb8fb1"
             },
             "wp_get_attachment_thumb_url": {
                 "verdict": "keep",
@@ -17318,8 +17287,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\AttachmentImages",
                 "why": "deprecated, but carries its own context rules for header parts and main-loop content against the image budget, beside loadingAttributes",
-                "doubt": "no false for the template context, nor for wp_get_attachment_image or the_post_thumbnail inside the_content or before the main loop",
-                "body": "8d9aebc59f5e"
+                "body": "9b377e91ebd9"
             },
             "wp_get_missing_image_subsizes": {
                 "verdict": "move",
@@ -17344,8 +17312,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\AttachmentImages",
                 "why": "builds the subsize table from the engine's sizes and normalises width, height and crop; belongs beside AttachmentImages::sizes",
-                "doubt": "a 0x0 size is kept where WordPress skips it, and a name added only through intermediate_image_sizes is dropped where WordPress reads its {name}_size_w/h options",
-                "body": "2e6d962b6f46"
+                "body": "986c661e6a3a"
             },
             "wp_getimagesize": {
                 "verdict": "move",
@@ -17354,8 +17321,7 @@
                     "refs"
                 ],
                 "why": "reads the image header from the file; file reading the engine already does in ImageMime and Canvas",
-                "doubt": "no fallback to the WebP, AVIF and HEIC header readers when getimagesize cannot parse the file, and a 0x0 result is returned as is",
-                "body": "f5140e5a09ed"
+                "body": "b0160f376e98"
             },
             "wp_handle_sideload": {
                 "verdict": "delegate",
@@ -17405,8 +17371,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\AttachmentImages",
                 "why": "matches a src to the full size or a stored size in the metadata and filters the answer; dimension lookup beside AttachmentImages::sizeFromMeta",
-                "doubt": "the filter receives the src rewritten from https to http, and the full size matches only an equal basename where WordPress accepts a src that contains it",
-                "body": "c27f2b79fa4b"
+                "body": "712029c4a72e"
             },
             "wp_imagecreatetruecolor": {
                 "verdict": "move",
@@ -17436,8 +17401,7 @@
                 "verdict": "move",
                 "to": "Minn\\Blocks\\ImageTags",
                 "why": "parses the src, looks the dimensions up in the metadata and writes width and height into the tag; content tag rewriting",
-                "doubt": "the src keeps its query string, an inline style width does not rescale the dimensions, and any truthy filter result counts where WordPress requires true",
-                "body": "d43b3444cd71"
+                "body": "7bf42eb35705"
             },
             "wp_is_client_side_media_processing_enabled": {
                 "verdict": "move",
@@ -17482,8 +17446,7 @@
                 "verdict": "move",
                 "to": "Minn\\Content\\PersonalData",
                 "why": "pages through the user's uploads and builds export items; beside PersonalData::item",
-                "doubt": "attachments without a URL are still exported and the email address is not trimmed",
-                "body": "e50620da99cf"
+                "body": "91f73d90d19a"
             },
             "wp_omit_loading_attr_threshold": {
                 "verdict": "move",
@@ -17517,8 +17480,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "the image_editor_save_pre filter, then the editor's own stream method, which a plugin's editor may override",
-                "doubt": "a GD image (the deprecated path) returns false instead of being streamed through image_save_pre",
-                "body": "8874be7211cf"
+                "body": "9ef43b6d7f56"
             },
             "wp_update_image_subsizes": {
                 "verdict": "move",
@@ -17564,8 +17526,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "for the oEmbed routes asked as XML, the server's response_to_data and send_header around _oembed_create_xml, echoed",
-                "doubt": "WordPress answers a 501 when no XML is made (and when SimpleXMLElement is missing); here an empty document is echoed and true returned",
-                "body": "9fcfcc1fc4fc"
+                "body": "1478ca39a9a6"
             },
             "_post_format_link": {
                 "verdict": "move",
@@ -17599,15 +17560,13 @@
                 "verdict": "keep",
                 "reason": "shape",
                 "why": "the dirlist_failed_copy_dir WP_Error for a missing source, else FileTree::copy",
-                "doubt": "WordPress copies through the global $wp_filesystem and answers true or a WP_Error (mkdir_failed_copy_dir, copy_failed_copy_dir); here a failed copy returns FileTree's bare false",
-                "body": "3432e86479d2"
+                "body": "7389d29661d2"
             },
             "edit_post_link": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\EditLinks",
                 "why": "builds the edit anchor (class, escaped address, text) around EditLinks::post and fires edit_post_link; template tag markup by rule, the before and after echo stays",
-                "doubt": "the default 'Edit This' is not translated; WordPress runs it through __()",
-                "body": "70791d9a43e1"
+                "body": "b4df6632647f"
             },
             "get_comment_type": {
                 "verdict": "keep",
@@ -17625,8 +17584,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "url_to_postid through oembed_request_post_id, then get_oembed_response_data",
-                "doubt": "WordPress returns the data as an object ((object) $data) and takes a missing width as 0 (so the 200 minimum); here the array comes back and the width defaults to 600",
-                "body": "41e15c947c24"
+                "body": "44b255c7ead1"
             },
             "get_post_format_link": {
                 "verdict": "keep",
@@ -17671,15 +17629,13 @@
                 "verdict": "keep",
                 "reason": "shape",
                 "why": "false for no folder or no levels, else FileTree::files with the exclusions",
-                "doubt": "$include_hidden is ignored (WordPress skips dot files unless asked); exclusions apply at every depth where WordPress applies them at the top only; an empty subfolder is not listed with its slash",
-                "body": "2112f20d9ff1"
+                "body": "1f2960da14e9"
             },
             "move_dir": {
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "moves through the global $wp_filesystem plugins and hosts set up, with the reference's WP_Error refusals and copy_dir as the fallback, then wp_opcache_invalidate_directory",
-                "doubt": "copy_dir here can return a bare false (FileTree::copy), which is not a WP_Error, so a failed copy still deletes the source; WordPress deletes it only when the copy returned true",
-                "body": "4f489d738c65"
+                "body": "2f48658b9949"
             },
             "set_post_format": {
                 "verdict": "keep",
@@ -17691,8 +17647,7 @@
                 "verdict": "move",
                 "to": "Minn\\Ops\\Signatures",
                 "why": "checks a file's sha384 hash against each ed25519 signature and trusted key with sodium, answering true or the reference's WP_Errors; Ops\\EngineUpdate::signed runs the same key loop privately",
-                "doubt": "the failure's data lacks the keys, signatures, skipped counts and versions WordPress reports, and the unsupported error carries no data",
-                "body": "2d332a298de3"
+                "body": "a2f738e70490"
             },
             "win_is_writable": {
                 "verdict": "move",
@@ -17731,8 +17686,7 @@
                 "verdict": "move",
                 "to": "Minn\\Support\\Files",
                 "why": "the size from pre_wp_filesize, else the disk, then wp_filesize; a file read with its filters for Support\\Files",
-                "doubt": "WordPress returns an integer from pre_wp_filesize at once (null is its default, 0 a real answer) without wp_filesize; here 0 falls through to the disk and the pre value still passes wp_filesize",
-                "body": "abf2d352376e"
+                "body": "3b459b4c4b46"
             },
             "wp_filter_oembed_iframe_title_attribute": {
                 "verdict": "move",
@@ -17750,8 +17704,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CustomCssPost",
                 "why": "finds a theme's custom_css post, trusting and recording the custom_css_post_id theme mod for the active theme (-1 for none); stored data the engine should own, as UserStylesPost does for global styles",
-                "doubt": "WordPress queries the name as sanitize_title($stylesheet); here the raw stylesheet is the name",
-                "body": "02aac6bd269f"
+                "body": "cddb737959f1"
             },
             "wp_get_mu_plugins": {
                 "verdict": "move",
@@ -17772,8 +17725,7 @@
                     "globals"
                 ],
                 "why": "includes .maintenance into the global $upgrading and applies the ten minute window and enable_maintenance_mode; Front\\Maintenance::answer makes the same check inline",
-                "doubt": "WordPress says no once time() - $upgrading reaches 600; here an $upgrading exactly 600 seconds old still counts",
-                "body": "948da9f29316"
+                "body": "875a337f13e1"
             },
             "wp_json_file_decode": {
                 "verdict": "move",
@@ -17791,8 +17743,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "wp_is_large_user_count, the enable_live_network_counts filter deciding, then wp_update_user_counts by name",
-                "doubt": "WordPress returns false when the filter says no; here nothing (null) comes back",
-                "body": "adbaa48802b5"
+                "body": "50ff5bfcddab"
             },
             "wp_oembed_add_provider": {
                 "verdict": "keep",
@@ -17810,22 +17761,20 @@
                 "verdict": "move",
                 "to": "Minn\\Ops\\Opcache",
                 "why": "decides whether opcache can and may invalidate a file (function present, the filter, enable and enable_cli) and does it; opcode cache control for the engine",
-                "doubt": "WordPress only invalidates .php files and checks opcache.restrict_api against the running script; here any existing file passes and restrict_api is not checked",
-                "body": "b8e2b9ff5dee"
+                "doubt": "opcache.restrict_api is not checked against the running script",
+                "body": "8a766f76d5ad"
             },
             "wp_opcache_invalidate_directory": {
                 "verdict": "move",
                 "to": "Minn\\Ops\\Opcache",
                 "why": "walks a folder and invalidates each file through wp_opcache_invalidate; opcode cache control beside it",
-                "doubt": "WordPress forces each invalidation (force true) and lists through the global $wp_filesystem; here force is false",
-                "body": "bdba723b8066"
+                "body": "d6aa856c938c"
             },
             "wp_post_revision_title": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PostRevisions",
                 "why": "words a revision's date with its edit link and the current or autosave marker; revision title markup by rule",
-                "doubt": "WordPress links get_edit_post_link (the post's edit screen for the current post, none when it gives none) and translates the strings; here it is always revision.php and untranslated",
-                "body": "304b095504e2"
+                "body": "124c27af8be8"
             },
             "wp_post_revision_title_expanded": {
                 "verdict": "move",
@@ -17840,15 +17789,13 @@
                     "refs"
                 ],
                 "why": "sorts an array's keys at every depth by reference; a list helper",
-                "doubt": "WordPress returns nothing; here ksort's true comes back",
-                "body": "a3d0ac0611f6"
+                "body": "d8789a101a81"
             },
             "wp_reset_vars": {
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "sets each named global from the request's form or query values; writing those globals is the point",
-                "doubt": "WordPress reads $_POST then $_GET as plugins left them, an empty POST value falling through to GET; here the engine's parsed request is read and an empty form value wins",
-                "body": "310d70375e82"
+                "body": "0b411142bc01"
             },
             "wp_set_post_lock": {
                 "verdict": "move",
@@ -17860,8 +17807,7 @@
                 "verdict": "move",
                 "to": "Minn\\Support\\Sprintf",
                 "why": "the %l directive: joins a list with the filtered between words; it goes beside wp_sprintf's parser",
-                "doubt": "WordPress answers '' for an empty list and casts a single value to a one-item list; here a non-array returns the pattern unchanged and an empty list keeps the pattern's tail",
-                "body": "cda8b9b60cef"
+                "body": "d43221e4fe93"
             },
             "wp_templating_constants": {
                 "verdict": "keep",
@@ -18064,15 +18010,13 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "wp_verify_nonce (pluggable) on the $_REQUEST field, the check_admin_referer action and wp_nonce_ays on failure",
-                "doubt": "nothing dies after wp_nonce_ays, so a wp_die handler that returns lets a caller that ignores the result go on; the -1 action's doing-it-wrong notice is also missing",
-                "body": "8da74ec72c0e"
+                "body": "00f1ad4e4ac6"
             },
             "check_ajax_referer": {
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "picks the nonce from $_REQUEST, asks wp_verify_nonce (pluggable), fires check_ajax_referer and stops on failure",
-                "doubt": "outside ajax WordPress ends with die('-1'), while wp_die here may return through a handler; a set but empty query_arg falls through to _ajax_nonce where WordPress stops at it",
-                "body": "e6f0dba3a6b3"
+                "body": "a8eba92d06a5"
             },
             "get_avatar": {
                 "verdict": "move",
@@ -18185,8 +18129,7 @@
                     "pluggable"
                 ],
                 "why": "the algorithm and options from their filters handed to Password::hash",
-                "doubt": "WordPress hashes the trimmed password under bcrypt and uses a $wp_hasher a plugin set; this hashes it untrimmed, so a password with edge spaces set here fails the trimmed sign-in",
-                "body": "d564d7f972c4"
+                "body": "cc181074c439"
             },
             "wp_login": {
                 "verdict": "keep",
@@ -18226,8 +18169,7 @@
                     "pluggable"
                 ],
                 "why": "the recipients with their filters and the own-comment rule, the headers once, then for each recipient in their language the comment or note notice, its text and subject filters and wp_mail (probe comment-remaining)",
-                "doubt": "the author is kept when they moderated the comment themselves or can no longer read the post, and the headers start empty where WordPress gives From, Reply-To and Content-Type",
-                "body": "e2da638fcf2c"
+                "body": "3d4dd7299a6d"
             },
             "wp_parse_auth_cookie": {
                 "verdict": "keep",
@@ -18269,8 +18211,7 @@
                     "pluggable"
                 ],
                 "why": "filters location and status, sanitises, filters X-Redirect-By and records the redirect for the engine's response besides sending the headers",
-                "doubt": "a status outside 3xx goes out as given where WordPress stops with wp_die",
-                "body": "a9c7951d4842"
+                "body": "6e8ae5dfdf8e"
             },
             "wp_safe_redirect": {
                 "verdict": "keep",
@@ -18285,8 +18226,7 @@
                     "pluggable"
                 ],
                 "why": "AuthCookies::settle plans the cookies with every hook, then three setcookie calls repeat AuthCookies::attach; the sending belongs on the engine's response",
-                "doubt": "the logged_in cookie's secure flag follows this request's scheme where WordPress follows the home URL's, the values skip the auth_cookie filter of wp_generate_auth_cookie, and the cookie constants are not read",
-                "body": "acccc4eb641c"
+                "body": "22966255ba82"
             },
             "wp_set_current_user": {
                 "verdict": "move",
@@ -18335,8 +18275,7 @@
                     "pluggable"
                 ],
                 "why": "the trimmed, sanitised location judged by Url::safeRedirect against allowed_redirect_hosts, the fallback for a refusal",
-                "doubt": "a relative path without a leading slash falls back where WordPress resolves it against the request's folder, and WordPress also refuses user, password or host parts holding : / ? # @, which is not checked",
-                "body": "0af925f7ba36"
+                "body": "34000b87624c"
             },
             "wp_verify_nonce": {
                 "verdict": "move",
@@ -19241,8 +19180,7 @@
                     "unprobed"
                 ],
                 "why": "chooses the prefix and name per archive kind, the table ArchiveTitle::parts keeps for the block path from a Resolution; the post type archive and Archives default would join it",
-                "doubt": "post format archives get the taxonomy prefix where WordPress titles them plainly (Asides, Galleries), and the taxonomy prefix skips the translatable '%s:' format",
-                "body": "cbb8009a1b11"
+                "body": "9a3b6a3c5c9b"
             },
             "_minn_cached_post_query": {
                 "verdict": "move",
@@ -19260,8 +19198,7 @@
                     "unprobed"
                 ],
                 "why": "works out the type from the query vars, skips hierarchical types, finds the post by old date or slug through old_slug_redirect_post_id and builds the paged or embed link",
-                "doubt": "the type is post_type or 'post'; WordPress first guesses 'attachment' from the attachment var and 'page' from pagename",
-                "body": "556ccf82c421"
+                "body": "fb3efe0703c9"
             },
             "_minn_run_main_query": {
                 "verdict": "move",
@@ -19297,8 +19234,7 @@
                     "globals"
                 ],
                 "why": "parses m or year/monthnum/day into date parts and names the month through the $wp_locale global",
-                "doubt": "a year archive without a month gives no title (WordPress shows the year), and a day read from m keeps its leading zero where WordPress casts it to an integer",
-                "body": "7bab5cc05066"
+                "body": "dbea09673992"
             },
             "_minn_wp_title_parts": {
                 "verdict": "move",
@@ -19307,8 +19243,7 @@
                     "unprobed"
                 ],
                 "why": "picks the title parts from the main query's conditionals (search, 404, post, term, type archive, author, date), the decision DocumentTitle::parts makes for the document title",
-                "doubt": "on a static front page WordPress leaves the title empty (it checks is_page() && !is_front_page()), here is_singular() gives the page's title",
-                "body": "d3681781e4e3"
+                "body": "5c4957c0ae05"
             },
             "get_the_archive_title": {
                 "verdict": "move",
@@ -19751,8 +19686,8 @@
             "print_footer_scripts": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "the WP_Scripts object's footer items, then the print_footer_scripts filter heard",
-                "body": "d550bd483819"
+                "why": "settles the concatenation globals, prints the WP_Scripts object's footer items, then the print_footer_scripts filter heard",
+                "body": "cb6d8588ecb4"
             },
             "print_head_scripts": {
                 "verdict": "keep",
@@ -19763,14 +19698,14 @@
             "print_late_styles": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "wp_print_styles, then the print_late_styles filter heard",
-                "body": "6ea8ee592a5b"
+                "why": "settles the concatenation globals, wp_print_styles, then the print_late_styles filter heard",
+                "body": "12641adb0f42"
             },
             "script_concat_settings": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "defaults the concatenation globals plugins read",
-                "body": "10bb707b7629"
+                "why": "defaults the concatenation globals plugins read: concatenation off, compression from the can_compress_scripts site option (read on every call, as plugins filtering it see), zlib output compression and the COMPRESS_* constants; three lines over globals",
+                "body": "4a352c6af9da"
             },
             "wp_add_global_styles_for_blocks": {
                 "verdict": "move",
@@ -19922,8 +19857,8 @@
             "wp_print_head_scripts": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "fires wp_print_scripts once, then the WP_Scripts object prints the head items",
-                "body": "d9c4013d2d15"
+                "why": "settles the concatenation globals, fires wp_print_scripts once, then the WP_Scripts object prints the head items",
+                "body": "3b566a117d60"
             },
             "wp_print_scripts": {
                 "verdict": "keep",
@@ -20532,8 +20467,7 @@
                     "unprobed"
                 ],
                 "why": "decides whether a row is the current period or post by comparing the query vars per archive type",
-                "doubt": "no is_archive() check, so a single post under a dated permalink marks its period current where WordPress marks none",
-                "body": "b31d917d5bf8"
+                "body": "77fe29337ed6"
             },
             "_minn_archive_rows": {
                 "verdict": "move",
@@ -20542,7 +20476,7 @@
                     "unprobed"
                 ],
                 "why": "wires Archives with date, link, week and title closures and picks posts or periods by type; the wiring belongs with Archives",
-                "body": "fc0f8a48a11f"
+                "body": "8678b8fc4dbc"
             },
             "_minn_avatar_subject": {
                 "verdict": "move",
@@ -20557,7 +20491,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "registers the block theme's wp_head defaults by public callback names so plugins can remove_action them",
-                "body": "953545fdca1c"
+                "body": "a336ce992f7d"
             },
             "_minn_calendar": {
                 "verdict": "move",
@@ -20577,8 +20511,7 @@
                     "globals"
                 ],
                 "why": "decides the calendar's month from the m, year and monthnum globals or the main query, falling back to now",
-                "doubt": "m shorter than six digits falls back instead of giving January, a year without a month keeps that year where WordPress shows the current month, m wins over year with monthnum, and ?w= is not read",
-                "body": "0dce87986d7a"
+                "body": "4fd04ef002a5"
             },
             "_minn_classic_bar_footer": {
                 "verdict": "keep",
@@ -20596,8 +20529,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "registers the wp_head defaults by public callback names so plugins can remove_action them, handing block themes to the block list",
-                "doubt": "the classic list misses wp_preload_resources and locale_stylesheet, which WordPress hooks to wp_head for every theme and the block list has",
-                "body": "d2f8296ecc6c"
+                "body": "3c63539ad1af"
             },
             "_minn_extra_feed": {
                 "verdict": "move",
@@ -20606,8 +20538,7 @@
                     "unprobed"
                 ],
                 "why": "chooses the extra feed by context (post comments, type archive, term, author, search), formats its title and asks its show filter",
-                "doubt": "feed_links_extra_show_post_comments_feed gets true instead of the feed_links_show_comments_feed answer, and that filter only runs when comments are open",
-                "body": "8b626b11cb19"
+                "body": "9f527fd2ea87"
             },
             "_minn_list_current_page": {
                 "verdict": "move",
@@ -20648,13 +20579,6 @@
                 ],
                 "why": "formats the $allowedtags global as tag and empty-attribute text and entity-encodes it; the global stays read in the facade and is passed in",
                 "body": "54784ebbff4f"
-            },
-            "esc_xml": {
-                "verdict": "move",
-                "to": "Minn\\Support\\Escape",
-                "why": "an escaping algorithm: entity normalisation for XML, bare ampersands and the four specials, then the esc_xml filter",
-                "doubt": "CDATA sections are escaped where WordPress's esc_xml leaves <![CDATA[...]]> blocks untouched",
-                "body": "8c0b5e29d73d"
             },
             "feed_links": {
                 "verdict": "keep",
@@ -20703,8 +20627,7 @@
                 "verdict": "move",
                 "to": "Minn\\Front\\Calendar",
                 "why": "reads the legacy argument form, filters the args, picks the month and renders the calendar through the get_calendar filter; the display flag is shape",
-                "doubt": "a site with no published posts of the type gets an empty month table where WordPress returns nothing",
-                "body": "a53cccec57de"
+                "body": "5c7fc25ccc53"
             },
             "get_category_template": {
                 "verdict": "keep",
@@ -20716,8 +20639,7 @@
                 "verdict": "move",
                 "to": "Minn\\Front\\Permalinks",
                 "why": "defaults year, month and day to now, picks the pretty or ?m= form with padded parts and fires day_link; Permalinks::forDate builds the same address",
-                "doubt": "same root-only /YYYY/MM/DD/ path as get_year_link, ignoring the date permastruct's front",
-                "body": "645462390a2b"
+                "body": "b07ee6c4f6a9"
             },
             "get_footer": {
                 "verdict": "keep",
@@ -20735,8 +20657,7 @@
                 "verdict": "move",
                 "to": "Minn\\Front\\Permalinks",
                 "why": "defaults year and month to now, picks the pretty or ?m= form with the zero-padded month and fires month_link; Permalinks::forDate builds the same address",
-                "doubt": "same root-only /YYYY/MM/ path as get_year_link, ignoring the date permastruct's front",
-                "body": "3efcc99b7f53"
+                "body": "c1fa4abb6fe7"
             },
             "get_page_template": {
                 "verdict": "keep",
@@ -20748,8 +20669,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "returns '' for a type without an archive, else get_archive_template() by name",
-                "doubt": "an unregistered type falls through to get_archive_template() where WordPress returns '' when the type object is missing",
-                "body": "396746eaa31d"
+                "body": "7a13c8826103"
             },
             "get_query_template": {
                 "verdict": "keep",
@@ -20761,8 +20681,7 @@
                 "verdict": "move",
                 "to": "Minn\\Theme\\SearchForm",
                 "why": "builds the default html5 or xhtml form by rules around the args and format filters; locating and loading a theme's searchform.php stays in the facade for scope",
-                "doubt": "the pre-5.2 boolean form get_search_form(false) still echoes (WordPress reads a non-array argument as the echo flag), a null from the get_search_form filter is not replaced by the form, and the labels are untranslated",
-                "body": "fae5506b7e3a"
+                "body": "c7239bbf5b95"
             },
             "get_sidebar": {
                 "verdict": "keep",
@@ -20798,8 +20717,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "runs the $_wp_current_template_content global through the public content pipeline (embeds, shortcodes, blocks, texturize, smilies, content tags) and wraps it",
-                "doubt": "do_blocks runs before do_shortcode where WordPress runs shortcodes first, and a singular page is not rendered inside the loop with the_post() as WordPress does",
-                "body": "bf33514ab131"
+                "body": "5313d02ec011"
             },
             "get_the_generator": {
                 "verdict": "move",
@@ -20817,15 +20735,13 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "chains add_query_arg over admin_url and fires the type's upload_iframe_src filter",
-                "doubt": "falls back to get_the_ID() where WordPress reads the global $post_ID of the edit screen",
-                "body": "e659e3643454"
+                "body": "858115539072"
             },
             "get_year_link": {
                 "verdict": "move",
                 "to": "Minn\\Front\\Permalinks",
                 "why": "defaults the year to now, picks the pretty or ?m= form and fires year_link; Permalinks::forDate builds the same address but without user_trailingslashit or the filter",
-                "doubt": "pretty date links always start at the root (/YYYY/), where WordPress's date permastruct keeps the structure's front and moves under /date/ when the structure starts with %post_id%; a year of 0 also stays 0 instead of falling back to now",
-                "body": "4db0c9816193"
+                "body": "9015d4a49fd4"
             },
             "load_template": {
                 "verdict": "keep",
@@ -20837,8 +20753,7 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\TemplateFiles",
                 "why": "searches the child, parent and engine theme-compat folders with the path check, a file lookup TemplateFiles should own; the load_template call stays in the facade for scope",
-                "doubt": "WordPress locates through the $wp_stylesheet_path and $wp_template_path globals (set once by wp_set_template_globals), here the directory functions are asked on every call",
-                "body": "fe9feb6a87cf"
+                "body": "8227eb1b7dd2"
             },
             "maybe_hash_hex_color": {
                 "verdict": "move",
@@ -20868,8 +20783,7 @@
                 "verdict": "keep",
                 "reason": "scope",
                 "why": "prints the weekday once per change, remembered in the $previousweekday global the loop shares",
-                "doubt": "compares weekday names where WordPress compares $currentday (the post's date) with $previousweekday, so posts a week apart on the same weekday print once here",
-                "body": "3b9f580af286"
+                "body": "3de06ebfcde2"
             },
             "wp_dependencies_unique_hosts": {
                 "verdict": "move",
@@ -20906,22 +20820,19 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\AssetQueue",
                 "why": "a run-once static flag and the wp_img_tag_add_auto_sizes decision before registering the inline contain-intrinsic-size style: engine state",
-                "doubt": "WordPress puts this handle at the front of the style queue so it prints first and stands down when a plugin unhooked the older print callback; here it is appended and that check is missing",
-                "body": "515fdbc181f6"
+                "body": "3b522d6f8961"
             },
             "wp_finalize_template_enhancement_output_buffer": {
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "the buffer callback: lets a cleaned phase through, else runs the page through wp_template_enhancement_output_buffer and fires the finalized action",
-                "doubt": "no Content-Type check: WordPress filters only an HTML response and hands others to the finalized action unfiltered",
-                "body": "996240bd772b"
+                "body": "ade4dfef3b75"
             },
             "wp_get_archives": {
                 "verdict": "move",
                 "to": "Minn\\Front\\Archives",
                 "why": "parses and filters the args, writes the WHERE and JOIN through their filters, reads rows from Archives and builds each link with its count and current mark",
-                "doubt": "with show_post_count the count replaces the after argument where WordPress prepends it ('&nbsp;(3)' . $after)",
-                "body": "4c933cb17f4a"
+                "body": "d645e68f1aa5"
             },
             "wp_get_toggletip": {
                 "verdict": "move",
@@ -20939,8 +20850,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "a heartbeat_settings filter callback adding admin_url and the pluggable wp_create_nonce to the settings",
-                "doubt": "WordPress sets ajaxurl only off admin screens and with the relative scheme; here it is always set and absolute",
-                "body": "2903dbd9a862"
+                "body": "130d7af6c859"
             },
             "wp_list_pages": {
                 "verdict": "move",
@@ -20952,43 +20862,37 @@
                 "verdict": "move",
                 "to": "Minn\\Login\\LoginForm",
                 "why": "the defaults, login_form_defaults and the top, middle and bottom filters go with LoginForm::embedded; echo or return stays",
-                "doubt": "the labels are English literals where WordPress translates them with __()",
-                "body": "08e991884afa"
+                "body": "198183696f5e"
             },
             "wp_loginout": {
                 "verdict": "move",
                 "to": "Minn\\Login\\LoginLinks",
                 "why": "builds the log in or log out link by the signed-in state, then filters loginout and echoes or returns",
-                "doubt": "the link text is the untranslated 'Log in'/'Log out' where WordPress uses __()",
-                "body": "e6e52672019c"
+                "body": "fc31e132d99e"
             },
             "wp_oembed_add_discovery_links": {
                 "verdict": "move",
                 "to": "Minn\\Front\\PostEmbed",
                 "why": "keeps a printed-once flag in the runtime, builds the JSON and XML discovery links for the singular permalink and fires oembed_discovery_links",
-                "doubt": "the endpoint is home_url('/wp-json/...') rather than get_oembed_endpoint_url (rest_url plus oembed_endpoint_url), missing plain permalinks and that filter; off singular pages oembed_discovery_links never fires",
-                "body": "c2335e70e6c8"
+                "body": "33675f9ed21f"
             },
             "wp_preload_resources": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\HeadLinks",
                 "why": "filters wp_preload_resources, dedupes by href or imagesrcset and prints the allowed attributes as preload links by rule",
-                "doubt": "imagesrcset and imagesizes print without WordPress's as=image conditions, and numeric-keyed bare attributes are dropped where WordPress prints them",
-                "body": "f0d82106e3a5"
+                "body": "30030f8034d6"
             },
             "wp_register": {
                 "verdict": "move",
                 "to": "Minn\\Login\\LoginLinks",
                 "why": "builds the Register or Site Admin link by the signed-in state and users_can_register, then filters register and echoes or returns",
-                "doubt": "a signed-in user gets Site Admin without WordPress's current_user_can('read') check, and the link texts are untranslated",
-                "body": "deabeadcb387"
+                "body": "202c2d4e997f"
             },
             "wp_resource_hints": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\HeadLinks",
                 "why": "collects external asset hosts from the registries as they stand (no use of them), runs each relation through wp_resource_hints, dedupes and prints the link markup by rules",
-                "doubt": "prefetch and prerender are never offered to the filter, preconnect hrefs are not cut to scheme://host, attributes outside WordPress's list print, and hosts include dependencies' where WordPress reads only queued handles",
-                "body": "ad641cf743e8"
+                "body": "d3041c5f8bda"
             },
             "wp_sanitize_script_attributes": {
                 "verdict": "move",
@@ -21012,8 +20916,7 @@
                 "verdict": "move",
                 "to": "Minn\\Admin\\StarRating",
                 "why": "turns a rating or percent into full, half and empty stars and builds the markup and screen-reader title",
-                "doubt": "a plain rating is rounded to one decimal (3.04 loses the half star WordPress's ceil gives), comma decimals are not read, and one rating reads '1 ratings' where WordPress uses _n()",
-                "body": "415cb55d935b"
+                "body": "33cbb8500281"
             },
             "wp_start_template_enhancement_output_buffer": {
                 "verdict": "keep",

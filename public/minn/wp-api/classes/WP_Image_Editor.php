@@ -176,25 +176,6 @@ abstract class WP_Image_Editor
         return $result;
     }
 
-    /**
-     * One size cut from the image as it stands and saved, the image left as
-     * it was; the size's metadata without its path, or the error.
-     */
-    public function make_subsize($size_data)
-    {
-        if (!isset($size_data['width']) && !isset($size_data['height'])) {
-            return new WP_Error('image_subsize_create_error', 'Cannot resize the image. Both width and height are not set.');
-        }
-        $state = $this->keep();
-        $resized = $this->resize($size_data['width'] ?? null, $size_data['height'] ?? null, !empty($size_data['crop']) ? $size_data['crop'] : false);
-        $saved = is_wp_error($resized) ? $resized : $this->save();
-        $this->restore($state);
-        if (!is_wp_error($saved)) {
-            unset($saved['path']);
-        }
-        return $saved;
-    }
-
     /** What make_subsize puts back after a size: the editor's size, and the file and format a save moves it to. */
     protected function keep()
     {
@@ -295,6 +276,25 @@ class WP_Image_Editor_GD extends WP_Image_Editor
             return new WP_Error('error_getting_dimensions', __('Could not calculate resized image dimensions'), $this->file);
         }
         return $this->canvas->resample($box)->image();
+    }
+
+    /**
+     * One size cut from the image as it stands and saved, the image left as
+     * it was; the size's metadata without its path, or the error.
+     */
+    public function make_subsize($size_data)
+    {
+        if (!isset($size_data['width']) && !isset($size_data['height'])) {
+            return new WP_Error('image_subsize_create_error', 'Cannot resize the image. Both width and height are not set.');
+        }
+        $state = $this->keep();
+        $resized = $this->resize($size_data['width'] ?? null, $size_data['height'] ?? null, !empty($size_data['crop']) ? $size_data['crop'] : false);
+        $saved = is_wp_error($resized) ? $resized : $this->save();
+        $this->restore($state);
+        if (!is_wp_error($saved)) {
+            unset($saved['path']);
+        }
+        return $saved;
     }
 
     protected function keep()

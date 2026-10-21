@@ -1,0 +1,985 @@
+[
+    [
+        "durations",
+        [
+            "0 hours, 5 minutes, 30 seconds",
+            "1 hour, 0 minutes, 0 seconds",
+            "5 minutes, 30 seconds",
+            "0 minutes, 0 seconds",
+            "1 hour, 2 minutes, 3 seconds",
+            "1 minute, 5 seconds",
+            "100 hours, 0 minutes, 0 seconds",
+            false,
+            "0 hours, 0 minutes, 0 seconds",
+            "2 minutes, 3 seconds",
+            false,
+            false,
+            false,
+            "0 hours, 0 minutes, 5 seconds"
+        ]
+    ],
+    [
+        "existing file names",
+        [
+            false,
+            true,
+            true,
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "apache modules",
+        [
+            [
+                false,
+                true
+            ],
+            [
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "dir size cache paths",
+        [
+            [
+                null,
+                [
+                    [
+                        "err",
+                        1024,
+                        "clean_dirsize_cache() only accepts a non-empty path string, received integer."
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "err",
+                        1024,
+                        "clean_dirsize_cache() only accepts a non-empty path string, received string."
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "err",
+                        1024,
+                        "clean_dirsize_cache() only accepts a non-empty path string, received array."
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "err",
+                        1024,
+                        "clean_dirsize_cache() only accepts a non-empty path string, received NULL."
+                    ]
+                ]
+            ],
+            [
+                null,
+                []
+            ]
+        ]
+    ],
+    [
+        "date_i18n",
+        [
+            [
+                [
+                    "U",
+                    1000000,
+                    "integer"
+                ],
+                [
+                    "U",
+                    1000000,
+                    "integer"
+                ],
+                [
+                    "U-Y",
+                    "1018000-1970",
+                    "string"
+                ],
+                [
+                    "U",
+                    "1000000",
+                    "string"
+                ],
+                [
+                    "U",
+                    1000000.7,
+                    "double"
+                ],
+                [
+                    "U",
+                    -5,
+                    "integer"
+                ],
+                [
+                    "Y-m-d H:i T",
+                    "1970-01-12 13:46 EST",
+                    "string"
+                ],
+                [
+                    "Z",
+                    "-18000",
+                    "string"
+                ],
+                [
+                    "O P T e",
+                    "-0500 -05:00 EST America/New_York",
+                    "string"
+                ],
+                [
+                    "integer",
+                    true
+                ]
+            ],
+            [
+                "integer",
+                "integer",
+                "integer",
+                "string",
+                "double",
+                "integer",
+                "integer",
+                "integer",
+                "integer",
+                "integer",
+                "integer",
+                "integer"
+            ]
+        ]
+    ],
+    [
+        "week start and end",
+        [
+            {
+                "start": "2024-03-11",
+                "end": "2024-03-17"
+            },
+            {
+                "start": "2024-03-11",
+                "end": "2024-03-17"
+            },
+            {
+                "start": "2024-03-11",
+                "end": "2024-03-17"
+            },
+            {
+                "start": "2024-03-10",
+                "end": "2024-03-16"
+            },
+            {
+                "start": "2024-03-10",
+                "end": "2024-03-16"
+            },
+            {
+                "start": "2024-03-09",
+                "end": "2024-03-15"
+            },
+            {
+                "start": "2024-03-11",
+                "end": "2024-03-17"
+            }
+        ]
+    ],
+    [
+        "admin notices",
+        [
+            [
+                "<div class=\"notice notice-warning\"><p>Msg</p></div>",
+                []
+            ],
+            [
+                "<div class=\"notice notice-a b\"><p>Msg</p></div>",
+                [
+                    [
+                        "wrong",
+                        "wp_get_admin_notice",
+                        "The type key must be a string without spaces."
+                    ]
+                ]
+            ],
+            [
+                "<div class=\"notice\" data-on role=\"alert\" hidden x><p>Msg</p></div>",
+                []
+            ],
+            [
+                "<div id=\"zzid\" class=\"notice is-dismissible a b c\">Msg</div>",
+                []
+            ],
+            [
+                "<div class=\"notice\"><p>Msg</p></div>",
+                []
+            ],
+            [
+                "<div class=\"notice\"><p>Msg</p></div>",
+                []
+            ]
+        ]
+    ],
+    [
+        "prefixed ids",
+        [
+            [
+                "N",
+                [
+                    [
+                        "err",
+                        1024,
+                        "wp_unique_prefixed_id(): The prefix must be a string. \"integer\" data type given."
+                    ]
+                ]
+            ],
+            [
+                "N",
+                [
+                    [
+                        "err",
+                        1024,
+                        "wp_unique_prefixed_id(): The prefix must be a string. \"array\" data type given."
+                    ]
+                ]
+            ],
+            [
+                "zzfnc-N",
+                []
+            ],
+            [
+                "N",
+                [
+                    [
+                        "err",
+                        1024,
+                        "wp_unique_prefixed_id(): The prefix must be a string. \"NULL\" data type given."
+                    ]
+                ]
+            ],
+            [
+                "N",
+                [
+                    [
+                        "err",
+                        1024,
+                        "wp_unique_prefixed_id(): The prefix must be a string. \"double\" data type given."
+                    ]
+                ]
+            ],
+            [
+                "N",
+                [
+                    [
+                        "err",
+                        1024,
+                        "wp_unique_prefixed_id(): The prefix must be a string. \"boolean\" data type given."
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "temporary names",
+        [
+            [
+                "zzfile-XXXXXX.tmp",
+                true
+            ],
+            [
+                "{uniqid}-XXXXXX.tmp",
+                true
+            ],
+            [
+                "zz.tar-XXXXXX.tmp",
+                true
+            ],
+            [
+                "zzpath-XXXXXX.tmp",
+                true
+            ],
+            [
+                "{uniqid}-XXXXXX.tmp",
+                true
+            ]
+        ]
+    ],
+    [
+        "referer field",
+        [
+            "<input type=\"hidden\" name=\"_wp_http_referer\" value=\"/zz/?a=1&#038;b=%22%3Cx%3E%22\" />",
+            "<input type=\"hidden\" name=\"_wp_http_referer\" value=\"/zz/?a=1&#038;b=2\" />",
+            "<input type=\"hidden\" name=\"_wp_http_referer\" value=\"/zz/&#039;\" />",
+            "<input type=\"hidden\" name=\"_wp_http_referer\" value=\"/zz/\" />"
+        ]
+    ],
+    [
+        "last changed told once",
+        [
+            [
+                "zzfnc",
+                3
+            ]
+        ]
+    ],
+    [
+        "non-cached ids",
+        [
+            [
+                3,
+                4,
+                0,
+                -1,
+                999999991
+            ],
+            [
+                [
+                    "wrong",
+                    "_get_non_cached_ids",
+                    "Object ID must be an integer, string given."
+                ],
+                [
+                    "wrong",
+                    "_get_non_cached_ids",
+                    "Object ID must be an integer, double given."
+                ],
+                [
+                    "wrong",
+                    "_get_non_cached_ids",
+                    "Object ID must be an integer, string given."
+                ],
+                [
+                    "wrong",
+                    "_get_non_cached_ids",
+                    "Object ID must be an integer, boolean given."
+                ],
+                [
+                    "wrong",
+                    "_get_non_cached_ids",
+                    "Object ID must be an integer, NULL given."
+                ]
+            ]
+        ]
+    ],
+    [
+        "die handlers",
+        [
+            [
+                "_ajax_wp_die_handler",
+                "zz msg",
+                [
+                    "status_header",
+                    "nocache_headers"
+                ]
+            ],
+            [
+                "_json_wp_die_handler",
+                "{\"code\":\"wp_die\",\"message\":\"zz msg\",\"data\":{\"status\":403},\"additional_errors\":[]}",
+                [
+                    "status_header",
+                    "nocache_headers"
+                ]
+            ],
+            [
+                "_jsonp_wp_die_handler",
+                "/**/({\"code\":\"wp_die\",\"message\":\"zz msg\",\"data\":{\"status\":403},\"additional_errors\":[]})",
+                [
+                    "status_header",
+                    "nocache_headers"
+                ]
+            ]
+        ]
+    ],
+    [
+        "die input",
+        [
+            [
+                "m1",
+                "WordPress &rsaquo; Error",
+                {
+                    "response": 418,
+                    "code": "c1",
+                    "exit": true,
+                    "back_link": false,
+                    "link_url": "",
+                    "link_text": "",
+                    "text_direction": "ltr",
+                    "charset": "UTF-8",
+                    "additional_errors": [
+                        {
+                            "code": "c1",
+                            "message": "m2",
+                            "data": {
+                                "status": 418
+                            }
+                        },
+                        {
+                            "code": "c2",
+                            "message": "m3",
+                            "data": "d3"
+                        }
+                    ]
+                }
+            ],
+            [
+                "m1",
+                "WordPress &rsaquo; Error",
+                {
+                    "response": 418,
+                    "code": "mine",
+                    "exit": true,
+                    "back_link": false,
+                    "link_url": "",
+                    "link_text": "",
+                    "text_direction": "ltr",
+                    "charset": "UTF-8",
+                    "additional_errors": [
+                        {
+                            "code": "c1",
+                            "message": "m2",
+                            "data": {
+                                "status": 418
+                            }
+                        },
+                        {
+                            "code": "c2",
+                            "message": "m3",
+                            "data": "d3"
+                        }
+                    ]
+                }
+            ],
+            [
+                "plain",
+                "WordPress &rsaquo; Error",
+                {
+                    "response": 404,
+                    "code": "mine",
+                    "exit": true,
+                    "back_link": false,
+                    "link_url": "",
+                    "link_text": "",
+                    "text_direction": "ltr",
+                    "charset": "UTF-8",
+                    "additional_errors": []
+                }
+            ]
+        ]
+    ],
+    [
+        "wp_die arguments, a redirect that is not 3xx, a refused ajax nonce",
+        [
+            [
+                "m",
+                404,
+                {
+                    "response": 500
+                }
+            ],
+            [
+                "m",
+                "",
+                {
+                    "response": 404
+                }
+            ],
+            [
+                "m",
+                "T",
+                {
+                    "response": 500
+                }
+            ],
+            [
+                "m",
+                "",
+                {
+                    "response": 404
+                }
+            ],
+            [
+                "HTTP redirect status code must be a redirection code, 3xx.",
+                "",
+                []
+            ],
+            [
+                -1,
+                "",
+                {
+                    "response": 403
+                }
+            ]
+        ]
+    ],
+    [
+        "emoji styles",
+        [
+            true,
+            false,
+            [
+                "\n\timg.wp-smiley, img.emoji {\n\t\tdisplay: inline !important;\n\t\tborder: none !important;\n\t\tbox-shadow: none !important;\n\t\theight: 1em !important;\n\t\twidth: 1em !important;\n\t\tmargin: 0 0.07em !important;\n\t\tvertical-align: -0.1em !important;\n\t\tbackground: none !important;\n\t\tpadding: 0 !important;\n\t}"
+            ]
+        ]
+    ],
+    [
+        "font folder",
+        [
+            [
+                [
+                    "fonts",
+                    "",
+                    "fonts"
+                ]
+            ],
+            "fonts",
+            ""
+        ]
+    ],
+    [
+        "basic auth contexts",
+        [
+            "front",
+            "front",
+            "login",
+            "login"
+        ]
+    ],
+    [
+        "an old request failed",
+        [
+            "request-failed",
+            ""
+        ]
+    ],
+    [
+        "uploaded file permissions",
+        "660"
+    ],
+    [
+        "enclosures",
+        [
+            [
+                [
+                    "http://zzfnc.example/a.mp3",
+                    "http://zzfnc.example/b.mp4",
+                    "http://zzfnc.example/c.txt",
+                    "http://zzfnc.example/d.ogg"
+                ],
+                [
+                    "http://zzfnc.example/a.mp3\n0\naudio/mpeg\n",
+                    "http://zzfnc.example/b.mp4\n0\nvideo/mp4\n",
+                    "http://zzfnc.example/d.ogg\n0\naudio/ogg\n"
+                ]
+            ],
+            [
+                [
+                    "http://zzfnc.example/a.mp3",
+                    "http://zzfnc.example/page2"
+                ],
+                [
+                    "http://zzfnc.example/a.mp3\n0\naudio/mpeg\n"
+                ]
+            ],
+            [
+                [
+                    "http://zzfnc.example/vid",
+                    "http://zzfnc.example/page3"
+                ],
+                []
+            ]
+        ]
+    ],
+    [
+        "rel attributes in and under comment_text",
+        [
+            " rel=\"nofollow ugc\"",
+            " rel=\"nofollow\""
+        ]
+    ],
+    [
+        "split by whitespace",
+        [
+            [
+                "abcd "
+            ],
+            [
+                "a ",
+                "b ",
+                "c"
+            ],
+            [],
+            [
+                "ab ",
+                "0 ",
+                "cd"
+            ],
+            [
+                "ab ",
+                "cd "
+            ],
+            []
+        ]
+    ],
+    [
+        "array paths read",
+        [
+            1,
+            "D",
+            "D",
+            "D",
+            "D",
+            "D",
+            "two",
+            "two",
+            "empty",
+            "D",
+            "D"
+        ]
+    ],
+    [
+        "array paths written",
+        [
+            {
+                "a": {
+                    "b": 1,
+                    "2": "two",
+                    "": "empty"
+                },
+                "1": "one",
+                "x": {
+                    "y": "V"
+                }
+            },
+            {
+                "a": {
+                    "b": 1,
+                    "2": "two",
+                    "": "empty"
+                },
+                "1": "one"
+            },
+            {
+                "a": {
+                    "b": 1,
+                    "2": "two",
+                    "": "empty"
+                },
+                "1": "one"
+            },
+            {
+                "a": {
+                    "b": 1,
+                    "2": "two",
+                    "": "V"
+                },
+                "1": "one"
+            },
+            {
+                "a": {
+                    "b": 1,
+                    "2": "two",
+                    "": "empty"
+                },
+                "1": "one"
+            },
+            {
+                "a": {
+                    "b": 1,
+                    "2": "two",
+                    "": "empty"
+                },
+                "1": "one",
+                "n": {
+                    "3": "V"
+                }
+            }
+        ]
+    ],
+    [
+        "antispambot forms",
+        [
+            [
+                "decimal",
+                "decodes back",
+                "plain"
+            ],
+            [
+                "decimal",
+                "decodes back",
+                "escaped",
+                "plain"
+            ]
+        ]
+    ],
+    [
+        "smilies",
+        [
+            "hi 🙂 there",
+            "hi :) there",
+            "hi :) there<img src=\"{s}://{host}/wp-includes/images/smilies/icon_smile.gif\" alt=\":zzq:\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" />x <code> :zzq: </code>",
+            [
+                "a.svg",
+                "<img src=\"{s}://{host}/wp-includes/images/smilies/b.jpe\" alt=\":zz2:\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" />",
+                "<img src=\"{s}://{host}/wp-includes/images/smilies/c.avif\" alt=\":zz3:\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" />",
+                "<img src=\"{s}://{host}/wp-includes/images/smilies/d.webp\" alt=\":zz4:\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" />",
+                "😀",
+                "<img src=\"{s}://{host}/wp-includes/images/smilies/e.GIF\" alt=\":zz6:\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" />",
+                "f.bmp",
+                "g.tif",
+                "h.png?x=1",
+                null
+            ]
+        ]
+    ],
+    [
+        "htmlentities2",
+        [
+            "&amp;a; &ab; &abcdefg; &amp;abcdefgh; &a1; &1a; &_a; &amp;;",
+            "&amp;#1; &#12; &#123; &amp;#1234; &amp;#x41; &copy; &amp;amp;",
+            "&lt; &eacute; &quot;&#039; a&amp;b &amp;a"
+        ]
+    ],
+    [
+        "time zone offsets",
+        [
+            18000,
+            19800,
+            18000,
+            -19800,
+            -18000,
+            0,
+            18000,
+            -18000,
+            18000,
+            0,
+            3600
+        ]
+    ],
+    [
+        "ISO 8601 zones",
+        [
+            "2024-01-02 02:04:05",
+            "2024-01-02 02:04:05",
+            "2024-01-02 02:04:05",
+            false,
+            false,
+            "2024-01-02 02:04:05"
+        ]
+    ],
+    [
+        "translated texts",
+        [
+            "[deleted]",
+            "This content was deleted by the author.",
+            "Continue reading %s"
+        ]
+    ],
+    [
+        "emoji in mail: the first content type",
+        [
+            true,
+            false,
+            true,
+            true
+        ]
+    ],
+    [
+        "admin referer without an action",
+        [
+            1,
+            [
+                [
+                    "wrong",
+                    "check_admin_referer",
+                    "You should specify an action to be verified by using the first parameter."
+                ]
+            ]
+        ]
+    ],
+    [
+        "ajax referer: an empty named argument",
+        [
+            false,
+            1,
+            1
+        ]
+    ],
+    [
+        "passwords hashed trimmed, checked as given",
+        [
+            true,
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "a plugin hasher",
+        "zzhash:zz"
+    ],
+    [
+        "author notices and their headers",
+        [
+            [
+                true,
+                [
+                    [
+                        "zzfnc_author@example.test",
+                        "From: \"Zz Visitor\" <wordpress@{host}>\nContent-Type: text/plain; charset=\"UTF-8\"\nReply-To: \"zzvisitor@example.test\" <zzvisitor@example.test>\n"
+                    ]
+                ]
+            ],
+            [
+                true,
+                [
+                    [
+                        "zzfnc_author@example.test",
+                        "From: \"Minn\" <wordpress@{host}>\nContent-Type: text/plain; charset=\"UTF-8\"\nReply-To: a@example.test\n"
+                    ]
+                ]
+            ],
+            [
+                true,
+                [
+                    [
+                        "zzfnc_author@example.test",
+                        "From: \"Zz \"Q\" Name\" <wordpress@{host}>\nContent-Type: text/plain; charset=\"UTF-8\"\n"
+                    ]
+                ]
+            ],
+            [
+                true,
+                [
+                    [
+                        "zzfnc_author@example.test",
+                        "From: \"Zz N\" <wordpress@{host}>\nContent-Type: text/plain; charset=\"UTF-8\"\nReply-To: \"b@example.test\" <b@example.test>\n"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "the author signed in is not told",
+        [
+            false,
+            0
+        ]
+    ],
+    [
+        "an author who cannot read is not told",
+        [
+            false,
+            0
+        ]
+    ],
+    [
+        "moderators filtered off",
+        [
+            true,
+            0
+        ]
+    ],
+    [
+        "password change notice",
+        [
+            null,
+            [
+                "[%s] Password Changed"
+            ],
+            [
+                "[Zz %s %d 100%] Password Changed"
+            ]
+        ]
+    ],
+    [
+        "redirects validated",
+        [
+            [
+                "/zzdir/foo/bar",
+                "/zzdir/./foo",
+                "/zzdir/../foo",
+                "?a=1",
+                "#frag",
+                "",
+                "FB",
+                "http://{host}/x",
+                "http://u@{host}/",
+                "FB",
+                "FB",
+                "FB",
+                "/zzdir/evil.example",
+                "/evil.example",
+                "FB"
+            ],
+            [
+                "/zzdir/foo/bar",
+                "/zzdir/./foo",
+                "/zzdir/../foo",
+                "?a=1",
+                "#frag",
+                "",
+                "FB",
+                "http://{host}/x",
+                "http://u@{host}/",
+                "FB",
+                "FB",
+                "FB",
+                "/zzdir/evil.example",
+                "/evil.example",
+                "FB"
+            ],
+            [
+                "/a/b/foo/bar",
+                "/a/b/./foo",
+                "/a/b/../foo",
+                "?a=1",
+                "#frag",
+                "",
+                "FB",
+                "http://{host}/x",
+                "http://u@{host}/",
+                "FB",
+                "FB",
+                "FB",
+                "/a/b/evil.example",
+                "/evil.example",
+                "FB"
+            ],
+            [
+                "/foo/bar",
+                "/./foo",
+                "/../foo",
+                "?a=1",
+                "#frag",
+                "",
+                "FB",
+                "http://{host}/x",
+                "http://u@{host}/",
+                "FB",
+                "FB",
+                "FB",
+                "/evil.example",
+                "/evil.example",
+                "FB"
+            ]
+        ]
+    ],
+    [
+        "auth cookies on an https request to an http home",
+        [
+            [
+                false
+            ],
+            2
+        ]
+    ]
+]

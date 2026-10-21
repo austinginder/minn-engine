@@ -491,6 +491,243 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\AdminMenu",
+            "short": "AdminMenu",
+            "namespace": "Minn\\Admin",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Admin/AdminMenu.php",
+            "lines": 75,
+            "doc": "The admin menu's arithmetic, as plugins' menu calls see it on the\nreference (probe admin-doubts): where a top-level entry is filed, the hook\na plugin page runs on, the file a plugin page's address is built on, and\nthe parent of the page being shown. The menu arrays themselves stay the\nglobals plugins read; this class only works things out from them.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "hookName",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hookName(string $type, string $page): string",
+                    "doc": "The hook a plugin page runs on: its type, \"_page_\", and the page with every \".php\" taken out.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "page",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 20
+                },
+                {
+                    "routes": [],
+                    "name": "positionKey",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "positionKey(array $menu, mixed $position, string $slug, string $title): string|int|null",
+                    "doc": "The key a top-level entry is filed under: null (appended) without a\nnumeric position; the position itself when it is free; a taken one\nmoved on by a fraction drawn from the slug and title, written as text.",
+                    "shapes": [
+                        "@param array<int|string, mixed> $menu"
+                    ],
+                    "params": [
+                        {
+                            "name": "menu",
+                            "type": "array",
+                            "shape": "array<int|string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "position",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "pageBase",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pageBase(string $slug, array $parents): ?string",
+                    "doc": "The file a plugin page's address is built on: admin.php for a\ntop-level page, one under another plugin page or under none; the\nparent's own file otherwise; null for a page never registered.",
+                    "shapes": [
+                        "@param array<string, string|false> $parents the page => parent map ($_parent_pages)"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parents",
+                            "type": "array",
+                            "shape": "array<string, string|false>",
+                            "default": null,
+                            "doc": "the page => parent map ($_parent_pages)"
+                        }
+                    ],
+                    "line": 48,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "parentOf",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parentOf(array $menu, array $submenu, string $pagenow, string $pluginPage, string $typenow, array $realParents): string",
+                    "doc": "The parent file of the page being shown: for a plugin page, the\ntop-level entry that is the page or the submenu holding it; otherwise\nthe submenu holding the current file (with \"?post_type=\" and the type\nwhen there is one); each mapped through the real parents, '' when\nnothing holds it.",
+                    "shapes": [
+                        "@param array<int|string, mixed> $menu",
+                        "@param array<string, mixed> $submenu",
+                        "@param array<string, string> $realParents"
+                    ],
+                    "params": [
+                        {
+                            "name": "menu",
+                            "type": "array",
+                            "shape": "array<int|string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "submenu",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pagenow",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pluginPage",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "typenow",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "realParents",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 87
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\AdminNotice",
+            "short": "AdminNotice",
+            "namespace": "Minn\\Admin",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Admin/AdminNotice.php",
+            "lines": 25,
+            "doc": "An admin notice's markup, as wp_get_admin_notice builds it on the\nreference (probe functions-formatting-doubts): a type is a string,\ntrimmed, and one holding a space is a mistake; extra classes come only\nfrom a list; an attribute that is true is a bare name, a value under a\nnumber is a bare name too, an empty one is left out.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Notices"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "markup",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "markup(string $message, array $args, Closure $attr): array",
+                    "doc": "The notice's div and its inner part (the message, in a paragraph\nunless paragraph_wrap is off), escaped by $attr.",
+                    "shapes": [
+                        "@param array<string, mixed> $args the parsed and filtered arguments",
+                        "@param Closure(string): string $attr the attribute escaper",
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the parsed and filtered arguments"
+                        },
+                        {
+                            "name": "attr",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": "the attribute escaper"
+                        }
+                    ],
+                    "line": 28,
+                    "end": 41
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\AdminPlugin",
             "short": "AdminPlugin",
             "namespace": "Minn\\Admin",
@@ -2150,6 +2387,122 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\CodeEditor",
+            "short": "CodeEditor",
+            "namespace": "Minn\\Admin",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Admin/CodeEditor.php",
+            "lines": 96,
+            "doc": "The code editor's settings as wp_get_code_editor_settings gives them\n(probe admin-doubts): CodeMirror's defaults and the three linters', the\nmode and its helpers from the content type (named, or worked out from the\nfile's extension), then the caller's own settings merged over each part.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "EXTENSIONS",
+                    "value": "array (   'css' => 'text/css',   'scss' => 'text/x-scss',   'less' => 'text/x-less',   'sass' => 'text/x-sass',   'js' => 'text/javascript',   'mjs' => 'text/javascript',   'jsx' => 'text/jsx',   'json' => 'application/json',   'php' => 'application/x-httpd-php',   'phtml' => 'application/x-httpd-php',   'php3' => 'application/x-httpd-php',   'php4' => 'application/x-httpd-php',   'php5' => 'application/x-httpd-php',   'php7' => 'application/x-httpd-php',   'phps' => 'application/x-httpd-php',   'svg' => 'application/svg+xml',   'xml' => 'text/xml',   'md' => 'text/x-gfm',   'sh' => 'text/x-sh',   'bash' => 'text/x-sh',   'sql' => 'text/x-sql',   'html' => 'text/html',   'htm' => 'text/html',   'yml' => 'text/x-yaml',   'yaml' => 'text/x-yaml',   'diff' => 'text/x-diff',   'patch' => 'text/x-diff',   'conf' => 'text/nginx', )",
+                    "doc": "A file extension => the content type it is edited as.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "settings",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "settings(array $args, string $espreeUrl, Closure $mimeOf): array",
+                    "doc": "The settings for one editor: $args' type, else its file's (the\nextension, else $mimeOf the file, else text/plain); the caller's\ncodemirror, csslint, jshint and htmlhint settings merged over the\ndefaults.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@param Closure(string): string $mimeOf a file's content type, '' when unknown",
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "espreeUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mimeOf",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": "a file's content type, '' when unknown"
+                        }
+                    ],
+                    "line": 38,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "mode",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "mode(array $codemirror, string $type): array",
+                    "doc": "CodeMirror's settings with the mode for a content type and the\nhelpers that mode takes.",
+                    "shapes": [
+                        "@param array<string, mixed> $codemirror",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "codemirror",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 88
+                },
+                {
+                    "routes": [],
+                    "name": "defaults",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "defaults(string $espreeUrl): array",
+                    "doc": "The defaults: CodeMirror's, then CSSLint's, JSHint's (with the module\nparser's address) and HTMLHint's rules.",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "espreeUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 109
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\Dashboard",
             "short": "Dashboard",
             "namespace": "Minn\\Admin",
@@ -3186,6 +3539,161 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\IframeMarkup",
+            "short": "IframeMarkup",
+            "namespace": "Minn\\Admin",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Admin/IframeMarkup.php",
+            "lines": 41,
+            "doc": "The fixed markup of the two bare admin documents plugins print into, as\niframe_header and wp_iframe print it on the reference (probe\nadmin-doubts): the globals the admin scripts read (ajaxurl, pagenow and\nthe rest), the body's opening with the no-js switch, and the onload call\nat the end. What hooks print goes between these pieces.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "LOAD_EVENT",
+                    "value": "'addLoadEvent = function(func){if(typeof jQuery!==\\'undefined\\')jQuery(function(){func();});else if(typeof wpOnload!==\\'function\\'){wpOnload=func;}else{var oldonload=wpOnload;wpOnload=function(){oldonload();func();}}};'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "headerScript",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "headerScript(string $title, array $page): string",
+                    "doc": "iframe_header's head after its title: the load-event helper, the\nthickbox closer and the admin globals.",
+                    "shapes": [
+                        "@param array{ajaxurl: string, pagenow: string, typenow: string, adminpage: string, thousands: string, decimal: string, rtl: int} $page"
+                    ],
+                    "params": [
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "page",
+                            "type": "array",
+                            "shape": "array{ajaxurl: string, pagenow: string, typenow: string, adminpage: string, thousands: string, decimal: string, rtl: int}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 24,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "headerBody",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "headerBody(string $idAttribute, string $classes): string",
+                    "doc": "iframe_header's body opening, the no-js class switched to js.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "idAttribute",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "classes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "iframeScript",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "iframeScript(string $title, string $ajaxurl, int $rtl): string",
+                    "doc": "wp_iframe's head after the document opening: its title, the load-event helper and the media popup's globals.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "ajaxurl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rtl",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 41
+                },
+                {
+                    "routes": [],
+                    "name": "iframeBody",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "iframeBody(string $idAttribute, string $classes): string",
+                    "doc": "wp_iframe's body opening, the no-js class switched to js.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "idAttribute",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "classes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "iframeEnd",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "iframeEnd(): string",
+                    "doc": "The onload call that closes wp_iframe's document.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 50,
+                    "end": 53
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\LanguageChoices",
             "short": "LanguageChoices",
             "namespace": "Minn\\Admin",
@@ -3724,6 +4232,234 @@
                     "params": [],
                     "line": 63,
                     "end": 77
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\MetaBoxMarkup",
+            "short": "MetaBoxMarkup",
+            "namespace": "Minn\\Admin",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Admin/MetaBoxMarkup.php",
+            "lines": 23,
+            "doc": "A meta box's frame as do_meta_boxes prints it on the reference (probe\nadmin-doubts): a labelled region, its title as a heading the three\nhandle buttons (move up, move down, show or hide) describe, each with\nits tooltip, then the box's inside, which the caller fills.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Html",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Support\\Entities",
+                "Minn\\Support\\KsesEntities"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "open",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "open(string $id, string $title, string $classes): string",
+                    "doc": "The box up to the start of its inside: the region, the header with its title, and the handle buttons.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "classes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "button",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "button(string $id, string $class, string $indicator, string $label, string $tip, string $extra): string",
+                    "doc": "One handle button and its tooltip.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "indicator",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "tip",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "extra",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 39
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\MetaBoxes",
+            "short": "MetaBoxes",
+            "namespace": "Minn\\Admin",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Admin/MetaBoxes.php",
+            "lines": 56,
+            "doc": "One screen's meta boxes as add_meta_box files them on the reference\n(probe admin-doubts): context => priority => id => box, a removed box\nkept as false so it stays removed.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PRIORITIES",
+                    "value": "array (   0 => 'high',   1 => 'core',   2 => 'default',   3 => 'low', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "add",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "add(array $boxes, string $context, string $priority, string $id, array $box): array",
+                    "doc": "The screen's boxes with one filed. The context is made first. A box\nfiled already is taken out of wherever it was, except at \"core\": a\nremoved box stays removed, one filed at \"default\" moves to \"core\" as\nit was, and any other is left alone. At \"sorted\" the box keeps its\nown title, callback and arguments.",
+                    "shapes": [
+                        "@param array<string, mixed> $boxes",
+                        "@param array{id: string, title: mixed, callback: mixed, args: mixed} $box",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "boxes",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "priority",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "box",
+                            "type": "array",
+                            "shape": "array{id: string, title: mixed, callback: mixed, args: mixed}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "remove",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "remove(array $boxes, string $context, string $id): array",
+                    "doc": "The screen's boxes with one removed from a context: false at every\npriority, so a later add at \"core\" leaves it out.",
+                    "shapes": [
+                        "@param array<string, mixed> $boxes",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "boxes",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 66
                 }
             ]
         },
@@ -5456,6 +6192,81 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\ScreenOptions",
+            "short": "ScreenOptions",
+            "namespace": "Minn\\Admin",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Admin/ScreenOptions.php",
+            "lines": 27,
+            "doc": "Which screen option a save keeps for itself, as set_screen_options tells\nthem apart on the reference (probe admin-doubts): a core list's page size\nis saved as a number from 1 to 999 without asking any filter; any other\noption is the plugin's to accept through its filters.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "CORE",
+                    "value": "array (   0 => 'edit_per_page',   1 => 'users_per_page',   2 => 'edit_comments_per_page',   3 => 'upload_per_page',   4 => 'edit_tags_per_page',   5 => 'plugins_per_page',   6 => 'export_personal_data_requests_per_page',   7 => 'remove_personal_data_requests_per_page',   8 => 'sites_network_per_page',   9 => 'users_network_per_page',   10 => 'site_users_network_per_page',   11 => 'plugins_network_per_page',   12 => 'themes_network_per_page',   13 => 'site_themes_network_per_page', )",
+                    "doc": "The core lists' page sizes that are not named after a post type or taxonomy.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "isCore",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isCore(string $option, Closure $registered): bool",
+                    "doc": "Whether an option is a core list's page size: one of those above, or\na name that is a post type or taxonomy once \"edit_\" and \"_per_page\"\nare taken out of it.",
+                    "shapes": [
+                        "@param Closure(string): bool $registered whether a post type or taxonomy has that name"
+                    ],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "registered",
+                            "type": "Closure",
+                            "shape": "Closure(string): bool",
+                            "default": null,
+                            "doc": "whether a post type or taxonomy has that name"
+                        }
+                    ],
+                    "line": 31,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "pageSized",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pageSized(string $option): bool",
+                    "doc": "Whether a plugin's option is a page size or the column count, which the general set-screen-option filter is asked about first.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 40
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\SessionsController",
             "short": "SessionsController",
             "namespace": "Minn\\Admin",
@@ -6144,6 +6955,92 @@
                     ],
                     "line": 175,
                     "end": 181
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Admin\\SubmitButton",
+            "short": "SubmitButton",
+            "namespace": "Minn\\Admin",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Admin/SubmitButton.php",
+            "lines": 37,
+            "doc": "A settings form's submit input as get_submit_button builds it: \"button\"\nand a class for each type (primary, small and large prefixed with\n\"button-\", secondary meaning none), the id given among the other\nattributes or the name, the other attributes escaped one by one (or a\nstring of them as given).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Entities",
+                "Minn\\Support\\KsesEntities"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "input",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "input(string $text, array $types, string $name, array|string $otherAttributes): string",
+                    "doc": "The input element.",
+                    "shapes": [
+                        "@param list<string> $types",
+                        "@param array<string, mixed>|string $otherAttributes"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "otherAttributes",
+                            "type": "array|string",
+                            "shape": "array<string, mixed>|string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "attr",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attr(string $value): string",
+                    "doc": "An attribute value escaped without encoding a reference twice.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 52
                 }
             ]
         },
@@ -8188,7 +9085,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/AuthCookies.php",
-            "lines": 107,
+            "lines": 110,
             "doc": "The three cookies a sign-in sets: the auth cookie on the admin and\nplugins paths (the secure variant over HTTPS, keyed off that scheme's\nsalt) and the logged_in cookie on the site root, which is the one REST\nreads. Every value shares the username|expiration|token|hmac shape.",
             "implements": [],
             "extends": null,
@@ -8283,7 +9180,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "settle(Minn\\Content\\UserRecord $user, int $days, bool $secure, bool $https, string $token = ''): array",
-                    "doc": "The sign-in cookies as the reference settles them (suite login-hooks):\ntheir life through auth_cookie_expiration (two days, or fourteen when\nremembered, the cookies then kept twelve hours past it); the auth\ncookie's security through secure_auth_cookie, and the logged-in\ncookie's through secure_logged_in_cookie (secure only over HTTPS); a\nsession made for that life when none is given; then set_auth_cookie\nand set_logged_in_cookie told the values, and send_auth_cookies asked\nwhether to send them. Signing in always runs under the booted\nruntime (its sessions are WordPress's), so the hooks always run.",
+                    "doc": "The sign-in cookies as the reference settles them (suite login-hooks):\ntheir life through auth_cookie_expiration (two days, or fourteen when\nremembered, the cookies then kept twelve hours past it); the auth\ncookie's security through secure_auth_cookie, and the logged-in\ncookie's through secure_logged_in_cookie (secure only when $https,\nwhich wp_set_auth_cookie answers by the home address's scheme); a\nsession made for that life when none is given; each cookie through\nauth_cookie; then set_auth_cookie\nand set_logged_in_cookie told the values, and send_auth_cookies asked\nwhether to send them. Signing in always runs under the booted\nruntime (its sessions are WordPress's), so the hooks always run.",
                     "shapes": [
                         "@return array{expiration: int, expire: int, secure: bool, secureLoggedIn: bool, scheme: string, token: string, auth: string, loggedIn: string, send: bool}"
                     ],
@@ -8324,8 +9221,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 66
+                    "line": 52,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -8353,8 +9250,8 @@
                             "doc": "from settle()"
                         }
                     ],
-                    "line": 75,
-                    "end": 88
+                    "line": 78,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -8365,8 +9262,8 @@
                     "doc": "Whether signing out clears the cookies: clear_auth_cookie told, then\nsend_auth_cookies asked with no cookie in hand, as the reference asks\nthem (suite login-hooks).",
                     "shapes": [],
                     "params": [],
-                    "line": 95,
-                    "end": 99
+                    "line": 98,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -8385,8 +9282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 116
+                    "line": 105,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -8426,8 +9323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 124
+                    "line": 122,
+                    "end": 127
                 }
             ]
         },
@@ -11793,7 +12690,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/SignIn.php",
-            "lines": 65,
+            "lines": 67,
             "doc": "The door itself: what a sign-in surface needs beyond checking a\npassword. Sessions are minted here, the three cookies ride out on the\nresponse, and the failure counter behind the throttle is kept in one\nplace with the session store and the cookie jar it protects.",
             "implements": [],
             "extends": null,
@@ -11804,7 +12701,8 @@
                 "Minn\\Content\\UserRecord",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
-                "Minn\\Runtime\\Handoff"
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -11831,8 +12729,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 24
+                "line": 21,
+                "end": 25
             },
             "cases": [],
             "constants": [],
@@ -11874,8 +12772,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 30
+                    "line": 28,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -11894,8 +12792,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -11906,8 +12804,8 @@
                     "doc": "The cookie-name hash the sign-in cookies, the postpass cookie, and the reset cookie share.",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 42
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -11940,8 +12838,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 48
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -11974,8 +12872,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 54
+                    "line": 52,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -12001,8 +12899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 68
+                    "line": 67,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -12028,8 +12926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 75
+                    "line": 74,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -12048,8 +12946,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 81
+                    "line": 81,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -12089,8 +12987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 61
+                    "line": 58,
+                    "end": 64
                 }
             ]
         },
@@ -39093,7 +39991,7 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/TextFilters.php",
-            "lines": 161,
+            "lines": 145,
             "doc": "The small text filters the reference runs over content, titles and\ncomments, each from its observed rules (contracts/runtime.md \"The content\nfilters\", \"The comment form\"): smilies, the capital P, insecure home\naddresses, the feed's embed clean-up, and a comment's links and spans.",
             "implements": [],
             "extends": null,
@@ -39104,12 +40002,6 @@
             "constructor": null,
             "cases": [],
             "constants": [
-                {
-                    "name": "IMAGE",
-                    "value": "'/\\\\.(png|gif|jpe?g|svg|webp)$/i'",
-                    "doc": "",
-                    "visibility": "private"
-                },
                 {
                     "name": "IGNORED",
                     "value": "array (   0 => 'code',   1 => 'pre',   2 => 'script',   3 => 'style',   4 => 'textarea', )",
@@ -39138,19 +40030,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 41
+                    "line": 28,
+                    "end": 40
                 },
                 {
                     "routes": [],
                     "name": "smilies",
                     "static": true,
                     "visibility": "public",
-                    "signature": "smilies(string $text, array $table, Closure $image): string",
-                    "doc": "Smilies become their emoji, or an image for the few that have one: a\ncode only counts as a whole word between spaces, and nothing inside a\ncode, pre, script, style or textarea element, or inside a tag, changes.",
+                    "signature": "smilies(string $text, Closure $run): string",
+                    "doc": "Text with $run applied to each stretch outside a tag and outside a\ncode, pre, script, style or textarea element, as convert_smilies\nruns the smilies search over it.",
                     "shapes": [
-                        "@param array<string, string> $table code => emoji, or an image file name",
-                        "@param Closure(string $file, string $code): string $image the <img> for an image smiley"
+                        "@param Closure(string): string $run"
                     ],
                     "params": [
                         {
@@ -39161,22 +40052,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "table",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": "code => emoji, or an image file name"
-                        },
-                        {
-                            "name": "image",
+                            "name": "run",
                             "type": "Closure",
-                            "shape": "",
+                            "shape": "Closure(string): string",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 64
+                    "line": 49,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -39195,8 +40079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -39215,8 +40099,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 99
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -39249,8 +40133,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 106
+                    "line": 86,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -39269,8 +40153,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 116
+                    "line": 93,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -39305,8 +40189,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 129
+                    "line": 110,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -39341,8 +40225,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 151
+                    "line": 123,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -39361,8 +40245,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 161
+                    "line": 138,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -39388,44 +40272,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 73
-                },
-                {
-                    "routes": [],
-                    "name": "words",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "words(string $text, array $table, Closure $image): string",
-                    "doc": "One text run, word by word. @param array<string, string> $table",
-                    "shapes": [
-                        "@param array<string, string> $table"
-                    ],
-                    "params": [
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "table",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "image",
-                            "type": "Closure",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 76,
-                    "end": 87
+                    "line": 65,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -39446,8 +40294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 175
+                    "line": 148,
+                    "end": 159
                 }
             ]
         },
@@ -53190,6 +54038,127 @@
             ]
         },
         {
+            "name": "Minn\\Front\\ResourceHints",
+            "short": "ResourceHints",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/ResourceHints.php",
+            "lines": 56,
+            "doc": "The resource hint links wp_head prints (wp_resource_hints): each relation\n(dns-prefetch, preconnect, prefetch, prerender) handed to the filter with\nwhat the engine found, its entries printed once each. A plain address\nprints rel first; an entry given as attributes prints its href, the\nattributes the reference keeps (as, crossorigin, pr, type; a bare word\nfor a numeric key) and rel last. dns-prefetch names only the host,\npreconnect the scheme and host, the others the whole address (probe\nmedia-template-doubts).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Escape"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "KEPT",
+                    "value": "array (   0 => 'as',   1 => 'crossorigin',   2 => 'href',   3 => 'pr',   4 => 'type', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "render",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "render(array $dnsPrefetch, Closure $filter): string",
+                    "doc": "The links, one a line.",
+                    "shapes": [
+                        "@param list<string> $dnsPrefetch the external hosts the queued assets use",
+                        "@param Closure(array, string): mixed $filter the wp_resource_hints filter"
+                    ],
+                    "params": [
+                        {
+                            "name": "dnsPrefetch",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "the external hosts the queued assets use"
+                        },
+                        {
+                            "name": "filter",
+                            "type": "Closure",
+                            "shape": "Closure(array, string): mixed",
+                            "default": null,
+                            "doc": "the wp_resource_hints filter"
+                        }
+                    ],
+                    "line": 30,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "address",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "address(string $href, string $relation): string",
+                    "doc": "An entry's address as its relation names it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "href",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "relation",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "withAttributes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "withAttributes(string $href, array $attrs, string $relation): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<int|string, mixed> $attrs"
+                    ],
+                    "params": [
+                        {
+                            "name": "href",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attrs",
+                            "type": "array",
+                            "shape": "array<int|string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "relation",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 74
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\RuleRoutes",
             "short": "RuleRoutes",
             "namespace": "Minn\\Front",
@@ -55793,6 +56762,7 @@
             "usedBy": [
                 "Minn\\Admin\\AppController",
                 "Minn\\Admin\\LanguageChoices",
+                "Minn\\Admin\\MetaBoxMarkup",
                 "Minn\\Blocks\\Duotone",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
@@ -72354,6 +73324,8 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Admin\\AdminNotice",
+                "Minn\\Admin\\MetaBoxMarkup",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
                 "Minn\\Blocks\\Dynamic\\Search",
@@ -72385,6 +73357,7 @@
                 "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\CommentChecks",
+                "Minn\\Runtime\\DieInput",
                 "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
@@ -80060,7 +81033,7 @@
             "namespace": "Minn\\Mail",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Mail/Mailer.php",
-            "lines": 88,
+            "lines": 102,
             "doc": "Sends a Message through the configured transport. Failures are logged\nand reported as false; nothing here throws into a request.",
             "implements": [],
             "extends": null,
@@ -80186,6 +81159,54 @@
                 },
                 {
                     "routes": [],
+                    "name": "commentHeaders",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "commentHeaders(string $author, string $email, string $host, string $charset, string $siteName): string",
+                    "doc": "The headers a comment notice is sent with, as the reference writes\nthem: from the commenter's name (the site's when they gave none) at\nwordpress@ the site's host (no www.), plain text in the site's\ncharset, replies to the commenter's address when there is one, the\nbare address for a nameless commenter (probe functions-formatting-doubts).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "author",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "host",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "charset",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "siteName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 50
+                },
+                {
+                    "routes": [],
                     "name": "noticesFor",
                     "static": true,
                     "visibility": "public",
@@ -80201,8 +81222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 45
+                    "line": 53,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -80221,8 +81242,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 75
+                    "line": 67,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -80264,8 +81285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 85
+                    "line": 92,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -80307,8 +81328,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 96
+                    "line": 102,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -80357,8 +81378,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 103
+                    "line": 113,
+                    "end": 117
                 }
             ]
         },
@@ -87058,6 +88079,113 @@
                     ],
                     "line": 171,
                     "end": 180
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Media\\CompatFields",
+            "short": "CompatFields",
+            "namespace": "Minn\\Media",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/CompatFields.php",
+            "lines": 50,
+            "doc": "The attachment's extra fields as the media modal's compat form prints\nthem (get_compat_media_markup), measured on the reference (probe\nmedia-template-doubts): a hidden menu order, the required-fields note and\na table of rows, a field's own \"tr\" as given, then its hidden fields. A\ntext input's value is escaped; a textarea's value, a label and an html\nfield print as given; any other input prints the field's entry of that\nname. Nothing at all when there are no fields.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Escape"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "markup",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "markup(int $id, int $menuOrder, array $fields, string $requiredNote): string",
+                    "doc": "The form's markup.",
+                    "shapes": [
+                        "@param array<string, mixed> $fields what attachment_fields_to_edit answered"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "menuOrder",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "what attachment_fields_to_edit answered"
+                        },
+                        {
+                            "name": "requiredNote",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "row",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "row(int $id, string $key, array $field, string $input): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $field"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "field",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "input",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 66
                 }
             ]
         },
@@ -135162,12 +136290,100 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\DieInput",
+            "short": "DieInput",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/DieInput.php",
+            "lines": 34,
+            "doc": "wp_die's message, title and arguments made whole, as the die handlers\nread them on the reference (probes functions-remaining,\nfunctions-formatting-doubts): an error's first message is the message and\nevery other one, each with its code's data, an additional error; the\nfirst error's status is the response unless the caller names one, and of\nits data only wp_die's own arguments carry over; the caller's code wins\nover the error's. A missing response is 500, a missing title the\ntranslated \"WordPress &rsaquo; Error\", a missing code wp_die, and the\ncharset the site's unless the caller names one, in its usual spelling.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Gettext",
+                "Minn\\Support\\Lists"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DEFAULTS",
+                    "value": "array (   'response' => 0,   'code' => '',   'exit' => true,   'back_link' => false,   'link_url' => '',   'link_text' => '',   'text_direction' => 'ltr',   'charset' => 'utf-8',   'additional_errors' =>    array (   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "process",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "process(mixed $message, ?array $errors, mixed $title, mixed $args, string $siteCharset, Closure $charset): array",
+                    "doc": "The message, title and arguments.",
+                    "shapes": [
+                        "@param list<array{code: int|string, message: string, data: mixed}>|null $errors the error's messages in order, or null for a plain message",
+                        "@param Closure(string): string $charset a charset's usual spelling",
+                        "@return array{0: mixed, 1: mixed, 2: array<string, mixed>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "message",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "errors",
+                            "type": "?array",
+                            "shape": "list<array{code: int|string, message: string, data: mixed}>|null",
+                            "default": null,
+                            "doc": "the error's messages in order, or null for a plain message"
+                        },
+                        {
+                            "name": "title",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "siteCharset",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "charset",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": "a charset's usual spelling"
+                        }
+                    ],
+                    "line": 33,
+                    "end": 54
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\DocumentTitle",
             "short": "DocumentTitle",
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/DocumentTitle.php",
-            "lines": 95,
+            "lines": 106,
             "doc": "The page's title as WordPress's title functions make it from the main\nquery: the document title and its parts (what is shown, the page number,\nthe site or its tagline), and the title tags of a post type archive, a\nterm archive and a single post, printed or returned.",
             "implements": [],
             "extends": null,
@@ -135296,6 +136512,26 @@
                     ],
                     "line": 94,
                     "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "formatArchive",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "formatArchive(string $termSlug): ?string",
+                    "doc": "A post format archive's title: the format's plural (Asides, Galleries),\ntranslated in its own context; null for the standard format and any\nother term (the plain \"Archives\" then).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "termSlug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 118,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -136100,7 +137336,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/FileUpload.php",
-            "lines": 105,
+            "lines": 106,
             "doc": "A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in\nthe reference's order (probe upload-filters, contracts/runtime.md\n\"Uploads\"): the action's prefilter, where a plugin sanitizes the file or\nrefuses it with an error; its overrides; the upload's own errors, an\nempty file and, for a form upload, the form and the upload itself; the\ntype, from the file's content as much as its name\n(wp_check_filetype_and_ext), refused unless the site allows it or the\nuser may upload anything; the uploads folder; a unique, clean name\n(wp_unique_filename); pre_move_uploaded_file, where a plugin may move it\nitself; the move; and wp_handle_upload over the result.",
             "implements": [],
             "extends": null,
@@ -136205,7 +137441,7 @@
                         }
                     ],
                     "line": 78,
-                    "end": 99
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -136255,8 +137491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 124
+                    "line": 109,
+                    "end": 125
                 }
             ]
         },
@@ -143647,6 +144883,7 @@
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
+                "Minn\\Admin\\AdminNotice",
                 "Minn\\Query\\DateSql",
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AbilityRun",
@@ -158514,6 +159751,7 @@
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\RegisteredCaps",
                 "Minn\\Auth\\Salts",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
@@ -173575,6 +174813,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Admin\\MetaBoxMarkup",
+                "Minn\\Admin\\SubmitButton",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\UserWrites",
                 "Minn\\Support\\Escape",
@@ -173764,7 +175004,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Escape.php",
-            "lines": 84,
+            "lines": 128,
             "doc": "Text made safe the way WordPress's escapers make it, each ending in the\nfilter plugins hook there, handed the result and the original: for HTML\n(esc_html, esc_attr) invalid UTF-8 emptied, entities already present\nnormalised rather than encoded again, the specials and both quotes\nencoded; for a textarea, everything encoded; for an inline script, a\nsingle-quoted string's specials; and an address (esc_url) cleaned, its\nprotocol checked against the allowed ones.",
             "implements": [],
             "extends": null,
@@ -173789,8 +175029,10 @@
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Front\\PageLinks",
                 "Minn\\Front\\PostEmbed",
+                "Minn\\Front\\ResourceHints",
                 "Minn\\Front\\ToolbarMarkup",
                 "Minn\\Front\\ToolbarMenus",
+                "Minn\\Media\\CompatFields",
                 "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\AttachmentImages",
                 "Minn\\Runtime\\CommentTags",
@@ -174003,6 +175245,66 @@
                 },
                 {
                     "routes": [],
+                    "name": "xml",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "xml(string $text): string",
+                    "doc": "Text for an XML document (esc_xml): named references XML lacks are\ndecoded (or their ampersand escaped), a bare ampersand and the four\nspecials encoded, and CDATA sections left exactly as written (probe\nmedia-template-doubts).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 111
+                },
+                {
+                    "routes": [],
+                    "name": "xmlText",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "xmlText(string $text): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 134
+                },
+                {
+                    "routes": [],
+                    "name": "xmlCharacter",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "xmlCharacter(int $code): bool",
+                    "doc": "Whether a code point is a character XML allows.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "code",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 137,
+                    "end": 140
+                },
+                {
+                    "routes": [],
                     "name": "encoded",
                     "static": true,
                     "visibility": "private",
@@ -174018,8 +175320,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 101
+                    "line": 142,
+                    "end": 145
                 }
             ]
         },
@@ -174091,7 +175393,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/FileTree.php",
-            "lines": 70,
+            "lines": 146,
             "doc": "Whole-directory reads and copies. The engine's own installer, the update\nunpacker and the plugins that reach for WordPress's copy_dir all want the\nsame two operations: list a tree, and duplicate one.",
             "implements": [],
             "extends": null,
@@ -174109,10 +175411,10 @@
                     "name": "files",
                     "static": true,
                     "visibility": "public",
-                    "signature": "files(string $dir, int $depth = 0, array $skip = array ( ), int $level = 1): array|false",
-                    "doc": "Every file under a directory, and every directory itself with a trailing\nslash, to the given depth. Depth 0 means no limit; depth 1 stops at the\ndirectory's own entries and names its subdirectories without descending.",
+                    "signature": "files(string $dir, int $depth = 0, array $skip = array ( )): array|false",
+                    "doc": "Every file under a directory, as list_files gives them: names starting\nwith a dot left out, the names in $skip left out at the top level only,\nan empty folder named with a trailing slash. Depth 0 means no limit;\nat the depth given a folder is named with its slash instead of entered.",
                     "shapes": [
-                        "@param list<string> $skip names to leave out at every level",
+                        "@param list<string> $skip",
                         "@return list<string>|false false when the directory cannot be read"
                     ],
                     "params": [
@@ -174135,18 +175437,48 @@
                             "type": "array",
                             "shape": "list<string>",
                             "default": "array ( )",
-                            "doc": "names to leave out at every level"
-                        },
-                        {
-                            "name": "level",
-                            "type": "int",
-                            "shape": "",
-                            "default": "1",
                             "doc": ""
                         }
                     ],
-                    "line": 22,
-                    "end": 48
+                    "line": 23,
+                    "end": 26
+                },
+                {
+                    "routes": [],
+                    "name": "filesWithHidden",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "filesWithHidden(string $dir, int $depth = 0, array $skip = array ( )): array|false",
+                    "doc": "As files(), dot files and folders included.",
+                    "shapes": [
+                        "@param list<string> $skip",
+                        "@return list<string>|false"
+                    ],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "skip",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -174181,8 +175513,146 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 80
+                    "line": 74,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "copyThrough",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "copyThrough(object $fs, string $from, string $to, array $skip, int $fileMode, int $dirMode): ?array",
+                    "doc": "A directory copied through a WordPress filesystem object, as copy_dir\ncopies it: the source listed, the destination made when it is missing,\neach file copied (once more after a chmod when the first copy fails),\neach missing folder made and copied in turn. A name in $skip is left\nout at its own level, \"folder/name\" one level down. Null when it all\ncopied, else the refusal's code and data.",
+                    "shapes": [
+                        "@param list<string> $skip",
+                        "@return array{0: string, 1: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "fs",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "from",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "to",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "skip",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fileMode",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "dirMode",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 140
+                },
+                {
+                    "routes": [],
+                    "name": "listedFiles",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "listedFiles(mixed $listing, string $dir): array",
+                    "doc": "The files of a recursive filesystem listing (dirlist), each as a path\nunder $dir, in listing order, folders' files where the folder stands.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "listing",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 156
+                },
+                {
+                    "routes": [],
+                    "name": "walk",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "walk(string $dir, int $depth, array $skip, ?string $hiddenPrefix, int $level): array|false",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $skip",
+                        "@return list<string>|false"
+                    ],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "skip",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hiddenPrefix",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 65
                 }
             ]
         },
@@ -175779,6 +177249,8 @@
                 "Minn\\Json"
             ],
             "usedBy": [
+                "Minn\\Admin\\MetaBoxMarkup",
+                "Minn\\Admin\\SubmitButton",
                 "Minn\\Feed\\Tree",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Kses",
@@ -176363,6 +177835,7 @@
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryWhere",
                 "Minn\\Runtime\\CommentTags",
+                "Minn\\Runtime\\DieInput",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\Pages",
@@ -178193,6 +179666,63 @@
             ]
         },
         {
+            "name": "Minn\\Support\\Signatures",
+            "short": "Signatures",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/Signatures.php",
+            "lines": 34,
+            "doc": "A file checked against detached Ed25519 signatures of its SHA-384 hash,\nas verify_file_signature checks it: a signature that does not decode to\nthe signature length is skipped, and for each one that does, every key\nthat does not decode to the key length is skipped too; the counts and the\nhash are what the caller reports when nothing verifies.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "check",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "check(string $file, array $signatures, array $keys): array",
+                    "doc": "Whether any signature verifies with any key, the file's hash in hex,\nand how many keys and signatures were skipped.",
+                    "shapes": [
+                        "@param list<mixed> $signatures",
+                        "@param list<mixed> $keys base64 public keys",
+                        "@return array{verified: bool, hash: string, skipped_key: int, skipped_sig: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "signatures",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "keys",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": "base64 public keys"
+                        }
+                    ],
+                    "line": 24,
+                    "end": 46
+                }
+            ]
+        },
+        {
             "name": "Minn\\Support\\Slashes",
             "short": "Slashes",
             "namespace": "Minn\\Support",
@@ -178903,7 +180433,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Url.php",
-            "lines": 266,
+            "lines": 271,
             "doc": "URL shaping the escaping and query helpers share: the character cleanup\nesc_url applies, bracket encoding outside the authority, and query\nargument merging. Behaviour pinned by contracts/fixtures/api/functions.json.",
             "implements": [],
             "extends": null,
@@ -179204,8 +180734,8 @@
                     "name": "safeRedirect",
                     "static": true,
                     "visibility": "public",
-                    "signature": "safeRedirect(string $location, Closure $allowedHosts): ?string",
-                    "doc": "A redirect target the site may send a browser to: http(s) only and a\nhost the caller allows (local paths always pass). Credentials before\nthe host are kept, as the reference keeps them: the host decides.",
+                    "signature": "safeRedirect(string $location, Closure $allowedHosts, string $requestPath = ''): ?string",
+                    "doc": "A redirect target the site may send a browser to: http(s) only and a\nhost the caller allows. A relative one stays on the site: a path\nwithout a leading slash is put after the request path's folder (up to\nits last \"/\", the dots kept), anything else as given. Credentials\nbefore the host are kept unless they hold an \"@\" (probe\nfunctions-formatting-doubts).",
                     "shapes": [
                         "@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host"
                     ],
@@ -179223,10 +180753,17 @@
                             "shape": "Closure(string): list<string>",
                             "default": null,
                             "doc": "the hosts allowed for the target's host"
+                        },
+                        {
+                            "name": "requestPath",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 243
+                    "line": 230,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -179252,8 +180789,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 278
+                    "line": 256,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -179631,45 +181168,6 @@
                     ],
                     "line": 184,
                     "end": 195
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Support\\WebServer",
-            "short": "WebServer",
-            "namespace": "Minn\\Support",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Support/WebServer.php",
-            "lines": 8,
-            "doc": "What the SERVER_SOFTWARE string says about the web server in front of the site.",
-            "implements": [],
-            "extends": null,
-            "uses": [],
-            "usedBy": [],
-            "constructor": null,
-            "cases": [],
-            "constants": [],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "isApache",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "isApache(string $software): bool",
-                    "doc": "Whether the server speaks Apache's module and .htaccess conventions: Apache itself, or LiteSpeed.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "software",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 11,
-                    "end": 14
                 }
             ]
         },

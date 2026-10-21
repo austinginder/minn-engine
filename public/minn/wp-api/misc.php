@@ -88,11 +88,12 @@ function _wp_filter_taxonomy_base($base)
 
 function wp_filesize($path)
 {
-    $size = (int) apply_filters('pre_wp_filesize', 0, $path);
-    if ($size === 0 && is_file((string) $path)) {
-        $size = (int) filesize((string) $path);
+    // A number from pre_wp_filesize is the answer, 0 included, without wp_filesize (probe query-comment-misc-doubts).
+    $size = apply_filters('pre_wp_filesize', null, $path);
+    if (is_numeric($size)) {
+        return (int) $size;
     }
-    return (int) apply_filters('wp_filesize', $size, $path);
+    return (int) apply_filters('wp_filesize', is_file((string) $path) ? (int) filesize((string) $path) : 0, $path);
 }
 
 function edit_post_link($text = null, $before = '', $after = '', $post = 0, $css_class = 'post-edit-link')
@@ -105,7 +106,7 @@ function edit_post_link($text = null, $before = '', $after = '', $post = 0, $css
     if (!$url) {
         return;
     }
-    $text ??= 'Edit This';
+    $text ??= __('Edit This');
     $link = '<a class="' . esc_attr($css_class) . '" href="' . esc_url($url) . '">' . $text . '</a>';
     echo $before . apply_filters('edit_post_link', $link, $post->ID, $text) . $after;
 }
@@ -265,7 +266,7 @@ function wp_maybe_update_user_counts($network_id = null)
 {
     // A large site counts on its own schedule unless a plugin says otherwise (probe hook-inputs).
     if (!apply_filters('enable_live_network_counts', !wp_is_large_user_count($network_id), 'users')) {
-        return;
+        return false;
     }
     return wp_update_user_counts($network_id);
 }
@@ -315,7 +316,7 @@ function wp_get_custom_css_post($stylesheet = '')
             return null;
         }
     }
-    $posts = get_posts(['post_type' => 'custom_css', 'post_status' => get_post_stati(), 'name' => $stylesheet, 'numberposts' => 1, 'orderby' => 'ID', 'order' => 'DESC', 'suppress_filters' => true]);
+    $posts = get_posts(['post_type' => 'custom_css', 'post_status' => get_post_stati(), 'name' => sanitize_title($stylesheet), 'numberposts' => 1, 'orderby' => 'ID', 'order' => 'DESC', 'suppress_filters' => true]);
     $post = $posts === [] ? null : $posts[0];
     if ($current) {
         set_theme_mod('custom_css_post_id', $post === null ? -1 : $post->ID);
@@ -397,17 +398,12 @@ function wp_post_revision_title($revision, $link = true)
     if (!in_array($revision->post_type, ['post', 'page', 'revision'], true)) {
         return false;
     }
-    $datef = 'F j, Y @ H:i:s';
-    $date = date_i18n($datef, strtotime($revision->post_modified));
-    if ($link && current_user_can('edit_post', $revision->ID)) {
-        $date = "<a href='" . esc_url(admin_url('revision.php?revision=' . $revision->ID)) . "'>$date</a>";
-    }
-    if (!wp_is_post_revision($revision)) {
-        $date = sprintf('%s [Current Revision]', $date);
-    } elseif (wp_is_post_autosave($revision)) {
-        $date = sprintf('%s [Autosave]', $date);
-    }
-    return $date;
+    // The link is the revision's edit link (the post's own screen for the current one), none when it has none (probe query-comment-misc-doubts).
+    [$autosave, $current] = [__('%s [Autosave]'), __('%s [Current Revision]')];
+    $date = date_i18n('F j, Y @ H:i:s', strtotime($revision->post_modified));
+    $edit = $link && current_user_can('edit_post', $revision->ID) ? get_edit_post_link($revision->ID) : '';
+    $date = $edit ? "<a href='$edit'>$date</a>" : $date;
+    return !wp_is_post_revision($revision) ? sprintf($current, $date) : (wp_is_post_autosave($revision) ? sprintf($autosave, $date) : $date);
 }
 
 /**
@@ -456,11 +452,15 @@ function wp_list_post_revisions($post = 0, $type = 'all')
 
 function wp_sprintf_l($pattern, $args)
 {
-    if (!is_array($args) || strpos((string) $pattern, '%l') !== 0) {
+    // A single value is a list of one; an empty list is nothing, the pattern's tail too (probe query-comment-misc-doubts).
+    if (strpos((string) $pattern, '%l') !== 0) {
         return $pattern;
     }
-    $l = apply_filters('wp_sprintf_l', ['between' => ', ', 'between_last_two' => ', and ', 'between_only_two' => ' and ']);
     $args = (array) $args;
+    if ($args === []) {
+        return '';
+    }
+    $l = apply_filters('wp_sprintf_l', ['between' => ', ', 'between_last_two' => ', and ', 'between_only_two' => ' and ']);
     $result = array_shift($args);
     if (count($args) === 1) {
         $result .= $l['between_only_two'] . array_shift($args);
@@ -532,10 +532,9 @@ function wp_embed_defaults($url = '')
 /** Sets each named global from the request's POST else GET value, empty string when absent. */
 function wp_reset_vars($vars)
 {
-    $request = Runtime::current()->request;
+    // $_POST as plugins left it, an empty value falling through to $_GET (probe query-comment-misc-doubts).
     foreach ((array) $vars as $var) {
-        $value = $request?->form[$var] ?? $request?->query[$var] ?? '';
-        $GLOBALS[$var] = is_scalar($value) ? (string) $value : $value;
+        $GLOBALS[$var] = empty($_POST[$var]) ? ($_GET[$var] ?? '') ?: '' : $_POST[$var];
     }
 }
 
@@ -611,7 +610,7 @@ function wp_recursive_ksort(&$input_array)
         }
     }
     unset($value);
-    return ksort($input_array);
+    ksort($input_array);
 }
 
 function wp_using_themes()
@@ -635,7 +634,7 @@ function wp_is_maintenance_mode()
     }
     include $file;
     $upgrading = (int) $upgrading;
-    return $upgrading >= time() - 600 && (bool) apply_filters('enable_maintenance_mode', true, $upgrading);
+    return time() - $upgrading < 600 && (bool) apply_filters('enable_maintenance_mode', true, $upgrading);
 }
 
 function wp_should_upgrade_global_tables()
@@ -656,10 +655,18 @@ function insert_with_markers($filename, $marker, $insertion)
 
 function copy_dir($from, $to, $skip_list = [])
 {
-    if (!is_dir((string) $from)) {
-        return new WP_Error('dirlist_failed_copy_dir', __('Directory listing failed.'), basename((string) $from));
+    global $wp_filesystem;
+    // Through the filesystem a plugin set up, as the reference copies (probe query-comment-misc-doubts); straight on disk without one.
+    if (!is_object($wp_filesystem)) {
+        return is_dir((string) $from) ? Minn\Support\FileTree::copy((string) $from, (string) $to, array_map('strval', (array) $skip_list)) : new WP_Error('dirlist_failed_copy_dir', __('Directory listing failed.'), basename((string) $from));
     }
-    return Minn\Support\FileTree::copy((string) $from, (string) $to, array_map('strval', (array) $skip_list));
+    $refused = Minn\Support\FileTree::copyThrough($wp_filesystem, (string) $from, (string) $to, array_map('strval', (array) $skip_list), defined('FS_CHMOD_FILE') ? FS_CHMOD_FILE : 0644, defined('FS_CHMOD_DIR') ? FS_CHMOD_DIR : 0755);
+    return $refused === null ? true : new WP_Error($refused[0], match ($refused[0]) {
+        'dirlist_failed_copy_dir' => __('Directory listing failed.'),
+        'mkdir_destination_failed_copy_dir' => __('Could not create the destination directory.'),
+        'copy_failed_copy_dir' => __('Could not copy file.'),
+        default => __('Could not create directory.'),
+    }, $refused[1]);
 }
 
 function list_files($folder = '', $levels = 100, $exclusions = [], $include_hidden = false)
@@ -667,7 +674,7 @@ function list_files($folder = '', $levels = 100, $exclusions = [], $include_hidd
     if ((string) $folder === '' || (int) $levels < 1) {
         return false;
     }
-    return Minn\Support\FileTree::files((string) $folder, (int) $levels, array_map('strval', (array) $exclusions));
+    return $include_hidden ? Minn\Support\FileTree::filesWithHidden((string) $folder, (int) $levels, array_map('strval', (array) $exclusions)) : Minn\Support\FileTree::files((string) $folder, (int) $levels, array_map('strval', (array) $exclusions));
 }
 
 function win_is_writable($path)
@@ -692,10 +699,11 @@ function wp_get_mu_plugins()
 
 function wp_opcache_invalidate($filepath, $force = false)
 {
-    if (!file_exists($filepath) || !function_exists('opcache_invalidate')) {
+    // Only a .php file is asked about, before it is looked for (probe query-comment-misc-doubts).
+    if (!str_ends_with((string) $filepath, '.php') || !apply_filters('wp_opcache_invalidate_file', true, $filepath)) {
         return false;
     }
-    if (!apply_filters('wp_opcache_invalidate_file', true, $filepath)) {
+    if (!file_exists($filepath) || !function_exists('opcache_invalidate')) {
         return false;
     }
     $enabled = ini_get('opcache.enable');
@@ -764,7 +772,8 @@ function get_post_embed_url($post = null)
 function get_oembed_response_data_for_url($url, $args)
 {
     $post_id = (int) apply_filters('oembed_request_post_id', url_to_postid((string) $url), $url);
-    return $post_id > 0 ? get_oembed_response_data($post_id, (int) ($args['width'] ?? 600)) : false;
+    $data = $post_id > 0 ? get_oembed_response_data($post_id, (int) ($args['width'] ?? 0)) : false;
+    return $data ? (object) $data : false;
 }
 
 /** The data as an oEmbed XML document. */
@@ -804,11 +813,16 @@ function _oembed_rest_pre_serve_request($served, $result, $request, $server)
     if (!in_array($request->get_route(), ['/oembed/1.0/embed', '/oembed/1.0/proxy'], true) || $request->get_param('format') !== 'xml') {
         return $served;
     }
-    $data = $server->response_to_data($result, false);
+    // No XML made is a 501, as the reference ends it (probe query-comment-misc-doubts).
+    $xml = _oembed_create_xml($server->response_to_data($result, false));
+    if (!$xml) {
+        status_header(501);
+        die(get_status_header_desc(501));
+    }
     if (!headers_sent()) {
         $server->send_header('Content-Type', 'text/xml; charset=' . get_option('blog_charset'));
     }
-    echo _oembed_create_xml($data);
+    echo $xml;
     return true;
 }
 
@@ -831,25 +845,33 @@ function move_dir($from, $to, $overwrite = false)
             return new WP_Error('destination_not_deleted_move_dir', __('The destination folder could not be deleted.'));
         }
     }
-    if (!$wp_filesystem->move($from, $to)) {
-        $copied = copy_dir($from, $to, [basename((string) $to)]);
-        if (is_wp_error($copied)) {
-            return $copied;
-        }
-        $wp_filesystem->delete($from, true);
+    if ($wp_filesystem->move($from, $to)) {
+        wp_opcache_invalidate_directory($to);
+        return true;
     }
-    wp_opcache_invalidate_directory($to);
+    // Copied instead, into a folder made for it; the source goes only after a good copy (probe query-comment-misc-doubts).
+    if (!$wp_filesystem->is_dir($to) && !$wp_filesystem->mkdir($to, FS_CHMOD_DIR)) {
+        return new WP_Error('mkdir_failed_move_dir', __('Could not create directory.'), $to);
+    }
+    $copied = copy_dir($from, $to, [basename((string) $to)]);
+    if (is_wp_error($copied)) {
+        return $copied;
+    }
+    $wp_filesystem->delete($from, true);
     return true;
 }
 
 /** Every PHP file under a folder dropped from the opcode cache. */
 function wp_opcache_invalidate_directory($dir)
 {
-    if (!is_string($dir) || trim($dir) === '' || !is_dir($dir)) {
+    global $wp_filesystem;
+    if (!is_string($dir) || trim($dir) === '') {
+        wp_trigger_error('', sprintf(__('%s expects a non-empty string.'), '<code>wp_opcache_invalidate_directory()</code>'));
         return;
     }
-    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS)) as $file) {
-        wp_opcache_invalidate($file->getPathname());
+    // Listed through the filesystem, each file forced (probe query-comment-misc-doubts).
+    foreach (Minn\Support\FileTree::listedFiles($wp_filesystem->dirlist($dir, false, true), $dir) as $file) {
+        wp_opcache_invalidate($file, true);
     }
 }
 
@@ -875,20 +897,12 @@ function verify_file_signature($filename, $signatures, $filename_for_errors = fa
     if (!$signatures) {
         return new WP_Error('signature_verification_no_signature', sprintf(__('The authenticity of %s could not be verified as no signature was found.'), '<span class="code">' . esc_html($name) . '</span>'), ['filename' => $name]);
     }
-    $hash = hash_file('sha384', (string) $filename, true);
-    foreach ((array) $signatures as $signature) {
-        $raw = base64_decode((string) $signature, true);
-        foreach (strlen((string) $raw) === SODIUM_CRYPTO_SIGN_BYTES ? (array) wp_trusted_keys() : [] as $key) {
-            $key = base64_decode((string) $key, true);
-            if (strlen((string) $key) === SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES && sodium_crypto_sign_verify_detached($raw, (string) $hash, $key)) {
-                return true;
-            }
-        }
-    }
-    return new WP_Error('signature_verification_failed', sprintf(__('The authenticity of %s could not be verified.'), '<span class="code">' . esc_html($name) . '</span>'), ['filename' => $name, 'hash' => bin2hex((string) $hash)]);
+    // What failed is reported with the keys, signatures, hash, skipped counts and versions (probe query-comment-misc-doubts).
+    $keys = (array) wp_trusted_keys();
+    $check = Minn\Support\Signatures::check((string) $filename, (array) $signatures, $keys);
+    return $check['verified'] ?: new WP_Error('signature_verification_failed', sprintf(__('The authenticity of %s could not be verified.'), '<span class="code">' . esc_html($name) . '</span>'), ['filename' => $name, 'keys' => $keys, 'signatures' => $signatures, 'hash' => $check['hash'], 'skipped_key' => $check['skipped_key'], 'skipped_sig' => $check['skipped_sig'], 'php' => PHP_VERSION, 'sodium' => defined('SODIUM_LIBRARY_VERSION') ? SODIUM_LIBRARY_VERSION : false]);
 }
 
-/** The keys a signature may be from: none of wordpress.org's (the engine fetches nothing from it), only what wp_trusted_keys adds. */
 function wp_trusted_keys()
 {
     return apply_filters('wp_trusted_keys', []);

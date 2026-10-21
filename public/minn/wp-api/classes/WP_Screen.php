@@ -26,7 +26,7 @@ final class WP_Screen
             return $hook_name;
         }
         $id = (string) ($hook_name === '' ? ($GLOBALS['hook_suffix'] ?? '') : $hook_name);
-        $id = preg_replace('/\.php$/', '', $id);
+        $id = sanitize_key((string) preg_replace('/\.php$/', '', $id));
         if (isset(self::$registry[$id])) {
             return self::$registry[$id];
         }

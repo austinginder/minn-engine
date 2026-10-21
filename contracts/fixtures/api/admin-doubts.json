@@ -1,0 +1,2150 @@
+[
+    [
+        "add_menu_page",
+        [
+            "toplevel_page_zzadm-top",
+            "toplevel_page_zzadm-icon",
+            "toplevel_page_zzadm-dash",
+            [
+                "2",
+                "5",
+                "80",
+                "5.35689",
+                "81",
+                "82"
+            ],
+            [
+                [
+                    "index.php",
+                    "menu-top",
+                    "dashicons-dashboard"
+                ],
+                [
+                    "edit.php",
+                    "menu-top",
+                    "dashicons-admin-post"
+                ],
+                [
+                    "options-general.php",
+                    "menu-top",
+                    "dashicons-admin-settings"
+                ],
+                [
+                    "zzadm-top",
+                    "menu-top menu-icon-generic toplevel_page_zzadm-top",
+                    "dashicons-admin-generic"
+                ],
+                [
+                    "zzadm-icon",
+                    "menu-top toplevel_page_zzadm-icon",
+                    "http://example.com/i.png"
+                ],
+                [
+                    "zzadm-dash",
+                    "menu-top toplevel_page_zzadm-dash",
+                    "dashicons-admin-generic"
+                ]
+            ],
+            {
+                "zzadm-top": false,
+                "zzadm-icon": false,
+                "zzadm-dash": false
+            },
+            [
+                "toplevel_page_zzadm-top",
+                "toplevel_page_zzadm-icon",
+                "toplevel_page_zzadm-dash"
+            ]
+        ]
+    ],
+    [
+        "add_submenu_page",
+        [
+            "zz-top_page_zzadm-sub",
+            "admin_page_zzadm-subsub",
+            "settings_page_zzadm-opt",
+            "admin_page_zzadm/page",
+            "posts_page_zzadm-edit",
+            "tools_page_zzadm-tools",
+            {
+                "options-general.php": [
+                    "options-general.php",
+                    "zzadm-opt"
+                ],
+                "edit.php": [
+                    "edit.php",
+                    "zzadm-edit"
+                ],
+                "zzadm-top": [
+                    "zzadm-top",
+                    "zzadm-sub"
+                ],
+                "zzadm-sub": [
+                    "zzadm-subsub"
+                ],
+                "zzadm/page.php": [
+                    "zzadm/page.php"
+                ],
+                "tools.php": [
+                    "zzadm-tools"
+                ]
+            },
+            {
+                "zzadm-top": false,
+                "zzadm-icon": false,
+                "zzadm-dash": false,
+                "zzadm-sub": "zzadm-top",
+                "zzadm-subsub": "zzadm-sub",
+                "zzadm-opt": "options-general.php",
+                "zzadm/page.php": "zzadm/page.php",
+                "zzadm-edit": "edit.php",
+                "zzadm-tools": "tools.php"
+            }
+        ]
+    ],
+    [
+        "menu_page_url",
+        [
+            "https://minn.localhost/wp-admin/admin.php?page=zzadm-top",
+            "https://minn.localhost/wp-admin/admin.php?page=zzadm-sub",
+            "https://minn.localhost/wp-admin/admin.php?page=zzadm-subsub",
+            "https://minn.localhost/wp-admin/options-general.php?page=zzadm-opt",
+            "https://minn.localhost/wp-admin/tools.php?page=zzadm-tools",
+            ""
+        ]
+    ],
+    [
+        "get_plugin_page_hookname",
+        [
+            "admin_page_zzadm/page",
+            "settings_page_zzadm-x",
+            "tools_page_zzadm-x",
+            "posts_page_zzadm-x",
+            "admin_page_zzadm-x",
+            "admin_page_zzadm-x",
+            "admin_page_zzadm-x",
+            "admin_page_zzadm-x",
+            "zz-top_page_zzadm-x"
+        ]
+    ],
+    [
+        "get_admin_page_parent",
+        [
+            "zzadm-top",
+            "zzadm-top",
+            "zzadm-top",
+            "zzadm-sub",
+            "zzadm-real",
+            "edit.php"
+        ]
+    ],
+    [
+        "is_super_admin",
+        [
+            true,
+            true,
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "meta boxes",
+        [
+            {
+                "zzadm-screen": {
+                    "normal": {
+                        "default": {
+                            "zzadm-a": false
+                        },
+                        "high": {
+                            "zzadm-a": false
+                        },
+                        "core": {
+                            "zzadm-a": false
+                        },
+                        "low": {
+                            "zzadm-a": false
+                        }
+                    },
+                    "side": {
+                        "high": {
+                            "zzadm-b": {
+                                "id": "zzadm-b",
+                                "title": "B2",
+                                "callback": "__return_null",
+                                "args": null
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "zzadm-screen": {
+                    "normal": {
+                        "default": {
+                            "zzadm-a": false
+                        },
+                        "high": {
+                            "zzadm-a": false
+                        },
+                        "core": {
+                            "zzadm-a": false
+                        },
+                        "low": {
+                            "zzadm-a": false
+                        }
+                    },
+                    "side": {
+                        "high": {
+                            "zzadm-b": {
+                                "id": "zzadm-b",
+                                "title": "B2",
+                                "callback": "__return_null",
+                                "args": null
+                            }
+                        }
+                    }
+                },
+                "zzadm-cur": {
+                    "normal": {
+                        "default": {
+                            "zzadm-d": {
+                                "id": "zzadm-d",
+                                "title": "D",
+                                "callback": "__return_null",
+                                "args": null
+                            }
+                        }
+                    },
+                    "advanced": {
+                        "default": {
+                            "zzadm-e": false
+                        },
+                        "high": {
+                            "zzadm-e": false
+                        },
+                        "core": {
+                            "zzadm-e": false
+                        },
+                        "low": {
+                            "zzadm-e": false
+                        }
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "set_current_screen globals",
+        [
+            "post",
+            "",
+            "edit-post"
+        ]
+    ],
+    [
+        "set_current_screen taxonomy globals",
+        [
+            "post",
+            "category",
+            "edit-category"
+        ]
+    ],
+    [
+        "hookname sanitizing",
+        [
+            [
+                "a b",
+                "admin_page_a b",
+                "tools_page_a b"
+            ],
+            [
+                "a.php.x",
+                "admin_page_a.x",
+                "tools_page_a.x"
+            ],
+            [
+                "A/B c.php",
+                "admin_page_A/B c",
+                "tools_page_A/B c"
+            ],
+            [
+                "zz?x=1",
+                "admin_page_zz?x=1",
+                "tools_page_zz?x=1"
+            ],
+            [
+                "zz.php",
+                "admin_page_zz",
+                "tools_page_zz"
+            ],
+            [
+                "zz:x",
+                "admin_page_zz:x",
+                "tools_page_zz:x"
+            ],
+            [
+                "zz_x.y",
+                "admin_page_zz_x.y",
+                "tools_page_zz_x.y"
+            ],
+            [
+                "zzé",
+                "admin_page_zzé",
+                "tools_page_zzé"
+            ],
+            [
+                "a/b/c.php",
+                "admin_page_a/b/c",
+                "tools_page_a/b/c"
+            ],
+            [
+                "zz-PHP.PHP",
+                "admin_page_zz-PHP.PHP",
+                "tools_page_zz-PHP.PHP"
+            ]
+        ]
+    ],
+    [
+        "menu positions",
+        [
+            [
+                "zzadm-p1",
+                "P One",
+                "5.45194",
+                "f4f9bfc5dbaecb4d12fd36b55180b08a"
+            ],
+            [
+                "zzadm-p1",
+                "P One",
+                "5.45194",
+                "f4f9bfc5dbaecb4d12fd36b55180b08a"
+            ],
+            [
+                "zzadm-p2",
+                "P One",
+                "5.17877",
+                "919dee9d592b6989d91d969a3eb645d5"
+            ],
+            [
+                "zzadm-p1",
+                "P Two",
+                "5.40776",
+                "e28500716a0a792c2cb0467221089f48"
+            ],
+            [
+                "zzadm-p3",
+                "P3",
+                "5.26906",
+                "ba3ce1b6e6a5af1b33037329f3ba691a"
+            ],
+            [
+                "5",
+                "5.5",
+                "6.06731"
+            ],
+            [
+                "5",
+                "7",
+                "3.5",
+                "8"
+            ]
+        ]
+    ],
+    [
+        "menu position wrong",
+        [
+            "add_menu_page"
+        ]
+    ],
+    [
+        "menu_page_url parents",
+        [
+            [
+                "{admin}admin.php?page=zzadm-t",
+                "{admin}admin.php?page=zzadm-s",
+                "{admin}admin.php?page=zzadm-ss",
+                "{admin}zzadm-unreg?page=zzadm-u",
+                "{admin}zzadm-unreg.php?page=zzadm-u2",
+                "{admin}edit.php?post_type=page&#038;page=zzadm-u3",
+                "{admin}admin.php?page=zzadm-u4",
+                "{admin}admin.php?page=zzadm-u5"
+            ],
+            {
+                "zzadm-t": false,
+                "zzadm-s": "zzadm-t",
+                "zzadm-ss": "zzadm-s",
+                "zzadm-u": "zzadm-unreg",
+                "zzadm-u2": "zzadm-unreg.php",
+                "zzadm-u3": "edit.php?post_type=page",
+                "zzadm-u4": "",
+                "zzadm-u5": ""
+            },
+            [
+                "zzadm-t",
+                "zzadm-s",
+                "zzadm-unreg",
+                "zzadm-unreg.php",
+                "edit.php?post_type=page",
+                ""
+            ],
+            []
+        ]
+    ],
+    [
+        "meta boxes re-added",
+        {
+            "removed first": {
+                "normal": {
+                    "high": {
+                        "zzadm-x": false
+                    },
+                    "core": {
+                        "zzadm-x": false
+                    },
+                    "default": {
+                        "zzadm-x": false
+                    },
+                    "low": {
+                        "zzadm-x": false
+                    }
+                }
+            },
+            "then added default": {
+                "normal": {
+                    "high": [],
+                    "core": [],
+                    "default": {
+                        "zzadm-x": {
+                            "id": "zzadm-x",
+                            "title": "X",
+                            "callback": "__return_null",
+                            "args": null
+                        }
+                    },
+                    "low": []
+                }
+            },
+            "then added high": {
+                "normal": {
+                    "high": {
+                        "zzadm-x": {
+                            "id": "zzadm-x",
+                            "title": "X",
+                            "callback": "__return_null",
+                            "args": null
+                        }
+                    },
+                    "core": [],
+                    "default": [],
+                    "low": []
+                }
+            },
+            "then added side core": {
+                "normal": {
+                    "high": {
+                        "zzadm-x": false
+                    },
+                    "core": {
+                        "zzadm-x": false
+                    },
+                    "default": {
+                        "zzadm-x": false
+                    },
+                    "low": {
+                        "zzadm-x": false
+                    }
+                },
+                "side": []
+            },
+            "core then default": {
+                "normal": {
+                    "core": [],
+                    "default": {
+                        "zzadm-x": {
+                            "id": "zzadm-x",
+                            "title": "X2",
+                            "callback": "__return_null",
+                            "args": null
+                        }
+                    }
+                }
+            },
+            "default then core": {
+                "normal": {
+                    "default": [],
+                    "core": {
+                        "zzadm-x": {
+                            "id": "zzadm-x",
+                            "title": "X",
+                            "callback": "__return_null",
+                            "args": null
+                        }
+                    }
+                }
+            },
+            "high then sorted": {
+                "normal": {
+                    "high": [],
+                    "sorted": {
+                        "zzadm-x": {
+                            "id": "zzadm-x",
+                            "title": "X",
+                            "callback": "__return_null",
+                            "args": null
+                        }
+                    }
+                }
+            },
+            "three contexts": {
+                "normal": {
+                    "low": []
+                },
+                "side": {
+                    "low": []
+                },
+                "advanced": {
+                    "high": {
+                        "zzadm-x": {
+                            "id": "zzadm-x",
+                            "title": "X3",
+                            "callback": "__return_null",
+                            "args": null
+                        }
+                    }
+                }
+            },
+            "bogus priority and context": [
+                {
+                    "normal": {
+                        "bogus": {
+                            "zzadm-x": {
+                                "id": "zzadm-x",
+                                "title": "X",
+                                "callback": "__return_null",
+                                "args": null
+                            }
+                        }
+                    },
+                    "bogus": {
+                        "default": {
+                            "zzadm-y": {
+                                "id": "zzadm-y",
+                                "title": "Y",
+                                "callback": "__return_null",
+                                "args": null
+                            }
+                        }
+                    }
+                },
+                [
+                    "zzadm-s1",
+                    "zzadms1"
+                ]
+            ]
+        }
+    ],
+    [
+        "get_admin_page_parent cases",
+        {
+            "edit": [
+                "edit.php",
+                "edit.php",
+                null,
+                "edit.php"
+            ],
+            "post-new": [
+                "edit.php",
+                "edit.php",
+                null,
+                "post-new.php"
+            ],
+            "tags": [
+                "",
+                "",
+                null,
+                "edit-tags.php"
+            ],
+            "options-general": [
+                "options-general.php",
+                "options-general.php",
+                null,
+                "options-general.php"
+            ],
+            "options plugin": [
+                "options-general.php",
+                "options-general.php",
+                null,
+                "options-general.php"
+            ],
+            "admin plugin sub": [
+                "zzadm-t",
+                "zzadm-t",
+                null,
+                "admin.php"
+            ],
+            "admin plugin top": [
+                "zzadm-t",
+                "zzadm-t",
+                null,
+                "admin.php"
+            ],
+            "admin plugin unknown": [
+                "",
+                "",
+                null,
+                "admin.php"
+            ],
+            "given parent_file": [
+                "edit.php",
+                "edit.php",
+                null,
+                "edit.php"
+            ],
+            "arg admin.php": [
+                "edit.php",
+                "edit.php",
+                null,
+                "edit.php"
+            ],
+            "arg other": [
+                "zzadm-arg",
+                null,
+                null,
+                "edit.php"
+            ],
+            "unknown page": [
+                "",
+                "",
+                null,
+                "zzadm-unknown.php"
+            ],
+            "index": [
+                "",
+                "",
+                null,
+                "index.php"
+            ]
+        }
+    ],
+    [
+        "get_admin_page_parent real parent",
+        [
+            [
+                "zzadm-real",
+                "zzadm-real",
+                null,
+                "edit.php"
+            ],
+            [
+                "zzadm-real",
+                "zzadm-real",
+                null,
+                "edit.php"
+            ],
+            [
+                "zzadm-real",
+                null,
+                null,
+                "edit.php"
+            ]
+        ]
+    ],
+    [
+        "positions refused",
+        [
+            [
+                [
+                    "add_menu_page",
+                    "The seventh parameter passed to <code>add_menu_page()</code> should be numeric representing menu position.",
+                    "6.0.0"
+                ],
+                [
+                    "add_submenu_page",
+                    "The seventh parameter passed to <code>add_submenu_page()</code> should be numeric representing menu position.",
+                    "5.3.0"
+                ]
+            ],
+            [
+                "zzadm-w1",
+                "zzadm-w3",
+                "zzadm-w2"
+            ]
+        ]
+    ],
+    [
+        "get_admin_page_parent more",
+        {
+            "tags with taxnow": [
+                "",
+                "",
+                null
+            ],
+            "tags no typenow": [
+                "",
+                "",
+                null
+            ],
+            "pages list": [
+                "edit.php?post_type=page",
+                "edit.php?post_type=page",
+                null
+            ],
+            "page new": [
+                "edit.php?post_type=page",
+                "edit.php?post_type=page",
+                null
+            ],
+            "index top only": [
+                "",
+                "",
+                null
+            ],
+            "file top": [
+                "",
+                "",
+                null
+            ],
+            "plugin page on file": [
+                "zzadm-t",
+                "zzadm-t",
+                null
+            ],
+            "plugin page top no sub": [
+                "zzadm-file.php",
+                "zzadm-file.php",
+                null
+            ],
+            "edit typenow post": [
+                "",
+                "",
+                null
+            ]
+        }
+    ],
+    [
+        "get_admin_page_parent real for plugin",
+        [
+            [
+                "zzadm-real-t",
+                "zzadm-real-t",
+                null
+            ],
+            "zzadm-real-t",
+            "zzadm-real-t"
+        ]
+    ],
+    [
+        "get_settings_errors and the flag",
+        [
+            0,
+            true,
+            1,
+            1,
+            false,
+            1
+        ]
+    ],
+    [
+        "settings_errors hidden on update",
+        [
+            "",
+            "<div id='setting-error-zzadm-e' class='notice notice-error settings-error is-dismissible'> \n<p><strong>ZZ error</strong></p></div> \n"
+        ]
+    ],
+    [
+        "get_submit_button",
+        [
+            "<p class=\"submit\"><input type=\"submit\" name=\"submit\" id=\"submit\" class=\"button button-primary button-large\" value=\"ZZ Save\"  /></p>",
+            "<p class=\"submit\"><input type=\"submit\" name=\"submit\" id=\"submit\" class=\"button button-primary button-large\" value=\"ZZ Save\"  /></p>",
+            "<p class=\"submit\"><input type=\"submit\" name=\"submit\" id=\"submit\" class=\"button button-primary button-large\" value=\"ZZ Save\"  /></p>",
+            "<p class=\"submit\"><input type=\"submit\" name=\"submit\" id=\"submit\" class=\"button button-primary button-large\" value=\"ZZ Save\"  /></p>",
+            "<input type=\"submit\" name=\"zz\" id=\"zzid\" class=\"button\" value=\"Go\" data-x=\"1\"  />"
+        ]
+    ],
+    [
+        "wp_get_code_editor_settings",
+        [
+            [
+                {
+                    "type": "text/css"
+                },
+                [
+                    "text/css",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "text/css",
+                        "lint": false,
+                        "autoCloseBrackets": true,
+                        "matchBrackets": true
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.js"
+                },
+                [
+                    "javascript",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "javascript",
+                        "lint": true,
+                        "autoCloseBrackets": true,
+                        "matchBrackets": true
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.php"
+                },
+                [
+                    "php",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "php",
+                        "autoCloseBrackets": true,
+                        "autoCloseTags": true,
+                        "matchBrackets": true,
+                        "matchTags": {
+                            "bothTags": true
+                        }
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.json"
+                },
+                [
+                    {
+                        "name": "javascript",
+                        "json": true
+                    },
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": {
+                            "name": "javascript",
+                            "json": true
+                        },
+                        "lint": true,
+                        "autoCloseBrackets": true,
+                        "matchBrackets": true
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.svg"
+                },
+                [
+                    "xml",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "xml",
+                        "autoCloseBrackets": true,
+                        "autoCloseTags": true,
+                        "matchTags": {
+                            "bothTags": true
+                        }
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.xml"
+                },
+                [
+                    "xml",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "xml",
+                        "autoCloseBrackets": true,
+                        "autoCloseTags": true,
+                        "matchTags": {
+                            "bothTags": true
+                        }
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.md"
+                },
+                [
+                    "gfm",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "gfm",
+                        "highlightFormatting": true
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.sh"
+                },
+                [
+                    "text/x-sh",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "text/x-sh"
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.sql"
+                },
+                [
+                    "sql",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "sql",
+                        "autoCloseBrackets": true,
+                        "matchBrackets": true
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.scss"
+                },
+                [
+                    "text/x-scss",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "text/x-scss",
+                        "lint": false,
+                        "autoCloseBrackets": true,
+                        "matchBrackets": true
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.less"
+                },
+                [
+                    "text/x-less",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "text/x-less",
+                        "lint": false,
+                        "autoCloseBrackets": true,
+                        "matchBrackets": true
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.html"
+                },
+                [
+                    "htmlmixed",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "htmlmixed",
+                        "lint": true,
+                        "autoCloseBrackets": true,
+                        "autoCloseTags": true,
+                        "matchTags": {
+                            "bothTags": true
+                        }
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "type": "application/javascript"
+                },
+                [
+                    "javascript",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "javascript",
+                        "lint": true,
+                        "autoCloseBrackets": true,
+                        "matchBrackets": true
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "type": "text/x-php"
+                },
+                [
+                    "text/x-php",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "text/x-php"
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "file": "a.txt"
+                },
+                [
+                    "text/plain",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "text/plain"
+                    },
+                    4,
+                    null
+                ]
+            ],
+            [
+                {
+                    "type": "text/css",
+                    "codemirror": {
+                        "indentUnit": 2,
+                        "zz": 1
+                    },
+                    "csslint": {
+                        "zz": true
+                    }
+                },
+                [
+                    "text/css",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": "text/css",
+                        "lint": false,
+                        "autoCloseBrackets": true,
+                        "matchBrackets": true,
+                        "zz": 1
+                    },
+                    2,
+                    true
+                ]
+            ],
+            [
+                [],
+                [
+                    "",
+                    [
+                        "codemirror",
+                        "csslint",
+                        "jshint",
+                        "htmlhint"
+                    ],
+                    {
+                        "mode": ""
+                    },
+                    4,
+                    null
+                ]
+            ]
+        ]
+    ],
+    [
+        "wp_add_dashboard_widget",
+        [
+            {
+                "dashboard": {
+                    "normal": {
+                        "core": {
+                            "zzadm_dw": {
+                                "id": "zzadm_dw",
+                                "title": "ZZ Widget <span class=\"postbox-title-action\"><a href=\"?edit=zzadm_dw#zzadm_dw\" class=\"edit-box open-box\">Configure</a></span>",
+                                "callback": "__return_null",
+                                "args": {
+                                    "zz": 1,
+                                    "__widget_basename": "ZZ Widget"
+                                }
+                            }
+                        }
+                    },
+                    "side": {
+                        "core": {
+                            "dashboard_quick_press": {
+                                "id": "dashboard_quick_press",
+                                "title": "Quick",
+                                "callback": "__return_null",
+                                "args": {
+                                    "__widget_basename": "Quick"
+                                }
+                            }
+                        },
+                        "high": {
+                            "zzadm_side": {
+                                "id": "zzadm_side",
+                                "title": "Side",
+                                "callback": "__return_null",
+                                "args": {
+                                    "__widget_basename": "Side"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            [
+                "zzadm_dw"
+            ]
+        ]
+    ],
+    [
+        "add_settings_section retired pages",
+        [
+            [
+                "general",
+                "reading"
+            ],
+            [
+                [
+                    "deprecated",
+                    "add_settings_section",
+                    "The \"misc\" options group has been removed. Use another settings group.",
+                    "3.0.0"
+                ],
+                [
+                    "deprecated",
+                    "add_settings_section",
+                    "The \"privacy\" options group has been removed. Use another settings group.",
+                    "3.5.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "WP_Filesystem with an unknown method",
+        [
+            null,
+            [
+                [
+                    "class-wp-filesystem-zzadm.php",
+                    "zzadm"
+                ]
+            ]
+        ]
+    ],
+    [
+        "wp_add_privacy_policy_content outside the admin",
+        [
+            null,
+            [
+                [
+                    "wp_add_privacy_policy_content",
+                    "The suggested privacy policy content should be added by using the <code>admin_init</code> (or later) action. Please see the inline documentation.",
+                    "4.9.7"
+                ]
+            ]
+        ]
+    ],
+    [
+        "_wp_admin_html_begin",
+        [
+            "<!DOCTYPE html>\n<html class=\"wp-toolbar\"\n\t zzns=\"1\"lang=\"en-US\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=X\" />\n\t",
+            1
+        ]
+    ],
+    [
+        "iframe_footer",
+        [
+            [
+                [
+                    "admin_footer",
+                    [
+                        "zzadm-suffix"
+                    ]
+                ],
+                [
+                    "admin_print_footer_scripts-zzadm-suffix",
+                    [
+                        ""
+                    ]
+                ],
+                [
+                    "admin_print_footer_scripts",
+                    [
+                        ""
+                    ]
+                ]
+            ],
+            false,
+            " if(typeof wpOnload==='function')wpOnload(); "
+        ]
+    ],
+    [
+        "code editor defaults",
+        {
+            "codemirror": {
+                "indentUnit": 4,
+                "indentWithTabs": true,
+                "inputStyle": "contenteditable",
+                "lineNumbers": true,
+                "lineWrapping": true,
+                "styleActiveLine": true,
+                "continueComments": true,
+                "extraKeys": {
+                    "Ctrl-Space": "autocomplete",
+                    "Ctrl-/": "toggleComment",
+                    "Cmd-/": "toggleComment",
+                    "Alt-F": "findPersistent",
+                    "Ctrl-F": "findPersistent",
+                    "Cmd-F": "findPersistent"
+                },
+                "direction": "ltr",
+                "gutters": [],
+                "mode": "zz/none"
+            },
+            "csslint": {
+                "errors": true,
+                "box-model": true,
+                "display-property-grouping": true,
+                "duplicate-properties": true,
+                "known-properties": true,
+                "outline-none": true
+            },
+            "jshint": {
+                "esversion": 11,
+                "module": false,
+                "espreeModuleUrl": "{home}/wp-includes/js/codemirror/espree.min.js?ver=9.6.1",
+                "boss": true,
+                "curly": true,
+                "eqeqeq": true,
+                "eqnull": true,
+                "expr": true,
+                "immed": true,
+                "noarg": true,
+                "nonbsp": true,
+                "quotmark": "single",
+                "undef": true,
+                "unused": true,
+                "browser": true,
+                "globals": {
+                    "_": false,
+                    "Backbone": false,
+                    "jQuery": false,
+                    "JSON": false,
+                    "wp": false,
+                    "export": false,
+                    "module": false,
+                    "require": false,
+                    "WorkerGlobalScope": false,
+                    "self": false,
+                    "OffscreenCanvas": false,
+                    "Promise": false
+                }
+            },
+            "htmlhint": {
+                "tagname-lowercase": true,
+                "attr-lowercase": true,
+                "attr-value-double-quotes": false,
+                "doctype-first": false,
+                "tag-pair": true,
+                "spec-char-escape": true,
+                "id-unique": true,
+                "src-not-empty": true,
+                "attr-no-duplication": true,
+                "alt-require": true,
+                "space-tab-mixed-disabled": "tab",
+                "attr-unsafe-chars": true
+            }
+        }
+    ],
+    [
+        "code editor by file",
+        {
+            "css": {
+                "mode": "text/css",
+                "lint": false,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "scss": {
+                "mode": "text/x-scss",
+                "lint": false,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "less": {
+                "mode": "text/x-less",
+                "lint": false,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "sass": {
+                "mode": "text/x-sass",
+                "lint": false,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "js": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": "javascript",
+                "lint": true,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "mjs": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": "javascript",
+                "lint": true,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "jsx": {
+                "mode": "jsx",
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "json": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": {
+                    "name": "javascript",
+                    "json": true
+                },
+                "lint": true,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "php": {
+                "mode": "php",
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchBrackets": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "phtml": {
+                "mode": "php",
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchBrackets": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "svg": {
+                "mode": "xml",
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "xml": {
+                "mode": "xml",
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "md": {
+                "mode": "gfm",
+                "highlightFormatting": true
+            },
+            "markdown": {
+                "mode": "text/plain"
+            },
+            "sh": {
+                "mode": "text/x-sh"
+            },
+            "bash": {
+                "mode": "text/x-sh"
+            },
+            "sql": {
+                "mode": "sql",
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "html": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": "htmlmixed",
+                "lint": true,
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "htm": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": "htmlmixed",
+                "lint": true,
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "xhtml": {
+                "mode": "text/plain"
+            },
+            "txt": {
+                "mode": "text/plain"
+            },
+            "yml": {
+                "mode": "yaml"
+            },
+            "csv": {
+                "mode": "text/csv"
+            },
+            "diff": {
+                "mode": "diff"
+            },
+            "patch": {
+                "mode": "diff"
+            },
+            "conf": {
+                "mode": "nginx"
+            },
+            "pot": {
+                "mode": "application/vnd.ms-powerpoint"
+            },
+            "HTML": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": "htmlmixed",
+                "lint": true,
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            }
+        }
+    ],
+    [
+        "code editor by type",
+        {
+            "text/css": {
+                "mode": "text/css",
+                "lint": false,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "text/x-scss": {
+                "mode": "text/x-scss",
+                "lint": false,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "text/javascript": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": "javascript",
+                "lint": true,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "application/javascript": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": "javascript",
+                "lint": true,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "application/ecmascript": {
+                "mode": "application/ecmascript"
+            },
+            "application/json": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": {
+                    "name": "javascript",
+                    "json": true
+                },
+                "lint": true,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "application/ld+json": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": {
+                    "name": "javascript",
+                    "jsonld": true
+                },
+                "lint": true,
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "text/x-php": {
+                "mode": "text/x-php"
+            },
+            "application/x-httpd-php": {
+                "mode": "php",
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchBrackets": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "text/html": {
+                "gutters": [
+                    "CodeMirror-lint-markers"
+                ],
+                "mode": "htmlmixed",
+                "lint": true,
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "text/xml": {
+                "mode": "xml",
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "image/svg+xml": {
+                "mode": "xml",
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "application/xhtml+xml": {
+                "mode": "xml",
+                "autoCloseBrackets": true,
+                "autoCloseTags": true,
+                "matchTags": {
+                    "bothTags": true
+                }
+            },
+            "text/x-markdown": {
+                "mode": "markdown",
+                "highlightFormatting": true
+            },
+            "text/x-gfm": {
+                "mode": "gfm",
+                "highlightFormatting": true
+            },
+            "text/x-sh": {
+                "mode": "text/x-sh"
+            },
+            "text/x-sql": {
+                "mode": "sql",
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "text/x-mysql": {
+                "mode": "sql",
+                "autoCloseBrackets": true,
+                "matchBrackets": true
+            },
+            "text/x-diff": {
+                "mode": "diff"
+            },
+            "text/plain": {
+                "mode": "text/plain"
+            },
+            "text/x-yaml": {
+                "mode": "yaml"
+            },
+            "text/nginx": {
+                "mode": "nginx"
+            },
+            "text/x-javascript": {
+                "mode": "text/x-javascript"
+            }
+        }
+    ],
+    [
+        "code editor overrides",
+        [
+            "text/css",
+            2,
+            {
+                "Ctrl-Q": "zz"
+            },
+            {
+                "errors": true,
+                "box-model": true,
+                "display-property-grouping": true,
+                "duplicate-properties": true,
+                "known-properties": true,
+                "outline-none": true,
+                "zz": true
+            },
+            5,
+            1,
+            {
+                "mode": ""
+            }
+        ]
+    ],
+    [
+        "do_meta_boxes",
+        [
+            [
+                2,
+                "<div id=\"normal-sortables\" class=\"meta-box-sortables\"><div id=\"zzadm-one\" class=\"postbox  hide-if-js\"  role=\"region\" aria-label=\"One t\">\n<div class=\"postbox-header\"><h2 class=\"hndle\" id=\"zzadm-one-title\">One <b>t</b></h2>\n<div class=\"handle-actions hide-if-no-js\"><span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button aria-label=\"Move up\" type=\"button\" class=\"handle-order-higher wp-tooltip__toggle\" aria-describedby=\"zzadm-one-title\">\n\t\t\t\t\t\t\t<span class=\"screen-reader-text\">Move up</span>\n\t\t\t\t\t\t\t<span class=\"order-higher-indicator\" aria-hidden=\"true\"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t<span popover=\"hint\" id=\"zzadm-one-handle-order-higher-description\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zzadm-one-handle-order-higher-description-text\" class=\"wp-tooltip__text\">Move up</span></span></span><span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button aria-label=\"Move down\" type=\"button\" class=\"handle-order-lower wp-tooltip__toggle\" aria-describedby=\"zzadm-one-title\">\n\t\t\t\t\t\t\t<span class=\"screen-reader-text\">Move down</span>\n\t\t\t\t\t\t\t<span class=\"order-lower-indicator\" aria-hidden=\"true\"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t<span popover=\"hint\" id=\"zzadm-one-handle-order-lower-description\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zzadm-one-handle-order-lower-description-text\" class=\"wp-tooltip__text\">Move down</span></span></span><span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button aria-label=\"Show or hide panel\" type=\"button\" class=\"handlediv wp-tooltip__toggle\" aria-expanded=\"true\" aria-describedby=\"zzadm-one-title\">\n\t\t\t\t\t\t\t<span class=\"screen-reader-text\">Show or hide panel</span>\n\t\t\t\t\t\t\t<span class=\"toggle-indicator\" aria-hidden=\"true\"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t<span popover=\"hint\" id=\"zzadm-one-handlediv\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zzadm-one-handlediv-text\" class=\"wp-tooltip__text\">Show or hide panel</span></span></span></div></div><div class=\"inside\">\nBODY1</div>\n</div>\n<div id=\"zzadm-two\" class=\"postbox closed\"  role=\"region\" aria-label=\"Two\">\n<div class=\"postbox-header\"><h2 class=\"hndle\" id=\"zzadm-two-title\">Two</h2>\n<div class=\"handle-actions hide-if-no-js\"><span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button aria-label=\"Move up\" type=\"button\" class=\"handle-order-higher wp-tooltip__toggle\" aria-describedby=\"zzadm-two-title\">\n\t\t\t\t\t\t\t<span class=\"screen-reader-text\">Move up</span>\n\t\t\t\t\t\t\t<span class=\"order-higher-indicator\" aria-hidden=\"true\"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t<span popover=\"hint\" id=\"zzadm-two-handle-order-higher-description\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zzadm-two-handle-order-higher-description-text\" class=\"wp-tooltip__text\">Move up</span></span></span><span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button aria-label=\"Move down\" type=\"button\" class=\"handle-order-lower wp-tooltip__toggle\" aria-describedby=\"zzadm-two-title\">\n\t\t\t\t\t\t\t<span class=\"screen-reader-text\">Move down</span>\n\t\t\t\t\t\t\t<span class=\"order-lower-indicator\" aria-hidden=\"true\"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t<span popover=\"hint\" id=\"zzadm-two-handle-order-lower-description\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zzadm-two-handle-order-lower-description-text\" class=\"wp-tooltip__text\">Move down</span></span></span><span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button aria-label=\"Show or hide panel\" type=\"button\" class=\"handlediv wp-tooltip__toggle\" aria-expanded=\"true\" aria-describedby=\"zzadm-two-title\">\n\t\t\t\t\t\t\t<span class=\"screen-reader-text\">Show or hide panel</span>\n\t\t\t\t\t\t\t<span class=\"toggle-indicator\" aria-hidden=\"true\"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t<span popover=\"hint\" id=\"zzadm-two-handlediv\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zzadm-two-handlediv-text\" class=\"wp-tooltip__text\">Show or hide panel</span></span></span></div></div><div class=\"inside\">\nBODY2</div>\n</div>\n</div>"
+            ],
+            [
+                1,
+                "<div id=\"side-sortables\" class=\"meta-box-sortables\"><div id=\"zzadm-q\" class=\"postbox \"  role=\"region\" aria-label=\"Q &quot;quoted&quot; &amp; it Configure\">\n<div class=\"postbox-header\"><h2 class=\"hndle\" id=\"zzadm-q-title\">Q \"quoted\" &amp; <i>it</i> <span class=\"postbox-title-action\"><a href=\"#\">Configure</a></span></h2>\n<div class=\"handle-actions hide-if-no-js\"><span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button aria-label=\"Move up\" type=\"button\" class=\"handle-order-higher wp-tooltip__toggle\" aria-describedby=\"zzadm-q-title\">\n\t\t\t\t\t\t\t<span class=\"screen-reader-text\">Move up</span>\n\t\t\t\t\t\t\t<span class=\"order-higher-indicator\" aria-hidden=\"true\"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t<span popover=\"hint\" id=\"zzadm-q-handle-order-higher-description\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zzadm-q-handle-order-higher-description-text\" class=\"wp-tooltip__text\">Move up</span></span></span><span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button aria-label=\"Move down\" type=\"button\" class=\"handle-order-lower wp-tooltip__toggle\" aria-describedby=\"zzadm-q-title\">\n\t\t\t\t\t\t\t<span class=\"screen-reader-text\">Move down</span>\n\t\t\t\t\t\t\t<span class=\"order-lower-indicator\" aria-hidden=\"true\"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t<span popover=\"hint\" id=\"zzadm-q-handle-order-lower-description\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zzadm-q-handle-order-lower-description-text\" class=\"wp-tooltip__text\">Move down</span></span></span><span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button aria-label=\"Show or hide panel\" type=\"button\" class=\"handlediv wp-tooltip__toggle\" aria-expanded=\"true\" aria-describedby=\"zzadm-q-title\">\n\t\t\t\t\t\t\t<span class=\"screen-reader-text\">Show or hide panel</span>\n\t\t\t\t\t\t\t<span class=\"toggle-indicator\" aria-hidden=\"true\"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t<span popover=\"hint\" id=\"zzadm-q-handlediv\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zzadm-q-handlediv-text\" class=\"wp-tooltip__text\">Show or hide panel</span></span></span></div></div><div class=\"inside\">\n</div>\n</div>\n</div>"
+            ],
+            [
+                0,
+                "<div id=\"advanced-sortables\" class=\"meta-box-sortables\"></div>"
+            ]
+        ]
+    ],
+    [
+        "dashboard widgets while one is edited",
+        [
+            {
+                "dashboard": {
+                    "normal": {
+                        "core": {
+                            "zzadm_dw": {
+                                "id": "zzadm_dw",
+                                "title": "ZZ Widget <span class=\"postbox-title-action\"><a href=\"\">Cancel</a></span>",
+                                "callback": "_wp_dashboard_control_callback",
+                                "args": {
+                                    "zz": 1,
+                                    "__widget_basename": "ZZ Widget"
+                                }
+                            },
+                            "dashboard_activity": {
+                                "id": "dashboard_activity",
+                                "title": "dashboard_activity",
+                                "callback": "__return_null",
+                                "args": {
+                                    "__widget_basename": "dashboard_activity"
+                                }
+                            }
+                        },
+                        "high": {
+                            "dashboard_php_nag": {
+                                "id": "dashboard_php_nag",
+                                "title": "dashboard_php_nag",
+                                "callback": "__return_null",
+                                "args": {
+                                    "__widget_basename": "dashboard_php_nag"
+                                }
+                            }
+                        }
+                    },
+                    "side": {
+                        "core": {
+                            "dashboard_quick_press": {
+                                "id": "dashboard_quick_press",
+                                "title": "dashboard_quick_press",
+                                "callback": "__return_null",
+                                "args": {
+                                    "__widget_basename": "dashboard_quick_press"
+                                }
+                            },
+                            "dashboard_primary": {
+                                "id": "dashboard_primary",
+                                "title": "dashboard_primary",
+                                "callback": "__return_null",
+                                "args": {
+                                    "__widget_basename": "dashboard_primary"
+                                }
+                            }
+                        }
+                    }
+                },
+                "zzadm-other": {
+                    "normal": {
+                        "core": {
+                            "zzadm_other": {
+                                "id": "zzadm_other",
+                                "title": "Other",
+                                "callback": "__return_null",
+                                "args": {
+                                    "__widget_basename": "Other"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            [
+                "zzadm_dw"
+            ]
+        ]
+    ],
+    [
+        "privacy content before admin_init, outside the admin and in it",
+        [
+            [
+                null,
+                false
+            ],
+            [
+                null,
+                true
+            ],
+            [
+                [
+                    "wp_add_privacy_policy_content",
+                    "The suggested privacy policy content should be added only in wp-admin by using the <code>admin_init</code> (or later) action.",
+                    "4.9.7"
+                ],
+                [
+                    "wp_add_privacy_policy_content",
+                    "The suggested privacy policy content should be added by using the <code>admin_init</code> (or later) action. Please see the inline documentation.",
+                    "4.9.7"
+                ]
+            ]
+        ]
+    ],
+    [
+        "settings fields on retired pages",
+        [
+            {
+                "general": {
+                    "default": {
+                        "zzadm-f": {
+                            "id": "zzadm-f",
+                            "title": "F",
+                            "callback": "__return_null",
+                            "args": []
+                        }
+                    }
+                },
+                "reading": {
+                    "zzsec": {
+                        "zzadm-f2": {
+                            "id": "zzadm-f2",
+                            "title": "F",
+                            "callback": "__return_null",
+                            "args": []
+                        }
+                    }
+                }
+            },
+            [
+                [
+                    "deprecated",
+                    "add_settings_field",
+                    "The \"misc\" options group has been removed. Use another settings group.",
+                    "3.0.0"
+                ],
+                [
+                    "deprecated",
+                    "add_settings_field",
+                    "The \"privacy\" options group has been removed. Use another settings group.",
+                    "3.5.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "screen options a save refuses",
+        [
+            [
+                "edit_post_per_page",
+                "abc",
+                "",
+                []
+            ],
+            [
+                "edit_post",
+                "0",
+                "",
+                []
+            ],
+            [
+                "zzadm_per_page",
+                "7",
+                "",
+                [
+                    [
+                        "set-screen-option",
+                        [
+                            false,
+                            "zzadm_per_page",
+                            "7"
+                        ]
+                    ],
+                    [
+                        "set_screen_option_zzadm_per_page",
+                        [
+                            false,
+                            "zzadm_per_page",
+                            "7"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "zzadm_option",
+                "9",
+                "",
+                [
+                    [
+                        "set_screen_option_zzadm_option",
+                        [
+                            false,
+                            "zzadm_option",
+                            "9"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "layout_columns",
+                "2",
+                "",
+                [
+                    [
+                        "set-screen-option",
+                        [
+                            false,
+                            "layout_columns",
+                            "2"
+                        ]
+                    ],
+                    [
+                        "set_screen_option_layout_columns",
+                        [
+                            false,
+                            "layout_columns",
+                            "2"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "edit_zzcpt_per_page",
+                "5",
+                "",
+                [
+                    [
+                        "set-screen-option",
+                        [
+                            false,
+                            "edit_zzcpt_per_page",
+                            "5"
+                        ]
+                    ],
+                    [
+                        "set_screen_option_edit_zzcpt_per_page",
+                        [
+                            false,
+                            "edit_zzcpt_per_page",
+                            "5"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "Bad Key",
+                "3",
+                "",
+                []
+            ]
+        ]
+    ],
+    [
+        "_wp_admin_html_begin printed",
+        "<!DOCTYPE html>\n<html class=\"wp-toolbar\"\n\t[admin_xml_ns:]lang=\"en-US\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=X\" />\n\t"
+    ],
+    [
+        "iframe_header",
+        "<!DOCTYPE html>\n<html class=\"wp-toolbar\"\n\t[admin_xml_ns:]lang=\"en-US\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=X\" />\n\t<title>Minn &rsaquo; ZZ <b>T</b> &#8212; WordPress</title>\n\t<script>\naddLoadEvent = function(func){if(typeof jQuery!=='undefined')jQuery(function(){func();});else if(typeof wpOnload!=='function'){wpOnload=func;}else{var oldonload=wpOnload;wpOnload=function(){oldonload();func();}}};\nfunction tb_close(){var win=window.dialogArguments||opener||parent||top;win.tb_remove();}\nvar ajaxurl = '{admin}admin-ajax.php',\n\tpagenow = 'edit-post',\n\ttypenow = 'post',\n\tadminpage = 'zzadm-suffix',\n\tthousandsSeparator = ',',\n\tdecimalPoint = '.',\n\tisRtl = 0;\n</script>\n\t[admin_enqueue_scripts:zzadm-suffix][admin_print_styles-zzadm-suffix:][admin_print_styles:][admin_print_scripts-zzadm-suffix:][admin_print_scripts:][admin_head-zzadm-suffix:][admin_head:]</head>\n\t<body id=\"zzbody\" class=\"wp-admin wp-core-ui no-js iframe zzB zzadm-suffix locale-en-us admin-color-modern\">\n<script>\n(function(){\nvar c = document.body.className;\nc = c.replace(/no-js/, 'js');\ndocument.body.className = c;\n})();\n</script>\n\t"
+    ],
+    [
+        "iframe_footer printed",
+        "\t<div class=\"hidden\">\n\t[admin_footer:zzadm-suffix][admin_print_footer_scripts-zzadm-suffix:][admin_print_footer_scripts:]\t</div>\n<script>if(typeof wpOnload==='function')wpOnload();</script>\n</body>\n</html>\n\t"
+    ],
+    [
+        "wp_iframe",
+        "<!DOCTYPE html>\n<html class=\"wp-toolbar\"\n\t[admin_xml_ns:]lang=\"en-US\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=X\" />\n\t\t<title>Minn &rsaquo; Uploads &#8212; WordPress</title>\n\t\t<script>\n\taddLoadEvent = function(func){if(typeof jQuery!=='undefined')jQuery(function(){func();});else if(typeof wpOnload!=='function'){wpOnload=func;}else{var oldonload=wpOnload;wpOnload=function(){oldonload();func();}}};\n\tvar ajaxurl = '{admin}admin-ajax.php', pagenow = 'media-upload-popup', adminpage = 'media-upload-popup',\n\tisRtl = 0;\n\t</script>\n\t[admin_enqueue_scripts:media-upload-popup][admin_print_styles-media-upload-popup:][admin_print_styles:][admin_print_scripts-media-upload-popup:][admin_print_scripts:][admin_head-media-upload-popup:][admin_head:][admin_head_zzadm_doubts_content:]\t</head>\n\t<body id=\"zzbody\" class=\"wp-core-ui no-js admin-color-modern\">\n\t<script>\n\tdocument.body.className = document.body.className.replace('no-js', 'js');\n\t</script>\n\tZZCONTENT[admin_print_footer_scripts:]\t<script>if(typeof wpOnload==='function')wpOnload();</script>\n\t</body>\n\t</html>\n\t"
+    ],
+    [
+        "quick edit tags",
+        "<div class=\"tags_input\" id=\"post_tag_{id}\">zzadm-a, zzadm-b, zzadm-filtered</div>"
+    ],
+    [
+        "wp_auth_check_load",
+        {
+            "hooked": false,
+            "user 0, screen none": [
+                false,
+                false,
+                false,
+                false,
+                [],
+                false
+            ],
+            "user 0, screen dashboard": [
+                5,
+                5,
+                true,
+                true,
+                [
+                    [
+                        true,
+                        "dashboard"
+                    ]
+                ],
+                true
+            ],
+            "user 1, screen none": [
+                5,
+                5,
+                true,
+                true,
+                [
+                    [
+                        true,
+                        "NULL"
+                    ]
+                ],
+                false
+            ],
+            "user 1, screen dashboard": [
+                5,
+                5,
+                true,
+                true,
+                [
+                    [
+                        true,
+                        "dashboard"
+                    ]
+                ],
+                true
+            ],
+            "user 1, screen update": [
+                false,
+                false,
+                false,
+                false,
+                [
+                    [
+                        false,
+                        "update"
+                    ]
+                ],
+                true
+            ],
+            "user 1, screen update-network": [
+                false,
+                false,
+                false,
+                false,
+                [
+                    [
+                        false,
+                        "update-network"
+                    ]
+                ],
+                true
+            ],
+            "user 1, screen update-core": [
+                false,
+                false,
+                false,
+                false,
+                [
+                    [
+                        false,
+                        "update-core"
+                    ]
+                ],
+                true
+            ],
+            "user 1, screen customize": [
+                5,
+                5,
+                true,
+                true,
+                [
+                    [
+                        true,
+                        "customize"
+                    ]
+                ],
+                true
+            ]
+        }
+    ],
+    [
+        "script_concat_settings",
+        {
+            "[null,null]": [
+                1,
+                [
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            "[null,[true,true,true]]": [
+                1,
+                [
+                    true,
+                    true,
+                    true
+                ]
+            ],
+            "[null,[true,null,null]]": [
+                1,
+                [
+                    true,
+                    false,
+                    false
+                ]
+            ],
+            "[1,null]": [
+                1,
+                [
+                    false,
+                    true,
+                    true
+                ]
+            ],
+            "[\"0\",null]": [
+                1,
+                [
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            "[\"yes\",[false,null,false]]": [
+                1,
+                [
+                    false,
+                    true,
+                    false
+                ]
+            ]
+        }
+    ]
+]

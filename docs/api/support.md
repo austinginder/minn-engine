@@ -10,9 +10,9 @@ escaping, serialized readers, small helpers
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
 | [`Entities`](#entities) | final class | 89 | HTML special-character encoding with the reference's quote styles and its |
-| [`Escape`](#escape) | final class | 84 | Text made safe the way WordPress's escapers make it, each ending in the |
+| [`Escape`](#escape) | final class | 128 | Text made safe the way WordPress's escapers make it, each ending in the |
 | [`FileHeaders`](#fileheaders) | final class | 27 | Header values from a plugin or theme file. The labels (Plugin Name, |
-| [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
+| [`FileTree`](#filetree) | final class | 146 | Whole-directory reads and copies. The engine's own installer, the update |
 | [`Files`](#files) | final class | 66 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
@@ -32,15 +32,15 @@ escaping, serialized readers, small helpers
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 403 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
+| [`Signatures`](#signatures) | final class | 34 | A file checked against detached Ed25519 signatures of its SHA-384 hash, |
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`Sprintf`](#sprintf) | final class | 46 | A pattern filled one fragment at a time, as wp_sprintf fills it: "%%" is |
 | [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
 | [`Text`](#text) | final class | 69 | Plain text shaped the way WordPress's formatting helpers shape it: cut to |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`TimezoneChoice`](#timezonechoice) | final class | 109 | The timezone choices a settings form offers (wp_timezone_choice, probe |
-| [`Url`](#url) | final class | 266 | URL shaping the escaping and query helpers share: the character cleanup |
+| [`Url`](#url) | final class | 271 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 182 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
-| [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
 ## Accents
 
@@ -151,7 +151,7 @@ named or numeric entity stays as it is.
 - const `DOUBLE_QUOTES` = `array (   '&quot;' => '"',   '&#034;' => '"',   '&#x22;' => '"', )`
 - const `SINGLE_QUOTES` = `array (   '&#039;' => '\'',   '&#x27;' => '\'',   '&#39;' => '\'',   '&apos;' => '\'', )`
 
-Used by: `Minn\Runtime\AccountFlows`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`
+Used by: `Minn\Admin\MetaBoxMarkup`, `Minn\Admin\SubmitButton`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`
 
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 
@@ -186,7 +186,7 @@ encoded; for a textarea, everything encoded; for an inline script, a
 single-quoted string's specials; and an address (esc_url) cleaned, its
 protocol checked against the allowed ones.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ResourceHints`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Media\CompatFields`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentTags`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostTags`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Theme\ThemeHeaders`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -226,7 +226,14 @@ The specials encoded in the given quote style (_wp_specialchars),
 references already present normalised the way kses normalises them
 rather than encoded again.
 
-Internals: `encoded()` (private, line 98)
+### static `xml(string $text): string`
+
+Text for an XML document (esc_xml): named references XML lacks are
+decoded (or their ampersand escaped), a bare ampersand and the four
+specials encoded, and CDATA sections left exactly as written (probe
+media-template-doubts).
+
+Internals: `xmlText()` (private, line 113), `xmlCharacter()` (private, line 137), `encoded()` (private, line 142)
 
 
 ## FileHeaders
@@ -257,14 +264,22 @@ same two operations: list a tree, and duplicate one.
 
 Used by: `Minn\Admin\AdminPlugin`
 
-### static `files(string $dir, int $depth = 0, array $skip = array ( ), int $level = 1): array|false`
+### static `files(string $dir, int $depth = 0, array $skip = array ( )): array|false`
 
-Every file under a directory, and every directory itself with a trailing
-slash, to the given depth. Depth 0 means no limit; depth 1 stops at the
-directory's own entries and names its subdirectories without descending.
+Every file under a directory, as list_files gives them: names starting
+with a dot left out, the names in $skip left out at the top level only,
+an empty folder named with a trailing slash. Depth 0 means no limit;
+at the depth given a folder is named with its slash instead of entered.
 
-- `@param list<string> $skip names to leave out at every level`
+- `@param list<string> $skip`
 - `@return list<string>|false false when the directory cannot be read`
+
+### static `filesWithHidden(string $dir, int $depth = 0, array $skip = array ( )): array|false`
+
+As files(), dot files and folders included.
+
+- `@param list<string> $skip`
+- `@return list<string>|false`
 
 ### static `copy(string $from, string $to, array $skip = array ( )): bool`
 
@@ -273,6 +288,27 @@ there. Names in $skip are left behind at the top level only, which is
 how the update unpacker keeps a directory it means to preserve.
 
 - `@param list<string> $skip`
+
+### static `copyThrough(object $fs, string $from, string $to, array $skip, int $fileMode, int $dirMode): ?array`
+
+A directory copied through a WordPress filesystem object, as copy_dir
+copies it: the source listed, the destination made when it is missing,
+each file copied (once more after a chmod when the first copy fails),
+each missing folder made and copied in turn. A name in $skip is left
+out at its own level, "folder/name" one level down. Null when it all
+copied, else the refusal's code and data.
+
+- `@param list<string> $skip`
+- `@return array{0: string, 1: string}|null`
+
+### static `listedFiles(mixed $listing, string $dir): array`
+
+The files of a recursive filesystem listing (dirlist), each as a path
+under $dir, in listing order, folders' files where the folder stands.
+
+- `@return list<string>`
+
+Internals: `walk()` (private, line 43)
 
 
 ## Files
@@ -606,7 +642,7 @@ The named references kses keeps as written: the list captured from the
 reference (data/kses.json) plus the five XML ones. Any other name is
 stored as "&amp;name;".
 
-Used by: `Minn\Feed\Tree`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesPolicy`
+Used by: `Minn\Admin\MetaBoxMarkup`, `Minn\Admin\SubmitButton`, `Minn\Feed\Tree`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesPolicy`
 
 
 ### static `known(string $name): bool`
@@ -750,7 +786,7 @@ wp_list_sort() promises (loose comparison per field, first difference
 wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
 
-Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentTags`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\Registered`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\WidgetAreas`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentTags`, `Minn\Runtime\DieInput`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\Registered`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\WidgetAreas`, `Minn\Theme\HeadLinks`
 
 
 ### static `filterParsed(?Closure $filter): void`
@@ -1098,6 +1134,26 @@ The integer values of a serialized list such as sticky_posts.
 Internals: `read()` (private, line 85), `readValue()` (private, line 98), `readObject()` (private, line 154), `encodeRecord()` (private, line 210), `encodeWrapper()` (private, line 227), `expect()` (private, line 234), `size()` (private, line 248), `opens()` (private, line 289), `opensRecord()` (private, line 295), `until()` (private, line 313), `encodeValue()` (private, line 346), `encodeObject()` (private, line 386)
 
 
+## Signatures
+
+`final class Minn\Support\Signatures` · `public/minn/src/Minn/Support/Signatures.php`
+
+A file checked against detached Ed25519 signatures of its SHA-384 hash,
+as verify_file_signature checks it: a signature that does not decode to
+the signature length is skipped, and for each one that does, every key
+that does not decode to the key length is skipped too; the counts and the
+hash are what the caller reports when nothing verifies.
+
+### static `check(string $file, array $signatures, array $keys): array`
+
+Whether any signature verifies with any key, the file's hash in hex,
+and how many keys and signatures were skipped.
+
+- `@param list<mixed> $signatures`
+- `@param list<mixed> $keys base64 public keys`
+- `@return array{verified: bool, hash: string, skipped_key: int, skipped_sig: int}`
+
+
 ## Slashes
 
 `final class Minn\Support\Slashes` · `public/minn/src/Minn/Support/Slashes.php`
@@ -1300,11 +1356,14 @@ parse_url that also accepts scheme-relative and path-only URLs; a single compone
 
 The URL under a scheme, or scheme-and-host stripped for 'relative'; a protocol-relative URL is read as http first.
 
-### static `safeRedirect(string $location, Closure $allowedHosts): ?string`
+### static `safeRedirect(string $location, Closure $allowedHosts, string $requestPath = ''): ?string`
 
 A redirect target the site may send a browser to: http(s) only and a
-host the caller allows (local paths always pass). Credentials before
-the host are kept, as the reference keeps them: the host decides.
+host the caller allows. A relative one stays on the site: a path
+without a leading slash is put after the request path's folder (up to
+its last "/", the dots kept), anything else as given. Credentials
+before the host are kept unless they hold an "@" (probe
+functions-formatting-doubts).
 
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
 
@@ -1405,15 +1464,4 @@ The UTF-8 bytes for a code point, or null for a negative one, a surrogate, or on
 ### static `firstCodePoint(string $bytes): ?int`
 
 The code point of the first character, or null when the bytes do not start with a whole, well-formed one.
-
-
-## WebServer
-
-`final class Minn\Support\WebServer` · `public/minn/src/Minn/Support/WebServer.php`
-
-What the SERVER_SOFTWARE string says about the web server in front of the site.
-
-### static `isApache(string $software): bool`
-
-Whether the server speaks Apache's module and .htaccess conventions: Apache itself, or LiteSpeed.
 

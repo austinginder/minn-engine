@@ -109,4 +109,15 @@ final class DocumentTitle
         }
         return $title;
     }
+
+    /**
+     * A post format archive's title: the format's plural (Asides, Galleries),
+     * translated in its own context; null for the standard format and any
+     * other term (the plain "Archives" then).
+     */
+    public static function formatArchive(string $termSlug): ?string
+    {
+        $plural = ['post-format-aside' => 'Asides', 'post-format-gallery' => 'Galleries', 'post-format-link' => 'Links', 'post-format-image' => 'Images', 'post-format-quote' => 'Quotes', 'post-format-status' => 'Statuses', 'post-format-video' => 'Videos', 'post-format-audio' => 'Audio', 'post-format-chat' => 'Chats'][$termSlug] ?? null;
+        return $plural === null ? null : Gettext::inContext($plural, 'post format archive title');
+    }
 }

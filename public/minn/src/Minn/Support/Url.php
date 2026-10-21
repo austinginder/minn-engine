@@ -219,27 +219,32 @@ final class Url
 
     /**
      * A redirect target the site may send a browser to: http(s) only and a
-     * host the caller allows (local paths always pass). Credentials before
-     * the host are kept, as the reference keeps them: the host decides.
+     * host the caller allows. A relative one stays on the site: a path
+     * without a leading slash is put after the request path's folder (up to
+     * its last "/", the dots kept), anything else as given. Credentials
+     * before the host are kept unless they hold an "@" (probe
+     * functions-formatting-doubts).
      *
      * @param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host
      */
-    public static function safeRedirect(string $location, Closure $allowedHosts): ?string
+    public static function safeRedirect(string $location, Closure $allowedHosts, string $requestPath = ''): ?string
     {
         if (str_starts_with($location, '//')) {
             $location = 'http:' . $location;
         }
-        $parts = self::parse(str_starts_with($location, '/') ? 'http://placeholder.invalid' . $location : $location);
-        if (!is_array($parts) || !isset($parts['host'])) {
+        $parts = self::parse($location);
+        if (!is_array($parts)) {
             return null;
         }
-        if (isset($parts['scheme']) && !in_array($parts['scheme'], ['http', 'https'], true)) {
+        if (!isset($parts['scheme']) && !isset($parts['host'])) {
+            $path = (string) ($parts['path'] ?? '');
+            $slash = strrpos($requestPath, '/');
+            return $path !== '' && $path[0] !== '/' ? ($slash === false ? '/' : substr($requestPath, 0, $slash + 1)) . $location : $location;
+        }
+        if (!isset($parts['host']) || !in_array($parts['scheme'] ?? '', ['http', 'https'], true) || str_contains(($parts['user'] ?? '') . ($parts['pass'] ?? ''), '@')) {
             return null;
         }
-        if ($parts['host'] !== 'placeholder.invalid' && !in_array($parts['host'], $allowedHosts($parts['host']), true)) {
-            return null;
-        }
-        return $location;
+        return in_array($parts['host'], $allowedHosts($parts['host']), true) ? $location : null;
     }
 
     /**

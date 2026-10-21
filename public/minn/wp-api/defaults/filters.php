@@ -524,6 +524,7 @@ add_action('wp_after_insert_post', 'wp_save_post_revision_on_insert', 9, 3);
 add_action('admin_init', 'wp_admin_headers');
 add_action('admin_init', 'send_frame_options_header', 10, 0);
 add_filter('heartbeat_send', 'wp_auth_check');
+add_action('admin_enqueue_scripts', 'wp_auth_check_load');
 add_filter('heartbeat_nopriv_send', 'wp_auth_check');
 // A post's life, as the reference's defaults hear it, in its order.
 add_action('transition_post_status', '_transition_post_status', 5, 3);

@@ -8,6 +8,7 @@ use Minn\Content\UserRecord;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\Runtime;
 
 /**
  * The door itself: what a sign-in surface needs beyond checking a
@@ -56,8 +57,10 @@ final readonly class SignIn
     /** A session longer than the two-day default is one to keep past the browser session, as the reference's remember-me does. */
     private function open(Response $response, UserRecord $user, Request $request, int $days): Response
     {
-        // The cookies settled as the reference settles them, its hooks told and asked (AuthCookies::settle).
-        return $this->cookies->attach($response, $this->cookies->settle($user, $days, $request->secure, $request->secure));
+        // The cookies settled as the reference settles them, its hooks told and asked (AuthCookies::settle); the
+        // logged-in cookie is secure only for a site whose home is https too (probe functions-formatting-doubts).
+        $httpsHome = parse_url((string) Runtime::options()->filtered('home'), PHP_URL_SCHEME) === 'https';
+        return $this->cookies->attach($response, $this->cookies->settle($user, $days, $request->secure, $httpsHome));
     }
 
     /** Ends one session and clears the cookies from the response, unless send_auth_cookies says not to (AuthCookies::clearing). */

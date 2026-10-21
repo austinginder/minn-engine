@@ -15,7 +15,6 @@ use Minn\Support\Escape;
  */
 final class TextFilters
 {
-    private const IMAGE = '/\.(png|gif|jpe?g|svg|webp)$/i';
     private const IGNORED = ['code', 'pre', 'script', 'style', 'textarea'];
 
     /**
@@ -41,14 +40,13 @@ final class TextFilters
     }
 
     /**
-     * Smilies become their emoji, or an image for the few that have one: a
-     * code only counts as a whole word between spaces, and nothing inside a
-     * code, pre, script, style or textarea element, or inside a tag, changes.
+     * Text with $run applied to each stretch outside a tag and outside a
+     * code, pre, script, style or textarea element, as convert_smilies
+     * runs the smilies search over it.
      *
-     * @param array<string, string> $table code => emoji, or an image file name
-     * @param Closure(string $file, string $code): string $image the <img> for an image smiley
+     * @param Closure(string): string $run
      */
-    public static function smilies(string $text, array $table, Closure $image): string
+    public static function smilies(string $text, Closure $run): string
     {
         $out = '';
         $ignoring = null;
@@ -58,7 +56,7 @@ final class TextFilters
                 $out .= $part;
                 continue;
             }
-            $out .= $ignoring === null ? self::words($part, $table, $image) : $part;
+            $out .= $ignoring === null ? $run($part) : $part;
         }
         return $out;
     }
@@ -70,20 +68,6 @@ final class TextFilters
             return preg_match('#^</' . $current . '\s*>#', $tag) === 1 ? null : $current;
         }
         return preg_match('#^<(' . implode('|', self::IGNORED) . ')[\s>]#', $tag, $m) === 1 && !str_ends_with($tag, '/>') ? $m[1] : null;
-    }
-
-    /** One text run, word by word. @param array<string, string> $table */
-    private static function words(string $text, array $table, Closure $image): string
-    {
-        $out = '';
-        foreach (preg_split('/(\s+)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [] as $word) {
-            if (!isset($table[$word])) {
-                $out .= $word;
-                continue;
-            }
-            $out .= preg_match(self::IMAGE, $table[$word]) === 1 ? $image($table[$word], $word) : $table[$word];
-        }
-        return $out;
     }
 
     /** "Wordpress" spelled right after a space, a parenthesis, a tag, or an opening curly quote; elsewhere it stays. */

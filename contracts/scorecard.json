@@ -277,13 +277,13 @@
     },
     "gate": {
         "deadEndCalls": 0,
-        "deadEndsByHand": 82,
+        "deadEndsByHand": 70,
         "deadEndsByHandAreas": {
             "customizer": 20,
-            "admin": 55,
+            "admin": 43,
             "editor": 7
         },
-        "deadEndsByHandProven": 164,
+        "deadEndsByHandProven": 177,
         "floor": {
             "version": "8.3",
             "newest": "8.5",
@@ -299,12 +299,12 @@
     "clones": {
         "duplicated": {
             "window": 100,
-            "stretches": 114,
-            "lines": 2054,
-            "of": 184790
+            "stretches": 115,
+            "lines": 2079,
+            "of": 185778
         },
         "engine": {
-            "of": 108181,
+            "of": 109124,
             "php": {
                 "strict": {
                     "window": 40,
@@ -313,8 +313,8 @@
                 },
                 "sensitive": {
                     "window": 30,
-                    "stretches": 69,
-                    "lines": 302
+                    "stretches": 70,
+                    "lines": 303
                 }
             },
             "assets": {
@@ -331,42 +331,42 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76609,
+            "of": 76654,
             "window": 80,
-            "stretches": 112,
-            "lines": 2955
+            "stretches": 110,
+            "lines": 2925
         }
     },
     "facadeLogic": {
-        "functions": 3493,
+        "functions": 3496,
         "methods": 3815,
         "delegates": 3473,
-        "logicFunctions": 1805,
+        "logicFunctions": 1808,
         "logicMethods": 2030,
-        "logicLines": 30098,
+        "logicLines": 30056,
         "kept": 0,
         "review": {
-            "doubts": 430,
-            "reviewed": 3196,
+            "doubts": 306,
+            "reviewed": 3199,
             "stale": 0,
             "verdicts": {
                 "delegate": 143,
                 "move": 1527,
-                "keep": 1511,
+                "keep": 1514,
                 "remove": 15
             },
             "keep": {
-                "scope": 113,
-                "shape": 287,
-                "compose": 599,
-                "contract": 499,
+                "scope": 114,
+                "shape": 288,
+                "compose": 601,
+                "contract": 498,
                 "library": 13
             },
             "gates": {
-                "subclass": 321,
+                "subclass": 322,
                 "pluggable": 25,
                 "unprobed": 157,
-                "globals": 166,
+                "globals": 168,
                 "refs": 27
             },
             "unreviewed": 639

@@ -88,12 +88,13 @@ final class FileUpload
         if ($options['test_form'] && (string) ($request?->form['action'] ?? '') !== (string) $options['action']) {
             return 'Invalid form submission.';
         }
-        $size = (int) ($file['size'] ?? (is_file((string) ($file['tmp_name'] ?? '')) ? filesize((string) $file['tmp_name']) : 0));
-        if ($options['test_size'] && $size <= 0) {
-            return 'File is empty. Please upload something more substantial. This error could also be caused by uploads being disabled in your php.ini or by post_max_size being defined as smaller than upload_max_filesize in php.ini.';
-        }
+        // An upload is tested as uploaded before its size (probe media-template-doubts).
         if ($action === 'wp_handle_upload' && !is_uploaded_file((string) ($file['tmp_name'] ?? ''))) {
             return 'Specified file failed upload test.';
+        }
+        $size = (int) ($file['size'] ?? (is_file((string) ($file['tmp_name'] ?? '')) ? filesize((string) $file['tmp_name']) : 0));
+        if ($options['test_size'] && $size <= 0) {
+            return 'File is empty. Please upload something more substantial. This error could also be caused by uploads being disabled in your php.ini file or by post_max_size being defined as smaller than upload_max_filesize in php.ini.';
         }
         return null;
     }

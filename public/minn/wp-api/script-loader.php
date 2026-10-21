@@ -232,6 +232,7 @@ function _minn_print_engine_styles()
 /** The head's scripts; wp_print_scripts fires first, once a request (probe script-printing). */
 function wp_print_head_scripts()
 {
+    script_concat_settings();
     if (!did_action('wp_print_scripts')) {
         do_action('wp_print_scripts');
     }
@@ -267,6 +268,7 @@ function _wp_footer_scripts()
 /** The footer's scripts, then print_footer_scripts, as print_head_scripts does. */
 function print_footer_scripts()
 {
+    script_concat_settings();
     $done = wp_scripts()->do_footer_items();
     apply_filters('print_footer_scripts', true);
     return $done;
@@ -275,6 +277,7 @@ function print_footer_scripts()
 /** The styles queued too late for the head, then print_late_styles, as print_head_scripts does. */
 function print_late_styles()
 {
+    script_concat_settings();
     $done = wp_print_styles();
     apply_filters('print_late_styles', true);
     return $done;
@@ -684,13 +687,14 @@ function wp_localize_jquery_ui_datepicker()
     wp_add_inline_script('jquery-ui-datepicker', "jQuery(function(jQuery){jQuery.datepicker.setDefaults({$defaults});});");
 }
 
-/** The script concatenation and compression globals: off, as the front end always has them. */
+/** The script concatenation and compression globals, each kept when set: concatenation off, as the front end has it; compression from the can_compress_scripts site option (read every call) unless zlib output compression or COMPRESS_SCRIPTS / COMPRESS_CSS turn it off. */
 function script_concat_settings()
 {
     global $concatenate_scripts, $compress_scripts, $compress_css;
+    $allowed = get_site_option('can_compress_scripts') && !ini_get('zlib.output_compression');
     $concatenate_scripts ??= false;
-    $compress_scripts ??= false;
-    $compress_css ??= false;
+    $compress_scripts ??= $allowed && (!defined('COMPRESS_SCRIPTS') || COMPRESS_SCRIPTS);
+    $compress_css ??= $allowed && (!defined('COMPRESS_CSS') || COMPRESS_CSS);
 }
 
 // Script loader helpers (probe script-loader-helpers).

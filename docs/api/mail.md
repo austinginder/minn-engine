@@ -17,7 +17,7 @@ sending mail and the notices the engine sends
 | [`MailHeaders`](#mailheaders) | final readonly class | 83 | The headers argument of wp_mail() read the way the reference reads it: |
 | [`MailLog`](#maillog) | final class | 45 | The engine's development transport: each message as one JSON line |
 | [`MailSettings`](#mailsettings) | final readonly class | 71 | How mail leaves the site, from the minn_mail option (JSON or a serialized |
-| [`Mailer`](#mailer) | final readonly class | 88 | Sends a Message through the configured transport. Failures are logged |
+| [`Mailer`](#mailer) | final readonly class | 102 | Sends a Message through the configured transport. Failures are logged |
 | [`MailerStrings`](#mailerstrings) | final class | 34 | The mailer's English messages, keyed as plugins look them up |
 | [`Message`](#message) | final readonly class | 18 | One outgoing plain-text email. |
 | [`MimeTypes`](#mimetypes) | final class | 43 | The MIME type a mailer gives an attachment by its file extension (the |
@@ -546,6 +546,14 @@ A mailer using the site's own settings.
 The one-line send: a recipient, a subject, a body, through the site's
 transport and sender, with nothing to construct at the call site.
 
+### static `commentHeaders(string $author, string $email, string $host, string $charset, string $siteName): string`
+
+The headers a comment notice is sent with, as the reference writes
+them: from the commenter's name (the site's when they gave none) at
+wordpress@ the site's host (no www.), plain text in the site's
+charset, replies to the commenter's address when there is one, the
+bare address for a nameless commenter (probe functions-formatting-doubts).
+
 ### static `noticesFor(Minn\Content\Site $site): Minn\Mail\Notices`
 
 The engine's own notices, worded once, from this site's name and address.
@@ -557,7 +565,7 @@ loaded the message goes through wp_mail(), so its filters and the
 phpmailer_init hook (an SMTP plugin's way in) apply as they do on the
 reference; otherwise through the configured transport directly.
 
-Internals: `viaSmtp()` (private, line 78), `viaMail()` (private, line 88), `draft()` (private, line 99)
+Internals: `viaSmtp()` (private, line 92), `viaMail()` (private, line 102), `draft()` (private, line 113)
 
 
 ## MailerStrings

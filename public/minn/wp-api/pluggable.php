@@ -60,31 +60,32 @@ endif;
 if (!function_exists('check_admin_referer')) :
 function check_admin_referer($action = -1, $query_arg = '_wpnonce')
 {
-    // The nonce comes from $_REQUEST, as on the reference (probe pluggable-remaining).
+    // The nonce comes from $_REQUEST, as on the reference (probe pluggable-remaining); the default action is a mistake.
+    if ($action === -1) {
+        _doing_it_wrong(__FUNCTION__, __('You should specify an action to be verified by using the first parameter.'), '3.2.0');
+    }
     $nonce = (string) ($_REQUEST[$query_arg] ?? '');
     $result = wp_verify_nonce($nonce, $action);
     do_action('check_admin_referer', $action, $result);
+    // A bad nonce ends the request, even when a die handler returns.
     if (!$result) {
         wp_nonce_ays($action);
+        die();
     }
     return $result;
 }
 endif;
 
 if (!function_exists('check_ajax_referer')) :
+/** The first of the named argument, _ajax_nonce and _wpnonce that the request holds, even empty. Refused: an ajax request through wp_die, anything else ends at once. */
 function check_ajax_referer($action = -1, $query_arg = false, $stop = true)
 {
-    $nonce = '';
-    foreach (array_filter([$query_arg ?: null, '_ajax_nonce', '_wpnonce']) as $key) {
-        $nonce = (string) ($_REQUEST[$key] ?? '');
-        if ($nonce !== '') {
-            break;
-        }
-    }
+    $key = $query_arg && isset($_REQUEST[$query_arg]) ? $query_arg : (isset($_REQUEST['_ajax_nonce']) ? '_ajax_nonce' : '_wpnonce');
+    $nonce = (string) ($_REQUEST[$key] ?? '');
     $result = wp_verify_nonce($nonce, $action);
     do_action('check_ajax_referer', $action, $result);
     if ($stop && $result === false) {
-        wp_die('-1', 403);
+        wp_doing_ajax() ? wp_die(-1, 403) : die('-1');
     }
     return $result;
 }
@@ -94,7 +95,7 @@ if (!function_exists('wp_validate_redirect')) :
 function wp_validate_redirect($location, $fallback_url = '')
 {
     $location = wp_sanitize_redirect(trim((string) $location, " \t\n\r\0\x08\x0B"));
-    $safe = Url::safeRedirect($location, static fn (string $host) => (array) apply_filters('allowed_redirect_hosts', [wp_parse_url(home_url())['host'] ?? ''], $host));
+    $safe = Url::safeRedirect($location, static fn (string $host) => (array) apply_filters('allowed_redirect_hosts', [wp_parse_url(home_url())['host'] ?? ''], $host), (string) wp_parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH));
     return $safe ?? $fallback_url;
 }
 endif;
@@ -131,6 +132,9 @@ function wp_redirect($location, $status = 302, $x_redirect_by = 'WordPress')
     if (!$location) {
         return false;
     }
+    if ($status < 300 || 399 < $status) {
+        wp_die(__('HTTP redirect status code must be a redirection code, 3xx.'));
+    }
     $location = wp_sanitize_redirect($location);
     $x_redirect_by = apply_filters('x_redirect_by', $x_redirect_by, $status, $location);
     Runtime::current()->set('redirect', ['location' => $location, 'status' => (int) $status, 'by' => $x_redirect_by]);
@@ -159,10 +163,14 @@ function wp_salt($scheme = 'auth')
 endif;
 
 if (!function_exists('wp_hash_password')) :
+/** Hashed trimmed, by a hasher a plugin set up ($wp_hasher) when there is one. */
 function wp_hash_password($password)
 {
+    if (isset($GLOBALS['wp_hasher']) && is_object($GLOBALS['wp_hasher'])) {
+        return $GLOBALS['wp_hasher']->HashPassword(trim((string) $password));
+    }
     [$algorithm, $options] = _minn_password_settings();
-    return Password::hash((string) $password, $algorithm, $options);
+    return Password::hash(trim((string) $password), $algorithm, $options);
 }
 endif;
 
@@ -289,14 +297,14 @@ function wp_notify_postauthor($comment_id, $deprecated = null)
     $author = $post === null ? false : get_userdata((int) $post->post_author);
     $emails = $author instanceof WP_User && (string) $author->user_email !== '' ? [(string) $author->user_email] : [];
     $emails = array_values(array_filter((array) apply_filters('comment_notification_recipients', $emails, (int) $comment_id)));
-    $own = $author instanceof WP_User && $comment !== null && (int) $comment->user_id === (int) $author->ID;
-    if ($own && !apply_filters('comment_notification_notify_author', false, (int) $comment_id)) {
-        $emails = array_values(array_diff($emails, [(string) $author->user_email]));
-    }
+    // The author is not told of their own comment, nor while they are the one signed in, unless the filter says so; never of a post they cannot read.
+    $notify = apply_filters('comment_notification_notify_author', false, (int) $comment_id);
+    $mute = $author instanceof WP_User && $comment !== null && (!$notify && in_array((int) $author->ID, [(int) $comment->user_id, get_current_user_id()], true) || !user_can($author->ID, 'read_post', (int) $post->ID));
+    $emails = $mute ? array_values(array_diff($emails, [(string) $author->user_email])) : $emails;
     if ($post === null || $emails === []) {
         return false;
     }
-    $headers = apply_filters('comment_notification_headers', '', (int) $comment_id);
+    $headers = apply_filters('comment_notification_headers', \Minn\Mail\Mailer::commentHeaders((string) $comment->comment_author, (string) $comment->comment_author_email, (string) wp_parse_url(network_home_url(), PHP_URL_HOST), (string) get_option('blog_charset'), wp_specialchars_decode((string) get_option('blogname'), ENT_QUOTES)), (int) $comment_id);
     // Each recipient is written to in their own language, the notice made again for them (probe comment-remaining).
     foreach ($emails as $email) {
         Minn\Runtime\RecipientLocale::forAddress((string) $email, static function () use ($email, $post, $comment, $comment_id, $headers): void {
@@ -504,7 +512,8 @@ function wp_set_auth_cookie($user_id, $remember = false, $secure = '', $token = 
         return null;
     }
     $cookies = new AuthCookies($runtime->db, new Cookie($runtime->db, new Users($runtime->db), new Sessions(new Users($runtime->db))));
-    $plan = $cookies->settle($user, $remember ? 14 : 2, $secure === '' ? is_ssl() : (bool) $secure, is_ssl(), (string) $token);
+    // The logged-in cookie is secure only for a site whose home is https.
+    $plan = $cookies->settle($user, $remember ? 14 : 2, $secure === '' ? is_ssl() : (bool) $secure, wp_parse_url((string) get_option('home'), PHP_URL_SCHEME) === 'https', (string) $token);
     if (!$plan['send'] || headers_sent()) {
         return null;
     }

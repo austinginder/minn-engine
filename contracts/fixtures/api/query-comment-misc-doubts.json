@@ -1,0 +1,1652 @@
+[
+    [
+        "query: front title",
+        [
+            true,
+            true,
+            ""
+        ]
+    ],
+    [
+        "query: date title {\"m\":\"20240302\"}",
+        " | 2024 | March | 2"
+    ],
+    [
+        "query: date title {\"year\":2024}",
+        ""
+    ],
+    [
+        "query: date title {\"m\":\"2024\"}",
+        " | 2024"
+    ],
+    [
+        "query: date title {\"m\":\"202403\"}",
+        " | 2024 | March"
+    ],
+    [
+        "query: date title {\"year\":2024,\"monthnum\":3,\"day\":4}",
+        " | 2024 | March | 04"
+    ],
+    [
+        "query: format archive",
+        [
+            true,
+            "Asides"
+        ]
+    ],
+    [
+        "query: format archive gallery",
+        "Archives"
+    ],
+    [
+        "query: tax archive",
+        [
+            true,
+            "Zz Kind: <span>zzqcm term</span>"
+        ]
+    ],
+    [
+        "query: ctx",
+        [
+            [
+                "%s:",
+                "taxonomy term archive title prefix"
+            ]
+        ]
+    ],
+    [
+        "query: old slug post",
+        "{home}/zzqcm-post-new/"
+    ],
+    [
+        "query: old slug attachment var",
+        "{home}/zzqcm-att-new/"
+    ],
+    [
+        "query: old slug attachment var only",
+        null
+    ],
+    [
+        "query: old slug pagename",
+        null
+    ],
+    [
+        "post format archives: aside",
+        [
+            true,
+            "Asides"
+        ]
+    ],
+    [
+        "post format archives: gallery",
+        [
+            true,
+            "Galleries"
+        ]
+    ],
+    [
+        "post format archives: link",
+        [
+            true,
+            "Links"
+        ]
+    ],
+    [
+        "post format archives: image",
+        [
+            true,
+            "Images"
+        ]
+    ],
+    [
+        "post format archives: quote",
+        [
+            true,
+            "Quotes"
+        ]
+    ],
+    [
+        "post format archives: status",
+        [
+            true,
+            "Statuses"
+        ]
+    ],
+    [
+        "post format archives: video",
+        [
+            true,
+            "Videos"
+        ]
+    ],
+    [
+        "post format archives: audio",
+        [
+            true,
+            "Audio"
+        ]
+    ],
+    [
+        "post format archives: chat",
+        [
+            true,
+            "Chats"
+        ]
+    ],
+    [
+        "post format archives: standard",
+        [
+            true,
+            "Archives"
+        ]
+    ],
+    [
+        "post format archives: zzbogus",
+        [
+            true,
+            "Archives"
+        ]
+    ],
+    [
+        "post format archives: ctx",
+        [
+            [
+                "Standard",
+                "Post format"
+            ],
+            [
+                "Aside",
+                "Post format"
+            ],
+            [
+                "Chat",
+                "Post format"
+            ],
+            [
+                "Gallery",
+                "Post format"
+            ],
+            [
+                "Link",
+                "Post format"
+            ],
+            [
+                "Image",
+                "Post format"
+            ],
+            [
+                "Quote",
+                "Post format"
+            ],
+            [
+                "Status",
+                "Post format"
+            ],
+            [
+                "Video",
+                "Post format"
+            ],
+            [
+                "Audio",
+                "Post format"
+            ],
+            [
+                "Standard",
+                "Post format"
+            ],
+            [
+                "Aside",
+                "Post format"
+            ],
+            [
+                "Chat",
+                "Post format"
+            ],
+            [
+                "Gallery",
+                "Post format"
+            ],
+            [
+                "Link",
+                "Post format"
+            ],
+            [
+                "Image",
+                "Post format"
+            ],
+            [
+                "Quote",
+                "Post format"
+            ],
+            [
+                "Status",
+                "Post format"
+            ],
+            [
+                "Video",
+                "Post format"
+            ],
+            [
+                "Audio",
+                "Post format"
+            ],
+            [
+                "Standard",
+                "Post format"
+            ],
+            [
+                "Aside",
+                "Post format"
+            ],
+            [
+                "Chat",
+                "Post format"
+            ],
+            [
+                "Gallery",
+                "Post format"
+            ],
+            [
+                "Link",
+                "Post format"
+            ],
+            [
+                "Image",
+                "Post format"
+            ],
+            [
+                "Quote",
+                "Post format"
+            ],
+            [
+                "Status",
+                "Post format"
+            ],
+            [
+                "Video",
+                "Post format"
+            ],
+            [
+                "Audio",
+                "Post format"
+            ],
+            [
+                "Asides",
+                "post format archive title"
+            ]
+        ]
+    ],
+    [
+        "comments: form signed out",
+        [
+            [
+                "author",
+                "email",
+                "url",
+                "cookies",
+                "comment"
+            ],
+            [
+                "comment_form_before_fields",
+                "comment_form_after_fields"
+            ],
+            true,
+            [
+                "<p class=\"comment-form-author",
+                "<p class=\"comment-form-email",
+                "<p class=\"comment-form-url",
+                "<p class=\"comment-form-cookies",
+                "<p class=\"comment-form-comment"
+            ]
+        ]
+    ],
+    [
+        "comments: form signed in",
+        [
+            [
+                "author",
+                "email",
+                "url",
+                "cookies",
+                "comment"
+            ],
+            [
+                "comment_form_after_fields"
+            ],
+            true,
+            [
+                "<p class=\"comment-form-comment"
+            ]
+        ]
+    ],
+    [
+        "comments: popup closed none false",
+        "<span>Comments Off<span class=\"screen-reader-text\"> on zzqcm closed</span></span>"
+    ],
+    [
+        "comments: popup closed none given",
+        "<span class=\"zc\">No way</span>"
+    ],
+    [
+        "comments: popup closed none empty",
+        "<span></span>"
+    ],
+    [
+        "comments: popup zero given only",
+        "<a href=\"{x}\">Zero!</a>"
+    ],
+    [
+        "comments: popup locked",
+        "Enter your password to view comments."
+    ],
+    [
+        "comments: popup locked custom",
+        "Enter your password to view comments."
+    ],
+    [
+        "comments: popup one, one unset",
+        "<a href=\"{x}\">1 Comment<span class=\"screen-reader-text\"> on zzqcm open</span></a>"
+    ],
+    [
+        "comments: popup one, defaults",
+        "<a href=\"{x}\">1 Comment<span class=\"screen-reader-text\"> on zzqcm open</span></a>"
+    ],
+    [
+        "comments: eraser refusal",
+        {
+            "items_removed": false,
+            "items_retained": true,
+            "messages": [
+                "&lt;b&gt;zzqcm no&lt;/b&gt;"
+            ],
+            "done": true
+        }
+    ],
+    [
+        "comments: eraser nothing to change",
+        {
+            "items_removed": true,
+            "items_retained": false,
+            "messages": [],
+            "done": true
+        }
+    ],
+    [
+        "comments: eraser changed",
+        {
+            "items_removed": true,
+            "items_retained": false,
+            "messages": [],
+            "done": true
+        }
+    ],
+    [
+        "comments: notify a note",
+        {
+            "notes on": [
+                false,
+                0
+            ],
+            "notes off": [
+                false,
+                0
+            ],
+            "notes unset": [
+                false,
+                0
+            ],
+            "comment, notify off": [
+                false,
+                0
+            ]
+        }
+    ],
+    [
+        "comment form: out default",
+        [
+            [
+                "comment",
+                "author",
+                "email",
+                "url",
+                "cookies"
+            ],
+            [
+                "comment_form_field_comment",
+                "comment_form_before_fields",
+                "comment_form_field_author",
+                "comment_form_field_cookies",
+                "comment_form_field_zzextra",
+                "comment_form_after_fields"
+            ],
+            [
+                "<p class=\"comment-form-comment",
+                "<p class=\"comment-form-author",
+                "<p class=\"comment-form-email",
+                "<p class=\"comment-form-url",
+                "<p class=\"comment-form-cookies",
+                "<p class=\"comment-form-zzextra"
+            ]
+        ]
+    ],
+    [
+        "comment form: out last",
+        [
+            [
+                "author",
+                "email",
+                "url",
+                "cookies",
+                "comment"
+            ],
+            [
+                "comment_form_before_fields",
+                "comment_form_field_author",
+                "comment_form_field_cookies",
+                "comment_form_field_comment",
+                "comment_form_field_zzextra",
+                "comment_form_after_fields"
+            ],
+            [
+                "<p class=\"comment-form-author",
+                "<p class=\"comment-form-email",
+                "<p class=\"comment-form-url",
+                "<p class=\"comment-form-cookies",
+                "<p class=\"comment-form-comment",
+                "<p class=\"comment-form-zzextra"
+            ]
+        ]
+    ],
+    [
+        "comment form: in default",
+        [
+            [
+                "comment",
+                "author",
+                "email",
+                "url",
+                "cookies"
+            ],
+            [
+                "comment_form_field_comment",
+                "comment_form_field_zzextra",
+                "comment_form_after_fields"
+            ],
+            [
+                "<p class=\"comment-form-comment",
+                "<p class=\"comment-form-zzextra"
+            ]
+        ]
+    ],
+    [
+        "comment form: in last",
+        [
+            [
+                "author",
+                "email",
+                "url",
+                "cookies",
+                "comment"
+            ],
+            [
+                "comment_form_field_comment",
+                "comment_form_field_zzextra",
+                "comment_form_after_fields"
+            ],
+            [
+                "<p class=\"comment-form-comment",
+                "<p class=\"comment-form-zzextra"
+            ]
+        ]
+    ],
+    [
+        "comment form: out last bare",
+        [
+            [
+                "author",
+                "email",
+                "url",
+                "cookies",
+                "comment"
+            ],
+            [
+                "comment_form_before_fields",
+                "comment_form_field_author",
+                "comment_form_field_cookies",
+                "comment_form_after_fields",
+                "comment_form_field_comment"
+            ],
+            [
+                "<p class=\"comment-form-author",
+                "<p class=\"comment-form-email",
+                "<p class=\"comment-form-url",
+                "<p class=\"comment-form-cookies",
+                "<p class=\"comment-form-comment"
+            ]
+        ]
+    ],
+    [
+        "comment form: in last bare",
+        [
+            [
+                "author",
+                "email",
+                "url",
+                "cookies",
+                "comment"
+            ],
+            [
+                "comment_form_field_comment"
+            ],
+            [
+                "<p class=\"comment-form-comment"
+            ]
+        ]
+    ],
+    [
+        "comment form: class",
+        "<a href=\"{x}\" class=\"zc\" >No Comments<span class=\"screen-reader-text\"> on zzqcm open</span></a>"
+    ],
+    [
+        "comment form: attr",
+        "<a href=\"{x}\"data-zz=\"1\">No Comments<span class=\"screen-reader-text\"> on zzqcm open</span></a>"
+    ],
+    [
+        "comment form: attr class",
+        "<a href=\"{x}\" class=\"zc\" data-zz=\"1\">Z</a>"
+    ],
+    [
+        "comment form: zero more",
+        "<a href=\"{x}\">No Comments<span class=\"screen-reader-text\"> on zzqcm open</span></a>"
+    ],
+    [
+        "comment form: empty strings",
+        "<a href=\"{x}\"></a>"
+    ],
+    [
+        "popup texts: open",
+        [
+            "<a href=\"{x}\">No Comments<span class=\"screen-reader-text\"> on zzqcm open</span></a>",
+            [
+                "No Comments<span class=\"screen-reader-text\"> on %s</span>",
+                "1 Comment<span class=\"screen-reader-text\"> on %s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "Comments Off<span class=\"screen-reader-text\"> on %s</span>"
+            ]
+        ]
+    ],
+    [
+        "popup texts: closed",
+        [
+            "<span>Comments Off<span class=\"screen-reader-text\"> on zzqcm closed</span></span>",
+            [
+                "No Comments<span class=\"screen-reader-text\"> on %s</span>",
+                "1 Comment<span class=\"screen-reader-text\"> on %s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "Comments Off<span class=\"screen-reader-text\"> on %s</span>"
+            ]
+        ]
+    ],
+    [
+        "popup texts: closed+pw",
+        [
+            "<span>Comments Off<span class=\"screen-reader-text\"> on Protected: zzqcm both</span></span>",
+            [
+                "No Comments<span class=\"screen-reader-text\"> on %s</span>",
+                "1 Comment<span class=\"screen-reader-text\"> on %s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "Comments Off<span class=\"screen-reader-text\"> on %s</span>"
+            ]
+        ]
+    ],
+    [
+        "popup texts: ping open",
+        [
+            "<a href=\"{x}\">No Comments<span class=\"screen-reader-text\"> on zzqcm ping</span></a>",
+            [
+                "No Comments<span class=\"screen-reader-text\"> on %s</span>",
+                "1 Comment<span class=\"screen-reader-text\"> on %s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "N:%1$s Comment<span class=\"screen-reader-text\"> on %2$s</span>|%1$s Comments<span class=\"screen-reader-text\"> on %2$s</span>",
+                "Comments Off<span class=\"screen-reader-text\"> on %s</span>"
+            ]
+        ]
+    ],
+    [
+        "misc: edit_post_link text",
+        [
+            [
+                "Edit This"
+            ],
+            true
+        ]
+    ],
+    [
+        "misc: oembed data for url",
+        [
+            "object",
+            200,
+            200
+        ]
+    ],
+    [
+        "misc: list_files",
+        [
+            "{dir}/a.txt",
+            "{dir}/empty/",
+            "{dir}/sub/b.txt",
+            "{dir}/sub/deep/c.txt",
+            "{dir}/sub/x.log",
+            "{dir}/x.log"
+        ]
+    ],
+    [
+        "misc: list_files hidden",
+        [
+            "{dir}/.dot",
+            "{dir}/.hiddendir/h.txt",
+            "{dir}/a.txt",
+            "{dir}/empty/",
+            "{dir}/sub/.dot2",
+            "{dir}/sub/b.txt",
+            "{dir}/sub/deep/c.txt",
+            "{dir}/sub/x.log",
+            "{dir}/x.log"
+        ]
+    ],
+    [
+        "misc: list_files exclude x.log",
+        [
+            "{dir}/a.txt",
+            "{dir}/empty/",
+            "{dir}/sub/b.txt",
+            "{dir}/sub/deep/c.txt",
+            "{dir}/sub/x.log"
+        ]
+    ],
+    [
+        "misc: list_files exclude sub/x.log",
+        [
+            "{dir}/a.txt",
+            "{dir}/empty/",
+            "{dir}/sub/b.txt",
+            "{dir}/sub/deep/c.txt",
+            "{dir}/sub/x.log",
+            "{dir}/x.log"
+        ]
+    ],
+    [
+        "misc: list_files levels 1",
+        [
+            "{dir}/a.txt",
+            "{dir}/empty/",
+            "{dir}/sub/",
+            "{dir}/x.log"
+        ]
+    ],
+    [
+        "misc: verify failure",
+        [
+            "signature_verification_failed",
+            [
+                "filename",
+                "keys",
+                "signatures",
+                "hash",
+                "skipped_key",
+                "skipped_sig",
+                "php",
+                "sodium"
+            ],
+            {
+                "filename": "a.txt",
+                "signatures": [
+                    "enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6eg==",
+                    "notbase64!!",
+                    "c2hvcnQ="
+                ],
+                "skipped_key": 0,
+                "skipped_sig": 2
+            },
+            [
+                "array",
+                0,
+                "string",
+                "string",
+                96
+            ]
+        ]
+    ],
+    [
+        "misc: verify none",
+        [
+            "signature_verification_no_signature",
+            {
+                "filename": "a.txt"
+            }
+        ]
+    ],
+    [
+        "misc: wp_filesize",
+        {
+            "zero": [
+                0,
+                0
+            ],
+            "five": [
+                5,
+                0
+            ],
+            "null": [
+                1,
+                1
+            ],
+            "string": [
+                7,
+                0
+            ],
+            "false": [
+                1,
+                1
+            ]
+        }
+    ],
+    [
+        "misc: custom css post",
+        [
+            "zz-qcm-theme",
+            true
+        ]
+    ],
+    [
+        "misc: user counts off",
+        false
+    ],
+    [
+        "misc: opcache",
+        [
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "misc: opcache asked",
+        [
+            "{dir}/s.php",
+            "{dir}/nope.php"
+        ]
+    ],
+    [
+        "misc: revision title current",
+        "<a href='{admin}post.php?post={post}&amp;action=edit'>{date}</a> [Current Revision]"
+    ],
+    [
+        "misc: revision title rev",
+        "<a href='{admin}revision.php?revision={rev}'>{date}</a>"
+    ],
+    [
+        "misc: revision title no link",
+        true
+    ],
+    [
+        "misc: revision title no edit link",
+        "{date} [Current Revision]"
+    ],
+    [
+        "misc: revision title msgids",
+        [
+            "%s [Autosave]",
+            "%s [Current Revision]"
+        ]
+    ],
+    [
+        "misc: ksort",
+        [
+            null,
+            {
+                "a": {
+                    "c": 2,
+                    "d": 1
+                },
+                "b": 1
+            }
+        ]
+    ],
+    [
+        "misc: reset vars",
+        [
+            "get a",
+            "post b",
+            "get c",
+            ""
+        ]
+    ],
+    [
+        "misc: sprintf_l",
+        [
+            "",
+            "one",
+            "a and b tail",
+            "",
+            "x %l",
+            "",
+            "L: a, b, and c!",
+            "solo"
+        ]
+    ],
+    [
+        "signatures: two good sigs",
+        [
+            "signature_verification_failed",
+            [
+                "a2tra2tra2tra2tra2tra2tra2tra2tra2tra2tra2s=",
+                "YmFka2V5",
+                "not base64!",
+                "ampqampqampqampqampqampqampqampqampqampqamo="
+            ],
+            4,
+            0
+        ]
+    ],
+    [
+        "signatures: one bad sig",
+        [
+            "signature_verification_failed",
+            [
+                "a2tra2tra2tra2tra2tra2tra2tra2tra2tra2tra2s=",
+                "YmFka2V5",
+                "not base64!",
+                "ampqampqampqampqampqampqampqampqampqampqamo="
+            ],
+            0,
+            1
+        ]
+    ],
+    [
+        "signatures: mixed",
+        [
+            "signature_verification_failed",
+            [
+                "a2tra2tra2tra2tra2tra2tra2tra2tra2tra2tra2s=",
+                "YmFka2V5",
+                "not base64!",
+                "ampqampqampqampqampqampqampqampqampqampqamo="
+            ],
+            2,
+            2
+        ]
+    ],
+    [
+        "signatures: real",
+        true
+    ],
+    [
+        "filesystem: copy ok",
+        [
+            true,
+            [
+                [
+                    "dirlist",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "a.txt",
+                        "sub",
+                        "skipme"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/",
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/a.txt",
+                    "/zz/dst/a.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst/sub",
+                    "=>",
+                    true
+                ],
+                [
+                    "dirlist",
+                    "/zz/src/sub",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "b.txt",
+                        "c.txt"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/sub/",
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/sub/b.txt",
+                    "/zz/dst/sub/b.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: copy dest missing, made",
+        [
+            true,
+            [
+                [
+                    "dirlist",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "a.txt",
+                        "sub",
+                        "skipme"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/",
+                    "=>",
+                    false
+                ],
+                [
+                    "mkdir",
+                    "/zz/dst/",
+                    false,
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/a.txt",
+                    "/zz/dst/a.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: copy dest missing, mkdir fails",
+        [
+            [
+                "mkdir_destination_failed_copy_dir",
+                "Could not create the destination directory.",
+                "dst"
+            ],
+            [
+                [
+                    "dirlist",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "a.txt",
+                        "sub",
+                        "skipme"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/",
+                    "=>",
+                    false
+                ],
+                [
+                    "mkdir",
+                    "/zz/dst/",
+                    false,
+                    "=>",
+                    false
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: copy sub mkdir fails",
+        [
+            [
+                "mkdir_failed_copy_dir",
+                "Could not create directory.",
+                "/zz/dst/sub"
+            ],
+            [
+                [
+                    "dirlist",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "a.txt",
+                        "sub",
+                        "skipme"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/",
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/a.txt",
+                    "/zz/dst/a.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst/sub",
+                    "=>",
+                    false
+                ],
+                [
+                    "mkdir",
+                    "/zz/dst/sub",
+                    493,
+                    "=>",
+                    false
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: copy file fails",
+        [
+            [
+                "copy_failed_copy_dir",
+                "Could not copy file.",
+                "/zz/dst/a.txt"
+            ],
+            [
+                [
+                    "dirlist",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "a.txt",
+                        "sub",
+                        "skipme"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/",
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/a.txt",
+                    "/zz/dst/a.txt",
+                    true,
+                    420,
+                    "=>",
+                    false
+                ],
+                [
+                    "chmod",
+                    "/zz/dst/a.txt",
+                    420,
+                    false,
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/a.txt",
+                    "/zz/dst/a.txt",
+                    true,
+                    420,
+                    "=>",
+                    false
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: copy list fails",
+        [
+            [
+                "dirlist_failed_copy_dir",
+                "Directory listing failed.",
+                "src"
+            ],
+            [
+                [
+                    "dirlist",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    false
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: move: move fails, copy fails",
+        [
+            [
+                "copy_failed_copy_dir",
+                "Could not copy file.",
+                "/zz/dst/a.txt"
+            ],
+            [
+                [
+                    "exists",
+                    "/zz/dst",
+                    "=>",
+                    false
+                ],
+                [
+                    "move",
+                    "/zz/src",
+                    "/zz/dst",
+                    false,
+                    "=>",
+                    false
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst",
+                    "=>",
+                    true
+                ],
+                [
+                    "dirlist",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "a.txt",
+                        "sub",
+                        "skipme"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/",
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/a.txt",
+                    "/zz/dst/a.txt",
+                    true,
+                    420,
+                    "=>",
+                    false
+                ],
+                [
+                    "chmod",
+                    "/zz/dst/a.txt",
+                    420,
+                    false,
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/a.txt",
+                    "/zz/dst/a.txt",
+                    true,
+                    420,
+                    "=>",
+                    false
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: move: move fails, copy ok",
+        [
+            true,
+            [
+                [
+                    "exists",
+                    "/zz/dst",
+                    "=>",
+                    false
+                ],
+                [
+                    "move",
+                    "/zz/src",
+                    "/zz/dst",
+                    false,
+                    "=>",
+                    false
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst",
+                    "=>",
+                    true
+                ],
+                [
+                    "dirlist",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "a.txt",
+                        "sub",
+                        "skipme"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/",
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/a.txt",
+                    "/zz/dst/a.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst/sub",
+                    "=>",
+                    true
+                ],
+                [
+                    "dirlist",
+                    "/zz/src/sub",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "b.txt",
+                        "c.txt"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/sub/",
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/sub/b.txt",
+                    "/zz/dst/sub/b.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/sub/c.txt",
+                    "/zz/dst/sub/c.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst/skipme",
+                    "=>",
+                    true
+                ],
+                [
+                    "dirlist",
+                    "/zz/src/skipme",
+                    true,
+                    false,
+                    "=>",
+                    []
+                ],
+                [
+                    "exists",
+                    "/zz/dst/skipme/",
+                    "=>",
+                    true
+                ],
+                [
+                    "delete",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    true
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: move ok",
+        [
+            true,
+            [
+                [
+                    "exists",
+                    "/zz/dst",
+                    "=>",
+                    false
+                ],
+                [
+                    "move",
+                    "/zz/src",
+                    "/zz/dst",
+                    false,
+                    "=>",
+                    true
+                ],
+                [
+                    "dirlist",
+                    "/zz/dst",
+                    false,
+                    true,
+                    "=>",
+                    [
+                        "x.php",
+                        "y.txt",
+                        "d"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: move: move fails, no dir, mkdir fails",
+        [
+            [
+                "mkdir_failed_move_dir",
+                "Could not create directory.",
+                "/zz/dst"
+            ],
+            [
+                [
+                    "exists",
+                    "/zz/dst",
+                    "=>",
+                    false
+                ],
+                [
+                    "move",
+                    "/zz/src",
+                    "/zz/dst",
+                    false,
+                    "=>",
+                    false
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst",
+                    "=>",
+                    false
+                ],
+                [
+                    "mkdir",
+                    "/zz/dst",
+                    493,
+                    "=>",
+                    false
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: move: move fails, no dir, made",
+        [
+            true,
+            [
+                [
+                    "exists",
+                    "/zz/dst",
+                    "=>",
+                    false
+                ],
+                [
+                    "move",
+                    "/zz/src",
+                    "/zz/dst",
+                    false,
+                    "=>",
+                    false
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst",
+                    "=>",
+                    false
+                ],
+                [
+                    "mkdir",
+                    "/zz/dst",
+                    493,
+                    "=>",
+                    true
+                ],
+                [
+                    "dirlist",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "a.txt",
+                        "sub",
+                        "skipme"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/",
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/a.txt",
+                    "/zz/dst/a.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst/sub",
+                    "=>",
+                    true
+                ],
+                [
+                    "dirlist",
+                    "/zz/src/sub",
+                    true,
+                    false,
+                    "=>",
+                    [
+                        "b.txt",
+                        "c.txt"
+                    ]
+                ],
+                [
+                    "exists",
+                    "/zz/dst/sub/",
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/sub/b.txt",
+                    "/zz/dst/sub/b.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ],
+                [
+                    "copy",
+                    "/zz/src/sub/c.txt",
+                    "/zz/dst/sub/c.txt",
+                    true,
+                    420,
+                    "=>",
+                    true
+                ],
+                [
+                    "is_dir",
+                    "/zz/dst/skipme",
+                    "=>",
+                    true
+                ],
+                [
+                    "dirlist",
+                    "/zz/src/skipme",
+                    true,
+                    false,
+                    "=>",
+                    []
+                ],
+                [
+                    "exists",
+                    "/zz/dst/skipme/",
+                    "=>",
+                    true
+                ],
+                [
+                    "delete",
+                    "/zz/src",
+                    true,
+                    false,
+                    "=>",
+                    true
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: invalidate directory",
+        [
+            null,
+            [
+                [
+                    "dirlist",
+                    "/zz/dst",
+                    false,
+                    true,
+                    "=>",
+                    [
+                        "x.php",
+                        "y.txt",
+                        "d"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "filesystem: invalidate directory asked",
+        [
+            "/zz/dst/x.php",
+            "/zz/dst/d/z.php"
+        ]
+    ],
+    [
+        "filesystem: invalidate directory bad",
+        [
+            [
+                null,
+                []
+            ],
+            [
+                null,
+                []
+            ]
+        ]
+    ],
+    [
+        "maintenance: 599",
+        [
+            599
+        ]
+    ],
+    [
+        "maintenance: 600",
+        []
+    ],
+    [
+        "maintenance: 601",
+        []
+    ],
+    [
+        "maintenance: 0",
+        [
+            0
+        ]
+    ],
+    [
+        "maintenance: -5",
+        [
+            -5
+        ]
+    ],
+    [
+        "invalidate notice: 0",
+        [
+            [
+                "wp_trigger_error_run",
+                [
+                    "",
+                    "<code>wp_opcache_invalidate_directory()</code> expects a non-empty string.",
+                    1024
+                ]
+            ]
+        ]
+    ],
+    [
+        "invalidate notice: 1",
+        [
+            "%s expects a non-empty string."
+        ]
+    ]
+]

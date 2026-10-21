@@ -95,6 +95,50 @@ final class Escape
         return Entities::specialchars(str_contains($text, '&') ? Kses::normalizeEntities($text) : $text, $quotes, false, KsesEntities::known(...));
     }
 
+    /**
+     * Text for an XML document (esc_xml): named references XML lacks are
+     * decoded (or their ampersand escaped), a bare ampersand and the four
+     * specials encoded, and CDATA sections left exactly as written (probe
+     * media-template-doubts).
+     */
+    public static function xml(string $text): string
+    {
+        $parts = preg_split('/(<!\[CDATA\[.*?\]\]>)/s', $text, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$text];
+        foreach ($parts as $i => $part) {
+            $parts[$i] = $i % 2 === 1 ? $part : self::xmlText($part);
+        }
+        return implode('', $parts);
+    }
+
+    private static function xmlText(string $text): string
+    {
+        $text = (string) preg_replace_callback('/&([A-Za-z][A-Za-z0-9]*);/', static function (array $m): string {
+            if (in_array($m[1], ['amp', 'lt', 'gt', 'quot', 'apos'], true)) {
+                return $m[0];
+            }
+            $decoded = html_entity_decode($m[0], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            return $decoded === $m[0] ? '&amp;' . $m[1] . ';' : $decoded;
+        }, $text);
+        // The five XML names stay; a character reference is written the reference's way (decimal in at least three digits, hex in lower-case x without leading zeros); any other ampersand is escaped.
+        $text = (string) preg_replace_callback('/&(?:(amp|lt|gt|quot|apos);|#(0*[0-9]{1,7});|#[xX](0*[0-9A-Fa-f]{1,6});)?/', static function (array $m): string {
+            if (($m[1] ?? '') !== '') {
+                return $m[0];
+            }
+            $code = ($m[2] ?? '') !== '' ? (int) $m[2] : (($m[3] ?? '') !== '' ? (int) hexdec($m[3]) : null);
+            if ($code === null || !self::xmlCharacter($code)) {
+                return '&amp;' . substr($m[0], 1);
+            }
+            return ($m[2] ?? '') !== '' ? '&#' . str_pad((string) $code, 3, '0', STR_PAD_LEFT) . ';' : '&#x' . ltrim($m[3], '0') . ';';
+        }, $text);
+        return str_replace(['<', '>', '"', "'"], ['&lt;', '&gt;', '&quot;', '&apos;'], $text);
+    }
+
+    /** Whether a code point is a character XML allows. */
+    private static function xmlCharacter(int $code): bool
+    {
+        return in_array($code, [0x9, 0xA, 0xD], true) || ($code >= 0x20 && $code <= 0xD7FF) || ($code >= 0xE000 && $code <= 0xFFFD) || ($code >= 0x10000 && $code <= 0x10FFFF);
+    }
+
     private static function encoded(string $text): string
     {
         return self::specialchars(self::validUtf8($text), ENT_QUOTES);
