@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 456 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 460 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 142 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 164 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -115,6 +115,8 @@ the wp/v2 surface: shapes and controllers
 The REST API: wires the controllers for one request and dispatches a
 route. Errors thrown anywhere underneath become the reference's error
 payload under the reference's headers.
+
+- const `ADDRESSING` = `array (   0 => 'rest_route',   1 => '_method',   2 => '_envelope',   3 => '_jsonp',   4 => '_wpnonce',   5 => '_fields',   6 => '_embed', )` — Query keys that address a request (its route, method override, envelope, nonce, selection) rather than name a write's argument.
 
 Used by: `Minn\Engine`
 
@@ -260,7 +262,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 77), `engineResponse()` (private, line 408), `withPageLinks()` (private, line 422), `options()` (private, line 453), `withSchema()` (private, line 470), `withAllow()` (private, line 491)
+Internals: `controllers()` (private, line 80), `engineResponse()` (private, line 411), `withPageLinks()` (private, line 426), `options()` (private, line 457), `withSchema()` (private, line 474), `withAllow()` (private, line 495)
 
 
 ## ApplicationPasswordsController

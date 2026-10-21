@@ -145,6 +145,36 @@ final readonly class Request
         return [];
     }
 
+    /**
+     * The same request with its query's arguments read beneath its body's,
+     * as the reference's REST request reads a write's parameters: a JSON or
+     * form body names an argument first and the query fills in the rest. A
+     * raw body (an upload) is left as it came.
+     *
+     * @param list<string> $reserved query keys that address the request rather than name an argument
+     */
+    public function withQueryBeneathBody(array $reserved): self
+    {
+        $query = array_diff_key($this->query, array_flip($reserved));
+        if ($query === []) {
+            return $this;
+        }
+        $body = $this->body;
+        $form = $this->form;
+        $decoded = trim($body) === '' || $form !== [] ? null : Json::decode($body, or: null);
+        if (trim($body) === '' || $form !== []) {
+            $form += $query;
+        } elseif (is_array($decoded) && ($decoded === [] || !array_is_list($decoded))) {
+            $body = Json::encode($decoded + $query);
+        } elseif (str_contains(strtolower((string) $this->header('content-type')), 'application/x-www-form-urlencoded')) {
+            parse_str($body, $fields);
+            $form = $fields + $query;
+        } else {
+            return $this;
+        }
+        return new self($this->method, $this->path, $this->query, $this->headers, $this->cookies, $body, $this->secure, $this->host, $form, $this->files, $this->remoteAddress, $this->server);
+    }
+
     /** The same request addressed to another path (a REST route carried in ?rest_route=). */
     public function withPath(string $path): self
     {

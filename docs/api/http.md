@@ -30,7 +30,7 @@ request, response, routing, and the outgoing client
 | [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
 | [`RawResponse`](#rawresponse) | final class | 105 | An HTTP response as text, the way the Requests library hands it from |
 | [`Refusal`](#refusal) | interface | 5 | A refusal a route judges after its arguments and before its policy: the |
-| [`Request`](#request) | final readonly class | 191 | An immutable picture of the incoming request. Built once from the PHP |
+| [`Request`](#request) | final readonly class | 221 | An immutable picture of the incoming request. Built once from the PHP |
 | [`RequestFailed`](#requestfailed) | final class | 7 | Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along. |
 | [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
 | [`Response`](#response) | final readonly class | 161 | What a handler returns. Nothing is written to the client until the |
@@ -1010,6 +1010,15 @@ The request PHP received, read once from the superglobals.
 ### `json(): array`
 
 The JSON body as an array, or the form fields when the body is empty or a form.
+
+### `withQueryBeneathBody(array $reserved): self`
+
+The same request with its query's arguments read beneath its body's,
+as the reference's REST request reads a write's parameters: a JSON or
+form body names an argument first and the query fills in the rest. A
+raw body (an upload) is left as it came.
+
+- `@param list<string> $reserved query keys that address the request rather than name an argument`
 
 ### `withPath(string $path): self`
 

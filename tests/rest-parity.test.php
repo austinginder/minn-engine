@@ -275,5 +275,39 @@ foreach ( array( $nav, $block ) as $id ) {
 	}
 }
 
+// A write reads its arguments from the body first and the query after: an author's post made
+// from the query alone, a JSON or form body winning over the query, the query filling in what
+// the body leaves out; a password or locale in the query is judged as one in the body.
+$session = json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . ' 3' ), true );
+$writes  = array(
+	'query only'          => array( '/wp/v2/posts', '?title=Q&status=draft', null, null ),
+	'JSON over the query' => array( '/wp/v2/posts', '?title=Q', '{"title":"B","status":"draft"}', 'application/json' ),
+	'form over the query' => array( '/wp/v2/posts', '?title=Q&status=draft', 'title=F', 'application/x-www-form-urlencoded' ),
+	'the query filling in' => array( '/wp/v2/posts', '?excerpt=QE', '{"title":"B","status":"draft"}', 'application/json' ),
+	'an empty JSON body'  => array( '/wp/v2/posts', '?title=Q&status=draft', '', 'application/json' ),
+	'a password'          => array( '/wp/v2/users/3', '?password=' . rawurlencode( 'a\\b' ), null, null ),
+	'a locale'            => array( '/wp/v2/users/3', '?locale=zz', null, null ),
+);
+foreach ( $writes as $label => [ $path, $query, $body, $type ] ) {
+	$answers = array();
+	foreach ( array( $REF, $ENGINE ) as $base ) {
+		$curl    = curl_init( "$base/wp-json$path$query" );
+		$headers = array( 'X-WP-Nonce: ' . ( $session['nonce'] ?? '' ), 'Cookie: ' . ( $session['cookie_name'] ?? '' ) . '=' . ( $session['cookie'] ?? '' ) );
+		if ( null !== $type ) {
+			$headers[] = "Content-Type: $type";
+		}
+		curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $body ?? '', CURLOPT_HTTPHEADER => $headers ) );
+		$answer    = json_decode( (string) curl_exec( $curl ), true );
+		$answers[] = curl_getinfo( $curl, CURLINFO_HTTP_CODE ) . ' ' . ( $answer['code'] ?? '' ) . ' ' . json_encode( $answer['data']['params'] ?? array( $answer['title']['raw'] ?? null, $answer['status'] ?? null, $answer['excerpt']['raw'] ?? null ) );
+		if ( (int) ( $answer['id'] ?? 0 ) > 0 && 'post' === ( $answer['type'] ?? '' ) && 3 === (int) ( $answer['author'] ?? 0 ) ) {
+			$wp( 'post delete ' . (int) $answer['id'] . ' --force' );
+		}
+	}
+	$ok = $answers[0] === $answers[1];
+	$ok ? $pass++ : $fail++;
+	echo ( $ok ? '  ok   ' : '  FAIL ' ) . "a write's arguments from the query: $label" . ( $ok ? " ({$answers[0]})" : " ({$answers[0]} vs {$answers[1]})" ) . "\n";
+}
+$wp( 'eval ' . escapeshellarg( 'WP_Session_Tokens::get_instance(3)->destroy(' . var_export( (string) ( $session['token'] ?? '' ), true ) . ');' ) );
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

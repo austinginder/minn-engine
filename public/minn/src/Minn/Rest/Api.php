@@ -40,6 +40,9 @@ use Minn\Support\Text;
  */
 final readonly class Api
 {
+    /** Query keys that address a request (its route, method override, envelope, nonce, selection) rather than name a write's argument. */
+    private const ADDRESSING = ['rest_route', '_method', '_envelope', '_jsonp', '_wpnonce', '_fields', '_embed'];
+
     public function __construct(
         private Request $request,
         private Router $router,
@@ -410,7 +413,8 @@ final readonly class Api
         if ($request->method === Method::Options) {
             return $this->options($request);
         }
-        $response = $this->router->dispatch($request);
+        $write = in_array($request->method, [Method::Post, Method::Put, Method::Patch, Method::Delete], true) && !str_starts_with($request->path, '/minn-admin/');
+        $response = $this->router->dispatch($write ? $request->withQueryBeneathBody(self::ADDRESSING) : $request);
         return $response === null ? null : $this->withPageLinks($request, $this->embed->decorate($request, $response));
     }
 
