@@ -64,7 +64,8 @@ class WP_User implements \Minn\Objects\User
         }
         $object = new stdClass();
         foreach (['ID', 'user_login', 'user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_key', 'user_status', 'display_name'] as $column) {
-            $object->{$column} = $column === 'ID' ? (int) $row[$column] : (string) ($row[$column] ?? '');
+            // Every column as the database answers it, the ID a string too, as the reference's row is ($user->ID is the integer).
+            $object->{$column} = (string) ($row[$column] ?? '');
         }
         return $object;
     }

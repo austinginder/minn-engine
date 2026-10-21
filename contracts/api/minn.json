@@ -25320,7 +25320,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Bundled.php",
-            "lines": 54,
+            "lines": 64,
             "doc": "WP-CLI's own bundled command for a verb the engine answers. Its docs give\nan engine verb the same synopsis (the arguments, defaults and allowed\nvalues the running WP-CLI accepts, which change between releases), and a\ncall the engine does not answer itself is handed back to it, run against\nthe engine's WordPress runtime as any bundled command is.",
             "implements": [],
             "extends": null,
@@ -25365,6 +25365,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "loadable",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "loadable(): bool",
+                    "doc": "Whether WP-CLI can load this site, as it checks before loading one: the\ncore version file readable under ABSPATH and a wp-config.php found. A\nMinn site carries both (its placeholder files); a bare webroot does not.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 60,
+                    "end": 63
+                },
+                {
+                    "routes": [],
                     "name": "run",
                     "static": true,
                     "visibility": "public",
@@ -25404,8 +25416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 71
+                    "line": 73,
+                    "end": 81
                 }
             ]
         },
@@ -25463,7 +25475,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Commands.php",
-            "lines": 105,
+            "lines": 134,
             "doc": "The verbs the engine answers to. Every one is registered for the\nbefore_wp_load phase, which WP-CLI runs before it looks for WordPress,\nand each replaces the bundled subcommand of the same name (a deferred\naddition lands after the bundle and overrides its leaf).",
             "implements": [],
             "extends": null,
@@ -25500,7 +25512,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 18,
-                    "end": 74
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -25544,8 +25556,39 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 96
+                    "line": 90,
+                    "end": 102
+                },
+                {
+                    "routes": [],
+                    "name": "runner",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "runner(callable|array $callable, array $bundled): callable|array",
+                    "doc": "What a leaf runs: the engine's method, or, for a verb named with\nWP-CLI's own command, that command whenever WP-CLI can load the site.",
+                    "shapes": [
+                        "@param callable|array{0: class-string, 1: string} $callable",
+                        "@param array{0?: string, 1?: string} $bundled",
+                        "@return callable|array{0: class-string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "callable",
+                            "type": "callable|array",
+                            "shape": "callable|array{0: class-string, 1: string}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bundled",
+                            "type": "array",
+                            "shape": "array{0?: string, 1?: string}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 112,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -25581,8 +25624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 118
+                    "line": 134,
+                    "end": 147
                 }
             ]
         },

@@ -5,9 +5,9 @@ the wp verbs the engine answers itself
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AssetUpdate`](#assetupdate) | final class | 329 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
-| [`Bundled`](#bundled) | final class | 54 | WP-CLI's own bundled command for a verb the engine answers. Its docs give |
+| [`Bundled`](#bundled) | final class | 64 | WP-CLI's own bundled command for a verb the engine answers. Its docs give |
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
-| [`Commands`](#commands) | final class | 105 | The verbs the engine answers to. Every one is registered for the |
+| [`Commands`](#commands) | final class | 134 | The verbs the engine answers to. Every one is registered for the |
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
@@ -74,6 +74,12 @@ WP-CLI has no such command.
 
 - `@return array<string, string>`
 
+### static `loadable(): bool`
+
+Whether WP-CLI can load this site, as it checks before loading one: the
+core version file readable under ABSPATH and a wp-config.php found. A
+Minn site carries both (its placeholder files); a bare webroot does not.
+
 ### static `run(string $class, string $method, array $args, array $assocArgs): void`
 
 Runs the bundled command for a call: WP-CLI loads the site (the engine
@@ -115,7 +121,7 @@ Used by: `Minn\Cli\OptionCommand`, `Minn\Cli\UserCommand`
 
 Registers every engine verb with WP-CLI in the phase it runs in.
 
-Internals: `leaf()` (private, line 88), `replace()` (private, line 105)
+Internals: `leaf()` (private, line 90), `runner()` (private, line 112), `replace()` (private, line 134)
 
 
 ## CoreCommand

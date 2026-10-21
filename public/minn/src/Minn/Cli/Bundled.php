@@ -53,6 +53,16 @@ final class Bundled
     }
 
     /**
+     * Whether WP-CLI can load this site, as it checks before loading one: the
+     * core version file readable under ABSPATH and a wp-config.php found. A
+     * Minn site carries both (its placeholder files); a bare webroot does not.
+     */
+    public static function loadable(): bool
+    {
+        return defined('ABSPATH') && is_readable(ABSPATH . 'wp-includes/version.php') && function_exists('WP_CLI\\Utils\\locate_wp_config') && \WP_CLI\Utils\locate_wp_config() !== false;
+    }
+
+    /**
      * Runs the bundled command for a call: WP-CLI loads the site (the engine
      * stands in for WordPress, plugins loaded), then the bundled method
      * answers with the arguments the shared synopsis already validated.

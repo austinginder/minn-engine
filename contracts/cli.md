@@ -5,7 +5,20 @@ The `wp` binary itself runs unchanged (WP-CLI is MIT). `public/wp-cli.yml` requi
 phase. WP-CLI runs that phase before it looks for a WordPress install, so the verbs
 below work on a webroot with no `wp-load.php` and no `wp-includes/`; anything else
 still fails with WP-CLI's own "This does not seem to be a WordPress installation".
-Code: `public/minn/src/Minn/Cli/`. Suite: `tests/cli.test.php` runs every verb
+Code: `public/minn/src/Minn/Cli/`.
+
+On a site WP-CLI can load (its `wp-includes/version.php` readable and a `wp-config.php`
+found, which a Minn site's placeholder files give it), the verbs whose answer plugins can
+change are WP-CLI's own commands, run on the engine's runtime with the site's plugins as on
+WordPress (Austin, 2026-10-21, decision 3B; `Cli\Bundled::loadable`): `option`
+get/add/update/set/delete, `user list` and `get`, `plugin` and `theme` `list`,
+`is-installed` and `is-active`, every `cron` verb, `cache flush` and `rewrite`. A plugin's
+option filters change what they print, a must-use plugin that stops WP-CLI is heard, and
+`--skip-plugins` works as WP-CLI defines it. The table below is what each verb does on a
+webroot that cannot load. The rest stay the engine's everywhere: plugin and theme installs,
+updates, searches, activation and deletion (the gate and the update service), `core` (Minn's
+releases), `search-replace`, `maintenance-mode`, `user login` (Cove's sign-in link) and
+`minn`. Suite: `tests/cli.test.php` runs every verb
 against the engine's webroot and the parked reference on the same database and
 compares stdout and the exit code.
 

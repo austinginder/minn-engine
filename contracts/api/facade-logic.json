@@ -11822,49 +11822,49 @@
         },
         "WP_User::__get": {
             "file": "classes/WP_User.php",
-            "line": 86,
+            "line": 87,
             "statements": 4,
             "lines": 10
         },
         "WP_User::__isset": {
             "file": "classes/WP_User.php",
-            "line": 72,
+            "line": 73,
             "statements": 4,
             "lines": 10
         },
         "WP_User::__set": {
             "file": "classes/WP_User.php",
-            "line": 100,
+            "line": 101,
             "statements": 2,
             "lines": 5
         },
         "WP_User::__unset": {
             "file": "classes/WP_User.php",
-            "line": 109,
+            "line": 110,
             "statements": 1,
             "lines": 3
         },
         "WP_User::_init_caps": {
             "file": "classes/WP_User.php",
-            "line": 148,
+            "line": 149,
             "statements": 2,
             "lines": 2
         },
         "WP_User::add_cap": {
             "file": "classes/WP_User.php",
-            "line": 260,
+            "line": 261,
             "statements": 4,
             "lines": 4
         },
         "WP_User::add_role": {
             "file": "classes/WP_User.php",
-            "line": 196,
+            "line": 197,
             "statements": 6,
             "lines": 8
         },
         "WP_User::for_blog": {
             "file": "classes/WP_User.php",
-            "line": 155,
+            "line": 156,
             "statements": 2,
             "lines": 2
         },
@@ -11876,7 +11876,7 @@
         },
         "WP_User::get_role_caps": {
             "file": "classes/WP_User.php",
-            "line": 174,
+            "line": 175,
             "statements": 7,
             "lines": 17
         },
@@ -11888,43 +11888,43 @@
         },
         "WP_User::level_reduction": {
             "file": "classes/WP_User.php",
-            "line": 246,
+            "line": 247,
             "statements": 2,
             "lines": 4
         },
         "WP_User::minn_read_caps": {
             "file": "classes/WP_User.php",
-            "line": 162,
+            "line": 163,
             "statements": 3,
             "lines": 3
         },
         "WP_User::remove_all_caps": {
             "file": "classes/WP_User.php",
-            "line": 279,
+            "line": 280,
             "statements": 4,
             "lines": 4
         },
         "WP_User::remove_cap": {
             "file": "classes/WP_User.php",
-            "line": 268,
+            "line": 269,
             "statements": 5,
             "lines": 7
         },
         "WP_User::remove_role": {
             "file": "classes/WP_User.php",
-            "line": 208,
+            "line": 209,
             "statements": 6,
             "lines": 8
         },
         "WP_User::set_role": {
             "file": "classes/WP_User.php",
-            "line": 220,
+            "line": 221,
             "statements": 10,
             "lines": 22
         },
         "WP_User::update_user_level_from_caps": {
             "file": "classes/WP_User.php",
-            "line": 254,
+            "line": 255,
             "statements": 2,
             "lines": 2
         },

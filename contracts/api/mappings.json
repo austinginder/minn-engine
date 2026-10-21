@@ -31539,7 +31539,7 @@
         },
         "WP_User::get_data_by": {
             "file": "classes/WP_User.php",
-            "lines": 18,
+            "lines": 19,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Users::__construct",
