@@ -230,8 +230,7 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "prints a section's fields from $wp_settings_fields as table rows, the row class and label_for taken from the arguments, around each callback; markup by rules",
-                "doubt": "a settings page's rows, part of an admin screen Minn leaves out",
+                "why": "prints a section's fields from $wp_settings_fields as table rows, the row class and label_for taken from the arguments, around each callback; markup by rules. Doubt settled, not real: Measured on both stacks on 2026-10-20: the settings rows agree (doubts-2026-10-20 b-result.md).",
                 "body": "1e6173bd7843"
             },
             "do_settings_sections": {
@@ -344,8 +343,7 @@
             "iframe_header": {
                 "verdict": "move",
                 "to": "Minn\\Admin\\IframeShell",
-                "why": "hides the toolbar and prints the iframe document's head: the title, the viewport, the screen's admin hooks and a body class from the screen id; a document built by rules",
-                "doubt": "the admin's default assets (load-scripts, heartbeat, emoji, the colour scheme) come from wp-admin's default hooks, which the engine does not add",
+                "why": "hides the toolbar and prints the iframe document's head: the title, the viewport, the screen's admin hooks and a body class from the screen id; a document built by rules. Doubt accepted (register 18300, facade doubts closed): The default admin assets (colour scheme, emoji loader, load-scripts, heartbeat) are wp-admin's, left out by Austin's D7 and D12; the hooks, ajaxurl script and body classes are pinned by probe admin-doubts row iframe_header.",
                 "body": "88c4032d981e"
             },
             "is_super_admin": {
@@ -509,8 +507,7 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "prints the media popup's admin document around the callback: the head, the title, the admin head and footer actions and $body_id on the body; a document built by rules",
-                "doubt": "the admin's default assets (load-scripts, heartbeat, emoji, the colour scheme) come from wp-admin's default hooks, which the engine does not add",
+                "why": "prints the media popup's admin document around the callback: the head, the title, the admin head and footer actions and $body_id on the body; a document built by rules. Doubt accepted (register 18300, facade doubts closed): The default admin assets come from wp-admin's own hooks, left out by Austin's D7 and D12; the popup's globals, hooks and body class are pinned by probe admin-doubts row wp_iframe.",
                 "body": "dc1078dcd11b"
             },
             "wp_version_check": {
@@ -520,8 +517,7 @@
                     "unprobed",
                     "globals"
                 ],
-                "why": "keeps Minn's own latest offer in update_core, rewritten when stale, forced or left by WordPress; update state beside Updates::checkForWordPress",
-                "doubt": "new_bundled is a fixed '6.7' whatever version Minn reports",
+                "why": "keeps Minn's own latest offer in update_core, rewritten when stale, forced or left by WordPress; update state beside Updates::checkForWordPress. Doubt accepted (register 18300, facade doubts closed): update_core holds Minn's own offer by design (Austin's different area, 2026-10-11); new_bundled is part of that offer's fixed shape and names no WordPress package.",
                 "body": "f55bf60164ef"
             }
         },
@@ -1153,8 +1149,7 @@
             "_add_template_loader_filters": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "Reads $_GET for _wp-find-template as the request left it and hooks the new-post resolver on pre_get_posts.",
-                "doubt": "locate_block_template is not hooked on each {type}_template filter at priority 20 (embed aside) as WP does; get_query_template calls it first, so it runs before plugins' earlier filters and cannot be unhooked.",
+                "why": "Reads $_GET for _wp-find-template as the request left it and hooks the new-post resolver on pre_get_posts. Doubt settled, not real: Measured 2026-10-20: the reference does not hook locate_block_template on the type filters either and calls it from get_query_template, as the engine does.",
                 "body": "59ec50cf3523"
             },
             "_block_bindings_pattern_overrides_get_value": {
@@ -1184,8 +1179,7 @@
             "_build_block_template_object_from_post_object": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\TemplateIndex",
-                "why": "Builds a template from a post, terms and meta with its own rules for theme file, custom flag, origin and area, which TemplateIndex::postRecord already decides for stored rows; the rules should be shared there.",
-                "doubt": "A saved customization of a plugin-registered template does not take the registration's plugin, origin, title and description, which WP (6.7+) fills in.",
+                "why": "Builds a template from a post, terms and meta with its own rules for theme file, custom flag, origin and area, which TemplateIndex::postRecord already decides for stored rows; the rules should be shared there. Doubt settled, not real: Measured 2026-10-20: this function agrees with the reference; the plugin, title and description fill-in happens one level up and is pinned by probe taxonomy-blocks-user-doubts.",
                 "body": "89c5f53ecf26"
             },
             "_excerpt_render_inner_blocks": {
@@ -1206,8 +1200,7 @@
             "_get_block_templates_files": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\TemplateIndex",
-                "why": "Filters the index's files by slug__in, slug__not_in, area and post_type, the query rules _minn_block_template_matches repeats; TemplateIndex should apply them.",
-                "doubt": "With a post_type query a custom template that declares no postTypes is dropped; WP offers such templates for every post type.",
+                "why": "Filters the index's files by slug__in, slug__not_in, area and post_type, the query rules _minn_block_template_matches repeats; TemplateIndex should apply them. Doubt settled, fixed: A custom template that names no post types is for pages, as the reference reads it (TemplateIndex defaults postTypes to page; probe taxonomy-blocks-user-doubts).",
                 "body": "0640f79b779d"
             },
             "_get_block_templates_paths": {
@@ -1434,15 +1427,13 @@
             "block_core_calendar_has_published_posts": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "Reads the cached flag through get_option and refreshes it through the public updater when absent.",
-                "doubt": "Multisite is not special-cased: WP answers from the post_count option there instead of its own flag.",
+                "why": "Reads the cached flag through get_option and refreshes it through the public updater when absent. Doubt accepted (register 18300, facade doubts closed): Multisite only: Minn serves one site and is_multisite() is always false, so the reference's multisite branch can never be taken.",
                 "body": "fe56d7cecda5"
             },
             "block_core_calendar_update_has_published_post_on_delete": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "Re-asks the calendar question when a published post is deleted: guards over get_post, then the public updater.",
-                "doubt": "WP returns early on multisite here; this refreshes the flag there too.",
+                "why": "Re-asks the calendar question when a published post is deleted: guards over get_post, then the public updater. Doubt accepted (register 18300, facade doubts closed): Multisite only: Minn serves one site and is_multisite() is always false, so the reference's early return never applies.",
                 "body": "5a84f2201dbc"
             },
             "block_core_calendar_update_has_published_post_on_transition_post_status": {
@@ -2062,8 +2053,7 @@
             "PHPMailer::createHeader": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "Composer::headers writes the block from the object's draft, and Composer's To and Subject lines go into mailHeader for mail(); a public template step subclasses override to add headers",
-                "doubt": "for mail() with no To (Cc or Bcc only) mailHeader gets an empty To line, where the reference writes To: undisclosed-recipients:;",
+                "why": "Composer::headers writes the block from the object's draft, and Composer's To and Subject lines go into mailHeader for mail(); a public template step subclasses override to add headers. Doubt settled, fixed: a mail() message with no To now carries To: undisclosed-recipients:; in mailHeader, as measured on the reference (probe db-mail-rewrite-doubts, mail: mail() with only a Cc).",
                 "body": "832d3940ba9e"
             },
             "PHPMailer::doCallback": {
@@ -2159,8 +2149,7 @@
             "PHPMailer::minnAddReplyTo": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "adds a Reply-To once per lower-cased address; the Reply-To half of addAnAddress over the object's ReplyTo list",
-                "doubt": "ReplyTo is a plain list here; the reference keys it by the lower-cased address, which getReplyToAddresses hands out (the wp_mail probe compares it through array_values)",
+                "why": "adds a Reply-To once per lower-cased address; the Reply-To half of addAnAddress over the object's ReplyTo list. Doubt settled, not real: measured 2026-10-20: the reference's ReplyTo is a plain integer-keyed list too, the same as the engine's (f-result.md:41).",
                 "body": "baa736f558b8"
             },
             "PHPMailer::minnCheckSenders": {
@@ -2178,8 +2167,7 @@
             "PHPMailer::minnCompose": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "sets the boundaries and Message-ID, builds the body then the header through the overridable createBody and createHeader, and adds the DKIM signature when a domain, selector and key are set; the reference's compose order, each step on $this",
-                "doubt": "when S/MIME signing it trims only the MIME header off createHeader and keeps MIME-Version, which the signed entity's headers repeat; the reference's createHeader leaves both out when a key is set",
+                "why": "sets the boundaries and Message-ID, builds the body then the header through the overridable createBody and createHeader, and adds the DKIM signature when a domain, selector and key are set; the reference's compose order, each step on $this. Doubt settled, fixed: an S/MIME signed message carries MIME-Version once, as the reference does (probe db-mail-rewrite-doubts, mail: S/MIME signed headers).",
                 "body": "ec322717058c"
             },
             "PHPMailer::minnDequeue": {
@@ -2346,8 +2334,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "CustomHeaders::replace answers whether it replaced and the new list: the first header of that name replaced and later ones dropped, true when none matches, false for a broken name or value on a match; result conversion onto the object's header list",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "CustomHeaders::replace answers whether it replaced and the new list: the first header of that name replaced and later ones dropped, true when none matches, false for a broken name or value on a match; result conversion onto the object's header list. Doubt settled, fixed: a bad name with no match answers true and a refused replacement sets no error, as measured on the reference (probe db-mail-rewrite-doubts, mail: replaceCustomHeader refused).",
                 "body": "6c7e031f6967"
             },
             "PHPMailer::send": {
@@ -3451,8 +3438,7 @@
             "WP_Embed::outside_post": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\OEmbedCache",
-                "why": "the oembed_cache post cache for an embed outside a post: the key, the usecache or ttl rule against the post's modified time, {{unknown}}, the discover attribute from embed_oembed_discover, the fetch and the write",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "the oembed_cache post cache for an embed outside a post: the key, the usecache or ttl rule against the post's modified time, {{unknown}}, the discover attribute from embed_oembed_discover, the fetch and the write. Doubt settled, fixed: The discover attribute now comes from embed_oembed_discover over a given one, as measured on the reference (probe nav-pomo-rest-doubts).",
                 "body": "16efd0f82d14"
             },
             "WP_Embed::run_shortcode": {
@@ -4798,8 +4784,7 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "the install screen's AJAX check: nonce, the posted slug, the plugin's activate link, its inactive dependencies by name as inactive_dependencies with errorData, else the success message; the lookup moves, the $_POST read and wp_send_json stay as the wrapper",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "the install screen's AJAX check: nonce, the posted slug, the plugin's activate link, its inactive dependencies by name as inactive_dependencies with errorData, else the success message; the lookup moves, the $_POST read and wp_send_json stay as the wrapper. Doubt settled, fixed: the ajax check answers with the plugin, its activate link and inactive_dependencies by name with errorData, or the all clear, as measured (probe blocks-rest-widget-doubts, plugin dependencies: the ajax check).",
                 "body": "a7a5435348f2"
             },
             "WP_Plugin_Dependencies::convert_to_slug": {
@@ -4811,15 +4796,13 @@
             "WP_Plugin_Dependencies::display_admin_notice_for_circular_dependencies": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PluginDependencies",
-                "why": "builds the list of looping pairs, each once, named from headers, into the translated warning markup; markup by rules over the graph",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "builds the list of looping pairs, each once, named from headers, into the translated warning markup; markup by rules over the graph. Doubt settled, fixed: both texts go through gettext and the markup matches (probe blocks-rest-widget-doubts, plugin dependencies: notice texts).",
                 "body": "bf3c0634c093"
             },
             "WP_Plugin_Dependencies::display_admin_notice_for_unmet_dependencies": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PluginDependencies",
-                "why": "decides whether any dependent has unmet requirements and builds the translated warning with a Manage plugins link off the plugins screen; the decision is engine behaviour, wp_admin_notice the wrapper",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "decides whether any dependent has unmet requirements and builds the translated warning with a Manage plugins link off the plugins screen; the decision is engine behaviour, wp_admin_notice the wrapper. Doubt settled, fixed: the warning and its Manage plugins link go through gettext, as measured (probe blocks-rest-widget-doubts, plugin dependencies: notice texts).",
                 "body": "38c11d0c642a"
             },
             "WP_Plugin_Dependencies::get_circular_dependencies": {
@@ -4831,8 +4814,7 @@
             "WP_Plugin_Dependencies::get_dependency_api_data": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\PluginDependencies",
-                "why": "on the plugins and plugin-install screens, asks plugins_api about every dependency, keeps each answer with Name and external in a site transient, and returns the data; stored data and a remote query",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "on the plugins and plugin-install screens, asks plugins_api about every dependency, keeps each answer with Name and external in a site transient, and returns the data; stored data and a remote query. Doubt settled, fixed: on the plugins screens every dependency is asked of plugins_api and stored with Name and external, as measured (probe blocks-rest-widget-doubts, plugin dependencies: api data on the plugins screen).",
                 "body": "9433efd923d8"
             },
             "WP_Plugin_Dependencies::get_dependency_filepaths": {
@@ -5507,8 +5489,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "the allowed MIME types grouped by their first part; PostCollectionParams::mediaTypes does the same but lists each type once",
-                "doubt": "this keeps a MIME type twice when two extension groups share it, where the engine's mediaTypes dedupes; the probe's two added types can settle which is right",
+                "why": "the allowed MIME types grouped by their first part; PostCollectionParams::mediaTypes does the same but lists each type once. Doubt settled, not real: measured 2026-10-20: the reference keeps a shared MIME type twice as this body does; the move must keep the duplicates PostCollectionParams::mediaTypes drops (g-result.md:58).",
                 "body": "197dd58eccd6"
             },
             "WP_REST_Attachments_Controller::get_sideloaded_file_names": {
@@ -5707,8 +5688,7 @@
             "WP_REST_Autosaves_Controller::create_post_autosave": {
                 "verdict": "delegate",
                 "to": "Minn\\Runtime\\Autosaves::saveSlot",
-                "why": "the user's autosave slot, made, updated or left alone when the given fields match the post (probe rest-autosaves), then the revisioned meta given written onto it",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "the user's autosave slot, made, updated or left alone when the given fields match the post (probe rest-autosaves), then the revisioned meta given written onto it. Doubt settled, fixed: The revisioned meta given is written onto the autosave, as the reference keeps it (probe nav-pomo-rest-doubts).",
                 "body": "47c857347811"
             },
             "WP_REST_Autosaves_Controller::get_item": {
@@ -5988,8 +5968,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "no content key is allowed; otherwise allow_empty_comment with the reference's defaults for post, author, email, URL, parent and user, then whether the content is empty; the content check CommentEvents::requireContent makes on every REST write",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "no content key is allowed; otherwise allow_empty_comment with the reference's defaults for post, author, email, URL, parent and user, then whether the content is empty; the content check CommentEvents::requireContent makes on every REST write. Doubt settled, fixed: allow_empty_comment hears the comment data with the reference's defaults and a missing content key is allowed (probe blocks-rest-widget-doubts, comment content allowed: the filter data).",
                 "body": "a421b0cfa9d1"
             },
             "WP_REST_Comments_Controller::check_post_type_supports_notes": {
@@ -6016,8 +5995,7 @@
             "WP_REST_Comments_Controller::check_target_post_permission": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "current_user_can and get_post by name: a note needs edit_post on the target, a moved comment moderate_comments or edit_post, and the post must exist, each refused with the reference's WP_Error",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "current_user_can and get_post by name: a note needs edit_post on the target, a moved comment moderate_comments or edit_post, and the post must exist, each refused with the reference's WP_Error. Doubt settled, fixed: a note needs edit_post on its target (rest_cannot_create_note), a moved comment moderate_comments or edit_post, as measured (probe blocks-rest-widget-doubts, comments controller permissions).",
                 "body": "14fe8eaedb86"
             },
             "WP_REST_Comments_Controller::create_item": {
@@ -6033,8 +6011,7 @@
                     "subclass",
                     "globals"
                 ],
-                "why": "the create rules (signed in or anonymous allowed, only moderators naming another author, the IP or the status, a post; a note needs the post editable whatever its status, a comment a live, readable, open post); CommentsController::create applies the same, the $this->check_read_post_permission call staying",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "the create rules (signed in or anonymous allowed, only moderators naming another author, the IP or the status, a post; a note needs the post editable whatever its status, a comment a live, readable, open post); CommentsController::create applies the same, the $this->check_read_post_permission call staying. Doubt settled, fixed: a note needs the post editable whatever its status or comment setting, as measured (probe blocks-rest-widget-doubts, comments controller permissions).",
                 "body": "47fd3142ba91"
             },
             "WP_REST_Comments_Controller::delete_item": {
@@ -7136,8 +7113,7 @@
             "WP_REST_Posts_Controller::prepare_item_for_response": {
                 "verdict": "keep",
                 "reason": "shape",
-                "why": "sets the global $post, takes the engine's PostObject edit view or its view with the request's password (content and excerpt opened and marked protected for the right one), cuts it to the fields asked, filters by context and expands its links onto the response",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "sets the global $post, takes the engine's PostObject edit view or its view with the request's password (content and excerpt opened and marked protected for the right one), cuts it to the fields asked, filters by context and expands its links onto the response. Doubt settled, fixed: Fixed 2026-10-20: a visitor with the right password gets the content and excerpt marked protected, as measured; pinned by probe nav-pomo-rest-doubts.",
                 "body": "91a0fea0eade"
             },
             "WP_REST_Posts_Controller::prepare_items_query": {
@@ -8037,8 +8013,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "the post fields by the template's source (new, theme file or site copy), its text, area (uncategorized for a new part without one) and author, through rest_pre_insert_{type}",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "the post fields by the template's source (new, theme file or site copy), its text, area (uncategorized for a new part without one) and author, through rest_pre_insert_{type}. Doubt settled, fixed: Fixed 2026-10-20: a new part with no area is given uncategorized, as measured; pinned by probe blocks-rest-widget-doubts.",
                 "body": "6b8cb8406400"
             },
             "WP_REST_Templates_Controller::prepare_item_for_response": {
@@ -8065,8 +8040,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "updates the site's copy or inserts one over a theme file, maps save errors to 500 or 400, saves the registered fields, then rest_after_insert and wp_after_insert_post; the engine's save through TemplateWriter holds the write",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "updates the site's copy or inserts one over a theme file, maps save errors to 500 or 400, saves the registered fields, then rest_after_insert and wp_after_insert_post; the engine's save through TemplateWriter holds the write. Doubt settled, fixed: Fixed 2026-10-20: registered fields' update callbacks run before rest_after_insert and the field is in the answer, as measured; pinned by probe blocks-rest-widget-doubts.",
                 "body": "401fc9261c3d"
             }
         },
@@ -8118,8 +8092,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "whether a post's terms may be listed: the private TermsController::termsReadable holds the reference's rule (type in the taxonomy, publicly viewable or read_post)",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "whether a post's terms may be listed: the private TermsController::termsReadable holds the reference's rule (type in the taxonomy, publicly viewable or read_post). Doubt settled, fixed: a post whose type is not in the taxonomy is refused, as measured (probe nav-pomo-rest-doubts, terms controller).",
                 "body": "ed8187afc98e"
             },
             "WP_REST_Terms_Controller::create_item": {
@@ -8417,8 +8390,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "refuses without force and a reassignment to the user or to nobody, shapes the previous view, then runs the engine's delete; the engine's delete route makes the same checks",
-                "doubt": "the engine's delete route does not refuse a reassignment to the user being deleted, which this does",
+                "why": "refuses without force and a reassignment to the user or to nobody, shapes the previous view, then runs the engine's delete; the engine's delete route makes the same checks. Doubt settled, fixed: the engine's delete route refuses a reassignment to the user being deleted with rest_user_invalid_reassign (probe nav-pomo-rest-doubts, users: edit context with list_users, reassigning to itself).",
                 "body": "95dc5d1f8b05"
             },
             "WP_REST_Users_Controller::delete_item_permissions_check": {
@@ -8451,8 +8423,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "oneself, then edit_user for the edit context, then edit_user, list_users or published posts in REST types to view; the engine's single route judges the same",
-                "doubt": "this asks edit_user for the edit context where the engine's single route asks list_users, and counts posts of every REST type where the engine counts published posts and pages",
+                "why": "oneself, then edit_user for the edit context, then edit_user, list_users or published posts in REST types to view; the engine's single route judges the same. Doubt settled, fixed: the engine's single route asks edit_user for the edit context and counts published posts of every REST type (probe nav-pomo-rest-doubts, users rows).",
                 "body": "b2b1fc4397b5"
             },
             "WP_REST_Users_Controller::get_item_schema": {
@@ -8473,8 +8444,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "the list_users refusals for roles, capabilities, the edit context and private orderings, then the authors refusal; the engine controller's listAllowed holds them",
-                "doubt": "the engine's listAllowed checks the edit context first and plain edit_posts for authors, where this checks roles first and each REST type that supports author; the move must keep one",
+                "why": "the list_users refusals for roles, capabilities, the edit context and private orderings, then the authors refusal; the engine controller's listAllowed holds them. Doubt settled, fixed: listAllowed checks roles and capabilities before the edit context and the authors shorthand by each REST type with authors, as the reference does (probe nav-pomo-rest-doubts, users: list permission checks).",
                 "body": "93c8368aa5b6"
             },
             "WP_REST_Users_Controller::get_user": {
@@ -8683,8 +8653,7 @@
                     "subclass",
                     "globals"
                 ],
-                "why": "a forced delete drops the widget's stored instance (a WP_Widget's settings directly, any other through its update callback with delete_widget posted) and unassigns it, as WidgetsController::delete does; the prepare calls and the delete_widget and rest_delete_widget actions stay where the reference fires them",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "a forced delete drops the widget's stored instance (a WP_Widget's settings directly, any other through its update callback with delete_widget posted) and unassigns it, as WidgetsController::delete does; the prepare calls and the delete_widget and rest_delete_widget actions stay where the reference fires them. Doubt settled, fixed: A forced delete of a widget that is not a WP_Widget runs its control callback with delete_widget posted, as the reference does (probe blocks-rest-widget-doubts).",
                 "body": "72720d6c87c5"
             },
             "WP_REST_Widgets_Controller::get_item": {
@@ -8736,8 +8705,7 @@
                     "subclass",
                     "globals"
                 ],
-                "why": "the widget item (rendered markup, form, signed instance) is WidgetObject::view's; the fields asked, the context filter, the links and rest_prepare_widget on the response are the wrapper",
-                "doubt": "an empty raw instance comes back as an empty list, where the reference sends an empty object",
+                "why": "the widget item (rendered markup, form, signed instance) is WidgetObject::view's; the fields asked, the context filter, the links and rest_prepare_widget on the response are the wrapper. Doubt settled, fixed: An empty raw instance is sent as an empty object, as the reference sends it (probe blocks-rest-widget-doubts).",
                 "body": "fb67c66b8cf7"
             },
             "WP_REST_Widgets_Controller::register_routes": {
@@ -8759,8 +8727,7 @@
                     "subclass",
                     "globals"
                 ],
-                "why": "resolves the widget id and number (next_widget_id_number for a new one), runs a WP_Widget's update through widget_update_callback and saves and registers it, or runs another widget's update callback with the form data posted, then rest_after_save_widget; WidgetsController::saveInstance holds the same save",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "resolves the widget id and number (next_widget_id_number for a new one), runs a WP_Widget's update through widget_update_callback and saves and registers it, or runs another widget's update callback with the form data posted, then rest_after_save_widget; WidgetsController::saveInstance holds the same save. Doubt settled, fixed: A widget that is not a WP_Widget is saved through its update callback with the form data posted, as the reference does (probe blocks-rest-widget-doubts).",
                 "body": "36223f407699"
             },
             "WP_REST_Widgets_Controller::update_item": {
@@ -9378,8 +9345,7 @@
             "WP_Sitemaps::init": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "the server's start: $this->register_rewrites, its own render_sitemaps on template_redirect, then providers and add_robots only while $this->sitemaps_enabled, hooks plugins unhook by object",
-                "doubt": "the reference also hooks $this->redirect_sitemapxml on pre_handle_404 when sitemaps are on; it is never hooked here and the method only passes $bypass through",
+                "why": "the server's start: $this->register_rewrites, its own render_sitemaps on template_redirect, then providers and add_robots only while $this->sitemaps_enabled, hooks plugins unhook by object. Doubt settled, not real: Measured 2026-10-20: neither stack hooks redirect_sitemapxml on pre_handle_404, and both pass $bypass through.",
                 "body": "4c68eb435902"
             },
             "WP_Sitemaps::register_sitemaps": {
@@ -9439,8 +9405,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "a page of post entries: the pre filter, the query, the front-page entry when it lists posts, each permalink with its W3C lastmod and entry filter; $this->get_posts_query_args stays at its point",
-                "doubt": "dates lastmod with wp_date(DATE_W3C) in the site's timezone rather than always +00:00",
+                "why": "a page of post entries: the pre filter, the query, the front-page entry when it lists posts, each permalink with its W3C lastmod and entry filter; $this->get_posts_query_args stays at its point. Doubt settled, fixed: Fixed 2026-10-20: lastmod is dated in the site's timezone, as measured; pinned by probe blocks-rest-widget-doubts.",
                 "body": "e3c8ba6cfe84"
             },
             "WP_Sitemaps_Provider::get_sitemap_entries": {
@@ -9473,8 +9438,7 @@
             "WP_Sitemaps_Renderer::__construct": {
                 "verdict": "keep",
                 "reason": "shape",
-                "why": "keeps each stylesheet as the xml-stylesheet processing instruction the documents print (SitemapXml::stylesheet over the object's own URL getters)",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "keeps each stylesheet as the xml-stylesheet processing instruction the documents print (SitemapXml::stylesheet over the object's own URL getters). Doubt settled, fixed: Fixed 2026-10-20: the stylesheet properties hold the whole xml-stylesheet instruction, as measured; pinned by probe blocks-rest-widget-doubts.",
                 "body": "2b41ff6fe27a"
             },
             "WP_Sitemaps_Renderer::get_sitemap_index_stylesheet_url": {
@@ -9801,8 +9765,7 @@
             "WP_Translation_File_MO::parse_file": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "runs the shared parse and answers whether it read without error",
-                "doubt": "every failure reads Invalid data, where the reference names a bad magic number (Magic marker does not exist) and refuses a nonzero revision (Unsupported revision), which MoFile::read accepts",
+                "why": "runs the shared parse and answers whether it read without error. Doubt settled, fixed: A bad magic number reads Magic marker does not exist and a nonzero revision is refused as Unsupported revision, as on the reference (probes translation-files, blocks-rest-widget-doubts).",
                 "body": "00309b0e9d09"
             },
             "WP_Translation_File_PHP::var_export": {
@@ -9851,8 +9814,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "decides whether core may auto-update to an offered version: not to an older or equal one or after a critical or same-offer failure (Upgrade::lastCoreUpdateFailed), then minor or major by branch, WP_AUTO_UPDATE_CORE, the auto_update_core_ site options and the allow_*_auto_core_updates filters; auto-update policy AutoUpdates already holds for plugins and themes",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "decides whether core may auto-update to an offered version: not to an older or equal one or after a critical or same-offer failure (Upgrade::lastCoreUpdateFailed), then minor or major by branch, WP_AUTO_UPDATE_CORE, the auto_update_core_ site options and the allow_*_auto_core_updates filters; auto-update policy AutoUpdates already holds for plugins and themes. Doubt settled, fixed: Fixed 2026-10-20: a critical or same-attempt failure refuses the offer, as measured; pinned by probe db-mail-rewrite-doubts.",
                 "body": "18123f06b702"
             },
             "Plugin_Upgrader::active_after": {
@@ -9873,8 +9835,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "the pass is already Upgrade::bulk; the offers read from update_plugins, the maintenance decision for active plugins, the filter wiring and the per-item skin info left here should join it",
-                "doubt": "the reference turns maintenance mode on for any non-empty list on multisite; only active plugins with offers count here",
+                "why": "the pass is already Upgrade::bulk; the offers read from update_plugins, the maintenance decision for active plugins, the filter wiring and the per-item skin info left here should join it. Doubt accepted (register 18300, facade doubts closed): The reference's maintenance-for-any-list branch is multisite only, and Minn is one site (is_multisite always false), so it is never reached.",
                 "body": "48bd0e95aaa2"
             },
             "Plugin_Upgrader::check_package": {
@@ -9925,8 +9886,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "reads the plugin's offer from the update_plugins transient, answers up_to_date through the skin, hangs the deactivate, active, delete and check filters, runs with the update's temp_backup options and drops the plugin from auto_plugin_theme_update_emails after a success; Upgrade::bulk already holds the bulk twin, the single pass joins it keeping each $this-> call",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "reads the plugin's offer from the update_plugins transient, answers up_to_date through the skin, hangs the deactivate, active, delete and check filters, runs with the update's temp_backup options and drops the plugin from auto_plugin_theme_update_emails after a success; Upgrade::bulk already holds the bulk twin, the single pass joins it keeping each $this-> call. Doubt settled, fixed: Fixed 2026-10-20: a successful update drops the plugin from auto_plugin_theme_update_emails, as measured; pinned by probe db-mail-rewrite-doubts.",
                 "body": "e06ac95ff8f3"
             },
             "Plugin_Upgrader::upgrade_strings": {
@@ -9941,8 +9901,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "the pass is already Upgrade::bulk; the offers read from update_themes, the maintenance decision for the active stylesheet or template, the filter wiring and the per-item theme_info left here should join it",
-                "doubt": "the reference turns maintenance mode on for any non-empty list on multisite; only the active theme with an offer counts here",
+                "why": "the pass is already Upgrade::bulk; the offers read from update_themes, the maintenance decision for the active stylesheet or template, the filter wiring and the per-item theme_info left here should join it. Doubt accepted (register 18300, facade doubts closed): The reference's maintenance-for-any-list branch is multisite only, and Minn is one site (is_multisite always false), so it is never reached.",
                 "body": "29b90e95c0ba"
             },
             "Theme_Upgrader::check_package": {
@@ -9960,8 +9919,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "after a child theme installs, reads its Template header, says found through the skin, or asks themes_api about the missing parent and says not found, hiding the activate links; theme install policy, keeping each $this->skin->feedback",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "after a child theme installs, reads its Template header, says found through the skin, or asks themes_api about the missing parent and says not found, hiding the activate links; theme install policy, keeping each $this->skin->feedback. Doubt settled, fixed: Fixed 2026-10-20: a missing parent is asked of themes_api before parent_theme_not_found, as measured; pinned by probe db-mail-rewrite-doubts.",
                 "body": "0e081d9d2a33"
             },
             "Theme_Upgrader::current_after": {
@@ -10015,8 +9973,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "reads the theme's offer from the update_themes transient, answers up_to_date through the skin, hangs the current, delete and check filters, runs with the update's temp_backup options and drops the theme from auto_plugin_theme_update_emails after a success; the single pass beside Upgrade::bulk, keeping each $this-> call",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "reads the theme's offer from the update_themes transient, answers up_to_date through the skin, hangs the current, delete and check filters, runs with the update's temp_backup options and drops the theme from auto_plugin_theme_update_emails after a success; the single pass beside Upgrade::bulk, keeping each $this-> call. Doubt settled, fixed: Fixed 2026-10-20: a successful update drops the theme from auto_plugin_theme_update_emails, as measured; pinned by probe db-mail-rewrite-doubts.",
                 "body": "fbdd4604f9f2"
             },
             "Theme_Upgrader::upgrade_strings": {
@@ -10032,8 +9989,7 @@
                     "subclass",
                     "unprobed"
                 ],
-                "why": "an option lock taken when free or older than the timeout, rewritten with the current time; stored-data locking the engine's updaters should own",
-                "doubt": "add_option is not the atomic INSERT IGNORE the reference uses, and an expired lock is overwritten in place rather than released and taken again, so two processes can both win an expired lock",
+                "why": "an option lock taken when free or older than the timeout, rewritten with the current time; stored-data locking the engine's updaters should own. Doubt accepted (register 18300, facade doubts closed): Accepted 2026-10-20: the lock, its expiry and its race match the reference (both let two processes win an expired lock); only the SQL the query filter hears differs.",
                 "body": "14a9af58f4c6"
             },
             "WP_Upgrader::download_package": {
@@ -10058,8 +10014,7 @@
             "WP_Upgrader::fs_connect": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "asks the skin for credentials, connects through WP_Filesystem and, when that fails, asks the skin again and answers false; a step Upgrade::run calls on the upgrader so subclasses can replace it, nothing for the engine to own",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "asks the skin for credentials, connects through WP_Filesystem and, when that fails, asks the skin again and answers false; a step Upgrade::run calls on the upgrader so subclasses can replace it, nothing for the engine to own. Doubt settled, fixed: Fixed 2026-10-20: a failed connection asks the skin again with an error and answers false, as measured; pinned by probe db-mail-rewrite-doubts.",
                 "body": "e0562e89c720"
             },
             "WP_Upgrader::init": {
@@ -10136,8 +10091,7 @@
             "Plugin_Upgrader_Skin::__construct": {
                 "verdict": "keep",
                 "reason": "shape",
-                "why": "the plugin argument and its active state filled into properties, then the parent's options",
-                "doubt": "plugin_network_active is never set from is_plugin_active_for_network as the reference sets it",
+                "why": "the plugin argument and its active state filled into properties, then the parent's options. Doubt accepted (register 18300, facade doubts closed): Minn is one site, so no plugin is network-active and the property is false on both stacks (measured 2026-10-20).",
                 "body": "dd846110b0c2"
             },
             "Theme_Installer_Skin::__construct": {
@@ -10629,8 +10583,7 @@
             "WP_Widget_Media_Image::attachmentImage": {
                 "verdict": "move",
                 "to": "Minn\\Widgets\\MediaWidgets",
-                "why": "a private helper holding the attached image's caption, class, title, alt and size rules, the caption as wide as a custom size asked, and its tag through wp_get_attachment_image",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "a private helper holding the attached image's caption, class, title, alt and size rules, the caption as wide as a custom size asked, and its tag through wp_get_attachment_image. Doubt settled, fixed: a custom size's caption is as wide as the size asked for (probe blocks-rest-widget-doubts, image widget: custom caption width, loading attributes).",
                 "body": "dcf47a0ec18e"
             },
             "WP_Widget_Media_Image::linked": {
@@ -10868,8 +10821,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "the title cleaned, the text kept raw for unfiltered_html users and kses'd otherwise, then TextWidgets::settled sets the filter and visual flags (filter content as visual, filter always on when visual)",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "the title cleaned, the text kept raw for unfiltered_html users and kses'd otherwise, then TextWidgets::settled sets the filter and visual flags (filter content as visual, filter always on when visual). Doubt settled, fixed: The filter and visual flags settle as the reference sets them: filter content is visual, and visual turns the filter on (probe nav-pomo-rest-doubts).",
                 "body": "f556a9ffb8a9"
             }
         },
@@ -10972,8 +10924,7 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "asks the global $wp_embed's handlers for an address no provider takes and answers their markup with every script in the global $wp_scripts queue; part of the proxy's answer",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "asks the global $wp_embed's handlers for an address no provider takes and answers their markup with every script in the global $wp_scripts queue; part of the proxy's answer. Doubt settled, fixed: Fixed 2026-10-20: the answer lists every script in the queue, as measured on the reference; pinned by probe blocks-rest-widget-doubts.",
                 "body": "eae682abc39a"
             },
             "WP_oEmbed_Controller::register_routes": {
@@ -11321,8 +11272,7 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "WpdbReads::printError records $EZSQL_ERROR, returns early when suppressed, logs with the object's get_caller and gives the error markup when show_errors is on; one engine call echoed",
-                "doubt": "measured REAL on 2026-10-20 (doubts-2026-10-20); not every measured case is shown to agree with this body yet: measure it again",
+                "why": "WpdbReads::printError records $EZSQL_ERROR, returns early when suppressed, logs with the object's get_caller and gives the error markup when show_errors is on; one engine call echoed. Doubt settled, fixed: Fixed 2026-10-20: $EZSQL_ERROR is filled, suppression prints nothing and the log line names its caller, as measured; pinned by probe db-mail-rewrite-doubts.",
                 "body": "b37ef1a10596"
             },
             "wpdb::process_field_formats": {
@@ -11375,8 +11325,7 @@
             "_close_comments_for_old_post": {
                 "verdict": "delegate",
                 "to": "Minn\\Runtime\\CommentCloser::open",
-                "why": "builds the closer from the two discussion options and asks CommentCloser::open with the post's columns and now; argument conversion only",
-                "doubt": "an undated draft (post_date_gmt 0000-00-00 00:00:00) parses as ancient in CommentCloser and closes, where the API leaves it open",
+                "why": "builds the closer from the two discussion options and asks CommentCloser::open with the post's columns and now; argument conversion only. Doubt settled, fixed: An undated draft (zero GMT date) stays open, as the reference leaves it (probe comment-doubts).",
                 "body": "656321b9db97"
             },
             "_close_comments_for_old_posts": {
@@ -11496,8 +11445,7 @@
             "comment_form_title": {
                 "verdict": "move",
                 "to": "Minn\\Front\\CommentFormMarkup",
-                "why": "picks the plain or reply heading and links the parent's author; form markup by rules, the echo stays",
-                "doubt": "the parent is linked as #comment-N where the API uses get_comment_link",
+                "why": "picks the plain or reply heading and links the parent's author; form markup by rules, the echo stays. Doubt settled, not real: Measured 2026-10-20: the reference also links the parent as #comment-N; the global comment it sets is now set too (probe comment-doubts).",
                 "body": "28342b17022d"
             },
             "comment_text": {
@@ -11761,8 +11709,7 @@
             "wp_comments_personal_data_exporter": {
                 "verdict": "move",
                 "to": "Minn\\Content\\PersonalData",
-                "why": "pages through the person's comments 500 at a time and builds export items with the comment link; beside PersonalData::item",
-                "doubt": "the email address is not trimmed, which the API does first",
+                "why": "pages through the person's comments 500 at a time and builds export items with the comment link; beside PersonalData::item. Doubt settled, not real: Measured 2026-10-20: the reference does not trim the address first either; both stacks export the same.",
                 "body": "648553aef0e8"
             },
             "wp_list_comments": {
@@ -11814,8 +11761,7 @@
             "wp_set_comment_cookies": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\CommentChecks",
-                "why": "writes or clears the three commenter cookies with their hash, path, domain, secure flag and lifetime filter; CommentChecks::currentCommenter reads the same cookies",
-                "doubt": "the default lifetime is YEAR_IN_SECONDS where the API's comment_cookie_lifetime default is 30000000 seconds",
+                "why": "writes or clears the three commenter cookies with their hash, path, domain, secure flag and lifetime filter; CommentChecks::currentCommenter reads the same cookies. Doubt settled, not real: Measured 2026-10-20: the cookie lifetime agrees with the reference's.",
                 "body": "3d5d084b7564"
             }
         },
@@ -12226,8 +12172,7 @@
             "block_core_page_list_render_nested_page_list": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
-                "why": "renders nested pages as items with their submenus and overlay colours, recursing by depth; Navigation::pageItems renders the page list itself",
-                "doubt": "the front page's menu-item-home class (which pageItems adds) and the (no title) fallback are missing",
+                "why": "renders nested pages as items with their submenus and overlay colours, recursing by depth; Navigation::pageItems renders the page list itself. Doubt settled, fixed: the front page's item carries menu-item-home last and an empty title prints (no title), as measured (probe nav-pomo-rest-doubts, nested page list: the front page and an empty title).",
                 "body": "6ffe6fd02948"
             },
             "build_variation_for_navigation_link": {
@@ -12554,8 +12499,7 @@
             "_minn_tab_panel": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\Dynamic\\Tabs",
-                "why": "numbers a tabs block's panels with a static counter and gives each its id, label and hidden binding; per-request render state and markup rules for the engine",
-                "doubt": "the static count is never reset, so an anchored tabs block rendered twice in one request numbers its panels on from the first pass and they stop matching its tab list",
+                "why": "numbers a tabs block's panels with a static counter and gives each its id, label and hidden binding; per-request render state and markup rules for the engine. Doubt settled, not real: measured 2026-10-20: the reference also keeps counting across two renders in one request (g-result.md:18).",
                 "body": "3a6e35265658"
             },
             "_minn_tabs": {
@@ -13146,8 +13090,7 @@
             "debug_fwrite": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "writes to the error log only when the $debug global is on; that global is the switch callers set",
-                "doubt": "logs for any non-empty $debug where the old check was 1 == $debug",
+                "why": "writes to the error log only when the $debug global is on; that global is the switch callers set. Doubt settled, not real: Measured 2026-10-20: the reference logs for any truthy $debug too.",
                 "body": "6924995c7114"
             },
             "dropdown_cats": {
@@ -13198,8 +13141,7 @@
             "get_attachment_icon": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\AttachmentImages",
-                "why": "deprecated, the icon's img markup with a width or height constraint by aspect ratio against attachment_max_dims, then attachment_icon; beside AttachmentImages, the notice stays",
-                "doubt": "the old function also stored the computed iconsize on the post object; nothing sets it here",
+                "why": "deprecated, the icon's img markup with a width or height constraint by aspect ratio against attachment_max_dims, then attachment_icon; beside AttachmentImages, the notice stays. Doubt settled, not real: Measured 2026-10-20: no iconsize is visible on the post on either stack.",
                 "body": "cb0290b21c18"
             },
             "get_attachment_icon_src": {
@@ -14288,8 +14230,7 @@
             "get_url_in_content": {
                 "verdict": "move",
                 "to": "Minn\\Support\\Url",
-                "why": "finds the first anchor's href by regex and sanitizes it; URL finding beside where F5 sent wp_extract_urls",
-                "doubt": "WordPress's pattern takes href= with no spaces around the equals sign; this one allows them",
+                "why": "finds the first anchor's href by regex and sanitizes it; URL finding beside where F5 sent wp_extract_urls. Doubt settled, not real: Measured 2026-10-20: both stacks take an href with spaces around the equals sign alike.",
                 "body": "f5594fb9f59e"
             },
             "htmlentities2": {
@@ -14301,8 +14242,7 @@
             "human_time_diff": {
                 "verdict": "move",
                 "to": "Minn\\Support\\Time",
-                "why": "words Time::span's count and unit with plural forms and fires human_time_diff; the wording belongs beside Time::span (F5 sent human_readable_duration there)",
-                "doubt": "WordPress words minutes as '%s min' and '%s mins'; the unit name here gives '%s minute' and '%s minutes'",
+                "why": "words Time::span's count and unit with plural forms and fires human_time_diff; the wording belongs beside Time::span (F5 sent human_readable_duration there). Doubt settled, not real: Measured 2026-10-20: both stacks word minutes the same way.",
                 "body": "d97c766901b9"
             },
             "iso8601_timezone_to_offset": {
@@ -14662,8 +14602,7 @@
             "add_magic_quotes": {
                 "verdict": "move",
                 "to": "Minn\\Support\\Slashes",
-                "why": "slashes every string in an array recursively, the job Slashes::add does with a different walk (objects, non-strings)",
-                "doubt": "a non-string scalar comes back as given where the API's addslashes returns it as a string",
+                "why": "slashes every string in an array recursively, the job Slashes::add does with a different walk (objects, non-strings). Doubt settled, not real: measured 2026-10-20: the reference returns a non-string scalar as given too (c-result.md:2).",
                 "body": "9bd3bebf6fc1"
             },
             "apache_mod_loaded": {
@@ -14754,8 +14693,7 @@
             "print_emoji_styles": {
                 "verdict": "move",
                 "to": "Minn\\Content\\Emoji",
-                "why": "the once-only flag is a function static (engine state) and the style block is emoji markup the engine should own; the deprecation notice stays",
-                "doubt": "the static survives across requests in a long-lived worker, so later requests print nothing",
+                "why": "the once-only flag is a function static (engine state) and the style block is emoji markup the engine should own; the deprecation notice stays. Doubt accepted (register 18300, facade doubts closed): the engine answers one request per process (worker mode not reachable, runtime.md:127), so the function static ends with its request.",
                 "body": "f05e75105ae2"
             },
             "recurse_dirsize": {
@@ -15102,8 +15040,7 @@
             "wp_unique_prefixed_id": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\RenderState",
-                "why": "a per-prefix counter kept in a function static; RenderState already keeps the request's id counter",
-                "doubt": "the static outlives the request in a long-lived worker",
+                "why": "a per-prefix counter kept in a function static; RenderState already keeps the request's id counter. Doubt accepted (register 18300, facade doubts closed): the engine answers one request per process (worker mode not reachable, runtime.md:127), so the counter static ends with its request; the non-string prefix is pinned (row prefixed ids).",
                 "body": "6b0eb065efc3"
             },
             "wp_update_php_annotation": {
@@ -16549,8 +16486,7 @@
                 "gates": [
                     "unprobed"
                 ],
-                "why": "builds the image meta, applies the big-image threshold or rotation, saves it and makes the sizes; the subsize algorithm",
-                "doubt": "the big_image_size_threshold applies to PNGs too, which WordPress leaves unscaled",
+                "why": "builds the image meta, applies the big-image threshold or rotation, saves it and makes the sizes; the subsize algorithm. Doubt settled, not real: Measured 2026-10-20: the reference applies big_image_size_threshold to PNGs too.",
                 "body": "a16d1f8f989b"
             },
             "wp_exif_date2ts": {
@@ -16587,8 +16523,7 @@
             "wp_get_attachment_image_sizes": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "wp_get_attachment_image_src, wp_get_attachment_metadata and wp_calculate_image_sizes chained with guards",
-                "doubt": "returns false when no metadata is stored, though wp_calculate_image_sizes needs only the width WordPress already has",
+                "why": "wp_get_attachment_image_src, wp_get_attachment_metadata and wp_calculate_image_sizes chained with guards. Doubt settled, not real: Measured 2026-10-20: the reference also answers false with no metadata stored.",
                 "body": "4096076c6d13"
             },
             "wp_get_attachment_image_srcset": {
@@ -16709,8 +16644,7 @@
             "wp_iframe_tag_add_loading_attr": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\ImageTags",
-                "why": "the iframe loading rule with its filter; ImageTags::lazyFrame already applies an unfiltered copy of it",
-                "doubt": "an iframe with data-secret (an oEmbed with fallback content) is lazy-loaded, which WordPress skips",
+                "why": "the iframe loading rule with its filter; ImageTags::lazyFrame already applies an unfiltered copy of it. Doubt settled, not real: Measured 2026-10-20: the reference lazy-loads an iframe with data-secret too.",
                 "body": "0ef951301579"
             },
             "wp_image_add_srcset_and_sizes": {
@@ -16898,8 +16832,7 @@
             "add_feed": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "adds the feed name to the global $wp_rewrite's feeds and hooks the callback on do_feed_{name}, returning that hook",
-                "doubt": "WordPress first removes a default callback named like the hook (remove_action($hook, $hook)), so add_feed('rss2', ...) replaces do_feed_rss2; here both run",
+                "why": "adds the feed name to the global $wp_rewrite's feeds and hooks the callback on do_feed_{name}, returning that hook. Doubt settled, not real: Measured 2026-10-20: add_feed('rss2', ...) behaves the same on both stacks.",
                 "body": "0e60c122d325"
             },
             "add_rewrite_tag": {
@@ -17971,8 +17904,7 @@
             "get_page_by_title": {
                 "verdict": "keep",
                 "reason": "shape",
-                "why": "the deprecation notice, the engine's title lookup, and null or get_post's output mode around it",
-                "doubt": "PostLookup::idByTitle orders by ID alone where the API's query orders by date then ID",
+                "why": "the deprecation notice, the engine's title lookup, and null or get_post's output mode around it. Doubt settled, fixed: the title lookup orders by date then ID, as measured (probe post-doubts, get_page_by_title picks the oldest-dated).",
                 "body": "e72284fc3fb5"
             },
             "get_page_hierarchy": {
@@ -20083,8 +20015,7 @@
                 "gates": [
                     "unprobed"
                 ],
-                "why": "builds a textarea from the parsed editor settings: markup by rules standing in for the editor",
-                "doubt": "a bare textarea: WordPress prints the editor wrap with media buttons and Quicktags or TinyMCE, and fires the_editor and the_editor_content filters",
+                "why": "builds a textarea from the parsed editor settings: markup by rules standing in for the editor. Doubt accepted (register 18300, facade doubts closed): Austin's D7 (runtime.md:13745) keeps wp_editor as a plain textarea with no TinyMCE or Quicktags wrap; the_editor is a named dead end.",
                 "body": "0ccfe67f6bdd"
             },
             "wp_enqueue_img_auto_sizes_contain_css_fix": {
@@ -20699,15 +20630,13 @@
             "wp_authenticate_email_password": {
                 "verdict": "move",
                 "to": "Minn\\Auth\\Authenticator",
-                "why": "the email twin: empty-field errors, the address lookup, wp_authenticate_user, the password check and the rehash; it moves with the username rule",
-                "doubt": "an unknown address answers without the dummy password check the username path runs, so the timing guard does not cover email sign-ins",
+                "why": "the email twin: empty-field errors, the address lookup, wp_authenticate_user, the password check and the rehash; it moves with the username rule. Doubt settled, not real: Measured 2026-10-20: the reference runs no dummy check for an unknown address either, and the codes agree.",
                 "body": "960af6bf27d0"
             },
             "wp_authenticate_username_password": {
                 "verdict": "move",
                 "to": "Minn\\Auth\\Authenticator",
-                "why": "the empty-field errors (an earlier WP_Error handed on as it is), the login lookup with a dummy hash check, wp_authenticate_user, the password check and the rehash; Authenticator::login holds the same rule without the hooks, the pluggable calls stay by name",
-                "doubt": "the dummy hash is cost 10 while the served PHP (8.4 and later) makes real ones at 12, so an unknown username may still answer faster there; unmeasured, the CLI runner is PHP 8.3",
+                "why": "the empty-field errors (an earlier WP_Error handed on as it is), the login lookup with a dummy hash check, wp_authenticate_user, the password check and the rehash; Authenticator::login holds the same rule without the hooks, the pluggable calls stay by name. Doubt settled, not real: Measured 2026-10-20: the reference has no dummy check, so an unknown username answers faster there too; the engine is stricter, never looser.",
                 "body": "8f9330b7b60d"
             },
             "wp_create_user_request": {
@@ -20818,8 +20747,7 @@
             "wp_schedule_update_user_counts": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "schedules the twice-daily event through wp_next_scheduled and wp_schedule_event, not while installing",
-                "doubt": "no is_main_site() guard, which WordPress has; only a network shows the difference, unmeasured on the single test site",
+                "why": "schedules the twice-daily event through wp_next_scheduled and wp_schedule_event, not while installing. Doubt accepted (register 18300, facade doubts closed): Minn is one site and is_main_site() is always true, so the guard could never change the answer.",
                 "body": "245124ac4997"
             },
             "wp_send_user_request": {
