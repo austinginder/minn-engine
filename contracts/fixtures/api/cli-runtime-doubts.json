@@ -1,0 +1,3661 @@
+[
+    [
+        "wp_set_post_categories on a post: what it answers, what the post has",
+        {
+            "a space": [
+                [],
+                []
+            ],
+            "a space, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "a zero string": [
+                [],
+                []
+            ],
+            "a zero string, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "two blanks": [
+                [],
+                []
+            ],
+            "two blanks, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "one blank": [
+                true,
+                [
+                    "T"
+                ]
+            ],
+            "one blank, appended": [
+                true,
+                [
+                    "T"
+                ]
+            ],
+            "a zero": [
+                [],
+                []
+            ],
+            "a zero, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "an empty list": [
+                [
+                    1
+                ],
+                [
+                    1
+                ]
+            ],
+            "an empty list, appended": [
+                [
+                    1
+                ],
+                [
+                    1
+                ]
+            ],
+            "null": [
+                [
+                    1
+                ],
+                [
+                    1
+                ]
+            ],
+            "null, appended": [
+                [
+                    1
+                ],
+                [
+                    1
+                ]
+            ],
+            "false": [
+                [],
+                []
+            ],
+            "false, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "a blank string": [
+                true,
+                [
+                    "T"
+                ]
+            ],
+            "a blank string, appended": [
+                true,
+                [
+                    "T"
+                ]
+            ],
+            "a space string": [
+                [],
+                []
+            ],
+            "a space string, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "a word": [
+                [],
+                []
+            ],
+            "a word, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "the id": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "the id, appended": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "the id as text": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "the id as text, appended": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a comma list": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a comma list, appended": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a negative": [
+                [],
+                []
+            ],
+            "a negative, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "an unknown id": [
+                [],
+                []
+            ],
+            "an unknown id, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "a blank and the id": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a blank and the id, appended": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a nested list": [
+                [
+                    1
+                ],
+                [
+                    1
+                ]
+            ],
+            "a nested list, appended": [
+                [
+                    1
+                ],
+                [
+                    1,
+                    "T"
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_set_post_categories on a zzclirt_t: what it answers, what the post has",
+        {
+            "a space": [
+                [],
+                []
+            ],
+            "a space, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "a zero string": [
+                [],
+                []
+            ],
+            "a zero string, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "two blanks": [
+                [],
+                []
+            ],
+            "two blanks, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "one blank": [
+                true,
+                [
+                    "T"
+                ]
+            ],
+            "one blank, appended": [
+                true,
+                [
+                    "T"
+                ]
+            ],
+            "a zero": [
+                [],
+                []
+            ],
+            "a zero, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "an empty list": [
+                [],
+                []
+            ],
+            "an empty list, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "null": [
+                [],
+                []
+            ],
+            "null, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "false": [
+                [],
+                []
+            ],
+            "false, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "a blank string": [
+                true,
+                [
+                    "T"
+                ]
+            ],
+            "a blank string, appended": [
+                true,
+                [
+                    "T"
+                ]
+            ],
+            "a space string": [
+                [],
+                []
+            ],
+            "a space string, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "a word": [
+                [],
+                []
+            ],
+            "a word, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "the id": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "the id, appended": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "the id as text": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "the id as text, appended": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a comma list": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a comma list, appended": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a negative": [
+                [],
+                []
+            ],
+            "a negative, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "an unknown id": [
+                [],
+                []
+            ],
+            "an unknown id, appended": [
+                [],
+                [
+                    "T"
+                ]
+            ],
+            "a blank and the id": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a blank and the id, appended": [
+                [
+                    "T"
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "a nested list": [
+                [
+                    1
+                ],
+                [
+                    1
+                ]
+            ],
+            "a nested list, appended": [
+                [
+                    1
+                ],
+                [
+                    1,
+                    "T"
+                ]
+            ]
+        }
+    ],
+    [
+        "post_category on a post: an update, a new post, a new auto-draft",
+        {
+            "a space": [
+                [],
+                [],
+                []
+            ],
+            "a zero string": [
+                [
+                    1
+                ],
+                [
+                    1
+                ],
+                []
+            ],
+            "two blanks": [
+                [
+                    1
+                ],
+                [
+                    1
+                ],
+                []
+            ],
+            "an empty list": [
+                [
+                    "T"
+                ],
+                [
+                    1
+                ],
+                []
+            ],
+            "a zero string alone": [
+                [
+                    "T"
+                ],
+                [
+                    1
+                ],
+                []
+            ],
+            "a word": [
+                [],
+                [],
+                []
+            ],
+            "a null in a list": [
+                [
+                    1
+                ],
+                [
+                    1
+                ],
+                []
+            ],
+            "a space and a blank": [
+                [],
+                [],
+                []
+            ],
+            "false": [
+                [
+                    "T"
+                ],
+                [
+                    1
+                ],
+                []
+            ]
+        }
+    ],
+    [
+        "post_category on a zzclirt_t: an update, a new post, a new auto-draft",
+        {
+            "a space": [
+                [],
+                [],
+                []
+            ],
+            "a zero string": [
+                [],
+                [],
+                []
+            ],
+            "two blanks": [
+                [],
+                [],
+                []
+            ],
+            "an empty list": [
+                [
+                    "T"
+                ],
+                [],
+                []
+            ],
+            "a zero string alone": [
+                [
+                    "T"
+                ],
+                [],
+                []
+            ],
+            "a word": [
+                [],
+                [],
+                []
+            ],
+            "a null in a list": [
+                [],
+                [],
+                []
+            ],
+            "a space and a blank": [
+                [],
+                [],
+                []
+            ],
+            "false": [
+                [
+                    "T"
+                ],
+                [],
+                []
+            ]
+        }
+    ],
+    [
+        "categories by status: what a post had, none set, new posts given none, a zero or a space, an update given a zero",
+        {
+            "auto-draft": [
+                [
+                    "T"
+                ],
+                [],
+                [
+                    [],
+                    [],
+                    []
+                ],
+                []
+            ],
+            "draft": [
+                [
+                    "T"
+                ],
+                [
+                    1
+                ],
+                [
+                    [
+                        1
+                    ],
+                    [
+                        1
+                    ],
+                    []
+                ],
+                [
+                    1
+                ]
+            ],
+            "pending": [
+                [
+                    "T"
+                ],
+                [
+                    1
+                ],
+                [
+                    [
+                        1
+                    ],
+                    [
+                        1
+                    ],
+                    []
+                ],
+                [
+                    1
+                ]
+            ],
+            "trash": [
+                [
+                    "T"
+                ],
+                [
+                    1
+                ],
+                [
+                    [
+                        1
+                    ],
+                    [
+                        1
+                    ],
+                    []
+                ],
+                [
+                    1
+                ]
+            ],
+            "inherit": [
+                [
+                    "T"
+                ],
+                [
+                    1
+                ],
+                [
+                    [
+                        1
+                    ],
+                    [
+                        1
+                    ],
+                    []
+                ],
+                [
+                    1
+                ]
+            ],
+            "publish": [
+                [
+                    "T"
+                ],
+                [
+                    1
+                ],
+                [
+                    [
+                        1
+                    ],
+                    [
+                        1
+                    ],
+                    []
+                ],
+                [
+                    1
+                ]
+            ],
+            "private": [
+                [
+                    "T"
+                ],
+                [
+                    1
+                ],
+                [
+                    [
+                        1
+                    ],
+                    [
+                        1
+                    ],
+                    []
+                ],
+                [
+                    1
+                ]
+            ]
+        }
+    ],
+    [
+        "set_object_terms heard on saves, and the categories after",
+        {
+            "post: wp_update_post naming no categories": [
+                [
+                    [
+                        "category",
+                        [
+                            "T"
+                        ]
+                    ]
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "post: wp_update_post with an empty list": [
+                [
+                    [
+                        "category",
+                        [
+                            "T"
+                        ]
+                    ]
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "post: wp_insert_post with an ID and no categories": [
+                [
+                    [
+                        "category",
+                        [
+                            "T"
+                        ]
+                    ]
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "post: a new post given none": [
+                [
+                    [
+                        "category",
+                        [
+                            1
+                        ]
+                    ]
+                ],
+                [
+                    1
+                ]
+            ],
+            "post: a new post given an empty list": [
+                [
+                    [
+                        "category",
+                        [
+                            1
+                        ]
+                    ]
+                ],
+                [
+                    1
+                ]
+            ],
+            "post: a new post given a zero string": [
+                [
+                    [
+                        "category",
+                        [
+                            1
+                        ]
+                    ]
+                ],
+                [
+                    1
+                ]
+            ],
+            "zzclirt_t: wp_update_post naming no categories": [
+                [
+                    [
+                        "category",
+                        [
+                            "T"
+                        ]
+                    ]
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "zzclirt_t: wp_update_post with an empty list": [
+                [
+                    [
+                        "category",
+                        [
+                            "T"
+                        ]
+                    ]
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "zzclirt_t: wp_insert_post with an ID and no categories": [
+                [
+                    [
+                        "category",
+                        [
+                            "T"
+                        ]
+                    ]
+                ],
+                [
+                    "T"
+                ]
+            ],
+            "zzclirt_t: a new post given none": [
+                [
+                    [
+                        "category",
+                        []
+                    ]
+                ],
+                []
+            ],
+            "zzclirt_t: a new post given an empty list": [
+                [
+                    [
+                        "category",
+                        []
+                    ]
+                ],
+                []
+            ],
+            "zzclirt_t: a new post given a zero string": [
+                [
+                    [
+                        "category",
+                        []
+                    ]
+                ],
+                []
+            ],
+            "page with categories, a new one given none": [
+                [
+                    [
+                        "category",
+                        [
+                            1
+                        ]
+                    ]
+                ],
+                [
+                    1
+                ]
+            ],
+            "page with categories, then updated, given none": [
+                [
+                    "category",
+                    [
+                        1
+                    ]
+                ]
+            ],
+            "page with categories, a new one given an empty list": [
+                [
+                    [
+                        "category",
+                        [
+                            1
+                        ]
+                    ]
+                ],
+                [
+                    1
+                ]
+            ],
+            "page with categories, then updated, given an empty list": [
+                [
+                    "category",
+                    [
+                        1
+                    ]
+                ]
+            ],
+            "page with categories, a new one given a zero string": [
+                [
+                    [
+                        "category",
+                        [
+                            1
+                        ]
+                    ]
+                ],
+                [
+                    1
+                ]
+            ],
+            "page with categories, then updated, given a zero string": [
+                [
+                    "category",
+                    [
+                        1
+                    ]
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_set_post_categories: the status and the types it asks for",
+        [
+            [
+                "publish",
+                "default_category_post_types",
+                "publish",
+                "publish",
+                "then an auto-draft the filter publishes",
+                "auto-draft",
+                "default_category_post_types"
+            ],
+            [
+                1
+            ]
+        ]
+    ],
+    [
+        "wp_update_post of a draft post: its dates and status before and after",
+        {
+            "no GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "now",
+                    "now",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ]
+            ],
+            "no GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ]
+            ],
+            "no GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ]
+            ],
+            "no GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ]
+            ],
+            "no GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ]
+            ],
+            "no GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ]
+            ],
+            "no GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ]
+            ],
+            "no GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "draft"
+                ],
+                [
+                    "now",
+                    "now",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ]
+            ],
+            "a GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "draft"
+                ]
+            ],
+            "a GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2005-01-24 09:52:00",
+                    "draft"
+                ]
+            ],
+            "a GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ]
+            ],
+            "a GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ]
+            ],
+            "a GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ]
+            ],
+            "a GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ]
+            ],
+            "a GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "draft"
+                ],
+                [
+                    "2030-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_update_post of a pending post: its dates and status before and after",
+        {
+            "no GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "now",
+                    "now",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ]
+            ],
+            "no GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ]
+            ],
+            "no GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ]
+            ],
+            "no GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ]
+            ],
+            "no GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ]
+            ],
+            "no GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ]
+            ],
+            "no GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ]
+            ],
+            "no GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "pending"
+                ],
+                [
+                    "now",
+                    "now",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ]
+            ],
+            "a GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "pending"
+                ]
+            ],
+            "a GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2005-01-24 09:52:00",
+                    "pending"
+                ]
+            ],
+            "a GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ]
+            ],
+            "a GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ]
+            ],
+            "a GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ]
+            ],
+            "a GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ]
+            ],
+            "a GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "pending"
+                ],
+                [
+                    "2030-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_update_post of a auto-draft post: its dates and status before and after",
+        {
+            "no GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "now",
+                    "now",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ]
+            ],
+            "no GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ]
+            ],
+            "no GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ]
+            ],
+            "no GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ]
+            ],
+            "no GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ]
+            ],
+            "no GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ]
+            ],
+            "no GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "now",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ]
+            ],
+            "no GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "0000-00-00 00:00:00",
+                    "auto-draft"
+                ],
+                [
+                    "now",
+                    "now",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ]
+            ],
+            "a GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "auto-draft"
+                ]
+            ],
+            "a GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2005-01-24 09:52:00",
+                    "auto-draft"
+                ]
+            ],
+            "a GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ]
+            ],
+            "a GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ]
+            ],
+            "a GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ]
+            ],
+            "a GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ]
+            ],
+            "a GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "auto-draft"
+                ],
+                [
+                    "2030-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_update_post of a publish post: its dates and status before and after",
+        {
+            "no GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ],
+                [
+                    "2030-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ],
+                [
+                    "2030-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_update_post of a private post: its dates and status before and after",
+        {
+            "no GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ]
+            ],
+            "no GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "private"
+                ]
+            ],
+            "no GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2005-01-24 09:52:00",
+                    "private"
+                ]
+            ],
+            "no GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ]
+            ],
+            "no GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ]
+            ],
+            "no GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ]
+            ],
+            "no GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ]
+            ],
+            "no GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2010-05-05 05:05:05",
+                    "private"
+                ],
+                [
+                    "2030-01-24 09:52:00",
+                    "2010-05-05 05:05:05",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ]
+            ],
+            "a GMT date, given a date and a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "private"
+                ]
+            ],
+            "a GMT date, given a GMT date": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2005-01-24 09:52:00",
+                    "private"
+                ]
+            ],
+            "a GMT date, given a date, edit_date 0": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ]
+            ],
+            "a GMT date, given a date, edit_date false": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ]
+            ],
+            "a GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ]
+            ],
+            "a GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a title": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ]
+            ],
+            "a GMT date, given a later date and future": [
+                [
+                    "2010-05-05 05:05:05",
+                    "2011-06-06 06:06:06",
+                    "private"
+                ],
+                [
+                    "2030-01-24 09:52:00",
+                    "2011-06-06 06:06:06",
+                    "publish"
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_update_post of a future post: its dates and status before and after",
+        {
+            "no GMT date, given a date and publish": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "no GMT date, given a date": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "no GMT date, given a date and a GMT date": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a GMT date": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2031-05-05 05:05:05",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "no GMT date, given a date, edit_date 0": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "no GMT date, given a date, edit_date false": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "no GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "no GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "no GMT date, given a title": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "no GMT date, given a later date and future": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2030-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "a GMT date, given a date and publish": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "a GMT date, given a date": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "a GMT date, given a date and a GMT date": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a GMT date": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2031-05-05 05:05:05",
+                    "2005-01-24 09:52:00",
+                    "publish"
+                ]
+            ],
+            "a GMT date, given a date, edit_date 0": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "a GMT date, given a date, edit_date false": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "a GMT date, given a date, edit_date \"x\"": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "a GMT date, given an ISO date, edit_date 1 and publish": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2005-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "a GMT date, given a title": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ],
+            "a GMT date, given a later date and future": [
+                [
+                    "2031-05-05 05:05:05",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ],
+                [
+                    "2030-01-24 09:52:00",
+                    "2031-05-05 05:05:05",
+                    "future"
+                ]
+            ]
+        }
+    ],
+    [
+        "future, publish, and future without a GMT date, by seconds from now; then future with no date",
+        [
+            {
+                "-3600": [
+                    "publish",
+                    "publish",
+                    "publish"
+                ],
+                "-30": [
+                    "publish",
+                    "publish",
+                    "publish"
+                ],
+                "30": [
+                    "publish",
+                    "publish",
+                    "publish"
+                ],
+                "120": [
+                    "future",
+                    "future",
+                    "future"
+                ],
+                "3600": [
+                    "future",
+                    "future",
+                    "future"
+                ]
+            },
+            "publish"
+        ]
+    ],
+    [
+        "a comment made and changed from slashed content",
+        [
+            "My\\Comment",
+            1,
+            "My\\New\\Comment"
+        ]
+    ],
+    [
+        "a comment changed from content already unslashed",
+        [
+            1,
+            "Un\\slashed\"x"
+        ]
+    ],
+    [
+        "wp_update_comment slashed, with a quote: what its filters hear, then what is stored",
+        [
+            [
+                [
+                    "pre_user_id",
+                    "0"
+                ],
+                [
+                    "pre_comment_user_agent",
+                    "ag\\'ent"
+                ],
+                [
+                    "pre_comment_author_name",
+                    "O\\'Neil x"
+                ],
+                [
+                    "pre_comment_content",
+                    "a\\\\b \\\"q\\\""
+                ],
+                [
+                    "pre_comment_user_ip",
+                    ""
+                ],
+                [
+                    "pre_comment_author_url",
+                    "http://example.com/a"
+                ],
+                [
+                    "pre_comment_author_email",
+                    ""
+                ],
+                [
+                    "comment_save_pre",
+                    "a\\b \"q\""
+                ],
+                [
+                    "wp_update_comment_data",
+                    "a\\b \"q\"",
+                    "O'Neil x",
+                    "ag'ent",
+                    "O\\'Neil x",
+                    "a\\\\b \\\"q\\\"",
+                    "O\\'Neil x",
+                    true
+                ],
+                [
+                    "edit_comment",
+                    "a\\b \"q\"",
+                    "O'Neil x"
+                ]
+            ],
+            [
+                1,
+                "a\\b \"q\"",
+                "O'Neil x",
+                "ag'ent"
+            ]
+        ]
+    ],
+    [
+        "wp_update_comment unslashed, with markup: what its filters hear, then what is stored",
+        [
+            [
+                [
+                    "pre_user_id",
+                    "0"
+                ],
+                [
+                    "pre_comment_user_agent",
+                    "ag\\'ent"
+                ],
+                [
+                    "pre_comment_author_name",
+                    "O\\'Neil x"
+                ],
+                [
+                    "pre_comment_content",
+                    "<b>b</b><script>x</script> c\\\\d"
+                ],
+                [
+                    "pre_comment_user_ip",
+                    ""
+                ],
+                [
+                    "pre_comment_author_url",
+                    "http://example.com/a"
+                ],
+                [
+                    "pre_comment_author_email",
+                    ""
+                ],
+                [
+                    "comment_save_pre",
+                    "<b>b</b>x c\\d"
+                ],
+                [
+                    "wp_update_comment_data",
+                    "<b>b</b>x c\\d",
+                    "O'Neil x",
+                    "ag'ent",
+                    "O\\'Neil x",
+                    "<b>b</b>x c\\\\d",
+                    "O\\'Neil x",
+                    true
+                ],
+                [
+                    "edit_comment",
+                    "<b>b</b>x c\\d",
+                    "O'Neil x"
+                ]
+            ],
+            [
+                1,
+                "<b>b</b>x c\\d",
+                "O'Neil x",
+                "ag'ent"
+            ]
+        ]
+    ],
+    [
+        "wp_update_comment slashed, an author too: what its filters hear, then what is stored",
+        [
+            [
+                [
+                    "pre_user_id",
+                    "0"
+                ],
+                [
+                    "pre_comment_user_agent",
+                    "ag\\'ent"
+                ],
+                [
+                    "pre_comment_author_name",
+                    "Z\\\\z"
+                ],
+                [
+                    "pre_comment_content",
+                    "z \\\\ <i>y</i>"
+                ],
+                [
+                    "pre_comment_user_ip",
+                    ""
+                ],
+                [
+                    "pre_comment_author_url",
+                    "http://example.com/a"
+                ],
+                [
+                    "pre_comment_author_email",
+                    ""
+                ],
+                [
+                    "comment_save_pre",
+                    "z \\ <i>y</i>"
+                ],
+                [
+                    "wp_update_comment_data",
+                    "z \\ <i>y</i>",
+                    "Z\\z",
+                    "ag'ent",
+                    "O\\'Neil x",
+                    "z \\\\ <i>y</i>",
+                    "Z\\\\z",
+                    true
+                ],
+                [
+                    "edit_comment",
+                    "z \\ <i>y</i>",
+                    "Z\\z"
+                ]
+            ],
+            [
+                1,
+                "z \\ <i>y</i>",
+                "Z\\z",
+                "ag'ent"
+            ]
+        ]
+    ],
+    [
+        "filters on comment_save_pre and pre_comment_content",
+        [
+            [
+                "10:convert_invalid_entities",
+                "50:balanceTags"
+            ],
+            [
+                "10:convert_invalid_entities",
+                "11:_wp_kses_sanitize_note_mention_classes",
+                "15:wp_rel_ugc",
+                "50:balanceTags"
+            ]
+        ]
+    ],
+    [
+        "wp_update_comment of a comment by: the content stored, the content filters inside, and after",
+        {
+            "nobody": [
+                "<b>b</b>x<a href=\"http://e.com\" rel=\"nofollow ugc\">l</a>",
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "10:wp_filter_kses",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ],
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ]
+            ],
+            "an administrator": [
+                "<b>b</b><script>x</script><a href=\"http://e.com\" onclick=\"y\" rel=\"nofollow ugc\">l</a>",
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ],
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ]
+            ],
+            "nobody, given an administrator": [
+                "<b>b</b>x<a href=\"http://e.com\" rel=\"nofollow ugc\">l</a>",
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "10:wp_filter_kses",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ],
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ]
+            ],
+            "an administrator, given nobody": [
+                "<b>b</b><script>x</script><a href=\"http://e.com\" onclick=\"y\" rel=\"nofollow ugc\">l</a>",
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ],
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ]
+            ],
+            "a subscriber": [
+                "<b>b</b>x<a href=\"http://e.com\" rel=\"nofollow ugc\">l</a>",
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "10:wp_filter_kses",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ],
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ]
+            ],
+            "an unknown user": [
+                "<b>b</b>x<a href=\"http://e.com\" rel=\"nofollow ugc\">l</a>",
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "10:wp_filter_kses",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ],
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ]
+            ],
+            "nobody, kses already on": [
+                "<b>b</b>x<a href=\"http://e.com\" rel=\"nofollow ugc\">l</a>",
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "10:wp_filter_kses",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ],
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "10:wp_filter_kses",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ]
+            ],
+            "nobody, post kses on": [
+                "<b>b</b>x<a href=\"http://e.com\" rel=\"nofollow ugc\">l</a>",
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "10:wp_filter_post_kses",
+                    "10:wp_filter_kses",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ],
+                [
+                    "1:closure",
+                    "10:convert_invalid_entities",
+                    "10:wp_filter_post_kses",
+                    "11:_wp_kses_sanitize_note_mention_classes",
+                    "15:wp_rel_ugc",
+                    "50:balanceTags"
+                ]
+            ]
+        }
+    ],
+    [
+        "wp_update_comment_data: the data after comment_save_pre, the change before it, and the keys of each",
+        [
+            [
+                [
+                    "x'y'!",
+                    "x\\'y",
+                    [
+                        "comment_ID",
+                        "comment_post_ID",
+                        "comment_author",
+                        "comment_author_email",
+                        "comment_author_url",
+                        "comment_author_IP",
+                        "comment_date",
+                        "comment_date_gmt",
+                        "comment_content",
+                        "comment_karma",
+                        "comment_approved",
+                        "comment_agent",
+                        "comment_type",
+                        "comment_parent",
+                        "user_id",
+                        "children",
+                        "populated_children",
+                        "post_fields",
+                        "zzclirt_extra",
+                        "filtered"
+                    ],
+                    [
+                        "comment_ID",
+                        "comment_post_ID",
+                        "comment_author",
+                        "comment_author_email",
+                        "comment_author_url",
+                        "comment_author_IP",
+                        "comment_date",
+                        "comment_date_gmt",
+                        "comment_content",
+                        "comment_karma",
+                        "comment_approved",
+                        "comment_agent",
+                        "comment_type",
+                        "comment_parent",
+                        "user_id",
+                        "children",
+                        "populated_children",
+                        "post_fields",
+                        "zzclirt_extra",
+                        "filtered"
+                    ],
+                    [
+                        "comment_ID",
+                        "comment_post_ID",
+                        "comment_author",
+                        "comment_author_email",
+                        "comment_author_url",
+                        "comment_author_IP",
+                        "comment_date",
+                        "comment_date_gmt",
+                        "comment_content",
+                        "comment_karma",
+                        "comment_approved",
+                        "comment_agent",
+                        "comment_type",
+                        "comment_parent",
+                        "user_id",
+                        "children",
+                        "populated_children",
+                        "post_fields"
+                    ]
+                ]
+            ],
+            "x'y'!"
+        ]
+    ],
+    [
+        "wp_set_comment_status, then the trash and spam functions, each twice: the answer, the actions, the status",
+        [
+            [
+                "approve",
+                true,
+                true,
+                [
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "comment_approved_comment",
+                    "wp_update_comment_count"
+                ],
+                "1"
+            ],
+            [
+                "approve",
+                true,
+                [
+                    "db_update_error",
+                    "Could not update comment status.",
+                    null
+                ],
+                [],
+                "1"
+            ],
+            [
+                "approve",
+                false,
+                false,
+                [],
+                "1"
+            ],
+            [
+                "1",
+                true,
+                [
+                    "db_update_error",
+                    "Could not update comment status.",
+                    null
+                ],
+                [],
+                "1"
+            ],
+            [
+                "hold",
+                true,
+                true,
+                [
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "comment_unapproved_comment",
+                    "wp_update_comment_count"
+                ],
+                "0"
+            ],
+            [
+                "0",
+                true,
+                [
+                    "db_update_error",
+                    "Could not update comment status.",
+                    null
+                ],
+                [],
+                "0"
+            ],
+            [
+                "hold",
+                false,
+                false,
+                [],
+                "0"
+            ],
+            [
+                "spam",
+                true,
+                true,
+                [
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "wp_update_comment_count"
+                ],
+                "spam"
+            ],
+            [
+                "spam",
+                false,
+                false,
+                [],
+                "spam"
+            ],
+            [
+                "trash",
+                true,
+                true,
+                [
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "wp_update_comment_count"
+                ],
+                "trash"
+            ],
+            [
+                "trash",
+                true,
+                [
+                    "db_update_error",
+                    "Could not update comment status.",
+                    null
+                ],
+                [],
+                "trash"
+            ],
+            [
+                "approve",
+                true,
+                true,
+                [
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "comment_approved_comment",
+                    "wp_update_comment_count"
+                ],
+                "1"
+            ],
+            [
+                "nonsense",
+                true,
+                false,
+                [],
+                "1"
+            ],
+            [
+                "wp_trash_comment",
+                true,
+                [
+                    "clean_comment_cache",
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "wp_update_comment_count",
+                    "trashed_comment",
+                    "clean_comment_cache"
+                ],
+                "trash"
+            ],
+            [
+                "wp_trash_comment",
+                false,
+                [
+                    "clean_comment_cache",
+                    "clean_comment_cache"
+                ],
+                "trash"
+            ],
+            [
+                "wp_untrash_comment",
+                true,
+                [
+                    "clean_comment_cache",
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "comment_approved_comment",
+                    "wp_update_comment_count",
+                    "untrashed_comment",
+                    "clean_comment_cache"
+                ],
+                "1"
+            ],
+            [
+                "wp_untrash_comment",
+                true,
+                [
+                    "clean_comment_cache",
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "comment_unapproved_comment",
+                    "wp_update_comment_count",
+                    "untrashed_comment",
+                    "clean_comment_cache"
+                ],
+                "0"
+            ],
+            [
+                "wp_spam_comment",
+                true,
+                [
+                    "clean_comment_cache",
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "wp_update_comment_count",
+                    "spammed_comment",
+                    "clean_comment_cache"
+                ],
+                "spam"
+            ],
+            [
+                "wp_spam_comment",
+                false,
+                [
+                    "clean_comment_cache",
+                    "clean_comment_cache"
+                ],
+                "spam"
+            ],
+            [
+                "wp_unspam_comment",
+                true,
+                [
+                    "clean_comment_cache",
+                    "clean_comment_cache",
+                    "wp_set_comment_status",
+                    "transition_comment_status",
+                    "comment_unapproved_comment",
+                    "wp_update_comment_count",
+                    "unspammed_comment",
+                    "clean_comment_cache"
+                ],
+                "0"
+            ],
+            [
+                "wp_unspam_comment",
+                false,
+                [
+                    "clean_comment_cache",
+                    "clean_comment_cache"
+                ],
+                "0"
+            ]
+        ]
+    ],
+    [
+        "a password with quotes and backslashes: whether it checks as given, and slashed",
+        {
+            "wp_insert_user, slashed": [
+                false,
+                true
+            ],
+            "wp_insert_user, as it is": [
+                true,
+                false
+            ],
+            "wp_update_user, slashed": [
+                false,
+                true
+            ],
+            "wp_update_user, a plain object, slashed (the second password)": [
+                false,
+                true
+            ],
+            "wp_insert_user, a plain object, slashed": [
+                false,
+                true
+            ],
+            "wp_create_user, slashed": [
+                false,
+                true
+            ]
+        }
+    ],
+    [
+        "wp_insert_user updating the password: stored as given",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "a password changed: what the save hooks hear (a hash or the text)",
+        {
+            "wp_insert_user with an ID and a password": [
+                "pre_user_login",
+                [
+                    "wp_pre_insert_user_data",
+                    "zzclirt plain 2",
+                    "zzclirt plain 2"
+                ],
+                [
+                    "profile_update",
+                    "zzclirt plain 2"
+                ]
+            ],
+            "wp_update_user with a new password": [
+                [
+                    "wp_set_password",
+                    "a'b",
+                    "zzclirt plain 2"
+                ],
+                [
+                    "send_password_change_email",
+                    "zzclirt plain 2",
+                    "a hash"
+                ],
+                "pre_user_login",
+                [
+                    "wp_pre_insert_user_data",
+                    "a hash",
+                    "a hash"
+                ],
+                [
+                    "profile_update",
+                    "a hash"
+                ],
+                [
+                    "wp_update_user",
+                    "a hash"
+                ]
+            ],
+            "wp_update_user with the stored hash": [
+                "pre_user_login",
+                [
+                    "wp_pre_insert_user_data",
+                    "a hash",
+                    "a hash"
+                ],
+                [
+                    "profile_update",
+                    "a hash"
+                ],
+                [
+                    "wp_update_user",
+                    "a hash"
+                ]
+            ],
+            "wp_update_user with an empty password": [
+                [
+                    "pre_user_login",
+                    [
+                        "wp_pre_insert_user_data",
+                        "a hash",
+                        ""
+                    ],
+                    [
+                        "profile_update",
+                        ""
+                    ],
+                    [
+                        "wp_update_user",
+                        ""
+                    ]
+                ],
+                true
+            ]
+        }
+    ],
+    [
+        "wp_insert_user of slashed fields: what its hooks hear, then what is stored",
+        [
+            [
+                [
+                    "pre_user_login",
+                    "zzclirt_fq"
+                ],
+                [
+                    "pre_user_nicename",
+                    "zzclirt_fq"
+                ],
+                [
+                    "pre_user_email",
+                    "zzclirt_f@example.com"
+                ],
+                [
+                    "pre_user_url",
+                    ""
+                ],
+                [
+                    "pre_user_nickname",
+                    "zzclirt_fq"
+                ],
+                [
+                    "pre_user_first_name",
+                    "O\\'B\\\\c\\\"d"
+                ],
+                [
+                    "pre_user_last_name",
+                    "O\\'B\\\\c\\\"d"
+                ],
+                [
+                    "pre_user_display_name",
+                    "O\\'B\\\\c\\\"d O\\'B\\\\c\\\"d"
+                ],
+                [
+                    "pre_user_description",
+                    "O\\'B\\\\c\\\"d"
+                ],
+                [
+                    "wp_pre_insert_user_data",
+                    {
+                        "user_nicename": "zzclirt_fq",
+                        "user_email": "zzclirt_f@example.com",
+                        "user_url": "",
+                        "display_name": "O'B\\c\"d O'B\\c\"d",
+                        "user_login": "zzclirt_fq"
+                    },
+                    {
+                        "user_login": "zzclirt_f\\'q",
+                        "user_email": "zzclirt_f@example.com",
+                        "first_name": "O\\'B\\\\c\\\"d",
+                        "last_name": "O\\'B\\\\c\\\"d",
+                        "description": "O\\'B\\\\c\\\"d",
+                        "zzclirt_meta": "O\\'B\\\\c\\\"d"
+                    }
+                ],
+                [
+                    "insert_user_meta",
+                    {
+                        "nickname": "zzclirt_fq",
+                        "first_name": "O\\'B\\\\c\\\"d",
+                        "last_name": "O\\'B\\\\c\\\"d",
+                        "description": "O\\'B\\\\c\\\"d",
+                        "locale": ""
+                    }
+                ],
+                [
+                    "user_register",
+                    {
+                        "user_login": "zzclirt_f\\'q",
+                        "first_name": "O\\'B\\\\c\\\"d",
+                        "description": "O\\'B\\\\c\\\"d",
+                        "zzclirt_meta": "O\\'B\\\\c\\\"d"
+                    }
+                ]
+            ],
+            [
+                "zzclirt_fq",
+                "O'B\\c\"d O'B\\c\"d",
+                "O'B\\c\"d",
+                "O'B\\c\"d",
+                "zzclirt_fq",
+                "O'B\\c\"d",
+                "zzclirt_fq"
+            ]
+        ]
+    ],
+    [
+        "wp_update_user of a slashed field: what its hooks hear, then what is stored",
+        [
+            [
+                [
+                    "pre_user_login",
+                    "zzclirt_fq"
+                ],
+                [
+                    "pre_user_nicename",
+                    "zzclirt_fq"
+                ],
+                [
+                    "pre_user_email",
+                    "zzclirt_f@example.com"
+                ],
+                [
+                    "pre_user_url",
+                    ""
+                ],
+                [
+                    "pre_user_nickname",
+                    "zzclirt_fq"
+                ],
+                [
+                    "pre_user_first_name",
+                    "O\\'B\\\\c\\\"d2"
+                ],
+                [
+                    "pre_user_last_name",
+                    "O\\'B\\\\c\\\"d"
+                ],
+                [
+                    "pre_user_display_name",
+                    "O\\'B\\\\c\\\"d O\\'B\\\\c\\\"d"
+                ],
+                [
+                    "pre_user_description",
+                    "O\\'B\\\\c\\\"d"
+                ],
+                [
+                    "wp_pre_insert_user_data",
+                    {
+                        "user_nicename": "zzclirt_fq",
+                        "user_email": "zzclirt_f@example.com",
+                        "user_url": "",
+                        "display_name": "O'B\\c\"d O'B\\c\"d"
+                    },
+                    {
+                        "user_login": "zzclirt_fq",
+                        "user_nicename": "zzclirt_fq",
+                        "user_email": "zzclirt_f@example.com",
+                        "user_url": "",
+                        "user_activation_key": "",
+                        "user_status": "0",
+                        "display_name": "O\\'B\\\\c\\\"d O\\'B\\\\c\\\"d",
+                        "first_name": "O\\'B\\\\c\\\"d2",
+                        "last_name": "O\\'B\\\\c\\\"d",
+                        "nickname": "zzclirt_fq",
+                        "description": "O\\'B\\\\c\\\"d",
+                        "rich_editing": "true",
+                        "syntax_highlighting": "true",
+                        "infinite_scrolling": "true",
+                        "comment_shortcuts": "false",
+                        "admin_color": "modern",
+                        "use_ssl": "0",
+                        "show_admin_bar_front": "true",
+                        "locale": ""
+                    }
+                ],
+                [
+                    "insert_user_meta",
+                    {
+                        "nickname": "zzclirt_fq",
+                        "first_name": "O\\'B\\\\c\\\"d2",
+                        "last_name": "O\\'B\\\\c\\\"d",
+                        "description": "O\\'B\\\\c\\\"d",
+                        "locale": ""
+                    }
+                ],
+                [
+                    "profile_update",
+                    "O'B\\c\"d O'B\\c\"d",
+                    {
+                        "user_login": "zzclirt_fq",
+                        "display_name": "O\\'B\\\\c\\\"d O\\'B\\\\c\\\"d",
+                        "first_name": "O\\'B\\\\c\\\"d2",
+                        "last_name": "O\\'B\\\\c\\\"d",
+                        "description": "O\\'B\\\\c\\\"d"
+                    }
+                ]
+            ],
+            [
+                "zzclirt_fq",
+                "O'B\\c\"d O'B\\c\"d",
+                "O'B\\c\"d2",
+                "O'B\\c\"d",
+                "zzclirt_fq",
+                "O'B\\c\"d",
+                "zzclirt_fq"
+            ]
+        ]
+    ],
+    [
+        "wp_insert_user with an ID of unslashed fields: what is stored",
+        [
+            "zzclirt_fq",
+            "O'Bc\"d",
+            "O'Bc\"d3",
+            "",
+            "zzclirt_fq",
+            "",
+            "zzclirt_fq"
+        ]
+    ],
+    [
+        "wp_update_user of a user object: what its hooks hear, then what is stored",
+        [
+            [
+                [
+                    "pre_user_login",
+                    "zzclirt_fq"
+                ],
+                [
+                    "pre_user_nicename",
+                    "zzclirt_fq"
+                ],
+                [
+                    "pre_user_email",
+                    ""
+                ],
+                [
+                    "pre_user_url",
+                    ""
+                ],
+                [
+                    "pre_user_nickname",
+                    "zzclirt_fq"
+                ],
+                [
+                    "pre_user_first_name",
+                    "O'B\\c\"d4"
+                ],
+                [
+                    "pre_user_last_name",
+                    ""
+                ],
+                [
+                    "pre_user_display_name",
+                    "O'Bc\"d"
+                ],
+                [
+                    "pre_user_description",
+                    ""
+                ],
+                [
+                    "wp_pre_insert_user_data",
+                    {
+                        "user_nicename": "zzclirt_fq",
+                        "user_email": "",
+                        "user_url": "",
+                        "display_name": "O'Bc\"d"
+                    },
+                    {
+                        "user_login": "zzclirt_fq",
+                        "user_nicename": "zzclirt_fq",
+                        "user_email": "",
+                        "user_url": "",
+                        "user_activation_key": "",
+                        "user_status": "0",
+                        "display_name": "O'Bc\"d",
+                        "first_name": "O'B\\c\"d4",
+                        "last_name": "",
+                        "nickname": "zzclirt_fq",
+                        "description": "",
+                        "rich_editing": "true",
+                        "syntax_highlighting": "true",
+                        "infinite_scrolling": "true",
+                        "comment_shortcuts": "false",
+                        "admin_color": "modern",
+                        "use_ssl": "0",
+                        "show_admin_bar_front": "true",
+                        "locale": ""
+                    }
+                ],
+                [
+                    "insert_user_meta",
+                    {
+                        "nickname": "zzclirt_fq",
+                        "first_name": "O\\'Bc\\\"d4",
+                        "last_name": "",
+                        "description": "",
+                        "locale": ""
+                    }
+                ],
+                [
+                    "profile_update",
+                    "O'Bc\"d",
+                    {
+                        "user_login": "zzclirt_fq",
+                        "display_name": "O'Bc\"d",
+                        "first_name": "O'B\\c\"d4",
+                        "last_name": "",
+                        "description": ""
+                    }
+                ]
+            ],
+            [
+                "zzclirt_fq",
+                "O'Bc\"d",
+                "O'Bc\"d4",
+                "",
+                "zzclirt_fq",
+                "",
+                "zzclirt_fq"
+            ]
+        ]
+    ],
+    [
+        "wp_delete_user with the reassignee as a string: the answer, the posts they now have",
+        [
+            true,
+            3,
+            3
+        ]
+    ],
+    [
+        "an undefined role on wp_update_user and wp_insert_user: the answer, the roles, the capabilities stored",
+        [
+            true,
+            [],
+            [],
+            {
+                "zzclirt_banana": true
+            }
+        ]
+    ],
+    [
+        "wp_check_password with a \"$generic$\" hash: the secret, another, no user; whether it needs a rehash; check_password heard",
+        [
+            [
+                false,
+                false,
+                false,
+                true
+            ],
+            [
+                [
+                    false,
+                    2
+                ],
+                [
+                    false,
+                    2
+                ],
+                [
+                    false,
+                    ""
+                ]
+            ],
+            true
+        ]
+    ],
+    [
+        "get_post of objects and arrays: the post, the warnings",
+        {
+            "an object holding a post_id": [
+                [
+                    "WP_Post",
+                    0,
+                    "",
+                    "post",
+                    "publish",
+                    "raw"
+                ],
+                []
+            ],
+            "an object with only a title": [
+                [
+                    "WP_Post",
+                    0,
+                    "x",
+                    "post",
+                    "publish",
+                    "raw"
+                ],
+                []
+            ],
+            "an object with ID 0": [
+                [
+                    "WP_Post",
+                    0,
+                    "z",
+                    "post",
+                    "publish",
+                    "raw"
+                ],
+                []
+            ],
+            "an array without an ID": [
+                null,
+                []
+            ],
+            "an empty array": [
+                null,
+                []
+            ],
+            "an array with ID 0": [
+                null,
+                []
+            ],
+            "an array with ID 1": [
+                null,
+                []
+            ],
+            "an object with an ID and a display filter": [
+                [
+                    "WP_Post",
+                    1,
+                    "Hello world!",
+                    "post",
+                    "publish",
+                    "raw"
+                ],
+                []
+            ],
+            "clean_post_cache of an object holding a post_id: warnings": []
+        }
+    ]
+]

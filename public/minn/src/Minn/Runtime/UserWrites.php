@@ -28,6 +28,9 @@ use Minn\Content\RowCache;
  */
 final class UserWrites
 {
+    /** The fields an account's row takes from its filtered fields. */
+    private const ROW_FIELDS = ['user_login' => true, 'user_nicename' => true, 'user_url' => true, 'user_email' => true, 'display_name' => true];
+
     /** Whether a username survives strict sanitising unchanged and is not empty (validate_username), as validate_username leaves it. */
     public static function validUsername(mixed $username): bool
     {
@@ -112,13 +115,16 @@ final class UserWrites
     }
 
     /**
-     * An account made or changed (wp_insert_user): each field through its
-     * pre_user_ filter first, in the reference's order; its id, or the
-     * error saying why not.
+     * An account made or changed (wp_insert_user) from slashed fields, as
+     * the reference takes them: each field through its pre_user_ filter
+     * first, slashed, in the reference's order; the row's fields then
+     * unslashed, the profile meta unslashed as it is stored, and the
+     * password the one given (hashed for a new account, stored as given on
+     * an update). Its id, or the error saying why not.
      */
     public static function insert(mixed $userdata): mixed
     {
-        $userdata = Slashes::strip(self::asArray($userdata));
+        $userdata = self::asArray($userdata);
         $update = !empty($userdata['ID']);
         $existing = $update ? Handoff::user((int) $userdata['ID']) : false;
         if ($update && !$existing) {
@@ -129,7 +135,7 @@ final class UserWrites
             return Handoff::newError($fields->code, $fields->message, $fields->data);
         }
         $given = $userdata;
-        $userdata = array_replace($userdata, $fields);
+        $userdata = array_replace($userdata, $fields, Slashes::strip(array_intersect_key($fields, self::ROW_FIELDS)));
         ['user_pass' => $pass] = $userdata + ['user_pass' => null];
         if ($existing && (string) ($pass ?? '') === (string) $existing->user_pass) {
             $userdata = array_diff_key($userdata, ['user_pass' => true]);
@@ -140,7 +146,6 @@ final class UserWrites
             static fn (string $email): bool => (bool) Sanitize::isEmail($email),
             static fn (string $login): bool => false,
             static fn (string $email): int => (int) self::emailExists($email),
-            static fn (string $role): bool => isset(Runtime::current()->capabilities->roles()->all()[$role]),
         );
         $resolved = $insert->resolve($userdata, $existing ? $existing->to_array() : null);
         if ($resolved instanceof Refusal) {
@@ -166,16 +171,23 @@ final class UserWrites
         }
         $before = Handoff::user($id)->to_array();
         $merged = $before;
-        // Every profile key is read, a missing one as empty, so the save writes them all back and a missing row is added (tests/tools/side-effects.php, rest-meta).
-        foreach (UserInsert::META_KEYS as $key) {
-            $merged[$key] = MetaData::get('user', $id, $key, true);
+        // Every profile key is read, a missing one as empty, so the save writes them all back and a missing row is added (tests/tools/side-effects.php, rest-meta);
+        // in the reference's order, infinite_scrolling only when the account has it.
+        foreach (['first_name', 'last_name', 'nickname', 'description', 'rich_editing', 'syntax_highlighting', 'infinite_scrolling', 'comment_shortcuts', 'admin_color', 'use_ssl', 'show_admin_bar_front', 'locale'] as $key) {
+            if ($key !== 'infinite_scrolling' || MetaData::exists('user', $id, $key)) {
+                $merged[$key] = MetaData::get('user', $id, $key, true);
+            }
         }
-        if (MetaData::exists('user', $id, 'infinite_scrolling')) {
-            $merged['infinite_scrolling'] = MetaData::get('user', $id, 'infinite_scrolling', true);
+        // A new password is told to plugins and hashed before the save, which stores it as it comes.
+        ['user_pass' => $plain] = $userdata + ['user_pass' => null];
+        if (!empty($plain) && (string) $plain !== (string) $before['user_pass']) {
+            Runtime::hooks()->action('wp_set_password', [$plain, $id, Handoff::user($id)]);
+            $userdata = array_replace($userdata, ['user_pass' => (string) Handoff::hashPassword((string) $plain)]);
         }
+        $notices = self::changeNotices($before, $userdata);
         $result = self::insert(array_merge(Slashes::add($merged), $userdata));
         if (!Records::isError($result)) {
-            self::changeNotices($before, $userdata);
+            $notices();
             Runtime::hooks()->action('wp_update_user', [$id, $userdata, $userdata]);
         }
         return $result;
@@ -300,7 +312,7 @@ final class UserWrites
         ['user_registered' => $registered] = $userdata + ['user_registered' => null];
         ['display_name' => $displayName] = $account + ['display_name' => null];
         $row = ['user_pass' => (string) Handoff::hashPassword((string) $account['password']), 'user_nicename' => (string) $account['nicename'], 'user_email' => (string) $account['email'], 'user_url' => (string) $account['url'], 'user_registered' => (string) ($registered ?? gmdate('Y-m-d H:i:s')), 'user_activation_key' => '', 'display_name' => (string) $displayName, 'user_login' => (string) $account['login']];
-        $data = UserSave::data(Slashes::strip($row), 0, $userdata);
+        $data = UserSave::data($row, 0, $userdata);
         $map = ['login' => 'user_login', 'nicename' => 'user_nicename', 'email' => 'user_email', 'url' => 'user_url', 'display_name' => 'display_name'];
         foreach ($map as $field => $column) {
             if (array_key_exists($column, $data)) {
@@ -322,7 +334,7 @@ final class UserWrites
     {
         $id = $existing->ID;
         $stored = $existing->to_array();
-        $columns = Slashes::strip(UserInsert::changes($userdata, $stored, $resolved, static fn (string $url): string => Kses::url($url), static fn (string $password): string => (string) Handoff::hashPassword($password)));
+        $columns = UserInsert::changes($userdata, $stored, $resolved, static fn (string $url): string => Kses::url($url), static fn (string $password): string => $password);
         $row = array_intersect_key(array_replace($stored, $columns), array_flip(['user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_key', 'display_name']));
         foreach (UserSave::data($row, $id, $given ?: $userdata) as $column => $value) {
             if ($column !== 'user_login' && (string) $value !== (string) ($stored[$column] ?? '')) {
@@ -333,13 +345,10 @@ final class UserWrites
             (new Users(Runtime::current()->db))->update($id, $columns);
         }
         $hooks = Runtime::hooks();
-        ['user_pass' => $hash] = $columns + ['user_pass' => null];
-        if ($hash !== null) {
-            ['user_pass' => $plain] = $userdata + ['user_pass' => null];
-            $hooks->action('wp_set_password', [(string) $plain, $id, $existing]);
-        }
         self::cleanCache($id);
-        $meta = array_intersect_key($userdata, array_flip([...UserInsert::META_KEYS, 'infinite_scrolling']));
+        // In the profile keys' order, whatever order the fields came in.
+        $keys = array_flip([...UserInsert::META_KEYS, 'infinite_scrolling']);
+        $meta = array_replace(array_intersect_key($keys, $userdata), array_intersect_key($userdata, $keys));
         foreach (UserSave::meta($meta, $id, $given ?: $userdata) as $key => $value) {
             MetaData::updateUser($id, $key, $value);
         }
@@ -347,7 +356,7 @@ final class UserWrites
             Handoff::newUser($id)->set_role($resolved['role']);
         }
         self::cleanCache($id);
-        $hooks->action('profile_update', [$id, $existing, $userdata]);
+        $hooks->action('profile_update', [$id, $existing, $given ?: $userdata]);
         if (array_key_exists('spam', $userdata) && $userdata['spam'] !== null && $userdata['spam'] !== $existing->spam) {
             $hooks->action('make_ham_user', [$id]);
         }
@@ -355,13 +364,16 @@ final class UserWrites
     }
 
     /**
-     * The notices a user whose password or email address just changed is
-     * mailed, to the address they had.
+     * The notices a user whose password or email address changes is
+     * mailed, to the address they had: whether each is sent is asked before
+     * the save (a password that is the stored hash is no change), the mail
+     * goes when the returned closure runs, after it.
      *
      * @param array<string, mixed> $user
      * @param array<string, mixed> $userdata
+     * @return \Closure(): void
      */
-    private static function changeNotices(array $user, array $userdata): void
+    private static function changeNotices(array $user, array $userdata): \Closure
     {
         $options = Runtime::options();
         $hooks = Runtime::hooks();
@@ -369,13 +381,14 @@ final class UserWrites
         ['user_pass' => $newPassword, 'user_email' => $newEmail] = $userdata + ['user_pass' => null, 'user_email' => null];
         $site = Entities::decode((string) $options->filtered('blogname'), ENT_QUOTES);
         $values = ['USERNAME' => (string) $login, 'ADMIN_EMAIL' => (string) $options->filtered('admin_email'), 'EMAIL' => (string) $email, 'SITENAME' => $site, 'SITEURL' => SiteUrls::home()];
-        $password = !empty($newPassword) && $hooks->filter('send_password_change_email', [true, $user, $userdata]);
+        $password = !empty($newPassword) && (string) $newPassword !== (string) ($user['user_pass'] ?? '') && $hooks->filter('send_password_change_email', [true, $user, $userdata]);
         $address = $newEmail !== null && (string) $newEmail !== (string) $email && $hooks->filter('send_email_change_email', [true, $user, $userdata]);
         if (!$password && !$address) {
-            return;
+            return static function (): void {
+            };
         }
         // Written in the user's language: one switch for both notices (probe account-flows).
-        RecipientLocale::forUser((int) ($user['ID'] ?? 0), static function () use ($password, $address, $newEmail, $email, $values, $site, $hooks, $user, $userdata): void {
+        return static fn () => RecipientLocale::forUser((int) ($user['ID'] ?? 0), static function () use ($password, $address, $newEmail, $email, $values, $site, $hooks, $user, $userdata): void {
             $sends = ($password ? ['password_change_email' => ChangeNotices::password()] : []) + ($address ? ['email_change_email' => ChangeNotices::email()] : []);
             $values += $address ? ['NEW_EMAIL' => (string) $newEmail] : [];
             foreach ($sends as $filter => $template) {

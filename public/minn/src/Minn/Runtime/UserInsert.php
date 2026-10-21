@@ -22,9 +22,8 @@ final readonly class UserInsert
      * @param Closure(string): bool $isEmail
      * @param Closure(string): bool $loginTaken
      * @param Closure(string): int $emailOwner 0 when nobody has it
-     * @param Closure(string): bool $roleExists
      */
-    public function __construct(private Closure $sanitizeLogin, private Closure $sanitizeSlug, private Closure $isEmail, private Closure $loginTaken, private Closure $emailOwner, private Closure $roleExists)
+    public function __construct(private Closure $sanitizeLogin, private Closure $sanitizeSlug, private Closure $isEmail, private Closure $loginTaken, private Closure $emailOwner)
     {
     }
 
@@ -61,11 +60,8 @@ final readonly class UserInsert
         if ($owner > 0 && (!$update || $owner !== (int) $userdata['ID'])) {
             return new Refusal('existing_user_email', 'Sorry, that email address is already used!');
         }
-        // false (or an empty role) is no role at all, which the caller adds later.
+        // false (or an empty role) is no role at all, which the caller adds later; a role no one defined is stored as given, as the reference stores it.
         $role = isset($userdata['role']) && $userdata['role'] !== false ? (string) $userdata['role'] : null;
-        if ($role !== null && $role !== '' && !($this->roleExists)($role)) {
-            return new Refusal('invalid_role', 'Invalid role.');
-        }
         return [
             'login' => $login,
             'email' => $email,

@@ -16,7 +16,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 82 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 46 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
 | [`Password`](#password) | final class | 71 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
-| [`PasswordReset`](#passwordreset) | final readonly class | 78 | Password reset keys in the reference's storage shape: user_activation_key |
+| [`PasswordReset`](#passwordreset) | final readonly class | 70 | Password reset keys in the reference's storage shape: user_activation_key |
 | [`PortableHash`](#portablehash) | final class | 86 | The portable phpass hash ("$P$"), from the published algorithm: an |
 | [`RegisteredCaps`](#registeredcaps) | final class | 24 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
@@ -290,7 +290,7 @@ filters included), the user's capabilities as user_has_cap leaves them,
 and every primitive one granted. "exist" is always granted and
 "do_not_allow" never.
 
-Used by: `Minn\Front\ToolbarMenus`, `Minn\Media\FileTypes`, `Minn\Rest\Caller`, `Minn\Rest\RestMeta`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\EditLinks`, `Minn\Runtime\FileUpload`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\UserCounts`
+Used by: `Minn\Front\ToolbarMenus`, `Minn\Media\FileTypes`, `Minn\Rest\Caller`, `Minn\Rest\RestMeta`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\EditLinks`, `Minn\Runtime\FileUpload`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\UserCounts`
 
 ### static `current(mixed $capability, mixed ...$args): mixed`
 
@@ -558,7 +558,7 @@ phpass "$P$" hashes and any other password_hash() value still verify, and
 a sign-in replaces whatever needsRehash() says is outdated (probe
 password-rehash).
 
-Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Rest\UsersController`
+Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Content\Users`, `Minn\Rest\UsersController`
 
 ### static `verify(string $password, string $hash): bool`
 
@@ -607,16 +607,12 @@ itself) is expired, as the reference treats it.
 
 - const `LIFETIME` = `86400`
 
-Used by: `Minn\Cli\UserCommand`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Runtime\UserWrites`
 
 ```php
 __construct(Minn\Content\Users $users)
 ```
 
-
-### `issue(Minn\Content\UserRecord $user): string`
-
-Mints a key, stores its hash, returns the key for the link.
 
 ### static `mint(): array`
 
@@ -640,7 +636,7 @@ reference counts expired after asking password_reset_key_expired), or
 
 Forgets a user's reset key.
 
-Internals: `hash()` (private, line 84), `matches()` (private, line 89)
+Internals: `hash()` (private, line 76), `matches()` (private, line 81)
 
 
 ## PortableHash
@@ -723,7 +719,7 @@ fallback for a fresh install.
 
 - const `LEVELS` = `array (   'administrator' => 10,   'editor' => 7,   'author' => 2,   'contributor' => 1,   'subscriber' => 0, )`
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Rest\UsersController`
+Used by: `Minn\Auth\Capabilities`, `Minn\Content\Users`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Minn\Db $db)

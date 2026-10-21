@@ -18240,9 +18240,16 @@ Left open.
   policy gate judges the caller before those arguments.
 - Navigation and block items embedded keep fewer nested fields (`title.raw`, `content.raw`,
   `block_version`); the page list's items carry a trailing space in their class.
-- The single-site scenarios of WP-CLI's entity commands the engine fails (31 on the first pass:
-  option CRUD and autoload values, post meta and categories, user CRUD and roles, the CSV import,
-  password resets, sessions, application passwords, comment slashing).
+- The single-site scenarios of WP-CLI's entity commands the engine failed on the first pass (31)
+  are settled the same night: WP-CLI's own debug mode (the error level and log under WP-CLI, errors
+  on stderr), the engine's `option` and `user list/get` commands taking WP-CLI's own argument rules
+  (`Cli\Bundled`; `user create/update/delete` are WP-CLI's again, so mail and hooks are WordPress's),
+  categories given empty or blank, an undated draft dated now on update without `edit_date`, comment
+  updates taking slashed data and kses for an author without `unfiltered_html`, a status already
+  held refused, an undefined role stored, a password hashed as given (probe `cli-runtime-doubts`).
+- A password holding quotes or backslashes: WordPress hashes and checks it in its slashed form
+  (REST, wp-login, `wp_authenticate`); the engine's sign-in, reset form and REST paths use the raw
+  text, so a user moved over from WordPress with such a password cannot sign in.
 - The block and pattern directories, the Google Fonts collection, site health's reports and the
   theme export: each would have the engine reach wordpress.org or build what the reference
   builds from its own install; waiting on Austin.
@@ -18359,5 +18366,6 @@ rows that are `open` or `austin`.
 | 18300 | REST fuzzing (10-21) | `POST` to template and template-part autosaves | open | `Rest\TemplateRevisionsController` |
 | 18300 | REST fuzzing (10-21) | menus' signed-out `context=edit`, bad `status` or `post` refused by the caller first | open | the policy gate's order |
 | 18300 | REST fuzzing (10-21) | navigation and block embeds' nested fields; the page list's trailing class space | open | `PostObject` embed view; `Blocks\Dynamic\Theme\Navigation` |
-| 18300 | REST fuzzing (10-21) | WP-CLI entity scenarios the engine fails on a single site (31) | open | the next batch (`tests/tools/cli-features.php --show`) |
+| 18300 | REST fuzzing (10-21) | WP-CLI entity scenarios the engine fails on a single site (31) | done | `Cli\Bundled`, the CLI debug mode, probe `cli-runtime-doubts` |
+| 18300 | REST fuzzing (10-21) | a password with quotes or backslashes is checked raw where WordPress checks it slashed (sign-in, reset, REST) | open | every password path at once: `Auth\Authenticator`, the reset form, the REST users routes |
 | 18300 | REST fuzzing (10-21) | block and pattern directories, the Google Fonts collection, site health's reports, the theme export | austin | each reaches wordpress.org or rebuilds the reference's install data (Track H) |

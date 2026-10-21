@@ -12,7 +12,8 @@ use WP_CLI;
 /**
  * Options, read and written straight to the options table. Serialized
  * values are decoded by the engine's own reader, and arrays written back
- * in the stored form.
+ * in the stored form. The verbs take WP-CLI's bundled synopsis (Commands);
+ * the one written here stands when this WP-CLI has none.
  */
 final class OptionCommand
 {
@@ -72,6 +73,8 @@ final class OptionCommand
      * options:
      *   - 'on'
      *   - 'off'
+     *   - 'yes'
+     *   - 'no'
      * ---
      *
      * @when before_wp_load
@@ -84,7 +87,8 @@ final class OptionCommand
         if ($runtime->site->option($key) !== null) {
             WP_CLI::error("Could not add option '{$key}'. Does it already exist?");
         }
-        $autoload = ($assocArgs['autoload'] ?? 'on') === 'off' ? 'off' : 'on';
+        // "no" and "off" store off; anything else (a bare --autoload among them) on.
+        $autoload = in_array($assocArgs['autoload'] ?? null, ['no', 'off'], true) ? 'off' : 'on';
         (new Options($runtime->db))->upsert($key, self::encode($value), $autoload);
         WP_CLI::success("Added '{$key}' option.");
     }
@@ -106,6 +110,8 @@ final class OptionCommand
      * options:
      *   - 'on'
      *   - 'off'
+     *   - 'yes'
+     *   - 'no'
      * ---
      *
      * [--format=<format>]
@@ -124,20 +130,30 @@ final class OptionCommand
         $runtime = Runtime::boot();
         $key = $args[0];
         $value = self::readValue($args, $assocArgs);
+        if (in_array($key, ['siteurl', 'home', 'category_base', 'tag_base'], true) && is_string($value)) {
+            // WP-CLI's own sanitization for these, as it reads them back.
+            $value = rtrim($value, '/\\');
+        }
         $encoded = self::encode($value);
         $stored = $runtime->site->option($key);
-        if ($stored !== null && $stored === $encoded && !isset($assocArgs['autoload'])) {
-            WP_CLI::success("Value passed for '{$key}' option is unchanged.");
-            return;
+        // A value among on, off, yes and no sets autoload; any other (a bare --autoload) leaves it.
+        $autoload = $assocArgs['autoload'] ?? null;
+        $autoload = in_array($autoload, ['on', 'off', 'yes', 'no'], true) ? (in_array($autoload, ['off', 'no'], true) ? 'off' : 'on') : null;
+        if ($stored !== null && $stored === $encoded) {
+            if ($autoload === null) {
+                WP_CLI::success("Value passed for '{$key}' option is unchanged.");
+                return;
+            }
+            // An unchanged value is not written, autoload with it, so the update fails as the reference's does.
+            WP_CLI::error("Could not update option '{$key}'.");
         }
         if ($stored === null) {
-            // A first write through update autoloads on demand ("auto"), as the reference does.
-            $autoload = ($assocArgs['autoload'] ?? 'auto') === 'off' ? 'off' : (($assocArgs['autoload'] ?? '') === 'on' ? 'on' : 'auto');
-            (new Options($runtime->db))->upsert($key, $encoded, $autoload);
-        } elseif (isset($assocArgs['autoload'])) {
+            // A first write through update autoloads on demand ("auto") unless told, as the reference does.
+            (new Options($runtime->db))->upsert($key, $encoded, $autoload ?? 'auto');
+        } elseif ($autoload !== null) {
             $runtime->db->execute(
                 "UPDATE {$runtime->db->table('options')} SET option_value = ?, autoload = ? WHERE option_name = ?",
-                [$encoded, $assocArgs['autoload'] === 'off' ? 'off' : 'on', $key],
+                [$encoded, $autoload, $key],
             );
         } else {
             $runtime->site->setOption($key, $encoded);

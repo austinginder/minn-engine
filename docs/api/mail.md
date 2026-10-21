@@ -22,7 +22,7 @@ sending mail and the notices the engine sends
 | [`MailerStrings`](#mailerstrings) | final class | 47 | The mailer's English messages, keyed as plugins look them up |
 | [`Message`](#message) | final readonly class | 18 | One outgoing plain-text email. |
 | [`MimeTypes`](#mimetypes) | final class | 43 | The MIME type a mailer gives an attachment by its file extension (the |
-| [`Notices`](#notices) | final readonly class | 99 | The messages the engine itself sends, worded as the reference words them |
+| [`Notices`](#notices) | final readonly class | 84 | The messages the engine itself sends, worded as the reference words them |
 | [`PathParts`](#pathparts) | final class | 22 | A path's parts the way a mailer names attachments, safe for multibyte |
 | [`SendmailLine`](#sendmailline) | final class | 13 | The command a mailer pipes a message to for sendmail and qmail (probe |
 | [`Smime`](#smime) | final class | 41 | S/MIME signing of a composed MIME entity with a certificate and key on |
@@ -565,7 +565,7 @@ The option's JSON, secrets included, for the settings surface.
 Sends a Message through the configured transport. Failures are logged
 and reported as false; nothing here throws into a request.
 
-Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\UserCommand`, `Minn\Mail\Composer`, `Minn\Runtime\AccountFlows`
+Used by: `Minn\Cli\MinnCommand`, `Minn\Mail\Composer`, `Minn\Runtime\AccountFlows`
 
 ```php
 __construct(Minn\Mail\MailSettings $settings, string $logFile)
@@ -694,10 +694,6 @@ __construct(string $siteName, string $home)
 ```
 
 
-### `loginDetails(string $login, string $email, string $resetLink): Minn\Mail\Message`
-
-A new account's login details, with a link to choose a password.
-
 ### `passwordReset(string $login, string $email, string $resetLink, string $requestIp): Minn\Mail\Message`
 
 The password reset link, with the requester's address as the reference prints it.
@@ -714,7 +710,7 @@ An approved comment on a post, announced to the post's author.
 
 A post's author told of a note on it, with where the post is edited (notes live in the editor).
 
-Internals: `subject()` (private, line 106)
+Internals: `subject()` (private, line 91)
 
 
 ## PathParts

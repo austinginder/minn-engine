@@ -18,17 +18,17 @@ final class Commands
     public static function register(): void
     {
         $early = ['when' => 'before_wp_load'];
-        self::leaf('option get', [OptionCommand::class, 'get'], $early);
-        self::leaf('option add', [OptionCommand::class, 'add'], $early);
-        self::leaf('option update', [OptionCommand::class, 'update'], $early);
-        self::leaf('option set', [OptionCommand::class, 'update'], $early);
-        self::leaf('option delete', [OptionCommand::class, 'delete'], $early);
-        self::leaf('user list', [UserCommand::class, 'list'], $early);
-        self::leaf('user get', [UserCommand::class, 'get'], $early);
+        // Options and users take the bundled command's synopsis (the arguments and values this WP-CLI accepts) once it is loaded.
+        self::leaf('option get', [OptionCommand::class, 'get'], $early, ['Option_Command', 'get']);
+        self::leaf('option add', [OptionCommand::class, 'add'], $early, ['Option_Command', 'add']);
+        self::leaf('option update', [OptionCommand::class, 'update'], $early, ['Option_Command', 'update']);
+        self::leaf('option set', [OptionCommand::class, 'update'], $early, ['Option_Command', 'update']);
+        self::leaf('option delete', [OptionCommand::class, 'delete'], $early, ['Option_Command', 'delete']);
+        self::leaf('user list', [UserCommand::class, 'list'], $early, ['User_Command', 'list_']);
+        self::leaf('user get', [UserCommand::class, 'get'], $early, ['User_Command', 'get']);
         self::leaf('user login', [UserCommand::class, 'login'], $early);
-        self::leaf('user create', [UserCommand::class, 'create'], $early);
-        self::leaf('user update', [UserCommand::class, 'update'], $early);
-        self::leaf('user delete', [UserCommand::class, 'delete'], $early);
+        // User create, update and delete stay WP-CLI's: they run on the engine's WordPress runtime, its
+        // hooks and mail (notices through wp_mail) as on the reference.
         self::leaf('plugin list', [PluginCommand::class, 'list'], $early);
         self::leaf('plugin install', [PluginCommand::class, 'install'], $early);
         self::leaf('plugin activate', [PluginCommand::class, 'activate'], $early);
@@ -76,17 +76,22 @@ final class Commands
     /**
      * Registers a leaf and re-adds it after the parent lands. WP-CLI
      * registers `plugin` as a namespace first; its later class command
-     * would otherwise overwrite our list.
+     * would otherwise overwrite our list. With a bundled class and method,
+     * the re-added leaf takes that method's docs: WP-CLI loads its bundled
+     * commands' classes only after the engine registers, by the time the
+     * parent lands.
      *
      * @param callable|array{0: class-string, 1: string} $callable
      * @param array<string, string> $args
+     * @param array{0?: string, 1?: string} $bundled
      */
-    private static function leaf(string $name, callable|array $callable, array $args): void
+    private static function leaf(string $name, callable|array $callable, array $args, array $bundled = []): void
     {
         WP_CLI::add_command($name, $callable, $args);
         $parent = explode(' ', $name)[0];
-        WP_CLI::add_hook("after_add_command:{$parent}", static function () use ($name, $callable, $args): void {
-            WP_CLI::add_command($name, $callable, $args);
+        WP_CLI::add_hook("after_add_command:{$parent}", static function () use ($name, $callable, $args, $bundled): void {
+            $docs = isset($bundled[0], $bundled[1]) ? Bundled::docs($bundled[0], $bundled[1]) : [];
+            WP_CLI::add_command($name, $callable, $args + $docs);
         });
     }
 

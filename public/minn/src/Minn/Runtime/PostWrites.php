@@ -91,9 +91,9 @@ final class PostWrites
             return $wpError ? Handoff::newError('invalid_post', 'Invalid post ID.') : 0;
         }
         $merged = array_merge($post->to_array(), Slashes::strip($postarr));
-        ['post_date' => $date, 'post_date_gmt' => $dateGmt] = $postarr + ['post_date' => null, 'post_date_gmt' => null];
-        if ($date !== null && $dateGmt === null) {
-            $merged = array_replace($merged, ['post_date_gmt' => '']);
+        // A draft never dated (no GMT date) is dated when it is saved, whatever date it is given, unless edit_date says that date is meant.
+        if (in_array($post->post_status, ['draft', 'pending', 'auto-draft'], true) && $post->post_date_gmt === '0000-00-00 00:00:00' && empty($postarr['edit_date'])) {
+            $merged = array_replace($merged, ['post_date' => SiteTime::now('mysql'), 'post_date_gmt' => '']);
         }
         ['post_type' => $mergedType] = $merged + ['post_type' => null];
         if ($mergedType === 'attachment') {
@@ -286,18 +286,14 @@ final class PostWrites
     }
 
     /**
-     * A post's categories set (wp_set_post_categories): posts, and the types
-     * default_category_post_types adds, fall back to the default category.
+     * A post's categories set (wp_set_post_categories), as
+     * PostInsert::categoryIds decides them; a lone blank changes nothing.
      */
     public static function setCategories(mixed $postId = 0, mixed $categories = [], mixed $append = false): mixed
     {
         $postId = (int) $postId;
-        $type = PostReads::type($postId);
-        $categories = array_values(array_filter(array_map('intval', (array) $categories)));
-        if ($categories === [] && !$append && in_array($type, ['post', ...(array) Runtime::hooks()->filter('default_category_post_types', [[]])], true)) {
-            $categories = [(int) Runtime::options()->filtered('default_category')];
-        }
-        return self::setTerms($postId, $categories, 'category', $append);
+        [$ids, $append] = PostInsert::categoryIds($categories, PostReads::status($postId), PostReads::type($postId), $append);
+        return $ids === null ? true : self::setTerms($postId, $ids, 'category', $append);
     }
 
     /** A post's terms of a taxonomy set (wp_set_post_terms): a comma list split, a hierarchical taxonomy's terms by id. */
@@ -445,7 +441,7 @@ final class PostWrites
     private static function inputs(int $id, array $postarr, string $type, string $status, mixed $update): void
     {
         $taxonomies = Registered::objectTaxonomies($type);
-        $categories = PostInsert::categories($postarr, $type, $status, $update, $taxonomies, (int) Runtime::options()->filtered('default_category'));
+        $categories = PostInsert::categories($postarr, $id, $type, $status, (bool) $update, $taxonomies);
         if ($categories !== null) {
             self::setCategories($id, $categories);
         }

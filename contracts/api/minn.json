@@ -10000,6 +10000,7 @@
                 "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\MetaKeys",
@@ -11470,7 +11471,6 @@
                 "Minn\\Auth\\AuthCookies",
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Cookie",
-                "Minn\\Cli\\UserCommand",
                 "Minn\\Content\\Users",
                 "Minn\\Rest\\UsersController"
             ],
@@ -11626,7 +11626,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/PasswordReset.php",
-            "lines": 78,
+            "lines": 70,
             "doc": "Password reset keys in the reference's storage shape: user_activation_key\nholds \"time:hash\", the key itself travels in the email link and is good\nfor a day. The hash is the reference's own ($generic$, FastHash), so a\nlink either stack sent works on the other. Older shapes still verify: a\nphpass hash (WordPress before 6.8) and the engine's former $minn$ HMAC.\nA matching key stored without its time (or, older still, stored as\nitself) is expired, as the reference treats it.",
             "implements": [],
             "extends": null,
@@ -11639,7 +11639,6 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
-                "Minn\\Cli\\UserCommand",
                 "Minn\\Engine",
                 "Minn\\Login\\LoginController",
                 "Minn\\Runtime\\UserWrites"
@@ -11684,26 +11683,6 @@
             "methods": [
                 {
                     "routes": [],
-                    "name": "issue",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "issue(Minn\\Content\\UserRecord $user): string",
-                    "doc": "Mints a key, stores its hash, returns the key for the link.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "user",
-                            "type": "Minn\\Content\\UserRecord",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 29,
-                    "end": 34
-                },
-                {
-                    "routes": [],
                     "name": "mint",
                     "static": true,
                     "visibility": "public",
@@ -11713,8 +11692,8 @@
                         "@return array{0: string, 1: string}"
                     ],
                     "params": [],
-                    "line": 42,
-                    "end": 46
+                    "line": 34,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -11740,8 +11719,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 41,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -11774,8 +11753,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 75
+                    "line": 52,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -11794,8 +11773,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 81
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -11814,8 +11793,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 76,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -11841,8 +11820,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 96
+                    "line": 81,
+                    "end": 88
                 }
             ]
         },
@@ -12136,7 +12115,6 @@
             ],
             "usedBy": [
                 "Minn\\Auth\\Capabilities",
-                "Minn\\Cli\\UserCommand",
                 "Minn\\Content\\Users",
                 "Minn\\Rest\\UsersController"
             ],
@@ -25334,6 +25312,101 @@
             ]
         },
         {
+            "name": "Minn\\Cli\\Bundled",
+            "short": "Bundled",
+            "namespace": "Minn\\Cli",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Cli/Bundled.php",
+            "lines": 54,
+            "doc": "WP-CLI's own bundled command for a verb the engine answers. Its docs give\nan engine verb the same synopsis (the arguments, defaults and allowed\nvalues the running WP-CLI accepts, which change between releases), and a\ncall the engine does not answer itself is handed back to it, run against\nthe engine's WordPress runtime as any bundled command is.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Cli\\Commands",
+                "Minn\\Cli\\UserCommand"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "docs",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "docs(string $class, string $method): array",
+                    "doc": "The bundled method's description and synopsis, as WP-CLI reads them\nfrom its doc comment, for add_command's arguments; empty when this\nWP-CLI has no such command.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "method",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "run(string $class, string $method, array $args, array $assocArgs): void",
+                    "doc": "Runs the bundled command for a call: WP-CLI loads the site (the engine\nstands in for WordPress, plugins loaded), then the bundled method\nanswers with the arguments the shared synopsis already validated.",
+                    "shapes": [
+                        "@param list<string> $args",
+                        "@param array<string, mixed> $assocArgs"
+                    ],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "method",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 71
+                }
+            ]
+        },
+        {
             "name": "Minn\\Cli\\CacheCommand",
             "short": "CacheCommand",
             "namespace": "Minn\\Cli",
@@ -25387,11 +25460,12 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Commands.php",
-            "lines": 100,
+            "lines": 105,
             "doc": "The verbs the engine answers to. Every one is registered for the\nbefore_wp_load phase, which WP-CLI runs before it looks for WordPress,\nand each replaces the bundled subcommand of the same name (a deferred\naddition lands after the bundle and overrides its leaf).",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Cli\\Bundled",
                 "Minn\\Cli\\CacheCommand",
                 "Minn\\Cli\\CoreCommand",
                 "Minn\\Cli\\CronCommand",
@@ -25404,7 +25478,10 @@
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Cli\\UserCommand"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Cli\\OptionCommand",
+                "Minn\\Cli\\UserCommand"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -25427,11 +25504,12 @@
                     "name": "leaf",
                     "static": true,
                     "visibility": "private",
-                    "signature": "leaf(string $name, callable|array $callable, array $args): void",
-                    "doc": "Registers a leaf and re-adds it after the parent lands. WP-CLI\nregisters `plugin` as a namespace first; its later class command\nwould otherwise overwrite our list.",
+                    "signature": "leaf(string $name, callable|array $callable, array $args, array $bundled = array ( )): void",
+                    "doc": "Registers a leaf and re-adds it after the parent lands. WP-CLI\nregisters `plugin` as a namespace first; its later class command\nwould otherwise overwrite our list. With a bundled class and method,\nthe re-added leaf takes that method's docs: WP-CLI loads its bundled\ncommands' classes only after the engine registers, by the time the\nparent lands.",
                     "shapes": [
                         "@param callable|array{0: class-string, 1: string} $callable",
-                        "@param array<string, string> $args"
+                        "@param array<string, string> $args",
+                        "@param array{0?: string, 1?: string} $bundled"
                     ],
                     "params": [
                         {
@@ -25454,10 +25532,17 @@
                             "shape": "array<string, string>",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "bundled",
+                            "type": "array",
+                            "shape": "array{0?: string, 1?: string}",
+                            "default": "array ( )",
+                            "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 91
+                    "line": 88,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -25493,8 +25578,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 113
+                    "line": 105,
+                    "end": 118
                 }
             ]
         },
@@ -27034,11 +27119,12 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/OptionCommand.php",
-            "lines": 185,
-            "doc": "Options, read and written straight to the options table. Serialized\nvalues are decoded by the engine's own reader, and arrays written back\nin the stored form.",
+            "lines": 200,
+            "doc": "Options, read and written straight to the options table. Serialized\nvalues are decoded by the engine's own reader, and arrays written back\nin the stored form. The verbs take WP-CLI's bundled synopsis (Commands);\nthe one written here stands when this WP-CLI has none.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Cli\\Commands",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Json",
                 "Minn\\Runtime\\Options",
@@ -27076,8 +27162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 47
+                    "line": 40,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -27085,7 +27171,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "add(array $args, array $assocArgs): void",
-                    "doc": "Adds a new option value.\n\n## OPTIONS\n\n<key>\n: The name of the option to add.\n\n[<value>]\n: The value of the option to add. If omitted, the value is read from STDIN.\n\n[--format=<format>]\n: The serialization format for the value.\n---\ndefault: plaintext\noptions:\n- plaintext\n- json\n---\n\n[--autoload=<autoload>]\n: Should this option be automatically loaded.\n---\noptions:\n- 'on'\n- 'off'\n---",
+                    "doc": "Adds a new option value.\n\n## OPTIONS\n\n<key>\n: The name of the option to add.\n\n[<value>]\n: The value of the option to add. If omitted, the value is read from STDIN.\n\n[--format=<format>]\n: The serialization format for the value.\n---\ndefault: plaintext\noptions:\n- plaintext\n- json\n---\n\n[--autoload=<autoload>]\n: Should this option be automatically loaded.\n---\noptions:\n- 'on'\n- 'off'\n- 'yes'\n- 'no'\n---",
                     "shapes": [],
                     "params": [
                         {
@@ -27103,8 +27189,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 90
+                    "line": 82,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -27112,7 +27198,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "update(array $args, array $assocArgs): void",
-                    "doc": "Updates an option value.\n\n## OPTIONS\n\n<key>\n: The name of the option to update.\n\n[<value>]\n: The new value. If omitted, the value is read from STDIN.\n\n[--autoload=<autoload>]\n: Requires WP 4.2. Should this option be automatically loaded.\n---\noptions:\n- 'on'\n- 'off'\n---\n\n[--format=<format>]\n: The serialization format for the value.\n---\ndefault: plaintext\noptions:\n- plaintext\n- json\n---",
+                    "doc": "Updates an option value.\n\n## OPTIONS\n\n<key>\n: The name of the option to update.\n\n[<value>]\n: The new value. If omitted, the value is read from STDIN.\n\n[--autoload=<autoload>]\n: Requires WP 4.2. Should this option be automatically loaded.\n---\noptions:\n- 'on'\n- 'off'\n- 'yes'\n- 'no'\n---\n\n[--format=<format>]\n: The serialization format for the value.\n---\ndefault: plaintext\noptions:\n- plaintext\n- json\n---",
                     "shapes": [],
                     "params": [
                         {
@@ -27130,8 +27216,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 146
+                    "line": 128,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -27157,8 +27243,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 169
+                    "line": 174,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -27184,8 +27270,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 186
+                    "line": 188,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -27204,8 +27290,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 193
+                    "line": 205,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -27224,8 +27310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 200
+                    "line": 211,
+                    "end": 216
                 }
             ]
         },
@@ -29278,17 +29364,16 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/UserCommand.php",
-            "lines": 367,
-            "doc": "Users: the list and get views, and the one-time login link.",
+            "lines": 180,
+            "doc": "Users: the list and get views, and the one-time login link. The list and\nget verbs take WP-CLI's bundled synopsis (Commands); a list the engine\ndoes not answer itself (query arguments, users without a role, fields\nbeyond the record's own) goes back to the bundled command.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Auth\\Password",
-                "Minn\\Auth\\PasswordReset",
-                "Minn\\Auth\\Roles",
+                "Minn\\Cli\\Bundled",
+                "Minn\\Cli\\Commands",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\UserRecord",
-                "Minn\\Mail\\Mailer"
+                "Minn\\Support\\Email"
             ],
             "usedBy": [
                 "Minn\\Cli\\Commands"
@@ -29301,6 +29386,12 @@
                     "value": "array (   0 => 'ID',   1 => 'user_login',   2 => 'display_name',   3 => 'user_email',   4 => 'user_registered',   5 => 'roles', )",
                     "doc": "",
                     "visibility": "private"
+                },
+                {
+                    "name": "LIST_ARGS",
+                    "value": "array (   0 => 'role',   1 => 'field',   2 => 'fields',   3 => 'format', )",
+                    "doc": "What the engine's own list reads: the role filter and the output arguments.",
+                    "visibility": "private"
                 }
             ],
             "properties": [],
@@ -29311,7 +29402,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "list(array $args, array $assocArgs): void",
-                    "doc": "Lists users.\n\n## OPTIONS\n\n[--role=<role>]\n: Only display users with a certain role.\n\n[--field=<field>]\n: Prints the value of a single field for each user.\n\n[--fields=<fields>]\n: Limit the output to specific object fields.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- ids\n- json\n- count\n- yaml\n---",
+                    "doc": "Lists users.\n\n## OPTIONS\n\n[--role=<role>]\n: Only display users with a certain role.\n\n[--<field>=<value>]\n: Control output by one or more arguments of the user query.\n\n[--field=<field>]\n: Prints the value of a single field for each user.\n\n[--fields=<fields>]\n: Limit the output to specific object fields.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- ids\n- json\n- count\n- yaml\n---",
                     "shapes": [],
                     "params": [
                         {
@@ -29329,8 +29420,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 66
+                    "line": 57,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -29356,8 +29447,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 109
+                    "line": 108,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -29383,101 +29474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 138
-                },
-                {
-                    "routes": [],
-                    "name": "create",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "create(array $args, array $assocArgs): void",
-                    "doc": "Creates a new user.\n\n## OPTIONS\n\n<user-login>\n: The login of the user to create.\n\n<user-email>\n: The email address of the user to create.\n\n[--role=<role>]\n: The role of the user to create. Default: the site's default role.\n\n[--user_pass=<password>]\n: The user password. Default: randomly generated.\n\n[--display_name=<name>]\n: The display name.\n\n[--user_nicename=<nice_name>]\n: A URL-friendly name. Default: the login.\n\n[--user_url=<url>]\n: The user's URL.\n\n[--nickname=<nickname>]\n: The nickname. Default: the login.\n\n[--first_name=<first_name>]\n: The first name.\n\n[--last_name=<last_name>]\n: The last name.\n\n[--description=<description>]\n: A description.\n\n[--send-email]\n: Send the new user a password-reset email.\n\n[--porcelain]\n: Output just the new user id.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "assocArgs",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 186,
-                    "end": 241
-                },
-                {
-                    "routes": [],
-                    "name": "update",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "update(array $args, array $assocArgs): void",
-                    "doc": "Updates an existing user.\n\n## OPTIONS\n\n<user>\n: User ID, email, or login.\n\n[--user_pass=<password>]\n: A new password.\n\n[--user_email=<email>]\n: A new email.\n\n[--display_name=<name>]\n: A new display name.\n\n[--first_name=<first_name>]\n: A new first name.\n\n[--last_name=<last_name>]\n: A new last name.\n\n[--role=<role>]\n: A new role.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "assocArgs",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 271,
-                    "end": 311
-                },
-                {
-                    "routes": [],
-                    "name": "delete",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "delete(array $args, array $assocArgs): void",
-                    "doc": "Deletes a user.\n\n## OPTIONS\n\n<user>\n: User ID, email, or login.\n\n[--reassign=<id>]\n: User ID to reassign posts to.\n\n[--yes]\n: Answer yes to the confirmation.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "assocArgs",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 329,
-                    "end": 346
-                },
-                {
-                    "routes": [],
-                    "name": "randomPassword",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "randomPassword(): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [],
-                    "line": 348,
-                    "end": 357
+                    "line": 131,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -29485,7 +29483,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "find(string $identifier): ?Minn\\Content\\UserRecord",
-                    "doc": "",
+                    "doc": "A user by the identifier WP-CLI's user fetcher takes: a number is an\nid (warned about when a login is the same number), an address an\nemail or else a login (logins can be addresses), anything else a\nlogin; WP_CLI_FORCE_USER_LOGIN reads every identifier as a login.",
                     "shapes": [],
                     "params": [
                         {
@@ -29496,8 +29494,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 359,
-                    "end": 367
+                    "line": 153,
+                    "end": 170
+                },
+                {
+                    "routes": [],
+                    "name": "ownList",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ownList(array $assocArgs): bool",
+                    "doc": "Whether the engine answers this list itself: only a role (not \"none\") and the record's own fields asked for.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "assocArgs",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 173,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -29532,8 +29550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 380
+                    "line": 186,
+                    "end": 196
                 }
             ]
         },
@@ -82229,7 +82247,6 @@
             ],
             "usedBy": [
                 "Minn\\Cli\\MinnCommand",
-                "Minn\\Cli\\UserCommand",
                 "Minn\\Mail\\Composer",
                 "Minn\\Runtime\\AccountFlows"
             ],
@@ -82891,7 +82908,7 @@
             "namespace": "Minn\\Mail",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Mail/Notices.php",
-            "lines": 99,
+            "lines": 84,
             "doc": "The messages the engine itself sends, worded as the reference words them\nand built in one place, so a controller and a CLI verb that announce the\nsame thing say the same thing.",
             "implements": [],
             "extends": null,
@@ -82950,40 +82967,6 @@
             "methods": [
                 {
                     "routes": [],
-                    "name": "loginDetails",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "loginDetails(string $login, string $email, string $resetLink): Minn\\Mail\\Message",
-                    "doc": "A new account's login details, with a link to choose a password.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "login",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "email",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "resetLink",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 19,
-                    "end": 31
-                },
-                {
-                    "routes": [],
                     "name": "passwordReset",
                     "static": false,
                     "visibility": "public",
@@ -83020,8 +83003,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 52
+                    "line": 19,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -83061,8 +83044,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 69
+                    "line": 40,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -83109,8 +83092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 86
+                    "line": 57,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -83157,8 +83140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 103
+                    "line": 74,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -83177,8 +83160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 109
+                    "line": 91,
+                    "end": 94
                 }
             ]
         },
@@ -138370,11 +138353,12 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CommentWrites.php",
-            "lines": 344,
+            "lines": 364,
             "doc": "Comments written as WordPress's comment functions write them: a comment\nstored and changed, its status set (to the trash or spam with the status\nit had kept aside, and back), deleted, and a post's count of approved\ncomments kept; each step with the actions and filters the reference\nfires in its order, and the cached rows let go.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Auth\\Can",
                 "Minn\\Content\\Comments",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Posts",
@@ -138429,8 +138413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 50
+                    "line": 28,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -138456,8 +138440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 64
+                    "line": 58,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -138476,8 +138460,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 93
+                    "line": 72,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -138485,7 +138469,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "update(mixed $commentarr, mixed $wpError = false): mixed",
-                    "doc": "A comment changed (wp_update_comment): the stored comment under the\nchange, through the field filters and comment_save_pre, then\nwp_update_comment_data (handed the data, the stored comment and the\nchange); the columns written, the post's count, edit_comment with the\ncolumns, and the status transition. 0 when nothing changed.",
+                    "doc": "A comment changed (wp_update_comment), from slashed data: the stored\ncomment (slashed) under the change, through the field filters as it\nis, then unslashed and its content through comment_save_pre, then\nwp_update_comment_data (handed the data, the slashed stored comment\nand the filtered slashed change); the columns written, the post's\ncount, edit_comment with the columns, and the status transition. 0\nwhen nothing changed.",
                     "shapes": [],
                     "params": [
                         {
@@ -138503,16 +138487,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 131
+                    "line": 105,
+                    "end": 144
                 },
                 {
                     "routes": [],
                     "name": "setStatus",
                     "static": true,
                     "visibility": "public",
-                    "signature": "setStatus(mixed $commentId, mixed $status, mixed $wpError = false): bool",
-                    "doc": "A comment's status set (wp_set_comment_status): hold, approve, spam or trash; false for an unknown comment or status.",
+                    "signature": "setStatus(mixed $commentId, mixed $status, mixed $wpError = false): mixed",
+                    "doc": "A comment's status set (wp_set_comment_status): hold, approve, spam or\ntrash; false for an unknown comment or status. A comment that has the\nstatus already is not written: false, or the update error when one is\nasked for, and nobody told.",
                     "shapes": [],
                     "params": [
                         {
@@ -138537,8 +138521,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 157
+                    "line": 152,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -138557,8 +138541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 167
+                    "line": 181,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -138591,8 +138575,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 181
+                    "line": 191,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -138611,8 +138595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 193
+                    "line": 205,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -138638,8 +138622,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 221
+                    "line": 221,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -138650,8 +138634,8 @@
                     "doc": "One batch of the update giving comments stored without a type the\ntype \"comment\" (_wp_batch_update_comment_type, on\nwp_update_comment_type_batch): under its lock (Runtime\\OptionLock),\nthe newest wp_update_comment_type_batch_size of them (100), the next\nbatch scheduled first; a batch that finds none marks the update\nfinished. While another batch holds the lock, only a try five\nminutes on is scheduled.",
                     "shapes": [],
                     "params": [],
-                    "line": 232,
-                    "end": 249
+                    "line": 253,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -138670,8 +138654,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 255
+                    "line": 273,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -138690,8 +138674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 261
+                    "line": 279,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -138710,8 +138694,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 267
+                    "line": 285,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -138730,8 +138714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 273
+                    "line": 291,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -138750,8 +138734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 297
+                    "line": 301,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -138770,8 +138754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 300,
-                    "end": 319
+                    "line": 321,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -138811,8 +138795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 339
+                    "line": 343,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -138845,8 +138829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 358
+                    "line": 363,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -138857,8 +138841,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 360,
-                    "end": 363
+                    "line": 381,
+                    "end": 384
                 }
             ]
         },
@@ -154752,7 +154736,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostInsert.php",
-            "lines": 184,
+            "lines": 213,
             "doc": "The decisions behind wp_insert_post: which columns a postarr fills, when\nthe post counts as empty, the status a publish request lands in, the dates\nand the slug, the categories a new post gets. The rows are written by\nContent\\PostWriter; the facade fires the hooks around each step.",
             "implements": [],
             "extends": null,
@@ -154761,6 +154745,8 @@
                 "Minn\\Db",
                 "Minn\\Objects\\Errors",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Sanitize"
             ],
             "usedBy": [
@@ -154992,7 +154978,7 @@
                         }
                     ],
                     "line": 91,
-                    "end": 143
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -155018,8 +155004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 152
+                    "line": 147,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -155047,8 +155033,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 165
+                    "line": 162,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -155081,24 +155067,32 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 173
+                    "line": 169,
+                    "end": 174
                 },
                 {
                     "routes": [],
                     "name": "categories",
                     "static": true,
                     "visibility": "public",
-                    "signature": "categories(array $postarr, string $type, string $status, bool $update, array $taxonomies, int $default): ?array",
-                    "doc": "The categories a saved post should carry: the ones given, or the\ndefault for a new post of a type that has categories; null when\nnothing should change.",
+                    "signature": "categories(array $postarr, int $id, string $type, string $status, bool $update, array $taxonomies): ?array",
+                    "doc": "The categories a saved post hands wp_set_post_categories: none when\nits type has no categories (null); an update that names none keeps\nthe ones it has; otherwise the ones given, each empty value dropped.\nNone left is the default category for a post that is not an\nauto-draft, else an empty list (which wp_set_post_categories decides).",
                     "shapes": [
+                        "@param array<string, mixed> $postarr",
                         "@param list<string> $taxonomies the type's taxonomies",
-                        "@return list<int>|null"
+                        "@return array<mixed>|null"
                     ],
                     "params": [
                         {
                             "name": "postarr",
                             "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "int",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -155130,17 +155124,53 @@
                             "shape": "list<string>",
                             "default": null,
                             "doc": "the type's taxonomies"
+                        }
+                    ],
+                    "line": 187,
+                    "end": 198
+                },
+                {
+                    "routes": [],
+                    "name": "categoryIds",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "categoryIds(mixed $categories, mixed $status, mixed $type, mixed $append): array",
+                    "doc": "The category ids wp_set_post_categories sets, and whether they add to\nthe post's: none given (null or an empty list) is the default\ncategory in place of the post's, for a post of a type that takes one\n(posts and the types default_category_post_types adds) that is not an\nauto-draft; a lone blank string is nothing to set (null ids); else\neach value as an id, any that is none dropped.",
+                    "shapes": [
+                        "@return array{0: list<int>|null, 1: bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "categories",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         },
                         {
-                            "name": "default",
-                            "type": "int",
+                            "name": "status",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "append",
+                            "type": "mixed",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 196
+                    "line": 210,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -155166,8 +155196,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 227,
+                    "end": 230
                 }
             ]
         },
@@ -157824,6 +157854,7 @@
                 "Minn\\Runtime\\CommentQueryRunner",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostInsert",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\PostQueryResults",
@@ -159783,7 +159814,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostWrites.php",
-            "lines": 577,
+            "lines": 573,
             "doc": "Posts written as WordPress's post functions write them: a post stored\nand changed (its columns through their filters, then its terms, meta and\ntemplate), published, sent to the trash and back, deleted with what\nhangs off it, its terms and categories set, made sticky or not; each step\nwith the actions the reference fires in its order, and the cached rows\nlet go.",
             "implements": [],
             "extends": null,
@@ -160087,7 +160118,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "setCategories(mixed $postId = 0, mixed $categories = array ( ), mixed $append = false): mixed",
-                    "doc": "A post's categories set (wp_set_post_categories): posts, and the types\ndefault_category_post_types adds, fall back to the default category.",
+                    "doc": "A post's categories set (wp_set_post_categories), as\nPostInsert::categoryIds decides them; a lone blank changes nothing.",
                     "shapes": [],
                     "params": [
                         {
@@ -160113,7 +160144,7 @@
                         }
                     ],
                     "line": 292,
-                    "end": 301
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -160153,8 +160184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 320
+                    "line": 300,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -160187,8 +160218,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 326
+                    "line": 319,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -160207,8 +160238,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 339
+                    "line": 325,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -160227,8 +160258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 351
+                    "line": 338,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -160275,8 +160306,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 354,
-                    "end": 360
+                    "line": 350,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -160302,8 +160333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 363,
-                    "end": 368
+                    "line": 359,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -160322,8 +160353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 383
+                    "line": 367,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -160351,8 +160382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 421
+                    "line": 410,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -160385,8 +160416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 522,
-                    "end": 540
+                    "line": 518,
+                    "end": 536
                 },
                 {
                     "routes": [],
@@ -160405,8 +160436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 558,
-                    "end": 563
+                    "line": 554,
+                    "end": 559
                 },
                 {
                     "routes": [],
@@ -160441,8 +160472,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 386,
-                    "end": 394
+                    "line": 382,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -160455,8 +160486,8 @@
                         "@return list<int> the sticky posts' ids"
                     ],
                     "params": [],
-                    "line": 397,
-                    "end": 401
+                    "line": 393,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -160484,8 +160515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 411
+                    "line": 400,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -160518,8 +160549,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 428,
-                    "end": 438
+                    "line": 424,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -160568,8 +160599,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 445,
-                    "end": 471
+                    "line": 441,
+                    "end": 467
                 },
                 {
                     "routes": [],
@@ -160597,8 +160628,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 479,
-                    "end": 491
+                    "line": 475,
+                    "end": 487
                 },
                 {
                     "routes": [],
@@ -160633,8 +160664,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 501,
-                    "end": 515
+                    "line": 497,
+                    "end": 511
                 },
                 {
                     "routes": [],
@@ -160653,8 +160684,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 543,
-                    "end": 555
+                    "line": 539,
+                    "end": 551
                 },
                 {
                     "routes": [],
@@ -160673,8 +160704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 566,
-                    "end": 579
+                    "line": 562,
+                    "end": 575
                 },
                 {
                     "routes": [],
@@ -160685,8 +160716,8 @@
                     "doc": "The insert decisions, with the site's options, the user's capabilities and the date helpers handed in.",
                     "shapes": [],
                     "params": [],
-                    "line": 582,
-                    "end": 593
+                    "line": 578,
+                    "end": 589
                 },
                 {
                     "routes": [],
@@ -160697,8 +160728,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 595,
-                    "end": 599
+                    "line": 591,
+                    "end": 595
                 }
             ]
         },
@@ -161452,7 +161483,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Records.php",
-            "lines": 138,
+            "lines": 140,
             "doc": "Posts, terms and comments as WordPress hands them to plugins: found by\nid (or the one being read), made from a row or an object, and given back\nas the object, an associative array (ARRAY_A) or a list (ARRAY_N); and\nwhether a value is a list of errors.",
             "implements": [],
             "extends": null,
@@ -161548,7 +161579,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "post(mixed $post = NULL, mixed $output = 'OBJECT', mixed $filter = 'raw'): mixed",
-                    "doc": "A post (get_post): the one being read when none is named; a post\nobject as given; one made from a row, an object or an array with an\nID; else by id, a copy of the cached one (what one plugin changes is\nnot what the next reader sees). Then put in the context asked for.",
+                    "doc": "A post (get_post): the one being read when none is named; a post\nobject as given; one made from a row or any other object (one without\nan ID is a post of none); none for an array; else by id, a copy of the\ncached one (what one plugin changes is not what the next reader sees).\nThen put in the context asked for.",
                     "shapes": [],
                     "params": [
                         {
@@ -161573,8 +161604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 64
+                    "line": 33,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -161614,8 +161645,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 99
+                    "line": 75,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -161641,8 +161672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 129
+                    "line": 110,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -161661,8 +161692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 139
+                    "line": 134,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -161681,8 +161712,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 148
+                    "line": 144,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -161708,8 +161739,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 160
+                    "line": 153,
+                    "end": 162
                 }
             ]
         },
@@ -165068,6 +165099,7 @@
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostFields",
+                "Minn\\Runtime\\PostInsert",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostLocks",
                 "Minn\\Runtime\\PostQuery",
@@ -178094,7 +178126,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/UserInsert.php",
-            "lines": 122,
+            "lines": 118,
             "doc": "The decisions behind wp_insert_user: what a new account needs, which email\nand login collide, the resolved profile fields, and which columns an\nupdate changes. The sanitisers and lookups arrive as closures so the\nreference's filters apply. Behaviour pinned by contracts/fixtures/api/functions.json.",
             "implements": [],
             "extends": null,
@@ -178105,15 +178137,14 @@
                 "Minn\\Runtime\\UserWrites"
             ],
             "constructor": {
-                "signature": "__construct(Closure $sanitizeLogin, Closure $sanitizeSlug, Closure $isEmail, Closure $loginTaken, Closure $emailOwner, Closure $roleExists)",
+                "signature": "__construct(Closure $sanitizeLogin, Closure $sanitizeSlug, Closure $isEmail, Closure $loginTaken, Closure $emailOwner)",
                 "doc": "",
                 "shapes": [
                     "@param Closure(string): string $sanitizeLogin",
                     "@param Closure(string): string $sanitizeSlug",
                     "@param Closure(string): bool $isEmail",
                     "@param Closure(string): bool $loginTaken",
-                    "@param Closure(string): int $emailOwner 0 when nobody has it",
-                    "@param Closure(string): bool $roleExists"
+                    "@param Closure(string): int $emailOwner 0 when nobody has it"
                 ],
                 "params": [
                     {
@@ -178150,18 +178181,11 @@
                         "shape": "Closure(string): int",
                         "default": null,
                         "doc": "0 when nobody has it"
-                    },
-                    {
-                        "name": "roleExists",
-                        "type": "Closure",
-                        "shape": "Closure(string): bool",
-                        "default": null,
-                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 29
+                "line": 26,
+                "end": 28
             },
             "cases": [],
             "constants": [
@@ -178217,15 +178241,6 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
-                },
-                {
-                    "name": "roleExists",
-                    "type": "Closure",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
                 }
             ],
             "methods": [
@@ -178257,8 +178272,8 @@
                             "doc": "the current row on an update"
                         }
                     ],
-                    "line": 38,
-                    "end": 76
+                    "line": 37,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -178293,8 +178308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 95
+                    "line": 75,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -178347,8 +178362,8 @@
                             "doc": "the password hasher"
                         }
                     ],
-                    "line": 106,
-                    "end": 135
+                    "line": 102,
+                    "end": 131
                 }
             ]
         },
@@ -179221,7 +179236,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/UserWrites.php",
-            "lines": 359,
+            "lines": 372,
             "doc": "Accounts written as WordPress's user functions write them: an account\nmade, changed (its row, profile meta and role, with the notices a\nchanged password or email sends) and deleted (its posts deleted or\nhanded on), a reset key issued, the lookups that guard a new account,\nand the cached rows let go; each step with the actions and filters the\nreference fires in its order.",
             "implements": [],
             "extends": null,
@@ -179264,7 +179279,14 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "ROW_FIELDS",
+                    "value": "array (   'user_login' => true,   'user_nicename' => true,   'user_url' => true,   'user_email' => true,   'display_name' => true, )",
+                    "doc": "The fields an account's row takes from its filtered fields.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [],
             "methods": [
                 {
@@ -179284,8 +179306,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 37
+                    "line": 35,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -179304,8 +179326,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 44
+                    "line": 43,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -179324,8 +179346,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 51
+                    "line": 50,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -179351,8 +179373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 58
+                    "line": 57,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -179363,8 +179385,8 @@
                     "doc": "Whether the site offers application passwords (wp_is_application_passwords_available): over HTTPS or on a local site, as the filter leaves it.",
                     "shapes": [],
                     "params": [],
-                    "line": 61,
-                    "end": 66
+                    "line": 64,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -179383,8 +179405,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 76
+                    "line": 72,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -179403,8 +179425,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 106
+                    "line": 86,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -179437,8 +179459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 112
+                    "line": 112,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -179446,7 +179468,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "insert(mixed $userdata): mixed",
-                    "doc": "An account made or changed (wp_insert_user): each field through its\npre_user_ filter first, in the reference's order; its id, or the\nerror saying why not.",
+                    "doc": "An account made or changed (wp_insert_user) from slashed fields, as\nthe reference takes them: each field through its pre_user_ filter\nfirst, slashed, in the reference's order; the row's fields then\nunslashed, the profile meta unslashed as it is stored, and the\npassword the one given (hashed for a new account, stored as given on\nan update). Its id, or the error saying why not.",
                     "shapes": [],
                     "params": [
                         {
@@ -179457,8 +179479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 153
+                    "line": 125,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -179477,8 +179499,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 182
+                    "line": 165,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -179504,8 +179526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 214
+                    "line": 201,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -179524,8 +179546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 234
+                    "line": 229,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -179544,8 +179566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 247
+                    "line": 249,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -179566,8 +179588,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 259
+                    "line": 262,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -179596,8 +179618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 288
+                    "line": 282,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -179627,8 +179649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 311
+                    "line": 310,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -179672,19 +179694,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 355
+                    "line": 333,
+                    "end": 364
                 },
                 {
                     "routes": [],
                     "name": "changeNotices",
                     "static": true,
                     "visibility": "private",
-                    "signature": "changeNotices(array $user, array $userdata): void",
-                    "doc": "The notices a user whose password or email address just changed is\nmailed, to the address they had.",
+                    "signature": "changeNotices(array $user, array $userdata): Closure",
+                    "doc": "The notices a user whose password or email address changes is\nmailed, to the address they had: whether each is sent is asked before\nthe save (a password that is the stored hash is no change), the mail\ngoes when the returned closure runs, after it.",
                     "shapes": [
                         "@param array<string, mixed> $user",
-                        "@param array<string, mixed> $userdata"
+                        "@param array<string, mixed> $userdata",
+                        "@return \\Closure(): void"
                     ],
                     "params": [
                         {
@@ -179702,8 +179725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 364,
-                    "end": 386
+                    "line": 376,
+                    "end": 399
                 }
             ]
         },
@@ -182106,6 +182129,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Cli\\UserCommand",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Support\\Sanitize"
             ],

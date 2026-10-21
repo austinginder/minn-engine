@@ -5,15 +5,16 @@ the wp verbs the engine answers itself
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AssetUpdate`](#assetupdate) | final class | 329 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
+| [`Bundled`](#bundled) | final class | 54 | WP-CLI's own bundled command for a verb the engine answers. Its docs give |
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
-| [`Commands`](#commands) | final class | 100 | The verbs the engine answers to. Every one is registered for the |
+| [`Commands`](#commands) | final class | 105 | The verbs the engine answers to. Every one is registered for the |
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
 | [`Installer`](#installer) | final class | 365 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
-| [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
+| [`OptionCommand`](#optioncommand) | final class | 200 | Options, read and written straight to the options table. Serialized |
 | [`PackageInstaller`](#packageinstaller) | final readonly class | 142 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
 | [`PluginCommand`](#plugincommand) | final class | 410 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 427 | What a site will and will not get from the engine, before anything |
@@ -21,7 +22,7 @@ the wp verbs the engine answers itself
 | [`Runtime`](#runtime) | final class | 98 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
 | [`ThemeCommand`](#themecommand) | final class | 332 | `wp theme list\|install\|update\|activate\|delete`: the inventory CaptainCore |
-| [`UserCommand`](#usercommand) | final class | 367 | Users: the list and get views, and the one-time login link. |
+| [`UserCommand`](#usercommand) | final class | 180 | Users: the list and get views, and the one-time login link. The list and |
 
 ## AssetUpdate
 
@@ -53,6 +54,36 @@ Updates the named assets, or all of them.
 Internals: `offers()` (private, line 102), `previewRow()` (private, line 150), `apply()` (private, line 162), `render()` (private, line 195), `emit()` (private, line 245), `skipped()` (private, line 266), `missing()` (private, line 274), `installed()` (private, line 283), `titleFor()` (private, line 296), `statusByName()` (private, line 310), `channel()` (private, line 321), `samePrefix()` (private, line 332), `pluginSlug()` (private, line 344)
 
 
+## Bundled
+
+`final class Minn\Cli\Bundled` · `public/minn/src/Minn/Cli/Bundled.php`
+
+WP-CLI's own bundled command for a verb the engine answers. Its docs give
+an engine verb the same synopsis (the arguments, defaults and allowed
+values the running WP-CLI accepts, which change between releases), and a
+call the engine does not answer itself is handed back to it, run against
+the engine's WordPress runtime as any bundled command is.
+
+Used by: `Minn\Cli\Commands`, `Minn\Cli\UserCommand`
+
+### static `docs(string $class, string $method): array`
+
+The bundled method's description and synopsis, as WP-CLI reads them
+from its doc comment, for add_command's arguments; empty when this
+WP-CLI has no such command.
+
+- `@return array<string, string>`
+
+### static `run(string $class, string $method, array $args, array $assocArgs): void`
+
+Runs the bundled command for a call: WP-CLI loads the site (the engine
+stands in for WordPress, plugins loaded), then the bundled method
+answers with the arguments the shared synopsis already validated.
+
+- `@param list<string> $args`
+- `@param array<string, mixed> $assocArgs`
+
+
 ## CacheCommand
 
 `final class Minn\Cli\CacheCommand` · `public/minn/src/Minn/Cli/CacheCommand.php`
@@ -78,11 +109,13 @@ before_wp_load phase, which WP-CLI runs before it looks for WordPress,
 and each replaces the bundled subcommand of the same name (a deferred
 addition lands after the bundle and overrides its leaf).
 
+Used by: `Minn\Cli\OptionCommand`, `Minn\Cli\UserCommand`
+
 ### static `register(): void`
 
 Registers every engine verb with WP-CLI in the phase it runs in.
 
-Internals: `leaf()` (private, line 84), `replace()` (private, line 100)
+Internals: `leaf()` (private, line 88), `replace()` (private, line 105)
 
 
 ## CoreCommand
@@ -516,7 +549,8 @@ Internals: `installer()` (private, line 220), `parkedTree()` (private, line 336)
 
 Options, read and written straight to the options table. Serialized
 values are decoded by the engine's own reader, and arrays written back
-in the stored form.
+in the stored form. The verbs take WP-CLI's bundled synopsis (Commands);
+the one written here stands when this WP-CLI has none.
 
 Used by: `Minn\Cli\Commands`
 
@@ -566,6 +600,8 @@ options:
 options:
 - 'on'
 - 'off'
+- 'yes'
+- 'no'
 ---
 
 ### `update(array $args, array $assocArgs): void`
@@ -586,6 +622,8 @@ Updates an option value.
 options:
 - 'on'
 - 'off'
+- 'yes'
+- 'no'
 ---
 
 [--format=<format>]
@@ -606,7 +644,7 @@ Deletes an option.
 <key>...
 : Key for the option.
 
-Internals: `readValue()` (private, line 172), `decode()` (private, line 189), `encode()` (private, line 195)
+Internals: `readValue()` (private, line 188), `decode()` (private, line 205), `encode()` (private, line 211)
 
 
 ## PackageInstaller
@@ -1162,9 +1200,13 @@ Internals: `pinVersion()` (private, line 227), `switchTo()` (private, line 249)
 
 `final class Minn\Cli\UserCommand` · `public/minn/src/Minn/Cli/UserCommand.php`
 
-Users: the list and get views, and the one-time login link.
+Users: the list and get views, and the one-time login link. The list and
+get verbs take WP-CLI's bundled synopsis (Commands); a list the engine
+does not answer itself (query arguments, users without a role, fields
+beyond the record's own) goes back to the bundled command.
 
 - const `FIELDS` = `array (   0 => 'ID',   1 => 'user_login',   2 => 'display_name',   3 => 'user_email',   4 => 'user_registered',   5 => 'roles', )`
+- const `LIST_ARGS` = `array (   0 => 'role',   1 => 'field',   2 => 'fields',   3 => 'format', )` — What the engine's own list reads: the role filter and the output arguments.
 
 Used by: `Minn\Cli\Commands`
 
@@ -1176,6 +1218,9 @@ Lists users.
 
 [--role=<role>]
 : Only display users with a certain role.
+
+[--<field>=<value>]
+: Control output by one or more arguments of the user query.
 
 [--field=<field>]
 : Prints the value of a single field for each user.
@@ -1234,92 +1279,5 @@ minutes, and then expires (the contract of the captaincore helper).
 <user>
 : User ID, user email, or user login.
 
-### `create(array $args, array $assocArgs): void`
-
-Creates a new user.
-
-## OPTIONS
-
-<user-login>
-: The login of the user to create.
-
-<user-email>
-: The email address of the user to create.
-
-[--role=<role>]
-: The role of the user to create. Default: the site's default role.
-
-[--user_pass=<password>]
-: The user password. Default: randomly generated.
-
-[--display_name=<name>]
-: The display name.
-
-[--user_nicename=<nice_name>]
-: A URL-friendly name. Default: the login.
-
-[--user_url=<url>]
-: The user's URL.
-
-[--nickname=<nickname>]
-: The nickname. Default: the login.
-
-[--first_name=<first_name>]
-: The first name.
-
-[--last_name=<last_name>]
-: The last name.
-
-[--description=<description>]
-: A description.
-
-[--send-email]
-: Send the new user a password-reset email.
-
-[--porcelain]
-: Output just the new user id.
-
-### `update(array $args, array $assocArgs): void`
-
-Updates an existing user.
-
-## OPTIONS
-
-<user>
-: User ID, email, or login.
-
-[--user_pass=<password>]
-: A new password.
-
-[--user_email=<email>]
-: A new email.
-
-[--display_name=<name>]
-: A new display name.
-
-[--first_name=<first_name>]
-: A new first name.
-
-[--last_name=<last_name>]
-: A new last name.
-
-[--role=<role>]
-: A new role.
-
-### `delete(array $args, array $assocArgs): void`
-
-Deletes a user.
-
-## OPTIONS
-
-<user>
-: User ID, email, or login.
-
-[--reassign=<id>]
-: User ID to reassign posts to.
-
-[--yes]
-: Answer yes to the confirmation.
-
-Internals: `randomPassword()` (private, line 348), `find()` (private, line 359), `item()` (private, line 370)
+Internals: `find()` (private, line 153), `ownList()` (private, line 173), `item()` (private, line 186)
 

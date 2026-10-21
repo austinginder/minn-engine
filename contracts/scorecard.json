@@ -261,7 +261,7 @@
         }
     },
     "open": {
-        "done": 69,
+        "done": 70,
         "accepted": 22,
         "open": 11,
         "austin": 1
@@ -299,12 +299,12 @@
     "clones": {
         "duplicated": {
             "window": 100,
-            "stretches": 115,
-            "lines": 2071,
-            "of": 188205
+            "stretches": 122,
+            "lines": 2184,
+            "of": 189624
         },
         "engine": {
-            "of": 112187,
+            "of": 113604,
             "php": {
                 "strict": {
                     "window": 40,
@@ -331,7 +331,7 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76018,
+            "of": 76020,
             "window": 80,
             "stretches": 108,
             "lines": 2901

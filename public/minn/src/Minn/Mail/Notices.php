@@ -15,21 +15,6 @@ final readonly class Notices
     {
     }
 
-    /** A new account's login details, with a link to choose a password. */
-    public function loginDetails(string $login, string $email, string $resetLink): Message
-    {
-        return Message::to($email, $this->subject('Login Details'), <<<TEXT
-            Username: {$login}
-
-            To set your password, visit the following address:
-
-            {$resetLink}
-
-            {$this->home}/wp-login.php
-
-            TEXT);
-    }
-
     /** The password reset link, with the requester's address as the reference prints it. */
     public function passwordReset(string $login, string $email, string $resetLink, string $requestIp): Message
     {

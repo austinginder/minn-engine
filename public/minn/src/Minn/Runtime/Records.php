@@ -25,9 +25,10 @@ final class Records
 {
     /**
      * A post (get_post): the one being read when none is named; a post
-     * object as given; one made from a row, an object or an array with an
-     * ID; else by id, a copy of the cached one (what one plugin changes is
-     * not what the next reader sees). Then put in the context asked for.
+     * object as given; one made from a row or any other object (one without
+     * an ID is a post of none); none for an array; else by id, a copy of the
+     * cached one (what one plugin changes is not what the next reader sees).
+     * Then put in the context asked for.
      */
     public static function post(mixed $post = null, mixed $output = 'OBJECT', mixed $filter = 'raw'): mixed
     {
@@ -42,10 +43,11 @@ final class Records
             $object = $post;
         } elseif ($post instanceof PostRecord) {
             $object = Handoff::newPost((object) $post->row());
-        } elseif (is_object($post) && isset($post->ID)) {
+        } elseif (is_object($post)) {
             $object = Handoff::newPost($post);
-        } elseif (is_array($post) && isset($post['ID'])) {
-            $object = Handoff::newPost((object) $post);
+        } elseif (is_array($post)) {
+            // An array is no post, whatever it holds.
+            return null;
         } else {
             $found = false;
             $cached = Handoff::cacheGet((int) $post, 'posts', false, $found);

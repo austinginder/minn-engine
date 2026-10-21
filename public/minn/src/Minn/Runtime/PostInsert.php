@@ -112,8 +112,9 @@ final readonly class PostInsert
                 $dateGmt = ($this->gmtFromDate)($date);
             }
         }
-        if ($status === 'publish' && strtotime($dateGmt . ' UTC') > time() + 60) {
-            $status = 'future';
+        // Published and scheduled are one choice: the GMT date over a minute ahead schedules, any other publishes.
+        if (in_array($status, ['publish', 'future'], true)) {
+            $status = strtotime($dateGmt . ' UTC') > time() + 60 ? 'future' : 'publish';
         }
         $columns['post_status'] = $status;
         // A private post keeps no password (probe placeholders-admin).
@@ -173,26 +174,54 @@ final readonly class PostInsert
     }
 
     /**
-     * The categories a saved post should carry: the ones given, or the
-     * default for a new post of a type that has categories; null when
-     * nothing should change.
+     * The categories a saved post hands wp_set_post_categories: none when
+     * its type has no categories (null); an update that names none keeps
+     * the ones it has; otherwise the ones given, each empty value dropped.
+     * None left is the default category for a post that is not an
+     * auto-draft, else an empty list (which wp_set_post_categories decides).
      *
+     * @param array<string, mixed> $postarr
      * @param list<string> $taxonomies the type's taxonomies
-     * @return list<int>|null
+     * @return array<mixed>|null
      */
-    public static function categories(array $postarr, string $type, string $status, bool $update, array $taxonomies, int $default): ?array
+    public static function categories(array $postarr, int $id, string $type, string $status, bool $update, array $taxonomies): ?array
     {
-        if (empty($postarr['post_category']) && ($update || $type !== 'post' || $status === 'auto-draft')) {
-            return null;
-        }
         if (!in_array('category', $taxonomies, true)) {
             return null;
         }
-        $categories = array_values(array_filter(array_map('intval', (array) ($postarr['post_category'] ?? []))));
-        if ($categories === [] && $type === 'post') {
-            $categories = [$default];
+        $given = $postarr['post_category'] ?? [];
+        $categories = empty($given) ? ($update ? (array) PostReads::categories($id) : []) : array_filter((array) $given);
+        if ($categories === [] && $type === 'post' && $status !== 'auto-draft') {
+            return [(int) Runtime::options()->filtered('default_category')];
         }
-        return $categories === [] ? null : $categories;
+        return $categories;
+    }
+
+    /**
+     * The category ids wp_set_post_categories sets, and whether they add to
+     * the post's: none given (null or an empty list) is the default
+     * category in place of the post's, for a post of a type that takes one
+     * (posts and the types default_category_post_types adds) that is not an
+     * auto-draft; a lone blank string is nothing to set (null ids); else
+     * each value as an id, any that is none dropped.
+     *
+     * @return array{0: list<int>|null, 1: bool}
+     */
+    public static function categoryIds(mixed $categories, mixed $status, mixed $type, mixed $append): array
+    {
+        $append = (bool) $append;
+        $given = (array) $categories;
+        if (count($given) === 1 && reset($given) === '') {
+            return [null, $append];
+        }
+        if ($given !== []) {
+            return [array_values(array_filter(array_map('intval', $given))), $append];
+        }
+        $types = ['post', ...(array) Runtime::hooks()->filter('default_category_post_types', [[]])];
+        if (in_array($type, $types, true) && $status !== 'auto-draft') {
+            return [[(int) Runtime::options()->filtered('default_category')], false];
+        }
+        return [[], $append];
     }
 
     private function type(array $columns, ?array $existing): string

@@ -25,14 +25,6 @@ final readonly class PasswordReset
     {
     }
 
-    /** Mints a key, stores its hash, returns the key for the link. */
-    public function issue(UserRecord $user): string
-    {
-        [$key, $stored] = self::mint();
-        $this->users->update($user->id, ['user_activation_key' => $stored]);
-        return $key;
-    }
-
     /**
      * A new key and the value that stores it (the time it was issued and its
      * hash), for a caller that saves it itself.

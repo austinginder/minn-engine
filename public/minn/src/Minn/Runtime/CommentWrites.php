@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Auth\Can;
 use Minn\Content\Comments;
 use Minn\Content\PostWriter;
 use Minn\Content\Posts;
@@ -93,26 +94,38 @@ final class CommentWrites
     }
 
     /**
-     * A comment changed (wp_update_comment): the stored comment under the
-     * change, through the field filters and comment_save_pre, then
-     * wp_update_comment_data (handed the data, the stored comment and the
-     * change); the columns written, the post's count, edit_comment with the
-     * columns, and the status transition. 0 when nothing changed.
+     * A comment changed (wp_update_comment), from slashed data: the stored
+     * comment (slashed) under the change, through the field filters as it
+     * is, then unslashed and its content through comment_save_pre, then
+     * wp_update_comment_data (handed the data, the slashed stored comment
+     * and the filtered slashed change); the columns written, the post's
+     * count, edit_comment with the columns, and the status transition. 0
+     * when nothing changed.
      */
     public static function update(mixed $commentarr, mixed $wpError = false): mixed
     {
-        $given = Slashes::strip((array) $commentarr);
+        $given = (array) $commentarr;
         ['comment_ID' => $commentId] = $given + ['comment_ID' => 0];
-        $comment = Records::comment((int) $commentId);
+        $comment = Records::comment((int) Slashes::strip($commentId));
         if ($comment === null) {
             return $wpError ? Handoff::newError('invalid_comment_id', 'Invalid comment ID.') : false;
         }
         $stored = $comment->to_array();
         $hooks = Runtime::hooks();
-        $commentarr = CommentChecks::filter(array_merge($stored, $given));
+        $slashedStored = Slashes::add($stored);
+        // A comment whose own author may not post unfiltered HTML has its content through kses while it is filtered, unless kses is on already.
+        $kses = $hooks->has('pre_comment_content', 'wp_filter_kses') === false && !Can::user((int) $comment->user_id, 'unfiltered_html');
+        if ($kses) {
+            $hooks->add('pre_comment_content', 'wp_filter_kses');
+        }
+        $filtered = CommentChecks::filter(array_merge($slashedStored, $given));
+        if ($kses) {
+            $hooks->remove('pre_comment_content', 'wp_filter_kses');
+        }
+        $commentarr = Slashes::strip($filtered);
         ['comment_content' => $content] = $commentarr + ['comment_content' => null];
         $commentarr = array_replace($commentarr, ['comment_content' => $hooks->filter('comment_save_pre', [$content])]);
-        $data = $hooks->filter('wp_update_comment_data', [$commentarr, $stored, $commentarr]);
+        $data = $hooks->filter('wp_update_comment_data', [$commentarr, $slashedStored, $filtered]);
         if (Records::isError($data)) {
             return $wpError ? $data : 0;
         }
@@ -130,8 +143,13 @@ final class CommentWrites
         return $changed === [] ? 0 : 1;
     }
 
-    /** A comment's status set (wp_set_comment_status): hold, approve, spam or trash; false for an unknown comment or status. */
-    public static function setStatus(mixed $commentId, mixed $status, mixed $wpError = false): bool
+    /**
+     * A comment's status set (wp_set_comment_status): hold, approve, spam or
+     * trash; false for an unknown comment or status. A comment that has the
+     * status already is not written: false, or the update error when one is
+     * asked for, and nobody told.
+     */
+    public static function setStatus(mixed $commentId, mixed $status, mixed $wpError = false): mixed
     {
         $comment = Records::comment($commentId);
         if ($comment === null) {
@@ -146,6 +164,9 @@ final class CommentWrites
         };
         if ($stored === null) {
             return false;
+        }
+        if ((string) $comment->comment_approved === $stored) {
+            return $wpError ? Handoff::newError('db_update_error', 'Could not update comment status.') : false;
         }
         self::store()->update((int) $comment->comment_ID, ['comment_approved' => $stored]);
         self::cleanCache($comment->comment_ID);

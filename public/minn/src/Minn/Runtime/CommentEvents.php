@@ -222,7 +222,7 @@ final readonly class CommentEvents
             }
             return;
         }
-        CommentWrites::update(['comment_ID' => $comment->id] + $columns);
+        CommentWrites::update(Slashes::add(['comment_ID' => $comment->id] + $columns));
         if ($status === null || $status === $comment->approved) {
             return;
         }

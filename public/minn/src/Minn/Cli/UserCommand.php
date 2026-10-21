@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace Minn\Cli;
 
 use Minn\Content\UserRecord;
-use Minn\Auth\PasswordReset;
-use Minn\Auth\Roles;
-use Minn\Mail\Mailer;
+use Minn\Support\Email;
 use WP_CLI;
 use WP_CLI\Formatter;
 
-/** Users: the list and get views, and the one-time login link. */
+/**
+ * Users: the list and get views, and the one-time login link. The list and
+ * get verbs take WP-CLI's bundled synopsis (Commands); a list the engine
+ * does not answer itself (query arguments, users without a role, fields
+ * beyond the record's own) goes back to the bundled command.
+ */
 final class UserCommand
 {
     private const FIELDS = ['ID', 'user_login', 'display_name', 'user_email', 'user_registered', 'roles'];
+
+    /** What the engine's own list reads: the role filter and the output arguments. */
+    private const LIST_ARGS = ['role', 'field', 'fields', 'format'];
 
     /**
      * Lists users.
@@ -23,6 +29,9 @@ final class UserCommand
      *
      * [--role=<role>]
      * : Only display users with a certain role.
+     *
+     * [--<field>=<value>]
+     * : Control output by one or more arguments of the user query.
      *
      * [--field=<field>]
      * : Prints the value of a single field for each user.
@@ -47,6 +56,10 @@ final class UserCommand
      */
     public function list(array $args, array $assocArgs): void
     {
+        if (!self::ownList($assocArgs)) {
+            Bundled::run('User_Command', 'list_', $args, $assocArgs);
+            return;
+        }
         $runtime = Runtime::boot();
         $role = (string) ($assocArgs['role'] ?? '');
         $rows = $runtime->db->rows("SELECT * FROM {$runtime->db->table('users')} ORDER BY user_login ASC");
@@ -96,16 +109,10 @@ final class UserCommand
     {
         $runtime = Runtime::boot();
         $user = self::find($args[0]) ?? WP_CLI::error("Invalid user ID, email or login: '{$args[0]}'");
-        // A single user reads in the reference's record order, its id as the stored string.
-        $data = [
-            'ID' => (string) $user->id,
-            'user_login' => $user->login,
-            'user_email' => $user->email,
-            'user_registered' => $user->registered,
-            'display_name' => $user->displayName,
-            'roles' => implode(', ', $runtime->capabilities->rolesOf($user->id)),
-        ];
-        (new Formatter($assocArgs, array_keys($data)))->display_item($data);
+        // The stored record in its column order, each value the stored string, then the roles.
+        $data = array_map('strval', $user->row());
+        $data['roles'] = implode(', ', $runtime->capabilities->rolesOf($user->id));
+        (new Formatter($assocArgs, self::FIELDS))->display_item($data);
     }
 
     /**
@@ -138,232 +145,41 @@ final class UserCommand
     }
 
     /**
-     * Creates a new user.
-     *
-     * ## OPTIONS
-     *
-     * <user-login>
-     * : The login of the user to create.
-     *
-     * <user-email>
-     * : The email address of the user to create.
-     *
-     * [--role=<role>]
-     * : The role of the user to create. Default: the site's default role.
-     *
-     * [--user_pass=<password>]
-     * : The user password. Default: randomly generated.
-     *
-     * [--display_name=<name>]
-     * : The display name.
-     *
-     * [--user_nicename=<nice_name>]
-     * : A URL-friendly name. Default: the login.
-     *
-     * [--user_url=<url>]
-     * : The user's URL.
-     *
-     * [--nickname=<nickname>]
-     * : The nickname. Default: the login.
-     *
-     * [--first_name=<first_name>]
-     * : The first name.
-     *
-     * [--last_name=<last_name>]
-     * : The last name.
-     *
-     * [--description=<description>]
-     * : A description.
-     *
-     * [--send-email]
-     * : Send the new user a password-reset email.
-     *
-     * [--porcelain]
-     * : Output just the new user id.
-     *
-     * @when before_wp_load
+     * A user by the identifier WP-CLI's user fetcher takes: a number is an
+     * id (warned about when a login is the same number), an address an
+     * email or else a login (logins can be addresses), anything else a
+     * login; WP_CLI_FORCE_USER_LOGIN reads every identifier as a login.
      */
-    public function create(array $args, array $assocArgs): void
-    {
-        $runtime = Runtime::boot();
-        [$login, $email] = $args;
-        if ($runtime->users->findByLogin($login) !== null) {
-            WP_CLI::error("The '{$login}' username is already registered.");
-        }
-        if ($runtime->users->findByEmail($email) !== null) {
-            WP_CLI::error('Sorry, that email address is already used!');
-        }
-        $role = (string) ($assocArgs['role'] ?? ($runtime->site->option('default_role') ?? 'subscriber'));
-        if (!isset($runtime->capabilities->roles()->all()[$role])) {
-            WP_CLI::error("Role doesn't exist: {$role}");
-        }
-        $generated = !isset($assocArgs['user_pass']);
-        $password = $generated ? self::randomPassword() : (string) $assocArgs['user_pass'];
-        $first = (string) ($assocArgs['first_name'] ?? '');
-        $last = (string) ($assocArgs['last_name'] ?? '');
-        $display = (string) ($assocArgs['display_name'] ?? '');
-        if ($display === '' && ($first !== '' || $last !== '')) {
-            $display = trim($first . ' ' . $last);
-        }
-        $account = [
-            'login' => $login,
-            'email' => $email,
-            'password' => $password,
-            'role' => $role,
-            'display_name' => $display !== '' ? $display : $login,
-            'url' => (string) ($assocArgs['user_url'] ?? ''),
-            'nickname' => (string) ($assocArgs['nickname'] ?? $login),
-            'first_name' => $first,
-            'last_name' => $last,
-            'description' => (string) ($assocArgs['description'] ?? ''),
-        ];
-        if (isset($assocArgs['user_nicename']) && (string) $assocArgs['user_nicename'] !== '') {
-            $account['nicename'] = (string) $assocArgs['user_nicename'];
-        }
-        $id = $runtime->users->createAccount($account);
-        if (isset($assocArgs['send-email'])) {
-            $user = $runtime->users->find($id);
-            if ($user !== null) {
-                $key = (new PasswordReset($runtime->users))->issue($user);
-                $home = rtrim((string) ($runtime->site->option('home') ?? ''), '/');
-                $link = $home . '/wp-login.php?action=rp&key=' . rawurlencode($key) . '&login=' . rawurlencode($login);
-                Mailer::forSite($runtime->site)->send(Mailer::noticesFor($runtime->site)->loginDetails($login, $email, $link));
-            }
-        }
-        if (isset($assocArgs['porcelain'])) {
-            WP_CLI::log((string) $id);
-            return;
-        }
-        WP_CLI::success("Created user {$id}.");
-        if ($generated) {
-            WP_CLI::log('Password: ' . $password);
-        }
-    }
-
-    /**
-     * Updates an existing user.
-     *
-     * ## OPTIONS
-     *
-     * <user>
-     * : User ID, email, or login.
-     *
-     * [--user_pass=<password>]
-     * : A new password.
-     *
-     * [--user_email=<email>]
-     * : A new email.
-     *
-     * [--display_name=<name>]
-     * : A new display name.
-     *
-     * [--first_name=<first_name>]
-     * : A new first name.
-     *
-     * [--last_name=<last_name>]
-     * : A new last name.
-     *
-     * [--role=<role>]
-     * : A new role.
-     *
-     * @when before_wp_load
-     */
-    public function update(array $args, array $assocArgs): void
-    {
-        $runtime = Runtime::boot();
-        $user = self::find($args[0]);
-        if ($user === null) {
-            WP_CLI::warning("Invalid user ID, email or login: '{$args[0]}'");
-            WP_CLI::error('No valid users found.');
-        }
-        $id = $user->id;
-        $columns = [];
-        if (isset($assocArgs['user_pass'])) {
-            $columns['user_pass'] = \Minn\Auth\Password::hash((string) $assocArgs['user_pass']);
-        }
-        if (isset($assocArgs['user_email'])) {
-            $columns['user_email'] = (string) $assocArgs['user_email'];
-        }
-        if (isset($assocArgs['display_name'])) {
-            $columns['display_name'] = (string) $assocArgs['display_name'];
-        }
-        if (isset($assocArgs['user_url'])) {
-            $columns['user_url'] = (string) $assocArgs['user_url'];
-        }
-        if ($columns !== []) {
-            $runtime->users->update($id, $columns);
-        }
-        foreach (['first_name', 'last_name', 'nickname', 'description'] as $meta) {
-            if (isset($assocArgs[$meta])) {
-                $runtime->users->setMeta($id, $meta, (string) $assocArgs[$meta]);
-            }
-        }
-        if (isset($assocArgs['role'])) {
-            $role = (string) $assocArgs['role'];
-            if (!isset($runtime->capabilities->roles()->all()[$role])) {
-                WP_CLI::error("Role doesn't exist: {$role}");
-            }
-            $prefix = $runtime->db->prefix();
-            $runtime->users->setMeta($id, "{$prefix}capabilities", Roles::serializeSingle($role));
-            $runtime->users->setMeta($id, "{$prefix}user_level", (string) Roles::level($role));
-        }
-        WP_CLI::success("Updated user {$id}.");
-    }
-
-    /**
-     * Deletes a user.
-     *
-     * ## OPTIONS
-     *
-     * <user>
-     * : User ID, email, or login.
-     *
-     * [--reassign=<id>]
-     * : User ID to reassign posts to.
-     *
-     * [--yes]
-     * : Answer yes to the confirmation.
-     *
-     * @when before_wp_load
-     */
-    public function delete(array $args, array $assocArgs): void
-    {
-        $runtime = Runtime::boot();
-        $user = self::find($args[0]) ?? WP_CLI::error("Invalid user ID, email or login: '{$args[0]}'");
-        $id = $user->id;
-        if (!isset($assocArgs['yes'])) {
-            WP_CLI::confirm("Are you sure you want to delete this user?");
-        }
-        $posts = $runtime->db->table('posts');
-        if (isset($assocArgs['reassign']) && ctype_digit((string) $assocArgs['reassign'])) {
-            $runtime->db->execute("UPDATE {$posts} SET post_author = ? WHERE post_author = ?", [(int) $assocArgs['reassign'], $id]);
-        } else {
-            $runtime->db->execute("DELETE FROM {$posts} WHERE post_author = ?", [$id]);
-        }
-        $runtime->users->delete($id);
-        $home = (string) ($runtime->site->option('home') ?? '');
-        WP_CLI::success("Removed user {$id} from {$home}.");
-    }
-
-    private static function randomPassword(): string
-    {
-        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_[]{}<>~`+=,.;:/?|';
-        $out = '';
-        $max = strlen($chars) - 1;
-        for ($i = 0; $i < 24; $i++) {
-            $out .= $chars[random_int(0, $max)];
-        }
-        return $out;
-    }
-
     private static function find(string $identifier): ?UserRecord
     {
         $users = Runtime::boot()->users;
-        return match (true) {
-            ctype_digit($identifier) => $users->find((int) $identifier),
-            str_contains($identifier, '@') => $users->findByEmail($identifier),
-            default => $users->findByLogin($identifier),
-        };
+        if (getenv('WP_CLI_FORCE_USER_LOGIN')) {
+            return $users->findByLogin($identifier);
+        }
+        if (is_numeric($identifier)) {
+            $user = ctype_digit($identifier) ? $users->find((int) $identifier) : null;
+            if ($user !== null && $users->findByLogin($identifier) !== null) {
+                WP_CLI::warning(sprintf("Ambiguous user match detected (both ID and user_login exist for identifier '%d'). WP-CLI will default to the ID, but you can force user_login instead with WP_CLI_FORCE_USER_LOGIN=1.", (int) $identifier));
+            }
+            return $user;
+        }
+        if (Email::check($identifier) === null) {
+            return $users->findByEmail($identifier) ?? $users->findByLogin($identifier);
+        }
+        return $users->findByLogin($identifier);
+    }
+
+    /** Whether the engine answers this list itself: only a role (not "none") and the record's own fields asked for. */
+    private static function ownList(array $assocArgs): bool
+    {
+        if (array_diff(array_keys($assocArgs), self::LIST_ARGS) !== [] || ($assocArgs['role'] ?? '') === 'none') {
+            return false;
+        }
+        $fields = isset($assocArgs['field']) ? [(string) $assocArgs['field']] : [];
+        if (isset($assocArgs['fields'])) {
+            $fields = array_merge($fields, array_map('trim', explode(',', (string) $assocArgs['fields'])));
+        }
+        return array_diff($fields, self::FIELDS) === [];
     }
 
     /** @param list<string> $roles */

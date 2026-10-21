@@ -71,8 +71,10 @@ $fillCache = static function (string $cache): void {
  *
  * @return array<string, bool>
  */
-$pass = static function (string $stack) use ($root, $wpcli, $features, $user, $password, $fillCache): array {
-    $tmp = sys_get_temp_dir() . "/minn-cli-features/{$stack}";
+// Separate passes run side by side each on a database and temporary folder of their own (MINN_CLI_DB, MINN_CLI_TMP).
+$database = preg_replace('/[^a-z0-9_]/', '', (string) (getenv('MINN_CLI_DB') ?: 'minn_cli_test'));
+$pass = static function (string $stack) use ($root, $wpcli, $features, $user, $password, $fillCache, $database): array {
+    $tmp = (getenv('MINN_CLI_TMP') ?: sys_get_temp_dir() . '/minn-cli-features') . "/{$stack}";
     @mkdir($tmp, 0777, true);
     $fillCache("{$tmp}/wp-cli-test-core-download-cache");
     $out = "{$tmp}/junit";
@@ -83,15 +85,20 @@ $pass = static function (string $stack) use ($root, $wpcli, $features, $user, $p
     $settings = "MINN_CLI_STACK=" . escapeshellarg($stack) . "\nMINN_WPCLI_DIR=" . escapeshellarg($wpcli) . "\nMINN_ENGINE_DIR=" . escapeshellarg("{$root}/public/minn") . "\n";
     file_put_contents("{$tmp}/bin/wp", preg_replace('/^set -u$/m', "set -u\n{$settings}", (string) file_get_contents("{$root}/tests/tools/cli-features/wp"), 1));
     chmod("{$tmp}/bin/wp", 0755);
+    // Each scenario copies the core cache with `cp -R`; on macOS a `cp` that clones (APFS) makes those copies cost almost no disk.
+    @mkdir("{$tmp}/shim", 0777, true);
+    file_put_contents("{$tmp}/shim/cp", PHP_OS_FAMILY === 'Darwin' ? "#!/bin/sh\nexec /bin/cp -c \"\$@\"\n" : "#!/bin/sh\nexec /bin/cp \"\$@\"\n");
+    chmod("{$tmp}/shim/cp", 0755);
     $env = [
         'TMPDIR' => $tmp . '/',
         'MINN_CLI_STACK' => $stack,
         'MINN_WPCLI_DIR' => $wpcli,
         'MINN_ENGINE_DIR' => "{$root}/public/minn",
         'WP_CLI_BIN_DIR' => "{$tmp}/bin",
+        'PATH' => "{$tmp}/shim:" . getenv('PATH'),
         'WP_CLI_TEST_DBROOTUSER' => $user[1] ?? 'root',
         'WP_CLI_TEST_DBROOTPASS' => $password[1] ?? '',
-        'WP_CLI_TEST_DBNAME' => 'minn_cli_test',
+        'WP_CLI_TEST_DBNAME' => $database,
         'WP_CLI_TEST_DBUSER' => 'minn_cli_test',
         'WP_CLI_TEST_DBPASS' => 'minn_cli_test',
         'WP_CLI_TEST_DBHOST' => 'localhost',
@@ -101,7 +108,7 @@ $pass = static function (string $stack) use ($root, $wpcli, $features, $user, $p
         $prefix .= $name . '=' . escapeshellarg((string) $value) . ' ';
     }
     // The scenarios' database and user, made once with the admin user.
-    $sql = "CREATE DATABASE IF NOT EXISTS minn_cli_test; CREATE USER IF NOT EXISTS 'minn_cli_test'@'localhost' IDENTIFIED BY 'minn_cli_test'; GRANT ALL PRIVILEGES ON minn_cli_test.* TO 'minn_cli_test'@'localhost';";
+    $sql = "CREATE DATABASE IF NOT EXISTS {$database}; CREATE USER IF NOT EXISTS 'minn_cli_test'@'localhost' IDENTIFIED BY 'minn_cli_test'; GRANT ALL PRIVILEGES ON {$database}.* TO 'minn_cli_test'@'localhost';";
     shell_exec('MYSQL_PWD=' . escapeshellarg($password[1] ?? '') . ' mariadb -u' . escapeshellarg($user[1] ?? 'root') . ' -e ' . escapeshellarg($sql) . ' 2>&1');
     // One feature file at a time, its scenarios' sites removed after it: each is a whole WordPress (a full pass of them filled the disk).
     foreach ($features as $n => $feature) {

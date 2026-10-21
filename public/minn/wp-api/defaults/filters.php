@@ -355,6 +355,8 @@ add_filter('pre_comment_content', 'convert_invalid_entities');
 add_filter('pre_comment_content', '_wp_kses_sanitize_note_mention_classes', 11);
 add_filter('pre_comment_content', 'wp_rel_ugc', 15);
 add_filter('pre_comment_content', 'balanceTags', 50);
+add_filter('comment_save_pre', 'convert_invalid_entities');
+add_filter('comment_save_pre', 'balanceTags', 50);
 // The comment form: the legacy flood hook attaches the database check, a new comment notifies, the commenter is remembered.
 add_action('check_comment_flood', 'check_comment_flood_db', 10, 4);
 add_filter('comment_flood_filter', 'wp_throttle_comment_flood', 10, 3);
