@@ -464,7 +464,8 @@
         "probe:blocks-rest-widget-doubts",
         "probe:nav-pomo-rest-doubts",
         "probe:cli-runtime-doubts",
-        "probe:term-caps"
+        "probe:term-caps",
+        "probe:theme-caches"
     ],
     "hooks": {
         "_get_page_link": {
@@ -865,54 +866,6 @@
             "probe:template-bindings-helpers": "not fired",
             "probe:theme-json-insecure": "not fired",
             "probe:upgrader": "not fired"
-        },
-        "auth_cookie_malformed": {
-            "http:admin-ajax": "not fired",
-            "http:admin-ajax-heartbeat": "not fired",
-            "http:admin-front-home": "not fired",
-            "http:admin-front-single": "not fired",
-            "http:admin-rest-me": "not fired",
-            "http:admin-rest-posts-edit": "not fired",
-            "http:admin-rest-settings": "not fired",
-            "http:ajax": "not fired",
-            "http:ajax-heartbeat": "not fired",
-            "http:canonical-move": "not fired",
-            "http:comment-empty": "not fired",
-            "http:feed": "not fired",
-            "http:feed-comments": "not fired",
-            "http:front-404": "not fired",
-            "http:front-author": "not fired",
-            "http:front-category": "not fired",
-            "http:front-embed": "not fired",
-            "http:front-home": "not fired",
-            "http:front-page": "not fired",
-            "http:front-search": "not fired",
-            "http:front-single": "not fired",
-            "http:login": "not fired",
-            "http:login-lost": "not fired",
-            "http:login-refused": "not fired",
-            "http:lostpassword-nobody": "not fired",
-            "http:rest-categories": "not fired",
-            "http:rest-comments": "not fired",
-            "http:rest-index": "not fired",
-            "http:rest-pages": "not fired",
-            "http:rest-post": "not fired",
-            "http:rest-posts": "not fired",
-            "http:rest-search": "not fired",
-            "http:rest-types": "not fired",
-            "http:rest-users": "not fired",
-            "http:robots": "not fired",
-            "http:sitemap-index": "not fired",
-            "http:sitemap-posts": "not fired"
-        },
-        "auth_cookie_valid": {
-            "http:admin-ajax": "not fired",
-            "http:admin-ajax-heartbeat": "not fired",
-            "http:admin-front-home": "not fired",
-            "http:admin-front-single": "not fired",
-            "http:admin-rest-me": "not fired",
-            "http:admin-rest-posts-edit": "not fired",
-            "http:admin-rest-settings": "not fired"
         },
         "author_link": {
             "http:admin-front-single": "not fired",
@@ -2195,12 +2148,6 @@
             "probe:tail-helpers": "not fired",
             "probe:template-tags-remaining": "fired here only"
         },
-        "delete_option": {
-            "probe:db-mail-rewrite-doubts": "not fired"
-        },
-        "delete_option_{*}": {
-            "probe:db-mail-rewrite-doubts": "not fired"
-        },
         "delete_post_{*}": {
             "probe:admin-bar-remaining": "2 arguments, not 4",
             "probe:block-template-helpers": "2 arguments, not 4",
@@ -2325,11 +2272,9 @@
             "probe:wp-user-query-sql": "not fired"
         },
         "delete_site_option": {
-            "probe:db-mail-rewrite-doubts": "not fired",
             "probe:theme-switch": "not fired"
         },
         "delete_site_option_{*}": {
-            "probe:db-mail-rewrite-doubts": "not fired",
             "probe:theme-switch": "not fired"
         },
         "delete_site_transient_{*}": {
@@ -2414,9 +2359,6 @@
             "probe:rest-meta-fields": "not fired",
             "probe:scheduled-delete": "not fired",
             "probe:wp-comment-query-sql": "not fired"
-        },
-        "deleted_option": {
-            "probe:db-mail-rewrite-doubts": "not fired"
         },
         "deleted_post_{*}": {
             "probe:admin-bar-remaining": "2 arguments, not 4",
@@ -2553,7 +2495,6 @@
             "probe:wp-user-query-sql": "not fired"
         },
         "deleted_site_transient": {
-            "probe:db-mail-rewrite-doubts": "not fired",
             "probe:theme-switch": "not fired"
         },
         "deleted_{*}_meta": {
@@ -2944,7 +2885,6 @@
             "probe:plugin-surface": "fired here only",
             "probe:rest-sidebar-classes": "fired here only",
             "probe:rest-view-config": "fired here only",
-            "probe:symbols": "not fired",
             "probe:view-config-functions": "fired here only"
         },
         "extra_{*}_headers": {
@@ -10954,6 +10894,7 @@
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
+            "probe:theme-caches": "not fired",
             "probe:theme-tags": "not fired",
             "probe:upgrader": "not fired",
             "probe:user-insert-filters": "not fired",
@@ -11488,6 +11429,7 @@
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
+            "probe:theme-caches": "not fired",
             "probe:theme-tags": "not fired",
             "probe:upgrader": "not fired",
             "probe:user-insert-filters": "not fired",
@@ -12468,6 +12410,7 @@
             "probe:tabs-and-parts": "not fired",
             "probe:tabs-render": "not fired",
             "probe:term-sanitize": "not fired",
+            "probe:theme-caches": "not fired",
             "probe:theme-headers": "not fired",
             "probe:theme-json-css": "not fired",
             "probe:theme-json-data": "not fired",
@@ -15373,6 +15316,7 @@
             "probe:template-getters": "not fired",
             "probe:template-loading": "not fired",
             "probe:template-part-lookup": "not fired",
+            "probe:theme-caches": "not fired",
             "probe:theme-data-supports": "not fired",
             "probe:theme-headers": "not fired",
             "probe:theme-json-css": "not fired",
@@ -15441,6 +15385,7 @@
             "probe:sweep-1018": "not fired",
             "probe:sweep-1020": "not fired",
             "probe:tabs-render": "not fired",
+            "probe:theme-caches": "fired here only",
             "probe:theme-json-data": "not fired",
             "probe:theme-json-insecure": "not fired",
             "probe:theme-json-nodes": "not fired",
@@ -15455,7 +15400,8 @@
             "probe:taxonomy-blocks-user-doubts": "fired here only"
         },
         "theme_scandir_exclusions": {
-            "probe:hook-inputs-2": "not fired"
+            "probe:hook-inputs-2": "not fired",
+            "probe:theme-caches": "not fired"
         },
         "title_save_pre": {
             "probe:rest-menu-save": "not fired",
@@ -16092,6 +16038,7 @@
             "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
+            "probe:theme-caches": "not fired",
             "probe:theme-remaining": "not fired",
             "probe:theme-switch": "not fired",
             "probe:upgrader": "not fired",
@@ -16735,7 +16682,6 @@
             "http:comment-empty": "not fired"
         },
         "wp_doing_ajax": {
-            "http:admin-ajax": "not fired",
             "http:ajax": "not fired",
             "probe:admin": "not fired",
             "probe:admin-bar": "not fired",
@@ -17990,6 +17936,7 @@
             "probe:template-part-lookup": "not fired",
             "probe:template-tags-remaining": "not fired",
             "probe:the-content": "not fired",
+            "probe:theme-caches": "not fired",
             "probe:theme-json-resolver": "not fired",
             "probe:theme-remaining": "not fired",
             "probe:theme-switch": "not fired",

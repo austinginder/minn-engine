@@ -492,8 +492,8 @@
             "wp_clean_themes_cache": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "delete_site_transient for update_themes by the flag, then search_theme_directories forced",
-                "body": "58523fb74f31"
+                "why": "delete_site_transient for update_themes by the flag, each theme's cache_delete (its patterns cache), then search_theme_directories forced (probe theme-caches)",
+                "body": "18d7f2989b0f"
             },
             "wp_get_code_editor_settings": {
                 "verdict": "move",
@@ -9640,6 +9640,125 @@
                 "body": "b9cf2889df98"
             }
         },
+        "classes/WP_Theme.php": {
+            "WP_Theme::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the Minn folder read (Theme\\Folder) laid onto the object's properties, the parent made, a problem as WP_Error; asks wp_cache_themes_persistently once",
+                "body": "d164330cd2c9"
+            },
+            "WP_Theme::custom_block_templates": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Templates",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "theme.json customTemplates of the parent then the child, by name",
+                "body": "412152298b22"
+            },
+            "WP_Theme::delete_pattern_cache": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the patterns cache key let go through the object cache or a site transient",
+                "body": "ded6625b5737"
+            },
+            "WP_Theme::display": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\ThemeHeaders",
+                "gates": [
+                    "globals"
+                ],
+                "why": "feature tags shown by name in the admin (data/theme-tags.json), the rest through ThemeHeaders::shown",
+                "body": "db0aaae53978"
+            },
+            "WP_Theme::get": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a missing theme answers false but for Name, the header read through ThemeHeaders",
+                "body": "cf4b73bba784"
+            },
+            "WP_Theme::get_allowed": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "network_allowed_themes over the network list, merged with the site's",
+                "body": "2e87cea0c3fe"
+            },
+            "WP_Theme::get_allowed_on_site": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the allowedthemes option through site_allowed_themes",
+                "body": "b64205ef47b6"
+            },
+            "WP_Theme::get_block_patterns": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\PatternHeaders",
+                "why": "the patterns folder read through PatternHeaders and cached by stylesheet directory for wp_theme_files_cache_ttl, the version ending it early",
+                "body": "1aba09ae84bd"
+            },
+            "WP_Theme::get_block_template_folders": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "the legacy block-templates folders when either exists, else templates and parts",
+                "body": "1ed883a20bf2"
+            },
+            "WP_Theme::get_core_default_theme": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Theme",
+                "why": "WP_DEFAULT_THEME then the bundled default themes newest first, the first that exists",
+                "body": "bbe114edc990"
+            },
+            "WP_Theme::get_files": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Folder",
+                "why": "the folder's files by type and depth, theme_scandir_exclusions heard, the parent's added when asked",
+                "body": "6a03ea8ce3a2"
+            },
+            "WP_Theme::get_page_templates": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_templates for the post's type through theme_templates and theme_{type}_templates",
+                "body": "b925b76e3ed4"
+            },
+            "WP_Theme::get_post_templates": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Templates",
+                "why": "PHP templates by their Template Name and Template Post Type headers, then theme.json custom templates for a block theme, titles translated in the theme's domain",
+                "body": "d6e66f254e6a"
+            },
+            "WP_Theme::get_screenshot": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the folder's screenshot as a URL under the stylesheet directory, or relative, or false",
+                "body": "881732f9dcbb"
+            },
+            "WP_Theme::network_disable_theme": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "stylesheets removed from the allowedthemes site option",
+                "body": "93482cecfeaf"
+            },
+            "WP_Theme::network_enable_theme": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "stylesheets added to the allowedthemes site option",
+                "body": "05f682c9a968"
+            },
+            "WP_Theme::offsetGet": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the legacy array offsets read as their headers, Status publish when unset, computed ones otherwise",
+                "body": "10653683662c"
+            },
+            "WP_Theme::scan": {
+                "verdict": "move",
+                "to": "Minn\\Theme\\Folder",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "a recursive listing that skips dot entries and exclusions, filtered by extension",
+                "body": "98a483e7beef"
+            }
+        },
         "classes/WP_Translation_Controller.php": {
             "WP_Translation_Controller::get_entries": {
                 "verdict": "move",
@@ -17284,7 +17403,7 @@
                 "verdict": "keep",
                 "reason": "compose",
                 "why": "the https detour, wp_validate_auth_cookie (pluggable) under auth_redirect_scheme and the auth_redirect action, else nocache_headers and wp_redirect to wp_login_url, then exit",
-                "doubt": "on a served request wp_validate_auth_cookie answers from the logged_in session whatever the scheme, so the logged_in cookie alone passes where WordPress requires the auth or secure_auth cookie; the use_ssl user option detour is also missing",
+                "doubt": "the use_ssl user option detour (a user who chose an HTTPS admin is sent there first) is not measured; the cookie it reads is settled (suite rest-gate)",
                 "body": "51f7affeb88a"
             },
             "cache_users": {
@@ -17549,15 +17668,17 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "parses the cookie, gives POST and ajax an hour's grace, judges it with Cookie::check and fires the auth_cookie_* verdict actions; the grace and the actions join Cookie",
-                "doubt": "with no cookie on a served request it returns the engine's logged_in session whatever the scheme, firing no action, where WordPress checks the auth or secure_auth cookie",
-                "body": "e6e615b78742"
+                "why": "parses the cookie, gives POST and ajax an hour's grace, judges it with Cookie::check and fires the auth_cookie_* verdict actions; the grace and the actions join Cookie. Doubt settled, fixed: with no cookie it reads the request cookie for the scheme, so a front request carries no admin cookie and auth_redirect sends the reader to sign in, as the reference does (suite rest-gate, auth_redirect rows).",
+                "body": "8d82726f123e"
             },
             "wp_validate_logged_in_cookie": {
-                "verdict": "keep",
-                "reason": "compose",
-                "why": "an earlier user id wins; in the blog or network admin nothing more (only the admin cookie signs in there), else wp_validate_auth_cookie (pluggable) on the logged_in cookie",
-                "body": "703568edd79e"
+                "verdict": "move",
+                "to": "Minn\\Auth\\Cookie",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "the logged-in cookie found as the engine sign-in finds it (Cookie::fromJar, any site hash after the canonical name), then judged under the logged_in scheme by wp_validate_auth_cookie so its actions fire as on the reference",
+                "body": "71c7c7b6c757"
             },
             "wp_validate_redirect": {
                 "verdict": "delegate",

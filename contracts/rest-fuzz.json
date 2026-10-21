@@ -4,7 +4,7 @@
     "summary": {
         "routes": 201,
         "requests": 14607,
-        "differences": 583
+        "differences": 526
     },
     "differences": [
         {
@@ -235,7 +235,7 @@
             "role": "anon",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 136730 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/oembed/1.0",
@@ -249,7 +249,7 @@
             "role": "author",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 138101 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/oembed/1.0",
@@ -263,7 +263,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 138097 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/minn-admin/v1",
@@ -588,18 +588,6 @@
             "reference": 200,
             "engine": 200,
             "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Improved\n\n* **Editor panels refuse what they cannot store, by one set of rules.** The SEO, Meta Box, Pods, The Events Calendar, PowerPress, Seriously Simple Podcasting and WP Job Manager panels now save through one path: a number the plugin would have emptied, a choice a field does not offer or a number outside its range is named as not sa"
-        },
-        {
-            "route": "/minn-admin/v1/overview",
-            "request": "/minn-admin/v1/overview",
-            "query": {
-                "days": "90"
-            },
-            "case": "days at maximum",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.chart.0.from ('2026-07-22 05:21:42' vs '2026-07-22 05:21:43')"
         },
         {
             "route": "/minn-admin/v1/templates",
@@ -1053,7 +1041,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.generated ('2026-10-21T05:24:54+00:00' vs '2026-10-21T05:24:55+00:00')"
+            "difference": "$.generated ('2026-10-21T12:53:24+00:00' vs '2026-10-21T12:53:22+00:00')"
         },
         {
             "route": "/minn-admin/v1/system",
@@ -1065,7 +1053,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.generated ('2026-10-21T05:24:55+00:00' vs '2026-10-21T05:24:56+00:00')"
+            "difference": "$.checks (length 14 vs 10)"
         },
         {
             "route": "/minn-admin/v1/system/autoload",
@@ -1119,7 +1107,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.size (78585778 vs 1387754)"
+            "difference": "$.size (79839039 vs 1412812)"
         },
         {
             "route": "/minn-admin/v1/system/debug-log",
@@ -1131,7 +1119,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.size (78585778 vs 1387754)"
+            "difference": "$.size (79839039 vs 1412812)"
         },
         {
             "route": "/minn-admin/v1/system/logs",
@@ -1683,7 +1671,7 @@
             "role": "anon",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 158314 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp/v2/posts/(?P<id>[\\d]+)",
@@ -1695,7 +1683,7 @@
             "role": "author",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 159685 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp/v2/posts/(?P<id>[\\d]+)",
@@ -1707,7 +1695,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 159681 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp/v2/posts/(?P<id>[\\d]+)",
@@ -1750,234 +1738,6 @@
             "reference": 500,
             "engine": 400,
             "difference": "status 500 vs 400"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/1",
-            "query": {
-                "id": ""
-            },
-            "case": "existing id empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/1",
-            "query": {
-                "id": ""
-            },
-            "case": "existing id empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/1",
-            "query": {
-                "id": ""
-            },
-            "case": "existing id empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/1",
-            "query": {
-                "id": "abc"
-            },
-            "case": "existing id word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/1",
-            "query": {
-                "id": "abc"
-            },
-            "case": "existing id word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/1",
-            "query": {
-                "id": "abc"
-            },
-            "case": "existing id word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/1",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "existing id fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/1",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "existing id fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/1",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "existing id fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/999999",
-            "query": {
-                "id": ""
-            },
-            "case": "missing id empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/999999",
-            "query": {
-                "id": ""
-            },
-            "case": "missing id empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/999999",
-            "query": {
-                "id": ""
-            },
-            "case": "missing id empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/999999",
-            "query": {
-                "id": "abc"
-            },
-            "case": "missing id word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/999999",
-            "query": {
-                "id": "abc"
-            },
-            "case": "missing id word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/999999",
-            "query": {
-                "id": "abc"
-            },
-            "case": "missing id word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/999999",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "missing id fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/999999",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "missing id fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/media/(?P<id>[\\d]+)",
-            "request": "/wp/v2/media/999999",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "missing id fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/menu-items",
-            "request": "/wp/v2/menu-items",
-            "query": {
-                "context": "edit"
-            },
-            "case": "context enum \"edit\"",
-            "role": "anon",
-            "reference": 401,
-            "engine": 401,
-            "difference": "$.code ('rest_forbidden_context' vs 'rest_cannot_view')"
         },
         {
             "route": "/wp/v2/templates",
@@ -2160,222 +1920,6 @@
             "difference": "status 500 vs 404"
         },
         {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/1",
-            "query": {
-                "id": ""
-            },
-            "case": "existing id empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/1",
-            "query": {
-                "id": ""
-            },
-            "case": "existing id empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/1",
-            "query": {
-                "id": ""
-            },
-            "case": "existing id empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/1",
-            "query": {
-                "id": "abc"
-            },
-            "case": "existing id word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/1",
-            "query": {
-                "id": "abc"
-            },
-            "case": "existing id word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/1",
-            "query": {
-                "id": "abc"
-            },
-            "case": "existing id word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/1",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "existing id fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/1",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "existing id fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/1",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "existing id fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/999999",
-            "query": {
-                "id": ""
-            },
-            "case": "missing id empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/999999",
-            "query": {
-                "id": ""
-            },
-            "case": "missing id empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/999999",
-            "query": {
-                "id": ""
-            },
-            "case": "missing id empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/999999",
-            "query": {
-                "id": "abc"
-            },
-            "case": "missing id word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/999999",
-            "query": {
-                "id": "abc"
-            },
-            "case": "missing id word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/999999",
-            "query": {
-                "id": "abc"
-            },
-            "case": "missing id word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/999999",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "missing id fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/999999",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "missing id fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/global-styles/(?P<id>[\\/\\d+]+)",
-            "request": "/wp/v2/global-styles/999999",
-            "query": {
-                "id": "1.5"
-            },
-            "case": "missing id fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
             "route": "/wp/v2/navigation",
             "request": "/wp/v2/navigation",
             "query": {
@@ -2434,18 +1978,6 @@
             "reference": 200,
             "engine": 200,
             "difference": "$.post.labels (keys missing:  extra: template_name)"
-        },
-        {
-            "route": "/wp/v2/menus",
-            "request": "/wp/v2/menus",
-            "query": {
-                "context": "edit"
-            },
-            "case": "context enum \"edit\"",
-            "role": "anon",
-            "reference": 401,
-            "engine": 401,
-            "difference": "$.code ('rest_forbidden_context' vs 'rest_cannot_view')"
         },
         {
             "route": "/wp/v2/search",
@@ -6211,228 +5743,6 @@
             "difference": "status 500 vs 200"
         },
         {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": ""
-            },
-            "case": "url empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": ""
-            },
-            "case": "url empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": ""
-            },
-            "case": "url empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "url long",
-            "role": "anon",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "url long",
-            "role": "author",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "url long",
-            "role": "admin",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "<b>zzfuzz</b>"
-            },
-            "case": "url markup",
-            "role": "anon",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "<b>zzfuzz</b>"
-            },
-            "case": "url markup",
-            "role": "author",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "<b>zzfuzz</b>"
-            },
-            "case": "url markup",
-            "role": "admin",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "url as array",
-            "role": "anon",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "url as array",
-            "role": "author",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "url as array",
-            "role": "admin",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "not a url"
-            },
-            "case": "url bad uri",
-            "role": "anon",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "not a url"
-            },
-            "case": "url bad uri",
-            "role": "author",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "not a url"
-            },
-            "case": "url bad uri",
-            "role": "admin",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "javascript:alert(1)"
-            },
-            "case": "url bad uri",
-            "role": "anon",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "javascript:alert(1)"
-            },
-            "case": "url bad uri",
-            "role": "author",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
-            "route": "/wp-block-editor/v1/url-details",
-            "request": "/wp-block-editor/v1/url-details",
-            "query": {
-                "url": "javascript:alert(1)"
-            },
-            "case": "url bad uri",
-            "role": "admin",
-            "reference": 400,
-            "engine": 400,
-            "difference": "$.data.details (list vs object)"
-        },
-        {
             "route": "/wp-block-editor/v1/export",
             "request": "/wp-block-editor/v1/export",
             "query": [],
@@ -6596,7 +5906,7 @@
             "role": "anon",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 136745 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp-abilities/v1",
@@ -6610,7 +5920,7 @@
             "role": "author",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 138116 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp-abilities/v1",
@@ -6624,7 +5934,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 138112 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp-abilities/v1/categories",
@@ -6636,7 +5946,7 @@
             "role": "author",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 142559 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp-abilities/v1/categories",
@@ -6648,7 +5958,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 142555 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp-abilities/v1/abilities/(?P<name>[a-zA-Z0-9\\-\\/]+?)/run",
@@ -6744,7 +6054,7 @@
             "role": "author",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 143025 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp-abilities/v1/abilities",
@@ -6756,7 +6066,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "[the body is not JSON on one stack (a crash page)]"
+            "difference": "$ ('[not JSON: 143022 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp/v2/icons",

@@ -45,3 +45,14 @@ add_filter('rest_endpoints', static function (array $endpoints): array {
     unset($endpoints['/wp/v2/tags']);
     return $endpoints;
 });
+
+// A front page a plugin guards with auth_redirect(): only the admin cookie lets a reader through.
+add_action('template_redirect', static function (): void {
+    if (empty($_GET['minn_gate_auth'])) {
+        return;
+    }
+    auth_redirect();
+    header('Content-Type: text/plain');
+    echo 'passed as ' . get_current_user_id();
+    exit;
+}, 0);

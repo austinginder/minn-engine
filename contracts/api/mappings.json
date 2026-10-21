@@ -29049,7 +29049,7 @@
         },
         "WP_Theme::cache_delete": {
             "file": "classes/WP_Theme.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
@@ -65788,12 +65788,13 @@
         },
         "wp_clean_themes_cache": {
             "file": "admin.php",
-            "lines": 5,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "delete_site_transient",
-                "search_theme_directories"
+                "search_theme_directories",
+                "wp_get_themes"
             ]
         },
         "wp_clean_update_cache": {
@@ -76811,7 +76812,7 @@
         },
         "wp_validate_auth_cookie": {
             "file": "pluggable.php",
-            "lines": 20,
+            "lines": 16,
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\Cookie::__construct",
@@ -76837,11 +76838,13 @@
         },
         "wp_validate_logged_in_cookie": {
             "file": "pluggable.php",
-            "lines": 11,
+            "lines": 14,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request"
+                "Minn\\Auth\\Cookie::__construct",
+                "Minn\\Auth\\Sessions::__construct",
+                "Minn\\Content\\Users::__construct",
+                "Minn\\Runtime\\Runtime::current"
             ],
             "composes": [
                 "is_blog_admin",

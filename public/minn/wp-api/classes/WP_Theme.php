@@ -326,9 +326,10 @@ class WP_Theme implements ArrayAccess, \Minn\Objects\Theme
         wp_using_ext_object_cache() ? wp_cache_delete($key, 'theme_files') : delete_site_transient($key);
     }
 
-    /** Nothing is cached of a theme here. */
+    /** The theme's caches let go: its patterns read again from their files (probe template-loading). */
     public function cache_delete()
     {
+        $this->delete_pattern_cache();
     }
 
     /** A theme read back from a serialized copy. */

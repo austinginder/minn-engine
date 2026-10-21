@@ -261,16 +261,16 @@
         }
     },
     "open": {
-        "done": 70,
+        "done": 74,
         "accepted": 22,
-        "open": 11,
+        "open": 12,
         "austin": 1
     },
     "run": {
-        "measured": "2026-10-20",
-        "suites": 92,
-        "green": 92,
-        "checks": 28861,
+        "measured": "2026-10-21",
+        "suites": 93,
+        "green": 93,
+        "checks": 30181,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
@@ -301,10 +301,10 @@
             "window": 100,
             "stretches": 122,
             "lines": 2184,
-            "of": 189624
+            "of": 189734
         },
         "engine": {
-            "of": 113604,
+            "of": 113714,
             "php": {
                 "strict": {
                     "window": 40,
@@ -383,6 +383,12 @@
             "requests": 14607,
             "differences": 583
         },
-        "cliFeatures": null
+        "cliFeatures": {
+            "scenarios": 178,
+            "passedReference": 163,
+            "passedEngine": 163,
+            "passedBoth": 163,
+            "setAsideMultisite": 54
+        }
     }
 }

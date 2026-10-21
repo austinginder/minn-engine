@@ -403,17 +403,15 @@ if (!function_exists('wp_validate_auth_cookie')) :
  * The user a sign-in cookie proves under its scheme, firing the
  * auth_cookie_* action for the verdict (probe auth-cookies): malformed,
  * expired (a POST or ajax request gets an hour's grace), bad_username,
- * bad_hash, bad_session_token, or valid. With no cookie on a served request,
- * the session the engine already checked when it read the request answers
- * (a REST call's nonce included); with no cookie outside one, $_COOKIE's.
+ * bad_hash, bad_session_token, or valid. With no cookie given, the request's
+ * own cookie for the scheme (secure_auth over HTTPS, auth otherwise, when none
+ * is named): on a front request, which carries no admin cookie, that is no
+ * one, so auth_redirect() sends a signed-in reader to sign in again, as the
+ * reference does (register 18300).
  */
 function wp_validate_auth_cookie($cookie = '', $scheme = '')
 {
     $runtime = Runtime::current();
-    if ((string) $cookie === '' && $runtime->request !== null) {
-        $reader = $runtime->reader;
-        return $reader->sessionToken !== '' && $reader->userId > 0 ? $reader->userId : false;
-    }
     $elements = wp_parse_auth_cookie($cookie, $scheme);
     if (!$elements) {
         do_action('auth_cookie_malformed', $cookie, $scheme);
@@ -433,7 +431,7 @@ function wp_validate_auth_cookie($cookie = '', $scheme = '')
 endif;
 
 if (!function_exists('wp_validate_logged_in_cookie')) :
-/** The user an earlier determine_current_user callback found; else, on a served request, the session the engine checked; else $_COOKIE's logged-in cookie. */
+/** The user an earlier determine_current_user callback found; else the one the request's logged-in cookie proves (on a served request, found as the engine's sign-in finds it, any site's hash after the canonical name). */
 function wp_validate_logged_in_cookie($user_id)
 {
     if ($user_id) {
@@ -443,8 +441,11 @@ function wp_validate_logged_in_cookie($user_id)
     if (is_blog_admin() || is_network_admin()) {
         return false;
     }
-    if (Runtime::current()->request !== null) {
-        return wp_validate_auth_cookie();
+    $runtime = Runtime::current();
+    if ($runtime->request !== null) {
+        $users = new Users($runtime->db);
+        $cookie = (new Cookie($runtime->db, $users, new Sessions($users)))->fromJar($runtime->request->cookies);
+        return $cookie === null ? false : wp_validate_auth_cookie($cookie, 'logged_in');
     }
     return empty($_COOKIE[LOGGED_IN_COOKIE]) ? false : wp_validate_auth_cookie($_COOKIE[LOGGED_IN_COOKIE], 'logged_in');
 }

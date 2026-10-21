@@ -855,6 +855,10 @@ function wp_clean_themes_cache($clear_update_cache = true)
     if ($clear_update_cache) {
         delete_site_transient('update_themes');
     }
+    // Every theme's caches go, its patterns with them (probe template-loading).
+    foreach (wp_get_themes() as $theme) {
+        $theme->cache_delete();
+    }
     // The themes on disk are searched again, as the reference searches them (probe hook-inputs-2).
     search_theme_directories(true);
 }

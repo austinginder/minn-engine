@@ -1,0 +1,35 @@
+[
+    [
+        "wp_clean_themes_cache(true)",
+        [
+            4,
+            [
+                "update_themes",
+                "wp_theme_files_patterns-{hash}",
+                "wp_theme_files_patterns-{hash}",
+                "wp_theme_files_patterns-{hash}",
+                "wp_theme_files_patterns-{hash}"
+            ],
+            false
+        ]
+    ],
+    [
+        "wp_clean_themes_cache(false)",
+        [
+            4,
+            [
+                "wp_theme_files_patterns-{hash}",
+                "wp_theme_files_patterns-{hash}",
+                "wp_theme_files_patterns-{hash}",
+                "wp_theme_files_patterns-{hash}"
+            ],
+            true
+        ]
+    ],
+    [
+        "WP_Theme::cache_delete",
+        [
+            "wp_theme_files_patterns-{hash}"
+        ]
+    ]
+]

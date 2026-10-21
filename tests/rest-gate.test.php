@@ -96,5 +96,30 @@ $same('its sibling routes still answer', '/wp/v2/categories', '', false, static 
 $same('an in-process rest_do_request runs as the signed-in user', '/wp/v2/gate-probe/me', '', true, static fn (int $s, $b): bool => $s === 200 && ($b['status'] ?? 0) === 200 && ($b['id'] ?? 0) === 1);
 $same('and as nobody when nobody is signed in', '/wp/v2/gate-probe/me', '', false, static fn (int $s, $b): bool => $s === 200 && ($b['status'] ?? 0) === 401);
 
+// auth_redirect() on a front request reads the admin cookie (secure_auth over HTTPS), never the logged-in one.
+$cookies = [
+    'no cookie' => [],
+    'the logged-in cookie alone' => [$mint['cookie_name'] . '=' . $mint['cookie']],
+    'the admin cookie alone' => [$mint['admin_cookie_name'] . '=' . $mint['admin_cookie']],
+    'both cookies' => [$mint['cookie_name'] . '=' . $mint['cookie'], $mint['admin_cookie_name'] . '=' . $mint['admin_cookie']],
+];
+foreach ($cookies as $label => $sent) {
+    $answers = [];
+    foreach ([$REF, $ENGINE] as $base) {
+        $curl = curl_init($base . '/?minn_gate_auth=1');
+        $location = '';
+        curl_setopt_array($curl, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_HTTPHEADER => $sent === [] ? [] : ['Cookie: ' . implode('; ', $sent)],
+            CURLOPT_HEADERFUNCTION => static function ($c, string $line) use (&$location): int {
+                if (stripos($line, 'location:') === 0) {
+                    $location = (string) parse_url(trim(substr($line, 9)), PHP_URL_PATH);
+                }
+                return strlen($line);
+            }]);
+        $body = (string) curl_exec($curl);
+        $answers[] = curl_getinfo($curl, CURLINFO_HTTP_CODE) . ' ' . ($location !== '' ? $location : trim($body));
+    }
+    $check("auth_redirect() with {$label}: {$answers[0]}", $answers[0] === $answers[1], json_encode($answers));
+}
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

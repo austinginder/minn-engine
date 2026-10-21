@@ -6,7 +6,7 @@
         "delegates": 3552,
         "logicFunctions": 1781,
         "logicMethods": 1972,
-        "logicLines": 29291,
+        "logicLines": 29293,
         "kept": 0
     },
     "byFile": {
@@ -56,7 +56,7 @@
         },
         "admin.php": {
             "logic": 60,
-            "lines": 523
+            "lines": 526
         },
         "classes/WP_REST_Posts_Controller.php": {
             "logic": 43,
@@ -92,7 +92,7 @@
         },
         "pluggable.php": {
             "logic": 40,
-            "lines": 367
+            "lines": 366
         },
         "rest-api.php": {
             "logic": 40,
@@ -10796,13 +10796,13 @@
         },
         "WP_Theme::get_allowed": {
             "file": "classes/WP_Theme.php",
-            "line": 341,
+            "line": 342,
             "statements": 2,
             "lines": 2
         },
         "WP_Theme::get_allowed_on_site": {
             "file": "classes/WP_Theme.php",
-            "line": 354,
+            "line": 355,
             "statements": 2,
             "lines": 2
         },
@@ -10820,7 +10820,7 @@
         },
         "WP_Theme::get_core_default_theme": {
             "file": "classes/WP_Theme.php",
-            "line": 381,
+            "line": 382,
             "statements": 2,
             "lines": 7
         },
@@ -10850,19 +10850,19 @@
         },
         "WP_Theme::network_disable_theme": {
             "file": "classes/WP_Theme.php",
-            "line": 371,
+            "line": 372,
             "statements": 3,
             "lines": 5
         },
         "WP_Theme::network_enable_theme": {
             "file": "classes/WP_Theme.php",
-            "line": 361,
+            "line": 362,
             "statements": 3,
             "lines": 5
         },
         "WP_Theme::offsetGet": {
             "file": "classes/WP_Theme.php",
-            "line": 410,
+            "line": 411,
             "statements": 4,
             "lines": 6
         },
@@ -12920,7 +12920,7 @@
         },
         "_draft_or_post_title": {
             "file": "admin.php",
-            "line": 903,
+            "line": 907,
             "statements": 2,
             "lines": 2
         },
@@ -13832,7 +13832,7 @@
         },
         "_minn_inline_extras": {
             "file": "admin.php",
-            "line": 1027,
+            "line": 1031,
             "statements": 10,
             "lines": 18
         },
@@ -14564,7 +14564,7 @@
         },
         "_post_states": {
             "file": "admin.php",
-            "line": 936,
+            "line": 940,
             "statements": 3,
             "lines": 5
         },
@@ -15068,7 +15068,7 @@
         },
         "_wp_oembed_get_object": {
             "file": "admin.php",
-            "line": 887,
+            "line": 891,
             "statements": 3,
             "lines": 5
         },
@@ -16082,7 +16082,7 @@
         },
         "delete_theme": {
             "file": "admin.php",
-            "line": 876,
+            "line": 880,
             "statements": 3,
             "lines": 7
         },
@@ -16208,7 +16208,7 @@
         },
         "enqueue_comment_hotkeys_js": {
             "file": "admin.php",
-            "line": 1050,
+            "line": 1054,
             "statements": 1,
             "lines": 3
         },
@@ -16466,7 +16466,7 @@
         },
         "get_avatar": {
             "file": "pluggable.php",
-            "line": 570,
+            "line": 571,
             "statements": 18,
             "lines": 26
         },
@@ -16652,7 +16652,7 @@
         },
         "get_column_headers": {
             "file": "admin.php",
-            "line": 1008,
+            "line": 1012,
             "statements": 3,
             "lines": 3
         },
@@ -16796,7 +16796,7 @@
         },
         "get_currentuserinfo": {
             "file": "pluggable.php",
-            "line": 704,
+            "line": 705,
             "statements": 2,
             "lines": 2
         },
@@ -16904,7 +16904,7 @@
         },
         "get_hidden_meta_boxes": {
             "file": "admin.php",
-            "line": 957,
+            "line": 961,
             "statements": 5,
             "lines": 8
         },
@@ -16922,7 +16922,7 @@
         },
         "get_importers": {
             "file": "admin.php",
-            "line": 987,
+            "line": 991,
             "statements": 2,
             "lines": 4
         },
@@ -16934,7 +16934,7 @@
         },
         "get_inline_data": {
             "file": "admin.php",
-            "line": 1016,
+            "line": 1020,
             "statements": 4,
             "lines": 6
         },
@@ -17246,7 +17246,7 @@
         },
         "get_post_states": {
             "file": "admin.php",
-            "line": 915,
+            "line": 919,
             "statements": 6,
             "lines": 16
         },
@@ -17840,13 +17840,13 @@
         },
         "get_user_by": {
             "file": "pluggable.php",
-            "line": 638,
+            "line": 639,
             "statements": 5,
             "lines": 7
         },
         "get_user_by_email": {
             "file": "pluggable.php",
-            "line": 695,
+            "line": 696,
             "statements": 2,
             "lines": 2
         },
@@ -17858,7 +17858,7 @@
         },
         "get_userdatabylogin": {
             "file": "pluggable.php",
-            "line": 686,
+            "line": 687,
             "statements": 2,
             "lines": 2
         },
@@ -18506,7 +18506,7 @@
         },
         "postbox_classes": {
             "file": "admin.php",
-            "line": 970,
+            "line": 974,
             "statements": 3,
             "lines": 3
         },
@@ -18548,7 +18548,7 @@
         },
         "print_admin_styles": {
             "file": "admin.php",
-            "line": 863,
+            "line": 867,
             "statements": 3,
             "lines": 3
         },
@@ -18662,7 +18662,7 @@
         },
         "register_importer": {
             "file": "admin.php",
-            "line": 978,
+            "line": 982,
             "statements": 2,
             "lines": 4
         },
@@ -19256,7 +19256,7 @@
         },
         "set_current_user": {
             "file": "pluggable.php",
-            "line": 713,
+            "line": 714,
             "statements": 2,
             "lines": 2
         },
@@ -19964,7 +19964,7 @@
         },
         "wp_add_privacy_policy_content": {
             "file": "admin.php",
-            "line": 996,
+            "line": 1000,
             "statements": 3,
             "lines": 6
         },
@@ -20277,8 +20277,8 @@
         "wp_clean_themes_cache": {
             "file": "admin.php",
             "line": 853,
-            "statements": 2,
-            "lines": 4
+            "statements": 3,
+            "lines": 7
         },
         "wp_clean_update_cache": {
             "file": "cron.php",
@@ -20288,13 +20288,13 @@
         },
         "wp_clear_auth_cookie": {
             "file": "pluggable.php",
-            "line": 467,
+            "line": 468,
             "statements": 4,
             "lines": 8
         },
         "wp_clearcookie": {
             "file": "pluggable.php",
-            "line": 732,
+            "line": 733,
             "statements": 2,
             "lines": 2
         },
@@ -20780,13 +20780,13 @@
         },
         "wp_generate_auth_cookie": {
             "file": "pluggable.php",
-            "line": 530,
+            "line": 531,
             "statements": 6,
             "lines": 10
         },
         "wp_generate_password": {
             "file": "pluggable.php",
-            "line": 665,
+            "line": 666,
             "statements": 6,
             "lines": 12
         },
@@ -20954,7 +20954,7 @@
         },
         "wp_get_cookie_login": {
             "file": "pluggable.php",
-            "line": 741,
+            "line": 742,
             "statements": 2,
             "lines": 2
         },
@@ -21836,7 +21836,7 @@
         },
         "wp_login": {
             "file": "pluggable.php",
-            "line": 750,
+            "line": 751,
             "statements": 5,
             "lines": 7
         },
@@ -21854,7 +21854,7 @@
         },
         "wp_logout": {
             "file": "pluggable.php",
-            "line": 455,
+            "line": 456,
             "statements": 5,
             "lines": 5
         },
@@ -22130,7 +22130,7 @@
         },
         "wp_parse_auth_cookie": {
             "file": "pluggable.php",
-            "line": 549,
+            "line": 550,
             "statements": 5,
             "lines": 14
         },
@@ -22142,7 +22142,7 @@
         },
         "wp_password_change_notification": {
             "file": "pluggable.php",
-            "line": 482,
+            "line": 483,
             "statements": 4,
             "lines": 15
         },
@@ -22298,7 +22298,7 @@
         },
         "wp_rand": {
             "file": "pluggable.php",
-            "line": 656,
+            "line": 657,
             "statements": 3,
             "lines": 3
         },
@@ -22892,7 +22892,7 @@
         },
         "wp_set_auth_cookie": {
             "file": "pluggable.php",
-            "line": 506,
+            "line": 507,
             "statements": 11,
             "lines": 15
         },
@@ -22904,7 +22904,7 @@
         },
         "wp_set_current_user": {
             "file": "pluggable.php",
-            "line": 609,
+            "line": 610,
             "statements": 3,
             "lines": 8
         },
@@ -22964,7 +22964,7 @@
         },
         "wp_setcookie": {
             "file": "pluggable.php",
-            "line": 722,
+            "line": 723,
             "statements": 3,
             "lines": 3
         },
@@ -23360,15 +23360,15 @@
         },
         "wp_validate_auth_cookie": {
             "file": "pluggable.php",
-            "line": 410,
-            "statements": 11,
-            "lines": 20
+            "line": 412,
+            "statements": 10,
+            "lines": 16
         },
         "wp_validate_logged_in_cookie": {
             "file": "pluggable.php",
-            "line": 437,
-            "statements": 4,
-            "lines": 10
+            "line": 435,
+            "statements": 5,
+            "lines": 13
         },
         "wp_validate_redirect": {
             "file": "pluggable.php",
