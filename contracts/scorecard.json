@@ -262,16 +262,20 @@
     },
     "open": {
         "done": 77,
-        "accepted": 23,
+        "accepted": 24,
         "open": 11,
-        "austin": 2
+        "austin": 3
     },
     "run": {
         "measured": "2026-10-21",
         "suites": 93,
-        "green": 93,
-        "checks": 30181,
-        "red": [],
+        "green": 90,
+        "checks": 30188,
+        "red": [
+            "admin-surfaces",
+            "browser: geometry (dev site)",
+            "browser: geometry (dogfood)"
+        ],
         "engineWarnings": 0,
         "warningKinds": []
     },
@@ -384,11 +388,11 @@
             "differences": 526
         },
         "cliFeatures": {
-            "scenarios": 178,
-            "passedReference": 163,
-            "passedEngine": 163,
-            "passedBoth": 163,
-            "setAsideMultisite": 54
+            "scenarios": 335,
+            "passedReference": 289,
+            "passedEngine": 288,
+            "passedBoth": 288,
+            "setAsideMultisite": 58
         }
     }
 }
