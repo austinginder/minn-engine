@@ -1,12 +1,14 @@
 {
-    "method": "tests/tools/cli-features.php: WP-CLI's bundled feature scenarios (entity-command/features/*.feature) on the reference and on the engine, each on a fresh install",
+    "method": "tests/tools/cli-features.php: WP-CLI's bundled feature scenarios (entity-command/features/*.feature,eval-command/features/*.feature,config-command/features/*.feature,db-command/features/*.feature) on the reference and on the engine, each on a fresh install",
     "measured": "2026-10-21",
     "summary": {
-        "scenarios": 178,
-        "passedReference": 163,
-        "passedEngine": 163,
-        "passedBoth": 163,
-        "setAsideMultisite": 54
+        "scenarios": 335,
+        "passedReference": 289,
+        "passedEngine": 288,
+        "passedBoth": 288,
+        "setAsideMultisite": 58
     },
-    "engineFails": []
+    "engineFails": [
+        "Query the database with WordPress' MySQL config :: Database querying shouldn't load any plugins"
+    ]
 }
