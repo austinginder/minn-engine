@@ -202,6 +202,26 @@ foreach ( array( 0 => 'signed out', 3 => 'an author', 2 => 'an editor' ) as $uid
 }
 $wp( "menu delete $menu" );
 
+// Menu items listed with a status the caller may not ask for: the status is refused before the caller is judged.
+foreach ( array( 0 => 'signed out', 3 => 'an author', 1 => 'an administrator' ) as $uid => $who ) {
+	$session = $uid > 0 ? json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . " $uid" ), true ) : null;
+	foreach ( array( 'status=draft', 'status=zz', 'status=draft&context=edit', 'status=publish' ) as $query ) {
+		$answers = array();
+		foreach ( array( $REF, $ENGINE ) as $base ) {
+			$curl = curl_init( "$base/index.php?rest_route=" . rawurlencode( '/wp/v2/menu-items' ) . "&$query" );
+			curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_HTTPHEADER => null === $session ? array() : array( 'X-WP-Nonce: ' . $session['nonce'], 'Cookie: ' . $session['cookie_name'] . '=' . $session['cookie'] ) ) );
+			$body      = json_decode( (string) curl_exec( $curl ), true );
+			$answers[] = curl_getinfo( $curl, CURLINFO_HTTP_CODE ) . ' ' . ( $body['code'] ?? 'list' ) . ' ' . json_encode( $body['data']['details'] ?? null );
+		}
+		$ok = $answers[0] === $answers[1];
+		$ok ? $pass++ : $fail++;
+		echo ( $ok ? '  ok   ' : '  FAIL ' ) . "menu items $query, $who" . ( $ok ? '' : " ({$answers[0]} vs {$answers[1]})" ) . "\n";
+	}
+	if ( null !== $session ) {
+		$wp( 'eval ' . escapeshellarg( 'WP_Session_Tokens::get_instance(' . $uid . ')->destroy(' . var_export( (string) $session['token'], true ) . ');' ) );
+	}
+}
+
 // A write's body or query naming another id writes that one, judged as that one: an
 // administrator's lands on the post named, an author's aimed at someone else's is refused.
 foreach ( array( 1 => 'an administrator', 3 => 'an author' ) as $uid => $who ) {

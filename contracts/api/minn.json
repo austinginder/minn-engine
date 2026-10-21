@@ -9996,6 +9996,7 @@
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Media\\FileTypes",
                 "Minn\\Rest\\Caller",
+                "Minn\\Rest\\MenuItemStatus",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AttachmentModel",
                 "Minn\\Runtime\\CommentChecks",
@@ -13134,6 +13135,7 @@
             ],
             "usedBy": [
                 "Minn\\Auth\\Capabilities",
+                "Minn\\Rest\\MenuItemStatus",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
@@ -70975,7 +70977,8 @@
             "usedBy": [
                 "Minn\\Rest\\ExistingPost",
                 "Minn\\Rest\\FontFaceRecord",
-                "Minn\\Rest\\FontFamilyRecord"
+                "Minn\\Rest\\FontFamilyRecord",
+                "Minn\\Rest\\MenuItemStatus"
             ],
             "constructor": null,
             "cases": [],
@@ -71086,6 +71089,7 @@
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\MenuItemStatus",
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
@@ -101113,6 +101117,7 @@
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\MenuItemStatus",
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
@@ -110650,6 +110655,57 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\MenuItemStatus",
+            "short": "MenuItemStatus",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/MenuItemStatus.php",
+            "lines": 13,
+            "doc": "Menu items listed with a status beyond publish by a caller who may not\nedit them: refused as the parameter it is (\"Status is forbidden.\"),\nbefore the caller is judged for the list or its edit context, as the\nreference refuses it, signed out too (register 18300).",
+            "implements": [
+                "Minn\\Http\\Refusal"
+            ],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\Can",
+                "Minn\\Auth\\TypeCapabilities",
+                "Minn\\Http\\Refusal",
+                "Minn\\Http\\Request",
+                "Minn\\RestError",
+                "Minn\\Rest\\PostsController",
+                "Minn\\Runtime\\Handoff"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\MenusController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "refuse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "refuse(Minn\\Http\\Request $request): void",
+                    "doc": "Throws the status refusal, 401 inside for a signed-out caller and 403 for one signed in.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 31
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\MenuLists",
             "short": "MenuLists",
             "namespace": "Minn\\Rest",
@@ -111001,6 +111057,7 @@
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\MenuCollectionParams",
                 "Minn\\Rest\\MenuItemCollectionParams",
+                "Minn\\Rest\\MenuItemStatus",
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\Reply",
@@ -114339,6 +114396,7 @@
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\MenuItemStatus",
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\NavigationController"
             ],
@@ -114502,6 +114560,28 @@
                     ],
                     "line": 66,
                     "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "requestedStatuses",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "requestedStatuses(Minn\\Http\\Request $request): ?array",
+                    "doc": "The statuses a list request names, null when it names none: a list\ngiven as one (status[]=draft), its members that are not plain values\ndropped, or a comma-separated string.",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 221,
+                    "end": 229
                 },
                 {
                     "routes": [
@@ -114747,28 +114827,6 @@
                     ],
                     "line": 185,
                     "end": 212
-                },
-                {
-                    "routes": [],
-                    "name": "requestedStatuses",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "requestedStatuses(Minn\\Http\\Request $request): ?array",
-                    "doc": "The statuses a list request names, null when it names none: a list\ngiven as one (status[]=draft), its members that are not plain values\ndropped, or a comma-separated string.",
-                    "shapes": [
-                        "@return list<string>|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 221,
-                    "end": 229
                 }
             ]
         },
@@ -142321,6 +142379,7 @@
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenuItemObject",
+                "Minn\\Rest\\MenuItemStatus",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",

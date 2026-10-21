@@ -186,7 +186,7 @@ final readonly class PostsController
     {
         // An attachment's public status is inherit (it shows as its parent does).
         $publicOnly = [$type === 'attachment' ? 'inherit' : 'publish'];
-        $requested = $this->requestedStatuses($request) ?? $publicOnly;
+        $requested = self::requestedStatuses($request) ?? $publicOnly;
         $beyondPublic = array_diff($requested, $publicOnly) !== [];
         $editCap = TypeCapabilities::edit($type);
         if ($beyondPublic && !$this->caller->can($editCap)) {
@@ -218,7 +218,7 @@ final readonly class PostsController
      *
      * @return list<string>|null
      */
-    private function requestedStatuses(Request $request): ?array
+    public static function requestedStatuses(Request $request): ?array
     {
         if (!$request->has('status')) {
             return null;

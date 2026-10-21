@@ -290,7 +290,7 @@ filters included), the user's capabilities as user_has_cap leaves them,
 and every primitive one granted. "exist" is always granted and
 "do_not_allow" never.
 
-Used by: `Minn\Front\ToolbarMenus`, `Minn\Media\FileTypes`, `Minn\Rest\Caller`, `Minn\Rest\RestMeta`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\EditLinks`, `Minn\Runtime\FileUpload`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\UserCounts`
+Used by: `Minn\Front\ToolbarMenus`, `Minn\Media\FileTypes`, `Minn\Rest\Caller`, `Minn\Rest\MenuItemStatus`, `Minn\Rest\RestMeta`, `Minn\Runtime\AttachmentModel`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\EditLinks`, `Minn\Runtime\FileUpload`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermTags`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\UserCounts`
 
 ### static `current(mixed $capability, mixed ...$args): mixed`
 
@@ -909,7 +909,7 @@ answers with the names it registered.
 
 - const `FOLDED` = `array (   'wp_navigation' => 'edit_theme_options', )` — Types whose whole cap family collapses to a single name.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`
+Used by: `Minn\Auth\Capabilities`, `Minn\Rest\MenuItemStatus`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`
 
 ### static `of(string $type, string $capability): string`
 

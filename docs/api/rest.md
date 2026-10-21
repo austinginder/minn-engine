@@ -44,6 +44,7 @@ the wp/v2 surface: shapes and controllers
 | [`MenuCollectionParams`](#menucollectionparams) | final class | 8 | The menus list's parameters as the reference declares them: a flat |
 | [`MenuItemCollectionParams`](#menuitemcollectionparams) | final class | 39 | The menu items list's parameters as the reference declares them: the |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 75 | The wp/v2/menu-items resource. |
+| [`MenuItemStatus`](#menuitemstatus) | final class | 13 | Menu items listed with a status beyond publish by a caller who may not |
 | [`MenuLists`](#menulists) | final readonly class | 84 | The menus and menu items lists, served as the reference serves them: the |
 | [`MenuObject`](#menuobject) | final readonly class | 41 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
 | [`MenusController`](#menuscontroller) | final readonly class | 262 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
@@ -1774,6 +1775,22 @@ __construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
 The wp/v2 menu-item shape, through rest_prepare_nav_menu_item when a plugin hooks it.
 
 
+## MenuItemStatus
+
+`final class Minn\Rest\MenuItemStatus` · `public/minn/src/Minn/Rest/MenuItemStatus.php` · implements `Minn\Http\Refusal`
+
+Menu items listed with a status beyond publish by a caller who may not
+edit them: refused as the parameter it is ("Status is forbidden."),
+before the caller is judged for the list or its edit context, as the
+reference refuses it, signed out too (register 18300).
+
+Used by: `Minn\Rest\MenusController`
+
+### static `refuse(Minn\Http\Request $request): void`
+
+Throws the status refusal, 401 inside for a signed-out caller and 403 for one signed in.
+
+
 ## MenuLists
 
 `final readonly class Minn\Rest\MenuLists` · `public/minn/src/Minn/Rest/MenuLists.php`
@@ -2317,7 +2334,7 @@ Internals: `meta()` (private, line 108), `navigationView()` (private, line 119),
 
 wp/v2 posts and pages, read side.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\NavigationController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemStatus`, `Minn\Rest\MenuLists`, `Minn\Rest\NavigationController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Rest\PostObject $object, Minn\Rest\Caller $caller)
@@ -2352,6 +2369,14 @@ items do); a shape that answers null leaves the post out.
 - `@param (\Closure(int): bool)|null $readable`
 - `@param array<string, array<string, mixed>>|null $registered`
 
+### static `requestedStatuses(Minn\Http\Request $request): ?array`
+
+The statuses a list request names, null when it names none: a list
+given as one (status[]=draft), its members that are not plain values
+dropped, or a comma-separated string.
+
+- `@return list<string>|null`
+
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/{base:posts|pages}/{id:[\d]+} (public; post {id} must exist; edit context: cap edit_post on {id})`
@@ -2374,7 +2399,7 @@ asked for, and the right password opens the content and the excerpt.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `shaped()` (private, line 112), `totals()` (private, line 140), `readable()` (private, line 159), `visibleStatuses()` (private, line 185), `requestedStatuses()` (private, line 221)
+Internals: `shaped()` (private, line 112), `totals()` (private, line 140), `readable()` (private, line 159), `visibleStatuses()` (private, line 185)
 
 
 ## PostsWriteController

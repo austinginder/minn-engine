@@ -112,7 +112,7 @@ final readonly class MenusController
     }
 
     /** The menu items, as their type's post list (Rest\MenuLists). */
-    #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', edit: new Policy(Access::Cap, 'edit_posts', of: 'nav_menu_item', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit posts in this post type.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit posts in this post type.'), opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']), params: MenuItemCollectionParams::class)]
+    #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', edit: new Policy(Access::Cap, 'edit_posts', of: 'nav_menu_item', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit posts in this post type.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit posts in this post type.'), opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']), params: MenuItemCollectionParams::class, refuse: MenuItemStatus::class)]
     public function listItems(Request $request): Response
     {
         return $this->lists->items($request);
