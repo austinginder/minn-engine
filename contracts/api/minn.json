@@ -104055,6 +104055,7 @@
                 "Minn\\Http\\Subject",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\ExistingPost",
+                "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController"
@@ -105267,6 +105268,7 @@
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
+                "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\CommentEvents",
@@ -105804,6 +105806,7 @@
                 "Minn\\Http\\Route",
                 "Minn\\Http\\RouteMiss",
                 "Minn\\Rest\\ExistingPost",
+                "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -106082,6 +106085,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\TermCollectionParams",
                 "Minn\\Rest\\TermsController"
             ],
@@ -108154,6 +108158,7 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\GlobalStylesObject",
+                "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionCollection",
                 "Minn\\Runtime\\PostWrites",
@@ -109624,6 +109629,7 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\MediaObject",
+                "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -110979,6 +110985,7 @@
                 "Minn\\Rest\\MenuCollectionParams",
                 "Minn\\Rest\\MenuItemCollectionParams",
                 "Minn\\Rest\\MenuLists",
+                "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
@@ -111527,6 +111534,7 @@
                 "Minn\\Http\\Route",
                 "Minn\\Http\\Subject",
                 "Minn\\Rest\\ExistingPost",
+                "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController"
@@ -111860,7 +111868,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/PathArgs.php",
-            "lines": 56,
+            "lines": 71,
             "doc": "The arguments a route's path names, as the reference lists them among the\nroute's args: each capture again, described and typed. Declared, they are\njudged like any other argument, and a value of the same name in the query\n(or a write's body) takes the capture's place before the caller is judged\n(Http\\Router), as on the reference: /wp/v2/users/1?id=abc is refused as an\ninvalid id, and /wp/v2/users/1?id=2 answers user 2. A route lists one only\nwhere the reference lists it (a widget's GET names no id), and in the\nreference's order, which a refusal's list follows.",
             "implements": [],
             "extends": null,
@@ -111870,8 +111878,17 @@
             "usedBy": [
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
+                "Minn\\Rest\\BlocksController",
+                "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\DeclaredTermsController",
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\InstalledThemesController",
+                "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\NavigationController",
                 "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TermsController",
@@ -111887,9 +111904,27 @@
                     "visibility": "public"
                 },
                 {
+                    "name": "POST_ID",
+                    "value": "array (   'id' =>    array (     'description' => 'Unique identifier for the post.',     'type' => 'integer',     'required' => false,   ), )",
+                    "doc": "A post's id: wp/v2/{type base}/{id}, media, blocks, navigation, menu items.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "COMMENT_ID",
+                    "value": "array (   'id' =>    array (     'description' => 'Unique identifier for the comment.',     'type' => 'integer',     'required' => false,   ), )",
+                    "doc": "A comment's id: wp/v2/comments/{id}.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "GLOBAL_STYLES_ID",
+                    "value": "array (   'id' =>    array (     'description' => 'ID of global styles config.',     'type' => 'integer',     'required' => false,   ), )",
+                    "doc": "A global styles config's id: wp/v2/global-styles/{id}, read (its writes name none).",
+                    "visibility": "public"
+                },
+                {
                     "name": "TERM_ID",
                     "value": "array (   'id' =>    array (     'description' => 'Unique identifier for the term.',     'type' => 'integer',     'required' => false,   ), )",
-                    "doc": "A term's id: wp/v2/{taxonomy base}/{id}.",
+                    "doc": "A term's id: wp/v2/{taxonomy base}/{id}, and a menu's.",
                     "visibility": "public"
                 },
                 {
@@ -114721,6 +114756,7 @@
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\ExistingPost",
                 "Minn\\Rest\\Fields",
+                "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RegisteredType",
                 "Minn\\Rest\\Reply",

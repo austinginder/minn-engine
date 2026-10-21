@@ -31,7 +31,7 @@ final readonly class DeclaredTermsController
     }
 
     /** One term of a registered taxonomy. */
-    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base'))]
+    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base'), args: [PathArgs::TERM_ID])]
     public function single(Request $request, string $base, string $id): Response
     {
         return $this->terms->single($request, $base, $id);
@@ -45,16 +45,16 @@ final readonly class DeclaredTermsController
     }
 
     /** Updates a term of a registered taxonomy. */
-    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base', verb: 'edit'))]
-    #[Route(Method::Put, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base', verb: 'edit'))]
-    #[Route(Method::Patch, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base', verb: 'edit'))]
+    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base', verb: 'edit'), args: [PathArgs::TERM_ID])]
+    #[Route(Method::Put, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base', verb: 'edit'), args: [PathArgs::TERM_ID])]
+    #[Route(Method::Patch, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base', verb: 'edit'), args: [PathArgs::TERM_ID])]
     public function update(Request $request, string $base, string $id): Response
     {
         return $this->terms->update($request, $base, $id);
     }
 
     /** Deletes a term of a registered taxonomy. */
-    #[Route(Method::Delete, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base', verb: 'delete'))]
+    #[Route(Method::Delete, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Taxonomy, param: 'base', verb: 'delete'), args: [PathArgs::TERM_ID])]
     public function delete(Request $request, string $base, string $id): Response
     {
         return $this->terms->delete($request, $base, $id);

@@ -132,9 +132,9 @@ final readonly class TermsController
     }
 
     /** Updates a category or tag. */
-    #[Route(Method::Post, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Cap, 'manage_categories', param: 'id', subject: Subject::Term, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
-    #[Route(Method::Put, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Cap, 'manage_categories', param: 'id', subject: Subject::Term, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
-    #[Route(Method::Patch, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Cap, 'manage_categories', param: 'id', subject: Subject::Term, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
+    #[Route(Method::Post, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Cap, 'manage_categories', param: 'id', subject: Subject::Term, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'), args: [PathArgs::TERM_ID])]
+    #[Route(Method::Put, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Cap, 'manage_categories', param: 'id', subject: Subject::Term, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'), args: [PathArgs::TERM_ID])]
+    #[Route(Method::Patch, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Cap, 'manage_categories', param: 'id', subject: Subject::Term, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'), args: [PathArgs::TERM_ID])]
     public function update(Request $request, string $base, string $id): Response
     {
         $config = TermObject::config($base);
@@ -164,7 +164,7 @@ final readonly class TermsController
     }
 
     /** The default category is capability-denied before the force check. */
-    #[Route(Method::Delete, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Cap, 'manage_categories', param: 'id', subject: Subject::Term, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this term.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this term.'))]
+    #[Route(Method::Delete, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Cap, 'manage_categories', param: 'id', subject: Subject::Term, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this term.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this term.'), args: [PathArgs::TERM_ID])]
     public function delete(Request $request, string $base, string $id): Response
     {
         $config = TermObject::config($base);

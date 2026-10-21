@@ -39,9 +39,9 @@ final class ParamCheck
                 continue;
             }
             $verdict = $validate($key, $value);
+            // A callback's plain false is listed without details (probe rest-comment-author; the URL details route).
             if ($verdict === false) {
                 $invalid[$key] = 'Invalid parameter.';
-                $details[$key] = ['code' => 'rest_invalid_param', 'message' => 'Invalid parameter.', 'data' => null];
             } elseif (is_array($verdict)) {
                 [$invalid[$key], $details[$key]] = $verdict;
             }

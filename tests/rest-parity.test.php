@@ -135,5 +135,68 @@ link_parity( 'the index', '/wp-json/' );
 link_parity( 'no such route', '/wp-json/wp/v2/nope' );
 link_parity( 'a refusal', '/wp-json/wp/v2/settings' );
 
+// A path's integer capture sent again in the query is the argument the route reads, on every
+// method: signed out, ?id=abc is refused as an invalid parameter before the caller is judged.
+// The cases come from the reference's index, so a route added later is held to it too.
+// Set aside: the font library's writes, which the engine does not serve (register row 18300).
+$aside = array( '/wp/v2/font-families/(?P<id>[\d]+)', '/wp/v2/font-families/(?P<font_family_id>[\d]+)/font-faces' );
+[ , $index ] = minn_test_fetch( "$REF/?rest_route=/" );
+$same  = 0;
+$cases = 0;
+foreach ( ( json_decode( (string) $index, true )['routes'] ?? array() ) as $route => $info ) {
+	if ( in_array( $route, $aside, true ) || ! preg_match_all( '/\(\?P<(\w+)>/', $route, $names ) ) {
+		continue;
+	}
+	$path = preg_replace( '/\(\?P<\w+>(?:[^()]|\((?:[^()]|\([^()]*\))*\))*\)/', '1', $route );
+	foreach ( $info['endpoints'] as $endpoint ) {
+		foreach ( $names[1] as $name ) {
+			if ( 'integer' !== ( $endpoint['args'][ $name ]['type'] ?? null ) ) {
+				continue;
+			}
+			foreach ( $endpoint['methods'] as $method ) {
+				$answers = array();
+				foreach ( array( $REF, $ENGINE ) as $base ) {
+					$curl = curl_init( "$base/index.php?rest_route=" . rawurlencode( $path ) . "&$name=abc" );
+					curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_TIMEOUT => 20 ) );
+					$body      = json_decode( (string) curl_exec( $curl ), true );
+					$answers[] = curl_getinfo( $curl, CURLINFO_HTTP_CODE ) . ' ' . ( $body['code'] ?? '' );
+				}
+				$cases++;
+				if ( $answers[0] === $answers[1] ) {
+					$same++;
+				} else {
+					$fail++;
+					echo "  FAIL path argument: $method $path?$name=abc ({$answers[0]} vs {$answers[1]})\n";
+				}
+			}
+		}
+	}
+}
+if ( $cases > 0 && $same === $cases ) {
+	$pass++;
+	echo "  ok   path argument: $cases requests naming a path's integer capture in the query answer alike\n";
+}
+
+// A write's body or query naming another id writes that one, judged as that one: an
+// administrator's lands on the post named, an author's aimed at someone else's is refused.
+$wp = static fn ( string $command ): string => trim( (string) shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . " && wp $command 2>/dev/null" ) );
+foreach ( array( 1 => 'an administrator', 3 => 'an author' ) as $uid => $who ) {
+	$session = json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . " $uid" ), true );
+	$seen    = array();
+	foreach ( array( $REF, $ENGINE ) as $base ) {
+		$a = (int) $wp( 'post create --post_title=redirect-a --post_status=draft --post_author=3 --porcelain' );
+		$b = (int) $wp( 'post create --post_title=redirect-b --post_status=draft --post_author=1 --porcelain' );
+		$curl = curl_init( "$base/index.php?rest_route=" . rawurlencode( "/wp/v2/posts/$a" ) );
+		curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_POSTFIELDS => json_encode( array( 'id' => $b, 'title' => 'redirected' ) ), CURLOPT_HTTPHEADER => array( 'Content-Type: application/json', 'X-WP-Nonce: ' . ( $session['nonce'] ?? '' ), 'Cookie: ' . ( $session['cookie_name'] ?? '' ) . '=' . ( $session['cookie'] ?? '' ) ) ) );
+		$body   = json_decode( (string) curl_exec( $curl ), true );
+		$seen[] = array( curl_getinfo( $curl, CURLINFO_HTTP_CODE ), $body['code'] ?? ( ( $body['id'] ?? 0 ) === $b ? 'B' : 'A' ), $wp( "post get $a --field=post_title" ), $wp( "post get $b --field=post_title" ) );
+		$wp( "post delete $a $b --force" );
+	}
+	$wp( 'eval ' . escapeshellarg( 'WP_Session_Tokens::get_instance(' . $uid . ')->destroy(' . var_export( (string) ( $session['token'] ?? '' ), true ) . ');' ) );
+	$ok = $seen[0] === $seen[1];
+	$ok ? $pass++ : $fail++;
+	echo ( $ok ? '  ok   ' : '  FAIL ' ) . "path argument: $who's write naming another post in its body" . ( $ok ? '' : ' (' . json_encode( $seen ) . ')' ) . "\n";
+}
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

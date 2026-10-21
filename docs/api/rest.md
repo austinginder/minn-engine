@@ -49,7 +49,7 @@ the wp/v2 surface: shapes and controllers
 | [`MenusController`](#menuscontroller) | final readonly class | 262 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
-| [`PathArgs`](#pathargs) | final class | 56 | The arguments a route's path names, as the reference lists them among the |
+| [`PathArgs`](#pathargs) | final class | 71 | The arguments a route's path names, as the reference lists them among the |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 287 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 166 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
@@ -2027,7 +2027,10 @@ where the reference lists it (a widget's GET names no id), and in the
 reference's order, which a refusal's list follows.
 
 - const `USER_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the user.',     'type' => 'integer',     'required' => false,   ), )` — A user's id: wp/v2/users/{id}.
-- const `TERM_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the term.',     'type' => 'integer',     'required' => false,   ), )` — A term's id: wp/v2/{taxonomy base}/{id}.
+- const `POST_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the post.',     'type' => 'integer',     'required' => false,   ), )` — A post's id: wp/v2/{type base}/{id}, media, blocks, navigation, menu items.
+- const `COMMENT_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the comment.',     'type' => 'integer',     'required' => false,   ), )` — A comment's id: wp/v2/comments/{id}.
+- const `GLOBAL_STYLES_ID` = `array (   'id' =>    array (     'description' => 'ID of global styles config.',     'type' => 'integer',     'required' => false,   ), )` — A global styles config's id: wp/v2/global-styles/{id}, read (its writes name none).
+- const `TERM_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the term.',     'type' => 'integer',     'required' => false,   ), )` — A term's id: wp/v2/{taxonomy base}/{id}, and a menu's.
 - const `STATUS` = `array (   'status' =>    array (     'description' => 'An alphanumeric identifier for the status.',     'type' => 'string',     'required' => false,   ), )` — A post status's name: wp/v2/statuses/{status}.
 - const `RENDERED_BLOCK` = `array (   'name' =>    array (     'description' => 'Unique registered name for the block.',     'type' => 'string',     'required' => false,   ), )` — The block a render asks for: wp/v2/block-renderer/{name}.
 - const `BLOCK_NAMESPACE` = `array (   'namespace' =>    array (     'description' => 'Block namespace.',     'type' => 'string',     'required' => false,   ), )` — A block type's namespace: wp/v2/block-types/{namespace}.
@@ -2039,7 +2042,7 @@ refusal is the bare "Invalid parameter.".
 - const `SIDEBAR_ID` = `array (   'id' =>    array (     'description' => 'The id of a registered sidebar',     'type' => 'string',     'required' => false,   ), )` — A registered sidebar's id: wp/v2/sidebars/{id}.
 - const `WIDGET_TYPE_ID` = `array (   'id' =>    array (     'description' => 'The widget type id.',     'type' => 'string',     'required' => false,   ), )` — A widget type's id: wp/v2/widget-types/{id}.
 
-Used by: `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\PluginsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
+Used by: `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\DeclaredTermsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
 
 
 ## PluginsController

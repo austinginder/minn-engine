@@ -25,7 +25,6 @@ require __DIR__ . '/lib.php';
  * shrink. A listed request that now agrees fails with "agrees now: drop it".
  */
 const DIVERGENT = [
-    'record: a write' => 'the handler carries no arguments for an edit: Minn publishes one endpoint per route with its query arguments, the reference one per method group with the schema\'s (contracts/runtime.md)',
     'an invalid parameter cleared before the callbacks' => 'a context no schema names leaves no fields on the reference; Minn answers it as view',
 ];
 

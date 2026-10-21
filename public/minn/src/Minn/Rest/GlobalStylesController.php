@@ -43,7 +43,7 @@ final readonly class GlobalStylesController
     }
 
     /** The saved styles by id: anyone who edits posts may read them, editing context needs the theme. */
-    #[Route(Method::Get, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Public, subject: Subject::GlobalStyles, param: 'id'))]
+    #[Route(Method::Get, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Public, subject: Subject::GlobalStyles, param: 'id'), args: [PathArgs::GLOBAL_STYLES_ID])]
     public function single(Request $request, string $id): Response
     {
         $post = $this->post((int) $id);

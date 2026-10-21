@@ -35,7 +35,7 @@ final readonly class DeclaredPostsController
     }
 
     /** A declared type's single post. */
-    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base'))]
+    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base'), args: [PathArgs::POST_ID])]
     public function single(Request $request, string $base, string $id): Response
     {
         return $this->reads->serveSingle($request, $this->slug($base), $id);
@@ -50,16 +50,16 @@ final readonly class DeclaredPostsController
     }
 
     /** Updates a post of a declared type. */
-    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'edit'))]
-    #[Route(Method::Put, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'edit'))]
-    #[Route(Method::Patch, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'edit'))]
+    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'edit'), args: [PathArgs::POST_ID])]
+    #[Route(Method::Put, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'edit'), args: [PathArgs::POST_ID])]
+    #[Route(Method::Patch, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'edit'), args: [PathArgs::POST_ID])]
     public function update(Request $request, string $base, string $id): Response
     {
         return $this->writes->serveUpdate($request, $this->slug($base), $id);
     }
 
     /** Trashes or deletes a post of a declared type. */
-    #[Route(Method::Delete, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'delete'))]
+    #[Route(Method::Delete, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'delete'), args: [PathArgs::POST_ID])]
     public function delete(Request $request, string $base, string $id): Response
     {
         return $this->writes->serveDelete($request, $this->slug($base), $id);

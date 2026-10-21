@@ -23,7 +23,22 @@ final class PathArgs
         'id' => ['description' => 'Unique identifier for the user.', 'type' => 'integer', 'required' => false],
     ];
 
-    /** A term's id: wp/v2/{taxonomy base}/{id}. */
+    /** A post's id: wp/v2/{type base}/{id}, media, blocks, navigation, menu items. */
+    public const POST_ID = [
+        'id' => ['description' => 'Unique identifier for the post.', 'type' => 'integer', 'required' => false],
+    ];
+
+    /** A comment's id: wp/v2/comments/{id}. */
+    public const COMMENT_ID = [
+        'id' => ['description' => 'Unique identifier for the comment.', 'type' => 'integer', 'required' => false],
+    ];
+
+    /** A global styles config's id: wp/v2/global-styles/{id}, read (its writes name none). */
+    public const GLOBAL_STYLES_ID = [
+        'id' => ['description' => 'ID of global styles config.', 'type' => 'integer', 'required' => false],
+    ];
+
+    /** A term's id: wp/v2/{taxonomy base}/{id}, and a menu's. */
     public const TERM_ID = [
         'id' => ['description' => 'Unique identifier for the term.', 'type' => 'integer', 'required' => false],
     ];

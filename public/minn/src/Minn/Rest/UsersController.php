@@ -274,9 +274,9 @@ final readonly class UsersController
     }
 
     /** Updates a user. */
-    #[Route(Method::Post, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this user.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this user.'), body: [Args::USER_EDIT])]
-    #[Route(Method::Put, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this user.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this user.'), body: [Args::USER_EDIT])]
-    #[Route(Method::Patch, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this user.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this user.'), body: [Args::USER_EDIT])]
+    #[Route(Method::Post, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this user.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this user.'), body: [Args::USER_EDIT], args: [PathArgs::USER_ID])]
+    #[Route(Method::Put, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this user.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this user.'), body: [Args::USER_EDIT], args: [PathArgs::USER_ID])]
+    #[Route(Method::Patch, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_user', param: 'id', subject: Subject::User, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this user.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this user.'), body: [Args::USER_EDIT], args: [PathArgs::USER_ID])]
     public function update(Request $request, string $id): Response
     {
         $userId = (int) $id;
@@ -346,7 +346,7 @@ final readonly class UsersController
     }
 
     /** reassign is REQUIRED (checked before the user lookup), and so is force. */
-    #[Route(Method::Delete, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Cap, 'delete_users', param: 'id', subject: Subject::User, signIn: 'rest_user_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this user.', refuse: 'rest_user_cannot_delete', message: 'Sorry, you are not allowed to delete this user.'), args: [Args::USER_DELETE])]
+    #[Route(Method::Delete, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Cap, 'delete_users', param: 'id', subject: Subject::User, signIn: 'rest_user_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this user.', refuse: 'rest_user_cannot_delete', message: 'Sorry, you are not allowed to delete this user.'), args: [PathArgs::USER_ID, Args::USER_DELETE])]
     public function delete(Request $request, string $id): Response
     {
         $userId = (int) $id;
