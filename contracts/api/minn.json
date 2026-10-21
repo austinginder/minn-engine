@@ -25463,7 +25463,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Commands.php",
-            "lines": 147,
+            "lines": 105,
             "doc": "The verbs the engine answers to. Every one is registered for the\nbefore_wp_load phase, which WP-CLI runs before it looks for WordPress,\nand each replaces the bundled subcommand of the same name (a deferred\naddition lands after the bundle and overrides its leaf).",
             "implements": [],
             "extends": null,
@@ -25477,7 +25477,6 @@
                 "Minn\\Cli\\OptionCommand",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\RewriteCommand",
-                "Minn\\Cli\\Runtime",
                 "Minn\\Cli\\SearchReplaceCommand",
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Cli\\UserCommand"
@@ -25489,17 +25488,7 @@
             "constructor": null,
             "cases": [],
             "constants": [],
-            "properties": [
-                {
-                    "name": "siteVerbs",
-                    "type": "array",
-                    "readonly": false,
-                    "static": true,
-                    "doc": "The engine verbs that read the site, so ask that it be installed (core verify-checksums reads files only, as on the reference).",
-                    "visibility": "private",
-                    "promoted": false
-                }
-            ],
+            "properties": [],
             "methods": [
                 {
                     "routes": [],
@@ -25510,30 +25499,8 @@
                     "doc": "Registers every engine verb with WP-CLI in the phase it runs in.",
                     "shapes": [],
                     "params": [],
-                    "line": 21,
-                    "end": 79
-                },
-                {
-                    "routes": [],
-                    "name": "requireInstalled",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "requireInstalled(array $args): void",
-                    "doc": "An engine verb on a site whose database holds no install stops as the\nreference's WP-CLI stops it while WordPress loads, before the verb's\narguments are read: its own message, naming any other table prefix\nthat has an install (WP-CLI's config-create scenarios).",
-                    "shapes": [
-                        "@param list<string> $args"
-                    ],
-                    "params": [
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 89,
-                    "end": 114
+                    "line": 18,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -25577,8 +25544,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 137
+                    "line": 88,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -25614,8 +25581,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 160
+                    "line": 105,
+                    "end": 118
                 }
             ]
         },
@@ -28702,7 +28669,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Runtime.php",
-            "lines": 104,
+            "lines": 98,
             "doc": "The engine, booted for a command: reads the site's wp-config.php (which\nends in wp-settings.php, whose engine boot stops short of serving under\nWP-CLI) so the database constants and table prefix are known.",
             "implements": [],
             "extends": null,
@@ -28722,7 +28689,6 @@
             ],
             "usedBy": [
                 "Minn\\Cli\\AssetUpdate",
-                "Minn\\Cli\\Commands",
                 "Minn\\Cli\\CronCommand",
                 "Minn\\Cli\\DirectorySearch",
                 "Minn\\Cli\\MaintenanceCommand",
@@ -28858,19 +28824,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 41,
-                    "end": 49
-                },
-                {
-                    "routes": [],
-                    "name": "database",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "database(): Minn\\Db",
-                    "doc": "The site's database, its wp-config.php run first when nothing has run it yet; nothing is read from it here.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 52,
-                    "end": 62
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -28881,8 +28835,8 @@
                     "doc": "The full WordPress runtime for a command, booted once: the facade is\ndefined, the site's plugins load as code, and the lifecycle actions\nfire, so a verb can fire a scheduled hook whose callback a plugin\nregistered. The lighter boot() does none of this; only a command that\nneeds the runtime (cron) asks for this, since it loads every plugin.",
                     "shapes": [],
                     "params": [],
-                    "line": 71,
-                    "end": 87
+                    "line": 65,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -28893,8 +28847,8 @@
                     "doc": "The runtime for a command WP-CLI loads WordPress for: WP-CLI has already\nrun wp-config.php, so the engine boots from the constants it defined,\nloads the site's plugins as code (their commands register as they load),\nand hands control back for WP-CLI to run the command.",
                     "shapes": [],
                     "params": [],
-                    "line": 95,
-                    "end": 101
+                    "line": 89,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -28905,8 +28859,8 @@
                     "doc": "PHP's error reporting as WP-CLI's own debug mode sets it when it loads\na site: under --debug every level but deprecations; otherwise the\ndebug constants' level and log (every level with WP_DEBUG, errors and\nwarnings without it); and errors shown on STDERR (Xdebug already sends\nthem there), so a command's output stays its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 110,
-                    "end": 118
+                    "line": 104,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -28925,8 +28879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 128
+                    "line": 115,
+                    "end": 122
                 }
             ]
         },

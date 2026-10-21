@@ -39,7 +39,8 @@ as_wordpress() {
     fi
 }
 as_engine() {
-    if [ -f "$site/wp-config.php" ] && [ -f "$site/wp-settings.php" ] && ! installed; then
+    # Minn installs over a WordPress that is installed: a config over an empty database stays WordPress until `core install`.
+    if [ -f "$site/wp-config.php" ] && [ -f "$site/wp-settings.php" ] && ! installed && "$real" core is-installed --path="$site" > /dev/null 2>&1; then
         [ -e "$site/minn" ] || ln -s "$MINN_ENGINE_DIR" "$site/minn"
         rm -rf "$site-parked"
         php "$minn" install "$site" --force --park="$site-parked" > /dev/null 2>&1

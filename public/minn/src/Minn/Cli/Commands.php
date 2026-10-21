@@ -14,9 +14,6 @@ use WP_CLI;
  */
 final class Commands
 {
-    /** The engine verbs that read the site, so ask that it be installed (core verify-checksums reads files only, as on the reference). */
-    private static array $siteVerbs = [];
-
     /** Registers every engine verb with WP-CLI in the phase it runs in. */
     public static function register(): void
     {
@@ -74,43 +71,6 @@ final class Commands
         self::replace('core verify-checksums', [CoreCommand::class, 'verifyChecksums'], $early);
         WP_CLI::add_hook('before_invoke:core download', [CoreCommand::class, 'guardDownload']);
         WP_CLI::add_command('minn', MinnCommand::class, $early);
-        unset(self::$siteVerbs['core verify-checksums']);
-        WP_CLI::add_hook('before_run_command', [self::class, 'requireInstalled']);
-    }
-
-    /**
-     * An engine verb on a site whose database holds no install stops as the
-     * reference's WP-CLI stops it while WordPress loads, before the verb's
-     * arguments are read: its own message, naming any other table prefix
-     * that has an install (WP-CLI's config-create scenarios).
-     *
-     * @param list<string> $args
-     */
-    public static function requireInstalled(array $args): void
-    {
-        $asked = null;
-        foreach ([3, 2, 1] as $words) {
-            $name = implode(' ', array_slice($args, 0, $words));
-            if (isset(self::$siteVerbs[$name])) {
-                $asked = $name;
-                break;
-            }
-        }
-        $root = defined('ABSPATH') ? ABSPATH : rtrim((string) WP_CLI::get_runner()->find_wp_root(), '/') . '/';
-        if ($asked === null || !is_file($root . 'wp-config.php')) {
-            return;
-        }
-        $db = Runtime::database();
-        $prefix = $db->prefix();
-        $tables = array_map(static fn (array $row): string => (string) reset($row), $db->rows("SHOW TABLES LIKE '%_options'"));
-        if (in_array("{$prefix}options", $tables, true) && (string) $db->value("SELECT option_value FROM {$prefix}options WHERE option_name = 'siteurl' LIMIT 1") !== '') {
-            return;
-        }
-        $others = array_values(array_filter(array_map(static fn (string $table): string => substr($table, 0, -strlen('options')), $tables), static fn (string $found): bool => $found !== $prefix));
-        sort($others);
-        WP_CLI::error($others === []
-            ? "The site you have requested is not installed.\nRun `wp core install` to create database tables."
-            : "The site you have requested is not installed.\nYour table prefix is '{$prefix}'. Found " . (count($others) > 1 ? 'installations' : 'installation') . ' with table prefix: ' . implode(', ', $others) . ".\nOr, run `wp core install` to create database tables.");
     }
 
     /**
@@ -127,7 +87,6 @@ final class Commands
      */
     private static function leaf(string $name, callable|array $callable, array $args, array $bundled = []): void
     {
-        self::$siteVerbs[$name] = true;
         WP_CLI::add_command($name, $callable, $args);
         $parent = explode(' ', $name)[0];
         WP_CLI::add_hook("after_add_command:{$parent}", static function () use ($name, $callable, $args, $bundled): void {
@@ -145,7 +104,6 @@ final class Commands
      */
     private static function replace(string $name, callable|array|string $callable, array $args): void
     {
-        self::$siteVerbs[$name] = true;
         $adding = false;
         $add = static function () use (&$adding, $name, $callable, $args): void {
             if ($adding) {
