@@ -8,6 +8,7 @@ use Minn\Content\RowCache;
 use Minn\Content\Posts;
 use Minn\Content\Users;
 use Minn\Db;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
 
@@ -268,9 +269,11 @@ final readonly class Capabilities
         if (is_string($taxonomy) && $capability === 'delete_term' && in_array($termId, [(int) ($this->db->option("default_{$taxonomy}") ?? 0), (int) ($this->db->option("default_term_{$taxonomy}") ?? 0)], true)) {
             return ['do_not_allow'];
         }
-        $registered = is_string($taxonomy) ? RegisteredCaps::ofTaxonomy($taxonomy) : null;
-        if ($registered === null) {
-            return $taxonomy === null && \Minn\Runtime\Runtime::booted() ? ['do_not_allow'] : null;
+        // A built-in taxonomy is mapped by its registered caps as well: a menu's are edit_theme_options, a link category's manage_links (probe term-caps).
+        $booted = Runtime::booted();
+        $registered = is_string($taxonomy) && $booted ? Registered::taxonomy($taxonomy) : null;
+        if (!is_object($registered)) {
+            return $taxonomy === null && $booted ? ['do_not_allow'] : null;
         }
         return $this->map((string) ($registered->cap->{$capability . 's'} ?? $capability), $userId, $termId);
     }

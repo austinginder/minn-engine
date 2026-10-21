@@ -4852,7 +4852,7 @@
             "summary": "Every classic menu, as the nav_menu taxonomy's term list (Rest\\MenuLists).",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_posts; or anyone, when rest_menu_read_access opens it",
+                "describe": "cap edit_posts; or anyone, when rest_menu_read_access opens it; edit context: cap edit_terms",
                 "cap": "edit_posts",
                 "signIn": {
                     "code": "rest_cannot_view",
@@ -4861,6 +4861,19 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menus."
+                },
+                "edit": {
+                    "access": "Cap",
+                    "describe": "cap edit_terms",
+                    "cap": "edit_terms",
+                    "signIn": {
+                        "code": "rest_forbidden_context",
+                        "message": "Sorry, you are not allowed to edit terms in this taxonomy."
+                    },
+                    "refuse": {
+                        "code": "rest_forbidden_context",
+                        "message": "Sorry, you are not allowed to edit terms in this taxonomy."
+                    }
                 },
                 "opener": "rest_menu_read_access"
             },
@@ -4977,7 +4990,7 @@
             "summary": "One menu.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_posts; menu {id} must exist; or anyone, when rest_menu_read_access opens it",
+                "describe": "cap edit_posts; menu {id} must exist; or anyone, when rest_menu_read_access opens it; edit context: cap edit_term on {id}",
                 "cap": "edit_posts",
                 "param": "id",
                 "subject": "Menu",
@@ -4992,6 +5005,20 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menus."
+                },
+                "edit": {
+                    "access": "Own",
+                    "describe": "cap edit_term on {id}",
+                    "cap": "edit_term",
+                    "param": "id",
+                    "signIn": {
+                        "code": "rest_forbidden_context",
+                        "message": "Sorry, you are not allowed to edit this term."
+                    },
+                    "refuse": {
+                        "code": "rest_forbidden_context",
+                        "message": "Sorry, you are not allowed to edit this term."
+                    }
                 },
                 "opener": "rest_menu_read_access"
             },
@@ -5187,7 +5214,7 @@
             "summary": "The menu items, as their type's post list (Rest\\MenuLists).",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_posts; or anyone, when rest_menu_read_access opens it",
+                "describe": "cap edit_posts; or anyone, when rest_menu_read_access opens it; edit context: cap edit_posts",
                 "cap": "edit_posts",
                 "signIn": {
                     "code": "rest_cannot_view",
@@ -5196,6 +5223,19 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menu items."
+                },
+                "edit": {
+                    "access": "Cap",
+                    "describe": "cap edit_posts",
+                    "cap": "edit_posts",
+                    "signIn": {
+                        "code": "rest_forbidden_context",
+                        "message": "Sorry, you are not allowed to edit posts in this post type."
+                    },
+                    "refuse": {
+                        "code": "rest_forbidden_context",
+                        "message": "Sorry, you are not allowed to edit posts in this post type."
+                    }
                 },
                 "opener": "rest_menu_read_access"
             },
@@ -5211,7 +5251,7 @@
             "summary": "One menu item.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_posts; menu item {id} must exist; or anyone, when rest_menu_read_access opens it",
+                "describe": "cap edit_posts; menu item {id} must exist; or anyone, when rest_menu_read_access opens it; edit context: cap edit_post on {id}",
                 "cap": "edit_posts",
                 "param": "id",
                 "subject": "MenuItem",
@@ -5226,6 +5266,20 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menu items."
+                },
+                "edit": {
+                    "access": "Own",
+                    "describe": "cap edit_post on {id}",
+                    "cap": "edit_post",
+                    "param": "id",
+                    "signIn": {
+                        "code": "rest_forbidden_context",
+                        "message": "Sorry, you are not allowed to edit this post."
+                    },
+                    "refuse": {
+                        "code": "rest_forbidden_context",
+                        "message": "Sorry, you are not allowed to edit this post."
+                    }
                 },
                 "opener": "rest_menu_read_access"
             },

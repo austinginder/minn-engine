@@ -1,0 +1,12 @@
+{
+    "method": "tests/tools/cli-features.php: WP-CLI's bundled feature scenarios (entity-command/features/*.feature) on the reference and on the engine, each on a fresh install",
+    "measured": "2026-10-21",
+    "summary": {
+        "scenarios": 178,
+        "passedReference": 163,
+        "passedEngine": 163,
+        "passedBoth": 163,
+        "setAsideMultisite": 54
+    },
+    "engineFails": []
+}

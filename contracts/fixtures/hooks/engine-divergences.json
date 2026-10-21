@@ -463,7 +463,8 @@
         "probe:db-mail-rewrite-doubts",
         "probe:blocks-rest-widget-doubts",
         "probe:nav-pomo-rest-doubts",
-        "probe:cli-runtime-doubts"
+        "probe:cli-runtime-doubts",
+        "probe:term-caps"
     ],
     "hooks": {
         "_get_page_link": {
@@ -1424,6 +1425,7 @@
             "probe:template-loader-more": "not fired",
             "probe:template-part-lookup": "not fired",
             "probe:template-tags-remaining": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -2194,12 +2196,10 @@
             "probe:template-tags-remaining": "fired here only"
         },
         "delete_option": {
-            "probe:db-mail-rewrite-doubts": "not fired",
-            "probe:template-loading": "not fired"
+            "probe:db-mail-rewrite-doubts": "not fired"
         },
         "delete_option_{*}": {
-            "probe:db-mail-rewrite-doubts": "not fired",
-            "probe:template-loading": "not fired"
+            "probe:db-mail-rewrite-doubts": "not fired"
         },
         "delete_post_{*}": {
             "probe:admin-bar-remaining": "2 arguments, not 4",
@@ -2326,12 +2326,10 @@
         },
         "delete_site_option": {
             "probe:db-mail-rewrite-doubts": "not fired",
-            "probe:template-loading": "not fired",
             "probe:theme-switch": "not fired"
         },
         "delete_site_option_{*}": {
             "probe:db-mail-rewrite-doubts": "not fired",
-            "probe:template-loading": "not fired",
             "probe:theme-switch": "not fired"
         },
         "delete_site_transient_{*}": {
@@ -2418,8 +2416,7 @@
             "probe:wp-comment-query-sql": "not fired"
         },
         "deleted_option": {
-            "probe:db-mail-rewrite-doubts": "not fired",
-            "probe:template-loading": "not fired"
+            "probe:db-mail-rewrite-doubts": "not fired"
         },
         "deleted_post_{*}": {
             "probe:admin-bar-remaining": "2 arguments, not 4",
@@ -2557,7 +2554,6 @@
         },
         "deleted_site_transient": {
             "probe:db-mail-rewrite-doubts": "not fired",
-            "probe:template-loading": "not fired",
             "probe:theme-switch": "not fired"
         },
         "deleted_{*}_meta": {
@@ -5721,6 +5717,7 @@
             "probe:taxonomy-remaining": "fired here only",
             "probe:template-family": "fired here only",
             "probe:template-loader-more": "fired here only",
+            "probe:term-caps": "fired here only",
             "probe:term-insert-filters": "fired here only",
             "probe:term-lookup": "fired here only",
             "probe:term-query-links": "fired here only",
@@ -7009,6 +7006,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -7159,6 +7157,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -7629,6 +7628,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -7779,6 +7779,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -7929,6 +7930,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -8079,6 +8081,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -8229,6 +8232,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -8379,6 +8383,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -8529,6 +8534,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -8679,6 +8685,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -8829,6 +8836,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -8979,6 +8987,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -9129,6 +9138,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -9279,6 +9289,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -9429,6 +9440,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -9643,6 +9655,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -9797,6 +9810,7 @@
             "probe:template-bindings-helpers": "not fired",
             "probe:template-family": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -9952,6 +9966,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -10102,6 +10117,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -10321,6 +10337,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -10471,6 +10488,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -10621,6 +10639,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -10931,6 +10950,7 @@
             "probe:template-loading": "not fired",
             "probe:template-part-lookup": "not fired",
             "probe:template-tags-remaining": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -11464,6 +11484,7 @@
             "probe:template-loading": "not fired",
             "probe:template-part-lookup": "not fired",
             "probe:template-tags-remaining": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -14410,6 +14431,7 @@
             "probe:taxonomy-more": "not fired",
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -15178,6 +15200,7 @@
             "probe:taxonomy-remaining": "not fired",
             "probe:template-bindings-helpers": "not fired",
             "probe:template-loader-more": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:the-content": "not fired",
@@ -16066,6 +16089,7 @@
             "probe:template-loader-more": "not fired",
             "probe:template-loading": "not fired",
             "probe:template-tags-remaining": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:theme-remaining": "not fired",
@@ -16291,6 +16315,7 @@
             "probe:template-getters": "not fired",
             "probe:template-loading": "not fired",
             "probe:template-tags-remaining": "not fired",
+            "probe:term-caps": "not fired",
             "probe:term-insert-filters": "not fired",
             "probe:term-lookup": "not fired",
             "probe:term-query-links": "not fired",

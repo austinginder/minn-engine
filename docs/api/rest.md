@@ -51,7 +51,7 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PathArgs`](#pathargs) | final class | 71 | The arguments a route's path names, as the reference lists them among the |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 287 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PolicyGate`](#policygate) | final readonly class | 166 | Judges a route's policy against the caller, with the reference's |
+| [`PolicyGate`](#policygate) | final readonly class | 176 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 170 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 561 | Builds the wp/v2 post and page objects in the reference's shape: the |
@@ -1850,13 +1850,13 @@ __construct(Minn\Rest\RestUrl $url, Minn\Rest\MenuLists $lists)
 
 ### `listMenus(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/menus (cap edit_posts; or anyone, when rest_menu_read_access opens it)`
+Route: `GET /wp/v2/menus (cap edit_posts; or anyone, when rest_menu_read_access opens it; edit context: cap edit_terms)`
 
 Every classic menu, as the nav_menu taxonomy's term list (Rest\MenuLists).
 
 ### `singleMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/menus/{id:[\d]+} (cap edit_posts; menu {id} must exist; or anyone, when rest_menu_read_access opens it)`
+Route: `GET /wp/v2/menus/{id:[\d]+} (cap edit_posts; menu {id} must exist; or anyone, when rest_menu_read_access opens it; edit context: cap edit_term on {id})`
 
 One menu.
 
@@ -1884,13 +1884,13 @@ Deletes a menu and its items.
 
 ### `listItems(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-items (cap edit_posts; or anyone, when rest_menu_read_access opens it)`
+Route: `GET /wp/v2/menu-items (cap edit_posts; or anyone, when rest_menu_read_access opens it; edit context: cap edit_posts)`
 
 The menu items, as their type's post list (Rest\MenuLists).
 
 ### `singleItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-items/{id:[\d]+} (cap edit_posts; menu item {id} must exist; or anyone, when rest_menu_read_access opens it)`
+Route: `GET /wp/v2/menu-items/{id:[\d]+} (cap edit_posts; menu item {id} must exist; or anyone, when rest_menu_read_access opens it; edit context: cap edit_post on {id})`
 
 One menu item.
 
@@ -2122,8 +2122,9 @@ refusals: a caller who is not signed in gets the policy's sign-in code
 at 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a
 signed-in caller who lacks a capability gets the refusal code at 403.
 A subject the policy names is looked up first and answers its 404
-before any of those. The edit-context policy is judged as well when
-the request asks for it.
+before any of those. The edit-context policy, when the request asks
+for it, is judged before the route's own, as the reference refuses the
+context first (the menus).
 
 Used by: `Minn\Rest\Api`
 
@@ -2142,7 +2143,7 @@ Throws the refusal the policy names, or returns.
 
 - `@param array<string, string> $captures`
 
-Internals: `subject()` (private, line 74), `type()` (private, line 94), `taxonomy()` (private, line 125), `opened()` (private, line 157), `capabilities()` (private, line 163), `own()` (private, line 177)
+Internals: `subject()` (private, line 76), `type()` (private, line 96), `taxonomy()` (private, line 127), `opened()` (private, line 159), `capabilities()` (private, line 165), `registered()` (private, line 179), `own()` (private, line 189)
 
 
 ## PostCollectionParams

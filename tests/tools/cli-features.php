@@ -15,7 +15,7 @@
  * scenario's site and boots the engine for everything after. The scenarios' databases are made with the
  * local server's admin user (Cove's, read from its config at run time).
  *
- *   php tests/tools/cli-features.php [--features=<glob under vendor/wp-cli>]
+ *   php tests/tools/cli-features.php [--features=<globs under vendor/wp-cli, comma-separated>]
  *       [--stacks=reference,engine] [--write] [--show]
  *
  * --features defaults to the entity commands (options, posts, terms, users,
@@ -34,7 +34,10 @@ $options = getopt('', ['features:', 'stacks:', 'write', 'show']);
 $wpcli = rtrim(getenv('MINN_WPCLI_DIR') ?: getenv('HOME') . '/Documents/wp-cli', '/');
 $glob = (string) ($options['features'] ?? 'entity-command/features/*.feature');
 $stacks = explode(',', (string) ($options['stacks'] ?? 'reference,engine'));
-$features = glob("{$wpcli}/vendor/wp-cli/{$glob}") ?: [];
+$features = [];
+foreach (explode(',', $glob) as $one) {
+    array_push($features, ...(glob("{$wpcli}/vendor/wp-cli/" . trim($one)) ?: []));
+}
 if (!is_file("{$wpcli}/vendor/bin/behat") || $features === []) {
     echo "SKIP: no WP-CLI checkout with Behat and features at {$wpcli} ({$glob})\n";
     exit(0);

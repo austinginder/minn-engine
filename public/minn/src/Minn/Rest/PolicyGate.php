@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\RouteMiss;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -20,8 +21,9 @@ use Minn\Runtime\Runtime;
  * at 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a
  * signed-in caller who lacks a capability gets the refusal code at 403.
  * A subject the policy names is looked up first and answers its 404
- * before any of those. The edit-context policy is judged as well when
- * the request asks for it.
+ * before any of those. The edit-context policy, when the request asks
+ * for it, is judged before the route's own, as the reference refuses the
+ * context first (the menus).
  */
 final readonly class PolicyGate
 {
@@ -51,6 +53,9 @@ final readonly class PolicyGate
             }
             return;
         }
+        if ($policy->edit !== null && Context::of($request)->isEdit()) {
+            $this->judge($policy->edit, $request, $captures);
+        }
         match ($policy->access) {
             Access::Public => null,
             Access::SignedIn => $this->caller->require($policy->signIn, $policy->signInMessage, $policy->signInStatus),
@@ -59,9 +64,6 @@ final readonly class PolicyGate
             Access::Type => $this->type($policy, $captures),
             Access::Taxonomy => $this->taxonomy($policy, $captures),
         };
-        if ($policy->edit !== null && Context::of($request)->isEdit()) {
-            $this->judge($policy->edit, $request, $captures);
-        }
     }
 
     /**
@@ -167,10 +169,20 @@ final readonly class PolicyGate
             ? $this->caller->require($policy->refuse, $policy->message)
             : $this->caller->require($policy->signIn, $policy->signInMessage);
         foreach ($policy->capabilities() as $capability) {
-            if (!$this->caller->can($capability)) {
+            if (!$this->caller->can(self::registered($policy, $capability))) {
                 throw new RestError($policy->refuse, $policy->message, 403);
             }
         }
+    }
+
+    /** A capability as the post type or taxonomy the policy names registered it, or as given. */
+    private static function registered(Policy $policy, string $capability): string
+    {
+        if ($policy->of === null) {
+            return $capability;
+        }
+        $object = Registered::postType($policy->of) ?? Registered::taxonomy($policy->of);
+        return is_object($object) ? (string) ($object->cap->{$capability} ?? $capability) : $capability;
     }
 
     /** @param array<string, string> $captures */

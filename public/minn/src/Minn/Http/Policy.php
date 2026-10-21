@@ -29,6 +29,7 @@ final readonly class Policy
      * @param string|null $missingMessage its message; the subject's own when null
      * @param int $signInStatus the status a signed-out caller is refused with (the reference answers some routes' signed-out writes 404, not 401)
      * @param string|null $verb what a Type or Taxonomy route does (create, edit, delete), judged with the type's or taxonomy's own capabilities
+     * @param string|null $of a post type or taxonomy whose registered capabilities $cap is named among (edit_posts, edit_terms), so a plugin's own caps hold
      */
     public function __construct(
         public Access $access = Access::Public,
@@ -46,6 +47,7 @@ final readonly class Policy
         public int $signInStatus = 401,
         public ?string $verb = null,
         public ?array $opener = null,
+        public ?string $of = null,
     ) {
     }
 

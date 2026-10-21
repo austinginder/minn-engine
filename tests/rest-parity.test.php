@@ -177,9 +177,33 @@ if ( $cases > 0 && $same === $cases ) {
 	echo "  ok   path argument: $cases requests naming a path's integer capture in the query answer alike\n";
 }
 
+$wp = static fn ( string $command ): string => trim( (string) shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . " && wp $command 2>/dev/null" ) );
+// The menus' edit context is judged before the menus are: signed out it is the context that is
+// refused, and an author or an editor without edit_theme_options is refused it on a menu or an item.
+$menu = (int) $wp( 'menu create zz-parity-context --porcelain' );
+$item = (int) $wp( "menu item add-custom $menu Zz https://example.com --porcelain" );
+foreach ( array( 0 => 'signed out', 3 => 'an author', 2 => 'an editor' ) as $uid => $who ) {
+	$session = $uid > 0 ? json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . " $uid" ), true ) : null;
+	foreach ( array( '/wp/v2/menus', "/wp/v2/menus/$menu", '/wp/v2/menu-items', "/wp/v2/menu-items/$item" ) as $route ) {
+		$answers = array();
+		foreach ( array( $REF, $ENGINE ) as $base ) {
+			$curl = curl_init( "$base/index.php?rest_route=" . rawurlencode( $route ) . '&context=edit' );
+			curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_HTTPHEADER => null === $session ? array() : array( 'X-WP-Nonce: ' . $session['nonce'], 'Cookie: ' . $session['cookie_name'] . '=' . $session['cookie'] ) ) );
+			$body      = json_decode( (string) curl_exec( $curl ), true );
+			$answers[] = curl_getinfo( $curl, CURLINFO_HTTP_CODE ) . ' ' . ( $body['code'] ?? 'ok' );
+		}
+		$ok = $answers[0] === $answers[1];
+		$ok ? $pass++ : $fail++;
+		echo ( $ok ? '  ok   ' : '  FAIL ' ) . 'menus edit context, ' . $who . ': ' . preg_replace( '/\d+$/', '{id}', $route ) . ( $ok ? " ({$answers[0]})" : " ({$answers[0]} vs {$answers[1]})" ) . "\n";
+	}
+	if ( null !== $session ) {
+		$wp( 'eval ' . escapeshellarg( 'WP_Session_Tokens::get_instance(' . $uid . ')->destroy(' . var_export( (string) $session['token'], true ) . ');' ) );
+	}
+}
+$wp( "menu delete $menu" );
+
 // A write's body or query naming another id writes that one, judged as that one: an
 // administrator's lands on the post named, an author's aimed at someone else's is refused.
-$wp = static fn ( string $command ): string => trim( (string) shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . " && wp $command 2>/dev/null" ) );
 foreach ( array( 1 => 'an administrator', 3 => 'an author' ) as $uid => $who ) {
 	$session = json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . " $uid" ), true );
 	$seen    = array();

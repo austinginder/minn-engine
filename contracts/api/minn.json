@@ -10155,7 +10155,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Capabilities.php",
-            "lines": 277,
+            "lines": 279,
             "doc": "The capability engine: a user's roles from {prefix}capabilities usermeta,\nwhat those roles and the user's own capabilities grant, and the meta-capability mapping for\nedit_post, delete_post, and read_post.",
             "implements": [],
             "extends": null,
@@ -10167,6 +10167,7 @@
                 "Minn\\Content\\RowCache",
                 "Minn\\Content\\Users",
                 "Minn\\Db",
+                "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Serialized"
             ],
@@ -10217,8 +10218,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 26
+                "line": 22,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -10269,8 +10270,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 32
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -10281,8 +10282,8 @@
                     "doc": "The role definitions.",
                     "shapes": [],
                     "params": [],
-                    "line": 35,
-                    "end": 38
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -10303,8 +10304,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 51
+                    "line": 47,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -10325,8 +10326,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 65
+                    "line": 62,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -10347,8 +10348,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 90
+                    "line": 77,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -10381,8 +10382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 113
+                    "line": 100,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -10417,8 +10418,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 136
+                    "line": 121,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -10437,8 +10438,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -10473,8 +10474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 180
+                    "line": 148,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -10502,8 +10503,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 193
+                    "line": 184,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -10538,8 +10539,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 250
+                    "line": 209,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -10574,8 +10575,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 276
+                    "line": 262,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -10604,8 +10605,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 285
+                    "line": 285,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -10624,8 +10625,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 294
+                    "line": 290,
+                    "end": 297
                 }
             ]
         },
@@ -70172,7 +70173,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Policy.php",
-            "lines": 115,
+            "lines": 117,
             "doc": "What a route requires of its caller, as data on the route: the router\nenforces it before the handler runs, so a grep over the attributes is\nthe authorization surface. The two refusals are the reference's: a\ncaller who is not signed in gets the sign-in code (401), a signed-in\ncaller who lacks the capability gets the refusal code (403); how a bad\nnonce is answered belongs to whoever judges the policy. A policy that\nnames a subject has the record looked up first, and answers the\nrecord's 404 before either refusal, which is the reference's order.\n\nWritten inline in the attribute with `new`, which is what an attribute\nargument allows: `policy: new Policy(Access::Cap, 'upload_files',\nrefuse: 'rest_cannot_create', message: '...')`.",
             "implements": [],
             "extends": null,
@@ -70244,7 +70245,7 @@
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL, ?Minn\\Http\\Subject $subject = NULL, ?string $missing = NULL, ?string $missingMessage = NULL, int $signInStatus = 401, ?string $verb = NULL, ?array $opener = NULL)",
+                "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL, ?Minn\\Http\\Subject $subject = NULL, ?string $missing = NULL, ?string $missingMessage = NULL, int $signInStatus = 401, ?string $verb = NULL, ?array $opener = NULL, ?string $of = NULL)",
                 "doc": "",
                 "shapes": [
                     "@param list<string> $caps further capabilities every one of which the caller must hold"
@@ -70354,11 +70355,18 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
+                    },
+                    {
+                        "name": "of",
+                        "type": "?string",
+                        "shape": "string|null",
+                        "default": "NULL",
+                        "doc": "a post type or taxonomy whose registered capabilities $cap is named among (edit_posts, edit_terms), so a plugin's own caps hold"
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 50
+                "line": 34,
+                "end": 52
             },
             "cases": [],
             "constants": [],
@@ -70497,6 +70505,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "of",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -70509,8 +70526,8 @@
                     "doc": "Whether the route is open to anyone with nothing to look up, so the gate need not run at all.",
                     "shapes": [],
                     "params": [],
-                    "line": 53,
-                    "end": 56
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -70521,8 +70538,8 @@
                     "doc": "The 404 code a missing subject earns.",
                     "shapes": [],
                     "params": [],
-                    "line": 59,
-                    "end": 62
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -70533,8 +70550,8 @@
                     "doc": "The 404 message a missing subject earns.",
                     "shapes": [],
                     "params": [],
-                    "line": 65,
-                    "end": 68
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -70547,8 +70564,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 76,
-                    "end": 83
+                    "line": 78,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -70561,8 +70578,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 86,
-                    "end": 113
+                    "line": 88,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -70573,8 +70590,8 @@
                     "doc": "The policy in one line, for the route index and the docs.",
                     "shapes": [],
                     "params": [],
-                    "line": 116,
-                    "end": 134
+                    "line": 118,
+                    "end": 136
                 }
             ]
         },
@@ -111053,7 +111070,7 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/menus (cap edit_posts; or anyone, when rest_menu_read_access opens it)"
+                        "GET /wp/v2/menus (cap edit_posts; or anyone, when rest_menu_read_access opens it; edit context: cap edit_terms)"
                     ],
                     "name": "listMenus",
                     "static": false,
@@ -111075,7 +111092,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menus/{id:[\\d]+} (cap edit_posts; menu {id} must exist; or anyone, when rest_menu_read_access opens it)"
+                        "GET /wp/v2/menus/{id:[\\d]+} (cap edit_posts; menu {id} must exist; or anyone, when rest_menu_read_access opens it; edit context: cap edit_term on {id})"
                     ],
                     "name": "singleMenu",
                     "static": false,
@@ -111186,7 +111203,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menu-items (cap edit_posts; or anyone, when rest_menu_read_access opens it)"
+                        "GET /wp/v2/menu-items (cap edit_posts; or anyone, when rest_menu_read_access opens it; edit context: cap edit_posts)"
                     ],
                     "name": "listItems",
                     "static": false,
@@ -111208,7 +111225,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menu-items/{id:[\\d]+} (cap edit_posts; menu item {id} must exist; or anyone, when rest_menu_read_access opens it)"
+                        "GET /wp/v2/menu-items/{id:[\\d]+} (cap edit_posts; menu item {id} must exist; or anyone, when rest_menu_read_access opens it; edit context: cap edit_post on {id})"
                     ],
                     "name": "singleItem",
                     "static": false,
@@ -112549,8 +112566,8 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PolicyGate.php",
-            "lines": 166,
-            "doc": "Judges a route's policy against the caller, with the reference's\nrefusals: a caller who is not signed in gets the policy's sign-in code\nat 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a\nsigned-in caller who lacks a capability gets the refusal code at 403.\nA subject the policy names is looked up first and answers its 404\nbefore any of those. The edit-context policy is judged as well when\nthe request asks for it.",
+            "lines": 176,
+            "doc": "Judges a route's policy against the caller, with the reference's\nrefusals: a caller who is not signed in gets the policy's sign-in code\nat 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a\nsigned-in caller who lacks a capability gets the refusal code at 403.\nA subject the policy names is looked up first and answers its 404\nbefore any of those. The edit-context policy, when the request asks\nfor it, is judged before the route's own, as the reference refuses the\ncontext first (the menus).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -112568,6 +112585,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\Types",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -112601,8 +112619,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 30
+                "line": 30,
+                "end": 32
             },
             "cases": [],
             "constants": [],
@@ -112645,8 +112663,8 @@
                     "doc": "The judge as the router takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 33,
-                    "end": 36
+                    "line": 35,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -112681,8 +112699,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 65
+                    "line": 45,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -112710,8 +112728,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 84
+                    "line": 76,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -112739,8 +112757,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 116
+                    "line": 96,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -112768,8 +112786,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 148
+                    "line": 127,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -112797,8 +112815,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 161
+                    "line": 159,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -112817,8 +112835,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 174
+                    "line": 165,
+                    "end": 176
+                },
+                {
+                    "routes": [],
+                    "name": "registered",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "registered(Minn\\Http\\Policy $policy, string $capability): string",
+                    "doc": "A capability as the post type or taxonomy the policy names registered it, or as given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Http\\Policy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "capability",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 179,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -112846,8 +112891,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 190
+                    "line": 189,
+                    "end": 202
                 }
             ]
         },
@@ -162341,6 +162386,7 @@
                 "Minn\\Support\\Lists"
             ],
             "usedBy": [
+                "Minn\\Auth\\Capabilities",
                 "Minn\\Auth\\RegisteredCaps",
                 "Minn\\Content\\PostSlugs",
                 "Minn\\Front\\ToolbarMenus",
@@ -162348,6 +162394,7 @@
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\MenuLists",
+                "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostListArgs",
                 "Minn\\Rest\\PostObject",

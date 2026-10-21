@@ -39,14 +39,14 @@ final readonly class MenusController
     }
 
     /** Every classic menu, as the nav_menu taxonomy's term list (Rest\MenuLists). */
-    #[Route(Method::Get, '/wp/v2/menus', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', opener: ['rest_menu_read_access', 'menus', 'nav_menu']), params: MenuCollectionParams::class)]
+    #[Route(Method::Get, '/wp/v2/menus', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', edit: new Policy(Access::Cap, 'edit_terms', of: 'nav_menu', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit terms in this taxonomy.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit terms in this taxonomy.'), opener: ['rest_menu_read_access', 'menus', 'nav_menu']), params: MenuCollectionParams::class)]
     public function listMenus(Request $request): Response
     {
         return $this->lists->menus($request);
     }
 
     /** One menu. */
-    #[Route(Method::Get, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', opener: ['rest_menu_read_access', 'menus', 'nav_menu']), args: [ItemArgs::MENU])]
+    #[Route(Method::Get, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', edit: new Policy(Access::Own, 'edit_term', param: 'id', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this term.'), opener: ['rest_menu_read_access', 'menus', 'nav_menu']), args: [ItemArgs::MENU])]
     public function singleMenu(Request $request, string $id): Response
     {
         $row = $this->lists->menus->find((int) $id);
@@ -112,14 +112,14 @@ final readonly class MenusController
     }
 
     /** The menu items, as their type's post list (Rest\MenuLists). */
-    #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']), params: MenuItemCollectionParams::class)]
+    #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', edit: new Policy(Access::Cap, 'edit_posts', of: 'nav_menu_item', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit posts in this post type.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit posts in this post type.'), opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']), params: MenuItemCollectionParams::class)]
     public function listItems(Request $request): Response
     {
         return $this->lists->items($request);
     }
 
     /** One menu item. */
-    #[Route(Method::Get, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']), args: [ItemArgs::MENU_ITEM])]
+    #[Route(Method::Get, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', edit: new Policy(Access::Own, 'edit_post', param: 'id', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this post.'), opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']), args: [ItemArgs::MENU_ITEM])]
     public function singleItem(Request $request, string $id): Response
     {
         $item = $this->lists->menus->findItem((int) $id);
