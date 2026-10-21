@@ -17,7 +17,7 @@ the wp verbs the engine answers itself
 | [`OptionCommand`](#optioncommand) | final class | 200 | Options, read and written straight to the options table. Serialized |
 | [`PackageInstaller`](#packageinstaller) | final readonly class | 142 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
 | [`PluginCommand`](#plugincommand) | final class | 410 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
-| [`Preflight`](#preflight) | final class | 427 | What a site will and will not get from the engine, before anything |
+| [`Preflight`](#preflight) | final class | 461 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
 | [`Runtime`](#runtime) | final class | 98 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
@@ -898,7 +898,7 @@ Same line Theme::active / ClassicTheme::active draw: a block template
 index (child or parent) is a block theme; otherwise a parent index.php
 is a classic theme.
 
-Internals: `readConfig()` (private, line 103), `env()` (private, line 141), `optionReader()` (private, line 152), `preflightTheme()` (private, line 164), `preflightPlugins()` (private, line 203), `preflightPlugin()` (private, line 272), `some()` (private, line 304), `surveyContent()` (private, line 318), `surveyMarkup()` (private, line 327), `surveyMenus()` (private, line 368), `surveyTables()` (private, line 395), `surveyTypes()` (private, line 414), `light()` (private, line 436), `say()` (private, line 445)
+Internals: `readConfig()` (private, line 106), `moved()` (private, line 149), `env()` (private, line 175), `optionReader()` (private, line 186), `preflightTheme()` (private, line 198), `preflightPlugins()` (private, line 237), `preflightPlugin()` (private, line 306), `some()` (private, line 338), `surveyContent()` (private, line 352), `surveyMarkup()` (private, line 361), `surveyMenus()` (private, line 402), `surveyTables()` (private, line 429), `surveyTypes()` (private, line 448), `light()` (private, line 470), `say()` (private, line 479)
 
 
 ## RewriteCommand

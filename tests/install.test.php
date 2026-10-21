@@ -120,6 +120,25 @@ $homeConfig = $readConfig->invoke(null, "$SCRATCH/home-config.php");
 $homeExpr = $readConfig->invoke(null, "$SCRATCH/home-expr-config.php");
 $check('preflight reads WP_HOME from wp-config.php, and knows when it is set in a way it cannot read', ($homeConfig['WP_HOME'] ?? '') === 'https://example.org' && !isset($homeExpr['WP_HOME']) && $homeExpr['homeInConfig'] === true, json_encode([$homeConfig, $homeExpr]));
 
+// A moved content or plugin folder is refused until Minn supports one (decision 2A, 2026-10-21).
+$moved = new ReflectionMethod(Minn\Cli\Preflight::class, 'moved');
+$movedCases = array(
+    "<?php define( 'WP_CONTENT_DIR', __DIR__ . '/wp-content' ); define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );" => array(),
+    "<?php define( \"WP_CONTENT_DIR\", dirname( __FILE__ ) . \"/wp-content\" );" => array(),
+    "<?php // define( 'WP_CONTENT_DIR', '/srv/app' );\n/* define( 'WP_PLUGIN_DIR', '/srv/plugins' ); */" => array(),
+    "<?php define( 'WP_CONTENT_DIR', __DIR__ . '/app' );" => array('WP_CONTENT_DIR'),
+    "<?php Config::define( 'WP_CONTENT_DIR', \$webroot_dir . Config::get( 'CONTENT_DIR' ) );" => array('WP_CONTENT_DIR'),
+    "<?php define( 'WPMU_PLUGIN_DIR', '/srv/mu' ); define( 'WP_PLUGIN_DIR', '/srv/plugins' );" => array('WPMU_PLUGIN_DIR', 'WP_PLUGIN_DIR'),
+);
+$movedSeen = array_map(static fn (string $source): array => $moved->invoke(null, $source), array_keys($movedCases));
+$check('preflight finds a moved content or plugin folder (Bedrock\'s Config::define too), not a default spelling or a comment', $movedSeen === array_values($movedCases), json_encode($movedSeen));
+$movedRoot = "$SCRATCH/moved";
+mkdir("$movedRoot/wp-content", 0755, true);
+file_put_contents("$movedRoot/wp-config.php", "<?php\ndefine( 'DB_NAME', 'x' );\ndefine( 'WP_CONTENT_DIR', __DIR__ . '/app' );\n");
+$movedBefore = $tree($movedRoot);
+[$out, $code] = $minn('install ' . escapeshellarg($movedRoot));
+$check('install refuses a site whose wp-config.php moves the content folder, and changes nothing', $code === 1 && str_contains($out, '[RED] wp-config.php moves a folder (WP_CONTENT_DIR)') && str_contains($out, 'Install refused (RED)') && $tree($movedRoot) === $movedBefore, $out);
+
 [$out, $code] = $minn('install ' . escapeshellarg($WEBROOT) . ' --park=' . escapeshellarg($PARK));
 $check('install succeeds', $code === 0 && str_contains($out, 'Installed.'), $out);
 $check('core files are parked', is_file("$PARK/wp-load.php") && is_dir("$PARK/wp-admin") && is_file("$PARK/wp-includes/js/wp.js") && is_file("$PARK/index.php"));

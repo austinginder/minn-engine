@@ -28012,7 +28012,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Preflight.php",
-            "lines": 427,
+            "lines": 461,
             "doc": "What a site will and will not get from the engine, before anything\nmoves: the config it can read, the database it can reach, the theme's\nkind, the plugins the extensions cover, and the content survey (the\nshortcodes, third-party blocks, menus, extra tables, and extra post\ntypes in the database). Every finding is a light; the worst decides.",
             "implements": [],
             "extends": null,
@@ -28116,7 +28116,7 @@
                         }
                     ],
                     "line": 42,
-                    "end": 78
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -28142,8 +28142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 100
+                    "line": 90,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -28162,8 +28162,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 135
+                    "line": 106,
+                    "end": 139
+                },
+                {
+                    "routes": [],
+                    "name": "moved",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "moved(string $source): array",
+                    "doc": "The folder constants the config sets away from their places beside it\n(decision 2A, 2026-10-21): WP_CONTENT_DIR, WP_PLUGIN_DIR or\nWPMU_PLUGIN_DIR defined, Bedrock's Config::define included, to anything\nbut their default spelled one of the usual ways. Comments are left out.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 149,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -28189,8 +28211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 149
+                    "line": 175,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -28218,8 +28240,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 161
+                    "line": 186,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -28247,8 +28269,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 193
+                    "line": 198,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -28277,8 +28299,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 262
+                    "line": 237,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -28327,8 +28349,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 298
+                    "line": 306,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -28349,8 +28371,8 @@
                             "doc": "the first five, and how many more"
                         }
                     ],
-                    "line": 304,
-                    "end": 307
+                    "line": 338,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -28401,8 +28423,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 324
+                    "line": 352,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -28444,8 +28466,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 366
+                    "line": 361,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -28471,8 +28493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 368,
-                    "end": 393
+                    "line": 402,
+                    "end": 427
                 },
                 {
                     "routes": [],
@@ -28498,8 +28520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 395,
-                    "end": 411
+                    "line": 429,
+                    "end": 445
                 },
                 {
                     "routes": [],
@@ -28534,8 +28556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 434
+                    "line": 448,
+                    "end": 468
                 },
                 {
                     "routes": [],
@@ -28561,8 +28583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 443
+                    "line": 470,
+                    "end": 477
                 },
                 {
                     "routes": [],
@@ -28581,8 +28603,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 445,
-                    "end": 448
+                    "line": 479,
+                    "end": 482
                 }
             ]
         },

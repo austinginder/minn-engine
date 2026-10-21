@@ -49,6 +49,9 @@ final class Preflight
         $state = Installer::state($root);
         $this->light($state === 'wordpress' ? 'GREEN' : ($state === 'minn' ? 'RED' : 'AMBER'), "webroot is {$state}");
         $config = self::readConfig("{$root}/wp-config.php");
+        foreach ($config['moved'] as $constant) {
+            $this->light('RED', "wp-config.php moves a folder ({$constant}): Minn reads wp-content beside wp-config.php and does not support a moved folder yet");
+        }
         if (!isset($config['DB_NAME'], $config['DB_USER'], $config['DB_HOST'])) {
             $this->light('RED', 'wp-config.php has no database constants the engine can read');
             return $this->worst;
@@ -131,7 +134,38 @@ final class Preflight
         if (preg_match('/\$table_prefix\s*=\s*[\'"]([A-Za-z0-9_]+)[\'"]/', $source, $p)) {
             $config['prefix'] = $p[1];
         }
+        $config['moved'] = self::moved($source);
         return $config;
+    }
+
+    /**
+     * The folder constants the config sets away from their places beside it
+     * (decision 2A, 2026-10-21): WP_CONTENT_DIR, WP_PLUGIN_DIR or
+     * WPMU_PLUGIN_DIR defined, Bedrock's Config::define included, to anything
+     * but their default spelled one of the usual ways. Comments are left out.
+     *
+     * @return list<string>
+     */
+    private static function moved(string $source): array
+    {
+        $code = '';
+        foreach (token_get_all(str_contains($source, '<?php') ? $source : "<?php {$source}") as $token) {
+            $code .= is_array($token) ? (in_array($token[0], [T_COMMENT, T_DOC_COMMENT], true) ? '' : $token[1]) : $token;
+        }
+        $defaults = [
+            'WP_CONTENT_DIR' => ["__DIR__.'/wp-content'", "dirname(__FILE__).'/wp-content'", "ABSPATH.'wp-content'"],
+            'WP_PLUGIN_DIR' => ["WP_CONTENT_DIR.'/plugins'"],
+            'WPMU_PLUGIN_DIR' => ["WP_CONTENT_DIR.'/mu-plugins'"],
+        ];
+        preg_match_all('/(?:Config::)?define\s*\(\s*[\'"](WP_CONTENT_DIR|WP_PLUGIN_DIR|WPMU_PLUGIN_DIR)[\'"]\s*,\s*(.+?)\s*\)\s*;/s', $code, $found, PREG_SET_ORDER);
+        $moved = [];
+        foreach ($found as [, $constant, $value]) {
+            $spelled = str_replace(['"', ' ', "\t", "\n"], ["'", '', '', ''], $value);
+            if (!in_array($spelled, $defaults[$constant], true)) {
+                $moved[] = $constant;
+            }
+        }
+        return array_values(array_unique($moved));
     }
 
     /**
