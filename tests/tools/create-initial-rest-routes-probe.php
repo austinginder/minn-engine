@@ -6,7 +6,8 @@
  * a controller the engine leaves out on purpose (Site Health, the editor's
  * block and pattern directories, the font library, the site export, the
  * navigation fallback, template autosaves and revisions) are set aside by
- * their handler's class, and so is a namespace left with only its index
+ * their handler's class (or, on a stack that serves them itself, their
+ * address), and so is a namespace left with only its index
  * (the engine has none of them, so how many is not compared).
  * Only the namespaces the function registers are
  * listed (wp/v2, wp-block-editor/v1, wp-site-health/v1, wp-abilities/v1):
@@ -42,7 +43,8 @@ foreach ($wp_rest_server->get_routes() as $route => $endpoints) {
             $methods[$method] = true;
         }
     }
-    if (array_intersect($classes, $left) !== []) {
+    // The same routes by their address, for a stack whose handlers are not those classes (the engine serves them itself).
+    if (array_intersect($classes, $left) !== [] || preg_match('#^/(wp-site-health/v1/|wp/v2/font-(families|collections)|wp-block-editor/v1/(export|navigation-fallback)|wp/v2/(templates|template-parts)/.*/(revisions|autosaves)|wp/v2/(block|pattern)-directory/)#', (string) $route) === 1) {
         continue;
     }
     $namespace = preg_match('#^/([^/]+/v\d+)#', (string) $route, $m) === 1 ? $m[1] : '';

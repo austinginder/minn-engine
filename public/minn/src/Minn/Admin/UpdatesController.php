@@ -25,10 +25,9 @@ final readonly class UpdatesController
     }
 
     /** The plugin update offers. */
-    #[Route(Method::Get, '/minn-admin/v1/plugin-updates', policy: new Policy(Access::SignedIn))]
+    #[Route(Method::Get, '/minn-admin/v1/plugin-updates', policy: new Policy(Access::Floor, caps: ['update_plugins']))]
     public function pluginUpdates(Request $request): Response
     {
-        $this->caller->requireCap('update_plugins');
         return Reply::answer($request, [
             'updates' => (object) $this->updates->pluginOffers(),
             'themes' => (object) ($this->caller->can('update_themes') ? $this->updates->themeOffers() : []),
@@ -40,10 +39,9 @@ final readonly class UpdatesController
     }
 
     /** Icons and details for the installed plugins. */
-    #[Route(Method::Get, '/minn-admin/v1/plugin-meta', policy: new Policy(Access::SignedIn))]
+    #[Route(Method::Get, '/minn-admin/v1/plugin-meta', policy: new Policy(Access::Floor, caps: ['activate_plugins']))]
     public function pluginMeta(Request $request): Response
     {
-        $this->caller->requireCap('activate_plugins');
         // Keyed by plugin file, so an object; with nothing to list, an empty list as the reference prints it.
         return Reply::answer($request, $this->updates->pluginMeta());
     }

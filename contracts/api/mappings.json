@@ -9,7 +9,7 @@
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8676,
-        "minnMethods": 1545,
+        "minnMethods": 1546,
         "leafLinesOver15": 8
     },
     "functions": {
@@ -12446,7 +12446,10 @@
             "file": "classes/WP_Font_Library.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::remember"
+            ],
             "composes": []
         },
         "WP_Font_Library::is_collection_registered": {

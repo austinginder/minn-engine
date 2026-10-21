@@ -50,8 +50,8 @@ final readonly class EditorController
         return Reply::answer($request, ['unlocked' => true]);
     }
 
-    /** No theme, no page templates: an honest empty set. */
-    #[Route(Method::Get, '/minn-admin/v1/templates', policy: new Policy(Access::Floor))]
+    /** No theme, no page templates, for any post type asked for: an honest empty set. */
+    #[Route(Method::Get, '/minn-admin/v1/templates', policy: new Policy(Access::Floor), args: [AdminArgs::TEMPLATES])]
     public function templates(Request $request): Response
     {
         return Reply::answer($request, ['templates' => []]);

@@ -6,6 +6,8 @@ namespace Minn\Rest;
 
 use Minn\Http\Subject;
 use Minn\Http\Access;
+use Minn\Http\Args;
+use Minn\Http\RevisionArgs;
 use Minn\Content\PostRecord;
 use Minn\Content\Revisions;
 use Minn\Http\Method;
@@ -108,32 +110,29 @@ final readonly class GlobalStylesController
         return Reply::answer($request, $this->object->theme($this->theme->settings(), $this->theme->styles(), $stylesheet));
     }
 
-    /** The revisions of the saved styles, newest first; all of them unless per_page pages them. */
-    #[Route(Method::Get, '/wp/v2/global-styles/{parent:[\d]+}/revisions', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'parent', subject: Subject::GlobalStylesParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'))]
+    /** The revisions of the saved styles, newest first; all of them unless per_page pages them, an offset where the page starts (RevisionCollection::paged). */
+    #[Route(Method::Get, '/wp/v2/global-styles/{parent:[\d]+}/revisions', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'parent', subject: Subject::GlobalStylesParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'), args: [RevisionArgs::PARENT, Args::CONTEXT, RevisionArgs::STYLES_COLLECTION])]
     public function revisions(Request $request, string $parent): Response
     {
         $rows = PostRecord::fromRows($this->revisions->revisionsOf($this->requireParent((int) $parent)));
-        $perPage = (int) $request->query('per_page', '0');
-        $page = max(1, (int) $request->query('page', '1'));
-        $pages = $perPage > 0 ? (int) ceil(count($rows) / $perPage) : 1;
-        // A page past the end is an error only when there are revisions to page through.
-        if ($rows !== [] && $page > $pages) {
-            throw new RestError('rest_revision_invalid_page_number', 'The page number requested is larger than the number of pages available.', 400);
-        }
-        $shown = $perPage > 0 ? array_slice($rows, ($page - 1) * $perPage, $perPage) : $rows;
-        return Reply::list(array_map($this->object->revision(...), $shown), count($rows), $pages, Fields::fromQuery($request->query));
+        [$shown, $total, $pages] = RevisionCollection::paged($request, $rows);
+        $context = Context::of($request);
+        return Reply::list(array_map(fn (PostRecord $row): array => $this->revisionObject($row, $context), $shown), $total, $pages, Fields::fromQuery($request->query));
     }
 
     /** One revision of the saved styles. */
-    #[Route(Method::Get, '/wp/v2/global-styles/{parent:[\d]+}/revisions/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'parent', subject: Subject::GlobalStylesParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'))]
+    #[Route(Method::Get, '/wp/v2/global-styles/{parent:[\d]+}/revisions/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'parent', subject: Subject::GlobalStylesParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'), args: [RevisionArgs::STYLES_PARENT, RevisionArgs::STYLES_ID, Args::CONTEXT])]
     public function revision(Request $request, string $parent, string $id): Response
     {
-        foreach (PostRecord::fromRows($this->revisions->revisionsOf($this->requireParent((int) $parent))) as $revision) {
-            if ($revision->id === (int) $id) {
-                return Reply::answer($request, $this->object->revision($revision));
-            }
-        }
-        throw new RestError('rest_post_invalid_id', 'Invalid revision ID.', 404);
+        $revision = RevisionCollection::ofParent($this->revisions->one((int) $id), $this->requireParent((int) $parent));
+        return Reply::answer($request, $this->revisionObject($revision, Context::of($request)));
+    }
+
+    /** A revision in the asked context: its embed view is who saved it, when, and whose revision it is. */
+    private function revisionObject(PostRecord $revision, Context $context): array
+    {
+        $object = $this->object->revision($revision);
+        return $context === Context::Embed ? array_intersect_key($object, array_flip(['author', 'date', 'id', 'parent'])) : $object;
     }
 
     private function post(int $id): PostRecord

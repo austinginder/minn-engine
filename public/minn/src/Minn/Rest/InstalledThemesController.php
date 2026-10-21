@@ -42,7 +42,7 @@ final readonly class InstalledThemesController
     }
 
     /** The installed themes the caller may see. */
-    #[Route(Method::Get, '/wp/v2/themes', policy: new Policy(Access::Public), args: [Args::CONTEXT, self::STATUS])]
+    #[Route(Method::Get, '/wp/v2/themes', policy: new Policy(Access::Public), args: [self::STATUS])]
     public function list(Request $request): Response
     {
         self::requireRuntime();
@@ -54,7 +54,8 @@ final readonly class InstalledThemesController
         }
         $items = [];
         foreach (Themes::all() as $stylesheet => $theme) {
-            if ($statuses === [] || in_array(self::status((string) $stylesheet), $statuses, true)) {
+            // A status asked for narrows the list even when it names none, as on the reference.
+            if (!array_key_exists('status', $request->query) || in_array(self::status((string) $stylesheet), $statuses, true)) {
                 $items[] = $this->item($theme);
             }
         }
@@ -62,7 +63,7 @@ final readonly class InstalledThemesController
     }
 
     /** One theme by its stylesheet. */
-    #[Route(Method::Get, '/wp/v2/themes/{stylesheet:[^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/themes/{stylesheet:[^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?}', policy: new Policy(Access::Public), args: [PathArgs::STYLESHEET])]
     public function single(Request $request, string $stylesheet): Response
     {
         self::requireRuntime();

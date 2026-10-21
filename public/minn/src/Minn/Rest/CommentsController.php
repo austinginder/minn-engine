@@ -10,6 +10,7 @@ use Minn\Objects\RestRequest;
 use Minn\Runtime\CommentEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
+use Minn\Http\ItemArgs;
 use Minn\Http\Subject;
 use Minn\Http\Access;
 use Minn\Content\PostRecord;
@@ -88,8 +89,8 @@ final readonly class CommentsController
         return [$total, $perPage > 0 ? (int) ceil($total / $perPage) : 0];
     }
 
-    /** One comment, if the caller may read it. */
-    #[Route(Method::Get, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Comment, param: 'id'), args: [Args::CONTEXT])]
+    /** One comment, if the caller may read it: one on a protected post only with the post's password, or for one who may edit the post. */
+    #[Route(Method::Get, '/wp/v2/comments/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Comment, param: 'id'), args: [ItemArgs::COMMENT])]
     public function single(Request $request, string $id): Response
     {
         $comment = $this->plainComment((int) $id);
@@ -98,7 +99,9 @@ final readonly class CommentsController
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
         }
         $post = $this->posts->find($comment->postId);
-        if (!$moderator && ($post === null || !$post->isPublished() || $post->isProtected()) && !$this->caller->can('edit_post', $comment->postId)) {
+        $password = is_string($request->query['password'] ?? null) ? $request->query['password'] : '';
+        $locked = $post !== null && $post->isProtected() && !hash_equals($post->password, $password);
+        if (!$moderator && ($post === null || !$post->isPublished() || $locked) && !$this->caller->can('edit_post', $comment->postId)) {
             throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read this comment.');
         }
         $context = Context::of($request);

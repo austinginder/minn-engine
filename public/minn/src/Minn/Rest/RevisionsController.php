@@ -7,6 +7,8 @@ namespace Minn\Rest;
 use Minn\Http\Policy;
 use Minn\Http\Subject;
 use Minn\Http\Access;
+use Minn\Http\Args;
+use Minn\Http\RevisionArgs;
 use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Posts;
@@ -52,27 +54,37 @@ final readonly class RevisionsController
     ) {
     }
 
-    /** Real revisions, not autosaves. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions', policy: new Policy(Access::Own, 'edit_post', param: 'parent', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'))]
+    /** Every revision of the parent, its autosaves among them, filtered, ordered and paged as the request asks (RevisionCollection). */
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions', policy: new Policy(Access::Own, 'edit_post', param: 'parent', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'), args: [RevisionArgs::PARENT, Args::CONTEXT, RevisionArgs::COLLECTION])]
     public function revisions(Request $request, string $base, string $parent): Response
     {
         $this->requireParent((int) $parent, $base);
-        $rows = $this->revisions->allOf((int) $parent);
-        return Reply::list(array_map(fn (array $r) => $this->object($r), $rows), count($rows), 1, Fields::fromQuery($request->query));
+        $context = Context::of($request);
+        [$rows, $total, $pages] = RevisionCollection::paged($request, RevisionCollection::filtered($request, PostRecord::fromRows($this->revisions->allOf((int) $parent))));
+        return Reply::list(array_map(fn (PostRecord $r) => $this->object($r, $context), $rows), $total, $pages, Fields::fromQuery($request->query));
     }
 
     /** One revision of a post, page, or block. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'parent', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'))]
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'parent', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'), args: [RevisionArgs::PARENT, RevisionArgs::ID, Args::CONTEXT])]
     public function revision(Request $request, string $base, string $parent, string $id): Response
     {
         $this->requireParent((int) $parent, $base);
-        foreach ($this->revisions->allOf((int) $parent) as $row) {
-            if ((int) $row['ID'] === (int) $id) {
-                $context = Context::of($request)->isEdit() ? Context::Edit : Context::View;
-                return Reply::item($this->object($row, $context), Fields::fromQuery($request->query));
-            }
+        $revision = RevisionCollection::ofParent($this->revisions->one((int) $id), (int) $parent);
+        return self::selected($this->object($revision, Context::of($request)), Fields::fromQuery($request->query));
+    }
+
+    /**
+     * One revision or autosave under the request's _fields: its links ride
+     * along exactly when the parent field is asked for, as the reference
+     * links one to its parent only then (and _links alone shows nothing).
+     */
+    private static function selected(array $object, ?Fields $fields): Response
+    {
+        if ($fields === null || $fields->deferred) {
+            return Reply::item($object, $fields);
         }
-        throw new RestError('rest_post_invalid_id', 'Invalid revision ID.', 404);
+        $shown = $fields->apply(array_diff_key($object, ['_links' => true]));
+        return Reply::item(in_array('parent', $fields->paths, true) && isset($object['_links']) ? $shown + ['_links' => $object['_links']] : $shown, null);
     }
 
     /**
@@ -80,7 +92,7 @@ final readonly class RevisionsController
      * reference grants deleting a revision to nobody by default, so a
      * request that passes the parent's check is refused at the revision's.
      */
-    #[Route(Method::Delete, '/wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions/{id:[\d]+}', policy: new Policy(Access::Own, 'delete_post', param: 'parent', subject: Subject::PostParent, signIn: 'rest_cannot_delete', signInMessage: self::DELETE_REFUSAL, refuse: 'rest_cannot_delete', message: self::DELETE_REFUSAL))]
+    #[Route(Method::Delete, '/wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions/{id:[\d]+}', policy: new Policy(Access::Own, 'delete_post', param: 'parent', subject: Subject::PostParent, signIn: 'rest_cannot_delete', signInMessage: self::DELETE_REFUSAL, refuse: 'rest_cannot_delete', message: self::DELETE_REFUSAL), args: [RevisionArgs::PARENT, RevisionArgs::ID, RevisionArgs::FORCE])]
     public function deleteRevision(Request $request, string $base, string $parent, string $id): Response
     {
         $this->caller->require('rest_cannot_delete', self::DELETE_REFUSAL);
@@ -111,13 +123,16 @@ final readonly class RevisionsController
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
-    /** The autosaves of a post. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{id:[\d]+}/autosaves', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view autosaves of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view autosaves of this post.'))]
+    /** The autosaves of a post, every author's, in the asked context; the edit view names each one's preview. */
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{id:[\d]+}/autosaves', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view autosaves of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view autosaves of this post.'), args: [RevisionArgs::AUTOSAVE_PARENT, Args::CONTEXT])]
     public function autosaves(Request $request, string $base, string $id): Response
     {
         $this->requireParent((int) $id, $base);
-        $rows = $this->revisions->autosavesOf((int) $id);
-        $objects = array_map(fn (array $r) => $this->object($r), $rows);
+        $context = Context::of($request);
+        $objects = array_map(
+            fn (PostRecord $row): array => $context->isEdit() ? $this->withPreviewLink($this->object($row, $context), (int) $id) : $this->object($row, $context),
+            PostRecord::fromRows($this->revisions->autosavesOf((int) $id)),
+        );
         $fields = Fields::fromQuery($request->query);
         if ($fields !== null) {
             $objects = array_map(static fn (array $o) => $fields->apply($o), $objects);
@@ -125,18 +140,18 @@ final readonly class RevisionsController
         return Reply::item($objects, null);
     }
 
-    /** The caller's autosave of the parent, whichever autosave id is asked for; the edit view names its preview. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{parent:[\d]+}/autosaves/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'parent', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'))]
+    /** The parent's newest autosave, whoever saved it and whichever autosave id is asked for; the edit view names its preview. */
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{parent:[\d]+}/autosaves/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'parent', subject: Subject::PostParent, signIn: 'rest_cannot_read', signInMessage: 'Sorry, you are not allowed to view revisions of this post.', refuse: 'rest_cannot_read', message: 'Sorry, you are not allowed to view revisions of this post.'), args: [RevisionArgs::AUTOSAVE_PARENT, RevisionArgs::AUTOSAVE_ID, Args::CONTEXT])]
     public function autosave(Request $request, string $base, string $parent, string $id): Response
     {
-        $userId = $this->requireParent((int) $parent, $base);
-        $mine = array_values(array_filter(PostRecord::fromRows($this->revisions->autosavesOf((int) $parent)), static fn (PostRecord $row) => $row->authorId === $userId))[0] ?? null;
-        if ($mine === null) {
+        $this->requireParent((int) $parent, $base);
+        $newest = PostRecord::fromRows($this->revisions->autosavesOf((int) $parent))[0] ?? null;
+        if ($newest === null) {
             throw new RestError('rest_post_no_autosave', 'There is no autosave revision for this post.', 404);
         }
-        $context = Context::of($request)->isEdit() ? Context::Edit : Context::View;
-        $object = $this->object($mine, $context);
-        return Reply::item($context->isEdit() ? $this->withPreviewLink($object, (int) $parent) : $object, Fields::fromQuery($request->query));
+        $context = Context::of($request);
+        $object = $this->object($newest, $context);
+        return self::selected($context->isEdit() ? $this->withPreviewLink($object, (int) $parent) : $object, Fields::fromQuery($request->query));
     }
 
     /** One autosave slot per author; the reply carries a preview link. */
@@ -189,39 +204,62 @@ final readonly class RevisionsController
         return $this->caller->can('unfiltered_html') ? $markup : Kses::post($markup);
     }
 
-    /** One revision row as wp/v2 serves it (autosaves and revisions alike). */
+    /** One revision row as wp/v2 serves it (autosaves and revisions alike), in the view, edit or embed shape. */
     public function object(array|PostRecord $r, Context $context = Context::View): array
     {
+        $record = $r instanceof PostRecord ? $r : PostRecord::fromRow($r);
         $withPreview = $context->isEdit();
-        $id = (int) $r['ID'];
-        $parent = (int) $r['post_parent'];
-        $parentType = $this->posts->find($parent)?->type ?? 'post';
-        $guid = $this->url->home('/?p=' . $id);
-        $excerpt = $r['post_excerpt'] === '' ? '' : Blocks::paragraphs((string) $r['post_excerpt']);
+        $parentType = $this->posts->find($record->parentId)?->type ?? 'post';
+        $guid = $this->url->home('/?p=' . $record->id);
+        $excerpt = $record->excerpt === '' ? '' : Blocks::paragraphs($record->excerpt);
         $dual = static fn (string $raw, string $rendered) => $withPreview ? ['raw' => $raw, 'rendered' => $rendered] : ['rendered' => $rendered];
         // A pattern is edited, never viewed, so its revisions carry the title and content raw in either context.
         $blockDual = static fn (string $raw, string $rendered) => $withPreview || $parentType === 'wp_block' ? ['raw' => $raw, 'rendered' => $rendered] : ['rendered' => $rendered];
 
         $object = [
-            'author' => (int) $r['post_author'],
-            'date' => PostObject::date((string) $r['post_date']),
-            'date_gmt' => PostObject::date((string) $r['post_date_gmt']),
-            'id' => $id,
-            'modified' => PostObject::date((string) $r['post_modified']),
-            'modified_gmt' => PostObject::date((string) $r['post_modified_gmt']),
-            'parent' => $parent,
-            'slug' => $r['post_name'],
+            'author' => $record->authorId,
+            'date' => PostObject::date($record->date),
+            'date_gmt' => PostObject::date($record->dateGmt),
+            'id' => $record->id,
+            'modified' => PostObject::date($record->modified),
+            'modified_gmt' => PostObject::date($record->modifiedGmt),
+            'parent' => $record->parentId,
+            'slug' => $record->slug,
             // A menu item's revision shows its guid raw in either context (probe rest-autosaves).
             'guid' => $withPreview || $parentType === 'nav_menu_item' ? ['rendered' => $guid, 'raw' => $guid] : ['rendered' => $guid],
-            'title' => $blockDual((string) $r['post_title'], Texturize::html((string) $r['post_title'])),
-            'content' => $blockDual((string) $r['post_content'], Blocks::render((string) $r['post_content'])),
-            'excerpt' => $dual((string) $r['post_excerpt'], $excerpt),
+            'title' => $blockDual($record->title, Texturize::html($record->title)),
+            'content' => $blockDual($record->content, Blocks::render($record->content)),
+            'excerpt' => $dual($record->excerpt, $excerpt),
         ];
         $object = array_diff_key($object, array_flip(array_diff(['title', 'content', 'excerpt'], self::FIELDS[$parentType] ?? ['title', 'content', 'excerpt'])));
-        $object['meta'] = $this->meta($id, (string) $parentType);
+        $object['meta'] = $this->meta($record->id, $parentType);
         $object['_links'] = [
-            'parent' => [['href' => $this->url->to('/wp/v2/' . PostObject::restBase((string) $parentType) . '/' . $parent)]],
+            'parent' => [['href' => $this->url->to('/wp/v2/' . PostObject::restBase($parentType) . '/' . $record->parentId)]],
         ];
+        return $context === Context::Embed ? self::embedded($object, $record, $parentType) : $object;
+    }
+
+    /**
+     * The embed view of a revision: who, when, which and whose, its title and
+     * excerpt; a navigation menu's carries its title and content with their
+     * raw halves instead.
+     *
+     * @param array<string, mixed> $object
+     * @return array<string, mixed>
+     */
+    private static function embedded(array $object, PostRecord $record, string $parentType): array
+    {
+        $object = array_intersect_key($object, array_flip(['author', 'date', 'id', 'parent', 'slug', 'title', 'content', 'excerpt', '_links']));
+        if ($parentType !== 'wp_navigation') {
+            // Only a menu's embed shows anything raw; a pattern's title is the rendered one alone here.
+            unset($object['content']);
+            if (isset($object['title'])) {
+                $object['title'] = ['rendered' => $object['title']['rendered']];
+            }
+            return $object;
+        }
+        $object['title'] = ['raw' => $record->title] + $object['title'];
+        $object['content'] = ['raw' => $record->content] + $object['content'];
         return $object;
     }
 

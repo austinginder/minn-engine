@@ -66,7 +66,7 @@ final readonly class RouteRow
         if ($this->params !== null && preg_match($this->regex, $route, $captures) === 1) {
             $args = ($this->params)::for(array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY));
         }
-        return array_map(static fn (array $arg): array => array_diff_key($arg, [Args::HANDLER_VALIDATES => true]), $args);
+        return array_map(Args::published(...), $args);
     }
 
     /** The row as data, for the JSON catalogue. @return array<string, mixed> */

@@ -103,7 +103,7 @@ final class Router
             if ($method === Method::Any || $method === Method::Head || !preg_match($route->regex(), $request->path, $captures) || ($literal !== null && !self::spells($route, $literal))) {
                 continue;
             }
-            $captures = array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY);
+            $captures = self::overridden($route, $request, array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY));
             $allowed[] = match (true) {
                 $route->policy === null => $method === Method::Get ? 'GET' : null,
                 $route->policy->isPublic() => $method->value,
@@ -153,7 +153,7 @@ final class Router
             if (!preg_match($route->regex(), $request->path, $captures)) {
                 continue;
             }
-            $captures = array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY);
+            $captures = self::overridden($route, $request, array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY));
             $arguments = self::arguments($method, $captures);
             $invoke = static fn (): Response => $method->invoke($handler, $request, ...$arguments);
             try {
@@ -167,6 +167,37 @@ final class Router
             return $response;
         }
         return null;
+    }
+
+    /**
+     * The path's captures, each replaced by the request's own value of that
+     * name where the route declares an argument by it: the reference reads a
+     * parameter from the body and the query before the path, so
+     * /wp/v2/users/1?id=2 is user 2, judged and answered as user 2. Replacing
+     * the capture before anything reads it keeps the gate and the handler on
+     * the same object. A value that is not a scalar is left to the argument
+     * check, and an integer argument is handed over as the integer it reads as.
+     *
+     * @param array<string, string> $captures
+     * @return array<string, string>
+     */
+    private static function overridden(Route $route, Request $request, array $captures): array
+    {
+        $values = in_array($request->method, [Method::Post, Method::Put, Method::Patch, Method::Delete], true) ? $request->json() + $request->query : $request->query;
+        // Only a request that names a capture is read further: the declared arguments are asked for (and their filters run) then alone.
+        if (array_intersect_key($captures, $values) === []) {
+            return $captures;
+        }
+        $declared = $route->arguments($captures);
+        foreach (array_keys($captures) as $name) {
+            if (!isset($declared[$name]) || !array_key_exists($name, $values) || !is_scalar($values[$name])) {
+                continue;
+            }
+            $given = (string) $values[$name];
+            $integer = in_array('integer', (array) ($declared[$name]['type'] ?? []), true) && is_numeric(trim($given));
+            $captures[$name] = $integer ? (string) (int) trim($given) : $given;
+        }
+        return $captures;
     }
 
     /**

@@ -18201,6 +18201,52 @@ Left open.
 - Hostile files the reference reads as nothing more than their size (the FLV, Matroska and
   AVI built by the sweep) give a few more fields on the engine.
 
+## REST fuzzing and WP-CLI's own tests (2026-10-21)
+
+Two hunts for behaviour no symbol count shows (gate measures 33 and 34).
+
+- **The differential REST fuzzer** (`tests/tools/rest-fuzz.php`) requests every route the
+  reference's index lists, plain, with an unknown argument and with each schema argument
+  mutated (wrong types, enum misses, bounds, bad formats, empty and oversized), signed out,
+  as the author and as the administrator, and compares status, body and the X-WP-Total
+  headers (GET only). The first pass found 1,320 differences in 4,273 signed-out requests and
+  2,741 in 8,546 signed in. Suite `rest-fuzz` holds a compact signed-out pass to the shrink-only
+  `contracts/fixtures/rest-fuzz/divergences.json`; the full pass is `contracts/rest-fuzz.json`.
+- **What it changed in the runtime's model.** The reference judges every argument its index
+  declares before it judges the caller or looks for the item; a route now declares what the
+  reference declares, and its handler honours each one: revisions and autosaves of every type
+  (`Http\RevisionArgs`), blocks, navigation and menu items as their post type's list, menus as
+  the nav_menu term list (`Rest\MenuLists`), item arguments (`Http\ItemArgs`: `password`,
+  `excerpt_length`), a missing required argument named before any value is judged
+  (`Rest\ArgCheck`), search subtypes for terms. A `status[]` array is read as statuses: before,
+  a signed-out `status[0]=draft` listed nothing but counted the drafts in X-WP-Total. New routes:
+  template and template-part revisions and autosaves (GET, DELETE), the font library (families,
+  faces, collections: GET, DELETE), site health's namespace and its refusals, the block
+  editor's navigation fallback and the export's refusals.
+- **WP-CLI's feature tests** (`tests/tools/cli-features.php`) run the Behat scenarios a WP-CLI
+  checkout bundles on both stacks: WordPress installs each scenario's site and the engine's own
+  installer turns it into a Minn site. The first pass of the entity commands: 232 scenarios,
+  the reference passing 216 and the engine 141; scenarios that install or use a multisite
+  network are set aside (the engine serves one site). WP-CLI loads `wp-admin/includes` files on
+  top of the engine when WordPress's own files are left in place (`add_link` redeclared): a Minn
+  site lays the engine's placeholders there, as `bin/minn install` does.
+
+Left open.
+
+- `POST` to a template's or part's autosaves (the reference creates an autosave, or refuses a
+  theme file's with `rest_invalid_template`).
+- A signed-out `context=edit` (and a bad `status` or `post`) on menus and menu items is refused
+  as `rest_cannot_view` where the reference refuses `rest_forbidden_context` or 400 first: the
+  policy gate judges the caller before those arguments.
+- Navigation and block items embedded keep fewer nested fields (`title.raw`, `content.raw`,
+  `block_version`); the page list's items carry a trailing space in their class.
+- The single-site scenarios of WP-CLI's entity commands the engine fails (31 on the first pass:
+  option CRUD and autoload values, post meta and categories, user CRUD and roles, the CSV import,
+  password resets, sessions, application passwords, comment slashing).
+- The block and pattern directories, the Google Fonts collection, site health's reports and the
+  theme export: each would have the engine reach wordpress.org or build what the reference
+  builds from its own install; waiting on Austin.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -18310,3 +18356,8 @@ rows that are `open` or `austin`.
 | 18098 | The security sweep (10-20) | `PHPMailer::addAddress` refuses a Unicode local part the reference accepts | open | address validation |
 | 18098 | The security sweep (10-20) | `WP_Upgrader::create_lock`'s SQL as the `query` filter hears it | accepted | the lock, its expiry and its race are the reference's; only the statements differ, and matching them means writing the option outside the option layer |
 | 18098 | The security sweep (10-20) | crafted FLV, Matroska and AVI files the reference reads as only their size give a few more fields on the engine | accepted | nothing a plugin reads; the readers end quickly and never throw on them (unit `media-av`) |
+| 18300 | REST fuzzing (10-21) | `POST` to template and template-part autosaves | open | `Rest\TemplateRevisionsController` |
+| 18300 | REST fuzzing (10-21) | menus' signed-out `context=edit`, bad `status` or `post` refused by the caller first | open | the policy gate's order |
+| 18300 | REST fuzzing (10-21) | navigation and block embeds' nested fields; the page list's trailing class space | open | `PostObject` embed view; `Blocks\Dynamic\Theme\Navigation` |
+| 18300 | REST fuzzing (10-21) | WP-CLI entity scenarios the engine fails on a single site (31) | open | the next batch (`tests/tools/cli-features.php --show`) |
+| 18300 | REST fuzzing (10-21) | block and pattern directories, the Google Fonts collection, site health's reports, the theme export | austin | each reaches wordpress.org or rebuilds the reference's install data (Track H) |

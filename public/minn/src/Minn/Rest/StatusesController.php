@@ -60,7 +60,7 @@ final readonly class StatusesController
     }
 
     /** One status. */
-    #[Route(Method::Get, '/wp/v2/statuses/{status:[\w-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/statuses/{status:[\w-]+}', policy: new Policy(Access::Public), args: [PathArgs::STATUS, Args::CONTEXT])]
     public function single(Request $request, string $status): Response
     {
         $found = self::statuses()[$status] ?? null;

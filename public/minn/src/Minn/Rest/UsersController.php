@@ -149,7 +149,7 @@ final readonly class UsersController
     }
 
     /** One user. */
-    #[Route(Method::Get, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::User, param: 'id'), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/users/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::User, param: 'id'), args: [PathArgs::USER_ID, Args::CONTEXT])]
     public function single(Request $request, string $id): Response
     {
         $userId = (int) $id;

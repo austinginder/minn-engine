@@ -102,7 +102,8 @@ $routes = (static function () use ($named): array {
     (new WP_REST_Templates_Controller('wp_template_part'))->register_routes();
     $found = [];
     foreach ($GLOBALS['wp_rest_server']->get_routes('wp/v2') as $route => $endpoints) {
-        if (!str_starts_with($route, '/wp/v2/template')) {
+        // A template's revisions and autosaves are other controllers' routes (the engine serves them itself).
+        if (!str_starts_with($route, '/wp/v2/template') || preg_match('#/(revisions|autosaves)(/|$)#', $route) === 1) {
             continue;
         }
         foreach ($endpoints as $endpoint) {

@@ -104,9 +104,11 @@ final class TextWidgets
      */
     public static function text(object $widget, array $args, array $instance): string
     {
-        $title = Runtime::hooks()->filter('widget_title', [empty($instance['title']) ? '' : $instance['title'], $instance, $widget->id_base]);
-        $text = !empty($instance['text']) ? $instance['text'] : '';
-        $visual = (!empty($instance['visual']) && !empty($instance['filter'])) || ($instance['filter'] ?? null) === 'content';
+        // Visual: saved as content, or both visual and filtered.
+        $visual = ($instance['filter'] ?? null) === 'content' || (!empty($instance['filter']) && !empty($instance['visual']));
+        $heading = empty($instance['title']) ? '' : $instance['title'];
+        $title = Runtime::hooks()->filter('widget_title', [$heading, $instance, $widget->id_base]);
+        $text = empty($instance['text']) ? '' : $instance['text'];
         if ($visual) {
             $instance['filter'] = true;
             $instance['visual'] = true;

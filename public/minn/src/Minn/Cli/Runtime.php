@@ -12,6 +12,7 @@ use Minn\Context;
 use Minn\Db;
 use Minn\Engine;
 use Minn\Front\Permalinks;
+use Minn\Runtime\DebugMode;
 use Minn\Runtime\Plugins;
 use Minn\Runtime\Runtime as WordPressRuntime;
 use Minn\Theme\Theme;
@@ -49,6 +50,7 @@ final class Runtime
             }
             self::loadConfig($root . 'wp-config.php');
         }
+        self::debugMode();
         $db = Db::shared();
         return self::$shared = new self($db, new Site($db), new Users($db), Capabilities::fromDb($db), Permalinks::fromDb($db));
     }
@@ -90,6 +92,23 @@ final class Runtime
             define('MINN_CLI_RUNTIME', true);
         }
         self::bootEngine();
+    }
+
+    /**
+     * PHP's error reporting as WP-CLI's own debug mode sets it when it loads
+     * a site: under --debug every level but deprecations; otherwise the
+     * debug constants' level and log (every level with WP_DEBUG, errors and
+     * warnings without it); and errors shown on STDERR (Xdebug already sends
+     * them there), so a command's output stays its own.
+     */
+    private static function debugMode(): void
+    {
+        $debug = DebugMode::settings(DebugMode::defined(), defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content');
+        if (WP_CLI::get_config('debug')) {
+            $debug = ['level' => E_ALL & ~E_DEPRECATED, 'ini' => []];
+        }
+        DebugMode::apply(['level' => $debug['level'], 'ini' => array_diff_key($debug['ini'], ['display_errors' => true])]);
+        ini_set('display_errors', function_exists('xdebug_debug_zval') ? '0' : 'stderr');
     }
 
     /** wp-config.php sets $table_prefix as a variable; the engine reads it as a global. */

@@ -34,7 +34,7 @@ final readonly class OverviewController
     }
 
     /** The overview payload. */
-    #[Route(Method::Get, '/minn-admin/v1/overview', policy: new Policy(Access::Floor))]
+    #[Route(Method::Get, '/minn-admin/v1/overview', policy: new Policy(Access::Floor), args: [AdminArgs::OVERVIEW])]
     public function overview(Request $request): Response
     {
         $userId = $this->caller->requireFloor();
@@ -42,7 +42,7 @@ final readonly class OverviewController
     }
 
     /** The events behind one chart bar. */
-    #[Route(Method::Get, '/minn-admin/v1/overview/activity', policy: new Policy(Access::Floor))]
+    #[Route(Method::Get, '/minn-admin/v1/overview/activity', policy: new Policy(Access::Floor), args: [AdminArgs::ACTIVITY])]
     public function overviewActivity(Request $request): Response
     {
         $userId = $this->caller->requireFloor();

@@ -164,6 +164,7 @@ final class RuntimeRoutes
                     $data['namespaces'][] = $namespace;
                 }
             }
+            $data['namespaces'] = RouteCatalogue::ordered($data['namespaces'] ?? []);
         }
         foreach ($runtime as $route => $description) {
             if ($scope !== null && (string) ($description['namespace'] ?? '') !== $scope) {

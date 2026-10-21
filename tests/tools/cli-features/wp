@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# The `wp` WP-CLI's feature tests run (WP_CLI_BIN_DIR), for tests/tools/cli-features.php,
+# which copies it per stack with MINN_CLI_STACK, MINN_WPCLI_DIR and MINN_ENGINE_DIR
+# written in after `set -u` (WP-CLI hands its commands only a few variables).
+#
+# On the reference stack it is WP-CLI as it is. On the engine stack a
+# scenario's WordPress install runs as WordPress (the engine installs over a
+# site, never from nothing), and once a site has its wp-config.php any other
+# command first installs Minn over it as a person would: minn/ linked to the
+# engine, then the engine's own installer (bin/minn install), which parks
+# WordPress's core beside the site and lays the Minn site's files.
+
+set -u
+real="${MINN_WPCLI_DIR:?}/bin/wp"
+if [ "${MINN_CLI_STACK:-reference}" != "engine" ]; then
+    exec "$real" "$@"
+fi
+
+site="$PWD"
+words=()
+for arg in "$@"; do
+    case "$arg" in
+        --path=*) site="${arg#--path=}" ;;
+        -*) ;;
+        *) words+=("$arg") ;;
+    esac
+done
+case "$site" in /*) ;; *) site="$PWD/$site" ;; esac
+site="${site%/}"
+minn="${MINN_ENGINE_DIR:?}/bin/minn"
+
+installed() {
+    [ -f "$site/wp-settings.php" ] && grep -q "minn/bootstrap.php" "$site/wp-settings.php"
+}
+as_wordpress() {
+    if installed; then
+        php "$minn" eject "$site" --park="$site-parked" > /dev/null 2>&1
+        [ -L "$site/minn" ] && rm -f "$site/minn"
+    fi
+}
+as_engine() {
+    if [ -f "$site/wp-config.php" ] && [ -f "$site/wp-settings.php" ] && ! installed; then
+        [ -e "$site/minn" ] || ln -s "$MINN_ENGINE_DIR" "$site/minn"
+        rm -rf "$site-parked"
+        php "$minn" install "$site" --force --park="$site-parked" > /dev/null 2>&1
+    fi
+}
+
+if [ "${words[0]:-}" = "core" ]; then
+    case "${words[1]:-}" in
+        install|multisite-install|multisite-convert)
+            as_wordpress
+            "$real" "$@"
+            status=$?
+            as_engine
+            exit $status
+            ;;
+        download)
+            exec "$real" "$@"
+            ;;
+    esac
+fi
+as_engine
+exec "$real" "$@"

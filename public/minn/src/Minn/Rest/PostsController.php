@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Http\Policy;
-use Minn\Http\Args;
+use Minn\Http\ItemArgs;
 use Minn\Http\Subject;
 use Minn\Http\Access;
 use Minn\Content\PostRecord;
@@ -53,16 +53,26 @@ final readonly class PostsController
      * context) shaped (by $shape when the type has its own object, as
      * media does). The totals are the query's, counted again without the
      * page when a later page came back empty. A media search also matches
-     * file names, as the reference's does.
+     * file names, as the reference's does. A type whose posts are read by
+     * a rule of its own names it ($readable, by post id: a pattern needs
+     * read_post, published or not), its rows still counted; a type whose
+     * list takes parameters of its own names them ($registered, as menu
+     * items do); a shape that answers null leaves the post out.
      *
-     * @param (\Closure(PostRecord, Context): array<string, mixed>)|null $shape
+     * @param (\Closure(PostRecord, Context): ?array<string, mixed>)|null $shape
+     * @param (\Closure(int): bool)|null $readable
+     * @param array<string, array<string, mixed>>|null $registered
      */
-    public function serveList(Request $request, string $type, ?\Closure $shape = null): Response
+    public function serveList(Request $request, string $type, ?\Closure $shape = null, ?\Closure $readable = null, ?array $registered = null): Response
     {
         $context = Context::of($request);
-        $this->visibleStatuses($request, $type, $context);
-        $registered = PostCollectionParams::listed($type);
+        $statuses = $this->visibleStatuses($request, $type, $context);
+        $registered ??= PostCollectionParams::listed($type);
         $wp = RuntimeRoutes::sanitized($request, $registered);
+        if (is_array($request->query['status'] ?? null)) {
+            // A list of statuses is read as judged: a member that is not a plain value counts for nothing.
+            $wp['status'] = $statuses;
+        }
         if ($wp['orderby'] === 'relevance' && empty($wp['search'])) {
             throw new RestError('rest_no_search_term_defined', 'You need to define a search term to order by relevance.', 400);
         }
@@ -85,20 +95,38 @@ final readonly class PostsController
         $ids = array_map(static fn ($post): int => $post instanceof Post ? $post->ID : 0, (array) $posts);
         $this->posts->prime($ids, array_map('strval', $taxonomies));
         $this->posts->primeRevisions($ids);
-        $objects = [];
         $fields = Fields::fromQuery($request->query);
-        foreach ((array) $posts as $post) {
-            if (!$post instanceof Post || !($context->isEdit() ? $this->caller->can('edit_post', $post->ID) : $this->readable($post))) {
+        $objects = ItemRender::around(fn (): array => $this->shaped((array) $posts, $context, $fields, $shape, $readable), $request->query['excerpt_length'] ?? null);
+        return Reply::list($objects, $total, $pages, $fields);
+    }
+
+    /**
+     * A list's posts as objects: each the caller may read (or edit, in the
+     * edit context), shaped by the type's own shape or the post object.
+     *
+     * @param array<array-key, mixed> $posts
+     * @param (\Closure(PostRecord, Context): ?array<string, mixed>)|null $shape
+     * @param (\Closure(int): bool)|null $readable
+     * @return list<array<string, mixed>>
+     */
+    private function shaped(array $posts, Context $context, ?Fields $fields, ?\Closure $shape, ?\Closure $readable): array
+    {
+        $objects = [];
+        foreach ($posts as $post) {
+            if (!$post instanceof Post || !($context->isEdit() ? $this->caller->can('edit_post', $post->ID) : ($readable !== null ? $readable($post->ID) : $this->readable($post)))) {
                 continue;
             }
             $record = PostRecord::fromRow(get_object_vars($post));
-            $objects[] = match (true) {
+            $object = match (true) {
                 $shape !== null => $shape($record, $context),
-                $context->isEdit() => $this->object->edit($record, $this->caller->id(), $fields),
+                $context->isEdit() => ItemRender::opened(fn (): array => $this->object->edit($record, $this->caller->id(), $fields), $record),
                 default => $this->object->view($record, $fields),
             };
+            if ($object !== null) {
+                $objects[] = $object;
+            }
         }
-        return Reply::list($objects, $total, $pages, $fields);
+        return $objects;
     }
 
     /**
@@ -150,14 +178,15 @@ final readonly class PostsController
      * The statuses this caller may list. Public callers see only 'publish';
      * any other status and the edit context need a caller who can edit this
      * type, and a status beyond publish is a parameter error without that cap.
+     * Answers the statuses the list reads, publish (or inherit) when none is named.
+     *
+     * @return list<string>
      */
-    private function visibleStatuses(Request $request, string $type, Context $context): void
+    private function visibleStatuses(Request $request, string $type, Context $context): array
     {
         // An attachment's public status is inherit (it shows as its parent does).
         $publicOnly = [$type === 'attachment' ? 'inherit' : 'publish'];
-        $requested = $request->has('status')
-            ? array_values(array_filter(array_map(trim(...), explode(',', (string) $request->query('status')))))
-            : $publicOnly;
+        $requested = $this->requestedStatuses($request) ?? $publicOnly;
         $beyondPublic = array_diff($requested, $publicOnly) !== [];
         $editCap = TypeCapabilities::edit($type);
         if ($beyondPublic && !$this->caller->can($editCap)) {
@@ -172,24 +201,52 @@ final readonly class PostsController
             throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => $inner['message']], 'details' => ['status' => $inner]]);
         }
         if (!$context->isEdit() && !$beyondPublic) {
-            return;
+            return $requested ?: $publicOnly;
         }
         $refusal = 'Sorry, you are not allowed to edit posts in this post type.';
         $this->caller->require('rest_forbidden_context', $refusal, 401);
         if (!$this->caller->can($editCap)) {
             throw new RestError('rest_forbidden_context', $refusal, 403);
         }
+        return $requested ?: $publicOnly;
+    }
+
+    /**
+     * The statuses a list request names, null when it names none: a list
+     * given as one (status[]=draft), its members that are not plain values
+     * dropped, or a comma-separated string.
+     *
+     * @return list<string>|null
+     */
+    private function requestedStatuses(Request $request): ?array
+    {
+        if (!$request->has('status')) {
+            return null;
+        }
+        $raw = $request->query['status'] ?? null;
+        $given = is_array($raw) ? array_filter($raw, is_scalar(...)) : explode(',', is_scalar($raw) ? (string) $raw : '');
+        return array_values(array_filter(array_map(static fn ($status): string => trim((string) $status), $given), static fn (string $status): bool => $status !== ''));
     }
 
     /** One post or page. */
-    #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Post, param: 'id', edit: new Policy(Access::Own, 'edit_post', param: 'id', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this post.')), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/{base:posts|pages}/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Post, param: 'id', edit: new Policy(Access::Own, 'edit_post', param: 'id', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this post.')), args: [ItemArgs::POST])]
     public function single(Request $request, string $base, string $id): Response
     {
         return $this->serveSingle($request, $base === 'pages' ? 'page' : 'post', $id);
     }
 
-    /** One post of any type, with the reference's read rules. */
-    public function serveSingle(Request $request, string $type, string $id): Response
+    /**
+     * One post of any type, with the reference's read rules: the edit
+     * context for one who may edit it, then the password (any given that is
+     * not the post's own is refused, protected or not, before the post's
+     * readability is judged), then the read itself, by the type's own rule
+     * when it has one ($readable, by post id) and otherwise a published post
+     * or one the caller may read. The excerpt is cut to the excerpt_length
+     * asked for, and the right password opens the content and the excerpt.
+     *
+     * @param (\Closure(int): bool)|null $readable
+     */
+    public function serveSingle(Request $request, string $type, string $id, ?\Closure $readable = null): Response
     {
         $postId = (int) $id;
         $row = $this->db->row(
@@ -201,22 +258,24 @@ final readonly class PostsController
         }
         $row = PostRecord::fromRow($row);
         $fields = Fields::fromQuery($request->query);
-        if (Context::of($request)->isEdit()) {
-            if (!$this->caller->can('edit_post', $postId)) {
-                throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this post.');
-            }
-            return self::withAlternate(Reply::item($this->object->edit($row, $this->caller->id(), $fields), $fields), $row);
+        $edit = Context::of($request)->isEdit();
+        if ($edit && !$this->caller->can('edit_post', $postId)) {
+            throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this post.');
         }
-        // A non-published post is visible only to a reader who can edit it.
-        if ($row->status !== 'publish' && !$this->caller->can('read_post', $postId)) {
-            throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
-        }
-        // A protected post's password opens its content; a wrong one is refused.
         $password = $request->query['password'] ?? null;
-        if ($row->isProtected() && is_string($password) && $password !== '' && $password !== $row->password) {
+        $password = is_string($password) ? $password : '';
+        if ($password !== '' && !hash_equals($row->password, $password)) {
             throw new RestError('rest_post_incorrect_password', 'Incorrect post password.', 403);
         }
-        return self::withAlternate(Reply::item($this->object->viewWithPassword($row, $password, $fields), $fields), $row);
+        if (!$edit && !($readable !== null ? $readable($postId) : $row->status === 'publish' || $this->caller->can('read_post', $postId))) {
+            throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
+        }
+        $render = $edit
+            ? fn (): array => $this->object->edit($row, $this->caller->id(), $fields)
+            : fn (): array => $this->object->viewWithPassword($row, $password, $fields);
+        $opened = $edit || ($password !== '' && $row->isProtected());
+        $object = ItemRender::around($opened ? static fn (): array => ItemRender::opened($render, $row) : $render, $request->query['excerpt_length'] ?? null);
+        return self::withAlternate(Reply::item($object, $fields), $row);
     }
 
     /** A viewable type's single post points at its page on the site. */

@@ -4736,13 +4736,13 @@
         },
         "WP_Font_Library::register_font_collection": {
             "file": "classes/WP_Font_Library.php",
-            "line": 9,
+            "line": 12,
             "statements": 4,
             "lines": 8
         },
         "WP_Font_Library::unregister_font_collection": {
             "file": "classes/WP_Font_Library.php",
-            "line": 21,
+            "line": 24,
             "statements": 3,
             "lines": 6
         },

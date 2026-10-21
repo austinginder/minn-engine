@@ -6,6 +6,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 |---|---|---|---|
 | [`ActivityChart`](#activitychart) | final readonly class | 65 | The overview's activity chart: published posts and pages plus every |
 | [`ActivityFeed`](#activityfeed) | final readonly class | 212 | What happened lately, as the overview and the bell tell it: the caller's |
+| [`AdminArgs`](#adminargs) | final class | 34 | The arguments Minn Admin's own routes register, as the reference lists |
 | [`AdminMenu`](#adminmenu) | final class | 75 | The admin menu's arithmetic, as plugins' menu calls see it on the |
 | [`AdminNotice`](#adminnotice) | final class | 25 | An admin notice's markup, as wp_get_admin_notice builds it on the |
 | [`AdminPlugin`](#adminplugin) | final class | 135 | Minn Admin's home on a site is wp-content/plugins/minn-admin: the same |
@@ -41,7 +42,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
 | [`ThemesController`](#themescontroller) | final readonly class | 99 | The theme inventory of minn-admin/v1: every theme on disk with its |
 | [`Translations`](#translations) | final readonly class | 237 | Languages for the admin. A person's locale is their `locale` user meta, |
-| [`UpdatesController`](#updatescontroller) | final readonly class | 130 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
+| [`UpdatesController`](#updatescontroller) | final readonly class | 128 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
 | [`UploadsSize`](#uploadssize) | final readonly class | 93 | How much the uploads folder holds, as Minn Admin 0.43 works it out and |
 | [`V1Controller`](#v1controller) | final readonly class | 80 | The boot burst of minn-admin/v1: the bell feed and its read marker, the |
 
@@ -124,6 +125,25 @@ A post's stored title, empty when the post is gone.
 A user's display name, empty when the user is gone.
 
 Internals: `ownPosts()` (private, line 98), `latestComments()` (private, line 143), `publishedBetween()` (private, line 171), `commentsBetween()` (private, line 196)
+
+
+## AdminArgs
+
+`final class Minn\Admin\AdminArgs` · `public/minn/src/Minn/Admin/AdminArgs.php`
+
+The arguments Minn Admin's own routes register, as the reference lists
+them with the plugin running there: declared, the router judges them
+before the caller, as the reference does, so a bad value is a 400 even
+for someone signed out. Each set names the handler that reads it.
+
+- const `OVERVIEW` = `array (   'days' =>    array (     'type' => 'integer',     'default' => 30,     'minimum' => 7,     'maximum' => 90,     'required' => false,   ), )` — Read by OverviewController::overview(): the window the charts cover, in days.
+- const `ACTIVITY` = `array (   'from' =>    array (     'type' => 'string',     'pattern' => '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$',     'required' => true,   ),   'to' =>    array (     'type' => 'string',     'pattern' => '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$',     'required' => true,   ), )` — Read by OverviewController::overviewActivity(): the bounds of one chart bar.
+- const `TEMPLATES` = `array (   'type' =>    array (     'type' => 'string',     'default' => 'page',     'required' => false,   ), )` — Read by EditorController::templates(): the post type whose page templates are asked for.
+- const `THEME_SEARCH` = `array (   'q' =>    array (     'type' => 'string',     'required' => true,   ), )` — Read by PackagesController::searchThemes(): the words searched for.
+- const `PLUGIN_SEARCH` = `array (   'q' =>    array (     'type' => 'string',     'required' => true,   ),   'page' =>    array (     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ), )` — Read by PackagesController::searchPlugins(): the words searched for and the page of results.
+- const `PLUGIN_INFO` = `array (   'slug' =>    array (     'type' => 'string',     'required' => true,   ), )` — Read by PackagesController::pluginInfo(): the directory slug.
+
+Used by: `Minn\Admin\EditorController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`
 
 
 ## AdminMenu
@@ -576,7 +596,7 @@ Internals: `postsCard()` (private, line 68), `pagesCard()` (private, line 85), `
 The editor's helpers in minn-admin/v1: the edit lock, and the template
 and pattern lists (honestly empty: the engine carries no theme content).
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Admin\AdminArgs`, `Minn\Rest\Api`
 
 ```php
 __construct(Minn\Content\PostWriter $writer, Minn\Rest\Caller $caller)
@@ -599,7 +619,7 @@ Releases the edit lock on a post.
 
 Route: `GET /minn-admin/v1/templates (floor edit_posts)`
 
-No theme, no page templates: an honest empty set.
+No theme, no page templates, for any post type asked for: an honest empty set.
 
 ### `patterns(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -903,7 +923,7 @@ Internals: `commentItems()` (private, line 68), `updateItems()` (private, line 9
 The Overview of minn-admin/v1: the payload, the drill-down behind one
 chart bar, and the pick of cards, the person's own and the site's default.
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Admin\AdminArgs`, `Minn\Rest\Api`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Admin\Dashboard $dashboard, Minn\Content\Users $users, Minn\Rest\Caller $caller)
@@ -943,7 +963,7 @@ Internals: `metricKeysFrom()` (private, line 82), `storedMetricLayout()` (privat
 
 Adding and removing themes and extensions from the Extensions view.
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Admin\AdminArgs`, `Minn\Rest\Api`
 
 ```php
 __construct(Minn\Ops\Packages $packages, Minn\Content\Site $site, Minn\Rest\Caller $caller)
@@ -1487,13 +1507,13 @@ __construct(Minn\Ops\Updates $updates, Minn\Ops\CoreStatus $core, Minn\Rest\Call
 
 ### `pluginUpdates(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /minn-admin/v1/plugin-updates (signed in)`
+Route: `GET /minn-admin/v1/plugin-updates (floor edit_posts + update_plugins)`
 
 The plugin update offers.
 
 ### `pluginMeta(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /minn-admin/v1/plugin-meta (signed in)`
+Route: `GET /minn-admin/v1/plugin-meta (floor edit_posts + activate_plugins)`
 
 Icons and details for the installed plugins.
 

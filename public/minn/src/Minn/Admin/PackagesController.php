@@ -27,7 +27,7 @@ final readonly class PackagesController
     }
 
     /** Searches the theme directory. */
-    #[Route(Method::Get, '/minn-admin/v1/themes/search', policy: new Policy(Access::Floor, caps: ['install_themes']))]
+    #[Route(Method::Get, '/minn-admin/v1/themes/search', policy: new Policy(Access::Floor, caps: ['install_themes']), args: [AdminArgs::THEME_SEARCH])]
     public function searchThemes(Request $request): Response
     {
         return Reply::answer($request, ['themes' => $this->packages->searchThemes(trim(self::required($request, 'q')))]);
@@ -107,14 +107,14 @@ final readonly class PackagesController
     }
 
     /** Searches the plugin directory. */
-    #[Route(Method::Get, '/minn-admin/v1/plugins/search', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
+    #[Route(Method::Get, '/minn-admin/v1/plugins/search', policy: new Policy(Access::Floor, caps: ['install_plugins']), args: [AdminArgs::PLUGIN_SEARCH])]
     public function searchPlugins(Request $request): Response
     {
         return Reply::answer($request, $this->packages->searchPlugins(trim(self::required($request, 'q')), (int) ($request->query('page') ?? 1)));
     }
 
     /** One directory plugin's details. */
-    #[Route(Method::Get, '/minn-admin/v1/plugins/info', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
+    #[Route(Method::Get, '/minn-admin/v1/plugins/info', policy: new Policy(Access::Floor, caps: ['install_plugins']), args: [AdminArgs::PLUGIN_INFO])]
     public function pluginInfo(Request $request): Response
     {
         return Reply::answer($request, $this->packages->pluginInfo(trim(self::required($request, 'slug'))));

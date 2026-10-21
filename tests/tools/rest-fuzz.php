@@ -17,11 +17,12 @@
  * change the shared database. Writes come with the side-effect triggers.
  *
  *   php tests/tools/rest-fuzz.php [--route=<regex>] [--roles=anon,author,admin]
- *       [--limit=<requests per route>] [--write] [--show]
+ *       [--limit=<requests per route>] [--write] [--show] [--json]
  *
  * --write records the pass in contracts/rest-fuzz.json (summary: routes,
  * requests, differences; then each difference), which scorecard.php reads.
- * --show prints each difference as it is found.
+ * --show prints each difference as it is found; --json prints only the
+ * differences found, as JSON, for the rest-fuzz suite to hold to its ledger.
  */
 
 require_once dirname(__DIR__) . '/lib.php';
@@ -29,7 +30,7 @@ require_once dirname(__DIR__) . '/lib.php';
 $root = dirname(__DIR__, 2);
 $engine = rtrim(getenv('MINN_TEST_URL') ?: minn_test_url(), '/');
 $reference = minn_test_reference_url();
-$options = getopt('', ['route:', 'roles:', 'limit:', 'write', 'show']);
+$options = getopt('', ['route:', 'roles:', 'limit:', 'write', 'show', 'json']);
 $routeFilter = isset($options['route']) ? '#' . str_replace('#', '\\#', (string) $options['route']) . '#' : null;
 $roleNames = explode(',', (string) ($options['roles'] ?? 'anon,author,admin'));
 $limit = (int) ($options['limit'] ?? 60);
@@ -67,31 +68,49 @@ register_shutdown_function(static function () use ($sessions, $users): void {
     }
 });
 
-/** One GET to a stack: status, the X-WP-Total headers, and the body with the reference's origin written as the engine's. */
-$send = static function (string $base, string $route, array $query, ?array $session) use ($reference, $engine): array {
+/**
+ * The same GET to both stacks at once (curl's multi handle): for each, the
+ * status, the X-WP-Total headers, and the body with the reference's origin
+ * written as the engine's.
+ *
+ * @return array{0: array<string, mixed>, 1: array<string, mixed>} the reference's answer, then the engine's
+ */
+$sendBoth = static function (string $route, array $query, ?array $session) use ($reference, $engine): array {
     $headers = [];
     if ($session !== null) {
         $headers[] = 'Cookie: ' . $session['cookie_name'] . '=' . $session['cookie'] . '; wordpress_logged_in_' . md5($reference) . '=' . $session['cookie'];
         $headers[] = 'X-WP-Nonce: ' . $session['nonce'];
     }
-    $context = stream_context_create([
-        'ssl' => ['verify_peer' => false, 'verify_peer_name' => false],
-        'http' => ['method' => 'GET', 'header' => implode("\r\n", $headers), 'ignore_errors' => true, 'timeout' => 20],
-    ]);
-    $url = "{$base}/index.php?rest_route=" . rawurlencode($route) . ($query === [] ? '' : '&' . http_build_query($query));
-    $raw = @file_get_contents($url, false, $context);
-    $status = 0;
-    $totals = [];
-    foreach ($http_response_header ?? [] as $line) {
-        if (preg_match('#^HTTP/\S+\s+(\d+)#', $line, $m) === 1) {
-            $status = (int) $m[1];
-        } elseif (preg_match('#^(x-wp-total|x-wp-totalpages):\s*(.*)$#i', $line, $m) === 1) {
-            $totals[strtolower($m[1])] = trim($m[2]);
-        }
+    $path = '/index.php?rest_route=' . rawurlencode($route) . ($query === [] ? '' : '&' . http_build_query($query));
+    $multi = curl_multi_init();
+    $handles = [];
+    $totals = [[], []];
+    foreach ([$reference, $engine] as $i => $base) {
+        $handle = curl_init($base . $path);
+        curl_setopt_array($handle, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 20, CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_HEADERFUNCTION => static function ($curl, string $line) use (&$totals, $i): int {
+                if (preg_match('#^(x-wp-total|x-wp-totalpages):\s*(.*)$#i', $line, $m) === 1) {
+                    $totals[$i][strtolower($m[1])] = trim($m[2]);
+                }
+                return strlen($line);
+            }]);
+        curl_multi_add_handle($multi, $handle);
+        $handles[$i] = $handle;
     }
-    $text = str_replace([str_replace('/', '\\/', $reference), $reference], [str_replace('/', '\\/', $engine), $engine], (string) $raw);
-    $json = json_decode(minn_test_neutralise($text), true);
-    return ['status' => $status, 'totals' => $totals, 'body' => $json ?? $text];
+    do {
+        curl_multi_exec($multi, $running);
+        curl_multi_select($multi, 1.0);
+    } while ($running > 0);
+    $answers = [];
+    foreach ($handles as $i => $handle) {
+        $text = str_replace([str_replace('/', '\\/', $reference), $reference], [str_replace('/', '\\/', $engine), $engine], (string) curl_multi_getcontent($handle));
+        $json = json_decode(minn_test_neutralise($text), true);
+        // A body that is not JSON (a crash page names files and paths) is kept as its size alone.
+        $answers[$i] = ['status' => (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE), 'totals' => $totals[$i], 'body' => $json ?? ($text === '' ? '' : '[not JSON: ' . strlen($text) . ' bytes]')];
+        curl_multi_remove_handle($multi, $handle);
+    }
+    curl_multi_close($multi);
+    return $answers;
 };
 
 /**
@@ -190,8 +209,7 @@ foreach ($index['routes'] as $pattern => $info) {
         foreach ($cases as [$label, $query]) {
             foreach ($sessions as $role => $session) {
                 $requests++;
-                $ref = $send($reference, $route, $query, $session);
-                $eng = $send($engine, $route, $query, $session);
+                [$ref, $eng] = $sendBoth($route, $query, $session);
                 $diff = $ref['status'] !== $eng['status'] ? "status {$ref['status']} vs {$eng['status']}" : minn_test_diff($ref['body'], $eng['body']);
                 $diff ??= $ref['totals'] === $eng['totals'] ? null : 'totals ' . json_encode($ref['totals']) . ' vs ' . json_encode($eng['totals']);
                 if ($diff === null) {
@@ -207,6 +225,10 @@ foreach ($index['routes'] as $pattern => $info) {
     }
 }
 
+if (isset($options['json'])) {
+    echo json_encode(['routes' => $routes, 'requests' => $requests, 'differences' => $differences], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";
+    exit(0);
+}
 printf("rest-fuzz: %d routes, %d requests, %d differences\n", $routes, $requests, count($differences));
 $byRoute = array_count_values(array_column($differences, 'route'));
 arsort($byRoute);

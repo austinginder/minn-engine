@@ -19,6 +19,12 @@ final readonly class RouteCatalogue
     /** The routes the reference's server registers itself, outside any namespace. */
     private const SERVER_ROUTES = ['/batch/v1'];
 
+    /** The namespace the reference registers before any plugin's. */
+    private const FIRST = 'oembed/1.0';
+
+    /** The core namespaces the reference registers after the plugins', in its order. */
+    private const CORE = ['wp/v2', 'wp-site-health/v1', 'wp-block-editor/v1', 'wp-abilities/v1'];
+
     public function __construct(private Router $router, private Types $types, private RestUrl $url)
     {
     }
@@ -60,6 +66,22 @@ final readonly class RouteCatalogue
             }
         }
         return ['namespaces' => $namespaces, 'routes' => $routes];
+    }
+
+    /**
+     * The namespaces in the order the reference's index lists them, which
+     * is the order they were registered in: oEmbed's first, then each
+     * plugin's (Minn Admin's among them) as they came, then core's own.
+     *
+     * @param list<string> $namespaces
+     * @return list<string>
+     */
+    public static function ordered(array $namespaces): array
+    {
+        $first = array_values(array_intersect([self::FIRST], $namespaces));
+        $core = array_values(array_intersect(self::CORE, $namespaces));
+        $plugins = array_values(array_diff($namespaces, $first, $core));
+        return [...$first, ...$plugins, ...$core];
     }
 
     /**

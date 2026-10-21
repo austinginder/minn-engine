@@ -1,7 +1,7 @@
 {
     "engine": "0.1.0",
-    "routes": 261,
-    "withPolicy": 255,
+    "routes": 283,
+    "withPolicy": 277,
     "entries": [
         {
             "method": "GET",
@@ -182,7 +182,7 @@
             "pattern": "/minn-admin/v1/templates",
             "name": "Minn\\Admin\\EditorController::templates",
             "handler": "Minn\\Admin\\EditorController::templates",
-            "summary": "No theme, no page templates: an honest empty set.",
+            "summary": "No theme, no page templates, for any post type asked for: an honest empty set.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts",
@@ -195,7 +195,13 @@
                     "message": "Sorry, you are not allowed to do that."
                 }
             },
-            "args": [],
+            "args": {
+                "type": {
+                    "type": "string",
+                    "default": "page",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -378,7 +384,15 @@
                     "message": "Sorry, you are not allowed to do that."
                 }
             },
-            "args": [],
+            "args": {
+                "days": {
+                    "type": "integer",
+                    "default": 30,
+                    "minimum": 7,
+                    "maximum": 90,
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -400,7 +414,18 @@
                     "message": "Sorry, you are not allowed to do that."
                 }
             },
-            "args": [],
+            "args": {
+                "from": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$",
+                    "required": true
+                },
+                "to": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$",
+                    "required": true
+                }
+            },
             "body": [],
             "index": true
         },
@@ -472,7 +497,12 @@
                     "message": "Sorry, you are not allowed to do that."
                 }
             },
-            "args": [],
+            "args": {
+                "q": {
+                    "type": "string",
+                    "required": true
+                }
+            },
             "body": [],
             "index": true
         },
@@ -622,7 +652,18 @@
                     "message": "Sorry, you are not allowed to do that."
                 }
             },
-            "args": [],
+            "args": {
+                "q": {
+                    "type": "string",
+                    "required": true
+                },
+                "page": {
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -647,7 +688,12 @@
                     "message": "Sorry, you are not allowed to do that."
                 }
             },
-            "args": [],
+            "args": {
+                "slug": {
+                    "type": "string",
+                    "required": true
+                }
+            },
             "body": [],
             "index": true
         },
@@ -1378,8 +1424,11 @@
             "handler": "Minn\\Admin\\UpdatesController::pluginUpdates",
             "summary": "The plugin update offers.",
             "policy": {
-                "access": "SignedIn",
-                "describe": "signed in",
+                "access": "Floor",
+                "describe": "floor edit_posts + update_plugins",
+                "caps": [
+                    "update_plugins"
+                ],
                 "signIn": {
                     "code": "rest_not_logged_in",
                     "message": "You are not currently logged in."
@@ -1400,8 +1449,11 @@
             "handler": "Minn\\Admin\\UpdatesController::pluginMeta",
             "summary": "Icons and details for the installed plugins.",
             "policy": {
-                "access": "SignedIn",
-                "describe": "signed in",
+                "access": "Floor",
+                "describe": "floor edit_posts + activate_plugins",
+                "caps": [
+                    "activate_plugins"
+                ],
                 "signIn": {
                     "code": "rest_not_logged_in",
                     "message": "You are not currently logged in."
@@ -2277,6 +2329,52 @@
         },
         {
             "method": "GET",
+            "pattern": "/wp-block-editor/v1/export",
+            "name": "Minn\\Rest\\BlockEditorController::export",
+            "handler": "Minn\\Rest\\BlockEditorController::export",
+            "summary": "The active theme packed with the site's templates and styles.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_export_templates",
+                    "message": "Sorry, you are not allowed to export templates and template parts."
+                },
+                "refuse": {
+                    "code": "rest_cannot_export_templates",
+                    "message": "Sorry, you are not allowed to export templates and template parts."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp-block-editor/v1/navigation-fallback",
+            "name": "Minn\\Rest\\BlockEditorController::navigationFallback",
+            "handler": "Minn\\Rest\\BlockEditorController::navigationFallback",
+            "summary": "The navigation menu a navigation block falls back to.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_create",
+                    "message": "Sorry, you are not allowed to create Navigation Menus as this user."
+                },
+                "refuse": {
+                    "code": "rest_cannot_create",
+                    "message": "Sorry, you are not allowed to create Navigation Menus as this user."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
             "pattern": "/wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+}",
             "name": "Minn\\Rest\\BlockRendererController::render",
             "handler": "Minn\\Rest\\BlockRendererController::render",
@@ -2286,6 +2384,11 @@
                 "describe": "public"
             },
             "args": {
+                "name": {
+                    "description": "Unique registered name for the block.",
+                    "type": "string",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",
@@ -2321,6 +2424,11 @@
                 "describe": "public"
             },
             "args": {
+                "name": {
+                    "description": "Unique registered name for the block.",
+                    "type": "string",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",
@@ -2363,7 +2471,8 @@
                 "post_id": {
                     "description": "ID of the post context.",
                     "type": "integer",
-                    "required": false
+                    "required": false,
+                    "handler_validates": true
                 }
             },
             "index": true
@@ -2420,6 +2529,11 @@
                     ],
                     "default": "view",
                     "required": false
+                },
+                "namespace": {
+                    "description": "Block namespace.",
+                    "type": "string",
+                    "required": false
                 }
             },
             "body": [],
@@ -2436,6 +2550,16 @@
                 "describe": "public"
             },
             "args": {
+                "name": {
+                    "description": "Block name.",
+                    "type": "string",
+                    "required": false
+                },
+                "namespace": {
+                    "description": "Block namespace.",
+                    "type": "string",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",
@@ -2453,10 +2577,10 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/blocks",
+            "pattern": "/wp/v2/{base:blocks}",
             "name": "Minn\\Rest\\BlocksController::list",
             "handler": "Minn\\Rest\\BlocksController::list",
-            "summary": "The blocks the caller may edit; an empty list for anyone else.",
+            "summary": "The blocks, each shown to a caller who may read it.",
             "policy": {
                 "access": "Public",
                 "describe": "public"
@@ -2481,7 +2605,34 @@
                     "message": "Invalid post ID."
                 }
             },
-            "args": [],
+            "args": {
+                "id": {
+                    "description": "Unique identifier for the post.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "excerpt_length": {
+                    "description": "Override the default excerpt length.",
+                    "type": "integer",
+                    "required": false
+                },
+                "password": {
+                    "description": "The password for the post if it is password protected.",
+                    "type": "string",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -2802,7 +2953,7 @@
             "pattern": "/wp/v2/comments/{id:[\\d]+}",
             "name": "Minn\\Rest\\CommentsController::single",
             "handler": "Minn\\Rest\\CommentsController::single",
-            "summary": "One comment, if the caller may read it.",
+            "summary": "One comment, if the caller may read it: one on a protected post only with the post's password, or for one who may edit the post.",
             "policy": {
                 "access": "Public",
                 "describe": "public; comment {id} must exist",
@@ -2814,6 +2965,11 @@
                 }
             },
             "args": {
+                "id": {
+                    "description": "Unique identifier for the comment.",
+                    "type": "integer",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",
@@ -2823,6 +2979,11 @@
                         "edit"
                     ],
                     "default": "view",
+                    "required": false
+                },
+                "password": {
+                    "description": "The password for the parent post of the comment (if the post is password protected).",
+                    "type": "string",
                     "required": false
                 }
             },
@@ -3539,6 +3700,466 @@
         },
         {
             "method": "GET",
+            "pattern": "/wp/v2/font-collections",
+            "name": "Minn\\Rest\\FontCollectionsController::list",
+            "handler": "Minn\\Rest\\FontCollectionsController::list",
+            "summary": "The registered font collections, a page at a time.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access font collections."
+                },
+                "refuse": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access font collections."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/font-collections/{slug:[\\/\\w-]+}",
+            "name": "Minn\\Rest\\FontCollectionsController::single",
+            "handler": "Minn\\Rest\\FontCollectionsController::single",
+            "summary": "One registered font collection, by its slug.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access font collections."
+                },
+                "refuse": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access font collections."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/font-families",
+            "name": "Minn\\Rest\\FontsController::families",
+            "handler": "Minn\\Rest\\FontsController::families",
+            "summary": "The font families.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access font families."
+                },
+                "refuse": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access font families."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "required": false
+                },
+                "exclude": {
+                    "description": "Ensure result set excludes specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "include": {
+                    "description": "Limit result set to specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "search_semantics": {
+                    "description": "How to interpret the search input.",
+                    "type": "string",
+                    "enum": [
+                        "exact"
+                    ],
+                    "required": false
+                },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
+                    "type": "integer",
+                    "required": false
+                },
+                "order": {
+                    "description": "Order sort attribute ascending or descending.",
+                    "type": "string",
+                    "default": "desc",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ],
+                    "required": false
+                },
+                "orderby": {
+                    "description": "Sort collection by post attribute.",
+                    "type": "string",
+                    "default": "id",
+                    "enum": [
+                        "id",
+                        "include"
+                    ],
+                    "required": false
+                },
+                "slug": {
+                    "description": "Limit result set to posts with one or more specific slugs.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/font-families/{id:[\\d]+}",
+            "name": "Minn\\Rest\\FontsController::family",
+            "handler": "Minn\\Rest\\FontsController::family",
+            "summary": "One font family.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access this font family."
+                },
+                "refuse": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access this font family."
+                }
+            },
+            "args": {
+                "id": {
+                    "description": "Unique identifier for the post.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/font-families/{font_family_id:[\\d]+}/font-faces",
+            "name": "Minn\\Rest\\FontsController::faces",
+            "handler": "Minn\\Rest\\FontsController::faces",
+            "summary": "A font family's faces.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access font faces."
+                },
+                "refuse": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access font faces."
+                }
+            },
+            "args": {
+                "font_family_id": {
+                    "description": "The ID for the parent font family of the font face.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "required": false
+                },
+                "exclude": {
+                    "description": "Ensure result set excludes specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "include": {
+                    "description": "Limit result set to specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "search_semantics": {
+                    "description": "How to interpret the search input.",
+                    "type": "string",
+                    "enum": [
+                        "exact"
+                    ],
+                    "required": false
+                },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
+                    "type": "integer",
+                    "required": false
+                },
+                "order": {
+                    "description": "Order sort attribute ascending or descending.",
+                    "type": "string",
+                    "default": "desc",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ],
+                    "required": false
+                },
+                "orderby": {
+                    "description": "Sort collection by post attribute.",
+                    "type": "string",
+                    "default": "id",
+                    "enum": [
+                        "id",
+                        "include"
+                    ],
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/font-families/{font_family_id:[\\d]+}/font-faces/{id:[\\d]+}",
+            "name": "Minn\\Rest\\FontsController::face",
+            "handler": "Minn\\Rest\\FontsController::face",
+            "summary": "One font face of a family.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access this font face."
+                },
+                "refuse": {
+                    "code": "rest_cannot_read",
+                    "message": "Sorry, you are not allowed to access this font face."
+                }
+            },
+            "args": {
+                "font_family_id": {
+                    "description": "The ID for the parent font family of the font face.",
+                    "type": "integer",
+                    "required": false
+                },
+                "id": {
+                    "description": "Unique identifier for the font face.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "DELETE",
+            "pattern": "/wp/v2/font-families/{id:[\\d]+}",
+            "name": "Minn\\Rest\\FontsController::deleteFamily",
+            "handler": "Minn\\Rest\\FontsController::deleteFamily",
+            "summary": "A font family deleted for good, its faces with it; there is no trash for either.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_delete",
+                    "message": "Sorry, you are not allowed to delete this post."
+                },
+                "refuse": {
+                    "code": "rest_cannot_delete",
+                    "message": "Sorry, you are not allowed to delete this post."
+                }
+            },
+            "args": {
+                "id": {
+                    "description": "Unique identifier for the post.",
+                    "type": "integer",
+                    "required": false
+                },
+                "force": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to bypass Trash and force deletion.",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "DELETE",
+            "pattern": "/wp/v2/font-families/{font_family_id:[\\d]+}/font-faces/{id:[\\d]+}",
+            "name": "Minn\\Rest\\FontsController::deleteFace",
+            "handler": "Minn\\Rest\\FontsController::deleteFace",
+            "summary": "A font face deleted for good, its file with it.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_delete",
+                    "message": "Sorry, you are not allowed to delete this post."
+                },
+                "refuse": {
+                    "code": "rest_cannot_delete",
+                    "message": "Sorry, you are not allowed to delete this post."
+                }
+            },
+            "args": {
+                "font_family_id": {
+                    "description": "The ID for the parent font family of the font face.",
+                    "type": "integer",
+                    "required": false
+                },
+                "id": {
+                    "description": "Unique identifier for the font face.",
+                    "type": "integer",
+                    "required": false
+                },
+                "force": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to bypass Trash and force deletion.",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
             "pattern": "/wp/v2/global-styles/{id:[\\/\\d+]+}",
             "name": "Minn\\Rest\\GlobalStylesController::single",
             "handler": "Minn\\Rest\\GlobalStylesController::single",
@@ -3695,7 +4316,7 @@
             "pattern": "/wp/v2/global-styles/{parent:[\\d]+}/revisions",
             "name": "Minn\\Rest\\GlobalStylesController::revisions",
             "handler": "Minn\\Rest\\GlobalStylesController::revisions",
-            "summary": "The revisions of the saved styles, newest first; all of them unless per_page pages them.",
+            "summary": "The revisions of the saved styles, newest first; all of them unless per_page pages them, an offset where the page starts (RevisionCollection::paged).",
             "policy": {
                 "access": "Cap",
                 "describe": "cap edit_theme_options; global styles parent {parent} must exist",
@@ -3715,7 +4336,43 @@
                     "message": "Sorry, you are not allowed to view revisions of this post."
                 }
             },
-            "args": [],
+            "args": {
+                "parent": {
+                    "description": "The ID for the parent of the revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "required": false
+                },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
+                    "type": "integer",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -3744,7 +4401,29 @@
                     "message": "Sorry, you are not allowed to view revisions of this post."
                 }
             },
-            "args": [],
+            "args": {
+                "parent": {
+                    "description": "The ID for the parent of the global styles revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "id": {
+                    "description": "Unique identifier for the global styles revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -3787,17 +4466,6 @@
                 "describe": "public"
             },
             "args": {
-                "context": {
-                    "description": "Scope under which the request is made; determines fields present in response.",
-                    "type": "string",
-                    "enum": [
-                        "view",
-                        "embed",
-                        "edit"
-                    ],
-                    "default": "view",
-                    "required": false
-                },
                 "status": {
                     "type": "array",
                     "items": {
@@ -3825,15 +4493,9 @@
                 "describe": "public"
             },
             "args": {
-                "context": {
-                    "description": "Scope under which the request is made; determines fields present in response.",
+                "stylesheet": {
+                    "description": "The theme's stylesheet. This uniquely identifies the theme.",
                     "type": "string",
-                    "enum": [
-                        "view",
-                        "embed",
-                        "edit"
-                    ],
-                    "default": "view",
                     "required": false
                 }
             },
@@ -4044,7 +4706,7 @@
             "pattern": "/wp/v2/menus",
             "name": "Minn\\Rest\\MenusController::listMenus",
             "handler": "Minn\\Rest\\MenusController::listMenus",
-            "summary": "Every classic menu.",
+            "summary": "Every classic menu, as the nav_menu taxonomy's term list (Rest\\MenuLists).",
             "policy": {
                 "access": "Cap",
                 "describe": "cap edit_posts; or anyone, when rest_menu_read_access opens it",
@@ -4059,7 +4721,108 @@
                 },
                 "opener": "rest_menu_read_access"
             },
-            "args": [],
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "required": false
+                },
+                "search": {
+                    "description": "Limit results to those matching a string.",
+                    "type": "string",
+                    "required": false
+                },
+                "exclude": {
+                    "description": "Ensure result set excludes specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "include": {
+                    "description": "Limit result set to specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
+                    "type": "integer",
+                    "required": false
+                },
+                "order": {
+                    "description": "Order sort attribute ascending or descending.",
+                    "type": "string",
+                    "default": "asc",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ],
+                    "required": false
+                },
+                "orderby": {
+                    "description": "Sort collection by term attribute.",
+                    "type": "string",
+                    "default": "name",
+                    "enum": [
+                        "id",
+                        "include",
+                        "name",
+                        "slug",
+                        "include_slugs",
+                        "term_group",
+                        "description",
+                        "count"
+                    ],
+                    "required": false
+                },
+                "hide_empty": {
+                    "description": "Whether to hide terms not assigned to any posts.",
+                    "type": "boolean",
+                    "default": false,
+                    "required": false
+                },
+                "post": {
+                    "description": "Limit result set to terms assigned to a specific post.",
+                    "type": "integer",
+                    "default": null,
+                    "required": false
+                },
+                "slug": {
+                    "description": "Limit result set to terms with one or more specific slugs.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4089,7 +4852,24 @@
                 },
                 "opener": "rest_menu_read_access"
             },
-            "args": [],
+            "args": {
+                "id": {
+                    "description": "Unique identifier for the term.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4237,7 +5017,7 @@
             "pattern": "/wp/v2/menu-items",
             "name": "Minn\\Rest\\MenusController::listItems",
             "handler": "Minn\\Rest\\MenusController::listItems",
-            "summary": "The items of a menu.",
+            "summary": "The menu items, as their type's post list (Rest\\MenuLists).",
             "policy": {
                 "access": "Cap",
                 "describe": "cap edit_posts; or anyone, when rest_menu_read_access opens it",
@@ -4282,7 +5062,24 @@
                 },
                 "opener": "rest_menu_read_access"
             },
-            "args": [],
+            "args": {
+                "id": {
+                    "description": "Unique identifier for the post.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4445,7 +5242,19 @@
                 },
                 "opener": "rest_menu_read_access"
             },
-            "args": [],
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4469,13 +5278,30 @@
                 },
                 "opener": "rest_menu_read_access"
             },
-            "args": [],
+            "args": {
+                "location": {
+                    "description": "An alphanumeric identifier for the menu location.",
+                    "type": "string",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/navigation",
+            "pattern": "/wp/v2/{base:navigation}",
             "name": "Minn\\Rest\\NavigationController::list",
             "handler": "Minn\\Rest\\NavigationController::list",
             "summary": "The navigation posts.",
@@ -4503,7 +5329,29 @@
                     "message": "Invalid post ID."
                 }
             },
-            "args": [],
+            "args": {
+                "id": {
+                    "description": "Unique identifier for the post.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "password": {
+                    "description": "The password for the post if it is password protected.",
+                    "type": "string",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4639,7 +5487,7 @@
             "pattern": "/wp/v2/plugins",
             "name": "Minn\\Rest\\PluginsController::list",
             "handler": "Minn\\Rest\\PluginsController::list",
-            "summary": "The plugins list, optionally by status.",
+            "summary": "The plugins list, narrowed by status and by a search when one is asked.",
             "policy": {
                 "access": "Cap",
                 "describe": "cap activate_plugins",
@@ -4653,7 +5501,36 @@
                     "message": "Sorry, you are not allowed to manage plugins for this site."
                 }
             },
-            "args": [],
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "search": {
+                    "description": "Limit results to those matching a string.",
+                    "type": "string",
+                    "required": false
+                },
+                "status": {
+                    "description": "Limits results to plugins with the given status.",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "inactive",
+                            "active"
+                        ]
+                    },
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4685,21 +5562,39 @@
             "pattern": "/wp/v2/plugins/{plugin:[^.\\/]+(?:\\/[^.\\/]+)?}",
             "name": "Minn\\Rest\\PluginsController::single",
             "handler": "Minn\\Rest\\PluginsController::single",
-            "summary": "One plugin.",
+            "summary": "One plugin; the refusal is named for the one, as on the reference.",
             "policy": {
                 "access": "Cap",
                 "describe": "cap activate_plugins",
                 "cap": "activate_plugins",
                 "signIn": {
-                    "code": "rest_cannot_view_plugins",
+                    "code": "rest_cannot_view_plugin",
                     "message": "Sorry, you are not allowed to manage plugins for this site."
                 },
                 "refuse": {
-                    "code": "rest_cannot_view_plugins",
+                    "code": "rest_cannot_view_plugin",
                     "message": "Sorry, you are not allowed to manage plugins for this site."
                 }
             },
-            "args": [],
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "plugin": {
+                    "type": "string",
+                    "pattern": "[^.\\/]+(?:\\/[^.\\/]+)?",
+                    "required": false,
+                    "bare_refusal": true
+                }
+            },
             "body": [],
             "index": true
         },
@@ -5441,6 +6336,11 @@
                 }
             },
             "args": {
+                "id": {
+                    "description": "Unique identifier for the post.",
+                    "type": "integer",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",
@@ -5450,6 +6350,16 @@
                         "edit"
                     ],
                     "default": "view",
+                    "required": false
+                },
+                "excerpt_length": {
+                    "description": "Override the default excerpt length.",
+                    "type": "integer",
+                    "required": false
+                },
+                "password": {
+                    "description": "The password for the post if it is password protected.",
+                    "type": "string",
                     "required": false
                 }
             },
@@ -5623,7 +6533,7 @@
             "pattern": "/wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\\d]+}/revisions",
             "name": "Minn\\Rest\\RevisionsController::revisions",
             "handler": "Minn\\Rest\\RevisionsController::revisions",
-            "summary": "Real revisions, not autosaves.",
+            "summary": "Every revision of the parent, its autosaves among them, filtered, ordered and paged as the request asks (RevisionCollection).",
             "policy": {
                 "access": "Own",
                 "describe": "cap edit_post on {parent}; post parent {parent} must exist",
@@ -5643,7 +6553,91 @@
                     "message": "Sorry, you are not allowed to view revisions of this post."
                 }
             },
-            "args": [],
+            "args": {
+                "parent": {
+                    "description": "The ID for the parent of the revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "required": false
+                },
+                "search": {
+                    "description": "Limit results to those matching a string.",
+                    "type": "string",
+                    "required": false
+                },
+                "exclude": {
+                    "description": "Ensure result set excludes specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "include": {
+                    "description": "Limit result set to specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
+                    "type": "integer",
+                    "required": false
+                },
+                "order": {
+                    "description": "Order sort attribute ascending or descending.",
+                    "type": "string",
+                    "default": "desc",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ],
+                    "required": false
+                },
+                "orderby": {
+                    "description": "Sort collection by object attribute.",
+                    "type": "string",
+                    "default": "date",
+                    "enum": [
+                        "date",
+                        "id",
+                        "include",
+                        "relevance",
+                        "slug",
+                        "include_slugs",
+                        "title"
+                    ],
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -5672,7 +6666,29 @@
                     "message": "Sorry, you are not allowed to view revisions of this post."
                 }
             },
-            "args": [],
+            "args": {
+                "parent": {
+                    "description": "The ID for the parent of the revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "id": {
+                    "description": "Unique identifier for the revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -5701,7 +6717,24 @@
                     "message": "Sorry, you are not allowed to delete revisions of this post."
                 }
             },
-            "args": [],
+            "args": {
+                "parent": {
+                    "description": "The ID for the parent of the revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "id": {
+                    "description": "Unique identifier for the revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "force": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Required to be true, as revisions do not support trashing.",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -5710,7 +6743,7 @@
             "pattern": "/wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{id:[\\d]+}/autosaves",
             "name": "Minn\\Rest\\RevisionsController::autosaves",
             "handler": "Minn\\Rest\\RevisionsController::autosaves",
-            "summary": "The autosaves of a post.",
+            "summary": "The autosaves of a post, every author's, in the asked context; the edit view names each one's preview.",
             "policy": {
                 "access": "Own",
                 "describe": "cap edit_post on {id}; post parent {id} must exist",
@@ -5730,7 +6763,24 @@
                     "message": "Sorry, you are not allowed to view autosaves of this post."
                 }
             },
-            "args": [],
+            "args": {
+                "parent": {
+                    "description": "The ID for the parent of the autosave.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -5739,7 +6789,7 @@
             "pattern": "/wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{parent:[\\d]+}/autosaves/{id:[\\d]+}",
             "name": "Minn\\Rest\\RevisionsController::autosave",
             "handler": "Minn\\Rest\\RevisionsController::autosave",
-            "summary": "The caller's autosave of the parent, whichever autosave id is asked for; the edit view names its preview.",
+            "summary": "The parent's newest autosave, whoever saved it and whichever autosave id is asked for; the edit view names its preview.",
             "policy": {
                 "access": "Own",
                 "describe": "cap edit_post on {parent}; post parent {parent} must exist",
@@ -5759,7 +6809,29 @@
                     "message": "Sorry, you are not allowed to view revisions of this post."
                 }
             },
-            "args": [],
+            "args": {
+                "parent": {
+                    "description": "The ID for the parent of the autosave.",
+                    "type": "integer",
+                    "required": false
+                },
+                "id": {
+                    "description": "The ID for the autosave.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -5858,6 +6930,24 @@
                         ],
                         "type": "string"
                     },
+                    "required": false
+                },
+                "exclude": {
+                    "description": "Ensure result set excludes specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "include": {
+                    "description": "Limit result set to specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
                     "required": false
                 }
             },
@@ -6508,6 +7598,11 @@
                 "describe": "public"
             },
             "args": {
+                "id": {
+                    "description": "The id of a registered sidebar",
+                    "type": "string",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",
@@ -6683,6 +7778,11 @@
                 }
             },
             "args": {
+                "id": {
+                    "description": "The widget type id.",
+                    "type": "string",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",
@@ -6715,6 +7815,167 @@
                 "refuse": {
                     "code": "rest_cannot_manage_widgets",
                     "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp-site-health/v1/tests/background-updates",
+            "name": "Minn\\Rest\\SiteHealthController::test",
+            "handler": "Minn\\Rest\\SiteHealthController::test",
+            "summary": "One of the asynchronous tests, or the directory sizes.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap view_site_health_checks",
+                "cap": "view_site_health_checks",
+                "signIn": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp-site-health/v1/tests/loopback-requests",
+            "name": "Minn\\Rest\\SiteHealthController::test",
+            "handler": "Minn\\Rest\\SiteHealthController::test",
+            "summary": "One of the asynchronous tests, or the directory sizes.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap view_site_health_checks",
+                "cap": "view_site_health_checks",
+                "signIn": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp-site-health/v1/tests/https-status",
+            "name": "Minn\\Rest\\SiteHealthController::test",
+            "handler": "Minn\\Rest\\SiteHealthController::test",
+            "summary": "One of the asynchronous tests, or the directory sizes.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap view_site_health_checks",
+                "cap": "view_site_health_checks",
+                "signIn": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp-site-health/v1/tests/dotorg-communication",
+            "name": "Minn\\Rest\\SiteHealthController::test",
+            "handler": "Minn\\Rest\\SiteHealthController::test",
+            "summary": "One of the asynchronous tests, or the directory sizes.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap view_site_health_checks",
+                "cap": "view_site_health_checks",
+                "signIn": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp-site-health/v1/tests/authorization-header",
+            "name": "Minn\\Rest\\SiteHealthController::test",
+            "handler": "Minn\\Rest\\SiteHealthController::test",
+            "summary": "One of the asynchronous tests, or the directory sizes.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap view_site_health_checks",
+                "cap": "view_site_health_checks",
+                "signIn": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp-site-health/v1/directory-sizes",
+            "name": "Minn\\Rest\\SiteHealthController::test",
+            "handler": "Minn\\Rest\\SiteHealthController::test",
+            "summary": "One of the asynchronous tests, or the directory sizes.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap view_site_health_checks",
+                "cap": "view_site_health_checks",
+                "signIn": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp-site-health/v1/tests/page-cache",
+            "name": "Minn\\Rest\\SiteHealthController::test",
+            "handler": "Minn\\Rest\\SiteHealthController::test",
+            "summary": "One of the asynchronous tests, or the directory sizes.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap view_site_health_checks",
+                "cap": "view_site_health_checks",
+                "signIn": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
                 }
             },
             "args": [],
@@ -6758,6 +8019,243 @@
                 "describe": "public"
             },
             "args": {
+                "status": {
+                    "description": "An alphanumeric identifier for the status.",
+                    "type": "string",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/{base:templates|template-parts}/{parent:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}/revisions",
+            "name": "Minn\\Rest\\TemplateRevisionsController::revisions",
+            "handler": "Minn\\Rest\\TemplateRevisionsController::revisions",
+            "summary": "Every revision of a saved template, its autosaves among them, filtered, ordered and paged as the request asks (RevisionCollection).",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": {
+                "parent": {
+                    "description": "The id of a template",
+                    "type": "string",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "required": false
+                },
+                "search": {
+                    "description": "Limit results to those matching a string.",
+                    "type": "string",
+                    "required": false
+                },
+                "exclude": {
+                    "description": "Ensure result set excludes specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "include": {
+                    "description": "Limit result set to specific IDs.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "default": [],
+                    "required": false
+                },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
+                    "type": "integer",
+                    "required": false
+                },
+                "order": {
+                    "description": "Order sort attribute ascending or descending.",
+                    "type": "string",
+                    "default": "desc",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ],
+                    "required": false
+                },
+                "orderby": {
+                    "description": "Sort collection by object attribute.",
+                    "type": "string",
+                    "default": "date",
+                    "enum": [
+                        "date",
+                        "id",
+                        "include",
+                        "relevance",
+                        "slug",
+                        "include_slugs",
+                        "title"
+                    ],
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/{base:templates|template-parts}/{parent:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}/revisions/{id:[\\d]+}",
+            "name": "Minn\\Rest\\TemplateRevisionsController::revision",
+            "handler": "Minn\\Rest\\TemplateRevisionsController::revision",
+            "summary": "One revision of a saved template; a revision of another post is a mismatch.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": {
+                "parent": {
+                    "description": "The id of a template",
+                    "type": "string",
+                    "required": false
+                },
+                "id": {
+                    "description": "Unique identifier for the revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "DELETE",
+            "pattern": "/wp/v2/{base:templates|template-parts}/{parent:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}/revisions/{id:[\\d]+}",
+            "name": "Minn\\Rest\\TemplateRevisionsController::deleteRevision",
+            "handler": "Minn\\Rest\\TemplateRevisionsController::deleteRevision",
+            "summary": "A template's revision deleted for good, answered as it was; never trashed, so without force it is refused.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": {
+                "parent": {
+                    "description": "The id of a template",
+                    "type": "string",
+                    "required": false
+                },
+                "id": {
+                    "description": "Unique identifier for the revision.",
+                    "type": "integer",
+                    "required": false
+                },
+                "force": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Required to be true, as revisions do not support trashing.",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/{base:templates|template-parts}/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}/autosaves",
+            "name": "Minn\\Rest\\TemplateRevisionsController::autosaves",
+            "handler": "Minn\\Rest\\TemplateRevisionsController::autosaves",
+            "summary": "The autosaves of a saved template, every author's, newest first.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": {
+                "id": {
+                    "description": "The id of a template",
+                    "type": "string",
+                    "required": false
+                },
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/{base:templates|template-parts}/{parent:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}/autosaves/{id:[\\d]+}",
+            "name": "Minn\\Rest\\TemplateRevisionsController::autosave",
+            "handler": "Minn\\Rest\\TemplateRevisionsController::autosave",
+            "summary": "The template's newest autosave, whoever saved it and whichever autosave id is asked for.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": {
+                "parent": {
+                    "description": "The id of a template",
+                    "type": "string",
+                    "required": false
+                },
+                "id": {
+                    "description": "The ID for the autosave.",
+                    "type": "integer",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",
@@ -7311,6 +8809,11 @@
                 }
             },
             "args": {
+                "id": {
+                    "description": "Unique identifier for the term.",
+                    "type": "integer",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",
@@ -8006,6 +9509,11 @@
                 }
             },
             "args": {
+                "id": {
+                    "description": "Unique identifier for the user.",
+                    "type": "integer",
+                    "required": false
+                },
                 "context": {
                     "description": "Scope under which the request is made; determines fields present in response.",
                     "type": "string",

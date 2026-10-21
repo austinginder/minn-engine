@@ -79,6 +79,7 @@ final readonly class Api
         $caller = $s->caller();
         $terms = new TermsController($s->db(), $s->terms(), $s->site(), $s->termObject(), $caller);
         $postsController = new PostsController($s->db(), $s->posts(), $s->postObject(), $caller);
+        [$menuObject, $itemObject] = [new MenuObject($s->menus(), $s->url(), $caller), new MenuItemObject($s->url(), $caller)];
         $postsWrite = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $caller);
         $controllers = [
             new IndexController($s->site(), $s->permalinks(), $s->url(), new RouteCatalogue($router, $s->types(), $s->url())),
@@ -122,14 +123,20 @@ final readonly class Api
             new GlobalStylesController($s->userStyles(), $s->themeStyles(), new GlobalStylesObject($s->revisions(), $s->url(), $caller), $s->revisions(), $caller),
             new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller, $s->permalinks()),
             new MediaController($s->posts(), $s->mediaWriter(), $s->mediaObject(), $caller, $postsController),
-            new MenusController($s->menus(), new MenuObject($s->menus(), $s->url(), $caller), new MenuItemObject($s->url(), $caller), $caller, $s->url()),
+            new MenusController($s->url(), new MenuLists($postsController, $s->menus(), $menuObject, $itemObject, $caller)),
+            new FontsController($s->posts(), new FontObject($s->db(), $s->url())),
+            new SiteHealthController(),
+            new BlockEditorController($s->url(), $caller),
+            new FontCollectionsController($s->url()),
         ];
         $templates = $s->templates();
         $templateWriter = $s->templateWriter();
         if ($templates !== null && $templateWriter !== null) {
+            // The revisions and autosaves routes go first: the templates' id pattern would take their paths too.
+            $controllers[] = new TemplateRevisionsController($templates, new TemplateObject($templates, $s->posts(), $s->url(), $caller), $s->revisions(), $s->url(), $caller);
             $controllers[] = new TemplatesController($templates, $templateWriter, new TemplateObject($templates, $s->posts(), $s->url(), $caller), $caller);
         }
-        return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new BlocksController($postsController, $postsWrite, $s->posts(), $caller), new DeclaredPostsController($s->types(), $postsController, $postsWrite), new DeclaredTermsController($terms)];
+        return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new BlocksController($postsController, $postsWrite, $caller), new DeclaredPostsController($s->types(), $postsController, $postsWrite), new DeclaredTermsController($terms)];
     }
 
     /** Who is making this request. */

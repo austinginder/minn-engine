@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Admin\AdminPlugin;
 use Minn\Http\Access;
+use Minn\Http\Args;
 use Minn\Objects\Errors;
 use Minn\Ops\Packages;
 use Minn\Content\Inventory;
@@ -23,6 +24,8 @@ use Minn\Runtime\PluginRemoval;
 use Minn\Runtime\Refusal;
 use Minn\RestError;
 use Minn\Html;
+use Minn\Support\Lists;
+use Minn\Support\Sanitize;
 use Minn\Support\Serialized;
 
 /**
@@ -35,6 +38,12 @@ use Minn\Support\Serialized;
  */
 final readonly class PluginsController
 {
+    /** Read by list(): the search and the statuses it narrows to. */
+    private const LIST_ARGS = [
+        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
+        'status' => ['description' => 'Limits results to plugins with the given status.', 'type' => 'array', 'items' => ['type' => 'string', 'enum' => ['inactive', 'active']], 'required' => false],
+    ];
+
     public function __construct(
         private Site $site,
         private Inventory $inventory,
@@ -45,13 +54,36 @@ final readonly class PluginsController
     ) {
     }
 
-    /** The plugins list, optionally by status. */
-    #[Route(Method::Get, '/wp/v2/plugins', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
+    /** The plugins list, narrowed by status and by a search when one is asked. */
+    #[Route(Method::Get, '/wp/v2/plugins', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'), args: [Args::CONTEXT, self::LIST_ARGS])]
     public function list(Request $request): Response
     {
-        $status = $request->query('status');
-        $items = array_values(array_filter($this->items(), static fn (array $p) => $status === null || $p['status'] === $status));
-        return Reply::item($items, Fields::fromQuery($request->query));
+        $statuses = Lists::items($request->query['status'] ?? []);
+        $search = Sanitize::textField($request->query['search'] ?? '');
+        $items = [];
+        foreach ($this->items() as [$item, $searched]) {
+            if (($statuses === [] || in_array($item['status'], $statuses, true)) && ($search === '' || self::mentions($searched, $search))) {
+                $items[] = $item;
+            }
+        }
+        $fields = Fields::fromQuery($request->query);
+        return Reply::item($fields === null ? $items : array_map(static fn (array $item): array => $fields->apply($item), $items), null);
+    }
+
+    /**
+     * Whether a search names a plugin: found, letter case kept, in its file
+     * or in one of its headers as written (probe: the reference's list).
+     *
+     * @param list<string> $searched
+     */
+    private static function mentions(array $searched, string $search): bool
+    {
+        foreach ($searched as $text) {
+            if (str_contains($text, $search)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Installs a directory plugin by slug, optionally activating it; answers 201 with the item. */
@@ -90,8 +122,8 @@ final readonly class PluginsController
         return Reply::item($this->find($key), Fields::fromQuery($request->query), 201);
     }
 
-    /** One plugin. */
-    #[Route(Method::Get, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
+    /** One plugin; the refusal is named for the one, as on the reference. */
+    #[Route(Method::Get, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugin', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugin', message: 'Sorry, you are not allowed to manage plugins for this site.'), args: [Args::CONTEXT, PathArgs::PLUGIN])]
     public function single(Request $request, string $plugin): Response
     {
         return Reply::item($this->find($plugin), Fields::fromQuery($request->query));
@@ -147,16 +179,28 @@ final readonly class PluginsController
         return Reply::item(['deleted' => true, 'previous' => $item], Fields::fromQuery($request->query));
     }
 
-    /** @return list<array> */
+    /**
+     * Every plugin's item, with the text a search reads for it: a WordPress
+     * plugin's file and headers as written, an extension's key and fields.
+     *
+     * @return list<array{0: array<string, mixed>, 1: list<string>}>
+     */
     private function items(): array
     {
         $items = [];
         foreach ($this->extensions->found() as $manifest) {
-            $items[] = $this->extensionItem($manifest, in_array($manifest, $this->extensions->active(), true));
+            $item = $this->extensionItem($manifest, in_array($manifest, $this->extensions->active(), true));
+            $items[] = [$item, [$item['plugin'] . '.php', $item['name'], $item['description']['raw'], $item['version'], $item['textdomain']]];
         }
         $stored = array_flip(Serialized::stringList($this->site->option('active_plugins')));
-        foreach ($this->inventory->pluginFiles() as $relative => $path) {
-            $items[] = $this->pluginItem($relative, $path, isset($stored[$relative]));
+        $files = $this->inventory->pluginFiles();
+        $headers = array_map(static fn (string $path): array => PluginFiles::data($path, false, false), $files);
+        // The WordPress plugins come by name, letter case aside, as the reference lists them.
+        uasort($headers, static fn (array $a, array $b): int => strnatcasecmp((string) ($a['Name'] ?? ''), (string) ($b['Name'] ?? '')));
+        foreach ($headers as $relative => $data) {
+            $relative = (string) $relative;
+            $item = self::shape($relative, $files[$relative], $data, isset($stored[$relative]) ? 'active' : 'inactive') + ['_links' => $this->links((string) preg_replace('/\.php$/', '', $relative))];
+            $items[] = [$item, [$relative, ...array_values(array_filter($data, is_string(...)))]];
         }
         return $items;
     }

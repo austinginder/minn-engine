@@ -1,10 +1,13 @@
 <?php
 
-/** The registered font collections, by slug (probe fonts). */
+/**
+ * The registered font collections, by slug (probe fonts). The one instance
+ * is the request's runtime's, where the engine's font-collections routes
+ * read it.
+ */
 class WP_Font_Library
 {
     private $collections = [];
-    private static $instance = null;
 
     public function register_font_collection(string $slug, array $args)
     {
@@ -45,6 +48,6 @@ class WP_Font_Library
 
     public static function get_instance()
     {
-        return self::$instance ??= new self();
+        return Minn\Runtime\Runtime::current()->remember('font_library', static fn () => new self());
     }
 }

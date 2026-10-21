@@ -33,7 +33,11 @@ final class Embed
         'user' => ['id', 'name', 'url', 'description', 'link', 'slug', 'avatar_urls', '_links'],
         'term' => ['id', 'link', 'name', 'slug', 'taxonomy', '_links'],
         'comment' => ['id', 'parent', 'author', 'author_name', 'author_url', 'date', 'content', 'link', 'type', 'author_avatar_urls', '_links'],
+        'menu-item' => ['id', 'title', 'status', 'url', 'attr_title', 'description', 'type', 'type_label', 'object', 'object_id', 'parent', 'menu_order', 'target', 'classes', 'xfn', 'invalid', '_links'],
     ];
+
+    /** The keys a post type shows in embed beyond a post's (probe: each type's list in the embed context). */
+    private const TYPE_KEYS = ['wp_navigation' => ['status', 'content'], 'wp_block' => ['wp_pattern_sync_status']];
 
     /** @var array<string, ?array> answered hrefs, so a list of posts by one author asks once */
     private array $cache = [];
@@ -195,7 +199,8 @@ final class Embed
     /** Which key set a route's objects take in embed context; null for routes without one. */
     private function kind(string $path): ?string
     {
-        if (!preg_match('#^/wp/v2/([^/]+)(?:/|$)#', $path, $m)) {
+        // A revision or an autosave is no post of its parent's type: its routes answer their own embed shape.
+        if (!preg_match('#^/wp/v2/([^/]+)(?:/|$)#', $path, $m) || preg_match('#^/wp/v2/[^/]+/.+/(?:revisions|autosaves)(?:/\d+)?$#', $path) === 1) {
             return null;
         }
         $base = $m[1];
@@ -203,6 +208,9 @@ final class Embed
             $base === 'media' => 'media',
             $base === 'users' => 'user',
             $base === 'comments' => 'comment',
+            $base === 'menu-items' => 'menu-item',
+            // A font family and its faces show the same fields in every context (Rest\FontObject).
+            $base === 'font-families' => null,
             $this->taxonomyBase($base) => 'term',
             $this->types->slugForRestBase($base) !== null => 'post',
             default => null,
@@ -225,11 +233,12 @@ final class Embed
         $kind = match (true) {
             $type === 'attachment' => 'media',
             $type === 'user', $type === 'comment' => $type,
+            $type === 'nav_menu_item' => 'menu-item',
             Registered::taxonomyExists($type) => 'term',
             Registered::postTypeExists($type) => 'post',
             default => null,
         };
-        return $kind === null ? $item : array_intersect_key($item, array_flip(self::KEYS[$kind]));
+        return $kind === null ? $item : array_intersect_key($item, array_flip([...self::KEYS[$kind], ...self::TYPE_KEYS[$type] ?? []]));
     }
 
     /** The embed shape, with the fields plugin code registered for the item's type to show in embed. */
@@ -239,8 +248,9 @@ final class Embed
             'post' => (string) ($object['type'] ?? ''),
             'term' => (string) ($object['taxonomy'] ?? ''),
             'media' => 'attachment',
+            'menu-item' => 'nav_menu_item',
             default => $kind,
         };
-        return array_intersect_key($object, array_flip([...self::KEYS[$kind], ...RegisteredFields::shownIn($type, 'embed')]));
+        return array_intersect_key($object, array_flip([...self::KEYS[$kind], ...self::TYPE_KEYS[$type] ?? [], ...RegisteredFields::shownIn($type, 'embed')]));
     }
 }

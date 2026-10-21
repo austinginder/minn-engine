@@ -86,7 +86,7 @@ final readonly class TermsController
     }
 
     /** One category or tag. */
-    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Term, param: 'id', edit: new Policy(Access::Cap, 'manage_categories', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this term.')), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Term, param: 'id', edit: new Policy(Access::Cap, 'manage_categories', signIn: 'rest_forbidden_context', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_forbidden_context', message: 'Sorry, you are not allowed to edit this term.')), args: [PathArgs::TERM_ID, Args::CONTEXT])]
     public function single(Request $request, string $base, string $id): Response
     {
         $config = TermObject::config($base);

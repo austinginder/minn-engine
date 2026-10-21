@@ -4,46 +4,58 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 449 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 456 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
-| [`ArgCheck`](#argcheck) | final readonly class | 124 | Judges a route's declared arguments against the request before the |
+| [`ArgCheck`](#argcheck) | final readonly class | 125 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 164 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
-| [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 89 | wp/v2/block-renderer as the reference answers it (probe |
+| [`BlockEditorController`](#blockeditorcontroller) | final readonly class | 29 | Two of wp-block-editor/v1's routes, for someone who may edit theme |
+| [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 93 | wp/v2/block-renderer as the reference answers it (probe |
 | [`BlockTypesController`](#blocktypescontroller) | final readonly class | 133 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
-| [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
+| [`BlocksController`](#blockscontroller) | final readonly class | 59 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
 | [`Caller`](#caller) | final class | 149 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 34 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 309 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 311 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
-| [`Embed`](#embed) | final class | 219 | The _embed decoration and the embed context. Every embeddable link in an |
+| [`Embed`](#embed) | final class | 229 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`ExistingPost`](#existingpost) | final class | 10 | A post created with an id names one that exists: refused with |
 | [`Fields`](#fields) | final readonly class | 106 | The _fields response filter. Dot paths descend ("title.rendered"); the |
-| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 161 | wp/v2/global-styles: the site editor's saved styles (one post per |
+| [`FontArgs`](#fontargs) | final class | 53 | The font library's parameters as the reference's REST index lists them |
+| [`FontCollectionsController`](#fontcollectionscontroller) | final readonly class | 78 | wp/v2/font-collections (probe: the font library routes on the |
+| [`FontFaceRecord`](#fontfacerecord) | final class | 21 | A font face route names a font face: refused as an invalid post id |
+| [`FontFamilyRecord`](#fontfamilyrecord) | final class | 8 | A font family route names a font family: refused as an invalid post id |
+| [`FontObject`](#fontobject) | final readonly class | 87 | A font family and a font face as wp/v2 shapes them (probe: the font |
+| [`FontsController`](#fontscontroller) | final readonly class | 162 | wp/v2/font-families and their font-faces, read and deleted (probe: the |
+| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 158 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
-| [`IndexController`](#indexcontroller) | final readonly class | 56 | The API index at /wp-json/: the site facts monitors read (name, url, |
-| [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 141 | wp/v2/themes as the reference answers it (probe rest-themes): the |
+| [`IndexController`](#indexcontroller) | final readonly class | 66 | The API index at /wp-json/: the site facts monitors read (name, url, |
+| [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 142 | wp/v2/themes as the reference answers it (probe rest-themes): the |
+| [`ItemRender`](#itemrender) | final class | 54 | What a post read sets up around its rendering, as the reference does for |
 | [`Links`](#links) | final class | 83 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
 | [`MediaController`](#mediacontroller) | final readonly class | 294 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 171 | The wp/v2 media object, view and edit context. |
+| [`MenuCollectionParams`](#menucollectionparams) | final class | 8 | The menus list's parameters as the reference declares them: a flat |
+| [`MenuItemCollectionParams`](#menuitemcollectionparams) | final class | 39 | The menu items list's parameters as the reference declares them: the |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 75 | The wp/v2/menu-items resource. |
+| [`MenuLists`](#menulists) | final readonly class | 84 | The menus and menu items lists, served as the reference serves them: the |
 | [`MenuObject`](#menuobject) | final readonly class | 41 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
-| [`MenusController`](#menuscontroller) | final readonly class | 305 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
+| [`MenusController`](#menuscontroller) | final readonly class | 262 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
-| [`PluginsController`](#pluginscontroller) | final readonly class | 246 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
+| [`PathArgs`](#pathargs) | final class | 56 | The arguments a route's path names, as the reference lists them among the |
+| [`PluginsController`](#pluginscontroller) | final readonly class | 287 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 166 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 170 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 561 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 202 | wp/v2 posts and pages, read side. |
+| [`PostsController`](#postscontroller) | final readonly class | 261 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 528 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
@@ -53,29 +65,32 @@ the wp/v2 surface: shapes and controllers
 | [`Responses`](#responses) | final class | 95 | REST answers as the WordPress layer shapes them: any value made a |
 | [`RestMeta`](#restmeta) | final class | 296 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 263 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
+| [`RevisionCollection`](#revisioncollection) | final class | 177 | A revisions list as the reference answers it (probe of the posts, |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 299 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
-| [`RouteCatalogue`](#routecatalogue) | final readonly class | 78 | The routes the engine serves, described in the reference's shape for the |
+| [`RouteCatalogue`](#routecatalogue) | final readonly class | 100 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 492 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 493 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 503 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
 | [`SchemaValues`](#schemavalues) | final class | 198 | The value side of JSON Schema, as the reference applies it: what counts |
-| [`SearchController`](#searchcontroller) | final readonly class | 122 | wp/v2 search over published content: id, title, url, type, and the |
+| [`SearchController`](#searchcontroller) | final readonly class | 171 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 417 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
-| [`SidebarsController`](#sidebarscontroller) | final readonly class | 206 | wp/v2/sidebars and wp/v2/widget-types as the reference answers them |
+| [`SidebarsController`](#sidebarscontroller) | final readonly class | 207 | wp/v2/sidebars and wp/v2/widget-types as the reference answers them |
+| [`SiteHealthController`](#sitehealthcontroller) | final readonly class | 17 | wp-site-health/v1 (probe: the site health routes on the reference): the |
 | [`SiteSchema`](#siteschema) | final class | 38 | The site's JSON-schema handler: one Schema whose email test, number |
 | [`StatusesController`](#statusescontroller) | final readonly class | 97 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
 | [`Subjects`](#subjects) | final readonly class | 53 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TemplateObject`](#templateobject) | final readonly class | 101 | The wp/v2/templates and wp/v2/template-parts resource. |
+| [`TemplateRevisionsController`](#templaterevisionscontroller) | final readonly class | 152 | wp/v2/templates and wp/v2/template-parts revisions and autosaves: the |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 324 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermCollectionParams`](#termcollectionparams) | final class | 13 | A taxonomy's term list parameters as the reference declares them (probe |
 | [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
@@ -90,7 +105,7 @@ the wp/v2 surface: shapes and controllers
 | [`UsersController`](#userscontroller) | final readonly class | 399 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 | [`ViewConfigPatch`](#viewconfigpatch) | final class | 151 | A patch to a view configuration (WP_View_Config_Data; probe |
 | [`WidgetObject`](#widgetobject) | final readonly class | 72 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
-| [`WidgetsController`](#widgetscontroller) | final readonly class | 169 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
+| [`WidgetsController`](#widgetscontroller) | final readonly class | 170 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
 
 ## Api
 
@@ -244,7 +259,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 77), `engineResponse()` (private, line 401), `withPageLinks()` (private, line 415), `options()` (private, line 446), `withSchema()` (private, line 463), `withAllow()` (private, line 484)
+Internals: `controllers()` (private, line 77), `engineResponse()` (private, line 408), `withPageLinks()` (private, line 422), `options()` (private, line 453), `withSchema()` (private, line 470), `withAllow()` (private, line 491)
 
 
 ## ApplicationPasswordsController
@@ -351,7 +366,7 @@ Throws the refusal the declared arguments earn, or returns. @param array<string,
 
 - `@param array<string, string> $captures what the path named, for a route whose parameters depend on it`
 
-Internals: `json()` (private, line 67), `missing()` (private, line 83), `round()` (private, line 97), `sanitizeRound()` (private, line 124), `refuse()` (private, line 149)
+Internals: `json()` (private, line 68), `missing()` (private, line 84), `round()` (private, line 98), `sanitizeRound()` (private, line 125), `refuse()` (private, line 150)
 
 
 ## BatchController
@@ -405,6 +420,39 @@ The batch body's requests in the reference's normalised form.
 - `@return list<array{method: string, path: string, query: array<string, mixed>, body: ?array, headers: ?array}>`
 
 
+## BlockEditorController
+
+`final readonly class Minn\Rest\BlockEditorController` · `public/minn/src/Minn/Rest/BlockEditorController.php`
+
+Two of wp-block-editor/v1's routes, for someone who may edit theme
+options (probe: the block editor routes on the reference).
+navigation-fallback answers the navigation menu a navigation block
+falls back to (the newest published one, made when there is none) by
+its id, linked so it embeds. export is refused to anyone else as the
+reference refuses it; the theme it packs (the theme's files with its
+templates and theme.json as the site has them, as a zip) the engine
+does not build, so for someone allowed that route declines.
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
+```
+
+
+### `export(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp-block-editor/v1/export (cap edit_theme_options)`
+
+The active theme packed with the site's templates and styles.
+
+### `navigationFallback(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp-block-editor/v1/navigation-fallback (cap edit_theme_options)`
+
+The navigation menu a navigation block falls back to.
+
+
 ## BlockRendererController
 
 `final readonly class Minn\Rest\BlockRendererController` · `public/minn/src/Minn/Rest/BlockRendererController.php`
@@ -419,7 +467,7 @@ context is accepted, and asking for none is asking for the view context,
 which is refused, as on the reference. Arguments are judged before the
 caller: someone who can edit posts may render, or edit the post named.
 
-- const `ARGS` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'edit',     ),     'default' => 'view',     'required' => false,     'handler_validates' => true,   ),   'attributes' =>    array (     'description' => 'Attributes for the block.',     'type' => 'object',     'default' =>      array (     ),     'required' => false,     'handler_validates' => true,   ),   'post_id' =>    array (     'description' => 'ID of the post context.',     'type' => 'integer',     'required' => false,   ), )`
+- const `ARGS` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'edit',     ),     'default' => 'view',     'required' => false,     'handler_validates' => true,   ),   'attributes' =>    array (     'description' => 'Attributes for the block.',     'type' => 'object',     'default' =>      array (     ),     'required' => false,     'handler_validates' => true,   ),   'post_id' =>    array (     'description' => 'ID of the post context.',     'type' => 'integer',     'required' => false,     'handler_validates' => true,   ), )`
 
 Used by: `Minn\Rest\Api`
 
@@ -436,7 +484,7 @@ Route: `POST /wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+} (public)`
 
 The block's markup, as {"rendered": "..."}.
 
-Internals: `refuseInvalid()` (private, line 70), `permit()` (private, line 88), `rendered()` (private, line 102)
+Internals: `refuseInvalid()` (private, line 74), `permit()` (private, line 92), `rendered()` (private, line 106)
 
 
 ## BlockTypesController
@@ -498,9 +546,10 @@ Internals: `items()` (private, line 63), `item()` (private, line 77), `links()` 
 
 wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block
 posts. The reading and writing is the posts machinery with the post
-type's own capabilities; what is this type's alone is the reading gate:
-without edit_posts the list is empty and a single block is refused,
-published or not.
+type's own capabilities and the posts list's parameters; what is this
+type's alone is the reading rule: a pattern is read only by one who may
+read it (read_post), published or not, so without that the list counts
+the patterns and shows none, and a single one is refused.
 
 - const `TYPE` = `'wp_block'`
 - const `BASE` = `'blocks'`
@@ -508,23 +557,23 @@ published or not.
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Rest\PostsController $reads, Minn\Rest\PostsWriteController $writes, Minn\Content\Posts $posts, Minn\Rest\Caller $caller)
+__construct(Minn\Rest\PostsController $reads, Minn\Rest\PostsWriteController $writes, Minn\Rest\Caller $caller)
 ```
 
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/blocks (public)`
+Route: `GET /wp/v2/{base:blocks} (public)`
 
-The blocks the caller may edit; an empty list for anyone else.
+The blocks, each shown to a caller who may read it.
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/blocks/{id:[\d]+} (public; block {id} must exist)`
 
 One block. Editing context is the posts machinery's own gate
-(rest_forbidden_context); a view is refused to anyone who cannot edit
-posts, and a trashed or unknown block is not found rather than refused.
+(rest_forbidden_context); a view is refused to anyone who may not read
+the block, and an unknown one is not found rather than refused.
 
 ### `create(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -548,6 +597,8 @@ Route: `DELETE /wp/v2/blocks/{id:[\d]+} (cap delete_post on {id}; block {id} mus
 
 Trashes or deletes a block.
 
+Internals: `readable()` (private, line 55)
+
 
 ## Caller
 
@@ -556,7 +607,7 @@ Trashes or deletes a block.
 Who is making this REST call. Resolved once from the cookie and nonce;
 an anonymous or failed caller has id 0 and every capability check fails.
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuLists`, `Minn\Rest\MenuObject`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ```php
 __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities)
@@ -775,7 +826,7 @@ when a page comes back empty), and the comments the caller may read.
 
 Route: `GET /wp/v2/comments/{id:[\d]+} (public; comment {id} must exist)`
 
-One comment, if the caller may read it.
+One comment, if the caller may read it: one on a protected post only with the post's password, or for one who may edit the post.
 
 ### `create(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -799,7 +850,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 80), `events()` (private, line 163), `allowed()` (private, line 232), `readablePost()` (private, line 273), `readable()` (private, line 282), `plainComment()` (private, line 292), `prepared()` (private, line 315)
+Internals: `totals()` (private, line 81), `events()` (private, line 166), `allowed()` (private, line 235), `readablePost()` (private, line 276), `readable()` (private, line 285), `plainComment()` (private, line 295), `prepared()` (private, line 318)
 
 
 ## Context
@@ -812,7 +863,7 @@ a linked resource carries when it rides inside another response.
 
 Cases: `View` = `'view'`, `Edit` = `'edit'`, `Embed` = `'embed'`
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`
 
 ### static `of(Minn\Http\Request $request): self`
 
@@ -942,9 +993,10 @@ _fields value without _links embeds nothing there; a single object embeds
 first and is filtered afterwards. The embed context is the view object
 cut to the reference's key set for that kind of item.
 
-- const `KEYS` = `array (   'post' =>    array (     0 => 'id',     1 => 'date',     2 => 'slug',     3 => 'type',     4 => 'link',     5 => 'title',     6 => 'excerpt',     7 => 'author',     8 => 'featured_media',     9 => '_links',   ),   'media' =>    array (     0 => 'id',     1 => 'date',     2 => 'slug',     3 => 'type',     4 => 'link',     5 => 'title',     6 => 'author',     7 => 'featured_media',     8 => 'caption',     9 => 'alt_text',     10 => 'media_type',     11 => 'mime_type',     12 => 'media_details',     13 => 'source_url',     14 => '_links',   ),   'user' =>    array (     0 => 'id',     1 => 'name',     2 => 'url',     3 => 'description',     4 => 'link',     5 => 'slug',     6 => 'avatar_urls',     7 => '_links',   ),   'term' =>    array (     0 => 'id',     1 => 'link',     2 => 'name',     3 => 'slug',     4 => 'taxonomy',     5 => '_links',   ),   'comment' =>    array (     0 => 'id',     1 => 'parent',     2 => 'author',     3 => 'author_name',     4 => 'author_url',     5 => 'date',     6 => 'content',     7 => 'link',     8 => 'type',     9 => 'author_avatar_urls',     10 => '_links',   ), )`
+- const `KEYS` = `array (   'post' =>    array (     0 => 'id',     1 => 'date',     2 => 'slug',     3 => 'type',     4 => 'link',     5 => 'title',     6 => 'excerpt',     7 => 'author',     8 => 'featured_media',     9 => '_links',   ),   'media' =>    array (     0 => 'id',     1 => 'date',     2 => 'slug',     3 => 'type',     4 => 'link',     5 => 'title',     6 => 'author',     7 => 'featured_media',     8 => 'caption',     9 => 'alt_text',     10 => 'media_type',     11 => 'mime_type',     12 => 'media_details',     13 => 'source_url',     14 => '_links',   ),   'user' =>    array (     0 => 'id',     1 => 'name',     2 => 'url',     3 => 'description',     4 => 'link',     5 => 'slug',     6 => 'avatar_urls',     7 => '_links',   ),   'term' =>    array (     0 => 'id',     1 => 'link',     2 => 'name',     3 => 'slug',     4 => 'taxonomy',     5 => '_links',   ),   'comment' =>    array (     0 => 'id',     1 => 'parent',     2 => 'author',     3 => 'author_name',     4 => 'author_url',     5 => 'date',     6 => 'content',     7 => 'link',     8 => 'type',     9 => 'author_avatar_urls',     10 => '_links',   ),   'menu-item' =>    array (     0 => 'id',     1 => 'title',     2 => 'status',     3 => 'url',     4 => 'attr_title',     5 => 'description',     6 => 'type',     7 => 'type_label',     8 => 'object',     9 => 'object_id',     10 => 'parent',     11 => 'menu_order',     12 => 'target',     13 => 'classes',     14 => 'xfn',     15 => 'invalid',     16 => '_links',   ), )`
+- const `TYPE_KEYS` = `array (   'wp_navigation' =>    array (     0 => 'status',     1 => 'content',   ),   'wp_block' =>    array (     0 => 'wp_pattern_sync_status',   ), )` — The keys a post type shows in embed beyond a post's (probe: each type's list in the embed context).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\RegisteredFields`
+Used by: `Minn\Rest\Api`, `Minn\Rest\RegisteredFields`, `Minn\Rest\TemplateRevisionsController`
 
 ```php
 __construct(Minn\Http\Router $router, Minn\Rest\Types $types, Minn\Rest\Taxonomies $taxonomies)
@@ -975,7 +1027,7 @@ An item cut to the embed shape of its object type (a post type, a taxonomy, atta
 
 - `@param array<string, mixed> $item @return array<string, mixed>`
 
-Internals: `decorateItem()` (private, line 98), `answer()` (private, line 142), `target()` (private, line 178), `kind()` (private, line 196), `taxonomyBase()` (private, line 212), `context()` (private, line 236)
+Internals: `decorateItem()` (private, line 102), `answer()` (private, line 146), `target()` (private, line 182), `kind()` (private, line 200), `taxonomyBase()` (private, line 220), `context()` (private, line 245)
 
 
 ## EngineRoutes
@@ -1037,7 +1089,7 @@ the whole payload otherwise, which is why _fields on the associative
 types response strips every key and yields [] over HTTP, a reference
 quirk the engine reproduces by construction.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\Responses`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\Responses`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 - readonly `array $paths`
 - readonly `bool $deferred`
@@ -1071,6 +1123,224 @@ given, dotted paths whose root is known, and `id` whenever it exists.
 - `@return list<string>`
 
 Internals: `filter()` (private, line 72)
+
+
+## FontArgs
+
+`final class Minn\Rest\FontArgs` · `public/minn/src/Minn/Rest/FontArgs.php`
+
+The font library's parameters as the reference's REST index lists them
+(font families, font faces, font collections), in its order, each read
+by Rest\FontsController or Rest\FontCollectionsController. A family's
+list and a face's list take the posts list's ids, offset, order and
+exact-search switch, ordered by id or by include alone, and only a
+family's list takes slugs. Neither takes a search, a status or an
+author: the reference ignores them. The ids a path names are listed as
+the reference lists them, except that the index there calls a face's
+family and id required; here they are optional, because the router
+looks for a required argument in the query and the path always carries
+them.
+
+- const `CONTEXT` = `array (   'description' => 'Scope under which the request is made; determines fields present in response.',   'type' => 'string',   'enum' =>    array (     0 => 'view',     1 => 'embed',     2 => 'edit',   ),   'default' => 'view',   'required' => false, )`
+- const `PAGE` = `array (   'description' => 'Current page of the collection.',   'type' => 'integer',   'default' => 1,   'minimum' => 1,   'required' => false, )`
+- const `PER_PAGE` = `array (   'description' => 'Maximum number of items to be returned in result set.',   'type' => 'integer',   'default' => 10,   'minimum' => 1,   'maximum' => 100,   'required' => false, )`
+- const `FAMILY_ID` = `array (   'description' => 'The ID for the parent font family of the font face.',   'type' => 'integer',   'required' => false, )`
+- const `POST_LIST` = `array (   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'search_semantics' =>    array (     'description' => 'How to interpret the search input.',     'type' => 'string',     'enum' =>      array (       0 => 'exact',     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'id',     'enum' =>      array (       0 => 'id',       1 => 'include',     ),     'required' => false,   ), )` — A list of font families or font faces past the shared three, in the reference's order.
+- const `FAMILIES` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'search_semantics' =>    array (     'description' => 'How to interpret the search input.',     'type' => 'string',     'enum' =>      array (       0 => 'exact',     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'id',     'enum' =>      array (       0 => 'id',       1 => 'include',     ),     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit result set to posts with one or more specific slugs.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ), )` — The font families list.
+- const `FAMILY` = `array (   'id' =>    array (     'description' => 'Unique identifier for the post.',     'type' => 'integer',     'required' => false,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )` — One font family.
+- const `FACES` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => false,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'search_semantics' =>    array (     'description' => 'How to interpret the search input.',     'type' => 'string',     'enum' =>      array (       0 => 'exact',     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'id',     'enum' =>      array (       0 => 'id',       1 => 'include',     ),     'required' => false,   ), )` — A font family's faces.
+- const `FACE` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => false,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => false,   ),   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )` — One font face of a family.
+- const `FORCE` = `array (   'type' => 'boolean',   'default' => false,   'description' => 'Whether to bypass Trash and force deletion.',   'required' => false, )` — Whether a delete bypasses the trash, as a font route lists it.
+- const `FAMILY_DELETE` = `array (   'id' =>    array (     'description' => 'Unique identifier for the post.',     'type' => 'integer',     'required' => false,   ),   'force' =>    array (     'type' => 'boolean',     'default' => false,     'description' => 'Whether to bypass Trash and force deletion.',     'required' => false,   ), )` — A font family deleted.
+- const `FACE_DELETE` = `array (   'font_family_id' =>    array (     'description' => 'The ID for the parent font family of the font face.',     'type' => 'integer',     'required' => false,   ),   'id' =>    array (     'description' => 'Unique identifier for the font face.',     'type' => 'integer',     'required' => false,   ),   'force' =>    array (     'type' => 'boolean',     'default' => false,     'description' => 'Whether to bypass Trash and force deletion.',     'required' => false,   ), )` — A font face deleted.
+- const `COLLECTIONS` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ), )` — The font collections list.
+- const `COLLECTION` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ), )` — One font collection.
+
+Used by: `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`
+
+
+## FontCollectionsController
+
+`final readonly class Minn\Rest\FontCollectionsController` · `public/minn/src/Minn/Rest/FontCollectionsController.php`
+
+wp/v2/font-collections (probe: the font library routes on the
+reference): the collections registered with the font library, in the
+order they were registered, a page at a time, and one by its slug. Only
+someone who may edit theme options reads them, refused as
+rest_cannot_read. A collection shows its slug, then its name,
+description, font families and categories as its data holds them, the
+same in every context, through rest_prepare_font_collection. The
+reference registers a Google Fonts collection read from wordpress.org;
+the engine registers none of its own (wp-api/fonts.php), so the list
+holds what plugins register.
+
+- const `REFUSAL` = `'Sorry, you are not allowed to access font collections.'`
+- const `FIELDS` = `array (   0 => 'name',   1 => 'description',   2 => 'font_families',   3 => 'categories', )`
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Rest\RestUrl $url)
+```
+
+
+### `list(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp/v2/font-collections (cap edit_theme_options)`
+
+The registered font collections, a page at a time.
+
+### `single(Minn\Http\Request $request, string $slug): Minn\Http\Response`
+
+Route: `GET /wp/v2/font-collections/{slug:[\/\w-]+} (cap edit_theme_options)`
+
+One registered font collection, by its slug.
+
+Internals: `collections()` (private, line 84), `item()` (private, line 96)
+
+
+## FontFaceRecord
+
+`final class Minn\Rest\FontFaceRecord` · `public/minn/src/Minn/Rest/FontFaceRecord.php` · implements `Minn\Http\Refusal`
+
+A font face route names a font face: refused as an invalid post id
+before the caller is judged, signed out or not, when the id (the
+query's, else the path's, as the reference reads a parameter) is not a
+wp_font_face post. Its family is judged once the caller has been.
+
+Used by: `Minn\Rest\FontFamilyRecord`, `Minn\Rest\FontsController`
+
+### static `refuse(Minn\Http\Request $request): void`
+
+Throws rest_post_invalid_id unless the face exists.
+
+### static `require(Minn\Http\Request $request, string $pattern, string $type): void`
+
+Throws rest_post_invalid_id unless the id the path ends with (or the query's id) is a post of the type.
+
+
+## FontFamilyRecord
+
+`final class Minn\Rest\FontFamilyRecord` · `public/minn/src/Minn/Rest/FontFamilyRecord.php` · implements `Minn\Http\Refusal`
+
+A font family route names a font family: refused as an invalid post id
+before the caller is judged, signed out or not, when the id is not a
+wp_font_family post (a post of any other type, a face included).
+
+Used by: `Minn\Rest\FontsController`
+
+### static `refuse(Minn\Http\Request $request): void`
+
+Throws rest_post_invalid_id unless the family exists.
+
+
+## FontObject
+
+`final readonly class Minn\Rest\FontObject` · `public/minn/src/Minn/Rest/FontObject.php`
+
+A font family and a font face as wp/v2 shapes them (probe: the font
+library routes on the reference): the id, the theme.json version (3,
+which nothing stores), and the settings the post holds: a family's
+name and slug from its title and slug, then its font family and preview
+from its JSON content; a face's font-face properties from its JSON
+content. A family lists its published and private faces by id, each a
+link that embeds; a face links to its family. The
+same fields show in every context, and the fields plugin code registers
+join through rest_prepare_wp_font_family and rest_prepare_wp_font_face.
+Only someone who may edit theme options sees either, and may use every
+method on it.
+
+- const `FAMILY_METHODS` = `array (   0 => 'GET',   1 => 'POST',   2 => 'PUT',   3 => 'PATCH',   4 => 'DELETE', )`
+- const `FACE_METHODS` = `array (   0 => 'GET',   1 => 'DELETE', )`
+- const `FACE_PROPERTIES` = `array (   0 => 'fontFamily',   1 => 'fontStyle',   2 => 'fontWeight',   3 => 'fontDisplay',   4 => 'src',   5 => 'fontStretch',   6 => 'ascentOverride',   7 => 'descentOverride',   8 => 'fontVariant',   9 => 'fontFeatureSettings',   10 => 'fontVariationSettings',   11 => 'lineGapOverride',   12 => 'sizeAdjust',   13 => 'unicodeRange',   14 => 'preview', )`
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\FontsController`
+
+```php
+__construct(Minn\Db $db, Minn\Rest\RestUrl $url)
+```
+
+
+### `family(Minn\Content\PostRecord $post): array`
+
+A font family as wp/v2 shapes it, through rest_prepare_wp_font_family. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### `face(Minn\Content\PostRecord $post): array`
+
+A font face as wp/v2 shapes it, through rest_prepare_wp_font_face. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+Internals: `faceIds()` (private, line 75), `familySettings()` (private, line 88), `faceSettings()` (private, line 102)
+
+
+## FontsController
+
+`final readonly class Minn\Rest\FontsController` · `public/minn/src/Minn/Rest/FontsController.php`
+
+wp/v2/font-families and their font-faces, read and deleted (probe: the
+font library routes on the reference). Only someone who may edit theme
+options reads or deletes either, refused as rest_cannot_read or
+rest_cannot_delete; a family or face that does not
+exist is refused before the caller is judged, a face's family only
+after. A list is the posts list narrowed to its own parameters: the
+statuses the caller may read (published and private), newest id first,
+the ids, offset, slugs (families only) and pages as the posts list
+reads them, through rest_{type}_query; anything else the request
+carries is ignored, a search included.
+
+- const `FAMILIES` = `'Sorry, you are not allowed to access font families.'`
+- const `FAMILY` = `'Sorry, you are not allowed to access this font family.'`
+- const `FACES` = `'Sorry, you are not allowed to access font faces.'`
+- const `FACE` = `'Sorry, you are not allowed to access this font face.'`
+- const `DELETE` = `'Sorry, you are not allowed to delete this post.'`
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Content\Posts $posts, Minn\Rest\FontObject $object)
+```
+
+
+### `families(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp/v2/font-families (cap edit_theme_options)`
+
+The font families.
+
+### `family(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/font-families/{id:[\d]+} (cap edit_theme_options)`
+
+One font family.
+
+### `faces(Minn\Http\Request $request, string $fontFamilyId): Minn\Http\Response`
+
+Route: `GET /wp/v2/font-families/{font_family_id:[\d]+}/font-faces (cap edit_theme_options)`
+
+A font family's faces.
+
+### `face(Minn\Http\Request $request, string $fontFamilyId, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+} (cap edit_theme_options)`
+
+One font face of a family.
+
+### `deleteFamily(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `DELETE /wp/v2/font-families/{id:[\d]+} (cap edit_theme_options)`
+
+A font family deleted for good, its faces with it; there is no trash for either.
+
+### `deleteFace(Minn\Http\Request $request, string $fontFamilyId, string $id): Minn\Http\Response`
+
+Route: `DELETE /wp/v2/font-families/{font_family_id:[\d]+}/font-faces/{id:[\d]+} (cap edit_theme_options)`
+
+A font face deleted for good, its file with it.
+
+Internals: `delete()` (private, line 106), `list()` (private, line 125), `totals()` (private, line 153), `parent()` (private, line 172), `found()` (private, line 182), `invalidParent()` (private, line 191)
 
 
 ## GlobalStylesController
@@ -1124,7 +1394,7 @@ The active theme's settings and styles, the engine's defaults underneath.
 
 Route: `GET /wp/v2/global-styles/{parent:[\d]+}/revisions (cap edit_theme_options; global styles parent {parent} must exist)`
 
-The revisions of the saved styles, newest first; all of them unless per_page pages them.
+The revisions of the saved styles, newest first; all of them unless per_page pages them, an offset where the page starts (RevisionCollection::paged).
 
 ### `revision(Minn\Http\Request $request, string $parent, string $id): Minn\Http\Response`
 
@@ -1132,7 +1402,7 @@ Route: `GET /wp/v2/global-styles/{parent:[\d]+}/revisions/{id:[\d]+} (cap edit_t
 
 One revision of the saved styles.
 
-Internals: `refuseIllegalCss()` (private, line 82), `post()` (private, line 139), `requireTheme()` (private, line 145), `requireParent()` (private, line 153), `title()` (private, line 166), `node()` (private, line 175)
+Internals: `refuseIllegalCss()` (private, line 84), `revisionObject()` (private, line 132), `post()` (private, line 138), `requireTheme()` (private, line 144), `requireParent()` (private, line 152), `title()` (private, line 165), `node()` (private, line 174)
 
 
 ## GlobalStylesObject
@@ -1195,7 +1465,10 @@ Route: `GET /{namespace:[a-z0-9-]+/(?:v\d+|\d+\.\d+)} (public)`
 One namespace's index, as the reference answers /wp-json/wp/v2 (or oembed/1.0): the
 namespace, its routes (the namespace root among them), and the link
 up to the root index. A namespace the engine does not serve is left
-to the runtime, whose plugins may own it.
+to the runtime, whose plugins may own it. The namespace argument the
+index lists takes the path's place when it is sent, as every path
+argument does on the reference: one naming no namespace the engine
+serves is rest_invalid_namespace.
 
 
 ## InstalledThemesController
@@ -1241,7 +1514,37 @@ through here); the request is what the supports' callbacks are handed.
 
 - `@return array<string, mixed>`
 
-Internals: `item()` (private, line 83), `links()` (private, line 130), `viewsThemes()` (private, line 153), `viewsActive()` (private, line 159), `status()` (private, line 164), `requireRuntime()` (private, line 170)
+Internals: `item()` (private, line 84), `links()` (private, line 131), `viewsThemes()` (private, line 154), `viewsActive()` (private, line 160), `status()` (private, line 165), `requireRuntime()` (private, line 171)
+
+
+## ItemRender
+
+`final class Minn\Rest\ItemRender` · `public/minn/src/Minn/Rest/ItemRender.php`
+
+What a post read sets up around its rendering, as the reference does for
+the one request: an excerpt_length given (declared on a single post,
+read on a list too) answers the excerpt_length filter as the integer PHP
+reads it as, so the excerpt is cut there; and a protected post read with
+its own password, or in the edit context, has post_password_required
+lifted for it, so its excerpt is the text and not the password form.
+Each is taken down once the object is built, whatever happened.
+
+- const `LENGTH_PRIORITY` = `20` — The priority the request's own excerpt length answers at, after a theme's usual 10.
+
+Used by: `Minn\Rest\PostsController`
+
+### static `around(Closure $render, mixed $length): mixed`
+
+What $render builds, with the request's excerpt length (null when none was given).
+
+- `@param Closure(): T $render`
+
+### static `opened(Closure $render, Minn\Content\PostRecord $post): mixed`
+
+What $render builds with the post's password lifted, for a reader the
+reference lets past it (the right password, or the edit context).
+
+- `@param Closure(): T $render`
 
 
 ## Links
@@ -1250,7 +1553,7 @@ Internals: `item()` (private, line 83), `links()` (private, line 130), `viewsThe
 
 Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along.
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlockEditorController`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\TemplateRevisionsController`
 
 ### static `item(string $rel, string $href, array $attributes): array`
 
@@ -1408,6 +1711,49 @@ caller may take; curies when any rel is the API's own.
 Internals: `buildFields()` (private, line 46), `details()` (private, line 166)
 
 
+## MenuCollectionParams
+
+`final class Minn\Rest\MenuCollectionParams` · `public/minn/src/Minn/Rest/MenuCollectionParams.php` · implements `Minn\Http\RouteParams`
+
+The menus list's parameters as the reference declares them: a flat
+taxonomy's term list (the context and Args::TERMS, an offset and no
+parent). Plugins change them through rest_nav_menu_collection_params
+when the list runs (Rest\MenuLists).
+
+Used by: `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`
+
+### static `for(array $captures): array`
+
+The menus list's parameters; the route has no captures to read.
+
+
+## MenuItemCollectionParams
+
+`final class Minn\Rest\MenuItemCollectionParams` · `public/minn/src/Minn/Rest/MenuItemCollectionParams.php` · implements `Minn\Http\RouteParams`
+
+The menu items list's parameters as the reference declares them: the
+nav_menu_item type's post list (its menus term filter among them),
+a hundred to a page in ascending menu order by default, menu_order
+among the orderby values and, last, a menu_order filter of its own.
+
+- const `TYPE` = `'nav_menu_item'`
+
+Used by: `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`
+
+### static `for(array $captures): array`
+
+The menu items list's parameters, as the index publishes them and the router judges them.
+
+### static `listed(): array`
+
+The parameters asked afresh, as the list asks for them each time it
+runs: rest_nav_menu_item_collection_params runs again.
+
+- `@return array<string, array<string, mixed>>`
+
+Internals: `adjusted()` (private, line 37)
+
+
 ## MenuItemObject
 
 `final readonly class Minn\Rest\MenuItemObject` · `public/minn/src/Minn/Rest/MenuItemObject.php`
@@ -1416,7 +1762,7 @@ The wp/v2/menu-items resource.
 
 - const `TYPE_LABEL` = `array (   'page' => 'Page',   'post' => 'Post',   'category' => 'Category',   'post_tag' => 'Tag',   'custom' => 'Custom Link', )`
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\MenusController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\MenuLists`
 
 ```php
 __construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -1428,13 +1774,51 @@ __construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
 The wp/v2 menu-item shape, through rest_prepare_nav_menu_item when a plugin hooks it.
 
 
+## MenuLists
+
+`final readonly class Minn\Rest\MenuLists` · `public/minn/src/Minn/Rest/MenuLists.php`
+
+The menus and menu items lists, served as the reference serves them: the
+menus as the nav_menu taxonomy's term list (its parameters through
+rest_nav_menu_collection_params, its query through rest_nav_menu_query,
+counted without the page), the items as the nav_menu_item type's post
+list with its own parameters (Rest\MenuItemCollectionParams), each in
+its own shape.
+
+- const `TAXONOMY` = `'nav_menu'`
+- const `ITEM_TYPE` = `'nav_menu_item'`
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\MenusController`
+
+```php
+__construct(Minn\Rest\PostsController $posts, Minn\Content\Menus $menus, Minn\Rest\MenuObject $menuObject, Minn\Rest\MenuItemObject $itemObject, Minn\Rest\Caller $caller)
+```
+
+- readonly `Minn\Content\Menus $menus`
+- readonly `Minn\Rest\MenuObject $menuObject`
+- readonly `Minn\Rest\MenuItemObject $itemObject`
+- readonly `Minn\Rest\Caller $caller`
+
+### `menus(Minn\Http\Request $request): Minn\Http\Response`
+
+The menus: edit context for one who may edit menus, a post's menus
+only for a menu item the caller may read (an unknown post is a bad
+parameter), then get_terms, or the post's own terms, as asked.
+
+### `items(Minn\Http\Request $request): Minn\Http\Response`
+
+The menu items, as the post list of their type: every list parameter honoured, each item in its own shape.
+
+Internals: `termsReadable()` (private, line 102)
+
+
 ## MenuObject
 
 `final readonly class Minn\Rest\MenuObject` · `public/minn/src/Minn/Rest/MenuObject.php`
 
 The wp/v2/menus resource: a nav_menu term plus locations and auto_add.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\MenusController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\MenuLists`
 
 ```php
 __construct(Minn\Content\Menus $menus, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -1460,7 +1844,7 @@ writes need edit_theme_options. Anonymous callers get 401.
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Content\Menus $menus, Minn\Rest\MenuObject $menuObject, Minn\Rest\MenuItemObject $itemObject, Minn\Rest\Caller $caller, Minn\Rest\RestUrl $url)
+__construct(Minn\Rest\RestUrl $url, Minn\Rest\MenuLists $lists)
 ```
 
 
@@ -1468,7 +1852,7 @@ __construct(Minn\Content\Menus $menus, Minn\Rest\MenuObject $menuObject, Minn\Re
 
 Route: `GET /wp/v2/menus (cap edit_posts; or anyone, when rest_menu_read_access opens it)`
 
-Every classic menu.
+Every classic menu, as the nav_menu taxonomy's term list (Rest\MenuLists).
 
 ### `singleMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -1502,7 +1886,7 @@ Deletes a menu and its items.
 
 Route: `GET /wp/v2/menu-items (cap edit_posts; or anyone, when rest_menu_read_access opens it)`
 
-The items of a menu.
+The menu items, as their type's post list (Rest\MenuLists).
 
 ### `singleItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -1544,7 +1928,7 @@ Route: `GET /wp/v2/menu-locations/{location:[\w-]+} (cap edit_theme_options; or 
 
 One menu location.
 
-Internals: `locationItem()` (private, line 250), `argsFrom()` (private, line 274), `titleFrom()` (private, line 297), `urlFrom()` (private, line 307), `refuse()` (private, line 317), `plain()` (private, line 327)
+Internals: `locationItem()` (private, line 207), `argsFrom()` (private, line 231), `titleFrom()` (private, line 254), `urlFrom()` (private, line 264), `refuse()` (private, line 274), `plain()` (private, line 284)
 
 
 ## NavigationController
@@ -1553,8 +1937,8 @@ Internals: `locationItem()` (private, line 250), `argsFrom()` (private, line 274
 
 wp/v2/navigation: the block theme's navigation menus, stored as
 wp_navigation posts. The reading and writing is the posts machinery with
-this type's own capabilities (every one of them edit_theme_options), so
-only the routes live here.
+this type's own capabilities (every one of them edit_theme_options) and
+the posts list's parameters, so only the routes live here.
 
 - const `TYPE` = `'wp_navigation'`
 - const `BASE` = `'navigation'`
@@ -1568,7 +1952,7 @@ __construct(Minn\Rest\PostsController $reads, Minn\Rest\PostsWriteController $wr
 
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/navigation (public)`
+Route: `GET /wp/v2/{base:navigation} (public)`
 
 The navigation posts.
 
@@ -1629,6 +2013,35 @@ The parameters after sanitising, or the refusal listing every invalid one.
 Internals: `refusal()` (private, line 82)
 
 
+## PathArgs
+
+`final class Minn\Rest\PathArgs` · `public/minn/src/Minn/Rest/PathArgs.php`
+
+The arguments a route's path names, as the reference lists them among the
+route's args: each capture again, described and typed. Declared, they are
+judged like any other argument, and a value of the same name in the query
+(or a write's body) takes the capture's place before the caller is judged
+(Http\Router), as on the reference: /wp/v2/users/1?id=abc is refused as an
+invalid id, and /wp/v2/users/1?id=2 answers user 2. A route lists one only
+where the reference lists it (a widget's GET names no id), and in the
+reference's order, which a refusal's list follows.
+
+- const `USER_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the user.',     'type' => 'integer',     'required' => false,   ), )` — A user's id: wp/v2/users/{id}.
+- const `TERM_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the term.',     'type' => 'integer',     'required' => false,   ), )` — A term's id: wp/v2/{taxonomy base}/{id}.
+- const `STATUS` = `array (   'status' =>    array (     'description' => 'An alphanumeric identifier for the status.',     'type' => 'string',     'required' => false,   ), )` — A post status's name: wp/v2/statuses/{status}.
+- const `RENDERED_BLOCK` = `array (   'name' =>    array (     'description' => 'Unique registered name for the block.',     'type' => 'string',     'required' => false,   ), )` — The block a render asks for: wp/v2/block-renderer/{name}.
+- const `BLOCK_NAMESPACE` = `array (   'namespace' =>    array (     'description' => 'Block namespace.',     'type' => 'string',     'required' => false,   ), )` — A block type's namespace: wp/v2/block-types/{namespace}.
+- const `BLOCK_NAME` = `array (   'name' =>    array (     'description' => 'Block name.',     'type' => 'string',     'required' => false,   ), )` — A block type's name within its namespace: wp/v2/block-types/{namespace}/{name}.
+- const `STYLESHEET` = `array (   'stylesheet' =>    array (     'description' => 'The theme\'s stylesheet. This uniquely identifies the theme.',     'type' => 'string',     'required' => false,   ), )` — A theme's stylesheet: wp/v2/themes/{stylesheet}.
+- const `PLUGIN` = `array (   'plugin' =>    array (     'type' => 'string',     'pattern' => '[^.\\/]+(?:\\/[^.\\/]+)?',     'required' => false,     'bare_refusal' => true,   ), )` — A plugin's file without its .php: wp/v2/plugins/{plugin}. The reference
+gives it no description and judges it with a check of its own, whose
+refusal is the bare "Invalid parameter.".
+- const `SIDEBAR_ID` = `array (   'id' =>    array (     'description' => 'The id of a registered sidebar',     'type' => 'string',     'required' => false,   ), )` — A registered sidebar's id: wp/v2/sidebars/{id}.
+- const `WIDGET_TYPE_ID` = `array (   'id' =>    array (     'description' => 'The widget type id.',     'type' => 'string',     'required' => false,   ), )` — A widget type's id: wp/v2/widget-types/{id}.
+
+Used by: `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\PluginsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
+
+
 ## PluginsController
 
 `final readonly class Minn\Rest\PluginsController` · `public/minn/src/Minn/Rest/PluginsController.php`
@@ -1639,6 +2052,8 @@ WordPress plugins the folder still holds; the engine runs the former
 and only records the latter's stored state. Activation writes the same
 options the reference and the extension loader read; files are never
 installed or deleted from here.
+
+- const `LIST_ARGS` = `array (   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'status' =>    array (     'description' => 'Limits results to plugins with the given status.',     'type' => 'array',     'items' =>      array (       'type' => 'string',       'enum' =>        array (         0 => 'inactive',         1 => 'active',       ),     ),     'required' => false,   ), )` — Read by list(): the search and the statuses it narrows to.
 
 Used by: `Minn\Rest\Api`
 
@@ -1651,7 +2066,7 @@ __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ext
 
 Route: `GET /wp/v2/plugins (cap activate_plugins)`
 
-The plugins list, optionally by status.
+The plugins list, narrowed by status and by a search when one is asked.
 
 ### `install(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1663,7 +2078,7 @@ Installs a directory plugin by slug, optionally activating it; answers 201 with 
 
 Route: `GET /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?} (cap activate_plugins)`
 
-One plugin.
+One plugin; the refusal is named for the one, as on the reference.
 
 ### `update(Minn\Http\Request $request, string $plugin): Minn\Http\Response`
 
@@ -1692,7 +2107,7 @@ rendered description.
 - `@param array<string, mixed> $headers the plugin's headers, as get_plugins() holds them`
 - `@return array<string, mixed>`
 
-Internals: `items()` (private, line 151), `find()` (private, line 165), `statusOf()` (private, line 179), `manifestFor()` (private, line 191), `extensionItem()` (private, line 201), `pluginItem()` (private, line 229), `links()` (private, line 263), `extensionKey()` (private, line 268), `refuse()` (private, line 275)
+Internals: `mentions()` (private, line 79), `items()` (private, line 188), `find()` (private, line 209), `statusOf()` (private, line 223), `manifestFor()` (private, line 235), `extensionItem()` (private, line 245), `pluginItem()` (private, line 273), `links()` (private, line 307), `extensionKey()` (private, line 312), `refuse()` (private, line 319)
 
 
 ## PolicyGate
@@ -1745,7 +2160,7 @@ rest_{type}_collection_params, asked once a request.
 - const `STATUSES` = `array (   0 => 'publish',   1 => 'future',   2 => 'draft',   3 => 'pending',   4 => 'private',   5 => 'trash',   6 => 'auto-draft',   7 => 'inherit',   8 => 'request-pending',   9 => 'request-confirmed',   10 => 'request-failed',   11 => 'request-completed', )`
 - const `IDS` = `array (   'type' => 'array',   'items' =>    array (     'type' => 'integer',   ),   'default' =>    array (   ), )`
 
-Used by: `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`
+Used by: `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemCollectionParams`, `Minn\Rest\NavigationController`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`
 
 ### static `for(array $captures): array`
 
@@ -1803,7 +2218,7 @@ mapped to the query's, and stickies left where they fall unless asked.
 - const `IN` = `'post__in'`
 - const `NOT_IN` = `'post__not_in'`
 
-Used by: `Minn\Rest\PostsController`
+Used by: `Minn\Rest\FontsController`, `Minn\Rest\PostsController`
 
 ### static `of(Minn\Objects\RestRequest $request, array $registered, string $type): array`
 
@@ -1898,7 +2313,7 @@ Internals: `meta()` (private, line 108), `navigationView()` (private, line 119),
 
 wp/v2 posts and pages, read side.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\NavigationController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\NavigationController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Rest\PostObject $object, Minn\Rest\Caller $caller)
@@ -1913,7 +2328,7 @@ Route: `GET /wp/v2/{base:pages} (public)`
 
 The posts or pages list.
 
-### `serveList(Minn\Http\Request $request, string $type, ?Closure $shape = NULL): Minn\Http\Response`
+### `serveList(Minn\Http\Request $request, string $type, ?Closure $shape = NULL, ?Closure $readable = NULL, ?array $registered = NULL): Minn\Http\Response`
 
 The list for any post type as the reference serves it (probe
 rest-post-lists): the caller and the statuses judged, the request's
@@ -1923,9 +2338,15 @@ filter run), then each post the caller may read (or edit, in the edit
 context) shaped (by $shape when the type has its own object, as
 media does). The totals are the query's, counted again without the
 page when a later page came back empty. A media search also matches
-file names, as the reference's does.
+file names, as the reference's does. A type whose posts are read by
+a rule of its own names it ($readable, by post id: a pattern needs
+read_post, published or not), its rows still counted; a type whose
+list takes parameters of its own names them ($registered, as menu
+items do); a shape that answers null leaves the post out.
 
-- `@param (\Closure(PostRecord, Context): array<string, mixed>)|null $shape`
+- `@param (\Closure(PostRecord, Context): ?array<string, mixed>)|null $shape`
+- `@param (\Closure(int): bool)|null $readable`
+- `@param array<string, array<string, mixed>>|null $registered`
 
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
@@ -1933,15 +2354,23 @@ Route: `GET /wp/v2/{base:posts|pages}/{id:[\d]+} (public; post {id} must exist; 
 
 One post or page.
 
-### `serveSingle(Minn\Http\Request $request, string $type, string $id): Minn\Http\Response`
+### `serveSingle(Minn\Http\Request $request, string $type, string $id, ?Closure $readable = NULL): Minn\Http\Response`
 
-One post of any type, with the reference's read rules.
+One post of any type, with the reference's read rules: the edit
+context for one who may edit it, then the password (any given that is
+not the post's own is refused, protected or not, before the post's
+readability is judged), then the read itself, by the type's own rule
+when it has one ($readable, by post id) and otherwise a published post
+or one the caller may read. The excerpt is cut to the excerpt_length
+asked for, and the right password opens the content and the excerpt.
+
+- `@param (\Closure(int): bool)|null $readable`
 
 ### static `withAlternate(Minn\Http\Response $response, Minn\Content\PostRecord $post): Minn\Http\Response`
 
 A viewable type's single post points at its page on the site.
 
-Internals: `totals()` (private, line 112), `readable()` (private, line 131), `visibleStatuses()` (private, line 154)
+Internals: `shaped()` (private, line 112), `totals()` (private, line 140), `readable()` (private, line 159), `visibleStatuses()` (private, line 185), `requestedStatuses()` (private, line 221)
 
 
 ## PostsWriteController
@@ -2167,7 +2596,7 @@ on lists.
 
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )`
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\LegacyPackController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\LegacyPackController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
 
@@ -2358,7 +2787,7 @@ REST URLs in the form the reference emits for the site's permalink mode:
 {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
 when query args ride along.
 
-Used by: `Minn\Engine`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
+Used by: `Minn\Engine`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks)
@@ -2378,6 +2807,47 @@ The URL of a REST route, pretty or plain as the site is set.
 ### static `curies(): array`
 
 The curies entry every wp/v2 _links block ends with.
+
+
+## RevisionCollection
+
+`final class Minn\Rest\RevisionCollection` · `public/minn/src/Minn/Rest/RevisionCollection.php`
+
+A revisions list as the reference answers it (probe of the posts,
+pages, patterns, menus, templates and global styles revisions routes):
+the include list (which outranks exclude) or the exclude list, the
+search (terms, quoted phrases and -exclusions over the title, excerpt
+and content, as a post search reads them), the order, then the page. An
+empty result is no pages at all. Without per_page every match is one
+page. An offset sent (zero too) is where a page of per_page starts, in
+the page number's place; one other than zero is refused at or past the
+total, and without one a page past the last is refused.
+
+Used by: `Minn\Rest\GlobalStylesController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateRevisionsController`
+
+### static `ofParent(?array $row, int $parent): Minn\Content\PostRecord`
+
+The revision a single route asks for, refused as the reference refuses
+it: no revision by that id is an invalid id, one of another parent a
+mismatch naming the parent asked for.
+
+- `@param array<string, mixed>|null $row`
+
+### static `filtered(Minn\Http\Request $request, array $rows): array`
+
+The rows the request's filters keep, in its order.
+
+- `@param list<PostRecord> $rows newest first`
+- `@return list<PostRecord>`
+
+### static `paged(Minn\Http\Request $request, array $rows): array`
+
+The page the request asks for, with the total and the page count.
+
+- `@param list<T> $rows`
+- `@return array{0: list<T>, 1: int, 2: int}`
+
+Internals: `ids()` (private, line 109), `matches()` (private, line 119), `contains()` (private, line 132), `sorted()` (private, line 148), `rank()` (private, line 186)
 
 
 ## RevisionsController
@@ -2405,7 +2875,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Revisions $revisions, Minn\R
 
 Route: `GET /wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions (cap edit_post on {parent}; post parent {parent} must exist)`
 
-Real revisions, not autosaves.
+Every revision of the parent, its autosaves among them, filtered, ordered and paged as the request asks (RevisionCollection).
 
 ### `revision(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
 
@@ -2425,13 +2895,13 @@ request that passes the parent's check is refused at the revision's.
 
 Route: `GET /wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{id:[\d]+}/autosaves (cap edit_post on {id}; post parent {id} must exist)`
 
-The autosaves of a post.
+The autosaves of a post, every author's, in the asked context; the edit view names each one's preview.
 
 ### `autosave(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
 
 Route: `GET /wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{parent:[\d]+}/autosaves/{id:[\d]+} (cap edit_post on {parent}; post parent {parent} must exist)`
 
-The caller's autosave of the parent, whichever autosave id is asked for; the edit view names its preview.
+The parent's newest autosave, whoever saved it and whichever autosave id is asked for; the edit view names its preview.
 
 ### `createAutosave(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
@@ -2441,9 +2911,9 @@ One autosave slot per author; the reply carries a preview link.
 
 ### `object(Minn\Content\PostRecord|array $r, Minn\Rest\Context $context = Minn\Rest\Context::View): array`
 
-One revision row as wp/v2 serves it (autosaves and revisions alike).
+One revision row as wp/v2 serves it (autosaves and revisions alike), in the view, edit or embed shape.
 
-Internals: `draftObject()` (private, line 172), `clean()` (private, line 187), `withPreviewLink()` (private, line 229), `previewLink()` (private, line 245), `meta()` (private, line 262), `requireParent()` (private, line 278), `parentOf()` (private, line 290)
+Internals: `selected()` (private, line 81), `draftObject()` (private, line 187), `clean()` (private, line 202), `embedded()` (private, line 250), `withPreviewLink()` (private, line 267), `previewLink()` (private, line 283), `meta()` (private, line 300), `requireParent()` (private, line 316), `parentOf()` (private, line 328)
 
 
 ## RouteArgs
@@ -2472,8 +2942,10 @@ namespaces they fall under. Routes are keyed as the reference spells them
 ('/wp/v2/posts/(?P<id>[\d]+)').
 
 - const `SERVER_ROUTES` = `array (   0 => '/batch/v1', )` — The routes the reference's server registers itself, outside any namespace.
+- const `FIRST` = `'oembed/1.0'` — The namespace the reference registers before any plugin's.
+- const `CORE` = `array (   0 => 'wp/v2',   1 => 'wp-site-health/v1',   2 => 'wp-block-editor/v1',   3 => 'wp-abilities/v1', )` — The core namespaces the reference registers after the plugins', in its order.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\IndexController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\IndexController`, `Minn\Rest\RuntimeRoutes`
 
 ```php
 __construct(Minn\Http\Router $router, Minn\Rest\Types $types, Minn\Rest\RestUrl $url)
@@ -2486,6 +2958,15 @@ Every route the engine serves, the root and each namespace's index
 among them, and the namespaces.
 
 - `@return array{namespaces: list<string>, routes: array<string, array<string, mixed>>}`
+
+### static `ordered(array $namespaces): array`
+
+The namespaces in the order the reference's index lists them, which
+is the order they were registered in: oEmbed's first, then each
+plugin's (Minn Admin's among them) as they came, then core's own.
+
+- `@param list<string> $namespaces`
+- `@return list<string>`
 
 ### static `namespaceOf(string $route): string`
 
@@ -2610,7 +3091,7 @@ before the filter runs.
 
 - const `BLOCK_HOOKS_TYPES` = `array (   0 => 'post',   1 => 'page',   2 => 'wp_block',   3 => 'wp_navigation', )` — The post types whose REST answers and saves get their hooked blocks, before plugins say.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostObject`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`, `Minn\Runtime\PostSave`
+Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostObject`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`, `Minn\Runtime\PostSave`
 
 ### static `answering(Minn\Objects\RestRequest $request): void`
 
@@ -2665,7 +3146,7 @@ and the runtime's namespaces folded into the index.
 - const `ROUTE_SCOPED` = `array (   '_wp_connectors_rest_settings_dispatch' =>    array (     0 => 10,     1 => '/wp/v2/settings',   ), )` — rest_post_dispatch's defaults that touch one route only: elsewhere they hand the answer back as it came, so they are left out there.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10,   'rest_send_cors_headers' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\SearchController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\SearchController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -2780,7 +3261,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 104), `dispatchDone()` (private, line 323), `asksForXml()` (private, line 398), `oembedXml()` (private, line 409), `look()` (private, line 423), `remember()` (private, line 428), `decode()` (private, line 435), `expand()` (private, line 455), `newWpRequest()` (private, line 480), `toResponse()` (private, line 509)
+Internals: `allow()` (private, line 104), `dispatchDone()` (private, line 324), `asksForXml()` (private, line 399), `oembedXml()` (private, line 410), `look()` (private, line 424), `remember()` (private, line 429), `decode()` (private, line 436), `expand()` (private, line 456), `newWpRequest()` (private, line 481), `toResponse()` (private, line 510)
 
 
 ## Schema
@@ -2939,7 +3420,7 @@ comparisons and date, colour, and uuid parsers the formats use, and the
 combining walk anyOf and oneOf share. Schema holds the rules; this holds
 what they are applied to.
 
-Used by: `Minn\Rest\PostListArgs`, `Minn\Rest\Schema`, `Minn\Rest\Settings`, `Minn\Rest\TemplatesController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Rest\PostListArgs`, `Minn\Rest\RevisionCollection`, `Minn\Rest\Schema`, `Minn\Rest\Settings`, `Minn\Rest\TemplatesController`, `Minn\Rest\WidgetsController`
 
 ### static `isBoolean(mixed $value): bool`
 
@@ -3028,6 +3509,8 @@ a title holding every term first, then a title holding any term, then
 an excerpt match, then a content match, newest first within a rank.
 
 - const `MAX_PER_PAGE` = `100`
+- const `IDS` = `array (   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ), )` — Read by list(): the ids the results keep to, and those they leave out.
+- const `LAST_OFFSET` = `1.8446744073709552E+19` — The largest row offset the database takes; a page past it fails the query, and the reference then refuses the page.
 
 Used by: `Minn\Rest\Api`
 
@@ -3042,7 +3525,7 @@ Route: `GET /wp/v2/search (public)`
 
 Search across post types with the reference's relevance order.
 
-Internals: `item()` (private, line 77), `subtypes()` (private, line 100), `rankExpression()` (private, line 115), `terms()` (private, line 126), `escapeLike()` (private, line 143)
+Internals: `item()` (private, line 107), `subtypes()` (private, line 139), `taxonomies()` (private, line 160), `rankExpression()` (private, line 166), `terms()` (private, line 177), `escapeLike()` (private, line 194)
 
 
 ## Services
@@ -3405,7 +3888,43 @@ as the_widget shows it, and the settings encoded again.
 The widgets are registered on init; a runtime that stopped short of it
 registers them now. Without the runtime there are no widgets to serve.
 
-Internals: `item()` (private, line 177), `type()` (private, line 203), `widgetTypes()` (private, line 220), `requireSidebar()` (private, line 230)
+Internals: `item()` (private, line 177), `type()` (private, line 203), `widgetTypes()` (private, line 221), `requireSidebar()` (private, line 231)
+
+
+## SiteHealthController
+
+`final readonly class Minn\Rest\SiteHealthController` · `public/minn/src/Minn/Rest/SiteHealthController.php`
+
+wp-site-health/v1 (probe: the site health routes on the reference): the
+namespace, its six asynchronous tests and the directory sizes, each for
+someone who may view site health checks and refused to anyone else as
+rest_forbidden. What the tests report is the reference's own Site Health
+screen (its wording, its loopback and wordpress.org requests, the sizes
+of a WordPress install), which the engine does not have
+(WP_Site_Health's tests are placeholders), so for someone allowed the
+route declines and the answer stays rest_no_route.
+
+- const `REFUSAL` = `'Sorry, you are not allowed to do that.'`
+
+Used by: `Minn\Rest\Api`
+
+### `test(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp-site-health/v1/tests/background-updates (cap view_site_health_checks)`
+
+Route: `GET /wp-site-health/v1/tests/loopback-requests (cap view_site_health_checks)`
+
+Route: `GET /wp-site-health/v1/tests/https-status (cap view_site_health_checks)`
+
+Route: `GET /wp-site-health/v1/tests/dotorg-communication (cap view_site_health_checks)`
+
+Route: `GET /wp-site-health/v1/tests/authorization-header (cap view_site_health_checks)`
+
+Route: `GET /wp-site-health/v1/directory-sizes (cap view_site_health_checks)`
+
+Route: `GET /wp-site-health/v1/tests/page-cache (cap view_site_health_checks)`
+
+One of the asynchronous tests, or the directory sizes.
 
 
 ## SiteSchema
@@ -3553,7 +4072,7 @@ The reference's view-context projection: the keys an anonymous reader sees.
 
 The wp/v2/templates and wp/v2/template-parts resource.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\TemplatesController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`
 
 ```php
 __construct(Minn\Theme\TemplateIndex $index, Minn\Content\Posts $posts, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -3569,6 +4088,66 @@ The rest_base of a template type.
 The wp/v2 template shape.
 
 Internals: `links()` (private, line 86)
+
+
+## TemplateRevisionsController
+
+`final readonly class Minn\Rest\TemplateRevisionsController` · `public/minn/src/Minn/Rest/TemplateRevisionsController.php`
+
+wp/v2/templates and wp/v2/template-parts revisions and autosaves: the
+revision rows of a template the site saved, each shown as the template
+it once was (the template's own shape, its parent's id, a self link and
+a parent link). The template is judged before the caller, as on the
+reference: one nobody saved is no parent, one only a theme file holds
+cannot have revisions; then the caller must be signed in and able to
+edit the saved row. The routes are listed ahead of the templates' own,
+whose id pattern would take these paths too.
+
+- const `ID` = `'([^\\/:<>\\*\\?"\\|]+(?:\\/[^\\/:<>\\*\\?"\\|]+)?)[\\/\\w%-]+'`
+- const `READ_REFUSAL` = `'Sorry, you are not allowed to view revisions of this post.'`
+- const `AUTOSAVES_REFUSAL` = `'Sorry, you are not allowed to view autosaves of this post.'`
+- const `DELETE_REFUSAL` = `'Sorry, you are not allowed to delete revisions of this post.'`
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Theme\TemplateIndex $index, Minn\Rest\TemplateObject $object, Minn\Content\Revisions $revisions, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
+```
+
+
+### `revisions(Minn\Http\Request $request, string $base, string $parent): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:templates|template-parts}/{parent:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?)[\/\w%-]+}/revisions (public)`
+
+Every revision of a saved template, its autosaves among them, filtered, ordered and paged as the request asks (RevisionCollection).
+
+### `revision(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:templates|template-parts}/{parent:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?)[\/\w%-]+}/revisions/{id:[\d]+} (public)`
+
+One revision of a saved template; a revision of another post is a mismatch.
+
+### `deleteRevision(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
+
+Route: `DELETE /wp/v2/{base:templates|template-parts}/{parent:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?)[\/\w%-]+}/revisions/{id:[\d]+} (public)`
+
+A template's revision deleted for good, answered as it was; never
+trashed, so without force it is refused. One of another post is not
+this template's to delete.
+
+### `autosaves(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:templates|template-parts}/{id:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?)[\/\w%-]+}/autosaves (public)`
+
+The autosaves of a saved template, every author's, newest first.
+
+### `autosave(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:templates|template-parts}/{parent:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?)[\/\w%-]+}/autosaves/{id:[\d]+} (public)`
+
+The template's newest autosave, whoever saved it and whichever autosave id is asked for.
+
+Internals: `readable()` (private, line 119), `saved()` (private, line 130), `shaped()` (private, line 150)
 
 
 ## TemplatesController
@@ -3727,7 +4306,7 @@ takes, and ids alone for a HEAD request.
 
 - const `MAPPINGS` = `array (   'exclude' => 'exclude',   'include' => 'include',   'order' => 'order',   'orderby' => 'orderby',   'post' => 'post',   'hide_empty' => 'hide_empty',   'per_page' => 'number',   'search' => 'search',   'slug' => 'slug', )`
 
-Used by: `Minn\Rest\TermsController`
+Used by: `Minn\Rest\MenuLists`, `Minn\Rest\TermsController`
 
 ### static `of(Minn\Objects\RestRequest $wp, array $registered, string $taxonomy, string $method): array`
 
@@ -4208,5 +4787,5 @@ Route: `DELETE /wp/v2/widgets/{id:[\w\-]+} (cap edit_theme_options)`
 
 Deletes a widget with force; without, sends it to the inactive widgets.
 
-Internals: `saveInstance()` (private, line 150), `newInstance()` (private, line 167), `sidebarOf()` (private, line 191)
+Internals: `saveInstance()` (private, line 151), `newInstance()` (private, line 168), `sidebarOf()` (private, line 192)
 

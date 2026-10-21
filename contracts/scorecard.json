@@ -263,8 +263,8 @@
     "open": {
         "done": 69,
         "accepted": 22,
-        "open": 7,
-        "austin": 0
+        "open": 11,
+        "austin": 1
     },
     "run": {
         "measured": "2026-10-20",
@@ -301,10 +301,10 @@
             "window": 100,
             "stretches": 115,
             "lines": 2071,
-            "of": 186086
+            "of": 188205
         },
         "engine": {
-            "of": 110071,
+            "of": 112187,
             "php": {
                 "strict": {
                     "window": 40,
@@ -331,7 +331,7 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76015,
+            "of": 76018,
             "window": 80,
             "stretches": 108,
             "lines": 2901
@@ -378,7 +378,11 @@
             "differing": 1,
             "rows": 1
         },
-        "restFuzz": null,
+        "restFuzz": {
+            "routes": 201,
+            "requests": 14607,
+            "differences": 583
+        },
         "cliFeatures": null
     }
 }

@@ -394,6 +394,12 @@ final class Runtime
         $this->state[$key] = $value;
     }
 
+    /** A per-request state value, made once by the given callable the first time it is asked for (a facade class's single instance). */
+    public function remember(string $key, callable $make): mixed
+    {
+        return $this->state[$key] ??= $make();
+    }
+
     /** Whether the request is over HTTPS. */
     public function isSecure(): bool
     {

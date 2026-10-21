@@ -4,7 +4,7 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`TextWidgets`](#textwidgets) | final class | 159 | The text and custom HTML widgets' behaviour (WP_Widget_Text, |
+| [`TextWidgets`](#textwidgets) | final class | 161 | The text and custom HTML widgets' behaviour (WP_Widget_Text, |
 | [`WidgetForms`](#widgetforms) | final class | 203 | The core widgets' settings forms, the markup a widget's form() prints and |
 | [`WidgetTemplates`](#widgettemplates) | final class | 85 | The Underscore templates the Text and Custom HTML widgets print for their |
 
@@ -67,7 +67,7 @@ a gallery naming neither an id nor included images belongs to no post (-1).
 - `@param array<array-key, mixed> $attrs`
 - `@return array<array-key, mixed>`
 
-Internals: `withoutPost()` (private, line 165)
+Internals: `withoutPost()` (private, line 167)
 
 
 ## WidgetForms

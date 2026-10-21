@@ -6,11 +6,12 @@ namespace Minn\Rest;
 
 use Minn\Http\Subject;
 use Minn\Http\Access;
-use Minn\Content\TermRecord;
 use Minn\Content\Menus;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Http\Args;
+use Minn\Http\ItemArgs;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
@@ -18,7 +19,6 @@ use Minn\Runtime\NavMenu;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
 use Minn\Support\Kses;
-use Minn\Support\Lists;
 
 /**
  * wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts;
@@ -33,54 +33,27 @@ final readonly class MenusController
     ];
 
     public function __construct(
-        private Menus $menus,
-        private MenuObject $menuObject,
-        private MenuItemObject $itemObject,
-        private Caller $caller,
         private RestUrl $url,
+        private MenuLists $lists,
     ) {
     }
 
-    /** Every classic menu. */
-    #[Route(Method::Get, '/wp/v2/menus', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', opener: ['rest_menu_read_access', 'menus', 'nav_menu']))]
+    /** Every classic menu, as the nav_menu taxonomy's term list (Rest\MenuLists). */
+    #[Route(Method::Get, '/wp/v2/menus', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', opener: ['rest_menu_read_access', 'menus', 'nav_menu']), params: MenuCollectionParams::class)]
     public function listMenus(Request $request): Response
     {
-        $rows = $this->menus->all();
-        $include = Lists::ids($request->query['include'] ?? []);
-        if ($include !== []) {
-            $rows = array_values(array_filter($rows, static fn (TermRecord $row) => in_array($row->id, $include, true)));
-        }
-        $post = (int) $request->query('post', '0');
-        if ($post > 0) {
-            $owned = [];
-            foreach ($this->menus->items() as $item) {
-                if ($item->id === $post) {
-                    $owned[$item->menuId] = true;
-                }
-            }
-            $rows = array_values(array_filter($rows, static fn (TermRecord $row) => isset($owned[$row->id])));
-        }
-        $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
-        $page = max(1, (int) $request->query('page', '1'));
-        $total = count($rows);
-        $slice = array_slice($rows, ($page - 1) * $perPage, $perPage);
-        return Reply::list(
-            array_map(fn (TermRecord $row) => $this->menuObject->view($row), $slice),
-            $total,
-            (int) ceil($total / $perPage),
-            Fields::fromQuery($request->query),
-        );
+        return $this->lists->menus($request);
     }
 
     /** One menu. */
-    #[Route(Method::Get, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', opener: ['rest_menu_read_access', 'menus', 'nav_menu']))]
+    #[Route(Method::Get, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', opener: ['rest_menu_read_access', 'menus', 'nav_menu']), args: [ItemArgs::MENU])]
     public function singleMenu(Request $request, string $id): Response
     {
-        $row = $this->menus->find((int) $id);
+        $row = $this->lists->menus->find((int) $id);
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
-        return Reply::item($this->menuObject->view($row), Fields::fromQuery($request->query));
+        return Reply::item($this->lists->menuObject->view($row), Fields::fromQuery($request->query));
     }
 
     /** Creates a menu. */
@@ -92,12 +65,12 @@ final readonly class MenusController
             throw RestError::missingParams(['name']);
         }
         $name = $this->plain((string) $body['name']);
-        $this->refuse($this->menus->refuseName($name));
+        $this->refuse($this->lists->menus->refuseName($name));
         $description = $this->plain((string) ($body['description'] ?? ''));
         // Saved as the reference saves it, telling plugins (Runtime\MenuEvents).
         $id = \_minn_menu_events()->restMenu(0, ['name' => $name] + (array_key_exists('description', $body) ? ['description' => $description] : []), $request);
-        $row = $this->menus->find($id);
-        return Reply::item($this->menuObject->view($row ?? []), Fields::fromQuery($request->query), 201)
+        $row = $this->lists->menus->find($id);
+        return Reply::item($this->lists->menuObject->view($row ?? []), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to("/wp/v2/menus/{$id}"));
     }
 
@@ -107,71 +80,55 @@ final readonly class MenusController
     #[Route(Method::Patch, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_update', signInMessage: 'Sorry, you are not allowed to edit this term.', refuse: 'rest_cannot_update', message: 'Sorry, you are not allowed to edit this term.'))]
     public function updateMenu(Request $request, string $id): Response
     {
-        $row = $this->menus->find((int) $id);
+        $row = $this->lists->menus->find((int) $id);
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
         $body = $request->json();
         $name = array_key_exists('name', $body) ? $this->plain((string) $body['name']) : null;
         if ($name !== null) {
-            $this->refuse($this->menus->refuseName($name, (int) $id));
+            $this->refuse($this->lists->menus->refuseName($name, (int) $id));
         }
         $description = array_key_exists('description', $body) ? $this->plain((string) $body['description']) : null;
         \_minn_menu_events()->restMenu((int) $id, array_filter(['name' => $name, 'description' => $description], static fn ($v) => $v !== null), $request);
-        return Reply::item($this->menuObject->view($this->menus->find((int) $id) ?? $row), Fields::fromQuery($request->query));
+        return Reply::item($this->lists->menuObject->view($this->lists->menus->find((int) $id) ?? $row), Fields::fromQuery($request->query));
     }
 
     /** Deletes a menu and its items. */
     #[Route(Method::Delete, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this term.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this term.'))]
     public function deleteMenu(Request $request, string $id): Response
     {
-        $row = $this->menus->find((int) $id);
+        $row = $this->lists->menus->find((int) $id);
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
         if (!$request->flagged('force')) {
             throw new RestError('rest_trash_not_supported', "Menus do not support trashing. Set 'force=true' to delete.", 501);
         }
-        $previous = $this->menuObject->view($row);
+        $previous = $this->lists->menuObject->view($row);
         unset($previous['_links']);
         \_minn_menu_events()->restDeleteMenu((int) $id, $previous, $request);
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
-    /** The items of a menu. */
-    #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']))]
+    /** The menu items, as their type's post list (Rest\MenuLists). */
+    #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']), params: MenuItemCollectionParams::class)]
     public function listItems(Request $request): Response
     {
-        // One menu id, a list or a comma-separated string (probe rest-menus-controller).
-        $menuIds = Lists::ids($request->query['menus'] ?? []);
-        $items = count($menuIds) > 1
-            ? array_values(array_filter($this->menus->items(), static fn ($item) => in_array($item->menuId, $menuIds, true)))
-            : $this->menus->items($menuIds[0] ?? null);
-        $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
-        $page = max(1, (int) $request->query('page', '1'));
-        $total = count($items);
-        $slice = array_slice($items, ($page - 1) * $perPage, $perPage);
-        $context = Context::of($request);
-        $edit = $context->isEdit();
-        return Reply::list(
-            array_map(fn ($item) => $this->itemObject->view($item, $context), $slice),
-            $total,
-            (int) ceil($total / $perPage),
-            Fields::fromQuery($request->query),
-        );
+        return $this->lists->items($request);
     }
 
     /** One menu item. */
-    #[Route(Method::Get, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']))]
+    #[Route(Method::Get, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', opener: ['rest_menu_read_access', 'menu-items', 'nav_menu_item']), args: [ItemArgs::MENU_ITEM])]
     public function singleItem(Request $request, string $id): Response
     {
-        $item = $this->menus->findItem((int) $id);
+        $item = $this->lists->menus->findItem((int) $id);
         if ($item === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
         $context = Context::of($request);
         $edit = $context->isEdit();
-        return Reply::item($this->itemObject->view($item, $context), Fields::fromQuery($request->query));
+        return Reply::item($this->lists->itemObject->view($item, $context), Fields::fromQuery($request->query));
     }
 
     /** Creates a menu item. */
@@ -185,8 +142,8 @@ final readonly class MenusController
             throw new RestError('rest_title_required', 'The title is required when using a custom menu item type.', 400);
         }
         $id = \_minn_menu_events()->restItem(0, $this->argsFrom($body, self::NEW_ITEM), $request);
-        $item = $this->menus->findItem($id);
-        return Reply::item($this->itemObject->view($item, Context::Edit), Fields::fromQuery($request->query), 201)
+        $item = $this->lists->menus->findItem($id);
+        return Reply::item($this->lists->itemObject->view($item, Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to("/wp/v2/menu-items/{$id}"));
     }
 
@@ -196,35 +153,35 @@ final readonly class MenusController
     #[Route(Method::Patch, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
     public function updateItem(Request $request, string $id): Response
     {
-        $item = $this->menus->findItem((int) $id);
+        $item = $this->lists->menus->findItem((int) $id);
         if ($item === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
         $body = $request->json();
         $events = \_minn_menu_events();
         $events->restItem((int) $id, $this->argsFrom($body, ['menu-id' => $item->menuId] + $events->savedArgs((int) $id)), $request);
-        return Reply::item($this->itemObject->view($this->menus->findItem((int) $id), Context::Edit), Fields::fromQuery($request->query));
+        return Reply::item($this->lists->itemObject->view($this->lists->menus->findItem((int) $id), Context::Edit), Fields::fromQuery($request->query));
     }
 
     /** Deletes a menu item. */
     #[Route(Method::Delete, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
     public function deleteItem(Request $request, string $id): Response
     {
-        $item = $this->menus->findItem((int) $id);
+        $item = $this->lists->menus->findItem((int) $id);
         if ($item === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
         if (!$request->flagged('force')) {
             throw new RestError('rest_trash_not_supported', "Menu items do not support trashing. Set 'force=true' to delete.", 501);
         }
-        $previous = $this->itemObject->view($item, Context::View);
+        $previous = $this->lists->itemObject->view($item, Context::View);
         unset($previous['_links']);
         \_minn_menu_events()->restDeleteItem((int) $id, $previous, $request);
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
     /** The menu locations the theme and plugins register (none for a block theme without plugins), keyed by name; edit_theme_options to view. */
-    #[Route(Method::Get, '/wp/v2/menu-locations', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.', opener: ['rest_menu_read_access', 'menu-locations']))]
+    #[Route(Method::Get, '/wp/v2/menu-locations', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.', opener: ['rest_menu_read_access', 'menu-locations']), args: [Args::CONTEXT])]
     public function locations(Request $request): Response
     {
         $out = [];
@@ -236,7 +193,7 @@ final readonly class MenusController
     }
 
     /** One menu location. */
-    #[Route(Method::Get, '/wp/v2/menu-locations/{location:[\w-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.', opener: ['rest_menu_read_access', 'menu-locations']))]
+    #[Route(Method::Get, '/wp/v2/menu-locations/{location:[\w-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.', opener: ['rest_menu_read_access', 'menu-locations']), args: [ItemArgs::MENU_LOCATION])]
     public function oneLocation(Request $request, string $location): Response
     {
         $registered = Runtime::current()->get('nav_menus', []);
@@ -255,7 +212,7 @@ final readonly class MenusController
             'collection' => [['href' => $this->url->to('/wp/v2/menu-locations')]],
         ];
         // Only a menu that exists is linked; a location left pointing at a deleted one is not (probe rest-block-controllers).
-        if ($menu > 0 && $this->menus->find($menu) !== null) {
+        if ($menu > 0 && $this->lists->menus->find($menu) !== null) {
             $links['wp:menu'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/menus/' . $menu)]];
             $links['curies'] = RestUrl::curies();
         }
@@ -310,7 +267,7 @@ final readonly class MenusController
         if ($url === '') {
             return '';
         }
-        return $this->caller->can('unfiltered_html') ? $url : Kses::url($url);
+        return $this->lists->caller->can('unfiltered_html') ? $url : Kses::url($url);
     }
 
     /** A refused menu name, in the shape the reference's REST error carries. */
@@ -326,6 +283,6 @@ final readonly class MenusController
 
     private function plain(string $value): string
     {
-        return $this->caller->can('unfiltered_html') ? $value : Kses::text($value);
+        return $this->lists->caller->can('unfiltered_html') ? $value : Kses::text($value);
     }
 }

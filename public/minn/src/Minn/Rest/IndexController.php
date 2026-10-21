@@ -14,6 +14,7 @@ use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Http\RouteMiss;
+use Minn\RestError;
 
 /**
  * The API index at /wp-json/: the site facts monitors read (name, url,
@@ -46,7 +47,7 @@ final readonly class IndexController
             'page_for_posts' => (int) ($this->site->option('page_for_posts') ?? 0),
             'page_on_front' => (int) ($this->site->option('page_on_front') ?? 0),
             'show_on_front' => (string) ($this->site->option('show_on_front') ?? 'posts'),
-            'namespaces' => $namespaces,
+            'namespaces' => RouteCatalogue::ordered($namespaces),
             'authentication' => Authenticator::applicationPasswordsAvailable($request) ? ['application-passwords' => ['endpoints' => ['authorization' => $this->permalinks->url('/wp-admin/authorize-application.php')]]] : [],
             'routes' => $routes,
             'site_logo' => (int) ($this->site->option('site_logo') ?? 0),
@@ -60,7 +61,10 @@ final readonly class IndexController
      * One namespace's index, as the reference answers /wp-json/wp/v2 (or oembed/1.0): the
      * namespace, its routes (the namespace root among them), and the link
      * up to the root index. A namespace the engine does not serve is left
-     * to the runtime, whose plugins may own it.
+     * to the runtime, whose plugins may own it. The namespace argument the
+     * index lists takes the path's place when it is sent, as every path
+     * argument does on the reference: one naming no namespace the engine
+     * serves is rest_invalid_namespace.
      */
     #[Route(Method::Get, '/{namespace:[a-z0-9-]+/(?:v\d+|\d+\.\d+)}', policy: new Policy(Access::Public), index: false)]
     public function namespaceIndex(Request $request, string $namespace): Response
@@ -68,6 +72,13 @@ final readonly class IndexController
         ['namespaces' => $namespaces, 'routes' => $routes] = $this->catalogue->all();
         if (!in_array($namespace, $namespaces, true)) {
             throw new RouteMiss();
+        }
+        $asked = $request->query['namespace'] ?? $namespace;
+        if (is_string($asked) && $asked !== $namespace) {
+            if (!in_array($asked, $namespaces, true)) {
+                throw new RestError('rest_invalid_namespace', 'The specified namespace could not be found.', 404);
+            }
+            $namespace = $asked;
         }
         $own = array_filter($routes, static fn (string $route): bool => $route === '/' . $namespace || str_starts_with($route, '/' . $namespace . '/'), ARRAY_FILTER_USE_KEY);
         return Reply::item([

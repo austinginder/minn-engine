@@ -49,16 +49,17 @@ final readonly class ArgCheck
         $shared = array_intersect_key($query, array_flip(Args::SHARED));
         $own = array_diff_key($query, $shared);
         $body = $route->bodyArguments();
-        $this->missing($shared, $request->query);
-        $this->round([[$shared, $request->query]]);
         // A request with a body reads its own arguments there first, then from the query, as the reference's request does (probe rest-users-controller).
         $sources = [[$own, in_array($request->method, [Method::Post, Method::Put, Method::Patch, Method::Delete], true) ? $request->json() + $request->query : $request->query]];
         if ($body !== []) {
             $sources[] = [$body, $request->json()];
         }
+        // Every required argument that did not arrive is answered before any value is judged.
+        $this->missing($shared, $request->query);
         foreach ($sources as [$args, $values]) {
             $this->missing($args, $values);
         }
+        $this->round([[$shared, $request->query]]);
         $this->round($sources);
         $this->sanitizeRound($sources);
     }

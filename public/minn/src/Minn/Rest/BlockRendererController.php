@@ -37,7 +37,8 @@ final readonly class BlockRendererController
     private const ARGS = [
         'context' => ['description' => 'Scope under which the request is made; determines fields present in response.', 'type' => 'string', 'enum' => ['edit'], 'default' => 'view', 'required' => false, Args::HANDLER_VALIDATES => true],
         'attributes' => ['description' => 'Attributes for the block.', 'type' => 'object', 'default' => [], 'required' => false, Args::HANDLER_VALIDATES => true],
-        'post_id' => ['description' => 'ID of the post context.', 'type' => 'integer', 'required' => false],
+        // Judged by the handler once the context and the attributes pass, as the reference judges it.
+        'post_id' => ['description' => 'ID of the post context.', 'type' => 'integer', 'required' => false, Args::HANDLER_VALIDATES => true],
     ];
 
     public function __construct(private Schema $schema, private Caller $caller)
@@ -45,8 +46,8 @@ final readonly class BlockRendererController
     }
 
     /** The block's markup, as {"rendered": "..."}. */
-    #[Route(Method::Get, '/wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+}', policy: new Policy(Access::Public), args: [self::ARGS])]
-    #[Route(Method::Post, '/wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+}', policy: new Policy(Access::Public), args: [self::ARGS], body: [self::ARGS])]
+    #[Route(Method::Get, '/wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+}', policy: new Policy(Access::Public), args: [PathArgs::RENDERED_BLOCK, self::ARGS])]
+    #[Route(Method::Post, '/wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+}', policy: new Policy(Access::Public), args: [PathArgs::RENDERED_BLOCK, self::ARGS], body: [self::ARGS])]
     public function render(Request $request, string $name): Response
     {
         if (!Runtime::booted()) {
@@ -56,6 +57,9 @@ final readonly class BlockRendererController
         $type = Handoff::blockTypes()->get_registered($name);
         $schema = ['type' => 'object', 'properties' => $type instanceof BlockType ? $type->get_attributes() : [], 'additionalProperties' => false];
         $this->refuseInvalid(['context' => [$values['context'] ?? 'view', self::ARGS['context']], 'attributes' => [$values['attributes'] ?? [], $type instanceof BlockType ? $schema : self::ARGS['attributes']]]);
+        if (array_key_exists('post_id', $values)) {
+            $this->refuseInvalid(['post_id' => [$values['post_id'], self::ARGS['post_id']]]);
+        }
         ['post_id' => $postId] = $values + ['post_id' => 0];
         $postId = (int) $postId;
         $this->permit($postId);

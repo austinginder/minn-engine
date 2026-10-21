@@ -447,7 +447,7 @@ for one.
 - const `STOPWORDS` = `'about,an,are,as,at,be,by,com,for,from,how,in,is,it,of,on,or,that,the,this,to,was,what,when,where,who,will,with,www'`
 - const `TERM` = `'/".*?("|$)|((?<=[\\t ",+])|^)[^\\t ",+]+/'`
 
-Used by: `Minn\Runtime\PostQuery`
+Used by: `Minn\Rest\RevisionCollection`, `Minn\Runtime\PostQuery`
 
 ### static `terms(string $search, callable $stopwords): array`
 

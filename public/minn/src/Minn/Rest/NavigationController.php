@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\ItemArgs;
 use Minn\Http\Policy;
 use Minn\Http\Subject;
 use Minn\Http\Access;
@@ -15,8 +16,8 @@ use Minn\Http\Route;
 /**
  * wp/v2/navigation: the block theme's navigation menus, stored as
  * wp_navigation posts. The reading and writing is the posts machinery with
- * this type's own capabilities (every one of them edit_theme_options), so
- * only the routes live here.
+ * this type's own capabilities (every one of them edit_theme_options) and
+ * the posts list's parameters, so only the routes live here.
  */
 final readonly class NavigationController
 {
@@ -30,14 +31,14 @@ final readonly class NavigationController
     }
 
     /** The navigation posts. */
-    #[Route(Method::Get, '/wp/v2/navigation', policy: new Policy(Access::Public))]
+    #[Route(Method::Get, '/wp/v2/{base:navigation}', policy: new Policy(Access::Public), params: PostCollectionParams::class)]
     public function list(Request $request): Response
     {
         return $this->reads->serveList($request, self::TYPE);
     }
 
     /** One navigation post. */
-    #[Route(Method::Get, '/wp/v2/navigation/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Navigation, param: 'id'))]
+    #[Route(Method::Get, '/wp/v2/navigation/{id:[\d]+}', policy: new Policy(Access::Public, subject: Subject::Navigation, param: 'id'), args: [ItemArgs::NAVIGATION])]
     public function single(Request $request, string $id): Response
     {
         return $this->reads->serveSingle($request, self::TYPE, $id);

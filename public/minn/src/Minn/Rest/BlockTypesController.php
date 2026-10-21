@@ -42,14 +42,14 @@ final readonly class BlockTypesController
     }
 
     /** One namespace's block types. */
-    #[Route(Method::Get, '/wp/v2/block-types/{namespace:[a-zA-Z0-9_-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/block-types/{namespace:[a-zA-Z0-9_-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT, PathArgs::BLOCK_NAMESPACE])]
     public function inNamespace(Request $request, string $namespace): Response
     {
         return $this->items($request, $namespace);
     }
 
     /** One block type. */
-    #[Route(Method::Get, '/wp/v2/block-types/{namespace:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/block-types/{namespace:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}', policy: new Policy(Access::Public), args: [PathArgs::BLOCK_NAME, PathArgs::BLOCK_NAMESPACE, Args::CONTEXT])]
     public function single(Request $request, string $namespace, string $name): Response
     {
         $this->requireViewer();

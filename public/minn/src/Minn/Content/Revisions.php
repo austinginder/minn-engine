@@ -32,6 +32,12 @@ final readonly class Revisions
         );
     }
 
+    /** One revision (or autosave) row by its id, whoever its parent is; null when the id is no revision. */
+    public function one(int $id): ?array
+    {
+        return $this->db->row("SELECT * FROM {$this->db->table('posts')} WHERE ID = ? AND post_type = 'revision'", [$id]);
+    }
+
     /** The autosaves of a post, newest first, as rows. */
     public function autosavesOf(int $parentId): array
     {

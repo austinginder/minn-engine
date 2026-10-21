@@ -62,7 +62,7 @@ final readonly class SidebarsController
     }
 
     /** One sidebar: anyone's to read when it is shown in REST, otherwise for someone who can edit theme options. */
-    #[Route(Method::Get, '/wp/v2/sidebars/{id:[\w-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/sidebars/{id:[\w-]+}', policy: new Policy(Access::Public), args: [PathArgs::SIDEBAR_ID, Args::CONTEXT])]
     public function sidebar(Request $request, string $id): Response
     {
         self::ready();
@@ -108,7 +108,7 @@ final readonly class SidebarsController
     }
 
     /** One widget type. */
-    #[Route(Method::Get, '/wp/v2/widget-types/{id:[a-zA-Z0-9_-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_manage_widgets', signInMessage: 'Sorry, you are not allowed to manage widgets on this site.', refuse: 'rest_cannot_manage_widgets', message: 'Sorry, you are not allowed to manage widgets on this site.'), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/widget-types/{id:[a-zA-Z0-9_-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_manage_widgets', signInMessage: 'Sorry, you are not allowed to manage widgets on this site.', refuse: 'rest_cannot_manage_widgets', message: 'Sorry, you are not allowed to manage widgets on this site.'), args: [PathArgs::WIDGET_TYPE_ID, Args::CONTEXT])]
     public function widgetType(Request $request, string $id): Response
     {
         self::ready();
@@ -205,7 +205,8 @@ final readonly class SidebarsController
         $item = [
             'id' => $widget->id_base,
             'name' => $widget->name,
-            'description' => (string) ($widget->widget_options['description'] ?? ''),
+            // The description as text: its entities read back into characters, as the reference shows it.
+            'description' => html_entity_decode((string) ($widget->widget_options['description'] ?? ''), ENT_QUOTES, 'UTF-8'),
             'is_multi' => true,
             'classname' => (string) ($widget->widget_options['classname'] ?? ''),
             '_links' => [

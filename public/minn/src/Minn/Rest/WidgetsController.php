@@ -48,11 +48,12 @@ final readonly class WidgetsController
     public function list(Request $request): Response
     {
         SidebarsController::ready();
-        $only = (string) ($request->query['sidebar'] ?? '');
+        // A sidebar asked for, even an empty name, narrows the list to it.
+        $only = isset($request->query['sidebar']) ? (string) $request->query['sidebar'] : null;
         $context = Context::of($request);
         $out = [];
         foreach (WidgetAreas::current() as $sidebar => $widgets) {
-            if ($only !== '' && $only !== (string) $sidebar) {
+            if ($only !== null && $only !== (string) $sidebar) {
                 continue;
             }
             foreach ((array) $widgets as $id) {
@@ -192,7 +193,7 @@ final readonly class WidgetsController
     {
         $sidebar = WidgetAreas::find($id);
         if ($sidebar === null || !isset($GLOBALS['wp_registered_widgets'][$id])) {
-            throw new RestError('rest_widget_not_found', 'No widget exists with that id.', 404);
+            throw new RestError('rest_widget_not_found', 'No widget was found with that id.', 404);
         }
         return $sidebar;
     }
