@@ -206,5 +206,42 @@ shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . 
 us_parity( 'editor cannot create users', $Q, $editor, 'POST', '{"username":"x","email":"x@x.test","password":"pw"}' );
 us_parity( 'duplicate username rejected', $Q, $admin, 'POST', '{"username":"admin","email":"fresh@minn-engine.localhost","password":"pw-123456"}' );
 
+// 6. Passwords with quotes and backslashes. The reference refuses a backslash and an empty password once every
+// other argument passed, before it asks who is calling; it stores a password slashed, and wp-login checks it so.
+us_cleanup();
+us_parity( 'a password with a backslash is refused', $Q, $admin, 'POST', json_encode( array( 'username' => 'pw-slash', 'email' => 'pw-slash@minn-engine.localhost', 'password' => 'a\\b' ) ) );
+us_parity( 'an empty password is refused', $Q, $admin, 'POST', json_encode( array( 'username' => 'pw-slash', 'email' => 'pw-slash@minn-engine.localhost', 'password' => '' ) ) );
+us_parity( 'a bad email is refused before the password', $Q, $admin, 'POST', json_encode( array( 'username' => 'pw-slash', 'email' => 'bad', 'password' => 'a\\b' ) ) );
+us_parity( 'a backslash is refused before the caller is asked for', $Q, null, 'POST', json_encode( array( 'username' => 'pw-slash', 'email' => 'pw-slash@minn-engine.localhost', 'password' => 'a\\b' ) ) );
+$target = (int) trim( (string) shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' && wp user create pw-target pw-target@minn-engine.localhost --role=subscriber --porcelain 2>/dev/null' ) );
+us_parity( 'a bad locale is refused before the password', $Q . '%2F' . $target, $admin, 'POST', json_encode( array( 'locale' => 'xx_YY', 'password' => 'a\\b' ) ) );
+us_parity( 'an edit to an empty password is refused', $Q . '%2F' . $target, $admin, 'POST', '{"password":""}' );
+
+/** Whether wp-login signs a login in with a password as typed. */
+function us_signs_in( string $base, string $login, string $password ): bool {
+	$ctx = stream_context_create( array(
+		'ssl'  => array( 'verify_peer' => false, 'verify_peer_name' => false ),
+		'http' => array( 'ignore_errors' => true, 'timeout' => 10, 'method' => 'POST', 'follow_location' => 0, 'header' => "Content-Type: application/x-www-form-urlencoded\r\nCookie: wordpress_test_cookie=WP%20Cookie%20check", 'content' => http_build_query( array( 'log' => $login, 'pwd' => $password, 'wp-submit' => 'Log In', 'testcookie' => '1' ) ) ),
+	) );
+	@file_get_contents( "$base/wp-login.php", false, $ctx );
+	return array() !== preg_grep( '/^Set-Cookie: wordpress_logged_in_/i', $http_response_header ?? array() );
+}
+$quoted = 'it\'s "quoted"';
+foreach ( array( array( $ENGINE, $REF, 'the engine', 'WordPress' ), array( $REF, $ENGINE, 'WordPress', 'the engine' ) ) as $i => [ $writer, $reader, $wrote, $reads ] ) {
+	[ $st, $made ] = us_fetch( $writer, $Q, $admin, 'POST', json_encode( array( 'username' => "pw-quoted-$i", 'email' => "pw-quoted-$i@minn-engine.localhost", 'password' => $quoted ) ) );
+	check( 201 === $st && us_signs_in( $reader, "pw-quoted-$i", $quoted ), "a quoted password $wrote stores over REST signs in on $reads" );
+	// The reset form: the link's key minted on the reference, the new password saved by the writer, signed in on the reader.
+	$id  = (int) ( $made['id'] ?? 0 );
+	$key = trim( (string) shell_exec( 'cd ' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . ' && wp eval ' . escapeshellarg( "echo get_password_reset_key(get_userdata($id));" ) . ' 2>/dev/null' ) );
+	$jar = tempnam( sys_get_temp_dir(), 'us-reset' );
+	foreach ( array( "action=rp&key=$key&login=pw-quoted-$i" => null, 'action=resetpass' => array( 'pass1' => "$quoted 2", 'pass2' => "$quoted 2", 'rp_key' => $key, 'wp-submit' => 'Save Password' ) ) as $query => $form ) {
+		$curl = curl_init( "$writer/wp-login.php?$query" );
+		curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_COOKIEJAR => $jar, CURLOPT_COOKIEFILE => $jar ) + ( null === $form ? array() : array( CURLOPT_POSTFIELDS => http_build_query( $form ) ) ) );
+		curl_exec( $curl );
+	}
+	@unlink( $jar );
+	check( us_signs_in( $reader, "pw-quoted-$i", "$quoted 2" ), "a quoted password $wrote saves through the reset form signs in on $reads" );
+}
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

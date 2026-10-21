@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Http\Args;
+use Minn\I18n\TranslationFiles;
 use Closure;
 use JsonException;
 use Minn\Http\Method;
@@ -104,6 +105,9 @@ final readonly class ArgCheck
                 if (!array_key_exists($name, $values) || ($schema[Args::HANDLER_VALIDATES] ?? false) === true || ($schema[Args::SANITIZE_ROUND] ?? false) === true) {
                     continue;
                 }
+                if (($schema[Args::INSTALLED_LOCALE] ?? false) === true) {
+                    $schema['enum'] = array_merge(['', 'en_US'], TranslationFiles::languages(\WP_LANG_DIR));
+                }
                 $verdict = $this->schema->validate($values[$name], $schema, $name);
                 if ($verdict instanceof Refusal && ($schema[Args::BARE_REFUSAL] ?? false) === true) {
                     $invalid[$name] = 'Invalid parameter.';
@@ -118,7 +122,8 @@ final readonly class ArgCheck
 
     /**
      * The arguments the reference judges once every other one passed, in its
-     * sanitize round: each may be empty, and is otherwise held to its schema.
+     * sanitize round: each may be empty, and is otherwise held to its schema;
+     * a user's password may not be empty or hold a backslash.
      *
      * @param list<array{0: array<string, array<string, mixed>>, 1: array<string, mixed>}> $sources
      */
@@ -128,10 +133,12 @@ final readonly class ArgCheck
         $details = [];
         foreach ($sources as [$args, $values]) {
             foreach ($args as $name => $schema) {
-                if (($schema[Args::SANITIZE_ROUND] ?? false) !== true || !array_key_exists($name, $values) || $values[$name] === '') {
+                $password = ($schema[Args::PASSWORD] ?? false) === true;
+                $judged = $password || (($schema[Args::SANITIZE_ROUND] ?? false) === true && ($values[$name] ?? '') !== '');
+                if (!$judged || !array_key_exists($name, $values)) {
                     continue;
                 }
-                $verdict = $this->schema->validate($values[$name], $schema, $name);
+                $verdict = $password ? self::password($values[$name]) : $this->schema->validate($values[$name], $schema, $name);
                 if ($verdict instanceof Refusal) {
                     $invalid[$name] = $verdict->message;
                     $details[$name] = ['code' => $verdict->code, 'message' => $verdict->message, 'data' => $verdict->data];
@@ -139,6 +146,17 @@ final readonly class ArgCheck
             }
         }
         self::refuse($invalid, $details);
+    }
+
+    /** A user's password the reference will not store: empty, or holding a backslash. */
+    private static function password(mixed $value): ?Refusal
+    {
+        $password = is_scalar($value) ? (string) $value : '';
+        return match (true) {
+            $password === '' => new Refusal('rest_user_invalid_password', 'Passwords cannot be empty.', ['status' => 400]),
+            str_contains($password, '\\') => new Refusal('rest_user_invalid_password', 'Passwords cannot contain the "\\" character.', ['status' => 400]),
+            default => null,
+        };
     }
 
     /**

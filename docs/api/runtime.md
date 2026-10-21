@@ -6776,7 +6776,7 @@ Internals: `pluginFile()` (private, line 97), `activePlugins()` (private, line 1
 
 A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error.
 
-Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Ops\Unzip`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\PluginsController`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SiteSchema`, `Minn\Rest\UsersController`, `Minn\Runtime\Connectors`, `Minn\Runtime\Patterns`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\UserInsert`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Ops\Unzip`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\PluginsController`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SiteSchema`, `Minn\Runtime\Connectors`, `Minn\Runtime\Patterns`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\UserInsert`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`
 
 ```php
 __construct(string $code, string $message, mixed $data = NULL)

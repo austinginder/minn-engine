@@ -41,8 +41,14 @@ final class Args
     /** The key an argument carries when the reference's own check refuses it with a bare "Invalid parameter." and no details: a comment's meta. */
     public const BARE_REFUSAL = 'bare_refusal';
 
+    /** The key a user's password carries: its type judged with the others, then, in the sanitize round, refused empty or with a backslash (probe rest-users-controller). */
+    public const PASSWORD = 'password_rule';
+
+    /** The key a user's locale carries: held to the site's installed languages (and '' and en_US), read when the request is judged. */
+    public const INSTALLED_LOCALE = 'installed_locale';
+
     /** The keys only the engine reads, which an argument never shows plugins. */
-    private const INTERNAL = [self::HANDLER_VALIDATES => true, self::SANITIZE_ROUND => true, self::BARE_REFUSAL => true];
+    private const INTERNAL = [self::HANDLER_VALIDATES => true, self::SANITIZE_ROUND => true, self::BARE_REFUSAL => true, self::PASSWORD => true, self::INSTALLED_LOCALE => true];
 
     /**
      * An argument as the index and plugins read it, without the keys only the engine reads.
@@ -147,8 +153,8 @@ final class Args
     ];
 
     /**
-     * Read by Rest\UsersController::create(): the body of a user create. The locale takes any
-     * string here; the reference's enum is the site's installed languages, which is not a constant.
+     * Read by Rest\UsersController::create(): the body of a user create. The locale's enum is the
+     * site's installed languages, which is not a constant, so ArgCheck reads it (INSTALLED_LOCALE).
      */
     public const USER_CREATE = [
         'username' => ['description' => 'Login name for the user.', 'type' => 'string', 'required' => true],
@@ -158,10 +164,10 @@ final class Args
         'email' => ['description' => 'The email address for the user.', 'type' => 'string', 'format' => 'email', 'required' => true],
         'url' => ['description' => 'URL of the user.', 'type' => 'string', 'format' => 'uri', 'required' => false],
         'description' => ['description' => 'Description of the user.', 'type' => 'string', 'required' => false],
-        'locale' => ['description' => 'Locale for the user.', 'type' => 'string', 'required' => false],
+        'locale' => ['description' => 'Locale for the user.', 'type' => 'string', 'required' => false, self::INSTALLED_LOCALE => true],
         'nickname' => ['description' => 'The nickname for the user.', 'type' => 'string', 'required' => false],
         'roles' => ['description' => 'Roles assigned to the user.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
-        'password' => ['description' => 'Password for the user (never included).', 'type' => 'string', 'required' => true],
+        'password' => ['description' => 'Password for the user (never included).', 'type' => 'string', 'required' => true, self::PASSWORD => true],
     ];
 
     /** Read by Rest\UsersController::update(): the body of a user edit; nothing is required. */
@@ -172,11 +178,11 @@ final class Args
         'email' => ['description' => 'The email address for the user.', 'type' => 'string', 'format' => 'email', 'required' => false],
         'url' => ['description' => 'URL of the user.', 'type' => 'string', 'format' => 'uri', 'required' => false],
         'description' => ['description' => 'Description of the user.', 'type' => 'string', 'required' => false],
-        'locale' => ['description' => 'Locale for the user.', 'type' => 'string', 'required' => false],
+        'locale' => ['description' => 'Locale for the user.', 'type' => 'string', 'required' => false, self::INSTALLED_LOCALE => true],
         'nickname' => ['description' => 'The nickname for the user.', 'type' => 'string', 'required' => false],
         'slug' => ['description' => 'An alphanumeric identifier for the user.', 'type' => 'string', 'required' => false],
         'roles' => ['description' => 'Roles assigned to the user.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
-        'password' => ['description' => 'Password for the user (never included).', 'type' => 'string', 'required' => false],
+        'password' => ['description' => 'Password for the user (never included).', 'type' => 'string', 'required' => false, self::PASSWORD => true],
         'meta' => ['description' => 'Meta fields.', 'type' => 'object', 'properties' => ['show_admin_bar_front' => ['type' => 'string', 'default' => 'true']], 'required' => false],
     ];
 

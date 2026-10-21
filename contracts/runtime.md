@@ -18247,9 +18247,13 @@ Left open.
   categories given empty or blank, an undated draft dated now on update without `edit_date`, comment
   updates taking slashed data and kses for an author without `unfiltered_html`, a status already
   held refused, an undefined role stored, a password hashed as given (probe `cli-runtime-doubts`).
-- A password holding quotes or backslashes: WordPress hashes and checks it in its slashed form
-  (REST, wp-login, `wp_authenticate`); the engine's sign-in, reset form and REST paths use the raw
-  text, so a user moved over from WordPress with such a password cannot sign in.
+- A password holding quotes or backslashes: WordPress hashes and checks it in its slashed form at
+  REST, wp-login and the reset form, while `wp_authenticate` and `wp_set_password` in PHP (and
+  WP-CLI) take it as given; REST refuses a backslash or an empty password once every other argument
+  passed, before the caller is judged, and reads a user's locale against the installed languages in
+  the first round. Settled the same day (`Http\Args::PASSWORD`, `INSTALLED_LOCALE`; suite `users`
+  signs a quoted password in across the stacks both ways, through REST and the reset form). Open: the
+  reference also reads a route's body arguments from the query string.
 - The block and pattern directories, the Google Fonts collection, site health's reports and the
   theme export: each would have the engine reach wordpress.org or build what the reference
   builds from its own install; waiting on Austin.
@@ -18367,5 +18371,6 @@ rows that are `open` or `austin`.
 | 18300 | REST fuzzing (10-21) | menus' signed-out `context=edit`, bad `status` or `post` refused by the caller first | open | the policy gate's order |
 | 18300 | REST fuzzing (10-21) | navigation and block embeds' nested fields; the page list's trailing class space | open | `PostObject` embed view; `Blocks\Dynamic\Theme\Navigation` |
 | 18300 | REST fuzzing (10-21) | WP-CLI entity scenarios the engine fails on a single site (31) | done | `Cli\Bundled`, the CLI debug mode, probe `cli-runtime-doubts` |
-| 18300 | REST fuzzing (10-21) | a password with quotes or backslashes is checked raw where WordPress checks it slashed (sign-in, reset, REST) | open | every password path at once: `Auth\Authenticator`, the reset form, the REST users routes |
+| 18300 | REST fuzzing (10-21) | a password with quotes or backslashes is checked raw where WordPress checks it slashed (sign-in, reset, REST) | done | slashed at wp-login, the reset form and REST; a backslash or empty password refused in the sanitize round (`Http\Args::PASSWORD`); suite `users` |
+| 18300 | REST fuzzing (10-21) | a route's body arguments sent in the query string (`POST /wp/v2/users?password=`) are read by the reference; the engine reads the JSON body only | open | `Rest\ArgCheck` body sources and every handler that reads `$request->json()` together |
 | 18300 | REST fuzzing (10-21) | block and pattern directories, the Google Fonts collection, site health's reports, the theme export | austin | each reaches wordpress.org or rebuilds the reference's install data (Track H) |

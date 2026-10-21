@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Minn\I18n\TranslationFiles;
 use Minn\Objects\RestRequest;
 use Minn\Objects\User;
 use Minn\Objects\UsersQuery;
 use Minn\Runtime\Handoff;
-use Minn\Runtime\Refusal;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\UserEvents;
@@ -30,6 +28,7 @@ use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Runtime\UserWrites;
 use Minn\Support\Kses;
+use Minn\Support\Slashes;
 
 /** wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. */
 final readonly class UsersController
@@ -206,24 +205,6 @@ final readonly class UsersController
         return $role;
     }
 
-    /**
-     * A locale asked for is one the site can show: none, en_US, or an
-     * installed language, as the reference's schema lists them (audit Low:
-     * any string was stored, and pasted into the reset link).
-     *
-     * @param array<string, mixed> $body
-     */
-    private function validLocale(array $body): void
-    {
-        if (!array_key_exists('locale', $body)) {
-            return;
-        }
-        $verdict = $this->schema->validate($body['locale'], ['type' => 'string', 'enum' => array_merge(['', 'en_US'], TranslationFiles::languages(\WP_LANG_DIR))], 'locale');
-        if ($verdict instanceof Refusal) {
-            throw new RestError('rest_invalid_param', 'Invalid parameter(s): locale', 400, ['params' => ['locale' => $verdict->message], 'details' => ['locale' => ['code' => $verdict->code, 'message' => $verdict->message, 'data' => $verdict->data]]]);
-        }
-    }
-
     /** A role asked for: registered, and one editable_roles lets this caller give (audit Low). */
     private function assignableRole(string $role): string
     {
@@ -249,7 +230,6 @@ final readonly class UsersController
             throw new RestError('rest_cannot_create_user', $refusal, 403);
         }
         $body = $request->json();
-        $this->validLocale($body);
         $missing = array_values(array_filter(['username', 'email', 'password'], static fn (string $key) => (string) ($body[$key] ?? '') === ''));
         if ($missing !== []) {
             throw RestError::missingParams($missing);
@@ -272,7 +252,8 @@ final readonly class UsersController
         if (!self::validEmail($email)) {
             throw new RestError('rest_user_invalid_email', 'Invalid email address.', 400);
         }
-        $password = (string) $body['password'];
+        // The reference stores the password as its request held it, slashed, as wp-login checks it.
+        $password = (string) Slashes::add((string) $body['password']);
         $name = (string) ($body['name'] ?? '');
         $url = (string) ($body['url'] ?? '');
         $profile = [
@@ -308,7 +289,6 @@ final readonly class UsersController
             throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this user.');
         }
         $body = $request->json();
-        $this->validLocale($body);
         // The role refusal is decided before anything is written, so a caller
         // without promote_users cannot land the other edits on the way to a 403.
         if (isset($body['roles'][0]) && !$this->caller->can('promote_users')) {
@@ -336,7 +316,7 @@ final readonly class UsersController
         if (isset($body['slug'])) {
             $columns['user_nicename'] = $this->users->uniqueNicename((string) $body['slug'], $userId);
         }
-        $password = isset($body['password']) && (string) $body['password'] !== '' ? (string) $body['password'] : null;
+        $password = isset($body['password']) && (string) $body['password'] !== '' ? (string) Slashes::add((string) $body['password']) : null;
         if ($password !== null) {
             $columns['user_pass'] = Password::hash($password);
         }

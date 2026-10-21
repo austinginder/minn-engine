@@ -66749,7 +66749,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Args.php",
-            "lines": 195,
+            "lines": 201,
             "doc": "The parameters a route accepts, as the reference describes them in the\nREST index: name => {description, type, ...}. The descriptions, types,\nenums and bounds were captured from the reference, so a client that\nreads either index is told the same thing, and the router refuses a\nvalue the way the reference refuses it, before it judges the caller.\n\nA route declares only what it really reads. An argument published here\nthat the handler ignores would be worse than none at all, because a\nclient reading the index would build a request around it, so each set\nbelow names the code that consumes it. The sets keep the reference's\norder, because a refusal lists the invalid parameters in that order.\n`_fields` and `_embed` are read everywhere and declared nowhere, as the\nreference lists neither and validates neither.",
             "implements": [],
             "extends": null,
@@ -66815,8 +66815,20 @@
                     "visibility": "public"
                 },
                 {
+                    "name": "PASSWORD",
+                    "value": "'password_rule'",
+                    "doc": "The key a user's password carries: its type judged with the others, then, in the sanitize round, refused empty or with a backslash (probe rest-users-controller).",
+                    "visibility": "public"
+                },
+                {
+                    "name": "INSTALLED_LOCALE",
+                    "value": "'installed_locale'",
+                    "doc": "The key a user's locale carries: held to the site's installed languages (and '' and en_US), read when the request is judged.",
+                    "visibility": "public"
+                },
+                {
                     "name": "INTERNAL",
-                    "value": "array (   'handler_validates' => true,   'sanitize_round' => true,   'bare_refusal' => true, )",
+                    "value": "array (   'handler_validates' => true,   'sanitize_round' => true,   'bare_refusal' => true,   'password_rule' => true,   'installed_locale' => true, )",
                     "doc": "The keys only the engine reads, which an argument never shows plugins.",
                     "visibility": "private"
                 },
@@ -66858,13 +66870,13 @@
                 },
                 {
                     "name": "USER_CREATE",
-                    "value": "array (   'username' =>    array (     'description' => 'Login name for the user.',     'type' => 'string',     'required' => true,   ),   'name' =>    array (     'description' => 'Display name for the user.',     'type' => 'string',     'required' => false,   ),   'first_name' =>    array (     'description' => 'First name for the user.',     'type' => 'string',     'required' => false,   ),   'last_name' =>    array (     'description' => 'Last name for the user.',     'type' => 'string',     'required' => false,   ),   'email' =>    array (     'description' => 'The email address for the user.',     'type' => 'string',     'format' => 'email',     'required' => true,   ),   'url' =>    array (     'description' => 'URL of the user.',     'type' => 'string',     'format' => 'uri',     'required' => false,   ),   'description' =>    array (     'description' => 'Description of the user.',     'type' => 'string',     'required' => false,   ),   'locale' =>    array (     'description' => 'Locale for the user.',     'type' => 'string',     'required' => false,   ),   'nickname' =>    array (     'description' => 'The nickname for the user.',     'type' => 'string',     'required' => false,   ),   'roles' =>    array (     'description' => 'Roles assigned to the user.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'password' =>    array (     'description' => 'Password for the user (never included).',     'type' => 'string',     'required' => true,   ), )",
-                    "doc": "Read by Rest\\UsersController::create(): the body of a user create. The locale takes any\nstring here; the reference's enum is the site's installed languages, which is not a constant.",
+                    "value": "array (   'username' =>    array (     'description' => 'Login name for the user.',     'type' => 'string',     'required' => true,   ),   'name' =>    array (     'description' => 'Display name for the user.',     'type' => 'string',     'required' => false,   ),   'first_name' =>    array (     'description' => 'First name for the user.',     'type' => 'string',     'required' => false,   ),   'last_name' =>    array (     'description' => 'Last name for the user.',     'type' => 'string',     'required' => false,   ),   'email' =>    array (     'description' => 'The email address for the user.',     'type' => 'string',     'format' => 'email',     'required' => true,   ),   'url' =>    array (     'description' => 'URL of the user.',     'type' => 'string',     'format' => 'uri',     'required' => false,   ),   'description' =>    array (     'description' => 'Description of the user.',     'type' => 'string',     'required' => false,   ),   'locale' =>    array (     'description' => 'Locale for the user.',     'type' => 'string',     'required' => false,     'installed_locale' => true,   ),   'nickname' =>    array (     'description' => 'The nickname for the user.',     'type' => 'string',     'required' => false,   ),   'roles' =>    array (     'description' => 'Roles assigned to the user.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'password' =>    array (     'description' => 'Password for the user (never included).',     'type' => 'string',     'required' => true,     'password_rule' => true,   ), )",
+                    "doc": "Read by Rest\\UsersController::create(): the body of a user create. The locale's enum is the\nsite's installed languages, which is not a constant, so ArgCheck reads it (INSTALLED_LOCALE).",
                     "visibility": "public"
                 },
                 {
                     "name": "USER_EDIT",
-                    "value": "array (   'name' =>    array (     'description' => 'Display name for the user.',     'type' => 'string',     'required' => false,   ),   'first_name' =>    array (     'description' => 'First name for the user.',     'type' => 'string',     'required' => false,   ),   'last_name' =>    array (     'description' => 'Last name for the user.',     'type' => 'string',     'required' => false,   ),   'email' =>    array (     'description' => 'The email address for the user.',     'type' => 'string',     'format' => 'email',     'required' => false,   ),   'url' =>    array (     'description' => 'URL of the user.',     'type' => 'string',     'format' => 'uri',     'required' => false,   ),   'description' =>    array (     'description' => 'Description of the user.',     'type' => 'string',     'required' => false,   ),   'locale' =>    array (     'description' => 'Locale for the user.',     'type' => 'string',     'required' => false,   ),   'nickname' =>    array (     'description' => 'The nickname for the user.',     'type' => 'string',     'required' => false,   ),   'slug' =>    array (     'description' => 'An alphanumeric identifier for the user.',     'type' => 'string',     'required' => false,   ),   'roles' =>    array (     'description' => 'Roles assigned to the user.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'password' =>    array (     'description' => 'Password for the user (never included).',     'type' => 'string',     'required' => false,   ),   'meta' =>    array (     'description' => 'Meta fields.',     'type' => 'object',     'properties' =>      array (       'show_admin_bar_front' =>        array (         'type' => 'string',         'default' => 'true',       ),     ),     'required' => false,   ), )",
+                    "value": "array (   'name' =>    array (     'description' => 'Display name for the user.',     'type' => 'string',     'required' => false,   ),   'first_name' =>    array (     'description' => 'First name for the user.',     'type' => 'string',     'required' => false,   ),   'last_name' =>    array (     'description' => 'Last name for the user.',     'type' => 'string',     'required' => false,   ),   'email' =>    array (     'description' => 'The email address for the user.',     'type' => 'string',     'format' => 'email',     'required' => false,   ),   'url' =>    array (     'description' => 'URL of the user.',     'type' => 'string',     'format' => 'uri',     'required' => false,   ),   'description' =>    array (     'description' => 'Description of the user.',     'type' => 'string',     'required' => false,   ),   'locale' =>    array (     'description' => 'Locale for the user.',     'type' => 'string',     'required' => false,     'installed_locale' => true,   ),   'nickname' =>    array (     'description' => 'The nickname for the user.',     'type' => 'string',     'required' => false,   ),   'slug' =>    array (     'description' => 'An alphanumeric identifier for the user.',     'type' => 'string',     'required' => false,   ),   'roles' =>    array (     'description' => 'Roles assigned to the user.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'password' =>    array (     'description' => 'Password for the user (never included).',     'type' => 'string',     'required' => false,     'password_rule' => true,   ),   'meta' =>    array (     'description' => 'Meta fields.',     'type' => 'object',     'properties' =>      array (       'show_admin_bar_front' =>        array (         'type' => 'string',         'default' => 'true',       ),     ),     'required' => false,   ), )",
                     "doc": "Read by Rest\\UsersController::update(): the body of a user edit; nothing is required.",
                     "visibility": "public"
                 },
@@ -66909,8 +66921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 59,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -66932,8 +66944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 215
+                    "line": 218,
+                    "end": 221
                 }
             ]
         },
@@ -76737,7 +76749,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
-                "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\ArgCheck",
                 "Minn\\Runtime\\OptionSanitizer",
                 "Minn\\Runtime\\Translations"
             ],
@@ -77123,7 +77135,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 501,
+            "lines": 502,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -77153,7 +77165,8 @@
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Runtime\\SiteUrls"
+                "Minn\\Runtime\\SiteUrls",
+                "Minn\\Support\\Slashes"
             ],
             "usedBy": [
                 "Minn\\Engine"
@@ -77207,8 +77220,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 45,
-                "end": 53
+                "line": 46,
+                "end": 54
             },
             "cases": [],
             "constants": [
@@ -77309,8 +77322,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 121
+                    "line": 63,
+                    "end": 122
                 },
                 {
                     "routes": [
@@ -77333,8 +77346,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 402
+                    "line": 363,
+                    "end": 404
                 },
                 {
                     "routes": [],
@@ -77360,8 +77373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 128
+                    "line": 125,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -77382,8 +77395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 135
+                    "line": 132,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -77402,8 +77415,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 146
+                    "line": 139,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -77429,8 +77442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -77449,8 +77462,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 178
+                    "line": 156,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -77483,8 +77496,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 199
+                    "line": 187,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -77503,8 +77516,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 220
+                    "line": 207,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -77525,8 +77538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 236
+                    "line": 224,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -77545,8 +77558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 264
+                    "line": 239,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -77572,8 +77585,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 292
+                    "line": 274,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -77599,8 +77612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 306
+                    "line": 299,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -77649,8 +77662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 313,
-                    "end": 317
+                    "line": 314,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -77669,8 +77682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 356
+                    "line": 326,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -77696,8 +77709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 410,
-                    "end": 426
+                    "line": 412,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -77716,8 +77729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 432,
-                    "end": 446
+                    "line": 434,
+                    "end": 448
                 },
                 {
                     "routes": [],
@@ -77736,8 +77749,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 453,
-                    "end": 476
+                    "line": 455,
+                    "end": 478
                 },
                 {
                     "routes": [],
@@ -77756,8 +77769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 492
+                    "line": 485,
+                    "end": 494
                 },
                 {
                     "routes": [],
@@ -77790,8 +77803,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 495,
-                    "end": 502
+                    "line": 497,
+                    "end": 504
                 },
                 {
                     "routes": [],
@@ -77802,8 +77815,8 @@
                     "doc": "The site's name, as the sign-in pages head themselves (\"Site\" when it has none).",
                     "shapes": [],
                     "params": [],
-                    "line": 505,
-                    "end": 508
+                    "line": 507,
+                    "end": 510
                 },
                 {
                     "routes": [],
@@ -77822,8 +77835,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 511,
-                    "end": 514
+                    "line": 513,
+                    "end": 516
                 },
                 {
                     "routes": [],
@@ -77849,8 +77862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 517,
-                    "end": 522
+                    "line": 519,
+                    "end": 524
                 },
                 {
                     "routes": [],
@@ -77883,8 +77896,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 525,
-                    "end": 538
+                    "line": 527,
+                    "end": 540
                 }
             ]
         },
@@ -102812,7 +102825,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/ArgCheck.php",
-            "lines": 125,
+            "lines": 142,
             "doc": "Judges a route's declared arguments against the request before the\npolicy is judged, the way the reference does: a required parameter that\ndid not arrive is rest_missing_callback_param; the shared collection\nparameters (context, page, per_page, search) are judged first and a\nrefusal among them is answered alone; then every other invalid one is\nlisted in rest_invalid_param, in the order the route declares them, with\nthe schema's own refusal under details (none for an argument whose\nrefusal is bare, Args::BARE_REFUSAL). An argument judged in the\nsanitize round (Args::SANITIZE_ROUND) is read only once all the others\npassed. The query is read against the route's args, the JSON body\nagainst its body set, and a JSON body that does not parse is refused on\nevery route first. An argument its handler judges\n(Args::HANDLER_VALIDATES) is left to the handler.",
             "implements": [],
             "extends": null,
@@ -102821,6 +102834,7 @@
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Route",
+                "Minn\\I18n\\TranslationFiles",
                 "Minn\\Json",
                 "Minn\\RestError",
                 "Minn\\Rest\\Schema",
@@ -102844,8 +102858,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 36
+                "line": 35,
+                "end": 37
             },
             "cases": [],
             "constants": [],
@@ -102870,8 +102884,8 @@
                     "doc": "The check as the router takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 42
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -102906,8 +102920,8 @@
                             "doc": "what the path named, for a route whose parameters depend on it"
                         }
                     ],
-                    "line": 45,
-                    "end": 65
+                    "line": 46,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -102926,8 +102940,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 78
+                    "line": 69,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -102956,8 +102970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 95
+                    "line": 85,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -102978,8 +102992,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 117
+                    "line": 99,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -102987,7 +103001,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "sanitizeRound(array $sources): void",
-                    "doc": "The arguments the reference judges once every other one passed, in its\nsanitize round: each may be empty, and is otherwise held to its schema.",
+                    "doc": "The arguments the reference judges once every other one passed, in its\nsanitize round: each may be empty, and is otherwise held to its schema;\na user's password may not be empty or hold a backslash.",
                     "shapes": [
                         "@param list<array{0: array<string, array<string, mixed>>, 1: array<string, mixed>}> $sources"
                     ],
@@ -103000,8 +103014,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 142
+                    "line": 130,
+                    "end": 149
+                },
+                {
+                    "routes": [],
+                    "name": "password",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "password(mixed $value): ?Minn\\Runtime\\Refusal",
+                    "doc": "A user's password the reference will not store: empty, or holding a backslash.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 152,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -103030,8 +103064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 155
+                    "line": 168,
+                    "end": 173
                 }
             ]
         },
@@ -127722,7 +127756,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/UsersController.php",
-            "lines": 399,
+            "lines": 380,
             "doc": "wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives.",
             "implements": [],
             "extends": null,
@@ -127741,7 +127775,6 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Http\\Subject",
-                "Minn\\I18n\\TranslationFiles",
                 "Minn\\Objects\\RestRequest",
                 "Minn\\Objects\\User",
                 "Minn\\Objects\\UsersQuery",
@@ -127758,12 +127791,12 @@
                 "Minn\\Rest\\UserListArgs",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Runtime\\Handoff",
-                "Minn\\Runtime\\Refusal",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\UserEvents",
                 "Minn\\Runtime\\UserWrites",
-                "Minn\\Support\\Kses"
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\Slashes"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
@@ -127831,8 +127864,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 47
+                "line": 36,
+                "end": 46
             },
             "cases": [],
             "constants": [],
@@ -127930,8 +127963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 59
+                    "line": 50,
+                    "end": 58
                 },
                 {
                     "routes": [
@@ -127954,8 +127987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 68
+                    "line": 64,
+                    "end": 67
                 },
                 {
                     "routes": [
@@ -127976,8 +128009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 75
+                    "line": 71,
+                    "end": 74
                 },
                 {
                     "routes": [
@@ -127998,8 +128031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 108
+                    "line": 83,
+                    "end": 107
                 },
                 {
                     "routes": [
@@ -128027,8 +128060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 174
+                    "line": 152,
+                    "end": 173
                 },
                 {
                     "routes": [
@@ -128049,8 +128082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 293
+                    "line": 225,
+                    "end": 274
                 },
                 {
                     "routes": [
@@ -128080,8 +128113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 366
+                    "line": 280,
+                    "end": 346
                 },
                 {
                     "routes": [
@@ -128109,8 +128142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 417
+                    "line": 350,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -128136,8 +128169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 131
+                    "line": 115,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -128166,8 +128199,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 149
+                    "line": 139,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -128178,8 +128211,8 @@
                     "doc": "Whether the caller may edit the posts of a type shown in REST that has authors.",
                     "shapes": [],
                     "params": [],
-                    "line": 177,
-                    "end": 185
+                    "line": 176,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -128198,8 +128231,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 198
+                    "line": 187,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -128218,30 +128251,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 207
-                },
-                {
-                    "routes": [],
-                    "name": "validLocale",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validLocale(array $body): void",
-                    "doc": "A locale asked for is one the site can show: none, en_US, or an\ninstalled language, as the reference's schema lists them (audit Low:\nany string was stored, and pasted into the reset link).",
-                    "shapes": [
-                        "@param array<string, mixed> $body"
-                    ],
-                    "params": [
-                        {
-                            "name": "body",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 216,
-                    "end": 225
+                    "line": 200,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -128260,8 +128271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 235
+                    "line": 209,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -128280,8 +128291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 240
+                    "line": 218,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -128300,8 +128311,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 424,
-                    "end": 432
+                    "line": 404,
+                    "end": 412
                 }
             ]
         },
@@ -162207,7 +162218,6 @@
                 "Minn\\Rest\\Schema",
                 "Minn\\Rest\\SchemaChoices",
                 "Minn\\Rest\\SiteSchema",
-                "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\Connectors",
                 "Minn\\Runtime\\Patterns",
                 "Minn\\Runtime\\PluginActivation",
@@ -187132,9 +187142,11 @@
             "usedBy": [
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Users",
+                "Minn\\Login\\LoginController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RestMeta",
+                "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\ApplicationPasswordEvents",
                 "Minn\\Runtime\\Autosaves",
                 "Minn\\Runtime\\CommentChecks",

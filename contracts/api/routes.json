@@ -9072,7 +9072,8 @@
                 "locale": {
                     "description": "Locale for the user.",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "installed_locale": true
                 },
                 "nickname": {
                     "description": "The nickname for the user.",
@@ -9095,7 +9096,8 @@
                 "password": {
                     "description": "Password for the user (never included).",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "password_rule": true
                 },
                 "meta": {
                     "description": "Meta fields.",
@@ -9166,7 +9168,8 @@
                 "locale": {
                     "description": "Locale for the user.",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "installed_locale": true
                 },
                 "nickname": {
                     "description": "The nickname for the user.",
@@ -9189,7 +9192,8 @@
                 "password": {
                     "description": "Password for the user (never included).",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "password_rule": true
                 },
                 "meta": {
                     "description": "Meta fields.",
@@ -9260,7 +9264,8 @@
                 "locale": {
                     "description": "Locale for the user.",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "installed_locale": true
                 },
                 "nickname": {
                     "description": "The nickname for the user.",
@@ -9283,7 +9288,8 @@
                 "password": {
                     "description": "Password for the user (never included).",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "password_rule": true
                 },
                 "meta": {
                     "description": "Meta fields.",
@@ -9590,7 +9596,8 @@
                 "locale": {
                     "description": "Locale for the user.",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "installed_locale": true
                 },
                 "nickname": {
                     "description": "The nickname for the user.",
@@ -9608,7 +9615,8 @@
                 "password": {
                     "description": "Password for the user (never included).",
                     "type": "string",
-                    "required": true
+                    "required": true,
+                    "password_rule": true
                 }
             },
             "index": true
@@ -9675,7 +9683,8 @@
                 "locale": {
                     "description": "Locale for the user.",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "installed_locale": true
                 },
                 "nickname": {
                     "description": "The nickname for the user.",
@@ -9698,7 +9707,8 @@
                 "password": {
                     "description": "Password for the user (never included).",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "password_rule": true
                 },
                 "meta": {
                     "description": "Meta fields.",
@@ -9776,7 +9786,8 @@
                 "locale": {
                     "description": "Locale for the user.",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "installed_locale": true
                 },
                 "nickname": {
                     "description": "The nickname for the user.",
@@ -9799,7 +9810,8 @@
                 "password": {
                     "description": "Password for the user (never included).",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "password_rule": true
                 },
                 "meta": {
                     "description": "Meta fields.",
@@ -9877,7 +9889,8 @@
                 "locale": {
                     "description": "Locale for the user.",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "installed_locale": true
                 },
                 "nickname": {
                     "description": "The nickname for the user.",
@@ -9900,7 +9913,8 @@
                 "password": {
                     "description": "Password for the user (never included).",
                     "type": "string",
-                    "required": false
+                    "required": false,
+                    "password_rule": true
                 },
                 "meta": {
                     "description": "Meta fields.",

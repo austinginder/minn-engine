@@ -6,7 +6,7 @@ the wp/v2 surface: shapes and controllers
 |---|---|---|---|
 | [`Api`](#api) | final readonly class | 456 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
-| [`ArgCheck`](#argcheck) | final readonly class | 125 | Judges a route's declared arguments against the request before the |
+| [`ArgCheck`](#argcheck) | final readonly class | 142 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 164 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlockEditorController`](#blockeditorcontroller) | final readonly class | 29 | Two of wp-block-editor/v1's routes, for someone who may edit theme |
@@ -102,7 +102,7 @@ the wp/v2 surface: shapes and controllers
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
 | [`UserObject`](#userobject) | final readonly class | 103 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 399 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`UsersController`](#userscontroller) | final readonly class | 380 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 | [`ViewConfigPatch`](#viewconfigpatch) | final class | 151 | A patch to a view configuration (WP_View_Config_Data; probe |
 | [`WidgetObject`](#widgetobject) | final readonly class | 72 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
 | [`WidgetsController`](#widgetscontroller) | final readonly class | 170 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
@@ -366,7 +366,7 @@ Throws the refusal the declared arguments earn, or returns. @param array<string,
 
 - `@param array<string, string> $captures what the path named, for a route whose parameters depend on it`
 
-Internals: `json()` (private, line 68), `missing()` (private, line 84), `round()` (private, line 98), `sanitizeRound()` (private, line 125), `refuse()` (private, line 150)
+Internals: `json()` (private, line 69), `missing()` (private, line 85), `round()` (private, line 99), `sanitizeRound()` (private, line 130), `password()` (private, line 152), `refuse()` (private, line 168)
 
 
 ## BatchController
@@ -4648,7 +4648,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `listAllowed()` (private, line 116), `totals()` (private, line 140), `editsAuthoredPosts()` (private, line 177), `hasPublishedContent()` (private, line 188), `validRole()` (private, line 201), `validLocale()` (private, line 216), `assignableRole()` (private, line 228), `validEmail()` (private, line 237), `loginRefusal()` (private, line 424)
+Internals: `listAllowed()` (private, line 115), `totals()` (private, line 139), `editsAuthoredPosts()` (private, line 176), `hasPublishedContent()` (private, line 187), `validRole()` (private, line 200), `assignableRole()` (private, line 209), `validEmail()` (private, line 218), `loginRefusal()` (private, line 404)
 
 
 ## ViewConfigPatch

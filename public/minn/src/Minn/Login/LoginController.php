@@ -27,6 +27,7 @@ use Minn\Html;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\PortableHash;
 use Minn\Runtime\SiteUrls;
+use Minn\Support\Slashes;
 
 /**
  * Signing in. The page people see is /minn-admin/login: the form, the
@@ -258,7 +259,7 @@ final readonly class LoginController
         if (!$refusal->isEmpty()) {
             return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, '', $this->parts('resetpass', 'Reset Password', $siteName, $user, $refusal)));
         }
-        AccountFlows::resetPassword(Handoff::newUser($user->id), $pass1);
+        AccountFlows::resetPassword(Handoff::newUser($user->id), (string) Slashes::add($pass1));
         return $this->signIn->endAll(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url($this->base($request)))), $user->id)
             ->withCookie('wp-resetpass-' . $this->signIn->hash(), ' ', ['expires' => time() - 31536000, 'path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
     }
@@ -381,7 +382,8 @@ final readonly class LoginController
             return $this->tooManyAttempts($request, $wait);
         }
         $login = (string) ($request->form['log'] ?? '');
-        $password = (string) ($request->form['pwd'] ?? '');
+        // The reference reads the password slashed, as its form arrived, and checks the stored hash against that (REST and the reset form store it so).
+        $password = (string) Slashes::add((string) ($request->form['pwd'] ?? ''));
         $user = $hooks->authenticate($login, $password);
         if (!$user instanceof UserRecord) {
             $this->signIn->recordFailure($request->remoteAddress);
