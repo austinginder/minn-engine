@@ -61,12 +61,31 @@ final class TemplateIndex
         return $records;
     }
 
-    /** Null when the id names another theme, or a slug nothing provides. */
+    /**
+     * The template an id names: the site's own row by that slug first,
+     * published, draft, trashed or an auto-draft (the reference's lookup by
+     * id; the list shows only published ones), then the theme's file or a
+     * plugin's. Null when the id names another theme, or a slug nothing
+     * provides.
+     */
     public function find(string $type, string $id): ?TemplateRecord
     {
         [$theme, $slug] = array_pad(explode('//', $id, 2), 2, '');
         if ($theme !== $this->theme->slug || $slug === '') {
             return null;
+        }
+        $row = $this->db->row(
+            "SELECT p.* FROM {$this->db->table('posts')} p
+             JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID
+             JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+             JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
+             WHERE p.post_type = ? AND p.post_name = ? AND p.post_status IN ('publish', 'draft', 'trash', 'auto-draft')
+               AND tt.taxonomy = 'wp_theme' AND t.slug = ?
+             ORDER BY p.post_date DESC, p.ID ASC LIMIT 1",
+            [$type, $slug, $theme],
+        );
+        if ($row !== null) {
+            return $this->fromRow($row, $type);
         }
         foreach ($this->all($type) as $record) {
             if ($record->slug === $slug) {

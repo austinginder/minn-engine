@@ -85,7 +85,7 @@ final readonly class TemplateObject
     /**
      * The write links and their curies show only to a caller who could use
      * them; a reader who may list templates but not change them sees a
-     * self link that allows GET and nothing else.
+     * self link that allows GET, and the revision links a saved copy has.
      */
     private function links(TemplateRecord $record, string $as): array
     {
@@ -97,9 +97,6 @@ final readonly class TemplateObject
             'collection' => [['href' => $this->url->to("/wp/v2/{$base}")]],
             'about' => [['href' => $this->url->to("/wp/v2/types/{$as}")]],
         ];
-        if (!$canWrite) {
-            return $links;
-        }
         // A trashed copy shows no revisions (probe rest-templates-controller).
         if ($record->wpId > 0 && $record->status !== 'trash') {
             $links['version-history'] = [['count' => $this->posts->revisionCount($record->wpId), 'href' => $self . '/revisions']];
@@ -107,6 +104,9 @@ final readonly class TemplateObject
             if ($latest > 0) {
                 $links['predecessor-version'] = [['id' => $latest, 'href' => $self . '/revisions/' . $latest]];
             }
+        }
+        if (!$canWrite) {
+            return $links;
         }
         $links['wp:action-publish'] = [['href' => $self]];
         $links['wp:action-unfiltered-html'] = [['href' => $self]];

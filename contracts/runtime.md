@@ -18234,7 +18234,14 @@ Two hunts for behaviour no symbol count shows (gate measures 33 and 34).
 Left open.
 
 - `POST` to a template's or part's autosaves (the reference creates an autosave, or refuses a
-  theme file's with `rest_invalid_template`).
+  theme file's with `rest_invalid_template`). Settled the same day: the caller is judged as the
+  template writes judge it, then the template; each author keeps one autosave holding only what
+  the body sends (a field it leaves out is empty, then kept from that author's last autosave), and
+  the author's own draft is saved in place and published. Finding it showed three more: a draft,
+  trashed or auto-draft template is found by its id (the list shows only published ones) and a
+  saved row wins over the theme's file there; trashing a template suffixes its slug `__trashed`
+  and keeps the trash meta, as any post's trash does; a reader who may not change templates
+  still sees a saved copy's revision links (suite `rest-parity`, template autosaves and lookups).
 - A signed-out `context=edit` (and a bad `status` or `post`) on menus and menu items is refused
   as `rest_cannot_view` where the reference refuses `rest_forbidden_context` or 400 first: the
   policy gate judges the caller before those arguments.
@@ -18375,7 +18382,11 @@ rows that are `open` or `austin`.
 | 18098 | The security sweep (10-20) | `PHPMailer::addAddress` refuses a Unicode local part the reference accepts | open | address validation |
 | 18098 | The security sweep (10-20) | `WP_Upgrader::create_lock`'s SQL as the `query` filter hears it | accepted | the lock, its expiry and its race are the reference's; only the statements differ, and matching them means writing the option outside the option layer |
 | 18098 | The security sweep (10-20) | crafted FLV, Matroska and AVI files the reference reads as only their size give a few more fields on the engine | accepted | nothing a plugin reads; the readers end quickly and never throw on them (unit `media-av`) |
-| 18300 | REST fuzzing (10-21) | `POST` to template and template-part autosaves | open | `Rest\TemplateRevisionsController` |
+| 18300 | REST fuzzing (10-21) | `POST` to template and template-part autosaves | done | `TemplateRevisionsController::createAutosave`; suite `rest-parity` |
+| 18300 | REST fuzzing (10-21) | a draft, trashed or auto-draft template not found by its id, and a theme file answering where a saved draft of its slug exists | done | `TemplateIndex::find` reads the site's row by slug in those statuses first |
+| 18300 | REST fuzzing (10-21) | a template trashed through REST kept its slug and no trash meta, so its id still found it | done | `TemplateWriter::trash` through `PostWrites::trash` |
+| 18300 | REST fuzzing (10-21) | a template's revision links hidden from a reader who may not change templates | done | `TemplateObject::links` shows them before the write links' cut |
+| 18300 | REST fuzzing (10-21) | a template set to `trash` without its slug suffixed (only a direct database edit does that) shows no `version-history` link; the reference shows one with count 0 | open | `TemplateObject::links` |
 | 18300 | REST fuzzing (10-21) | menus' signed-out `context=edit`, bad `status` or `post` refused by the caller first | done | the gate judges a route's edit-context policy before its own; the four menus reads carry one (`Http\Policy::$of` names the menu taxonomy's and item type's registered caps); suite `rest-parity` |
 | 18300 | REST fuzzing (10-21) | `edit_term`, `delete_term` and `assign_term` on a built-in taxonomy's term mapped to the category caps: an editor could edit a menu's term and anyone a link category's | done | `Auth\Capabilities` maps every taxonomy by its registered caps (`edit_theme_options`, `manage_links`); probe `term-caps` |
 | 18300 | REST fuzzing (10-21) | menu items listed with a `status` the caller may not ask for: the reference refuses the status ("Status is forbidden.") before the caller is judged, signed out too | done | `Rest\MenuItemStatus`, a route refusal judged after the arguments and before the policy; suite `rest-parity` |

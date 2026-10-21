@@ -1,7 +1,7 @@
 {
     "engine": "0.1.0",
-    "routes": 283,
-    "withPolicy": 277,
+    "routes": 284,
+    "withPolicy": 278,
     "entries": [
         {
             "method": "GET",
@@ -8561,6 +8561,32 @@
                     "required": false
                 }
             },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/{base:templates|template-parts}/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}/autosaves",
+            "name": "Minn\\Rest\\TemplateRevisionsController::createAutosave",
+            "handler": "Minn\\Rest\\TemplateRevisionsController::createAutosave",
+            "summary": "An autosave of a saved template (probe rest-template-autosave): the caller's own draft is saved in place, and published; any other keeps one autosave per author, holding only what the body sends (a field it leaves out is stored empty).",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_posts + edit_theme_options",
+                "cap": "edit_posts",
+                "caps": [
+                    "edit_theme_options"
+                ],
+                "signIn": {
+                    "code": "rest_cannot_manage_templates",
+                    "message": "Sorry, you are not allowed to access the templates on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_templates",
+                    "message": "Sorry, you are not allowed to access the templates on this site."
+                }
+            },
+            "args": [],
             "body": [],
             "index": true
         },

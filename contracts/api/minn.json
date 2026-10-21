@@ -92080,6 +92080,7 @@
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Rest\\TemplateRevisionsController",
                 "Minn\\Runtime\\AbilityRun",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\ApplicationPasswordEvents",
@@ -92154,6 +92155,7 @@
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\RenderedFields",
+                "Minn\\Rest\\TemplateRevisionsController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\Autosaves",
                 "Minn\\Runtime\\DocumentTitle",
@@ -106615,7 +106617,7 @@
                     "name": "decorateItem",
                     "static": false,
                     "visibility": "private",
-                    "signature": "decorateItem(Minn\\Http\\Request $request, array $item, ?array $rels, ?string $kind, ?string $type): array",
+                    "signature": "decorateItem(Minn\\Http\\Request $request, array $item, ?array $rels, ?string $kind, ?string $type = NULL): array",
                     "doc": "",
                     "shapes": [
                         "@param ?list<string> $rels"
@@ -106653,7 +106655,7 @@
                             "name": "type",
                             "type": "?string",
                             "shape": "",
-                            "default": null,
+                            "default": "NULL",
                             "doc": ""
                         }
                     ],
@@ -125109,7 +125111,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "links(Minn\\Theme\\TemplateRecord $record, string $as): array",
-                    "doc": "The write links and their curies show only to a caller who could use\nthem; a reader who may list templates but not change them sees a\nself link that allows GET and nothing else.",
+                    "doc": "The write links and their curies show only to a caller who could use\nthem; a reader who may list templates but not change them sees a\nself link that allows GET, and the revision links a saved copy has.",
                     "shapes": [],
                     "params": [
                         {
@@ -125138,7 +125140,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TemplateRevisionsController.php",
-            "lines": 152,
+            "lines": 197,
             "doc": "wp/v2/templates and wp/v2/template-parts revisions and autosaves: the\nrevision rows of a template the site saved, each shown as the template\nit once was (the template's own shape, its parent's id, a self link and\na parent link). The template is judged before the caller, as on the\nreference: one nobody saved is no parent, one only a theme file holds\ncannot have revisions; then the caller must be signed in and able to\nedit the saved row. The routes are listed ahead of the templates' own,\nwhose id pattern would take these paths too.",
             "implements": [],
             "extends": null,
@@ -125153,6 +125155,8 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\RevisionArgs",
                 "Minn\\Http\\Route",
+                "Minn\\Objects\\Errors",
+                "Minn\\Objects\\Post",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Context",
@@ -125163,8 +125167,12 @@
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RevisionCollection",
                 "Minn\\Rest\\TemplateObject",
+                "Minn\\Runtime\\Autosaves",
                 "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\PostWrites",
+                "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Slashes",
                 "Minn\\Theme\\TemplateIndex",
                 "Minn\\Theme\\TemplateRecord"
             ],
@@ -125213,8 +125221,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 40,
-                "end": 47
+                "line": 47,
+                "end": 54
             },
             "cases": [],
             "constants": [
@@ -125239,6 +125247,12 @@
                 {
                     "name": "DELETE_REFUSAL",
                     "value": "'Sorry, you are not allowed to delete revisions of this post.'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "MANAGE_REFUSAL",
+                    "value": "'Sorry, you are not allowed to access the templates on this site.'",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -125324,8 +125338,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 58
+                    "line": 58,
+                    "end": 65
                 },
                 {
                     "routes": [
@@ -125367,8 +125381,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 67
+                    "line": 69,
+                    "end": 74
                 },
                 {
                     "routes": [
@@ -125410,8 +125424,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 95
+                    "line": 82,
+                    "end": 102
                 },
                 {
                     "routes": [
@@ -125446,8 +125460,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 107
+                    "line": 106,
+                    "end": 114
                 },
                 {
                     "routes": [
@@ -125489,8 +125503,44 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 116
+                    "line": 118,
+                    "end": 123
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/{base:templates|template-parts}/{id:([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+}/autosaves (cap edit_posts + edit_theme_options)"
+                    ],
+                    "name": "createAutosave",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "createAutosave(Minn\\Http\\Request $request, string $base, string $id): Minn\\Http\\Response",
+                    "doc": "An autosave of a saved template (probe rest-template-autosave): the\ncaller's own draft is saved in place, and published; any other keeps\none autosave per author, holding only what the body sends (a field it\nleaves out is stored empty). The caller is judged before the template.\nThe reply is what was saved, shown as the template, in the edit context.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 133,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -125523,8 +125573,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 127
+                    "line": 170,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -125550,8 +125600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 140
+                    "line": 181,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -125600,8 +125650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 183
+                    "line": 201,
+                    "end": 234
                 }
             ]
         },
@@ -134111,7 +134161,8 @@
                 "Minn\\Support\\Text"
             ],
             "usedBy": [
-                "Minn\\Rest\\RevisionsController"
+                "Minn\\Rest\\RevisionsController",
+                "Minn\\Rest\\TemplateRevisionsController"
             ],
             "constructor": null,
             "cases": [],
@@ -160130,6 +160181,7 @@
                 "Minn\\Cron\\Cron",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\TemplateRevisionsController",
                 "Minn\\Runtime\\Attachments",
                 "Minn\\Runtime\\Autosaves",
                 "Minn\\Runtime\\NavigationFallback",
@@ -160137,7 +160189,8 @@
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostRevisions",
                 "Minn\\Runtime\\UserStylesPost",
-                "Minn\\Runtime\\UserWrites"
+                "Minn\\Runtime\\UserWrites",
+                "Minn\\Theme\\TemplateWriter"
             ],
             "constructor": null,
             "cases": [],
@@ -161798,6 +161851,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Rest\\TemplateRevisionsController",
                 "Minn\\Rest\\TermFilters",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\TermsController",
@@ -187412,6 +187466,7 @@
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RestMeta",
+                "Minn\\Rest\\TemplateRevisionsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\ApplicationPasswordEvents",
                 "Minn\\Runtime\\Autosaves",
@@ -193984,7 +194039,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/TemplateIndex.php",
-            "lines": 324,
+            "lines": 343,
             "doc": "Every block template and template part the site offers, in the order the\nreference lists them: the rows the site editor saved first (newest post\ndate first, those of one date in the order they were saved), then the theme's own files in the order the directory hands\nthem back, then whatever a plugin registered. A saved row shadows the\ntheme file of the same slug and reports has_theme_file so the file can\nbe restored by deleting the row.",
             "implements": [],
             "extends": null,
@@ -194136,7 +194191,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "find(string $type, string $id): ?Minn\\Theme\\TemplateRecord",
-                    "doc": "Null when the id names another theme, or a slug nothing provides.",
+                    "doc": "The template an id names: the site's own row by that slug first,\npublished, draft, trashed or an auto-draft (the reference's lookup by\nid; the list shows only published ones), then the theme's file or a\nplugin's. Null when the id names another theme, or a slug nothing\nprovides.",
                     "shapes": [],
                     "params": [
                         {
@@ -194154,8 +194209,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 77
+                    "line": 71,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -194176,8 +194231,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 83
+                    "line": 99,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -194198,8 +194253,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 94
+                    "line": 110,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -194227,8 +194282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 123
+                    "line": 123,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -194249,8 +194304,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 133
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -194283,8 +194338,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 149
+                    "line": 155,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -194295,8 +194350,8 @@
                     "doc": "The theme the index reads.",
                     "shapes": [],
                     "params": [],
-                    "line": 152,
-                    "end": 155
+                    "line": 171,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -194322,8 +194377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 161
+                    "line": 177,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -194342,8 +194397,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 180
+                    "line": 188,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -194362,8 +194417,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 192
+                    "line": 202,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -194382,8 +194437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 198
+                    "line": 214,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -194396,8 +194451,8 @@
                         "@return array<string, array{title: string, description: string}>"
                     ],
                     "params": [],
-                    "line": 205,
-                    "end": 208
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -194416,8 +194471,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 219
+                    "line": 235,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -194438,8 +194493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 234
+                    "line": 241,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -194460,8 +194515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 243
+                    "line": 256,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -194489,8 +194544,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 275
+                    "line": 265,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -194516,8 +194571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 296
+                    "line": 296,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -194545,8 +194600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 317
+                    "line": 318,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -194572,8 +194627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 331
+                    "line": 343,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -194599,8 +194654,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 343
+                    "line": 352,
+                    "end": 362
                 }
             ]
         },
@@ -195244,7 +195299,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/TemplateWriter.php",
-            "lines": 121,
+            "lines": 125,
             "doc": "Saving and removing block templates. A template the theme ships is never\ntouched on disk: editing one writes a wp_template row that shadows the\nfile, and deleting that row is what \"reset to the theme version\" means.",
             "implements": [],
             "extends": null,
@@ -195253,6 +195308,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Terms",
                 "Minn\\Db",
+                "Minn\\Runtime\\PostWrites",
                 "Minn\\Theme\\TemplateIndex",
                 "Minn\\Theme\\TemplateRecord"
             ],
@@ -195302,8 +195358,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 26
+                "line": 20,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -195388,8 +195444,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 57
+                    "line": 35,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -195424,8 +195480,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 69
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -195433,7 +195489,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "trash(Minn\\Theme\\TemplateRecord $record): void",
-                    "doc": "Moves a site copy to the trash, which hands the theme's file back.",
+                    "doc": "Moves a site copy to the trash, which hands the theme's file back: as\nany post goes there, its slug suffixed __trashed and its status, time\nand slug kept for the way back, so the id no longer finds it.",
                     "shapes": [],
                     "params": [
                         {
@@ -195444,8 +195500,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 111
+                    "line": 113,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -195464,8 +195520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 117
+                    "line": 119,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -195500,8 +195556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 105
+                    "line": 77,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -195534,8 +195590,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 127
+                    "line": 124,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -195546,8 +195602,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 129,
-                    "end": 136
+                    "line": 134,
+                    "end": 141
                 }
             ]
         },

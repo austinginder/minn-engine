@@ -14,9 +14,15 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\RevisionArgs;
 use Minn\Http\Route;
+use Minn\Objects\Errors;
+use Minn\Objects\Post;
 use Minn\RestError;
+use Minn\Runtime\Autosaves;
 use Minn\Runtime\PostEvents;
+use Minn\Runtime\PostWrites;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
+use Minn\Support\Slashes;
 use Minn\Theme\TemplateIndex;
 use Minn\Theme\TemplateRecord;
 
@@ -36,6 +42,7 @@ final readonly class TemplateRevisionsController
     private const READ_REFUSAL = 'Sorry, you are not allowed to view revisions of this post.';
     private const AUTOSAVES_REFUSAL = 'Sorry, you are not allowed to view autosaves of this post.';
     private const DELETE_REFUSAL = 'Sorry, you are not allowed to delete revisions of this post.';
+    private const MANAGE_REFUSAL = 'Sorry, you are not allowed to access the templates on this site.';
 
     public function __construct(
         private TemplateIndex $index,
@@ -113,6 +120,50 @@ final readonly class TemplateRevisionsController
         $template = $this->readable($base, $parent, self::READ_REFUSAL);
         $newest = PostRecord::fromRows($this->revisions->autosavesOf($template->wpId))[0] ?? throw new RestError('rest_post_no_autosave', 'There is no autosave revision for this post.', 404);
         return Reply::item($this->shaped($base, $template, $newest, Context::of($request), 'autosaves'), Fields::fromQuery($request->query));
+    }
+
+    /**
+     * An autosave of a saved template (probe rest-template-autosave): the
+     * caller's own draft is saved in place, and published; any other keeps
+     * one autosave per author, holding only what the body sends (a field it
+     * leaves out is stored empty). The caller is judged before the template.
+     * The reply is what was saved, shown as the template, in the edit context.
+     */
+    #[Route(Method::Post, '/wp/v2/{base:templates|template-parts}/{id:' . self::ID . '}/autosaves', policy: new Policy(Access::Cap, 'edit_posts', caps: ['edit_theme_options'], signIn: 'rest_cannot_manage_templates', signInMessage: self::MANAGE_REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::MANAGE_REFUSAL))]
+    public function createAutosave(Request $request, string $base, string $id): Response
+    {
+        $template = $this->saved($base, $id);
+        $body = $request->json();
+        $text = static fn (mixed $value): ?string => is_array($value) ? (is_string($value['raw'] ?? null) ? $value['raw'] : null) : (is_string($value) ? $value : null);
+        $fields = ['post_title' => $text($body['title'] ?? null), 'post_content' => $text($body['content'] ?? null), 'post_excerpt' => $text($body['description'] ?? null)];
+        $post = Records::post($template->wpId);
+        $userId = $this->caller->id();
+        if (!$post instanceof Post) {
+            throw new RestError('rest_post_invalid_parent', 'Invalid template parent ID.', 404);
+        }
+        if (Autosaves::inPlace($post, $userId)) {
+            \defined('DOING_AUTOSAVE') || \define('DOING_AUTOSAVE', true);
+            $saved = PostWrites::update(Slashes::add(['ID' => $post->ID, 'post_status' => 'publish'] + array_filter($fields, is_string(...))), true);
+            if ($saved instanceof Errors) {
+                throw new RestError($saved->get_error_code(), $saved->get_error_message(), 500);
+            }
+            $object = $this->shaped($base, $template, PostRecord::fromPost(Records::post($post->ID)), Context::Edit, 'autosaves');
+            // The template itself was saved: it stands as its own autosave, with no parent.
+            $object['parent'] = 0;
+            return Reply::item($object, Fields::fromQuery($request->query));
+        }
+        // A field the body leaves out keeps the caller's autosave's value, or is empty when there is none yet.
+        $own = array_values(array_filter(PostRecord::fromRows($this->revisions->autosavesOf($post->ID)), static fn (PostRecord $row): bool => $row->authorId === $userId))[0] ?? null;
+        $kept = ['post_title' => $own?->title ?? '', 'post_content' => $own?->content ?? '', 'post_excerpt' => $own?->excerpt ?? ''];
+        $merged = [];
+        foreach ($fields as $column => $value) {
+            $merged[$column] = $value ?? $kept[$column];
+        }
+        $saved = Autosaves::saveSlot($post, $userId, $merged);
+        if ($saved instanceof Errors) {
+            throw new RestError($saved->get_error_code(), $saved->get_error_message(), 500);
+        }
+        return Reply::item($this->shaped($base, $template, PostRecord::fromPost(Records::post($saved)), Context::Edit, 'autosaves'), Fields::fromQuery($request->query));
     }
 
     /** The saved template, then the caller judged: signed in, and able to edit it. */

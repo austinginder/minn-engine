@@ -309,5 +309,76 @@ foreach ( $writes as $label => [ $path, $query, $body, $type ] ) {
 }
 $wp( 'eval ' . escapeshellarg( 'WP_Session_Tokens::get_instance(3)->destroy(' . var_export( (string) ( $session['token'] ?? '' ), true ) . ');' ) );
 
+// A saved template's autosaves: each author keeps one, holding only what the body sends (what
+// it leaves out is empty, then kept from the author's last autosave); the author's own draft is
+// saved in place and published; a theme file's or an unknown template is refused. A draft
+// template is found by its id, and trashing one suffixes its slug as any post's.
+$template = (int) $wp( 'post create --post_type=wp_template --post_name=zz-parity-tpl --post_title=Parity --post_status=publish --post_author=1 --post_content=' . escapeshellarg( '<p>orig</p>' ) . ' --porcelain' );
+if ( $template > 0 ) {
+	$wp( "post term set $template wp_theme twentytwentyfive" );
+	$session = json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . ' 1' ), true );
+	$send    = function ( string $base, string $method, string $path, string $body = '' ) use ( $session ): string {
+		$curl = curl_init( "$base/wp-json$path" );
+		curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_POSTFIELDS => $body, CURLOPT_HTTPHEADER => array( 'Content-Type: application/json', 'X-WP-Nonce: ' . $session['nonce'], 'Cookie: ' . $session['cookie_name'] . '=' . $session['cookie'] ) ) );
+		return curl_getinfo( $curl, CURLINFO_HTTP_CODE ) . ' ' . preg_replace( array( '#"(date|modified)":"[^"]*"#', '#\d{6,}#' ), array( '"$1":"X"', 'N' ), (string) curl_exec( $curl ) );
+	};
+	$state = function () use ( $wp, $template ): string {
+		return $wp( "post get $template --fields=post_name,post_title,post_content,post_status --format=csv" ) . ' ' . preg_replace( '#\d{6,}#', 'N', $wp( "post list --post_type=revision --post_parent=$template --post_status=any --orderby=ID --order=asc --fields=post_name,post_title,post_content,post_excerpt --format=csv" ) );
+	};
+	$reset = function () use ( $wp, $template ): void {
+		$wp( 'db query ' . escapeshellarg( 'UPDATE ' . $wp( 'db prefix' ) . "posts SET post_status = 'publish', post_name = 'zz-parity-tpl', post_title = 'Parity', post_content = '<p>orig</p>' WHERE ID = $template" ) );
+		foreach ( array( '_wp_trash_meta_status', '_wp_trash_meta_time', '_wp_desired_post_slug' ) as $key ) {
+			$wp( "post meta delete $template $key" );
+		}
+		$revisions = $wp( "post list --post_type=revision --post_parent=$template --post_status=any --format=ids" );
+		if ( '' !== $revisions ) {
+			$wp( "post delete $revisions --force" );
+		}
+	};
+	$own      = '/wp/v2/templates/twentytwentyfive//zz-parity-tpl';
+	$cases    = array(
+		'an empty body'               => array( 'publish', array( array( 'POST', "$own/autosaves", '{}' ) ) ),
+		'a description and objects'   => array( 'publish', array( array( 'POST', "$own/autosaves", '{"description":"d","title":{"raw":"T"},"content":{"raw":"<p>c</p>"}}' ) ) ),
+		'a second save'               => array( 'publish', array( array( 'POST', "$own/autosaves", '{"title":"A","content":"<p>a</p>"}' ), array( 'POST', "$own/autosaves", '{"content":"<p>b</p>"}' ), array( 'GET', "$own/autosaves" ) ) ),
+		'the author\'s own draft'     => array( 'draft', array( array( 'GET', $own ), array( 'POST', "$own/autosaves", '{"content":"<p>d</p>"}' ) ) ),
+		'a theme file and a stranger' => array( 'publish', array( array( 'POST', '/wp/v2/templates/twentytwentyfive//single/autosaves', '{}' ), array( 'POST', '/wp/v2/template-parts/twentytwentyfive//header/autosaves', '{}' ), array( 'POST', '/wp/v2/templates/twentytwentyfive//zz-parity-none/autosaves', '{}' ) ) ),
+		'trashing'                    => array( 'publish', array( array( 'DELETE', $own ), array( 'GET', $own ), array( 'DELETE', $own ) ) ),
+	);
+	foreach ( $cases as $label => [ $status, $requests ] ) {
+		$seen = array();
+		foreach ( array( $REF, $ENGINE ) as $base ) {
+			$reset();
+			if ( 'publish' !== $status ) {
+				$wp( 'db query ' . escapeshellarg( 'UPDATE ' . $wp( 'db prefix' ) . "posts SET post_status = '$status' WHERE ID = $template" ) );
+			}
+			$replies = array();
+			foreach ( $requests as $request ) {
+				$replies[] = $send( $base, $request[0], $request[1], $request[2] ?? '' );
+			}
+			$seen[] = implode( "\n", $replies ) . "\n" . $state();
+		}
+		$ok = $seen[0] === $seen[1];
+		$ok ? $pass++ : $fail++;
+		echo ( $ok ? '  ok   ' : '  FAIL ' ) . "template autosaves and lookups: $label" . ( $ok ? '' : "\n      " . substr( $seen[0], 0, 400 ) . "\n      " . substr( $seen[1], 0, 400 ) ) . "\n";
+	}
+	// A reader who may not change templates still sees a saved copy's revision links.
+	$reset();
+	$wp( "post update $template --post_content=" . escapeshellarg( '<p>revised</p>' ) );
+	$reader  = json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . ' 3' ), true );
+	$answers = array();
+	foreach ( array( $REF, $ENGINE ) as $base ) {
+		$curl = curl_init( "$base/wp-json$own" );
+		curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_HTTPHEADER => array( 'X-WP-Nonce: ' . $reader['nonce'], 'Cookie: ' . $reader['cookie_name'] . '=' . $reader['cookie'] ) ) );
+		$answers[] = json_encode( json_decode( (string) curl_exec( $curl ), true )['_links'] ?? null );
+	}
+	$ok = $answers[0] === $answers[1] && str_contains( $answers[0], 'predecessor-version' );
+	$ok ? $pass++ : $fail++;
+	echo ( $ok ? '  ok   ' : '  FAIL ' ) . "template autosaves and lookups: an author's links to a revised template" . ( $ok ? '' : " ({$answers[0]} vs {$answers[1]})" ) . "\n";
+	$wp( 'eval ' . escapeshellarg( 'WP_Session_Tokens::get_instance(3)->destroy(' . var_export( (string) $reader['token'], true ) . ');' ) );
+	$reset();
+	$wp( "post delete $template --force" );
+	$wp( 'eval ' . escapeshellarg( 'WP_Session_Tokens::get_instance(1)->destroy(' . var_export( (string) $session['token'], true ) . ');' ) );
+}
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

@@ -91,7 +91,7 @@ the wp/v2 surface: shapes and controllers
 | [`Subjects`](#subjects) | final readonly class | 53 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TemplateObject`](#templateobject) | final readonly class | 105 | The wp/v2/templates and wp/v2/template-parts resource. |
-| [`TemplateRevisionsController`](#templaterevisionscontroller) | final readonly class | 152 | wp/v2/templates and wp/v2/template-parts revisions and autosaves: the |
+| [`TemplateRevisionsController`](#templaterevisionscontroller) | final readonly class | 197 | wp/v2/templates and wp/v2/template-parts revisions and autosaves: the |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 329 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermCollectionParams`](#termcollectionparams) | final class | 13 | A taxonomy's term list parameters as the reference declares them (probe |
 | [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
@@ -4152,6 +4152,7 @@ whose id pattern would take these paths too.
 - const `READ_REFUSAL` = `'Sorry, you are not allowed to view revisions of this post.'`
 - const `AUTOSAVES_REFUSAL` = `'Sorry, you are not allowed to view autosaves of this post.'`
 - const `DELETE_REFUSAL` = `'Sorry, you are not allowed to delete revisions of this post.'`
+- const `MANAGE_REFUSAL` = `'Sorry, you are not allowed to access the templates on this site.'`
 
 Used by: `Minn\Rest\Api`
 
@@ -4192,7 +4193,17 @@ Route: `GET /wp/v2/{base:templates|template-parts}/{parent:([^\/:<>\*\?"\|]+(?:\
 
 The template's newest autosave, whoever saved it and whichever autosave id is asked for.
 
-Internals: `readable()` (private, line 119), `saved()` (private, line 130), `shaped()` (private, line 150)
+### `createAutosave(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
+
+Route: `POST /wp/v2/{base:templates|template-parts}/{id:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?)[\/\w%-]+}/autosaves (cap edit_posts + edit_theme_options)`
+
+An autosave of a saved template (probe rest-template-autosave): the
+caller's own draft is saved in place, and published; any other keeps
+one autosave per author, holding only what the body sends (a field it
+leaves out is stored empty). The caller is judged before the template.
+The reply is what was saved, shown as the template, in the edit context.
+
+Internals: `readable()` (private, line 170), `saved()` (private, line 181), `shaped()` (private, line 201)
 
 
 ## TemplatesController

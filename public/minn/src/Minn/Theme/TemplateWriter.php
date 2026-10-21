@@ -8,6 +8,7 @@ use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Content\Terms;
 use Minn\Db;
+use Minn\Runtime\PostWrites;
 
 /**
  * Saving and removing block templates. A template the theme ships is never
@@ -104,10 +105,14 @@ final readonly class TemplateWriter
         return $id;
     }
 
-    /** Moves a site copy to the trash, which hands the theme's file back. */
+    /**
+     * Moves a site copy to the trash, which hands the theme's file back: as
+     * any post goes there, its slug suffixed __trashed and its status, time
+     * and slug kept for the way back, so the id no longer finds it.
+     */
     public function trash(TemplateRecord $record): void
     {
-        $this->writer->setStatus($record->wpId, 'trash');
+        PostWrites::trash($record->wpId);
     }
 
     /** Deletes a saved template row. */

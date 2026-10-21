@@ -34,11 +34,11 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Teaser`](#teaser) | enum | 5 | What a post's full text does with the part before its more tag |
 | [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
-| [`TemplateIndex`](#templateindex) | final class | 324 | Every block template and template part the site offers, in the order the |
+| [`TemplateIndex`](#templateindex) | final class | 343 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 35 | One block template or template part, whatever it came from: a theme |
-| [`TemplateWriter`](#templatewriter) | final readonly class | 121 | Saving and removing block templates. A template the theme ships is never |
+| [`TemplateWriter`](#templatewriter) | final readonly class | 125 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 250 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 358 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeHeaders`](#themeheaders) | final class | 95 | A theme's headers as the reference's WP_Theme reads and shows them |
@@ -1132,7 +1132,11 @@ Every template of a type: the theme's files with the saved rows over them.
 
 ### `find(string $type, string $id): ?Minn\Theme\TemplateRecord`
 
-Null when the id names another theme, or a slug nothing provides.
+The template an id names: the site's own row by that slug first,
+published, draft, trashed or an auto-draft (the reference's lookup by
+id; the list shows only published ones), then the theme's file or a
+plugin's. Null when the id names another theme, or a slug nothing
+provides.
 
 ### `postRecord(array $row): Minn\Theme\TemplateRecord`
 
@@ -1202,7 +1206,7 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
-Internals: `savedRows()` (private, line 222), `pluginRows()` (private, line 237), `fromRow()` (private, line 246), `fromFile()` (private, line 277), `fromPlugin()` (private, line 299), `fileTitle()` (private, line 324), `savedArea()` (private, line 333)
+Internals: `savedRows()` (private, line 241), `pluginRows()` (private, line 256), `fromRow()` (private, line 265), `fromFile()` (private, line 296), `fromPlugin()` (private, line 318), `fileTitle()` (private, line 343), `savedArea()` (private, line 352)
 
 
 ## TemplatePartTheme
@@ -1320,13 +1324,15 @@ rest-template-create).
 
 ### `trash(Minn\Theme\TemplateRecord $record): void`
 
-Moves a site copy to the trash, which hands the theme's file back.
+Moves a site copy to the trash, which hands the theme's file back: as
+any post goes there, its slug suffixed __trashed and its status, time
+and slug kept for the way back, so the id no longer finds it.
 
 ### `destroy(Minn\Theme\TemplateRecord $record): void`
 
 Deletes a saved template row.
 
-Internals: `insert()` (private, line 76), `setArea()` (private, line 119), `themeTermId()` (private, line 129)
+Internals: `insert()` (private, line 77), `setArea()` (private, line 124), `themeTermId()` (private, line 134)
 
 
 ## Templates

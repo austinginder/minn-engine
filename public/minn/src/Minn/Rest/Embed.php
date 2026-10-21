@@ -101,7 +101,7 @@ final class Embed
     }
 
     /** @param ?list<string> $rels */
-    private function decorateItem(Request $request, array $item, ?array $rels, ?string $kind, ?string $type): array
+    private function decorateItem(Request $request, array $item, ?array $rels, ?string $kind, ?string $type = null): array
     {
         if ($kind !== null) {
             $item = self::context($kind, $item, $type);
