@@ -7,7 +7,7 @@ the wp verbs the engine answers itself
 | [`AssetUpdate`](#assetupdate) | final class | 329 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
 | [`Bundled`](#bundled) | final class | 54 | WP-CLI's own bundled command for a verb the engine answers. Its docs give |
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
-| [`Commands`](#commands) | final class | 105 | The verbs the engine answers to. Every one is registered for the |
+| [`Commands`](#commands) | final class | 147 | The verbs the engine answers to. Every one is registered for the |
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
@@ -19,7 +19,7 @@ the wp verbs the engine answers itself
 | [`PluginCommand`](#plugincommand) | final class | 410 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 427 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
-| [`Runtime`](#runtime) | final class | 98 | The engine, booted for a command: reads the site's wp-config.php (which |
+| [`Runtime`](#runtime) | final class | 104 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
 | [`ThemeCommand`](#themecommand) | final class | 332 | `wp theme list\|install\|update\|activate\|delete`: the inventory CaptainCore |
 | [`UserCommand`](#usercommand) | final class | 180 | Users: the list and get views, and the one-time login link. The list and |
@@ -111,11 +111,21 @@ addition lands after the bundle and overrides its leaf).
 
 Used by: `Minn\Cli\OptionCommand`, `Minn\Cli\UserCommand`
 
+
 ### static `register(): void`
 
 Registers every engine verb with WP-CLI in the phase it runs in.
 
-Internals: `leaf()` (private, line 88), `replace()` (private, line 105)
+### static `requireInstalled(array $args): void`
+
+An engine verb on a site whose database holds no install stops as the
+reference's WP-CLI stops it while WordPress loads, before the verb's
+arguments are read: its own message, naming any other table prefix
+that has an install (WP-CLI's config-create scenarios).
+
+- `@param list<string> $args`
+
+Internals: `leaf()` (private, line 128), `replace()` (private, line 146)
 
 
 ## CoreCommand
@@ -947,7 +957,7 @@ The engine, booted for a command: reads the site's wp-config.php (which
 ends in wp-settings.php, whose engine boot stops short of serving under
 WP-CLI) so the database constants and table prefix are known.
 
-Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\CronCommand`, `Minn\Cli\DirectorySearch`, `Minn\Cli\MaintenanceCommand`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\RewriteCommand`, `Minn\Cli\SearchReplaceCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cli\UserCommand`
+Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\Commands`, `Minn\Cli\CronCommand`, `Minn\Cli\DirectorySearch`, `Minn\Cli\MaintenanceCommand`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\RewriteCommand`, `Minn\Cli\SearchReplaceCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cli\UserCommand`
 
 - readonly `Minn\Db $db`
 - readonly `Minn\Content\Site $site`
@@ -958,6 +968,10 @@ Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\CronCommand`, `Minn\Cli\DirectorySear
 ### static `boot(): self`
 
 The engine's runtime for a CLI process, booted once.
+
+### static `database(): Minn\Db`
+
+The site's database, its wp-config.php run first when nothing has run it yet; nothing is read from it here.
 
 ### static `bootEngine(): Minn\Runtime\Runtime`
 
@@ -974,7 +988,7 @@ run wp-config.php, so the engine boots from the constants it defined,
 loads the site's plugins as code (their commands register as they load),
 and hands control back for WP-CLI to run the command.
 
-Internals: `debugMode()` (private, line 104), `loadConfig()` (private, line 115)
+Internals: `debugMode()` (private, line 110), `loadConfig()` (private, line 121)
 
 
 ## SearchReplaceCommand

@@ -60,5 +60,10 @@ if [ "${words[0]:-}" = "core" ]; then
             ;;
     esac
 fi
+# WP-CLI's config commands edit wp-config.php and never load WordPress: they run on the files as they are,
+# so a scenario that writes a config over an older WordPress it downloaded is not turned into a Minn site first.
+if [ "${words[0]:-}" = "config" ]; then
+    exec "$real" "$@"
+fi
 as_engine
 exec "$real" "$@"

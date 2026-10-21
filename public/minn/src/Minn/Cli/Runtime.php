@@ -43,6 +43,14 @@ final class Runtime
         if (self::$shared !== null) {
             return self::$shared;
         }
+        $db = self::database();
+        self::debugMode();
+        return self::$shared = new self($db, new Site($db), new Users($db), Capabilities::fromDb($db), Permalinks::fromDb($db));
+    }
+
+    /** The site's database, its wp-config.php run first when nothing has run it yet; nothing is read from it here. */
+    public static function database(): Db
+    {
         if (!defined('DB_NAME')) {
             $root = defined('ABSPATH') ? ABSPATH : rtrim(WP_CLI::get_runner()->find_wp_root(), '/') . '/';
             if (!is_file($root . 'wp-config.php')) {
@@ -50,9 +58,7 @@ final class Runtime
             }
             self::loadConfig($root . 'wp-config.php');
         }
-        self::debugMode();
-        $db = Db::shared();
-        return self::$shared = new self($db, new Site($db), new Users($db), Capabilities::fromDb($db), Permalinks::fromDb($db));
+        return Db::shared();
     }
 
     /**
