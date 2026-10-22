@@ -119580,7 +119580,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RouteCatalogue.php",
-            "lines": 142,
+            "lines": 143,
             "doc": "The routes the engine serves, described in the reference's shape for the\nindex and for an OPTIONS request: every route's namespace, its methods\nand the parameters it declares, gathered per concrete route from the\nattributes so a client learns what really works on it, with the\nnamespaces they fall under. Routes are keyed as the reference spells them\n('/wp/v2/posts/(?P<id>[\\d]+)').",
             "implements": [],
             "extends": null,
@@ -119740,9 +119740,9 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "describing(string $path): ?array",
-                    "doc": "The first route whose pattern takes the path, as the reference finds\nthe route an OPTIONS request describes; null when none does.",
+                    "doc": "The first route whose pattern takes the path, as the reference finds\nthe route an OPTIONS request describes, with its description; null\nwhen none does.",
                     "shapes": [
-                        "@return array<string, mixed>|null"
+                        "@return array{0: string, 1: array<string, mixed>}|null"
                     ],
                     "params": [
                         {
@@ -119753,8 +119753,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 157
+                    "line": 150,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -119815,7 +119815,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RouteIndex.php",
-            "lines": 61,
+            "lines": 80,
             "doc": "The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link.",
             "implements": [],
             "extends": null,
@@ -119835,6 +119835,44 @@
             ],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "endpointsIn",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "endpointsIn(string $route, array $table, callable $restUrl): array",
+                    "doc": "One route's endpoints as a route table describes them in the index\n(methods, batching, parameters); none for a route the table lacks.",
+                    "shapes": [
+                        "@param array{0: array<string, list<array<string, mixed>>>, 1: array<string, array<string, mixed>>} $table the routes and each route's options",
+                        "@param callable(string): string $restUrl",
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "array",
+                            "shape": "array{0: array<string, list<array<string, mixed>>>, 1: array<string, array<string, mixed>>}",
+                            "default": null,
+                            "doc": "the routes and each route's options"
+                        },
+                        {
+                            "name": "restUrl",
+                            "type": "callable",
+                            "shape": "callable(string): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 27
+                },
                 {
                     "routes": [],
                     "name": "describe",
@@ -119885,8 +119923,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 49
+                    "line": 37,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -119905,8 +119943,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 67
+                    "line": 71,
+                    "end": 86
                 }
             ]
         },
@@ -120665,7 +120703,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 493,
+            "lines": 528,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -120875,6 +120913,36 @@
                 },
                 {
                     "routes": [],
+                    "name": "described",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "described(string $route, array $entry): array",
+                    "doc": "An engine route's description with what its core controller says of\nthe same endpoints (an endpoint listing the same methods): whether it\nmay be batched, and, for a write or a delete, or a read that declares\nnone, the parameters the controller publishes when they hold every\none the engine declares (a type's writes list its schema's fields).\nA read's own parameters stay the engine's, as do the endpoints and\ntheir methods: nothing the engine does not answer is listed.",
+                    "shapes": [
+                        "@param array<string, mixed> $entry",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "entry",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 161,
+                    "end": 179
+                },
+                {
+                    "routes": [],
                     "name": "mergeIndex",
                     "static": true,
                     "visibility": "public",
@@ -120890,8 +120958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 191
+                    "line": 182,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -120917,8 +120985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 207
+                    "line": 238,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -120946,8 +121014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 223
+                    "line": 250,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -120966,8 +121034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 230
+                    "line": 261,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -121002,8 +121070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 241
+                    "line": 272,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -121022,8 +121090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 250
+                    "line": 279,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -121042,8 +121110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 273
+                    "line": 292,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -121072,8 +121140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 293
+                    "line": 317,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -121094,8 +121162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 308
+                    "line": 336,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -121114,8 +121182,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 321
+                    "line": 346,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -121141,8 +121209,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 386
+                    "line": 377,
+                    "end": 421
                 },
                 {
                     "routes": [],
@@ -121168,8 +121236,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 396
+                    "line": 428,
+                    "end": 431
                 },
                 {
                     "routes": [],
@@ -121188,8 +121256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 501
+                    "line": 532,
+                    "end": 536
                 },
                 {
                     "routes": [],
@@ -121200,8 +121268,8 @@
                     "doc": "The runtime's REST server, the one door to it (built, with rest_api_init, on first use).",
                     "shapes": [],
                     "params": [],
-                    "line": 505,
-                    "end": 508
+                    "line": 540,
+                    "end": 543
                 },
                 {
                     "routes": [],
@@ -121256,8 +121324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 333
+                    "line": 359,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -121276,8 +121344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 402
+                    "line": 434,
+                    "end": 437
                 },
                 {
                     "routes": [],
@@ -121303,8 +121371,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 410,
-                    "end": 421
+                    "line": 445,
+                    "end": 456
                 },
                 {
                     "routes": [],
@@ -121325,8 +121393,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 424,
-                    "end": 427
+                    "line": 459,
+                    "end": 462
                 },
                 {
                     "routes": [],
@@ -121359,8 +121427,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 429,
-                    "end": 433
+                    "line": 464,
+                    "end": 468
                 },
                 {
                     "routes": [],
@@ -121379,8 +121447,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 446
+                    "line": 471,
+                    "end": 481
                 },
                 {
                     "routes": [],
@@ -121402,8 +121470,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 456,
-                    "end": 479
+                    "line": 491,
+                    "end": 514
                 },
                 {
                     "routes": [],
@@ -121422,8 +121490,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 481,
-                    "end": 494
+                    "line": 516,
+                    "end": 529
                 },
                 {
                     "routes": [],
@@ -121442,8 +121510,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 510,
-                    "end": 518
+                    "line": 545,
+                    "end": 553
                 }
             ]
         },

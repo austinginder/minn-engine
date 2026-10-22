@@ -71,13 +71,13 @@ the wp/v2 surface: shapes and controllers
 | [`RevisionCollection`](#revisioncollection) | final class | 177 | A revisions list as the reference answers it (probe of the posts, |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 299 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
-| [`RouteCatalogue`](#routecatalogue) | final readonly class | 142 | The routes the engine serves, described in the reference's shape for the |
-| [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
+| [`RouteCatalogue`](#routecatalogue) | final readonly class | 143 | The routes the engine serves, described in the reference's shape for the |
+| [`RouteIndex`](#routeindex) | final class | 80 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 493 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 528 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 503 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
@@ -3100,9 +3100,10 @@ for them and their path answers no namespace index.
 ### `describing(string $path): ?array`
 
 The first route whose pattern takes the path, as the reference finds
-the route an OPTIONS request describes; null when none does.
+the route an OPTIONS request describes, with its description; null
+when none does.
 
-- `@return array<string, mixed>|null`
+- `@return array{0: string, 1: array<string, mixed>}|null`
 
 Internals: `endpoints()` (private, line 74), `rank()` (private, line 107)
 
@@ -3115,6 +3116,15 @@ The description of one route the REST index publishes: namespace, methods, endpo
 
 - const `SCHEMA_KEYWORDS` = `array (   0 => 'default',   1 => 'enum',   2 => 'description',   3 => 'type',   4 => 'items',   5 => 'minimum',   6 => 'maximum',   7 => 'exclusiveMinimum',   8 => 'exclusiveMaximum',   9 => 'minLength',   10 => 'maxLength',   11 => 'pattern',   12 => 'format',   13 => 'properties',   14 => 'additionalProperties',   15 => 'oneOf',   16 => 'anyOf',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems', )`
 
+### static `endpointsIn(string $route, array $table, callable $restUrl): array`
+
+One route's endpoints as a route table describes them in the index
+(methods, batching, parameters); none for a route the table lacks.
+
+- `@param array{0: array<string, list<array<string, mixed>>>, 1: array<string, array<string, mixed>>} $table the routes and each route's options`
+- `@param callable(string): string $restUrl`
+- `@return list<array<string, mixed>>`
+
 ### static `describe(string $route, array $callbacks, array $options, string $context, callable $restUrl): ?array`
 
 One route as the index describes it, or null when hidden.
@@ -3124,7 +3134,7 @@ One route as the index describes it, or null when hidden.
 - `@param callable(string): string $restUrl`
 - `@return array<string, mixed>|null null when no endpoint shows in the index`
 
-Internals: `argument()` (private, line 52)
+Internals: `argument()` (private, line 71)
 
 
 ## RouteMatch
@@ -3309,6 +3319,19 @@ Allow header is (probe rest-registry-controllers).
 
 - `@return list<string>|null`
 
+### static `described(string $route, array $entry): array`
+
+An engine route's description with what its core controller says of
+the same endpoints (an endpoint listing the same methods): whether it
+may be batched, and, for a write or a delete, or a read that declares
+none, the parameters the controller publishes when they hold every
+one the engine declares (a type's writes list its schema's fields).
+A read's own parameters stay the engine's, as do the endpoints and
+their methods: nothing the engine does not answer is listed.
+
+- `@param array<string, mixed> $entry`
+- `@return array<string, mixed>`
+
 ### static `mergeIndex(Minn\Http\Response $response): Minn\Http\Response`
 
 The engine's index plus the namespaces and routes the runtime holds.
@@ -3385,7 +3408,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 104), `dispatchDone()` (private, line 324), `asksForXml()` (private, line 399), `oembedXml()` (private, line 410), `look()` (private, line 424), `remember()` (private, line 429), `decode()` (private, line 436), `expand()` (private, line 456), `newWpRequest()` (private, line 481), `toResponse()` (private, line 510)
+Internals: `allow()` (private, line 104), `dispatchDone()` (private, line 359), `asksForXml()` (private, line 434), `oembedXml()` (private, line 445), `look()` (private, line 459), `remember()` (private, line 464), `decode()` (private, line 471), `expand()` (private, line 491), `newWpRequest()` (private, line 516), `toResponse()` (private, line 545)
 
 
 ## Schema

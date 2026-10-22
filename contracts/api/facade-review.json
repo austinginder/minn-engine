@@ -7664,11 +7664,17 @@
                 "why": "Links::expanded gives each link's relation, href and attributes; adding each to the response is the wrapper",
                 "body": "d3da15f1491c"
             },
+            "WP_REST_Server::minn_controller_routes": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "swaps the global $wp_rest_server for a scratch server so the core controllers' register_rest_route calls land there, and keeps that table normalised, once a request, for their schemas and their endpoints' published parameters",
+                "body": "6821eb9b821a"
+            },
             "WP_REST_Server::minn_engine_schemas": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "swaps the global $wp_rest_server for a scratch server so the core controllers' register_rest_route calls land there, then keeps each route's schema callback",
-                "body": "8418fac5f80f"
+                "why": "keeps each core route's schema callback from the routes the core controllers registered on a scratch server (minn_controller_routes)",
+                "body": "33e26ff0c07f"
             },
             "WP_REST_Server::query_text": {
                 "verdict": "keep",

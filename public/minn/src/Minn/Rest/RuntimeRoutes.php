@@ -146,12 +146,47 @@ final class RuntimeRoutes
         return $server->engine_route((string) $matched[0]) ? $server->engine_allowed($wpRequest) : self::allowedMethods((string) $matched[0], $wpRequest);
     }
 
+    /**
+     * An engine route's description with what its core controller says of
+     * the same endpoints (an endpoint listing the same methods): whether it
+     * may be batched, and, for a write or a delete, or a read that declares
+     * none, the parameters the controller publishes when they hold every
+     * one the engine declares (a type's writes list its schema's fields).
+     * A read's own parameters stay the engine's, as do the endpoints and
+     * their methods: nothing the engine does not answer is listed.
+     *
+     * @param array<string, mixed> $entry
+     * @return array<string, mixed>
+     */
+    public static function described(string $route, array $entry): array
+    {
+        $theirs = self::server()->engine_described_endpoints($route);
+        foreach ((array) ($entry['endpoints'] ?? []) as $i => $endpoint) {
+            foreach ($theirs as $other) {
+                if (($other['methods'] ?? null) !== ($endpoint['methods'] ?? null)) {
+                    continue;
+                }
+                $args = (array) ($endpoint['args'] ?? []);
+                $published = (array) ($other['args'] ?? []);
+                if (($endpoint['methods'] !== ['GET'] || $args === []) && array_diff_key($args, $published) === []) {
+                    $args = $published;
+                }
+                $entry['endpoints'][$i] = ['methods' => $endpoint['methods']] + (isset($other['allow_batch']) ? ['allow_batch' => $other['allow_batch']] : []) + ['args' => $args];
+                break;
+            }
+        }
+        return $entry;
+    }
+
     /** The engine's index plus the namespaces and routes the runtime holds. */
     public static function mergeIndex(Response $response): Response
     {
         $data = Json::decode($response->body, or: null);
         if (!is_array($data) || !isset($data['routes'])) {
             return $response;
+        }
+        foreach ((array) $data['routes'] as $route => $entry) {
+            $data['routes'][$route] = self::described((string) $route, (array) $entry);
         }
         $server = self::server();
         $runtime = $server->get_data_for_routes($server->get_routes(), 'view');

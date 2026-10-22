@@ -2,11 +2,11 @@
     "method": "tests/tools/facade-logic.php: functions and methods in public/minn/wp-api (generated dead ends and placeholders apart) whose body holds more than one statement or a control structure, by tokens; lines are the body's non-blank, non-comment lines; a docblock tag @minn-facade-logic <reason> keeps one out of the count and lists it under \"kept\"",
     "summary": {
         "functions": 3494,
-        "methods": 3811,
-        "delegates": 3553,
+        "methods": 3813,
+        "delegates": 3554,
         "logicFunctions": 1780,
-        "logicMethods": 1972,
-        "logicLines": 29288,
+        "logicMethods": 1973,
+        "logicLines": 29292,
         "kept": 0
     },
     "byFile": {
@@ -103,8 +103,8 @@
             "lines": 331
         },
         "classes/WP_REST_Server.php": {
-            "logic": 29,
-            "lines": 315
+            "logic": 30,
+            "lines": 319
         },
         "load.php": {
             "logic": 45,
@@ -8570,175 +8570,181 @@
         },
         "WP_REST_Server::add_active_theme_link_to_index": {
             "file": "classes/WP_REST_Server.php",
-            "line": 506,
+            "line": 534,
             "statements": 3,
             "lines": 7
         },
         "WP_REST_Server::add_image_to_index": {
             "file": "classes/WP_REST_Server.php",
-            "line": 531,
+            "line": 559,
             "statements": 4,
             "lines": 6
         },
         "WP_REST_Server::add_site_icon_to_index": {
             "file": "classes/WP_REST_Server.php",
-            "line": 522,
+            "line": 550,
             "statements": 4,
             "lines": 4
         },
         "WP_REST_Server::dispatch": {
             "file": "classes/WP_REST_Server.php",
-            "line": 264,
+            "line": 292,
             "statements": 12,
             "lines": 37
         },
         "WP_REST_Server::embed_links": {
             "file": "classes/WP_REST_Server.php",
-            "line": 425,
+            "line": 453,
             "statements": 2,
             "lines": 4
         },
         "WP_REST_Server::engine_allowed": {
             "file": "classes/WP_REST_Server.php",
-            "line": 122,
+            "line": 125,
             "statements": 2,
             "lines": 2
         },
         "WP_REST_Server::engine_endpoints": {
             "file": "classes/WP_REST_Server.php",
-            "line": 171,
+            "line": 174,
             "statements": 7,
             "lines": 19
         },
         "WP_REST_Server::engine_response": {
             "file": "classes/WP_REST_Server.php",
-            "line": 369,
+            "line": 397,
             "statements": 9,
             "lines": 17
         },
         "WP_REST_Server::envelope_response": {
             "file": "classes/WP_REST_Server.php",
-            "line": 460,
+            "line": 488,
             "statements": 2,
             "lines": 2
         },
         "WP_REST_Server::get_data_for_routes": {
             "file": "classes/WP_REST_Server.php",
-            "line": 555,
+            "line": 583,
             "statements": 3,
             "lines": 9
         },
         "WP_REST_Server::get_index": {
             "file": "classes/WP_REST_Server.php",
-            "line": 481,
+            "line": 509,
             "statements": 7,
             "lines": 20
         },
         "WP_REST_Server::get_namespace_index": {
             "file": "classes/WP_REST_Server.php",
-            "line": 541,
+            "line": 569,
             "statements": 8,
             "lines": 10
         },
         "WP_REST_Server::get_namespaces": {
             "file": "classes/WP_REST_Server.php",
-            "line": 104,
+            "line": 107,
             "statements": 3,
             "lines": 7
         },
         "WP_REST_Server::get_response_links": {
             "file": "classes/WP_REST_Server.php",
-            "line": 433,
+            "line": 461,
             "statements": 5,
             "lines": 17
         },
         "WP_REST_Server::get_routes": {
             "file": "classes/WP_REST_Server.php",
-            "line": 91,
+            "line": 94,
             "statements": 5,
             "lines": 9
         },
         "WP_REST_Server::get_target_hints_for_link": {
             "file": "classes/WP_REST_Server.php",
-            "line": 415,
+            "line": 443,
             "statements": 3,
             "lines": 5
         },
         "WP_REST_Server::in_process": {
             "file": "classes/WP_REST_Server.php",
-            "line": 136,
+            "line": 139,
             "statements": 15,
             "lines": 24
         },
         "WP_REST_Server::json_error": {
             "file": "classes/WP_REST_Server.php",
-            "line": 56,
+            "line": 59,
             "statements": 2,
             "lines": 4
         },
         "WP_REST_Server::match_request_to_handler": {
             "file": "classes/WP_REST_Server.php",
-            "line": 252,
+            "line": 280,
             "statements": 6,
             "lines": 8
         },
         "WP_REST_Server::minn_add_links": {
             "file": "classes/WP_REST_Server.php",
-            "line": 393,
+            "line": 421,
             "statements": 1,
             "lines": 3
         },
+        "WP_REST_Server::minn_controller_routes": {
+            "file": "classes/WP_REST_Server.php",
+            "line": 222,
+            "statements": 6,
+            "lines": 17
+        },
         "WP_REST_Server::minn_engine_schemas": {
             "file": "classes/WP_REST_Server.php",
-            "line": 202,
-            "statements": 7,
-            "lines": 20
+            "line": 205,
+            "statements": 3,
+            "lines": 7
         },
         "WP_REST_Server::query_text": {
             "file": "classes/WP_REST_Server.php",
-            "line": 355,
+            "line": 383,
             "statements": 2,
             "lines": 9
         },
         "WP_REST_Server::register_route": {
             "file": "classes/WP_REST_Server.php",
-            "line": 70,
+            "line": 73,
             "statements": 4,
             "lines": 17
         },
         "WP_REST_Server::respond_to_request": {
             "file": "classes/WP_REST_Server.php",
-            "line": 310,
+            "line": 338,
             "statements": 8,
             "lines": 28
         },
         "WP_REST_Server::response_to_data": {
             "file": "classes/WP_REST_Server.php",
-            "line": 400,
+            "line": 428,
             "statements": 5,
             "lines": 9
         },
         "WP_REST_Server::route_removed_by_filter": {
             "file": "classes/WP_REST_Server.php",
-            "line": 228,
+            "line": 256,
             "statements": 5,
             "lines": 9
         },
         "WP_REST_Server::send_headers": {
             "file": "classes/WP_REST_Server.php",
-            "line": 593,
+            "line": 621,
             "statements": 1,
             "lines": 3
         },
         "WP_REST_Server::serve_batch_request_v1": {
             "file": "classes/WP_REST_Server.php",
-            "line": 473,
+            "line": 501,
             "statements": 4,
             "lines": 4
         },
         "WP_REST_Server::top_level_fields": {
             "file": "classes/WP_REST_Server.php",
-            "line": 348,
+            "line": 376,
             "statements": 2,
             "lines": 2
         },

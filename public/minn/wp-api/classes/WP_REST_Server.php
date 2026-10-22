@@ -28,6 +28,9 @@ class WP_REST_Server implements \Minn\Objects\RestServer
     protected $namespaces = [];
     protected $endpoints = [];
     protected ?array $engine_endpoints = null;
+
+    /** @internal the core controllers' routes as each registers them on the reference: the route table and each route's options */
+    protected ?array $minn_controller_routes = null;
     protected $route_options = [];
     protected $embed_cache = [];
     protected $dispatching_requests = [];
@@ -201,6 +204,26 @@ class WP_REST_Server implements \Minn\Objects\RestServer
      */
     private function minn_engine_schemas(): array
     {
+        $schemas = [];
+        foreach ($this->minn_controller_routes()[1] as $route => $options) {
+            if (isset($options['schema']) && is_callable($options['schema'])) {
+                $schemas[$route] = $options['schema'];
+            }
+        }
+        return $schemas;
+    }
+
+    /**
+     * @internal the core controllers' routes registered on a server of
+     * their own, as the reference registers them, kept for what they
+     * describe (their schemas, their endpoints' parameters) and never
+     * dispatched to
+     */
+    private function minn_controller_routes(): array
+    {
+        if ($this->minn_controller_routes !== null) {
+            return $this->minn_controller_routes;
+        }
         $scratch = new self();
         $previous = $GLOBALS['wp_rest_server'] ?? null;
         $GLOBALS['wp_rest_server'] = $scratch;
@@ -215,13 +238,18 @@ class WP_REST_Server implements \Minn\Objects\RestServer
         } finally {
             $GLOBALS['wp_rest_server'] = $previous;
         }
-        $schemas = [];
-        foreach ($scratch->endpoints as $route => $handlers) {
-            if (is_array($handlers) && isset($handlers['schema']) && is_callable($handlers['schema'])) {
-                $schemas[$route] = $handlers['schema'];
-            }
-        }
-        return $schemas;
+        // As the table lists them: each handler with its defaults (methods as a map, shown in the index).
+        return $this->minn_controller_routes = RouteTable::normalise($scratch->endpoints);
+    }
+
+    /**
+     * @internal a core route's endpoints as its controller describes them
+     * in the index (methods and parameters), for the engine's description
+     * of the same route; empty for a route no core controller registers
+     */
+    public function engine_described_endpoints($route): array
+    {
+        return RouteIndex::endpointsIn((string) $route, $this->minn_controller_routes(), rest_url(...));
     }
 
     /** Whether a rest_endpoints filter dropped the route that would answer this request, so the engine must not answer it either. */

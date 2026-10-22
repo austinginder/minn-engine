@@ -142,15 +142,16 @@ final readonly class RouteCatalogue
 
     /**
      * The first route whose pattern takes the path, as the reference finds
-     * the route an OPTIONS request describes; null when none does.
+     * the route an OPTIONS request describes, with its description; null
+     * when none does.
      *
-     * @return array<string, mixed>|null
+     * @return array{0: string, 1: array<string, mixed>}|null
      */
     public function describing(string $path): ?array
     {
         foreach ($this->all()['routes'] as $route => $entry) {
             if (preg_match('@^' . $route . '$@i', $path) === 1) {
-                return $entry;
+                return [(string) $route, $entry];
             }
         }
         return null;

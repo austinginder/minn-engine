@@ -468,8 +468,8 @@ final readonly class Api
         if (Runtime::hooks()->has('rest_pre_dispatch', 'rest_handle_options_request') === false) {
             return null;
         }
-        $entry = (new RouteCatalogue($this->router, $this->services->types(), $this->services->url()))->describing($request->path);
-        return $entry === null ? null : Reply::item($this->withSchema($entry, $request->path), null);
+        $described = (new RouteCatalogue($this->router, $this->services->types(), $this->services->url()))->describing($request->path);
+        return $described === null ? null : Reply::item($this->withSchema(RuntimeRoutes::described($described[0], $described[1]), $request->path), null);
     }
 
     /**
