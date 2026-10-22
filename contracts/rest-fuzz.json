@@ -4,7 +4,7 @@
     "summary": {
         "routes": 201,
         "requests": 14607,
-        "differences": 280
+        "differences": 262
     },
     "differences": [
         {
@@ -25,7 +25,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -35,7 +35,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -59,7 +59,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -71,7 +71,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -95,7 +95,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -107,7 +107,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -131,7 +131,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -143,7 +143,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -167,7 +167,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -179,7 +179,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -207,7 +207,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/",
@@ -221,7 +221,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$ (keys missing: image_sizes,image_size_threshold,image_strip_meta,image_max_bit_depth extra: )"
+            "difference": "$.namespaces (length 6 vs 7)"
         },
         {
             "route": "/oembed/1.0",
@@ -590,28 +590,8 @@
             "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Added\n\n* **Breakwater.** Minn now reads Breakwater\\'s log, every comment, sign-up and form submission it checked, under Forms: filter it to what was held, see why each one scored what it did, and say Not spam to hand a held submission back to its form (saved and sent as if it had never been held) or Was spam on one that got through. Its mo"
         },
         {
-            "route": "/minn-admin/v1/templates",
-            "request": "/minn-admin/v1/templates",
-            "query": [],
-            "case": "plain",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.templates (length 1 vs 0)"
-        },
-        {
-            "route": "/minn-admin/v1/templates",
-            "request": "/minn-admin/v1/templates",
-            "query": [],
-            "case": "plain",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.templates (length 1 vs 0)"
-        },
-        {
-            "route": "/minn-admin/v1/templates",
-            "request": "/minn-admin/v1/templates",
+            "route": "/minn-admin/v1/overview",
+            "request": "/minn-admin/v1/overview",
             "query": {
                 "zzfuzz": "1"
             },
@@ -619,19 +599,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.templates (length 1 vs 0)"
-        },
-        {
-            "route": "/minn-admin/v1/templates",
-            "request": "/minn-admin/v1/templates",
-            "query": {
-                "zzfuzz": "1"
-            },
-            "case": "unknown argument",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.templates (length 1 vs 0)"
+            "difference": "$.chart.0.from ('2026-09-22 04:17:41' vs '2026-09-22 04:17:42')"
         },
         {
             "route": "/minn-admin/v1/boot-status",
@@ -990,50 +958,6 @@
             "difference": "$.urls (length 92 vs 2)"
         },
         {
-            "route": "/minn-admin/v1/patterns",
-            "request": "/minn-admin/v1/patterns",
-            "query": [],
-            "case": "plain",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.patterns (length 40 vs 0)"
-        },
-        {
-            "route": "/minn-admin/v1/patterns",
-            "request": "/minn-admin/v1/patterns",
-            "query": [],
-            "case": "plain",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.patterns (length 40 vs 0)"
-        },
-        {
-            "route": "/minn-admin/v1/patterns",
-            "request": "/minn-admin/v1/patterns",
-            "query": {
-                "zzfuzz": "1"
-            },
-            "case": "unknown argument",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.patterns (length 40 vs 0)"
-        },
-        {
-            "route": "/minn-admin/v1/patterns",
-            "request": "/minn-admin/v1/patterns",
-            "query": {
-                "zzfuzz": "1"
-            },
-            "case": "unknown argument",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.patterns (length 40 vs 0)"
-        },
-        {
             "route": "/minn-admin/v1/system",
             "request": "/minn-admin/v1/system",
             "query": [],
@@ -1041,7 +965,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.generated ('2026-10-22T03:17:40+00:00' vs '2026-10-22T03:17:38+00:00')"
+            "difference": "$.generated ('2026-10-22T04:18:24+00:00' vs '2026-10-22T04:18:22+00:00')"
         },
         {
             "route": "/minn-admin/v1/system",
@@ -1107,7 +1031,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.size (81432234 vs 1448100)"
+            "difference": "$.size (81441151 vs 1458104)"
         },
         {
             "route": "/minn-admin/v1/system/debug-log",
@@ -1119,7 +1043,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.size (81432234 vs 1448100)"
+            "difference": "$.size (81441151 vs 1458104)"
         },
         {
             "route": "/minn-admin/v1/system/logs",
@@ -1411,7 +1335,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1421,7 +1345,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1431,7 +1355,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1443,7 +1367,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1455,7 +1379,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1467,7 +1391,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1521,7 +1445,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1533,7 +1457,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1545,7 +1469,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1557,7 +1481,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1569,7 +1493,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1581,7 +1505,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1593,7 +1517,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1605,7 +1529,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1617,7 +1541,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1631,7 +1555,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1645,7 +1569,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2",
@@ -1659,7 +1583,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
+            "difference": "$.routes./wp/v2/templates/(?P<id>([^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?)[\\/\\w%-]+)/autosaves.endpoints.1.args (list vs object)"
         },
         {
             "route": "/wp/v2/posts/(?P<id>[\\d]+)",
@@ -1671,7 +1595,7 @@
             "role": "anon",
             "reference": 500,
             "engine": 500,
-            "difference": "$ ('[not JSON: 158313 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
+            "difference": "$ ('[not JSON: 158314 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp/v2/posts/(?P<id>[\\d]+)",
@@ -1695,7 +1619,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "$ ('[not JSON: 159681 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
+            "difference": "$ ('[not JSON: 159680 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp/v2/posts/(?P<id>[\\d]+)",
@@ -1822,30 +1746,6 @@
             "reference": 500,
             "engine": 404,
             "difference": "status 500 vs 404"
-        },
-        {
-            "route": "/wp/v2/types",
-            "request": "/wp/v2/types",
-            "query": {
-                "context": "edit"
-            },
-            "case": "context enum \"edit\"",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.post.labels (keys missing:  extra: template_name)"
-        },
-        {
-            "route": "/wp/v2/types",
-            "request": "/wp/v2/types",
-            "query": {
-                "context": "edit"
-            },
-            "case": "context enum \"edit\"",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.post.labels (keys missing:  extra: template_name)"
         },
         {
             "route": "/wp/v2/search",
@@ -1990,8 +1890,8 @@
             "case": "plain",
             "role": "author",
             "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -2132,8 +2032,8 @@
             "case": "page padded",
             "role": "author",
             "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
+            "engine": 200,
+            "difference": "$.59.title ('Data Table' vs 'Data  Table')"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -2175,30 +2075,6 @@
             "route": "/wp/v2/pattern-directory/patterns",
             "request": "/wp/v2/pattern-directory/patterns",
             "query": {
-                "per_page": " 5"
-            },
-            "case": "per_page padded",
-            "role": "author",
-            "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "1"
-            },
-            "case": "per_page at minimum",
-            "role": "author",
-            "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
                 "per_page": "100"
             },
             "case": "per_page at maximum",
@@ -2223,18 +2099,6 @@
             "route": "/wp/v2/pattern-directory/patterns",
             "request": "/wp/v2/pattern-directory/patterns",
             "query": {
-                "search": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "search long",
-            "role": "author",
-            "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
                 "search": "<b>zzfuzz</b>"
             },
             "case": "search markup",
@@ -2251,18 +2115,6 @@
             },
             "case": "search markup",
             "role": "admin",
-            "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "99999999999999999999"
-            },
-            "case": "category huge",
-            "role": "author",
             "reference": 200,
             "engine": 500,
             "difference": "status 200 vs 500"
@@ -2276,8 +2128,8 @@
             "case": "category padded",
             "role": "author",
             "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
+            "engine": 200,
+            "difference": "$.49.content ('<!-- wp:group {\"layout\":{\"type\":\"constrained\"}} -->\n<div class=\"wp-block-group\"><!-- wp:columns -->\n<div class=\"wp-block-columns\"><!-- wp:column -->\n<div class=\"wp-block-column\"><!-- wp:cover {\"url\":\"https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/-a010-markuss-0262.jpg?w=1200\\\\u0026amp;h=1200\\\\u0026amp;fit=clip\\\\u0026amp;crop=default\\\\u0026amp;dpr=1\\\\u0026amp;"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -2295,54 +2147,6 @@
             "route": "/wp/v2/pattern-directory/patterns",
             "request": "/wp/v2/pattern-directory/patterns",
             "query": {
-                "category": "1"
-            },
-            "case": "category at minimum",
-            "role": "author",
-            "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "99999999999999999999"
-            },
-            "case": "keyword huge",
-            "role": "author",
-            "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": " 5"
-            },
-            "case": "keyword padded",
-            "role": "author",
-            "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "1"
-            },
-            "case": "keyword at minimum",
-            "role": "author",
-            "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
                 "slug": ""
             },
             "case": "slug empty",
@@ -2383,21 +2187,6 @@
             },
             "case": "slug comma list",
             "role": "admin",
-            "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "slug": [
-                    "1",
-                    "zzfuzz"
-                ]
-            },
-            "case": "slug mixed items",
-            "role": "author",
             "reference": 200,
             "engine": 500,
             "difference": "status 200 vs 500"
@@ -2443,8 +2232,8 @@
             "case": "offset negative",
             "role": "author",
             "reference": 200,
-            "engine": 500,
-            "difference": "status 200 vs 500"
+            "engine": 200,
+            "difference": "$.16.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -2980,7 +2769,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "$ ('[not JSON: 142554 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
+            "difference": "$ ('[not JSON: 142555 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp-abilities/v1/abilities/(?P<name>[a-zA-Z0-9\\-\\/]+?)/run",
@@ -3088,7 +2877,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "$ ('[not JSON: 143021 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
+            "difference": "$ ('[not JSON: 143022 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp/v2/icons",
