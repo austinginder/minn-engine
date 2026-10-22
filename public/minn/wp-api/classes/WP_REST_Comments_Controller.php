@@ -421,7 +421,11 @@ class WP_REST_Comments_Controller extends WP_REST_Controller
         }
         // The post is readable by its own type's controller.
         $type = get_post_type_object($post->post_type);
-        $controller = $type ? $type->get_rest_controller() : null;
+        // A post of a type no longer registered is readable by no one, and says so quietly.
+        if (!$type) {
+            return false;
+        }
+        $controller = $type->get_rest_controller();
         if (!$controller instanceof WP_REST_Posts_Controller) {
             $controller = new WP_REST_Posts_Controller($post->post_type);
         }

@@ -23,7 +23,8 @@ function wp_create_nonce($action = -1)
     // Only a visitor's id is asked of nonce_user_logged_out: a signed-in user's nonce is always theirs.
     $uid = (int) wp_get_current_user()->ID;
     $uid = $uid === 0 ? (int) apply_filters('nonce_user_logged_out', $uid, $action) : $uid;
-    return Nonce::create($uid, wp_get_session_token(), is_int($action) ? $action : (string) $action);
+    // The tick is the pluggable wp_nonce_tick's, as wp_verify_nonce reads it.
+    return Nonce::at((float) wp_nonce_tick($action), $uid, wp_get_session_token(), (string) $action);
 }
 endif;
 

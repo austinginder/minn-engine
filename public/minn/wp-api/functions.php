@@ -517,7 +517,7 @@ function wp_is_mobile()
 function wp_is_site_protected_by_basic_auth($context = '')
 {
     if ($context === '') {
-        $context = is_admin() ? 'admin' : (isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] === 'wp-login.php' ? 'login' : 'front');
+        $context = isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] === 'wp-login.php' ? 'login' : (is_admin() ? 'admin' : 'front');
     }
     $is_protected = !empty($_SERVER['PHP_AUTH_USER']) || !empty($_SERVER['PHP_AUTH_PW']);
     return (bool) apply_filters('wp_is_site_protected_by_basic_auth', $is_protected, $context);
@@ -719,14 +719,10 @@ function wp_cache_get_last_changed($group)
 
 function _get_non_cached_ids($object_ids, $cache_group)
 {
-    $ids = [];
-    foreach (array_filter((array) $object_ids, '_validate_cache_id') as $id) {
-        $id = (int) $id;
-        if (!in_array($id, $ids, true) && wp_cache_get($id, (string) $cache_group) === false) {
-            $ids[] = $id;
-        }
-    }
-    return $ids;
+    // The cache (a drop-in's, perhaps) is asked for them all at once.
+    $ids = array_values(array_unique(array_map('intval', array_filter((array) $object_ids, '_validate_cache_id'))));
+    $cached = $ids === [] ? [] : wp_cache_get_multiple($ids, (string) $cache_group);
+    return array_values(array_filter($ids, static fn (int $id): bool => ($cached[$id] ?? false) === false));
 }
 
 function wp_cache_set_last_changed($group)
@@ -1571,6 +1567,9 @@ function wp_maybe_load_widgets()
 /** Schedules the hourly removal of old personal data exports, once (on init). */
 function wp_schedule_delete_old_privacy_export_files()
 {
+    if (wp_installing()) {
+        return;
+    }
     if (!wp_next_scheduled('wp_privacy_delete_old_export_files')) {
         wp_schedule_event(time(), 'hourly', 'wp_privacy_delete_old_export_files');
     }

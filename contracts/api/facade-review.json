@@ -367,9 +367,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "DirectoryApi::ask already runs the args, api and result filters and asks the directory; the body only builds it for plugins, which a factory would make one call",
-                "doubt": "the content folder is ABSPATH . 'wp-content' where wp_update_plugins uses Runtime::contentDir(), so a moved WP_CONTENT_DIR points Packages at the wrong folder",
-                "body": "cdc59ba6b60e"
+                "why": "DirectoryApi::ask already runs the args, api and result filters and asks the directory; the body only builds it for plugins, which a factory would make one call Doubt fixed (2026-10-22): the content folder is Runtime::contentDir(), as wp_update_plugins reads it.",
+                "body": "9a4607fd97ed"
             },
             "postbox_classes": {
                 "verdict": "move",
@@ -455,9 +454,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "DirectoryApi::ask already runs the args, api and result filters and asks the directory; the body only builds it for themes, which a factory would make one call",
-                "doubt": "the content folder is ABSPATH . 'wp-content' where wp_update_themes uses Runtime::contentDir(), so a moved WP_CONTENT_DIR points Packages at the wrong folder",
-                "body": "31990e32b74c"
+                "why": "DirectoryApi::ask already runs the args, api and result filters and asks the directory; the body only builds it for themes, which a factory would make one call Doubt fixed (2026-10-22): the content folder is Runtime::contentDir(), as wp_update_themes reads it.",
+                "body": "aa0512a92e4c"
             },
             "validate_plugin_requirements": {
                 "verdict": "keep",
@@ -2123,8 +2121,7 @@
                     "subclass",
                     "unprobed"
                 ],
-                "why": "encodes the subject, prints the debug lines and calls PHP's mail() with or without the -f parameter; the mail() call is the transport, the edebug calls kept on $this",
-                "doubt": "passes the -f parameter even with UseSendmailOptions off, which the reference checks before giving mail() a fifth argument",
+                "why": "encodes the subject, prints the debug lines and calls PHP's mail() with or without the -f parameter; the mail() call is the transport, the edebug calls kept on $this Doubt settled, not real: the -f parameter is built only when UseSendmailOptions holds (PHPMailer::mailSend), so mail() gets no fifth argument with it off.",
                 "body": "bbeceee7bf43"
             },
             "PHPMailer::mailSend": {
@@ -5988,9 +5985,8 @@
             "WP_REST_Comments_Controller::check_read_post_permission": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "asks the post type's own REST controller (a posts controller made when it has none) its check_read_permission, which plugin controllers override",
-                "doubt": "a type that is not registered warns (a property read on null) before answering false, where the reference answers false quietly",
-                "body": "7f4d274f574f"
+                "why": "asks the post type's own REST controller (a posts controller made when it has none) its check_read_permission, which plugin controllers override Doubt fixed (2026-10-22): a type no longer registered answers false quietly, as on the reference.",
+                "body": "3f93026fc225"
             },
             "WP_REST_Comments_Controller::check_target_post_permission": {
                 "verdict": "keep",
@@ -14452,8 +14448,7 @@
             "wp_check_invalid_utf8": {
                 "verdict": "move",
                 "to": "Minn\\Support\\Escape",
-                "why": "decides what an invalid string becomes (empty, or scrubbed to U+FFFD when stripping) around Escape::validUtf8 and Utf8::scrub; the strip choice belongs in Escape::validUtf8",
-                "doubt": "WordPress returns the text untouched when the site charset is not UTF-8 (its static is_utf8_charset check); here every string is checked",
+                "why": "decides what an invalid string becomes (empty, or scrubbed to U+FFFD when stripping) around Escape::validUtf8 and Utf8::scrub; the strip choice belongs in Escape::validUtf8 Doubt settled, not real: measured 2026-10-22, with blog_charset ISO-8859-1 both stacks check and strip alike.",
                 "body": "91a82163594c"
             },
             "wp_embed_excerpt_more": {
@@ -14599,9 +14594,8 @@
             "_get_non_cached_ids": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "asks the cache, which a drop-in may provide, for each id and keeps the misses",
-                "doubt": "the cache is asked id by id where the API asks wp_cache_get_multiple once",
-                "body": "4222b1eb614e"
+                "why": "asks the cache, which a drop-in may provide, for each id and keeps the misses Doubt fixed (2026-10-22): the cache is asked once through wp_cache_get_multiple; the same ids come back on both stacks.",
+                "body": "9f7fc0f29dc8"
             },
             "_http_build_query": {
                 "verdict": "move",
@@ -14924,8 +14918,7 @@
             "wp_get_admin_notice": {
                 "verdict": "move",
                 "to": "Minn\\Admin\\AdminNotice",
-                "why": "builds the notice div's classes and attributes from the arguments by rule, with its filters; markup the engine should render",
-                "doubt": "the id is escaped here where WordPress prints it raw (stricter)",
+                "why": "builds the notice div's classes and attributes from the arguments by rule, with its filters; markup the engine should render Doubt accepted (register 18300, facade doubts closed): escaping the id is stricter than printing it raw and differs only for an id holding markup.",
                 "body": "481de3934a56"
             },
             "wp_get_default_extension_for_mime_type": {
@@ -15000,9 +14993,8 @@
             "wp_is_site_protected_by_basic_auth": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "reads $pagenow and the PHP_AUTH superglobals as plugins left them, then the filter decides",
-                "doubt": "is_admin() is asked before the login page where the API tests wp-login.php first",
-                "body": "98d7ae6ba1e1"
+                "why": "reads $pagenow and the PHP_AUTH superglobals as plugins left them, then the filter decides Doubt fixed (2026-10-22): the login page is tested before is_admin(), as the API does.",
+                "body": "ec32b2430f14"
             },
             "wp_is_stream": {
                 "verdict": "move",
@@ -15092,9 +15084,8 @@
             "wp_schedule_delete_old_privacy_export_files": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "schedules the hourly event through wp_next_scheduled and wp_schedule_event",
-                "doubt": "no early return while installing, which the API has",
-                "body": "753464e829b4"
+                "why": "schedules the hourly event through wp_next_scheduled and wp_schedule_event Doubt fixed (2026-10-22): nothing is scheduled while installing, as measured on the reference.",
+                "body": "47e49d9efd9c"
             },
             "wp_schedule_personal_data_cleanup_requests": {
                 "verdict": "keep",
@@ -16305,9 +16296,8 @@
                 "gates": [
                     "unprobed"
                 ],
-                "why": "the shared step that names, inserts and generates metadata for a stored file",
-                "doubt": "an ID in post_data is not unset, so it can overwrite an existing attachment, which WordPress prevents",
-                "body": "9a15b37ca664"
+                "why": "the shared step that names, inserts and generates metadata for a stored file Doubt fixed (2026-10-22): an ID in post_data is unset, so an upload is always a new attachment, as measured on the reference.",
+                "body": "a0db6f8d281a"
             },
             "_minn_missing_pdf_sizes": {
                 "verdict": "move",
@@ -16648,9 +16638,8 @@
             "wp_get_attachment_image_srcset": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "wp_get_attachment_image_src, wp_get_attachment_metadata and wp_calculate_image_srcset chained with guards",
-                "doubt": "a non-array image_meta or none stored returns false before wp_calculate_image_srcset and its wp_calculate_image_srcset_meta filter run; WordPress passes it on",
-                "body": "0119411505b7"
+                "why": "wp_get_attachment_image_src, wp_get_attachment_metadata and wp_calculate_image_srcset chained with guards Doubt fixed (2026-10-22): metadata that is missing or not an array is handed on, so wp_calculate_image_srcset_meta hears it, as on the reference.",
+                "body": "deee1e2a5281"
             },
             "wp_get_attachment_image_url": {
                 "verdict": "delegate",
@@ -16679,8 +16668,7 @@
             "wp_get_image_editor": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "wp_check_filetype, wp_get_image_editor_output_format and _wp_image_editor_choose, then constructs and loads the editor class a plugin may have chosen",
-                "doubt": "an unknown type sets mime_type to '' instead of leaving it unset, so every editor refuses where WordPress lets the editor detect the type",
+                "why": "wp_check_filetype, wp_get_image_editor_output_format and _wp_image_editor_choose, then constructs and loads the editor class a plugin may have chosen Doubt settled, not real: measured 2026-10-22, a PNG under an unknown extension gets the Imagick editor on both stacks.",
                 "body": "0d647e470373"
             },
             "wp_get_image_editor_output_format": {
@@ -17489,9 +17477,8 @@
                 "gates": [
                     "pluggable"
                 ],
-                "why": "the current user's id (a visitor's through nonce_user_logged_out; probe sweep-1020) and the session token handed to Nonce::create",
-                "doubt": "the tick comes from Nonce::tick, not the pluggable wp_nonce_tick that wp_verify_nonce uses",
-                "body": "33c5a4de3f2b"
+                "why": "the current user's id (a visitor's through nonce_user_logged_out; probe sweep-1020) and the session token handed to Nonce::create Doubt fixed (2026-10-22): the tick is the pluggable wp_nonce_tick, as wp_verify_nonce reads it.",
+                "body": "4eba18223af9"
             },
             "wp_generate_auth_cookie": {
                 "verdict": "move",
@@ -18422,8 +18409,7 @@
             "wp_filter_wp_template_unique_post_slug": {
                 "verdict": "move",
                 "to": "Minn\\Theme\\TemplateWriter",
-                "why": "makes a template slug unique within its theme by numbered suffixes; template storage rules",
-                "doubt": "no truncation to 200 characters",
+                "why": "makes a template slug unique within its theme by numbered suffixes; template storage rules Doubt settled, not real: measured 2026-10-22, a 250-character template slug comes back whole on both stacks.",
                 "body": "90eab1bcb2ae"
             },
             "wp_get_latest_revision_id_and_total_count": {

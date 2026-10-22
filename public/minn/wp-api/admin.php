@@ -730,14 +730,14 @@ function request_filesystem_credentials($form_post, $type = '', $error = false, 
 
 function plugins_api($action, $args = [])
 {
-    $packages = new Minn\Ops\Packages(Runtime::current()->site, rtrim(ABSPATH, '/') . '/wp-content');
+    $packages = new Minn\Ops\Packages(Runtime::current()->site, Runtime::current()->contentDir());
     return (new Minn\Ops\DirectoryApi('plugins', apply_filters(...), $packages, get_user_locale(), (string) $GLOBALS['wp_version']))->ask((string) $action, $args);
 }
 
 /** themes_api as plugins call it (probe themes-api): a seller's own answer first, otherwise the directory through the Minn update service. */
 function themes_api($action, $args = [])
 {
-    $packages = new Minn\Ops\Packages(Runtime::current()->site, rtrim(ABSPATH, '/') . '/wp-content');
+    $packages = new Minn\Ops\Packages(Runtime::current()->site, Runtime::current()->contentDir());
     return (new Minn\Ops\DirectoryApi('themes', apply_filters(...), $packages, get_user_locale(), (string) $GLOBALS['wp_version']))->ask((string) $action, $args);
 }
 

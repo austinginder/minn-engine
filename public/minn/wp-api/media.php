@@ -565,10 +565,8 @@ function wp_get_attachment_image_srcset($attachment_id, $size = 'medium', $image
     if (!$image) {
         return false;
     }
+    // Metadata that is missing or not a list is handed on all the same, so wp_calculate_image_srcset_meta hears it.
     $image_meta = $image_meta ?? wp_get_attachment_metadata((int) $attachment_id);
-    if (!is_array($image_meta)) {
-        return false;
-    }
     return wp_calculate_image_srcset([absint($image[1]), absint($image[2])], $image[0], $image_meta, (int) $attachment_id);
 }
 
@@ -1182,6 +1180,8 @@ function _minn_media_attach(array $file, int $post_id, $desc, array $post_data)
 {
     $title = $desc ?? preg_replace('/\.[^.]+$/', '', wp_basename($file['file']));
     $attachment = array_merge(['post_mime_type' => $file['type'], 'guid' => $file['url'], 'post_parent' => $post_id, 'post_title' => $title, 'post_content' => ''], (array) $post_data);
+    // An upload is always a new attachment: an ID in the post data never names one to overwrite.
+    unset($attachment['ID']);
     $id = wp_insert_attachment($attachment, $file['file'], $post_id, true);
     if (!is_wp_error($id)) {
         wp_update_attachment_metadata($id, wp_generate_attachment_metadata($id, $file['file']));

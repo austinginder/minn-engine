@@ -9,7 +9,7 @@
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8678,
-        "minnMethods": 1549,
+        "minnMethods": 1548,
         "leafLinesOver15": 8
     },
     "functions": {
@@ -19722,7 +19722,7 @@
         },
         "WP_REST_Comments_Controller::check_read_post_permission": {
             "file": "classes/WP_REST_Comments_Controller.php",
-            "lines": 11,
+            "lines": 15,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -35187,11 +35187,11 @@
         },
         "_get_non_cached_ids": {
             "file": "functions.php",
-            "lines": 8,
+            "lines": 4,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "wp_cache_get"
+                "wp_cache_get_multiple"
             ]
         },
         "_get_page_link": {
@@ -37520,7 +37520,7 @@
         },
         "_minn_media_attach": {
             "file": "media.php",
-            "lines": 7,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -55849,6 +55849,7 @@
             "minn": [
                 "Minn\\Ops\\DirectoryApi::__construct",
                 "Minn\\Ops\\Packages::__construct",
+                "Minn\\Runtime\\Runtime::contentDir",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::site"
             ],
@@ -61867,6 +61868,7 @@
             "minn": [
                 "Minn\\Ops\\DirectoryApi::__construct",
                 "Minn\\Ops\\Packages::__construct",
+                "Minn\\Runtime\\Runtime::contentDir",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::site"
             ],
@@ -66156,15 +66158,16 @@
         },
         "wp_create_nonce": {
             "file": "pluggable.php",
-            "lines": 4,
+            "lines": 5,
             "kind": "minn",
             "minn": [
-                "Minn\\Auth\\Nonce::create"
+                "Minn\\Auth\\Nonce::at"
             ],
             "composes": [
                 "apply_filters",
                 "wp_get_current_user",
-                "wp_get_session_token"
+                "wp_get_session_token",
+                "wp_nonce_tick"
             ]
         },
         "wp_create_post_autosave": {
@@ -68174,7 +68177,7 @@
         },
         "wp_get_attachment_image_srcset": {
             "file": "media.php",
-            "lines": 9,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -74793,10 +74796,11 @@
         },
         "wp_schedule_delete_old_privacy_export_files": {
             "file": "functions.php",
-            "lines": 3,
+            "lines": 6,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "wp_installing",
                 "wp_next_scheduled",
                 "wp_schedule_event"
             ]
