@@ -32,9 +32,10 @@ final readonly class Templates
     }
 
     /**
-     * The template that renders a resolution, or null.
+     * The template that renders a resolution, or null; with the runtime up,
+     * its fields as the template object holds them too.
      *
-     * @return array{slug: string, markup: string}|null
+     * @return array{slug: string, markup: string, fields?: array<string, mixed>}|null
      */
     public function forResolution(Resolution $resolution): ?array
     {
@@ -53,7 +54,7 @@ final readonly class Templates
      * add one or change one, as The Events Calendar and WooCommerce do).
      *
      * @param list<string> $slugs
-     * @return array{slug: string, markup: string}|null
+     * @return array{slug: string, markup: string, fields?: array<string, mixed>}|null
      */
     private function found(array $slugs): ?array
     {
@@ -69,12 +70,12 @@ final readonly class Templates
         $found = [];
         foreach ((array) Handoff::blockTemplates(['slug__in' => $slugs], 'wp_template') as $template) {
             if (is_object($template) && isset($template->slug, $template->content)) {
-                $found[(string) $template->slug] ??= (string) $template->content;
+                $found[(string) $template->slug] ??= $template;
             }
         }
         foreach ($slugs as $slug) {
             if (isset($found[$slug])) {
-                return ['slug' => $slug, 'markup' => $found[$slug]];
+                return ['slug' => $slug, 'markup' => (string) $found[$slug]->content, 'fields' => get_object_vars($found[$slug])];
             }
         }
         return null;

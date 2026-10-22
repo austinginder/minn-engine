@@ -1596,8 +1596,7 @@
             "locate_block_template": {
                 "verdict": "keep",
                 "reason": "scope",
-                "why": "Writes the globals $_wp_current_template_id and $_wp_current_template_content the canvas and plugins read, after trimming the hierarchy and calling resolve_block_template; a _wp-find-template request is answered with the template as JSON.",
-                "doubt": "The _wp-find-template JSON is answered here, but the engine's page renderer does not route a served request through locate_block_template, so the site editor's request still gets the page.",
+                "why": "Writes the globals $_wp_current_template_id and $_wp_current_template_content the canvas and plugins read, after trimming the hierarchy and calling resolve_block_template; a _wp-find-template request is answered with the template as JSON. Doubt settled (2026-10-22): a served request asking ?_wp-find-template is answered by the engine's front (FrontController::themed, the template's fields under the page's status), identical to the reference's (suite templates).",
                 "body": "7189459676de"
             },
             "parse_blocks": {

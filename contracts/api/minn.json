@@ -50729,7 +50729,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FrontController.php",
-            "lines": 129,
+            "lines": 134,
             "doc": "The public site. One catch-all route: resolve the URL, then either\nredirect or render, through the active block theme when there is one,\nthe classic PHP template runner when the theme is classic, and the\ninterim template otherwise.",
             "implements": [],
             "extends": null,
@@ -50748,6 +50748,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Json",
                 "Minn\\Runtime\\LegacyPack",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer",
@@ -50829,8 +50830,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 41
+                "line": 31,
+                "end": 42
             },
             "cases": [],
             "constants": [],
@@ -50927,8 +50928,8 @@
                     "doc": "The themed (or interim) 404 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 44,
-                    "end": 47
+                    "line": 45,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -50947,8 +50948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 63
+                    "line": 55,
+                    "end": 69
                 },
                 {
                     "routes": [
@@ -50969,8 +50970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 79
+                    "line": 73,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -50989,8 +50990,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 114
+                    "line": 87,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -51009,8 +51010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 134
+                    "line": 128,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -51036,8 +51037,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 155
+                    "line": 143,
+                    "end": 161
                 }
             ]
         },
@@ -77013,6 +77014,7 @@
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Manifest",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Front\\FrontController",
                 "Minn\\Html",
                 "Minn\\Http",
                 "Minn\\Http\\Exchange",
@@ -194185,7 +194187,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/PageRenderer.php",
-            "lines": 207,
+            "lines": 218,
             "doc": "A whole page from the active block theme: the template the resolution\nmaps to, rendered against the main query, inside the document shell the\nreference emits (skip link, wp-site-blocks, the skip-link target on the\nfirst main element).",
             "implements": [],
             "extends": null,
@@ -194459,6 +194461,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "foundTemplate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "foundTemplate(Minn\\Front\\Resolution $resolution): ?array",
+                    "doc": "The fields of the template that renders a resolution, as the site\neditor asks for them (?_wp-find-template); null without one.",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 120,
+                    "end": 123
+                },
+                {
+                    "routes": [],
                     "name": "render",
                     "static": false,
                     "visibility": "public",
@@ -194481,8 +194505,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 135
+                    "line": 126,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -194524,8 +194548,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 195
+                    "line": 154,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -194546,8 +194570,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 209
+                    "line": 214,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -194580,8 +194604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 241
+                    "line": 229,
+                    "end": 252
                 }
             ]
         },
@@ -197718,7 +197742,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/Templates.php",
-            "lines": 250,
+            "lines": 251,
             "doc": "Which template renders a resolution, and where its markup comes from:\na wp_template post saved from the site editor (matched by slug and the\ntheme term) wins over the theme's file. Parts resolve the same way\nthrough wp_template_part.",
             "implements": [],
             "extends": null,
@@ -197826,9 +197850,9 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "forResolution(Minn\\Front\\Resolution $resolution): ?array",
-                    "doc": "The template that renders a resolution, or null.",
+                    "doc": "The template that renders a resolution, or null; with the runtime up,\nits fields as the template object holds them too.",
                     "shapes": [
-                        "@return array{slug: string, markup: string}|null"
+                        "@return array{slug: string, markup: string, fields?: array<string, mixed>}|null"
                     ],
                     "params": [
                         {
@@ -197839,8 +197863,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 48
+                    "line": 40,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -197859,8 +197883,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -197879,8 +197903,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -197901,8 +197925,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 109
+                    "line": 102,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -197913,8 +197937,8 @@
                     "doc": "The site editor's saved global styles for the active theme, when any.\nAn emptied node is stored as [] and reads as nothing, the way the\nreference reads it; a list where a map belongs is dropped the same way.",
                     "shapes": [],
                     "params": [],
-                    "line": 175,
-                    "end": 183
+                    "line": 176,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -197925,8 +197949,8 @@
                     "doc": "Has the theme's saved templates (and its term) read, if they are not yet: the template-part lookup answers from them.",
                     "shapes": [],
                     "params": [],
-                    "line": 223,
-                    "end": 226
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -197947,8 +197971,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 238
+                    "line": 235,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -197967,8 +197991,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 248
+                    "line": 242,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -197979,7 +198003,7 @@
                     "doc": "The first of these slugs a template answers, in their order. With the runtime up the answer is the\nreference's: the templates get_block_templates finds for the slugs (its pre and result filters let a plugin\nadd one or change one, as The Events Calendar and WooCommerce do).",
                     "shapes": [
                         "@param list<string> $slugs",
-                        "@return array{slug: string, markup: string}|null"
+                        "@return array{slug: string, markup: string, fields?: array<string, mixed>}|null"
                     ],
                     "params": [
                         {
@@ -197990,8 +198014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 81
+                    "line": 59,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -198020,8 +198044,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 129
+                    "line": 122,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -198042,8 +198066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 168
+                    "line": 140,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -198056,8 +198080,8 @@
                         "@return array<string, list<array<string, mixed>>>"
                     ],
                     "params": [],
-                    "line": 193,
-                    "end": 220
+                    "line": 194,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -198083,8 +198107,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 254
+                    "line": 251,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -198112,8 +198136,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 272
+                    "line": 264,
+                    "end": 273
                 }
             ]
         },

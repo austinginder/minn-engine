@@ -211,6 +211,17 @@ foreach ( (array) @scandir( $dir, SCANDIR_SORT_NONE ) as $entry ) {
 }
 check( $disk === array_column( (array) $ids, 'id' ), 'theme files list in directory order', implode( ',', $disk ) );
 
+// The site editor asks a page which template it gets (?_wp-find-template): the template, as JSON, to
+// anyone; a redirect and a 404 answer as the page would.
+foreach ( array( '/?_wp-find-template=true', '/sample-page/?_wp-find-template=true', '/?p=1&_wp-find-template', '/zz-no-such-page/?_wp-find-template=1' ) as $path ) {
+	$answers = array();
+	foreach ( array( $REF, $ENGINE ) as $base ) {
+		[ $page, $body ] = minn_test_fetch( $base . $path, 15 );
+		$answers[] = array( $page['status'], (string) $body );
+	}
+	check( $answers[0] === $answers[1] && ( 404 === $answers[0][0] || str_contains( $answers[0][1], '"success":true' ) || '' === $answers[0][1] ), "the template a page gets: $path ({$answers[0][0]})", substr( (string) $answers[1][1], 0, 200 ) );
+}
+
 tpl_cleanup();
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

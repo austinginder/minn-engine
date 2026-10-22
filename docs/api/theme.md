@@ -23,7 +23,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 136 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 207 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 218 | A whole page from the active block theme: the template the resolution |
 | [`PatternHeaders`](#patternheaders) | final class | 78 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 234 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
@@ -40,7 +40,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 35 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 125 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 250 | Which template renders a resolution, and where its markup comes from: |
+| [`Templates`](#templates) | final readonly class | 251 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 358 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeHeaders`](#themeheaders) | final class | 95 | A theme's headers as the reference's WP_Theme reads and shows them |
 | [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
@@ -793,11 +793,18 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 - `@return list<string>`
 
+### `foundTemplate(Minn\Front\Resolution $resolution): ?array`
+
+The fields of the template that renders a resolution, as the site
+editor asks for them (?_wp-find-template); null without one.
+
+- `@return array<string, mixed>|null`
+
 ### `render(Minn\Front\Resolution $resolution, array $coreClasses): ?string`
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `document()` (private, line 143), `skipLinkTarget()` (private, line 203), `head()` (private, line 218)
+Internals: `document()` (private, line 154), `skipLinkTarget()` (private, line 214), `head()` (private, line 229)
 
 
 ## PatternHeaders
@@ -1391,9 +1398,10 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Theme\Theme $theme, ?Mi
 
 ### `forResolution(Minn\Front\Resolution $resolution): ?array`
 
-The template that renders a resolution, or null.
+The template that renders a resolution, or null; with the runtime up,
+its fields as the template object holds them too.
 
-- `@return array{slug: string, markup: string}|null`
+- `@return array{slug: string, markup: string, fields?: array<string, mixed>}|null`
 
 ### `template(string $slug): ?string`
 
@@ -1431,7 +1439,7 @@ part of the theme by that name, or none.
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `found()` (private, line 58), `filtered()` (private, line 121), `groups()` (private, line 139), `savedOfTheme()` (private, line 193), `saved()` (private, line 250), `savedRow()` (private, line 263)
+Internals: `found()` (private, line 59), `filtered()` (private, line 122), `groups()` (private, line 140), `savedOfTheme()` (private, line 194), `saved()` (private, line 251), `savedRow()` (private, line 264)
 
 
 ## Theme

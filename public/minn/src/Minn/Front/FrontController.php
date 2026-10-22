@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Json;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
@@ -55,6 +56,11 @@ final readonly class FrontController
     {
         $page = $this->bridge->stand($resolution);
         $resolution = MainQueryBridge::verdict($resolution);
+        // The site editor asks which template a page gets: the answer is the template, as JSON (wp_send_json_success), to anyone, under the page's status.
+        $found = array_key_exists('_wp-find-template', Runtime::current()->request?->query ?? []) ? $this->theme?->foundTemplate($resolution) : null;
+        if ($found !== null) {
+            return new Response($resolution->status, ['Content-Type' => 'application/json; charset=UTF-8'], Json::encode(['success' => true, 'data' => $found], Json::ESCAPED));
+        }
         $classes = $this->renderer->bodyClasses();
         $html = $this->theme?->render($resolution, $classes)
             ?? $this->classic?->render($resolution, $classes)

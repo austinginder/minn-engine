@@ -111,6 +111,17 @@ final readonly class PageRenderer
         return $classes;
     }
 
+    /**
+     * The fields of the template that renders a resolution, as the site
+     * editor asks for them (?_wp-find-template); null without one.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function foundTemplate(Resolution $resolution): ?array
+    {
+        return $this->templates->forResolution($resolution)['fields'] ?? null;
+    }
+
     /** The page for a resolution, or null when the theme has no template for it. */
     public function render(Resolution $resolution, array $coreClasses): ?string
     {
