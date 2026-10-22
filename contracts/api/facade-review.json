@@ -20694,8 +20694,7 @@
             "wp_authenticate_cookie": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "the authenticate callback: an empty sign-in asks wp_validate_auth_cookie (pluggable) and reports an expired session when the cookie the global $auth_secure_cookie names is still sent",
-                "doubt": "unmeasured on a served request, where wp_validate_auth_cookie() answers from the engine's logged_in session rather than the auth cookie; the CLI runner cannot show it",
+                "why": "the authenticate callback: an empty sign-in asks wp_validate_auth_cookie (pluggable) and reports an expired session when the cookie the global $auth_secure_cookie names is still sent. Doubt settled (2026-10-22): measured on a served request, the engine's sign-in now adds it at 30 with $auth_secure_cookie from secure_signon_cookie, as wp_signon does, so empty credentials with a valid secure auth cookie sign in on both stacks and a logged-in cookie alone does not (suite login-endpoint).",
                 "body": "c00183d90cf2"
             },
             "wp_authenticate_email_password": {

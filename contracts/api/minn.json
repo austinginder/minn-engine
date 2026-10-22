@@ -78807,7 +78807,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginHooks.php",
-            "lines": 143,
+            "lines": 149,
             "doc": "The sign-in as plugins see it, when they are loaded. The credentials go\nthrough the reference's authenticate chain, so a plugin may refuse a\nsign-in (a breached password, a second factor, a locked account) or\naccept one the password alone would not; wp_login_failed is the chain's\nown report. wp_login follows a good sign-in and wp_logout a sign-out.\nThe refusal is shown as the page's notices (LoginNotices): the chain's\nown as one vague sentence, a plugin's in its own words.",
             "implements": [],
             "extends": null,
@@ -78883,7 +78883,7 @@
                         }
                     ],
                     "line": 38,
-                    "end": 46
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -78902,8 +78902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 61
+                    "line": 60,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -78922,8 +78922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 68
+                    "line": 70,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -78979,8 +78979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 108
+                    "line": 88,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -79013,8 +79013,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -79047,8 +79047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -79067,8 +79067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 126
+                    "line": 129,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -79089,8 +79089,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 147
+                    "line": 144,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -79116,8 +79116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 161
+                    "line": 161,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -79136,8 +79136,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 167
+                    "line": 170,
+                    "end": 173
                 }
             ]
         },

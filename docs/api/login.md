@@ -6,7 +6,7 @@
 |---|---|---|---|
 | [`LoginController`](#logincontroller) | final readonly class | 557 | Signing in. The page people see is /minn-admin/login: the form, the |
 | [`LoginForm`](#loginform) | final class | 263 | The sign-in page markup. |
-| [`LoginHooks`](#loginhooks) | final readonly class | 143 | The sign-in as plugins see it, when they are loaded. The credentials go |
+| [`LoginHooks`](#loginhooks) | final readonly class | 149 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`LoginNotices`](#loginnotices) | final readonly class | 113 | What a sign-in page tells the reader, held as the reference's pages hold |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 

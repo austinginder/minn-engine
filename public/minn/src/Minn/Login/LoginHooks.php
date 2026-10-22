@@ -38,6 +38,12 @@ final readonly class LoginHooks
     public function authenticate(string $login, string $password): UserRecord|Errors|null
     {
         Runtime::hooks()->actionRefArray('wp_authenticate', [&$login, &$password]);
+        // As wp_signon signs in: whether its cookies are secure (secure_signon_cookie), told to the cookie check it
+        // adds, which lets a valid auth cookie stand in for empty credentials (wp_authenticate_cookie).
+        $request = Runtime::current()->request;
+        $credentials = ['user_login' => $login, 'user_password' => $password, 'remember' => !empty($request?->form['rememberme'])];
+        $GLOBALS['auth_secure_cookie'] = (bool) Runtime::hooks()->filter('secure_signon_cookie', [(bool) ($request?->secure ?? false), $credentials]);
+        Runtime::hooks()->add('authenticate', 'wp_authenticate_cookie', 30, 3);
         $result = Handoff::authenticate($login, $password);
         if ($result instanceof User) {
             return $this->users->find((int) $result->ID);

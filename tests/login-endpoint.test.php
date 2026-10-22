@@ -189,6 +189,18 @@ if ( $uid > 1 ) {
 		$wp( "eval 'WP_Session_Tokens::get_instance($uid)->destroy_all();'" );
 	}
 	check( null === minn_test_diff( $asked['reference'], $asked['engine'] ) && 403 === $asked['reference'][0], 'a signed-in log out without a nonce is asked again, as the reference asks', (string) minn_test_diff( $asked['reference'], $asked['engine'] ) );
+	// Empty credentials with a valid secure auth cookie sign in again (wp_signon's cookie check): a redirect and fresh
+	// cookies on both stacks (where to, the engine's admin by design); with only the logged-in cookie, the form again.
+	$again = array();
+	foreach ( array( 'reference' => $REF, 'engine' => $ENGINE ) as $who => $base ) {
+		$mint = (array) json_decode( $wp( 'eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-logout.php" ) . " $uid" ), true );
+		foreach ( array( 'secure', 'logged_in' ) as $which ) {
+			[ $cs, $ch ] = http( 'POST', "$base/wp-login.php", array( 'Content-Type: application/x-www-form-urlencoded', 'Cookie: wordpress_test_cookie=WP%20Cookie%20check; ' . implode( '=', (array) ( $mint[ $which ] ?? array() ) ) ), 'log=&pwd=&wp-submit=Log+In&testcookie=1' );
+			$again[ $who ][ $which ] = array( $cs, count( array_filter( $ch['set-cookie'], static fn ( string $c ): bool => str_starts_with( $c, 'wordpress_logged_in_' ) && ! str_contains( $c, '=%20' ) ) ) > 0 );
+		}
+		$wp( "eval 'WP_Session_Tokens::get_instance($uid)->destroy_all();'" );
+	}
+	check( $again['reference'] === $again['engine'] && array( 302, true ) === $again['reference']['secure'], 'empty credentials with a valid auth cookie sign in again, as on the reference', json_encode( $again ) );
 	$d = minn_test_diff( $seen['reference'], $seen['engine'] );
 	check( null === $d && count( $seen['reference'][2] ) >= 17, 'a signed-in log out expires the reference\'s cookies, in its order, and names the language', (string) $d );
 	$wp( "user delete $uid --yes" );
