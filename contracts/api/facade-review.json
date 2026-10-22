@@ -12433,8 +12433,7 @@
             "_minn_block_post_comments_link": {
                 "verdict": "move",
                 "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
-                "why": "picks the No comments or N comments text and its target (the form or the comments), hiding it when closed and empty, the wrapper asked for the link colour class; comment block markup by rules",
-                "doubt": "the link colour's wp-elements-N class comes from WP_Block::render here and from render_block on the reference (renderer-wide, register 18098), so the block rendered through WP_Block alone still differs",
+                "why": "picks the No comments or N comments text and its target (the form or the comments), hiding it when closed and empty, the wrapper asked for the link colour class; comment block markup by rules. Doubt fixed 2026-10-22: through WP_Block alone neither stack adds the element class (probe block-class-stages).",
                 "body": "8ca4d953f8b9"
             },
             "_minn_block_post_time_to_read": {
