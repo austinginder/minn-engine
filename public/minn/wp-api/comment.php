@@ -1098,8 +1098,10 @@ function wp_new_comment_notify_moderator($comment_id)
 function wp_new_comment_notify_postauthor($comment_id)
 {
     $comment = get_comment($comment_id);
-    $notify = apply_filters('notify_post_author', get_option('comments_notify'), (int) $comment_id);
-    if (!$notify || $comment === null || (string) $comment->comment_approved !== '1') {
+    // A note is judged by wp_notes_notify and goes out unapproved; a comment by comments_notify once approved.
+    $note = $comment !== null && $comment->comment_type === 'note';
+    $notify = apply_filters('notify_post_author', get_option($note ? 'wp_notes_notify' : 'comments_notify'), (int) $comment_id);
+    if (!$notify || $comment === null || (!$note && (string) $comment->comment_approved !== '1')) {
         return false;
     }
     return wp_notify_postauthor((int) $comment_id);

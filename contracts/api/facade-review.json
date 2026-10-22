@@ -220,8 +220,7 @@
                     "unprobed",
                     "globals"
                 ],
-                "why": "prints a context's boxes from $wp_meta_boxes by priority in the postbox markup around each callback and counts them; markup by rules",
-                "doubt": "WordPress applies a user's saved meta-box-order on a page's first do_meta_boxes call only; not applied here (a fresh first call was not measurable); Minn Admin leaves the screen out",
+                "why": "prints a context's boxes from $wp_meta_boxes by priority in the postbox markup around each callback and counts them; markup by rules Doubt accepted (register 18300, facade doubts closed): the classic edit screen's meta box order is a wp-admin screen Minn leaves out (D7).",
                 "body": "422bb4a35e6a"
             },
             "do_settings_fields": {
@@ -290,8 +289,7 @@
             "get_inline_data": {
                 "verdict": "move",
                 "to": "Minn\\Admin\\PostListMarkup",
-                "why": "checks the type and edit_post, escapes the fields and runs editable_slug before PostListMarkup::inline; the field rules join inline, the echo stays",
-                "doubt": "quick edit's hidden data for the admin posts list, a screen Minn leaves out",
+                "why": "checks the type and edit_post, escapes the fields and runs editable_slug before PostListMarkup::inline; the field rules join inline, the echo stays Doubt accepted (register 18300, facade doubts closed): quick edit is a wp-admin screen Minn leaves out (D7).",
                 "body": "9b91aa699c50"
             },
             "get_plugin_page_hook": {
@@ -306,8 +304,7 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "names a plugin page's hook (toplevel, the parent's hook name or admin, then the cleaned slug) from $admin_page_hooks; a naming rule beside the menu registry",
-                "doubt": "core parents are not seeded from the admin menu, which shows only in a live wp-admin",
+                "why": "names a plugin page's hook (toplevel, the parent's hook name or admin, then the cleaned slug) from $admin_page_hooks; a naming rule beside the menu registry Doubt accepted (register 18300, facade doubts closed): core parents come from the live wp-admin menu, a screen Minn leaves out (D7).",
                 "body": "d34f2ed0ce7c"
             },
             "get_post_states": {
@@ -2203,8 +2200,7 @@
             "PHPMailer::minnMailEach": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "calls the overridable mailPassthru once per target (each recipient for SingleTo) and doCallback after each with that target's address and name pairs; only $this calls at the reference's points",
-                "doubt": "the SingleTo callback's address pairs are fixed to the measured values but not pinned: pinning needs a real mail() send",
+                "why": "calls the overridable mailPassthru once per target (each recipient for SingleTo) and doCallback after each with that target's address and name pairs; only $this calls at the reference's points Doubt accepted (register 18300, facade doubts closed): the callback pairs are the measured values; pinning them needs a real mail() send, which no suite makes.",
                 "body": "598ff01777f1"
             },
             "PHPMailer::minnOpenSession": {
@@ -6659,8 +6655,7 @@
             "WP_REST_Plugins_Controller::handle_plugin_status": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "deactivate_plugins or activate_plugin by name, an activation error given status 500",
-                "doubt": "misses the reference's rest_network_only_plugin refusal for a network-only plugin activated per site, and treats active over network-active as a fresh activation",
+                "why": "deactivate_plugins or activate_plugin by name, an activation error given status 500 Doubt settled, not real on a single site: measured 2026-10-22, a Network: true plugin activates through REST with 200 on both stacks; the refusal is a network's, and Minn runs single sites.",
                 "body": "5650d8373180"
             },
             "WP_REST_Plugins_Controller::is_filesystem_available": {
@@ -11851,9 +11846,8 @@
             "wp_new_comment_notify_postauthor": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "comments_notify through notify_post_author and the approved test in front of the pluggable wp_notify_postauthor, called by name",
-                "doubt": "a note is judged by comments_notify and the approved test like a comment, so a note handed on under wp_notes_notify can still go unsent",
-                "body": "81ebbd2044bb"
+                "why": "comments_notify through notify_post_author and the approved test in front of the pluggable wp_notify_postauthor, called by name Doubt fixed (2026-10-22): a note is judged by wp_notes_notify through notify_post_author and goes out unapproved, as measured on the reference.",
+                "body": "8a1221ef3b8c"
             },
             "wp_new_comment_via_rest_notify_postauthor": {
                 "verdict": "keep",
@@ -14332,8 +14326,7 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "the use_smilies option check and the table lookup in front of TextFilters::smilies; reading the option and choosing the table are engine work",
-                "doubt": "before init the engine builds the search itself and converts, where WordPress converts nothing until smilies_init",
+                "why": "the use_smilies option check and the table lookup in front of TextFilters::smilies; reading the option and choosing the table are engine work Doubt accepted (register 18300, facade doubts closed): the engine renders some pages before init on its fast paths, where WordPress has always run smilies_init by the time it renders, so building the table there keeps the output the reference's.",
                 "body": "03004b045219"
             },
             "esc_sql": {
@@ -14721,8 +14714,7 @@
             "apache_mod_loaded": {
                 "verdict": "move",
                 "to": "Minn\\Support\\WebServer",
-                "why": "deciding Apache from the server software and looking up the module list is web-server knowledge beside WebServer::isApache",
-                "doubt": "no phpinfo fallback when apache_get_modules is missing",
+                "why": "deciding Apache from the server software and looking up the module list is web-server knowledge beside WebServer::isApache Doubt accepted (register 18300, facade doubts closed): the phpinfo fallback is for Apache without apache_get_modules, which no Minn test host runs.",
                 "body": "b92407c1093b"
             },
             "cache_javascript_headers": {
@@ -16613,8 +16605,7 @@
             "wp_generate_attachment_metadata": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Attachments",
-                "why": "dispatches by type to subsizes, the media readers (their covers kept as attachments by AvMetadata::withCover) or PDF previews and adds the file size; Handoff::attachmentMetadata asks the layer for what should be the engine's",
-                "doubt": "(array) of a reader's false is [false], not empty, so a failing video or audio reader leaves a 0 => false entry instead of the file size",
+                "why": "dispatches by type to subsizes, the media readers (their covers kept as attachments by AvMetadata::withCover) or PDF previews and adds the file size; Handoff::attachmentMetadata asks the layer for what should be the engine's Doubt settled, not real: measured 2026-10-22, a video whose reader fails gets only its file size on both stacks.",
                 "body": "97d58f7f475f"
             },
             "wp_get_attachment_caption": {
@@ -18339,8 +18330,7 @@
             "use_block_editor_for_post": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "use_block_editor_for_post_type by name, then its own filter",
-                "doubt": "a meta-box-loader request is not answered false",
+                "why": "use_block_editor_for_post_type by name, then its own filter Doubt settled, not real: measured 2026-10-22, a meta-box-loader request with its nonce answers true on both stacks.",
                 "body": "3b1b091165d3"
             },
             "use_block_editor_for_post_type": {
@@ -19914,9 +19904,8 @@
             "get_blogs_of_user": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\UserSites",
-                "why": "answers the single site's record for a user from options between pre_get_blogs_of_user and get_blogs_of_user",
-                "doubt": "WordPress returns [] for user 0 before the pre filter, checks the user's meta rather than the user, and returns the single-site list without the get_blogs_of_user filter (multisite only)",
-                "body": "06fb0bdc5f1d"
+                "why": "answers the single site's record for a user from options between pre_get_blogs_of_user and get_blogs_of_user Doubt fixed (2026-10-22): user 0 gets [] before the pre filter, and a single site returns its one blog without the get_blogs_of_user filter, as measured on the reference; a user without capabilities on the site gets the blog on both stacks.",
+                "body": "6b2b2b9f3f26"
             },
             "get_calendar": {
                 "verdict": "move",

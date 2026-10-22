@@ -419,7 +419,10 @@ function get_super_admins()
 
 function get_blogs_of_user($user_id, $all = false)
 {
-    // A plugin may answer for the list (probe hook-inputs).
+    // Nobody belongs to no site, before any plugin is asked; otherwise a plugin may answer for the list (probe hook-inputs).
+    if ((int) $user_id === 0) {
+        return [];
+    }
     $pre = apply_filters('pre_get_blogs_of_user', null, (int) $user_id, $all);
     if ($pre !== null) {
         return $pre;
@@ -428,8 +431,8 @@ function get_blogs_of_user($user_id, $all = false)
     if (!$user) {
         return [];
     }
-    $blogs = [1 => (object) ['userblog_id' => 1, 'blogname' => get_option('blogname'), 'domain' => '', 'path' => '', 'site_id' => 1, 'siteurl' => get_option('siteurl'), 'archived' => 0, 'spam' => 0, 'deleted' => 0]];
-    return apply_filters('get_blogs_of_user', $blogs, (int) $user_id, $all);
+    // A single site's one blog; the get_blogs_of_user filter is for a network's list.
+    return [1 => (object) ['userblog_id' => 1, 'blogname' => get_option('blogname'), 'domain' => '', 'path' => '', 'site_id' => 1, 'siteurl' => get_option('siteurl'), 'archived' => 0, 'spam' => 0, 'deleted' => 0]];
 }
 
 function _wp_to_kebab_case($input_string)

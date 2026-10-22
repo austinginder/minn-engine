@@ -47507,7 +47507,7 @@
         },
         "get_blogs_of_user": {
             "file": "template.php",
-            "lines": 11,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -72189,7 +72189,7 @@
         },
         "wp_new_comment_notify_postauthor": {
             "file": "comment.php",
-            "lines": 6,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
