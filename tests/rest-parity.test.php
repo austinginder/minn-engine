@@ -434,6 +434,19 @@ foreach ( $cases as $label => $case ) {
 	$ok ? $pass++ : $fail++;
 	echo ( $ok ? '  ok   ' : '  FAIL ' ) . "directories and nonces: $label" . ( $ok ? '' : "\n      " . substr( json_encode( $seen[0] ), 0, 400 ) . "\n      " . substr( json_encode( $seen[1] ), 0, 400 ) ) . "\n";
 }
+// The root index tells someone who may upload how the browser processes images, and someone who
+// may edit posts where the active theme is (its routes and namespaces aside).
+foreach ( array( 'signed out' => null, 'an author' => $author, 'an administrator' => $admin ) as $label => $session ) {
+	$seen = array();
+	foreach ( array( $REF, $ENGINE ) as $base ) {
+		$answer = $ask( $base, '/wp-json/', $session );
+		unset( $answer[1]['routes'], $answer[1]['namespaces'] );
+		$seen[] = $answer;
+	}
+	$ok = $seen[0] === $seen[1] && ( null === $session || isset( $seen[0][1]['image_sizes'], $seen[0][1]['_links']['wp:active-theme'] ) );
+	$ok ? $pass++ : $fail++;
+	echo ( $ok ? '  ok   ' : '  FAIL ' ) . "directories and nonces: the root index for $label" . ( $ok ? '' : "\n      " . substr( json_encode( $seen[0] ), 0, 400 ) . "\n      " . substr( json_encode( $seen[1] ), 0, 400 ) ) . "\n";
+}
 $wp( 'eval ' . escapeshellarg( 'delete_site_transient(' . var_export( $key, true ) . ');' ) );
 foreach ( array( 1 => $admin, 3 => $author ) as $id => $session ) {
 	$wp( 'eval ' . escapeshellarg( "WP_Session_Tokens::get_instance($id)->destroy(" . var_export( (string) $session['token'], true ) . ');' ) );

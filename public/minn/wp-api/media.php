@@ -66,19 +66,9 @@ function get_intermediate_image_sizes()
     return apply_filters('intermediate_image_sizes', array_keys(_minn_image_sizes()));
 }
 
-/** The sizes get_intermediate_image_sizes names (its intermediate_image_sizes filter heard), each with its width, height and crop. */
 function wp_get_registered_image_subsizes()
 {
-    // Every name the filter lists: one the engine does not know is read from its options; a size of neither width nor height is left out (probe media-template-doubts).
-    $sizes = _minn_image_sizes();
-    $out = [];
-    foreach (get_intermediate_image_sizes() as $name) {
-        $size = $sizes[$name] ?? ['width' => get_option("{$name}_size_w"), 'height' => get_option("{$name}_size_h"), 'crop' => get_option("{$name}_crop")];
-        if ((int) $size['width'] > 0 || (int) $size['height'] > 0) {
-            $out[$name] = ['width' => (int) $size['width'], 'height' => (int) $size['height'], 'crop' => is_array($size['crop']) ? $size['crop'] : (bool) $size['crop']];
-        }
-    }
-    return $out;
+    return Minn\Runtime\AttachmentImages::subsizes();
 }
 
 function wp_constrain_dimensions($current_width, $current_height, $max_width = 0, $max_height = 0)
@@ -438,17 +428,9 @@ function wp_get_chromium_major_version()
     return preg_match('#Chrome/(\d+)#', (string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), $m) === 1 ? (int) $m[1] : null;
 }
 
-/**
- * Whether images are processed in the browser before upload (probe
- * rest-attachments-controller): in a secure context, which is HTTPS or a
- * host of localhost or under .localhost (its port aside; 127.0.0.1 is not
- * one), through wp_client_side_media_processing_enabled.
- */
 function wp_is_client_side_media_processing_enabled()
 {
-    $host = strtolower((string) preg_replace('/:\d+$/', '', (string) ($_SERVER['HTTP_HOST'] ?? '')));
-    $secure = is_ssl() || $host === 'localhost' || str_ends_with($host, '.localhost');
-    return apply_filters('wp_client_side_media_processing_enabled', $secure);
+    return Minn\Runtime\AttachmentImages::browserProcessing(is_ssl() ? 'https' : 'http', (string) ($_SERVER['HTTP_HOST'] ?? ''));
 }
 
 /** @internal runs a new attachment's sizing with none made (generate_sub_sizes false) or none converted (convert_format false), as a REST upload asks */

@@ -104641,6 +104641,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\GlobalStylesObject",
+                "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
@@ -109202,7 +109203,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/IndexController.php",
-            "lines": 66,
+            "lines": 106,
             "doc": "The API index at /wp-json/: the site facts monitors read (name, url,\nhome, namespaces) and the routes this engine serves, described from its\nown router rather than the reference's full schema; and the index of one\nnamespace at /wp-json/{namespace}, the same routes narrowed.",
             "implements": [],
             "extends": null,
@@ -109218,16 +109219,20 @@
                 "Minn\\Http\\Route",
                 "Minn\\Http\\RouteMiss",
                 "Minn\\RestError",
+                "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Fields",
+                "Minn\\Rest\\Links",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
-                "Minn\\Rest\\RouteCatalogue"
+                "Minn\\Rest\\RouteCatalogue",
+                "Minn\\Runtime\\AttachmentImages",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Rest\\RestUrl $url, Minn\\Rest\\RouteCatalogue $catalogue)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Rest\\RestUrl $url, Minn\\Rest\\RouteCatalogue $catalogue, Minn\\Rest\\Caller $caller)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -109258,11 +109263,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 33
+                "line": 29,
+                "end": 36
             },
             "cases": [],
             "constants": [],
@@ -109302,6 +109314,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -109324,8 +109345,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 58
+                    "line": 40,
+                    "end": 62
                 },
                 {
                     "routes": [
@@ -109353,8 +109374,44 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 89
+                    "line": 112,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "imageSettings",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "imageSettings(Minn\\Http\\Request $request): array",
+                    "doc": "How the browser processes images before upload, for someone who may\nupload when it does: the registered sizes, the big-image threshold,\nwhether metadata is stripped and the deepest bit depth kept, each\nthrough its filter as the editor hears it.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "themeLink",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "themeLink(): array",
+                    "doc": "The active theme's link, for someone who may switch themes, manage\nthe network's or edit posts, as the reference links it (with the\ncuries its relation needs).",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 93,
+                    "end": 100
                 }
             ]
         },
@@ -109739,6 +109796,7 @@
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\FontCollectionsController",
                 "Minn\\Rest\\FontObject",
+                "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\TemplateRevisionsController"
             ],
             "constructor": null,
@@ -133359,7 +133417,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AttachmentImages.php",
-            "lines": 424,
+            "lines": 459,
             "doc": "An attachment's image as WordPress's media functions make it: the\nregistered sizes, a size fitted to a box, the file for a size (or an\nicon), the srcset and sizes pair, the loading attributes an image earns\nwhere it sits, the img element itself, and the site icon.",
             "implements": [],
             "extends": null,
@@ -133385,6 +133443,7 @@
                 "Minn\\Front\\FeedTags",
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Front\\ToolbarMenus",
+                "Minn\\Rest\\IndexController",
                 "Minn\\Runtime\\AttachmentModel"
             ],
             "constructor": null,
@@ -133705,6 +133764,47 @@
                 },
                 {
                     "routes": [],
+                    "name": "subsizes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "subsizes(): array",
+                    "doc": "The sizes get_intermediate_image_sizes names (its\nintermediate_image_sizes filter heard), each with its width, height\nand crop: a name no size is registered under is read from its\noptions, and one of neither width nor height is left out (probe\nmedia-template-doubts).",
+                    "shapes": [
+                        "@return array<string, array{width: int, height: int, crop: bool|array<mixed>}>"
+                    ],
+                    "params": [],
+                    "line": 221,
+                    "end": 233
+                },
+                {
+                    "routes": [],
+                    "name": "browserProcessing",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "browserProcessing(string $scheme, string $host): bool",
+                    "doc": "Whether images are processed in the browser before upload (probe\nrest-attachments-controller): in a secure context, which is HTTPS or\na host of localhost or under .localhost (its port aside; 127.0.0.1\nis not one), through wp_client_side_media_processing_enabled.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "scheme",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "host",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 241,
+                    "end": 245
+                },
+                {
+                    "routes": [],
                     "name": "sizesAttribute",
                     "static": true,
                     "visibility": "public",
@@ -133741,8 +133841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 234
+                    "line": 248,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -133761,8 +133861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 240
+                    "line": 272,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -133788,8 +133888,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 253
+                    "line": 278,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -133815,8 +133915,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 259
+                    "line": 291,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -133849,8 +133949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 289
+                    "line": 302,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -133879,8 +133979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 305
+                    "line": 333,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -133937,8 +134037,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 336
+                    "line": 349,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -133978,8 +134078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 364
+                    "line": 379,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -134012,8 +134112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 367,
-                    "end": 377
+                    "line": 402,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -134032,8 +134132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 380,
-                    "end": 383
+                    "line": 415,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -134077,8 +134177,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 394,
-                    "end": 416
+                    "line": 429,
+                    "end": 451
                 },
                 {
                     "routes": [],
@@ -134122,8 +134222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 429,
-                    "end": 443
+                    "line": 464,
+                    "end": 478
                 }
             ]
         },
@@ -165911,6 +166011,7 @@
                 "Minn\\Rest\\FontCollectionsController",
                 "Minn\\Rest\\FontFaceRecord",
                 "Minn\\Rest\\FontsController",
+                "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\ItemRender",
                 "Minn\\Rest\\LiveSettings",

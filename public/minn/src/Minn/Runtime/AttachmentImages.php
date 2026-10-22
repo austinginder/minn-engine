@@ -209,6 +209,41 @@ final class AttachmentImages
         return Sizing::srcset(is_array($sources) ? $sources : []) ?? false;
     }
 
+    /**
+     * The sizes get_intermediate_image_sizes names (its
+     * intermediate_image_sizes filter heard), each with its width, height
+     * and crop: a name no size is registered under is read from its
+     * options, and one of neither width nor height is left out (probe
+     * media-template-doubts).
+     *
+     * @return array<string, array{width: int, height: int, crop: bool|array<mixed>}>
+     */
+    public static function subsizes(): array
+    {
+        $sizes = self::sizes();
+        $options = Runtime::options();
+        $out = [];
+        foreach ((array) Runtime::hooks()->filter('intermediate_image_sizes', [array_keys($sizes)]) as $name) {
+            $size = $sizes[$name] ?? ['width' => $options->filtered("{$name}_size_w"), 'height' => $options->filtered("{$name}_size_h"), 'crop' => $options->filtered("{$name}_crop")];
+            if ((int) $size['width'] > 0 || (int) $size['height'] > 0) {
+                $out[(string) $name] = ['width' => (int) $size['width'], 'height' => (int) $size['height'], 'crop' => is_array($size['crop']) ? $size['crop'] : (bool) $size['crop']];
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Whether images are processed in the browser before upload (probe
+     * rest-attachments-controller): in a secure context, which is HTTPS or
+     * a host of localhost or under .localhost (its port aside; 127.0.0.1
+     * is not one), through wp_client_side_media_processing_enabled.
+     */
+    public static function browserProcessing(string $scheme, string $host): bool
+    {
+        $host = strtolower((string) preg_replace('/:\d+$/', '', $host));
+        return (bool) Runtime::hooks()->filter('wp_client_side_media_processing_enabled', [$scheme === 'https' || $host === 'localhost' || str_ends_with($host, '.localhost')]);
+    }
+
     /** The sizes attribute for an image's width (wp_calculate_image_sizes), as wp_calculate_image_sizes leaves it; false without a width. */
     public static function sizesAttribute(mixed $size, mixed $imageSrc = null, mixed $imageMeta = null, mixed $attachmentId = 0): mixed
     {

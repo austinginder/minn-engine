@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1655
+        "delegates": 1657
     },
     "functions": {
         "__": {
@@ -5472,6 +5472,10 @@
             "file": "cron.php",
             "statement": "return Minn\\Runtime\\CronEvents::ready();"
         },
+        "wp_get_registered_image_subsizes": {
+            "file": "media.php",
+            "statement": "return Minn\\Runtime\\AttachmentImages::subsizes();"
+        },
         "wp_get_root_state_style": {
             "file": "block-supports-states.php",
             "statement": "return array_diff_key((array) $state_style, array_flip((array) $nested_keys));"
@@ -5703,6 +5707,10 @@
         "wp_is_block_theme": {
             "file": "load.php",
             "statement": "return Minn\\Runtime\\Themes::isBlockTheme();"
+        },
+        "wp_is_client_side_media_processing_enabled": {
+            "file": "media.php",
+            "statement": "return Minn\\Runtime\\AttachmentImages::browserProcessing(is_ssl() ? 'https' : 'http', (string) ($_SERVER['HTTP_HOST'] ?? ''));"
         },
         "wp_is_connector_registered": {
             "file": "connectors.php",

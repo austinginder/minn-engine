@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 703,
-        "composes": 2068,
+        "composes": 2066,
         "leaf": 961,
-        "noop": 3258,
+        "noop": 3260,
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8678,
-        "minnMethods": 1547,
+        "minnMethods": 1549,
         "leafLinesOver15": 8
     },
     "functions": {
@@ -69380,14 +69380,12 @@
         },
         "wp_get_registered_image_subsizes": {
             "file": "media.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_image_sizes",
-                "get_intermediate_image_sizes",
-                "get_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::subsizes"
+            ],
+            "composes": []
         },
         "wp_get_revision_ui_diff": {
             "file": "deadends.php",
@@ -70658,11 +70656,12 @@
         },
         "wp_is_client_side_media_processing_enabled": {
             "file": "media.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::browserProcessing"
+            ],
             "composes": [
-                "apply_filters",
                 "is_ssl"
             ]
         },

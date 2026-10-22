@@ -15,6 +15,8 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Http\RouteMiss;
 use Minn\RestError;
+use Minn\Runtime\AttachmentImages;
+use Minn\Runtime\Runtime;
 
 /**
  * The API index at /wp-json/: the site facts monitors read (name, url,
@@ -29,6 +31,7 @@ final readonly class IndexController
         private Permalinks $permalinks,
         private RestUrl $url,
         private RouteCatalogue $catalogue,
+        private Caller $caller,
     ) {
     }
 
@@ -50,11 +53,50 @@ final readonly class IndexController
             'namespaces' => RouteCatalogue::ordered($namespaces),
             'authentication' => Authenticator::applicationPasswordsAvailable($request) ? ['application-passwords' => ['endpoints' => ['authorization' => $this->permalinks->url('/wp-admin/authorize-application.php')]]] : [],
             'routes' => $routes,
+        ] + $this->imageSettings($request) + [
             'site_logo' => (int) ($this->site->option('site_logo') ?? 0),
             'site_icon' => (int) ($this->site->option('site_icon') ?? 0),
             'site_icon_url' => '',
-            '_links' => ['help' => [['href' => 'https://developer.wordpress.org/rest-api/']]],
+            '_links' => ['help' => [['href' => 'https://developer.wordpress.org/rest-api/']]] + $this->themeLink(),
         ], Fields::fromQuery($request->query));
+    }
+
+    /**
+     * How the browser processes images before upload, for someone who may
+     * upload when it does: the registered sizes, the big-image threshold,
+     * whether metadata is stripped and the deepest bit depth kept, each
+     * through its filter as the editor hears it.
+     *
+     * @return array<string, mixed>
+     */
+    private function imageSettings(Request $request): array
+    {
+        if (!AttachmentImages::browserProcessing($request->secure ? 'https' : 'http', $request->host) || !$this->caller->can('upload_files')) {
+            return [];
+        }
+        $hooks = Runtime::hooks();
+        return [
+            'image_sizes' => AttachmentImages::subsizes(),
+            'image_size_threshold' => $hooks->filter('big_image_size_threshold', [2560, [0, 0], '', 0]),
+            'image_strip_meta' => $hooks->filter('image_strip_meta', [true]),
+            'image_max_bit_depth' => $hooks->filter('image_max_bit_depth', [16, 16]),
+        ];
+    }
+
+    /**
+     * The active theme's link, for someone who may switch themes, manage
+     * the network's or edit posts, as the reference links it (with the
+     * curies its relation needs).
+     *
+     * @return array<string, mixed>
+     */
+    private function themeLink(): array
+    {
+        if (!$this->caller->can('switch_themes') && !$this->caller->can('manage_network_themes') && !$this->caller->can('edit_posts')) {
+            return [];
+        }
+        $theme = $this->url->to('/wp/v2/themes/' . (string) ($this->site->option('stylesheet') ?? ''));
+        return ['wp:active-theme' => [Links::item('wp:active-theme', $theme, [])], 'curies' => RestUrl::curies()];
     }
 
     /**

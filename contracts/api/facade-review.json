@@ -16720,12 +16720,6 @@
                 "why": "the same original_image rule against the attachment URL, beside Attachments::url",
                 "body": "bee46bd17e7e"
             },
-            "wp_get_registered_image_subsizes": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\AttachmentImages",
-                "why": "builds the subsize table from the engine's sizes and normalises width, height and crop; belongs beside AttachmentImages::sizes",
-                "body": "986c661e6a3a"
-            },
             "wp_getimagesize": {
                 "verdict": "move",
                 "to": "Minn\\Media\\ImageMime",
@@ -16813,15 +16807,6 @@
                 "to": "Minn\\Blocks\\ImageTags",
                 "why": "parses the src, looks the dimensions up in the metadata and writes width and height into the tag; content tag rewriting",
                 "body": "7bf42eb35705"
-            },
-            "wp_is_client_side_media_processing_enabled": {
-                "verdict": "move",
-                "to": "Minn\\Media\\ClientProcessing",
-                "gates": [
-                    "globals"
-                ],
-                "why": "the secure-context rule (SSL or a localhost host from $_SERVER) behind the filter is engine behaviour",
-                "body": "75d9da3ef764"
             },
             "wp_load_image": {
                 "verdict": "move",
