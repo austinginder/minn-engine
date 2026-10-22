@@ -1,0 +1,58 @@
+[
+    [
+        "title and caption",
+        [
+            "ZZ IPTC Title",
+            "",
+            "ZZ IPTC caption here"
+        ]
+    ],
+    [
+        "caption only",
+        [
+            "ZZ only a caption",
+            "",
+            "ZZ only a caption"
+        ]
+    ],
+    [
+        "headline",
+        [
+            "ZZ Headline",
+            "",
+            ""
+        ]
+    ],
+    [
+        "blank title and caption",
+        [
+            "zz-sideload-meta",
+            "",
+            ""
+        ]
+    ],
+    [
+        "none",
+        [
+            "zz-sideload-meta",
+            "",
+            ""
+        ]
+    ],
+    [
+        "a description given",
+        [
+            "ZZ Desc",
+            "",
+            "ZZ cap"
+        ]
+    ],
+    [
+        "post data over both",
+        [
+            "ZZ PD",
+            "",
+            "ZZ PD content"
+        ]
+    ]
+]

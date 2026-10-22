@@ -16286,8 +16286,8 @@
                 "gates": [
                     "unprobed"
                 ],
-                "why": "the shared step that names, inserts and generates metadata for a stored file Doubt fixed (2026-10-22): an ID in post_data is unset, so an upload is always a new attachment, as measured on the reference.",
-                "body": "a0db6f8d281a"
+                "why": "the shared step that names, inserts and generates metadata for a stored file: titled by the description given, else the image's own title, else the file name; its content the image's caption; the post data over both. Doubts fixed (2026-10-22): an ID in post_data is unset, so an upload is always a new attachment, and the image's IPTC title and caption name and describe it (probe sideload-image-meta).",
+                "body": "480bef982087"
             },
             "_minn_missing_pdf_sizes": {
                 "verdict": "move",
@@ -16539,8 +16539,7 @@
                 "gates": [
                     "unprobed"
                 ],
-                "why": "stores the file, turns an error into a WP_Error and creates the attachment; the creation flow belongs beside Attachments::insert The file is filed under the parent post's month, a page's too (measured 2026-10-22).",
-                "doubt": "the EXIF title and caption are not used for the attachment's title and excerpt (not yet measured with an image carrying them)",
+                "why": "stores the file, turns an error into a WP_Error and creates the attachment; the creation flow belongs beside Attachments::insert. The file is filed under the parent post's month, a page's too (measured 2026-10-22); the image's title and caption name and describe the attachment (probe sideload-image-meta).",
                 "body": "9fa9cecf9758"
             },
             "media_handle_upload": {

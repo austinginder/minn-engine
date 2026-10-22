@@ -37537,7 +37537,7 @@
         },
         "_minn_media_attach": {
             "file": "media.php",
-            "lines": 9,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -37545,6 +37545,7 @@
                 "wp_basename",
                 "wp_generate_attachment_metadata",
                 "wp_insert_attachment",
+                "wp_read_image_metadata",
                 "wp_update_attachment_metadata"
             ]
         },

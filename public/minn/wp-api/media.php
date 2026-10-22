@@ -1175,11 +1175,18 @@ function media_handle_sideload($file_array, $post_id = 0, $desc = null, $post_da
     return _minn_media_attach($file, (int) $post_id, $desc, (array) $post_data);
 }
 
-/** @internal an uploaded or sideloaded file made an attachment of the post, its metadata generated */
+/**
+ * @internal an uploaded or sideloaded file made an attachment of the post,
+ * its metadata generated: titled by the description given, else by the
+ * image's own title, else by its file name; described by the image's
+ * caption; the post data over both (probe: the sideload's image meta)
+ */
 function _minn_media_attach(array $file, int $post_id, $desc, array $post_data)
 {
-    $title = $desc ?? preg_replace('/\.[^.]+$/', '', wp_basename($file['file']));
-    $attachment = array_merge(['post_mime_type' => $file['type'], 'guid' => $file['url'], 'post_parent' => $post_id, 'post_title' => $title, 'post_content' => ''], (array) $post_data);
+    $image = wp_read_image_metadata($file['file']);
+    $named = is_array($image) && trim((string) ($image['title'] ?? '')) !== '' ? (string) $image['title'] : preg_replace('/\.[^.]+$/', '', wp_basename($file['file']));
+    $caption = is_array($image) && trim((string) ($image['caption'] ?? '')) !== '' ? (string) $image['caption'] : '';
+    $attachment = array_merge(['post_mime_type' => $file['type'], 'guid' => $file['url'], 'post_parent' => $post_id, 'post_title' => $desc ?? $named, 'post_content' => $caption], (array) $post_data);
     // An upload is always a new attachment: an ID in the post data never names one to overwrite.
     unset($attachment['ID']);
     $id = wp_insert_attachment($attachment, $file['file'], $post_id, true);
