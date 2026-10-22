@@ -55,6 +55,10 @@ $run = static function (string $dir, string $command, string $stdin = ''): array
 };
 $engine = static fn (string $command, string $stdin = ''): array => $run($ENGINE_DIR, $command, $stdin);
 $reference = static fn (string $command, string $stdin = ''): array => $run($REF_DIR, $command, $stdin);
+// The cron lock is the engine's guarded row, which WP-CLI's option delete is refused: cleared in the table.
+$clearLock = static function () use ($engine): void {
+    $engine('db query ' . escapeshellarg("DELETE FROM " . trim($engine('db prefix')[0]) . "options WHERE option_name = 'minn_cron_lock'"));
+};
 $same = static function (string $label, string $command) use ($run, $check, $ENGINE_DIR, $REF_DIR): void {
     [$engineOut, $engineCode] = $run($ENGINE_DIR, $command);
     [$refOut, $refCode] = $run($REF_DIR, $command);
@@ -65,11 +69,11 @@ echo "cron suite: wp in $ENGINE_DIR (engine) vs $REF_DIR (reference)\n";
 
 // The fixture must not be active for the parity half; capture and restore active_plugins.
 [$before] = $engine('option get active_plugins --format=json');
-$restore = static function () use ($engine, $before, $FIXTURE): void {
+$restore = static function () use ($engine, $before, $FIXTURE, $clearLock): void {
     $engine("cron event delete minn_test_cron_tick");
     $engine("cron event delete minn_test_cron_once");
     $engine('option delete minn_test_cron_log');
-    $engine('option delete minn_cron_lock');
+    $clearLock();
     $engine('option update active_plugins ' . escapeshellarg($before) . ' --format=json');
 };
 register_shutdown_function($restore);
@@ -112,7 +116,7 @@ $check('the single event is gone after it ran', trim($gone) === '0', $gone);
 
 // wp minn cron fires due events too (the system-cron verb).
 $engine('option delete minn_test_cron_log');
-$engine('option delete minn_cron_lock');
+$clearLock();
 $engine("cron event schedule minn_test_cron_once now");
 [$minnCron] = $engine('minn cron');
 $check('wp minn cron reports firing scheduled events', str_contains($minnCron, 'fired ') && str_contains($minnCron, 'scheduled event'), $minnCron);
@@ -121,7 +125,7 @@ $check('wp minn cron fired the plugin callback', str_contains($log2, '"event":"o
 
 // The real host path: a GET of wp-cron.php runs what is due.
 $engine('option delete minn_test_cron_log');
-$engine('option delete minn_cron_lock');
+$clearLock();
 $engine("cron event schedule minn_test_cron_once now");
 [$probeHeaders, $probeBody] = minn_test_fetch("$ENGINE/wp-cron.php", 5);
 $check('wp-cron.php answers 200 with an empty body', ($probeHeaders['status'] ?? 0) === 200 && trim($probeBody) === '', 'status ' . ($probeHeaders['status'] ?? '?'));
@@ -137,7 +141,7 @@ $offRuns = [];
 foreach (['engine' => $ENGINE, 'reference' => minn_test_reference_url()] as $stack => $base) {
     foreach (['wp-cron.php' => '/wp-cron.php', 'a front request' => '/'] as $how => $path) {
         $engine('option delete minn_test_cron_log');
-        $engine('option delete minn_cron_lock');
+        $clearLock();
         $engine('transient delete doing_cron');
         $engine("cron event schedule minn_test_cron_once now");
         minn_test_fetch($base . $path . '?minn-test-cron-off=1', 10);
@@ -152,11 +156,12 @@ $check('with DISABLE_WP_CRON, wp-cron.php still runs what is due and a front req
 // DOING_CRON travels with the run: the reference's cron request declares it, and a callback may ask.
 $check('wp-cron.php fires the event under DOING_CRON', str_contains($log3, '"cron":true'), $log3);
 $check('wp minn cron fires the event under DOING_CRON', str_contains($log2, '"cron":true'), $log2);
-$check('wp cron event run fires the event without DOING_CRON, as WP-CLI does', str_contains($log, '"cron":false'), $log);
+// WP-CLI's own run declares DOING_CRON before the hook fires (its Cron_Event_Command::run_event).
+$check('wp cron event run fires the event under DOING_CRON, as WP-CLI does', str_contains($log, '"cron":true'), $log);
 
 // An ordinary front request finds the due event and runs it once the page is sent.
 $engine('option delete minn_test_cron_log');
-$engine('option delete minn_cron_lock');
+$clearLock();
 $engine("cron event schedule minn_test_cron_once now");
 [$homeHeaders, $homeBody] = minn_test_fetch("$ENGINE/", 10);
 $check('the front page answers normally with an event due', ($homeHeaders['status'] ?? 0) === 200 && str_contains($homeBody, '</html>'), 'status ' . ($homeHeaders['status'] ?? '?'));

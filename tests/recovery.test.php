@@ -57,7 +57,8 @@ add_action('init', static function (): void {
 PLUGIN);
 
 $wp('plugin activate ' . escapeshellarg($slug));
-$wp("option delete minn_recovery_strikes");
+// The strikes are the engine's guarded row: WP-CLI's option delete is refused it, the engine's verb forgets them.
+$wp('minn recovery resume-all');
 $check(str_contains($wp('minn recovery'), 'nothing paused'), 'nothing is paused to begin with');
 
 [$first] = minn_test_fetch($ENGINE . '/');
@@ -135,7 +136,7 @@ add_shortcode('minn_recovery_boom', static function (): string {
 });
 PLUGIN);
 $wp('plugin activate ' . escapeshellarg($restSlug));
-$wp('option delete minn_recovery_strikes');
+$wp('minn recovery resume-all');
 [$boom1] = minn_test_fetch($ENGINE . '/wp-json/minn-recovery/v1/boom');
 [$boom2] = minn_test_fetch($ENGINE . '/wp-json/minn-recovery/v1/boom');
 [$boom3] = minn_test_fetch($ENGINE . '/wp-json/minn-recovery/v1/boom');

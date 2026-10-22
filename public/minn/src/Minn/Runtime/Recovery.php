@@ -237,12 +237,13 @@ final readonly class Recovery
         return true;
     }
 
-    /** Lets everything load again. Returns how many were released. */
+    /** Lets everything load again, every strike forgotten as resume() forgets one's. Returns how many were released. */
     public function resumeAll(): int
     {
         $count = count($this->read(self::PLUGINS_OPTION)) + count($this->read(self::THEMES_OPTION));
         $this->site->deleteOption(self::PLUGINS_OPTION);
         $this->site->deleteOption(self::THEMES_OPTION);
+        $this->site->deleteOption(self::STRIKES_OPTION);
         return $count;
     }
 

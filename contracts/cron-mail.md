@@ -35,7 +35,8 @@ Triggers, each running the same job (`Cron::create` is the one recipe):
   hears yes;
 - `wp minn cron` (and `minn cron`): boots the full runtime under `DOING_CRON`, so
   due hooks fire and the daily auto-update check runs; this is the verb a system
-  cron calls. `wp cron event run` fires a hook without `DOING_CRON`, as WP-CLI does;
+  cron calls. `wp cron event run` is WP-CLI's own command on a site that can load
+  (`contracts/cli.md`), which declares `DOING_CRON` before it fires the hook;
 - an ordinary front request that finds a due post or a due event (one indexed
   query for the post, one read of the `cron` option) runs the job **after its
   response is sent**: the page goes out, the connection closes

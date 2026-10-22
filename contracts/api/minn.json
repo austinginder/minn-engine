@@ -162539,7 +162539,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/Recovery.php",
-            "lines": 240,
+            "lines": 241,
             "doc": "Recovery from a fatal in someone else's code. When a plugin or theme\nkills the boot of a request, the file it died in names it; a second\nsuch failure inside ten minutes records it as paused, and the next\nrequest loads without it: the site comes back on its own instead of\nstaying down until a human reads the log. One failure is only noted:\na pause is a site-wide decision, and a single request can be a\ncrafted one. Failures after boot (a route, a template) never pause\nanything; see Failure::armRecovery().\n\nThe paused list is stored where WordPress stores it, in the same shape\n(`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,\neach holding type, file, line and message), so a site that ejects back\nto WordPress finds the pause it left with. The strikes live in the\nengine's own `minn_recovery_strikes` option.",
             "implements": [],
             "extends": null,
@@ -162832,11 +162832,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "resumeAll(): int",
-                    "doc": "Lets everything load again. Returns how many were released.",
+                    "doc": "Lets everything load again, every strike forgotten as resume() forgets one's. Returns how many were released.",
                     "shapes": [],
                     "params": [],
                     "line": 241,
-                    "end": 247
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -162937,8 +162937,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 255
+                    "line": 251,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -162966,8 +162966,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 265
+                    "line": 259,
+                    "end": 266
                 }
             ]
         },

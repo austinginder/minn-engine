@@ -123,7 +123,7 @@ the WordPress runtime plugins load against
 | [`QueryFlags`](#queryflags) | final readonly class | 201 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`RecipientLocale`](#recipientlocale) | final class | 30 | An email written in its reader's language, as the reference writes each: |
 | [`Records`](#records) | final class | 140 | Posts, terms and comments as WordPress hands them to plugins: found by |
-| [`Recovery`](#recovery) | final readonly class | 240 | Recovery from a fatal in someone else's code. When a plugin or theme |
+| [`Recovery`](#recovery) | final readonly class | 241 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registered`](#registered) | final class | 188 | What is registered, looked up the way WordPress's lookups answer: post |
 | [`RegisteredSettings`](#registeredsettings) | final class | 108 | Settings as register_setting keeps them (probe rest-settings): the |
@@ -6766,9 +6766,9 @@ Lets an extension load again. Returns false when it was not paused.
 
 ### `resumeAll(): int`
 
-Lets everything load again. Returns how many were released.
+Lets everything load again, every strike forgotten as resume() forgets one's. Returns how many were released.
 
-Internals: `pluginFile()` (private, line 97), `activePlugins()` (private, line 111), `strikes()` (private, line 168), `forgetStrikes()` (private, line 175), `read()` (private, line 250), `write()` (private, line 258)
+Internals: `pluginFile()` (private, line 97), `activePlugins()` (private, line 111), `strikes()` (private, line 168), `forgetStrikes()` (private, line 175), `read()` (private, line 251), `write()` (private, line 259)
 
 
 ## Refusal
