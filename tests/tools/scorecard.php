@@ -151,7 +151,8 @@ $findings = [
     'An MO translation object ran a PHP file' => ['tests/tools/translation-files-probe.php', 'each class reads its own format'],
     'Sticky, revision-delete and protected-comment checks were looser' => ['tests/tools/sweep-1020b-probe.php', 'deleting a revision of a post the user may not edit'],
     'Enum strings were stored as serialized data' => ['tests/tools/sweep-1020b-probe.php', 'serialized or not'],
-    'The RSS widget fetched the site\'s own address' => ['tests/tools/sweep-1020b-probe.php', 'the RSS widget\'s address'],
+    // The probe writes this label with its quote escaped.
+    'The RSS widget fetched the site\'s own address' => ['tests/tools/sweep-1020b-probe.php', 'the RSS widget\\\'s address'],
     'Sendmail took "+", "=" and non-ASCII senders' => ['tests/tools/sweep-1020b-probe.php', 'shell-safe sender addresses'],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
