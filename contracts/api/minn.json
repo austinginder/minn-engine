@@ -22329,7 +22329,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Renderer.php",
-            "lines": 552,
+            "lines": 553,
             "doc": "Renders a block tree the way the reference renders post_content:\ndelimiters gone, each block's own HTML kept with inner blocks rendered\nin place, then the per-block render-time additions (layout classes, the\nparagraph class, image attributes, gallery ids, style-variation\ncounters), and finally texturize over the whole.",
             "implements": [],
             "extends": null,
@@ -23176,12 +23176,14 @@
                 },
                 {
                     "routes": [],
-                    "name": "elementsClass",
+                    "name": "supportClasses",
                     "static": false,
                     "visibility": "private",
-                    "signature": "elementsClass(Minn\\Blocks\\Block $block): ?string",
-                    "doc": "A core block's wp-elements-N class, its rules recorded, when the engine renders it itself.",
-                    "shapes": [],
+                    "signature": "supportClasses(Minn\\Blocks\\Block $block): array",
+                    "doc": "A core block's wp-elements-N class (rules recorded) and numbered style variation, with no block filters about to add them (probe block-class-stages). @return array{0: ?string, 1: ?string}",
+                    "shapes": [
+                        "@return array{0: ?string, 1: ?string}"
+                    ],
                     "params": [
                         {
                             "name": "block",
@@ -23192,7 +23194,7 @@
                         }
                     ],
                     "line": 529,
-                    "end": 532
+                    "end": 535
                 },
                 {
                     "routes": [],
@@ -23220,8 +23222,8 @@
                             "doc": "the bound attributes' values, put into a static block's HTML"
                         }
                     ],
-                    "line": 535,
-                    "end": 564
+                    "line": 538,
+                    "end": 566
                 },
                 {
                     "routes": [],
@@ -23261,8 +23263,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 566,
-                    "end": 588
+                    "line": 568,
+                    "end": 589
                 },
                 {
                     "routes": [],
@@ -23273,8 +23275,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 590,
-                    "end": 595
+                    "line": 591,
+                    "end": 596
                 }
             ]
         },
@@ -136907,7 +136909,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/BlockFilters.php",
-            "lines": 181,
+            "lines": 188,
             "doc": "The block-level filters plugin code hooks (pre_render_block,\nrender_block_data, render_block, render_block_{name}), applied around the\nengine's own renderer so a plugin sees every block the page renders, not\nonly the ones it registered.",
             "implements": [],
             "extends": null,
@@ -136928,14 +136930,14 @@
             "constants": [
                 {
                     "name": "NATIVE_DATA_DONE",
-                    "value": "array (   'wp_render_elements_support_styles' => 10,   'wp_render_block_style_variation_support_styles' => 10,   'block_core_gallery_data_id_backcompatibility' => 10, )",
-                    "doc": "The data filters the engine's renderer does itself for a block it renders natively: element styles, style variations, a gallery's image ids.",
+                    "value": "array (   'block_core_gallery_data_id_backcompatibility' => 10, )",
+                    "doc": "The data filters the engine's renderer does itself for a block it\nrenders natively: a gallery's image ids. Element styles and style\nvariations are left to their own filters, which name the classes in\nthe block's className as plugins' later filters read it (probe\nblock-class-stages).",
                     "visibility": "public"
                 },
                 {
                     "name": "NATIVE_RENDER_DONE",
-                    "value": "array (   'wp_render_elements_class_name' => 10,   'wp_render_block_style_variation_class_name' => 10,   'wp_render_layout_support_flag' =>    array (     0 => 10,     1 => '_minn_render_child_layout_support',   ),   'block_core_paragraph_add_class' => 10, )",
-                    "doc": "The render filters it does itself: the element and style variation\nclasses, the layout's container classes (a child's own layout left to a\nstand-in), the paragraph's class.",
+                    "value": "array ( )",
+                    "doc": "The render filters it does itself: none. The element, layout, style\nvariation and paragraph classes reach the markup at their own filters,\nas a plugin's earlier filters see it without them (probe\nblock-class-stages).",
                     "visibility": "public"
                 }
             ],
@@ -137048,8 +137050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -137092,8 +137094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 97
+                    "line": 100,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -137128,8 +137130,8 @@
                             "doc": "the data filters done already"
                         }
                     ],
-                    "line": 113,
-                    "end": 136
+                    "line": 120,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -137155,8 +137157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 148
+                    "line": 150,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -137177,8 +137179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 158
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -137213,8 +137215,8 @@
                             "doc": "the render filters done already"
                         }
                     ],
-                    "line": 166,
-                    "end": 173
+                    "line": 173,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -137257,8 +137259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 185
+                    "line": 186,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -137271,8 +137273,8 @@
                         "@return array<string, mixed> the context render_block() gives a document's top block: the global post's, as get_post() reads it"
                     ],
                     "params": [],
-                    "line": 188,
-                    "end": 195
+                    "line": 195,
+                    "end": 202
                 }
             ]
         },

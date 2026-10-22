@@ -24,7 +24,7 @@ the WordPress runtime plugins load against
 | [`Autosaves`](#autosaves) | final class | 71 | An autosave as the reference's REST autosave makes it (probes |
 | [`AvMetadata`](#avmetadata) | final class | 252 | An audio or video file's metadata as WordPress's media readers keep it |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
-| [`BlockFilters`](#blockfilters) | final class | 181 | The block-level filters plugin code hooks (pre_render_block, |
+| [`BlockFilters`](#blockfilters) | final class | 188 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 219 | The Block Hooks API on the engine's own front end: a plugin asks for its |
 | [`BlockMetadata`](#blockmetadata) | final class | 138 | block.json to the settings a block type registers with: the property |
 | [`BlockQueries`](#blockqueries) | final class | 62 | The query arguments the query and comments blocks run, as WordPress's |
@@ -1337,10 +1337,15 @@ render_block_data, render_block, render_block_{name}), applied around the
 engine's own renderer so a plugin sees every block the page renders, not
 only the ones it registered.
 
-- const `NATIVE_DATA_DONE` = `array (   'wp_render_elements_support_styles' => 10,   'wp_render_block_style_variation_support_styles' => 10,   'block_core_gallery_data_id_backcompatibility' => 10, )` — The data filters the engine's renderer does itself for a block it renders natively: element styles, style variations, a gallery's image ids.
-- const `NATIVE_RENDER_DONE` = `array (   'wp_render_elements_class_name' => 10,   'wp_render_block_style_variation_class_name' => 10,   'wp_render_layout_support_flag' =>    array (     0 => 10,     1 => '_minn_render_child_layout_support',   ),   'block_core_paragraph_add_class' => 10, )` — The render filters it does itself: the element and style variation
-classes, the layout's container classes (a child's own layout left to a
-stand-in), the paragraph's class.
+- const `NATIVE_DATA_DONE` = `array (   'block_core_gallery_data_id_backcompatibility' => 10, )` — The data filters the engine's renderer does itself for a block it
+renders natively: a gallery's image ids. Element styles and style
+variations are left to their own filters, which name the classes in
+the block's className as plugins' later filters read it (probe
+block-class-stages).
+- const `NATIVE_RENDER_DONE` = `array ( )` — The render filters it does itself: none. The element, layout, style
+variation and paragraph classes reach the markup at their own filters,
+as a plugin's earlier filters see it without them (probe
+block-class-stages).
 
 Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Renderer`
 
@@ -1410,7 +1415,7 @@ the WP_Block it began as.
 
 - `@param array<string, int|array{0: int, 1: string}> $done the render filters done already`
 
-Internals: `begin()` (private, line 179), `context()` (private, line 188)
+Internals: `begin()` (private, line 186), `context()` (private, line 195)
 
 
 ## BlockHooks

@@ -1,0 +1,443 @@
+[
+    [
+        "paragraph with a link colour",
+        [
+            "\n<p class=\"wp-elements-{n} wp-block-paragraph\">One <a href=\"#\">link</a></p>\n",
+            [
+                [
+                    "data 11",
+                    "core/paragraph",
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 5",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 10",
+                    "core/paragraph",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 11",
+                    "core/paragraph",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "paragraph 5",
+                    "core/paragraph",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "paragraph 11",
+                    "core/paragraph",
+                    {
+                        "elements": true,
+                        "paragraph": true,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ]
+            ]
+        ]
+    ],
+    [
+        "heading with a link colour",
+        [
+            "\n<h2 class=\"wp-block-heading wp-elements-{n}\">Two <a href=\"#\">link</a></h2>\n",
+            [
+                [
+                    "data 11",
+                    "core/heading",
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 5",
+                    "core/heading",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 10",
+                    "core/heading",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 11",
+                    "core/heading",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "heading 11",
+                    "core/heading",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ]
+            ]
+        ]
+    ],
+    [
+        "group with a link colour",
+        [
+            "\n<div class=\"wp-block-group wp-elements-{n} has-global-padding is-layout-constrained wp-block-group-is-layout-constrained\">\n<p class=\"wp-block-paragraph\">Inside</p>\n</div>\n",
+            [
+                [
+                    "data 11",
+                    "core/group",
+                    "wp-elements-{n}"
+                ],
+                [
+                    "data 11",
+                    "core/paragraph",
+                    ""
+                ],
+                [
+                    "render 5",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "render 10",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "render 11",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "paragraph 5",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "paragraph 11",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": true,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "render 5",
+                    "core/group",
+                    {
+                        "elements": false,
+                        "paragraph": true,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 10",
+                    "core/group",
+                    {
+                        "elements": true,
+                        "paragraph": true,
+                        "layout": true
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 11",
+                    "core/group",
+                    {
+                        "elements": true,
+                        "paragraph": true,
+                        "layout": true
+                    },
+                    "wp-elements-{n}"
+                ]
+            ]
+        ]
+    ],
+    [
+        "plain paragraph",
+        [
+            "\n<p class=\"wp-block-paragraph\">Plain</p>\n",
+            [
+                [
+                    "data 11",
+                    "core/paragraph",
+                    ""
+                ],
+                [
+                    "render 5",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "render 10",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "render 11",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "paragraph 5",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "paragraph 11",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": true,
+                        "layout": false
+                    },
+                    ""
+                ]
+            ]
+        ]
+    ],
+    [
+        "dynamic block with a link colour",
+        [
+            "<h1 class=\"has-link-color wp-elements-{n} wp-block-site-title\"><a href=\"https://minn.localhost\" target=\"_self\" rel=\"home\">Minn</a></h1>",
+            [
+                [
+                    "data 11",
+                    "core/site-title",
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 5",
+                    "core/site-title",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 10",
+                    "core/site-title",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 11",
+                    "core/site-title",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ]
+            ]
+        ]
+    ],
+    [
+        "render_block()",
+        [
+            "\n<p class=\"wp-elements-{n} wp-block-paragraph\">One <a href=\"#\">link</a></p>\n",
+            [
+                [
+                    "data 11",
+                    "core/paragraph",
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 5",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 10",
+                    "core/paragraph",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "render 11",
+                    "core/paragraph",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "paragraph 5",
+                    "core/paragraph",
+                    {
+                        "elements": true,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ],
+                [
+                    "paragraph 11",
+                    "core/paragraph",
+                    {
+                        "elements": true,
+                        "paragraph": true,
+                        "layout": false
+                    },
+                    "wp-elements-{n}"
+                ]
+            ]
+        ]
+    ],
+    [
+        "WP_Block::render()",
+        [
+            "\n<p class=\"wp-block-paragraph\">One <a href=\"#\">link</a></p>\n",
+            [
+                [
+                    "render 5",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "render 10",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "render 11",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "paragraph 5",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": false,
+                        "layout": false
+                    },
+                    ""
+                ],
+                [
+                    "paragraph 11",
+                    "core/paragraph",
+                    {
+                        "elements": false,
+                        "paragraph": true,
+                        "layout": false
+                    },
+                    ""
+                ]
+            ]
+        ]
+    ]
+]

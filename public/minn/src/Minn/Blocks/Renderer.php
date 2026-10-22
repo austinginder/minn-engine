@@ -525,21 +525,24 @@ final class Renderer
         return (string) preg_replace('/^(\s*<[a-z][^>]*?\sclass="(?:[^"]*\s)?)' . preg_quote($default, '/') . '(?=[\s"])/', '${1}' . $class, $html, 1);
     }
 
-    /** A core block's wp-elements-N class, its rules recorded, when the engine renders it itself. */
-    private function elementsClass(Block $block): ?string
+    /** A core block's wp-elements-N class (rules recorded) and numbered style variation, with no block filters about to add them (probe block-class-stages). @return array{0: ?string, 1: ?string} */
+    private function supportClasses(Block $block): array
     {
-        return $this->rendersNatively((string) $block->name) ? Elements::className($block->attrs, CoreBlocks::supports((string) $block->name)) : null;
+        if (!$this->rendersNatively((string) $block->name) || BlockFilters::active()) {
+            return [null, null];
+        }
+        return [Elements::className($block->attrs, CoreBlocks::supports((string) $block->name)), self::numberedStyle((string) $block->name, $block->className())];
     }
 
     /** @param array<string, mixed> $bound the bound attributes' values, put into a static block's HTML */
     private function renderNamed(Block $block, array $bound = []): string
     {
         if (isset($this->dynamic[$block->name])) {
-            // The element class is numbered before the block renders (the
-            // reference counts it even for a block that renders nothing).
-            $outer = $this->state->setPendingElements($this->elementsClass($block));
-            // So is its style variation: the reference numbers it, and prints its CSS, even for a block that renders nothing.
-            $outerVariation = $this->state->setPendingVariation($this->rendersNatively((string) $block->name) ? self::numberedStyle((string) $block->name, $block->className()) : null);
+            // The element class and style variation are numbered before the block renders (the
+            // reference counts them, and prints their CSS, even for a block that renders nothing).
+            [$elements, $numbered] = $this->supportClasses($block);
+            $outer = $this->state->setPendingElements($elements);
+            $outerVariation = $this->state->setPendingVariation($numbered);
             // The global post is as it was once a dynamic block has rendered (a query loop's leaves it on its last post).
             $global = $GLOBALS['post'] ?? null;
             $out = ($this->dynamic[$block->name])($block, $this);
@@ -553,8 +556,7 @@ final class Renderer
             return $this->images->enrichPlugin($out);
         }
         // A parent's element styles and style variation number before its children's.
-        $elements = $this->elementsClass($block);
-        $numbered = $this->rendersNatively((string) $block->name) ? self::numberedStyle((string) $block->name, $block->className()) : null;
+        [$elements, $numbered] = $this->supportClasses($block);
         $out = '';
         $inner = 0;
         foreach ($block->innerContent as $chunk) {
@@ -565,17 +567,16 @@ final class Renderer
 
     private function decorate(Block $block, string $html, ?string $elements, ?string $numbered): string
     {
-        if ($elements !== null) {
-            $html = Html::addClasses($html, [$elements]);
-        }
+        $html = Html::addClasses($html, array_filter([$elements]));
+        // With block filters about, the paragraph's and the layout support's own filters add these classes.
         $html = match ($block->name) {
-            'core/paragraph' => Html::addClasses($html, ['wp-block-paragraph']),
+            'core/paragraph' => BlockFilters::active() ? $html : Html::addClasses($html, ['wp-block-paragraph']),
             // Saved without their class (older content), these get it as they render.
             'core/heading' => Html::addClasses($html, ['wp-block-heading']),
             'core/list' => Html::addClasses($html, ['wp-block-list']),
-            'core/group', 'core/columns', 'core/column', 'core/quote', 'core/details', 'core/buttons', 'core/accordion-panel' => Html::addClasses($html, Layout::classes($block->name, $block->attrs)),
+            'core/group', 'core/columns', 'core/column', 'core/quote', 'core/details', 'core/buttons', 'core/accordion-panel' => BlockFilters::active() ? $html : Html::addClasses($html, Layout::classes($block->name, $block->attrs)),
             'core/gallery' => $this->images->enrichGallery(Html::addClasses($html, ['wp-block-gallery-' . self::gallery(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex'])),
-            'core/cover' => Html::addClasses($this->images->enrich($html), Layout::classes($block->name, $block->attrs), 'wp-block-cover__inner-container'),
+            'core/cover' => BlockFilters::active() ? $this->images->enrich($html) : Html::addClasses($this->images->enrich($html), Layout::classes($block->name, $block->attrs), 'wp-block-cover__inner-container'),
             // The lightbox goes on before the image's loading attributes, as the reference adds them (to the front of the tag) after it.
             'core/image' => $this->images->enrich($this->imageFinish === null ? $html : ($this->imageFinish)($html, $block)),
             'core/media-text' => $this->images->enrich($html),

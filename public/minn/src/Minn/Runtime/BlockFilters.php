@@ -58,15 +58,22 @@ final class BlockFilters
     /** @var array<int, array{0: RenderedBlock|null, 1: array<string, mixed>|null}> the WP_Block each block began as and the context render_block_context gave it, by block object id */
     private static array $begun = [];
 
-    /** The data filters the engine's renderer does itself for a block it renders natively: element styles, style variations, a gallery's image ids. */
-    public const NATIVE_DATA_DONE = ['wp_render_elements_support_styles' => 10, 'wp_render_block_style_variation_support_styles' => 10, 'block_core_gallery_data_id_backcompatibility' => 10];
+    /**
+     * The data filters the engine's renderer does itself for a block it
+     * renders natively: a gallery's image ids. Element styles and style
+     * variations are left to their own filters, which name the classes in
+     * the block's className as plugins' later filters read it (probe
+     * block-class-stages).
+     */
+    public const NATIVE_DATA_DONE = ['block_core_gallery_data_id_backcompatibility' => 10];
 
     /**
-     * The render filters it does itself: the element and style variation
-     * classes, the layout's container classes (a child's own layout left to a
-     * stand-in), the paragraph's class.
+     * The render filters it does itself: none. The element, layout, style
+     * variation and paragraph classes reach the markup at their own filters,
+     * as a plugin's earlier filters see it without them (probe
+     * block-class-stages).
      */
-    public const NATIVE_RENDER_DONE = ['wp_render_elements_class_name' => 10, 'wp_render_block_style_variation_class_name' => 10, 'wp_render_layout_support_flag' => [10, '_minn_render_child_layout_support'], 'block_core_paragraph_add_class' => 10];
+    public const NATIVE_RENDER_DONE = [];
 
     /**
      * A parsed block through render_block_data, without the callbacks done
