@@ -261,44 +261,19 @@
         }
     },
     "open": {
-        "done": 119,
+        "done": 122,
         "accepted": 27,
-        "open": 6,
+        "open": 5,
         "austin": 0
     },
     "run": {
         "measured": "2026-10-22",
-        "suites": 95,
-        "green": 68,
-        "checks": 29143,
+        "suites": 96,
+        "green": 94,
+        "checks": 30734,
         "red": [
-            "api",
-            "auth",
-            "identity",
-            "application-passwords",
-            "caps",
-            "writes",
-            "login-endpoint",
-            "login-hooks",
-            "rest-parity",
-            "allow",
-            "minn-v1",
-            "comments",
-            "settings",
-            "users",
-            "terms",
-            "write-fields",
-            "editor",
             "templates",
-            "navigation",
-            "permalinks",
-            "blocks",
-            "theme",
-            "styles",
-            "probes",
-            "dogfood",
-            "hook-parity",
-            "browser: minn-admin boot"
+            "cli"
         ],
         "engineWarnings": 0,
         "warningKinds": []
@@ -329,10 +304,10 @@
             "window": 100,
             "stretches": 123,
             "lines": 2189,
-            "of": 191740
+            "of": 191811
         },
         "engine": {
-            "of": 115661,
+            "of": 115721,
             "php": {
                 "strict": {
                     "window": 40,
@@ -359,22 +334,22 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76079,
+            "of": 76090,
             "window": 80,
             "stretches": 108,
             "lines": 2901
         }
     },
     "facadeLogic": {
-        "functions": 3495,
+        "functions": 3496,
         "methods": 3814,
-        "delegates": 3561,
+        "delegates": 3562,
         "logicFunctions": 1777,
         "logicMethods": 1971,
-        "logicLines": 29282,
+        "logicLines": 29283,
         "kept": 0,
         "review": {
-            "doubts": 8,
+            "doubts": 4,
             "reviewed": 3131,
             "stale": 0,
             "verdicts": {
