@@ -88,7 +88,7 @@ final class PostTags
         return Runtime::hooks()->filter("get_the_author_{$field}", [$value === null || $value === false ? '' : $value, $userId === false ? $user->ID : $userId, $userId === false ? $user->ID : false]);
     }
 
-    /** An author's archive address (get_author_posts_url): /author/{nicename}/ with pretty permalinks, else ?author=; as author_link leaves it. */
+    /** An author's archive address (get_author_posts_url): /author/{nicename} with pretty permalinks, its slash as user_trailingslashit leaves it, else ?author=; as author_link leaves it. */
     public static function authorPostsUrl(mixed $authorId, mixed $nicename = ''): mixed
     {
         $authorId = (int) $authorId;
@@ -97,7 +97,7 @@ final class PostTags
             $nicename = $user ? $user->user_nicename : '';
         }
         $permalinks = Runtime::current()->get('permalinks');
-        $link = $permalinks !== null && $permalinks->isPretty() ? SiteUrls::home('/author/' . ($nicename === '' ? '' : $nicename . '/')) : SiteUrls::home('/?author=' . $authorId);
+        $link = $permalinks !== null && $permalinks->isPretty() ? SiteUrls::home(SiteUrls::trailing('/author/' . $nicename)) : SiteUrls::home('/?author=' . $authorId);
         return Runtime::hooks()->filter('author_link', [$link, $authorId, $nicename]);
     }
 

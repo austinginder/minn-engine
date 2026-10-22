@@ -17710,7 +17710,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/PostBlocks.php",
-            "lines": 295,
+            "lines": 294,
             "doc": "The post-* blocks: they render the context's current post.",
             "implements": [],
             "extends": null,
@@ -17742,6 +17742,7 @@
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\MainQuery",
+                "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -17782,8 +17783,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 35,
-                "end": 41
+                "line": 36,
+                "end": 42
             },
             "cases": [],
             "constants": [],
@@ -17843,8 +17844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 54
+                    "line": 45,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -17870,8 +17871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 69
+                    "line": 57,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -17897,8 +17898,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 76
+                    "line": 73,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -17931,8 +17932,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 128
+                    "line": 79,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -17958,8 +17959,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 142
+                    "line": 131,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -17985,7 +17986,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
+                    "line": 151,
                     "end": 170
                 },
                 {
@@ -51498,7 +51499,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Permalinks.php",
-            "lines": 271,
+            "lines": 265,
             "doc": "Builds public URLs from the site's permalink structure. With an empty\nstructure every link is a query-string form (?p=, ?cat=); with a\nstructure, published and private posts get their pretty form and every\nother status keeps the query form, which is what the reference emits.",
             "implements": [],
             "extends": null,
@@ -52013,34 +52014,7 @@
                         }
                     ],
                     "line": 222,
-                    "end": 225
-                },
-                {
-                    "routes": [],
-                    "name": "forAuthorBy",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "forAuthorBy(int $id, string $nicename): string",
-                    "doc": "An author archive's URL by id and nicename; with no nicename (a user who does not exist), the archive's base.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "nicename",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 228,
-                    "end": 233
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -52073,8 +52047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 249
+                    "line": 230,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -52093,8 +52067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 255
+                    "line": 246,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -52120,8 +52094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 261
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -52152,8 +52126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 266
+                    "line": 257,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -52172,8 +52146,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 294
+                    "line": 262,
+                    "end": 288
                 }
             ]
         },
@@ -161413,6 +161387,7 @@
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
+                "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Content\\MediaShortcodes",
                 "Minn\\Front\\EmbedCard",
                 "Minn\\Front\\FeedTags",
@@ -161546,7 +161521,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "authorPostsUrl(mixed $authorId, mixed $nicename = ''): mixed",
-                    "doc": "An author's archive address (get_author_posts_url): /author/{nicename}/ with pretty permalinks, else ?author=; as author_link leaves it.",
+                    "doc": "An author's archive address (get_author_posts_url): /author/{nicename} with pretty permalinks, its slash as user_trailingslashit leaves it, else ?author=; as author_link leaves it.",
                     "shapes": [],
                     "params": [
                         {

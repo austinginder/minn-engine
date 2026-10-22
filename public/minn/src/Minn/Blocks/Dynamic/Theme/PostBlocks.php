@@ -28,6 +28,7 @@ use Minn\Extension\Extensions;
 use Minn\Front\Kind;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\MainQuery;
+use Minn\Runtime\PostTags;
 
 /** The post-* blocks: they render the context's current post. */
 final readonly class PostBlocks
@@ -159,12 +160,11 @@ final readonly class PostBlocks
         if ($user === null && $post !== null) {
             return '';
         }
-        $name = Html::esc((string) ($user['display_name'] ?? ''));
+        // The name and the link as get_the_author_meta and get_author_posts_url give them, through their filters.
+        $name = Html::esc((string) ($user === null ? '' : PostTags::authorMeta('display_name', (int) $named)));
         if ((bool) $block->attr('isLink', false)) {
             // The link is to the archive of the id the variable reads as, even where no name was found.
-            $linked = $user ?? $this->users->find((int) $named);
-            $href = $linked === null ? $this->permalinks->forAuthorBy((int) $named, '') : $this->permalinks->forAuthor($linked);
-            $name = '<a href="' . Html::attr($href) . '" target="' . self::target($block) . '" class="wp-block-post-author-name__link">' . $name . '</a>';
+            $name = '<a href="' . Html::attr((string) PostTags::authorPostsUrl((int) $named)) . '" target="' . self::target($block) . '" class="wp-block-post-author-name__link">' . $name . '</a>';
         }
         return self::open('div', ['wp-block-post-author-name', ...Styles::classes($block->attrs)], $block) . $name . '</div>';
     }

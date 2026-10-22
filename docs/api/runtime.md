@@ -6305,7 +6305,7 @@ none is named): its id and title, whether a password stands before it,
 whether comments and pings are open, how many comments it has, and its
 featured image; each through the filter plugins hook there.
 
-Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentTags`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostData`, `Minn\Theme\FrontLifecycle`
+Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentTags`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostData`, `Minn\Theme\FrontLifecycle`
 
 ### static `time(mixed $format = 'U', mixed $gmt = false, mixed $post = NULL, mixed $translate = false): mixed`
 
@@ -6327,7 +6327,7 @@ leaves it.
 
 ### static `authorPostsUrl(mixed $authorId, mixed $nicename = ''): mixed`
 
-An author's archive address (get_author_posts_url): /author/{nicename}/ with pretty permalinks, else ?author=; as author_link leaves it.
+An author's archive address (get_author_posts_url): /author/{nicename} with pretty permalinks, its slash as user_trailingslashit leaves it, else ?author=; as author_link leaves it.
 
 ### static `titleAttribute(mixed $args = ''): mixed`
 
