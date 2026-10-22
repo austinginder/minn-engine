@@ -446,34 +446,9 @@ foreach ( array( 'signed out' => null, 'an author' => $author, 'an administrator
 	echo ( $ok ? '  ok   ' : '  FAIL ' ) . "directories and nonces: the root index for $label" . ( $ok ? '' : "\n      " . substr( json_encode( $seen[0] ), 0, 400 ) . "\n      " . substr( json_encode( $seen[1] ), 0, 400 ) ) . "\n";
 }
 // OPTIONS on each route both indexes list tells a client its item schema, as the reference's controller
-// describes it (asked signed out, on the route with each capture filled in). Set aside: the schemas still
-// told differently (register row 18300, OPTIONS schemas); the list only shrinks.
-$schema_aside = array(
-	'/wp/v2/media/(?P<id>[\d]+)/sideload',
-	'/wp/v2/media/(?P<id>[\d]+)/finalize',
-	'/wp/v2/global-styles/(?P<id>[\/\d+]+)',
-	'/wp/v2/global-styles/(?P<parent>[\d]+)/revisions',
-	'/wp/v2/global-styles/(?P<parent>[\d]+)/revisions/(?P<id>[\d]+)',
-	'/wp/v2/statuses',
-	'/wp/v2/statuses/(?P<status>[\w-]+)',
-	'/wp/v2/block-directory/search',
-	'/wp/v2/pattern-directory/patterns',
-	'/wp-site-health/v1/tests/background-updates',
-	'/wp-site-health/v1/tests/loopback-requests',
-	'/wp-site-health/v1/tests/https-status',
-	'/wp-site-health/v1/tests/dotorg-communication',
-	'/wp-site-health/v1/tests/authorization-header',
-	'/wp-block-editor/v1/navigation-fallback',
-	'/wp-block-editor/v1/url-details',
-	'/wp/v2/font-collections',
-	'/wp/v2/font-collections/(?P<slug>[\/\w-]+)',
-	'/wp/v2/menu-items/(?P<id>[\d]+)/autosaves',
-	'/wp/v2/menu-items/(?P<parent>[\d]+)/autosaves/(?P<id>[\d]+)',
-	'/wp/v2/font-families',
-	'/wp/v2/font-families/(?P<id>[\d]+)',
-	'/wp/v2/font-families/(?P<font_family_id>[\d]+)/font-faces',
-	'/wp/v2/font-families/(?P<font_family_id>[\d]+)/font-faces/(?P<id>[\d]+)',
-);
+// describes it (asked signed out, on the route with each capture filled in). Set aside: any schema still
+// told differently (none since 2026-10-22); the list only shrinks.
+$schema_aside = array();
 [ , $engine_index ] = minn_test_fetch( "$ENGINE/?rest_route=/" );
 $shared  = array_intersect_key( json_decode( (string) $index, true )['routes'] ?? array(), json_decode( (string) $engine_index, true )['routes'] ?? array() );
 $schemas = 0;

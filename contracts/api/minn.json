@@ -101498,7 +101498,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 472,
+            "lines": 464,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -101571,6 +101571,7 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RouteCatalogue",
+                "Minn\\Rest\\RouteSchemas",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
@@ -101591,7 +101592,6 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetObject",
                 "Minn\\Rest\\WidgetsController",
-                "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Text",
@@ -102370,7 +102370,7 @@
                     "name": "withSchema",
                     "static": false,
                     "visibility": "private",
-                    "signature": "withSchema(array $entry, string $path): array",
+                    "signature": "withSchema(array $entry, string $route): array",
                     "doc": "A route's description as the reference's OPTIONS answer gives it: the\nschema its controller describes it by, and for a route with no\nparameters a self link.",
                     "shapes": [
                         "@param array<string, mixed> $entry",
@@ -102385,7 +102385,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "path",
+                            "name": "route",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -102393,7 +102393,7 @@
                         }
                     ],
                     "line": 484,
-                    "end": 502
+                    "end": 494
                 },
                 {
                     "routes": [],
@@ -102419,8 +102419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 508,
-                    "end": 512
+                    "line": 500,
+                    "end": 504
                 }
             ]
         },
@@ -117193,7 +117193,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RegisteredFields.php",
-            "lines": 118,
+            "lines": 135,
             "doc": "The fields plugin code adds to an object type with register_rest_field,\nas the reference serves them (probe rest-fields). A get callback's value\nfollows the item's own fields, before its links. It is handed the item\nso far (without links, cut to the fields asked for, id kept), the\nfield's name, the request and the object type. A field is left out when\n_fields does not name it or its schema's context does not include the\nrequest's. A write runs the update callbacks for the fields its body\nnames, with the saved object, before rest_after_insert; an error one\nreturns is the write's answer.",
             "implements": [],
             "extends": null,
@@ -117212,6 +117212,7 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesParams",
                 "Minn\\Rest\\RestMeta",
+                "Minn\\Rest\\RouteSchemas",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostEvents",
@@ -117373,6 +117374,36 @@
                 },
                 {
                     "routes": [],
+                    "name": "withSchemas",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "withSchemas(array $schema, string $type): array",
+                    "doc": "An item schema with the type's registered fields added after its own\nproperties, each by its schema (one without a schema adds none).",
+                    "shapes": [
+                        "@param array<string, mixed> $schema",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 124
+                },
+                {
+                    "routes": [],
                     "name": "of",
                     "static": true,
                     "visibility": "private",
@@ -117390,8 +117421,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 114
+                    "line": 127,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -117412,8 +117443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 124
+                    "line": 134,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -117441,8 +117472,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 131
+                    "line": 144,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -117461,8 +117492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 140
+                    "line": 150,
+                    "end": 157
                 }
             ]
         },
@@ -120939,6 +120970,61 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\RouteSchemas",
+            "short": "RouteSchemas",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/RouteSchemas.php",
+            "lines": 40,
+            "doc": "The item schema an OPTIONS answer describes a route by: the one its core\ncontroller registers on the runtime's server, or, where the engine keeps\nthat controller as a dead end or answers the route itself, the schema the\nreference describes it by (data/rest-schemas.json), with the fields\nplugin code registers for the type after its own properties.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Rest\\SchemaData",
+                "Minn\\Runtime\\PluginCall"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "OWN",
+                    "value": "array (   '/wp/v2/font-families' =>    array (     0 => 'wp_font_family',     1 => 'wp_font_family',   ),   '/wp/v2/font-families/(?P<id>[\\\\d]+)' =>    array (     0 => 'wp_font_family',     1 => 'wp_font_family',   ),   '/wp/v2/font-families/(?P<font_family_id>[\\\\d]+)/font-faces' =>    array (     0 => 'wp_font_face',     1 => 'wp_font_face',   ),   '/wp/v2/font-families/(?P<font_family_id>[\\\\d]+)/font-faces/(?P<id>[\\\\d]+)' =>    array (     0 => 'wp_font_face',     1 => 'wp_font_face',   ),   '/wp/v2/global-styles/(?P<id>[\\\\/\\\\d+]+)' =>    array (     0 => 'wp_global_styles',     1 => 'wp_global_styles',   ),   '/wp/v2/global-styles/(?P<parent>[\\\\d]+)/revisions' =>    array (     0 => 'wp_global_styles-revision',     1 => 'wp_global_styles',   ),   '/wp/v2/global-styles/(?P<parent>[\\\\d]+)/revisions/(?P<id>[\\\\d]+)' =>    array (     0 => 'wp_global_styles-revision',     1 => 'wp_global_styles',   ),   '/wp/v2/statuses' =>    array (     0 => 'status',     1 => NULL,   ),   '/wp/v2/statuses/(?P<status>[\\\\w-]+)' =>    array (     0 => 'status',     1 => NULL,   ),   '/wp/v2/font-collections' =>    array (     0 => 'font-collection',     1 => NULL,   ),   '/wp/v2/font-collections/(?P<slug>[\\\\/\\\\w-]+)' =>    array (     0 => 'font-collection',     1 => NULL,   ),   '/wp/v2/block-directory/search' =>    array (     0 => 'block-directory-item',     1 => NULL,   ),   '/wp/v2/pattern-directory/patterns' =>    array (     0 => 'pattern-directory-item',     1 => NULL,   ),   '/wp-site-health/v1/tests/background-updates' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-site-health/v1/tests/loopback-requests' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-site-health/v1/tests/https-status' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-site-health/v1/tests/dotorg-communication' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-site-health/v1/tests/authorization-header' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-block-editor/v1/navigation-fallback' =>    array (     0 => 'navigation-fallback',     1 => NULL,   ), )",
+                    "doc": "Each route, as the index lists it: the captured schema it is described by, and the type whose registered fields join it.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "for",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "for(string $route): ?array",
+                    "doc": "The schema the route is described by, or null for none. @return array<string, mixed>|null",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 54
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\RouteTable",
             "short": "RouteTable",
             "namespace": "Minn\\Rest",
@@ -121623,6 +121709,7 @@
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
+                "Minn\\Rest\\RouteSchemas",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\SearchController",
@@ -123476,7 +123563,9 @@
             "uses": [
                 "Minn\\Json"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Rest\\RouteSchemas"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -154799,10 +154888,10 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Rest\\Api",
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RouteIndex",
+                "Minn\\Rest\\RouteSchemas",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\FileNames",
                 "Minn\\Runtime\\Hooks",

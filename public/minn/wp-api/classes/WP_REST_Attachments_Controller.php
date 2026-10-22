@@ -50,29 +50,43 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
             'permission_callback' => [$this, 'edit_media_item_permissions_check'],
             'args' => $this->get_edit_media_item_args(),
         ]);
-        if (!wp_is_client_side_media_processing_enabled()) {
-            return;
+        if (wp_is_client_side_media_processing_enabled()) {
+            $this->minn_register_browser_actions($route, $id);
         }
+    }
+
+    /**
+     * @internal The browser's sideload of each size it made and the upload's
+     * finalize, each described by the attachment's schema (OPTIONS).
+     */
+    private function minn_register_browser_actions(string $route, array $id): void
+    {
         $sizes = ['type' => ['string', 'array'], 'items' => ['type' => 'string', 'minLength' => 1], 'minItems' => 1, 'minLength' => 1];
         register_rest_route($this->namespace, $route . '/sideload', [
-            'methods' => WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'sideload_item'],
-            'permission_callback' => [$this, 'sideload_item_permissions_check'],
-            'args' => [
-                'id' => $id,
-                'image_size' => ['description' => __('Image size. Can be a single size name or an array of size names to register the same file under multiple sizes.')] + $sizes + ['required' => true, 'validate_callback' => static fn ($value, $request, $param) => self::validate_image_size_names($value, $param)],
-                'convert_format' => ['type' => 'boolean', 'default' => true, 'description' => __('Whether to convert image formats.')],
+            [
+                'methods' => WP_REST_Server::CREATABLE,
+                'callback' => [$this, 'sideload_item'],
+                'permission_callback' => [$this, 'sideload_item_permissions_check'],
+                'args' => [
+                    'id' => $id,
+                    'image_size' => ['description' => __('Image size. Can be a single size name or an array of size names to register the same file under multiple sizes.')] + $sizes + ['required' => true, 'validate_callback' => static fn ($value, $request, $param) => self::validate_image_size_names($value, $param)],
+                    'convert_format' => ['type' => 'boolean', 'default' => true, 'description' => __('Whether to convert image formats.')],
+                ],
             ],
+            'schema' => [$this, 'get_public_item_schema'],
         ]);
         $sub_size = ['image_size' => ['description' => __('Size name, or an array of size names when a single file is registered under multiple sizes with matching dimensions.')] + $sizes + ['required' => true], 'width' => ['type' => 'integer', 'minimum' => 1], 'height' => ['type' => 'integer', 'minimum' => 1], 'file' => ['type' => 'string', 'minLength' => 1], 'mime_type' => ['type' => 'string', 'pattern' => '^image/.*'], 'filesize' => ['type' => 'integer', 'minimum' => 1], 'original_image' => ['type' => 'string', 'minLength' => 1]];
         register_rest_route($this->namespace, $route . '/finalize', [
-            'methods' => WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'finalize_item'],
-            'permission_callback' => [$this, 'edit_media_item_permissions_check'],
-            'args' => [
-                'id' => $id,
-                'sub_sizes' => ['description' => __('Array of sub-size metadata collected from sideload responses.'), 'type' => 'array', 'default' => [], 'maxItems' => 100, 'validate_callback' => static fn ($value, $request, $param) => self::minn_sub_sizes_checked($value, $param), 'items' => ['type' => 'object', 'properties' => $sub_size]],
+            [
+                'methods' => WP_REST_Server::CREATABLE,
+                'callback' => [$this, 'finalize_item'],
+                'permission_callback' => [$this, 'edit_media_item_permissions_check'],
+                'args' => [
+                    'id' => $id,
+                    'sub_sizes' => ['description' => __('Array of sub-size metadata collected from sideload responses.'), 'type' => 'array', 'default' => [], 'maxItems' => 100, 'validate_callback' => static fn ($value, $request, $param) => self::minn_sub_sizes_checked($value, $param), 'items' => ['type' => 'object', 'properties' => $sub_size]],
+                ],
             ],
+            'schema' => [$this, 'get_public_item_schema'],
         ]);
     }
 

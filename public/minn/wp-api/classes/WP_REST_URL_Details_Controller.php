@@ -34,7 +34,7 @@ class WP_REST_URL_Details_Controller extends WP_REST_Controller
                 'args' => ['url' => ['required' => true, 'description' => __('The URL to process.'), 'validate_callback' => 'wp_http_validate_url', 'sanitize_callback' => 'sanitize_url', 'type' => 'string', 'format' => 'uri']],
                 'permission_callback' => [$this, 'permissions_check'],
             ],
-            'schema' => [$this, 'get_public_item_schema'],
+            // The route names no schema, so an OPTIONS answer describes none (as on the reference).
         ]);
     }
 

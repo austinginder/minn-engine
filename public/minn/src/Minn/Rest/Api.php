@@ -470,7 +470,7 @@ final readonly class Api
             return null;
         }
         $described = (new RouteCatalogue($this->router, $this->services->types(), $this->services->url()))->describing($request->path);
-        return $described === null ? null : Reply::item($this->withSchema(RuntimeRoutes::described($described[0], $described[1]), $request->path), null);
+        return $described === null ? null : Reply::item($this->withSchema(RuntimeRoutes::described($described[0], $described[1]), $described[0]), null);
     }
 
     /**
@@ -481,22 +481,14 @@ final readonly class Api
      * @param array<string, mixed> $entry
      * @return array<string, mixed>
      */
-    private function withSchema(array $entry, string $path): array
+    private function withSchema(array $entry, string $route): array
     {
-        $server = RuntimeRoutes::server();
-        foreach (array_keys($server->get_routes()) as $route) {
-            if (@preg_match('@^' . $route . '$@i', $path) !== 1) {
-                continue;
+        $schema = RouteSchemas::for($route);
+        if ($schema !== null) {
+            $entry['schema'] = $schema;
+            if (!str_contains($route, '(?P<')) {
+                $entry['_links'] = ['self' => [Links::item('self', $this->services->url()->to($route), [])]];
             }
-            // The schema callback is the route's option, beside its handlers, as the server keeps it.
-            $schema = ((array) $server->get_route_options((string) $route))['schema'] ?? null;
-            if (is_callable($schema)) {
-                $entry['schema'] = \Minn\Runtime\PluginCall::run($schema);
-                if (!str_contains((string) $route, '(?P<')) {
-                    $entry['_links'] = ['self' => [Links::item('self', $this->services->url()->to((string) $route), [])]];
-                }
-            }
-            break;
         }
         return $entry;
     }

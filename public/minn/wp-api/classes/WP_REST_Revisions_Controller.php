@@ -272,9 +272,8 @@ class WP_REST_Revisions_Controller extends WP_REST_Controller
         $own = SchemaData::of('revision-properties');
         $parent = $this->parent_controller->get_item_schema();
         $properties = array_slice($own, 0, 3, true);
-        if (!empty($parent['properties']['guid'])) {
-            $properties['guid'] = $parent['properties']['guid'];
-        }
+        // The parent's guid, or, where it describes none (a menu item), the revision's own.
+        $properties['guid'] = empty($parent['properties']['guid']) ? ['description' => __('GUID for the revision, as it exists in the database.'), 'type' => 'string', 'context' => ['view', 'edit']] : $parent['properties']['guid'];
         $properties += array_slice($own, 3, null, true);
         foreach (['title', 'content', 'excerpt'] as $field) {
             if (!empty($parent['properties'][$field])) {

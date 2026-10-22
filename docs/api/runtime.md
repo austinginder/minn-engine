@@ -5114,7 +5114,7 @@ passes the post ID it was posted, a string, to just such a callback).
 Every call into extension code is made from here, the one engine file
 that leaves strict types off.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\RegisteredFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RouteIndex`, `Minn\Rest\RuntimeRoutes`, `Minn\Runtime\FileNames`, `Minn\Runtime\Hooks`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\WidgetAreas`
+Used by: `Minn\Rest\RegisteredFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RouteIndex`, `Minn\Rest\RouteSchemas`, `Minn\Rest\RuntimeRoutes`, `Minn\Runtime\FileNames`, `Minn\Runtime\Hooks`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\WidgetAreas`
 
 ### static `run(callable $callback, array $args = array ( )): mixed`
 

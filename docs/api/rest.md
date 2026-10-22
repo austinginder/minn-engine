@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 472 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 464 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 142 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 164 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -64,7 +64,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostObject`](#postobject) | final readonly class | 567 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 264 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 528 | wp/v2 posts and pages, write side: create, update, trash, and force |
-| [`RegisteredFields`](#registeredfields) | final class | 118 | The fields plugin code adds to an object type with register_rest_field, |
+| [`RegisteredFields`](#registeredfields) | final class | 135 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
 | [`RenderedFields`](#renderedfields) | final class | 68 | A post's rendered title, content and excerpt as a REST response carries |
@@ -78,6 +78,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteCatalogue`](#routecatalogue) | final readonly class | 144 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 80 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
+| [`RouteSchemas`](#routeschemas) | final class | 40 | The item schema an OPTIONS answer describes a route by: the one its core |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
@@ -269,7 +270,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 81), `engineResponse()` (private, line 421), `withPageLinks()` (private, line 436), `options()` (private, line 467), `withSchema()` (private, line 484), `withAllow()` (private, line 508)
+Internals: `controllers()` (private, line 81), `engineResponse()` (private, line 421), `withPageLinks()` (private, line 436), `options()` (private, line 467), `withSchema()` (private, line 484), `withAllow()` (private, line 500)
 
 
 ## ApplicationPasswordsController
@@ -2745,7 +2746,7 @@ request's. A write runs the update callbacks for the fields its body
 names, with the saved object, before rest_after_insert; an error one
 returns is the write's answer.
 
-Used by: `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesParams`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesParams`, `Minn\Rest\RestMeta`, `Minn\Rest\RouteSchemas`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 ### static `add(array $item, string $type, Minn\Objects\RestRequest $request): array`
 
@@ -2777,7 +2778,15 @@ or one without a schema, takes none).
 
 - `@return array<string, array<string, mixed>>`
 
-Internals: `of()` (private, line 110), `wanted()` (private, line 117), `inContext()` (private, line 127), `refusal()` (private, line 133)
+### static `withSchemas(array $schema, string $type): array`
+
+An item schema with the type's registered fields added after its own
+properties, each by its schema (one without a schema adds none).
+
+- `@param array<string, mixed> $schema`
+- `@return array<string, mixed>`
+
+Internals: `of()` (private, line 127), `wanted()` (private, line 134), `inContext()` (private, line 144), `refusal()` (private, line 150)
 
 
 ## RegisteredPostFields
@@ -3345,6 +3354,27 @@ answered from this.
 - `@return array{route: string, handlers: list<array<string, mixed>>}|null`
 
 
+## RouteSchemas
+
+`final class Minn\Rest\RouteSchemas` · `public/minn/src/Minn/Rest/RouteSchemas.php`
+
+The item schema an OPTIONS answer describes a route by: the one its core
+controller registers on the runtime's server, or, where the engine keeps
+that controller as a dead end or answers the route itself, the schema the
+reference describes it by (data/rest-schemas.json), with the fields
+plugin code registers for the type after its own properties.
+
+- const `OWN` = `array (   '/wp/v2/font-families' =>    array (     0 => 'wp_font_family',     1 => 'wp_font_family',   ),   '/wp/v2/font-families/(?P<id>[\\d]+)' =>    array (     0 => 'wp_font_family',     1 => 'wp_font_family',   ),   '/wp/v2/font-families/(?P<font_family_id>[\\d]+)/font-faces' =>    array (     0 => 'wp_font_face',     1 => 'wp_font_face',   ),   '/wp/v2/font-families/(?P<font_family_id>[\\d]+)/font-faces/(?P<id>[\\d]+)' =>    array (     0 => 'wp_font_face',     1 => 'wp_font_face',   ),   '/wp/v2/global-styles/(?P<id>[\\/\\d+]+)' =>    array (     0 => 'wp_global_styles',     1 => 'wp_global_styles',   ),   '/wp/v2/global-styles/(?P<parent>[\\d]+)/revisions' =>    array (     0 => 'wp_global_styles-revision',     1 => 'wp_global_styles',   ),   '/wp/v2/global-styles/(?P<parent>[\\d]+)/revisions/(?P<id>[\\d]+)' =>    array (     0 => 'wp_global_styles-revision',     1 => 'wp_global_styles',   ),   '/wp/v2/statuses' =>    array (     0 => 'status',     1 => NULL,   ),   '/wp/v2/statuses/(?P<status>[\\w-]+)' =>    array (     0 => 'status',     1 => NULL,   ),   '/wp/v2/font-collections' =>    array (     0 => 'font-collection',     1 => NULL,   ),   '/wp/v2/font-collections/(?P<slug>[\\/\\w-]+)' =>    array (     0 => 'font-collection',     1 => NULL,   ),   '/wp/v2/block-directory/search' =>    array (     0 => 'block-directory-item',     1 => NULL,   ),   '/wp/v2/pattern-directory/patterns' =>    array (     0 => 'pattern-directory-item',     1 => NULL,   ),   '/wp-site-health/v1/tests/background-updates' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-site-health/v1/tests/loopback-requests' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-site-health/v1/tests/https-status' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-site-health/v1/tests/dotorg-communication' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-site-health/v1/tests/authorization-header' =>    array (     0 => 'wp-site-health-test',     1 => NULL,   ),   '/wp-block-editor/v1/navigation-fallback' =>    array (     0 => 'navigation-fallback',     1 => NULL,   ), )` — Each route, as the index lists it: the captured schema it is described by, and the type whose registered fields join it.
+
+Used by: `Minn\Rest\Api`
+
+### static `for(string $route): ?array`
+
+The schema the route is described by, or null for none. @return array<string, mixed>|null
+
+- `@return array<string, mixed>|null`
+
+
 ## RouteTable
 
 `final class Minn\Rest\RouteTable` · `public/minn/src/Minn/Rest/RouteTable.php`
@@ -3463,7 +3493,7 @@ and the runtime's namespaces folded into the index.
 - const `ROUTE_SCOPED` = `array (   '_wp_connectors_rest_settings_dispatch' =>    array (     0 => 10,     1 => '/wp/v2/settings',   ), )` — rest_post_dispatch's defaults that touch one route only: elsewhere they hand the answer back as it came, so they are left out there.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10,   'rest_send_cors_headers' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\SearchController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RouteSchemas`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\SearchController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -3731,6 +3761,8 @@ REST schemas captured from the reference for the facade's controller
 classes (data/rest-schemas.json): an item schema, a collection's
 parameters or a route argument, by name. Callbacks are not data, so a
 controller adds its own.
+
+Used by: `Minn\Rest\RouteSchemas`
 
 
 ### static `of(string $name): array`

@@ -106,6 +106,23 @@ final class RegisteredFields
         return array_map(static fn (array $arg): array => array_diff_key($arg, ['validate_callback' => true, 'sanitize_callback' => true]), Schema::endpointArgs(['properties' => $properties], false));
     }
 
+    /**
+     * An item schema with the type's registered fields added after its own
+     * properties, each by its schema (one without a schema adds none).
+     *
+     * @param array<string, mixed> $schema
+     * @return array<string, mixed>
+     */
+    public static function withSchemas(array $schema, string $type): array
+    {
+        foreach (self::of($type) as $name => $options) {
+            if (is_array($options) && is_array($options['schema'] ?? null)) {
+                $schema['properties'][$name] = $options['schema'];
+            }
+        }
+        return $schema;
+    }
+
     /** @return array<string, array<string, mixed>> */
     private static function of(string $type): array
     {

@@ -2,11 +2,11 @@
     "method": "tests/tools/facade-logic.php: functions and methods in public/minn/wp-api (generated dead ends and placeholders apart) whose body holds more than one statement or a control structure, by tokens; lines are the body's non-blank, non-comment lines; a docblock tag @minn-facade-logic <reason> keeps one out of the count and lists it under \"kept\"",
     "summary": {
         "functions": 3495,
-        "methods": 3813,
+        "methods": 3814,
         "delegates": 3560,
         "logicFunctions": 1778,
-        "logicMethods": 1970,
-        "logicLines": 29264,
+        "logicMethods": 1971,
+        "logicLines": 29268,
         "kept": 0
     },
     "byFile": {
@@ -63,8 +63,8 @@
             "lines": 514
         },
         "classes/WP_REST_Attachments_Controller.php": {
-            "logic": 39,
-            "lines": 495
+            "logic": 40,
+            "lines": 501
         },
         "taxonomy.php": {
             "logic": 62,
@@ -184,7 +184,7 @@
         },
         "classes/WP_REST_Revisions_Controller.php": {
             "logic": 17,
-            "lines": 199
+            "lines": 197
         },
         "classes/WP_Image_Editor.php": {
             "logic": 22,
@@ -6680,199 +6680,205 @@
         },
         "WP_REST_Attachments_Controller::create_item": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 135,
+            "line": 149,
             "statements": 10,
             "lines": 16
         },
         "WP_REST_Attachments_Controller::create_item_from_url": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 156,
+            "line": 170,
             "statements": 13,
             "lines": 19
         },
         "WP_REST_Attachments_Controller::create_item_permissions_check": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 115,
+            "line": 129,
             "statements": 7,
             "lines": 15
         },
         "WP_REST_Attachments_Controller::edit_media_item": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 258,
+            "line": 272,
             "statements": 24,
             "lines": 39
         },
         "WP_REST_Attachments_Controller::edit_media_item_permissions_check": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 240,
+            "line": 254,
             "statements": 2,
             "lines": 4
         },
         "WP_REST_Attachments_Controller::finalize_item": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 710,
+            "line": 724,
             "statements": 13,
             "lines": 19
         },
         "WP_REST_Attachments_Controller::get_attachment_filename": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 514,
+            "line": 528,
             "statements": 2,
             "lines": 2
         },
         "WP_REST_Attachments_Controller::get_attachment_filesize": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 520,
+            "line": 534,
             "statements": 4,
             "lines": 6
         },
         "WP_REST_Attachments_Controller::get_attachment_upload_subdir": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 690,
+            "line": 704,
             "statements": 4,
             "lines": 6
         },
         "WP_REST_Attachments_Controller::get_collection_params": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 461,
+            "line": 475,
             "statements": 6,
             "lines": 6
         },
         "WP_REST_Attachments_Controller::get_edit_media_item_args": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 501,
+            "line": 515,
             "statements": 4,
             "lines": 8
         },
         "WP_REST_Attachments_Controller::get_endpoint_args_for_item_schema": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 79,
+            "line": 93,
             "statements": 5,
             "lines": 9
         },
         "WP_REST_Attachments_Controller::get_item_schema": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 421,
+            "line": 435,
             "statements": 7,
             "lines": 13
         },
         "WP_REST_Attachments_Controller::get_media_types": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 485,
+            "line": 499,
             "statements": 3,
             "lines": 5
         },
         "WP_REST_Attachments_Controller::get_sideloaded_file_names": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 677,
+            "line": 691,
             "statements": 6,
             "lines": 8
         },
         "WP_REST_Attachments_Controller::handle_featured_media": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 213,
+            "line": 227,
             "statements": 4,
             "lines": 6
         },
         "WP_REST_Attachments_Controller::insert_attachment": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 180,
+            "line": 194,
             "statements": 15,
             "lines": 28
         },
         "WP_REST_Attachments_Controller::minn_apply_modifier": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 318,
+            "line": 332,
             "statements": 3,
             "lines": 14
         },
         "WP_REST_Attachments_Controller::minn_edited_attachment": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 337,
+            "line": 351,
             "statements": 13,
             "lines": 24
         },
         "WP_REST_Attachments_Controller::minn_engine": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 759,
+            "line": 773,
             "statements": 9,
             "lines": 11
         },
         "WP_REST_Attachments_Controller::minn_finalized_meta": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 734,
+            "line": 748,
             "statements": 3,
             "lines": 14
         },
         "WP_REST_Attachments_Controller::minn_media_links": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 402,
+            "line": 416,
             "statements": 3,
             "lines": 7
         },
         "WP_REST_Attachments_Controller::minn_modifiers": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 302,
+            "line": 316,
             "statements": 5,
             "lines": 11
         },
         "WP_REST_Attachments_Controller::minn_register_actions": {
             "file": "classes/WP_REST_Attachments_Controller.php",
             "line": 37,
-            "statements": 9,
-            "lines": 38
+            "statements": 5,
+            "lines": 17
+        },
+        "WP_REST_Attachments_Controller::minn_register_browser_actions": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "line": 62,
+            "statements": 4,
+            "lines": 27
         },
         "WP_REST_Attachments_Controller::minn_sideload_recorded": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 609,
+            "line": 623,
             "statements": 6,
             "lines": 16
         },
         "WP_REST_Attachments_Controller::minn_sideloaded_file": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 567,
+            "line": 581,
             "statements": 11,
             "lines": 15
         },
         "WP_REST_Attachments_Controller::minn_size_refusal": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 587,
+            "line": 601,
             "statements": 7,
             "lines": 16
         },
         "WP_REST_Attachments_Controller::minn_sub_sizes_checked": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 652,
+            "line": 666,
             "statements": 2,
             "lines": 7
         },
         "WP_REST_Attachments_Controller::post_process_item": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 225,
+            "line": 239,
             "statements": 3,
             "lines": 5
         },
         "WP_REST_Attachments_Controller::prepare_item_for_database": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 365,
+            "line": 379,
             "statements": 5,
             "lines": 13
         },
         "WP_REST_Attachments_Controller::prepare_item_for_response": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 383,
+            "line": 397,
             "statements": 11,
             "lines": 13
         },
         "WP_REST_Attachments_Controller::prepare_items_query": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 93,
+            "line": 107,
             "statements": 9,
             "lines": 17
         },
         "WP_REST_Attachments_Controller::prepare_links": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 413,
+            "line": 427,
             "statements": 2,
             "lines": 2
         },
@@ -6884,31 +6890,31 @@
         },
         "WP_REST_Attachments_Controller::sideload_item": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 546,
+            "line": 560,
             "statements": 9,
             "lines": 16
         },
         "WP_REST_Attachments_Controller::upload_from_data": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 438,
+            "line": 452,
             "statements": 8,
             "lines": 13
         },
         "WP_REST_Attachments_Controller::upload_from_file": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 472,
+            "line": 486,
             "statements": 4,
             "lines": 8
         },
         "WP_REST_Attachments_Controller::validate_image_size_names": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 630,
+            "line": 644,
             "statements": 4,
             "lines": 15
         },
         "WP_REST_Attachments_Controller::validate_sub_size_provenance": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "line": 663,
+            "line": 677,
             "statements": 3,
             "lines": 9
         },
@@ -8420,7 +8426,7 @@
         },
         "WP_REST_Revisions_Controller::get_collection_params": {
             "file": "classes/WP_REST_Revisions_Controller.php",
-            "line": 289,
+            "line": 288,
             "statements": 9,
             "lines": 9
         },
@@ -8434,7 +8440,7 @@
             "file": "classes/WP_REST_Revisions_Controller.php",
             "line": 267,
             "statements": 10,
-            "lines": 18
+            "lines": 16
         },
         "WP_REST_Revisions_Controller::get_items": {
             "file": "classes/WP_REST_Revisions_Controller.php",
@@ -8474,7 +8480,7 @@
         },
         "WP_REST_Revisions_Controller::prepare_excerpt_response": {
             "file": "classes/WP_REST_Revisions_Controller.php",
-            "line": 303,
+            "line": 302,
             "statements": 2,
             "lines": 2
         },
@@ -8498,7 +8504,7 @@
         },
         "WP_REST_Revisions_Controller::restore_post_data": {
             "file": "classes/WP_REST_Revisions_Controller.php",
-            "line": 310,
+            "line": 309,
             "statements": 2,
             "lines": 2
         },

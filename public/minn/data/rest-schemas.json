@@ -7089,5 +7089,709 @@
                 ]
             }
         }
+    },
+    "wp_font_family": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "wp_font_family",
+        "type": "object",
+        "properties": {
+            "id": {
+                "description": "Unique identifier for the post.",
+                "type": "integer",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "theme_json_version": {
+                "description": "Version of the theme.json schema used for the typography settings.",
+                "type": "integer",
+                "default": 3,
+                "minimum": 2,
+                "maximum": 3,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "font_faces": {
+                "description": "The IDs of the child font faces in the font family.",
+                "type": "array",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "items": {
+                    "type": "integer"
+                }
+            },
+            "font_family_settings": {
+                "description": "font-face definition in theme.json format.",
+                "type": "object",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the font family preset, translatable.",
+                        "type": "string"
+                    },
+                    "slug": {
+                        "description": "Kebab-case unique identifier for the font family preset.",
+                        "type": "string"
+                    },
+                    "fontFamily": {
+                        "description": "CSS font-family value.",
+                        "type": "string"
+                    },
+                    "preview": {
+                        "description": "URL to a preview image of the font family.",
+                        "type": "string",
+                        "format": "uri",
+                        "default": ""
+                    }
+                },
+                "required": [
+                    "name",
+                    "slug",
+                    "fontFamily"
+                ],
+                "additionalProperties": false
+            }
+        }
+    },
+    "wp_font_face": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "wp_font_face",
+        "type": "object",
+        "properties": {
+            "id": {
+                "description": "Unique identifier for the post.",
+                "type": "integer",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "theme_json_version": {
+                "description": "Version of the theme.json schema used for the typography settings.",
+                "type": "integer",
+                "default": 3,
+                "minimum": 2,
+                "maximum": 3,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "parent": {
+                "description": "The ID for the parent font family of the font face.",
+                "type": "integer",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "font_face_settings": {
+                "description": "font-face declaration in theme.json format.",
+                "type": "object",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "properties": {
+                    "fontFamily": {
+                        "description": "CSS font-family value.",
+                        "type": "string",
+                        "default": ""
+                    },
+                    "fontStyle": {
+                        "description": "CSS font-style value.",
+                        "type": "string",
+                        "default": "normal"
+                    },
+                    "fontWeight": {
+                        "description": "List of available font weights, separated by a space.",
+                        "default": "400",
+                        "type": [
+                            "string",
+                            "integer"
+                        ]
+                    },
+                    "fontDisplay": {
+                        "description": "CSS font-display value.",
+                        "type": "string",
+                        "default": "fallback",
+                        "enum": [
+                            "auto",
+                            "block",
+                            "fallback",
+                            "swap",
+                            "optional"
+                        ]
+                    },
+                    "src": {
+                        "description": "Paths or URLs to the font files.",
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "default": []
+                    },
+                    "fontStretch": {
+                        "description": "CSS font-stretch value.",
+                        "type": "string"
+                    },
+                    "ascentOverride": {
+                        "description": "CSS ascent-override value.",
+                        "type": "string"
+                    },
+                    "descentOverride": {
+                        "description": "CSS descent-override value.",
+                        "type": "string"
+                    },
+                    "fontVariant": {
+                        "description": "CSS font-variant value.",
+                        "type": "string"
+                    },
+                    "fontFeatureSettings": {
+                        "description": "CSS font-feature-settings value.",
+                        "type": "string"
+                    },
+                    "fontVariationSettings": {
+                        "description": "CSS font-variation-settings value.",
+                        "type": "string"
+                    },
+                    "lineGapOverride": {
+                        "description": "CSS line-gap-override value.",
+                        "type": "string"
+                    },
+                    "sizeAdjust": {
+                        "description": "CSS size-adjust value.",
+                        "type": "string"
+                    },
+                    "unicodeRange": {
+                        "description": "CSS unicode-range value.",
+                        "type": "string"
+                    },
+                    "preview": {
+                        "description": "URL to a preview image of the font face.",
+                        "type": "string",
+                        "format": "uri",
+                        "default": ""
+                    }
+                },
+                "required": [
+                    "fontFamily",
+                    "src"
+                ],
+                "additionalProperties": false
+            }
+        }
+    },
+    "wp_global_styles": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "wp_global_styles",
+        "type": "object",
+        "properties": {
+            "id": {
+                "description": "ID of global styles config.",
+                "type": "integer",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "styles": {
+                "description": "Global styles.",
+                "type": [
+                    "object"
+                ],
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "settings": {
+                "description": "Global settings.",
+                "type": [
+                    "object"
+                ],
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "title": {
+                "description": "Title of the global styles variation.",
+                "type": [
+                    "object",
+                    "string"
+                ],
+                "default": "",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "properties": {
+                    "raw": {
+                        "description": "Title for the global styles variation, as it exists in the database.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ]
+                    },
+                    "rendered": {
+                        "description": "HTML title for the post, transformed for display.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ],
+                        "readonly": true
+                    }
+                }
+            }
+        }
+    },
+    "font-collection": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "font-collection",
+        "type": "object",
+        "properties": {
+            "slug": {
+                "description": "Unique identifier for the font collection.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "name": {
+                "description": "The name for the font collection.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "description": {
+                "description": "The description for the font collection.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "font_families": {
+                "description": "The font families for the font collection.",
+                "type": "array",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "categories": {
+                "description": "The categories for the font collection.",
+                "type": "array",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            }
+        }
+    },
+    "block-directory-item": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "block-directory-item",
+        "type": "object",
+        "properties": {
+            "name": {
+                "description": "The block name, in namespace/block-name format.",
+                "type": "string",
+                "context": [
+                    "view"
+                ]
+            },
+            "title": {
+                "description": "The block title, in human readable format.",
+                "type": "string",
+                "context": [
+                    "view"
+                ]
+            },
+            "description": {
+                "description": "A short description of the block, in human readable format.",
+                "type": "string",
+                "context": [
+                    "view"
+                ]
+            },
+            "id": {
+                "description": "The block slug.",
+                "type": "string",
+                "context": [
+                    "view"
+                ]
+            },
+            "rating": {
+                "description": "The star rating of the block.",
+                "type": "number",
+                "context": [
+                    "view"
+                ]
+            },
+            "rating_count": {
+                "description": "The number of ratings.",
+                "type": "integer",
+                "context": [
+                    "view"
+                ]
+            },
+            "active_installs": {
+                "description": "The number sites that have activated this block.",
+                "type": "integer",
+                "context": [
+                    "view"
+                ]
+            },
+            "author_block_rating": {
+                "description": "The average rating of blocks published by the same author.",
+                "type": "number",
+                "context": [
+                    "view"
+                ]
+            },
+            "author_block_count": {
+                "description": "The number of blocks published by the same author.",
+                "type": "integer",
+                "context": [
+                    "view"
+                ]
+            },
+            "author": {
+                "description": "The WordPress.org username of the block author.",
+                "type": "string",
+                "context": [
+                    "view"
+                ]
+            },
+            "icon": {
+                "description": "The block icon.",
+                "type": "string",
+                "format": "uri",
+                "context": [
+                    "view"
+                ]
+            },
+            "last_updated": {
+                "description": "The date when the block was last updated.",
+                "type": "string",
+                "format": "date-time",
+                "context": [
+                    "view"
+                ]
+            },
+            "humanized_updated": {
+                "description": "The date when the block was last updated, in human readable format.",
+                "type": "string",
+                "context": [
+                    "view"
+                ]
+            }
+        }
+    },
+    "pattern-directory-item": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "pattern-directory-item",
+        "type": "object",
+        "properties": {
+            "id": {
+                "description": "The pattern ID.",
+                "type": "integer",
+                "minimum": 1,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "title": {
+                "description": "The pattern title, in human readable format.",
+                "type": "string",
+                "minLength": 1,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "content": {
+                "description": "The pattern content.",
+                "type": "string",
+                "minLength": 1,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "categories": {
+                "description": "The pattern's category slugs.",
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "keywords": {
+                "description": "The pattern's keywords.",
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "description": {
+                "description": "A description of the pattern.",
+                "type": "string",
+                "minLength": 1,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "viewport_width": {
+                "description": "The preferred width of the viewport when previewing a pattern, in pixels.",
+                "type": "integer",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "block_types": {
+                "description": "The block types which can use this pattern.",
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "view",
+                    "embed"
+                ]
+            }
+        }
+    },
+    "wp-site-health-test": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "wp-site-health-test",
+        "type": "object",
+        "properties": {
+            "test": {
+                "type": "string",
+                "description": "The name of the test being run.",
+                "readonly": true
+            },
+            "label": {
+                "type": "string",
+                "description": "A label describing the test.",
+                "readonly": true
+            },
+            "status": {
+                "type": "string",
+                "description": "The status of the test.",
+                "enum": [
+                    "good",
+                    "recommended",
+                    "critical"
+                ],
+                "readonly": true
+            },
+            "badge": {
+                "type": "object",
+                "description": "The category this test is grouped in.",
+                "properties": {
+                    "label": {
+                        "type": "string",
+                        "readonly": true
+                    },
+                    "color": {
+                        "type": "string",
+                        "enum": [
+                            "blue",
+                            "orange",
+                            "red",
+                            "green",
+                            "purple",
+                            "gray"
+                        ],
+                        "readonly": true
+                    }
+                },
+                "readonly": true
+            },
+            "description": {
+                "type": "string",
+                "description": "A more descriptive explanation of what the test looks for, and why it is important for the user.",
+                "readonly": true
+            },
+            "actions": {
+                "type": "string",
+                "description": "HTML containing an action to direct the user to where they can resolve the issue.",
+                "readonly": true
+            }
+        }
+    },
+    "navigation-fallback": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "navigation-fallback",
+        "type": "object",
+        "properties": {
+            "id": {
+                "description": "The unique identifier for the Navigation Menu.",
+                "type": "integer",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            }
+        }
+    },
+    "wp_global_styles-revision": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "wp_global_styles-revision",
+        "type": "object",
+        "properties": {
+            "author": {
+                "description": "The ID for the author of the revision.",
+                "type": "integer",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "date": {
+                "description": "The date the revision was published, in the site's timezone.",
+                "type": "string",
+                "format": "date-time",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "date_gmt": {
+                "description": "The date the revision was published, as GMT.",
+                "type": "string",
+                "format": "date-time",
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "id": {
+                "description": "ID of global styles config.",
+                "type": "integer",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "modified": {
+                "description": "The date the revision was last modified, in the site's timezone.",
+                "type": "string",
+                "format": "date-time",
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "modified_gmt": {
+                "description": "The date the revision was last modified, as GMT.",
+                "type": "string",
+                "format": "date-time",
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "parent": {
+                "description": "The ID for the parent of the revision.",
+                "type": "integer",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "styles": {
+                "description": "Global styles.",
+                "type": [
+                    "object"
+                ],
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "settings": {
+                "description": "Global settings.",
+                "type": [
+                    "object"
+                ],
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            }
+        }
     }
 }

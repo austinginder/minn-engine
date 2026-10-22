@@ -5550,8 +5550,14 @@
             "WP_REST_Attachments_Controller::minn_register_actions": {
                 "verdict": "keep",
                 "reason": "contract",
-                "why": "registers post-process and edit, and sideload and finalize when the browser processes images, all pointing at $this callbacks; the engine registers these through it",
-                "body": "f3dd17aabec8"
+                "why": "registers post-process and edit, and the browser's sideload and finalize when the browser processes images, all pointing at $this callbacks; the engine registers these through it",
+                "body": "cc835082ec8c"
+            },
+            "WP_REST_Attachments_Controller::minn_register_browser_actions": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the browser's sideload and finalize routes with their arguments and the attachment's schema as the route option, pointing at $this callbacks",
+                "body": "2c285e30ac03"
             },
             "WP_REST_Attachments_Controller::minn_sideload_recorded": {
                 "verdict": "move",
@@ -7378,8 +7384,8 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "the captured revision fields with the parent type's guid, title, content and excerpt and the meta schema; schema rules beside the post schema, cached in $this->schema",
-                "body": "8f824d1cd58f"
+                "why": "the captured revision fields with the parent type's guid (or, for a parent describing none, the revision's own, as a menu item autosave's OPTIONS shows on the reference), title, content and excerpt and the meta schema; schema rules beside the post schema, cached in $this->schema",
+                "body": "de422c23eb63"
             },
             "WP_REST_Revisions_Controller::get_items": {
                 "verdict": "move",

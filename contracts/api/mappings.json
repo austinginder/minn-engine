@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 702,
-        "composes": 2065,
+        "composes": 2066,
         "leaf": 960,
         "noop": 3264,
         "placeholder": 0,
         "deadend": 1766,
-        "functions": 8679,
+        "functions": 8680,
         "minnMethods": 1551,
         "leafLinesOver15": 8
     },
@@ -18980,13 +18980,23 @@
         },
         "WP_REST_Attachments_Controller::minn_register_actions": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "lines": 38,
+            "lines": 17,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "__",
                 "register_rest_route",
                 "wp_is_client_side_media_processing_enabled"
+            ]
+        },
+        "WP_REST_Attachments_Controller::minn_register_browser_actions": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "lines": 27,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_rest_route"
             ]
         },
         "WP_REST_Attachments_Controller::minn_sideload_recorded": {
@@ -22824,12 +22834,14 @@
         },
         "WP_REST_Revisions_Controller::get_item_schema": {
             "file": "classes/WP_REST_Revisions_Controller.php",
-            "lines": 18,
+            "lines": 17,
             "kind": "minn",
             "minn": [
                 "Minn\\Rest\\SchemaData::of"
             ],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Revisions_Controller::get_items": {
             "file": "classes/WP_REST_Revisions_Controller.php",
