@@ -33,8 +33,9 @@ the wp/v2 surface: shapes and controllers
 | [`FontFamilyRecord`](#fontfamilyrecord) | final class | 8 | A font family route names a font family: refused as an invalid post id |
 | [`FontObject`](#fontobject) | final readonly class | 87 | A font family and a font face as wp/v2 shapes them (probe: the font |
 | [`FontsController`](#fontscontroller) | final readonly class | 162 | wp/v2/font-families and their font-faces, read and deleted (probe: the |
-| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 158 | wp/v2/global-styles: the site editor's saved styles (one post per |
+| [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 161 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
+| [`GlobalStylesParams`](#globalstylesparams) | final class | 22 | A global styles update's parameters as the reference declares them: its |
 | [`IndexController`](#indexcontroller) | final readonly class | 106 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 142 | wp/v2/themes as the reference answers it (probe rest-themes): the |
 | [`ItemRender`](#itemrender) | final class | 54 | What a post read sets up around its rendering, as the reference does for |
@@ -51,7 +52,7 @@ the wp/v2 surface: shapes and controllers
 | [`MenusController`](#menuscontroller) | final readonly class | 262 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
-| [`PathArgs`](#pathargs) | final class | 71 | The arguments a route's path names, as the reference lists them among the |
+| [`PathArgs`](#pathargs) | final class | 79 | The arguments a route's path names, as the reference lists them among the |
 | [`PatternDirectoryController`](#patterndirectorycontroller) | final readonly class | 120 | wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 287 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 176 | Judges a route's policy against the caller, with the reference's |
@@ -60,7 +61,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostObject`](#postobject) | final readonly class | 567 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 264 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 528 | wp/v2 posts and pages, write side: create, update, trash, and force |
-| [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
+| [`RegisteredFields`](#registeredfields) | final class | 118 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
 | [`RenderedFields`](#renderedfields) | final class | 68 | A post's rendered title, content and excerpt as a REST response carries |
@@ -71,13 +72,13 @@ the wp/v2 surface: shapes and controllers
 | [`RevisionCollection`](#revisioncollection) | final class | 177 | A revisions list as the reference answers it (probe of the posts, |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 299 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
-| [`RouteCatalogue`](#routecatalogue) | final readonly class | 143 | The routes the engine serves, described in the reference's shape for the |
+| [`RouteCatalogue`](#routecatalogue) | final readonly class | 144 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 80 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 554 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 571 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 503 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
@@ -1402,6 +1403,7 @@ and no delete; the post is made on first use, as on the reference.
 
 - const `CANNOT_EDIT` = `'Sorry, you are not allowed to edit this global style.'`
 - const `CANNOT_READ_REVISIONS` = `'Sorry, you are not allowed to view revisions of this post.'`
+- const `NO_BATCH` = `array (   'v1' => false, )` — Global styles take no part in a batch, and the index says so of each of their endpoints.
 
 Used by: `Minn\Rest\Api`
 
@@ -1450,7 +1452,7 @@ Route: `GET /wp/v2/global-styles/{parent:[\d]+}/revisions/{id:[\d]+} (cap edit_t
 
 One revision of the saved styles.
 
-Internals: `refuseIllegalCss()` (private, line 84), `revisionObject()` (private, line 132), `post()` (private, line 138), `requireTheme()` (private, line 144), `requireParent()` (private, line 152), `title()` (private, line 165), `node()` (private, line 174)
+Internals: `refuseIllegalCss()` (private, line 87), `revisionObject()` (private, line 135), `post()` (private, line 141), `requireTheme()` (private, line 147), `requireParent()` (private, line 155), `title()` (private, line 168), `node()` (private, line 177)
 
 
 ## GlobalStylesObject
@@ -1482,6 +1484,25 @@ One revision row: both nodes when the body holds anything at all,
 neither when it is blank, then the row's own facts; no links.
 
 Internals: `links()` (private, line 79), `node()` (private, line 97)
+
+
+## GlobalStylesParams
+
+`final class Minn\Rest\GlobalStylesParams` · `public/minn/src/Minn/Rest/GlobalStylesParams.php` · implements `Minn\Http\RouteParams`
+
+A global styles update's parameters as the reference declares them: its
+styles and settings, each an object, and its title, then the fields
+plugins register for wp_global_styles (Minn Admin's own among them). Each
+is held to its type before the caller is judged; the id is the path's
+alone, and a key the update does not know is ignored.
+
+- const `UPDATE` = `array (   'styles' =>    array (     'description' => 'Global styles.',     'type' =>      array (       0 => 'object',     ),     'required' => false,   ),   'settings' =>    array (     'description' => 'Global settings.',     'type' =>      array (       0 => 'object',     ),     'required' => false,   ),   'title' =>    array (     'description' => 'Title of the global styles variation.',     'type' =>      array (       0 => 'object',       1 => 'string',     ),     'properties' =>      array (       'raw' =>        array (         'description' => 'Title for the global styles variation, as it exists in the database.',         'type' => 'string',         'context' =>          array (           0 => 'view',           1 => 'edit',           2 => 'embed',         ),       ),       'rendered' =>        array (         'description' => 'HTML title for the post, transformed for display.',         'type' => 'string',         'context' =>          array (           0 => 'view',           1 => 'edit',           2 => 'embed',         ),         'readonly' => true,       ),     ),     'required' => false,   ), )`
+
+Used by: `Minn\Rest\GlobalStylesController`
+
+### static `for(array $captures): array`
+
+The update's parameters; the route's id capture changes none of them.
 
 
 ## IndexController
@@ -2096,6 +2117,8 @@ reference's order, which a refusal's list follows.
 - const `POST_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the post.',     'type' => 'integer',     'required' => false,   ), )` — A post's id: wp/v2/{type base}/{id}, media, blocks, navigation, menu items.
 - const `COMMENT_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the comment.',     'type' => 'integer',     'required' => false,   ), )` — A comment's id: wp/v2/comments/{id}.
 - const `GLOBAL_STYLES_ID` = `array (   'id' =>    array (     'description' => 'ID of global styles config.',     'type' => 'integer',     'required' => false,   ), )` — A global styles config's id: wp/v2/global-styles/{id}, read (its writes name none).
+- const `THEME_STYLES` = `array (   'stylesheet' =>    array (     'description' => 'The theme identifier',     'type' => 'string',     'required' => false,     'handler_validates' => true,   ), )` — A theme's identifier: wp/v2/global-styles/themes/{stylesheet} and its
+variations. The handler judges it: the reference holds it to no type.
 - const `TERM_ID` = `array (   'id' =>    array (     'description' => 'Unique identifier for the term.',     'type' => 'integer',     'required' => false,   ), )` — A term's id: wp/v2/{taxonomy base}/{id}, and a menu's.
 - const `STATUS` = `array (   'status' =>    array (     'description' => 'An alphanumeric identifier for the status.',     'type' => 'string',     'required' => false,   ), )` — A post status's name: wp/v2/statuses/{status}.
 - const `RENDERED_BLOCK` = `array (   'name' =>    array (     'description' => 'Unique registered name for the block.',     'type' => 'string',     'required' => false,   ), )` — The block a render asks for: wp/v2/block-renderer/{name}.
@@ -2572,7 +2595,7 @@ request's. A write runs the update callbacks for the fields its body
 names, with the saved object, before rest_after_insert; an error one
 returns is the write's answer.
 
-Used by: `Minn\Rest\Embed`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesParams`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 ### static `add(array $item, string $type, Minn\Objects\RestRequest $request): array`
 
@@ -2596,7 +2619,15 @@ The names of the fields registered for the type that show in the context. @retur
 
 - `@return list<string>`
 
-Internals: `of()` (private, line 97), `wanted()` (private, line 104), `inContext()` (private, line 114), `refusal()` (private, line 120)
+### static `args(string $type): array`
+
+The type's registered fields as a write's parameters, each from its
+schema as the reference derives an item schema's (a read-only field,
+or one without a schema, takes none).
+
+- `@return array<string, array<string, mixed>>`
+
+Internals: `of()` (private, line 110), `wanted()` (private, line 117), `inContext()` (private, line 127), `refusal()` (private, line 133)
 
 
 ## RegisteredPostFields
@@ -3107,7 +3138,7 @@ when none does.
 
 - `@return array{0: string, 1: array<string, mixed>}|null`
 
-Internals: `endpoints()` (private, line 74), `rank()` (private, line 107)
+Internals: `endpoints()` (private, line 74), `rank()` (private, line 108)
 
 
 ## RouteIndex
@@ -3410,7 +3441,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 104), `filled()` (private, line 176), `dispatchDone()` (private, line 385), `asksForXml()` (private, line 460), `oembedXml()` (private, line 471), `look()` (private, line 485), `remember()` (private, line 490), `decode()` (private, line 497), `expand()` (private, line 517), `newWpRequest()` (private, line 542), `toResponse()` (private, line 571)
+Internals: `allow()` (private, line 104), `describing()` (private, line 173), `filled()` (private, line 192), `dispatchDone()` (private, line 402), `asksForXml()` (private, line 477), `oembedXml()` (private, line 488), `look()` (private, line 502), `remember()` (private, line 507), `decode()` (private, line 514), `expand()` (private, line 534), `newWpRequest()` (private, line 559), `toResponse()` (private, line 588)
 
 
 ## Schema
@@ -3426,7 +3457,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `KEYWORDS` = `array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )` — Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\RestMeta`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`, `Minn\Rest\SiteSchema`, `Minn\Rest\UsersController`
+Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\RegisteredFields`, `Minn\Rest\RestMeta`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`, `Minn\Rest\SiteSchema`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)

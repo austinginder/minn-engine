@@ -38,6 +38,14 @@ final class PathArgs
         'id' => ['description' => 'ID of global styles config.', 'type' => 'integer', 'required' => false],
     ];
 
+    /**
+     * A theme's identifier: wp/v2/global-styles/themes/{stylesheet} and its
+     * variations. The handler judges it: the reference holds it to no type.
+     */
+    public const THEME_STYLES = [
+        'stylesheet' => ['description' => 'The theme identifier', 'type' => 'string', 'required' => false, Args::HANDLER_VALIDATES => true],
+    ];
+
     /** A term's id: wp/v2/{taxonomy base}/{id}, and a menu's. */
     public const TERM_ID = [
         'id' => ['description' => 'Unique identifier for the term.', 'type' => 'integer', 'required' => false],

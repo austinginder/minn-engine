@@ -160,7 +160,23 @@ final class RuntimeRoutes
      */
     public static function described(string $route, array $entry): array
     {
-        return self::filled($entry, self::server()->engine_described_endpoints($route));
+        return self::filled($entry, self::describing($route));
+    }
+
+    /**
+     * What describes an engine route's endpoints: its own description, or,
+     * for a template's autosaves, its update's, whose parameters the
+     * reference lists for the autosave too.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private static function describing(string $route): array
+    {
+        if (preg_match('#^(/wp/v2/template(?:-part)?s/.+)/autosaves$#', $route, $parent) !== 1) {
+            return self::server()->engine_described_endpoints($route);
+        }
+        $update = array_values(array_filter(self::server()->engine_described_endpoints($parent[1]), static fn (array $endpoint): bool => in_array('POST', (array) ($endpoint['methods'] ?? []), true)));
+        return $update === [] ? [] : [['methods' => ['POST']] + $update[0]];
     }
 
     /**
@@ -193,7 +209,8 @@ final class RuntimeRoutes
                 if (($other['methods'] !== ['GET'] || $args === []) && array_diff_key($args, $published) === []) {
                     $args = $published;
                 }
-                $endpoints[] = ['methods' => $other['methods']] + (isset($other['allow_batch']) ? ['allow_batch' => $other['allow_batch']] : []) + ['args' => $args];
+                $batch = $other['allow_batch'] ?? $endpoint['allow_batch'] ?? null;
+                $endpoints[] = ['methods' => $other['methods']] + ($batch !== null ? ['allow_batch' => $batch] : []) + ['args' => $args];
             }
         }
         if (isset($entry['endpoints'])) {

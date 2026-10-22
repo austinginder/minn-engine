@@ -46,7 +46,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ThemeStyles`](#themestyles) | final readonly class | 169 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`TreeStyles`](#treestyles) | final readonly class | 259 | The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree |
 | [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
-| [`UserStyles`](#userstyles) | final readonly class | 105 | The site editor's saved global styles: one wp_global_styles post per |
+| [`UserStyles`](#userstyles) | final readonly class | 109 | The site editor's saved global styles: one wp_global_styles post per |
 
 ## ArchiveTitle
 
@@ -1851,10 +1851,13 @@ True when the body carries nothing at all under settings or styles, malformed or
 
 ### `changes(int $id, ?string $title, ?array $settings, ?array $styles): ?array`
 
-What a save changes, as columns: the content with what the caller
-names replaced (null keeps the stored value), and the title when one
-is given; null for no such post. The REST controller saves it as a
-post update.
+What a save changes, as columns: the title when one is given, and,
+when the caller names settings or styles, the content rebuilt from
+them, the stored styles and settings it leaves out (a node the stored
+config never had stays out), the marker and version 3, as the
+reference rewrites it; any other stored key is dropped. A save naming
+neither leaves the content as stored, broken or not. Null for no such
+post. The REST controller saves it as a post update.
 
 - `@return array<string, string>|null`
 

@@ -35,10 +35,10 @@ request, response, routing, and the outgoing client
 | [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
 | [`Response`](#response) | final readonly class | 161 | What a handler returns. Nothing is written to the client until the |
 | [`RevisionArgs`](#revisionargs) | final class | 66 | The parameters the revisions and autosaves routes accept, as the |
-| [`Route`](#route) | final readonly class | 75 | Declares a handler method as a route. The policy lives here, as |
+| [`Route`](#route) | final readonly class | 77 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
 | [`RouteParams`](#routeparams) | interface | 10 | The parameters a route takes when they depend on what its captures name |
-| [`RouteRow`](#routerow) | final readonly class | 87 | One line of the route table: what a route is, who it is for, and what it |
+| [`RouteRow`](#routerow) | final readonly class | 90 | One line of the route table: what a route is, who it is for, and what it |
 | [`Router`](#router) | final class | 291 | Matches a request to a #[Route] on one of the registered handler |
 | [`StatusText`](#statustext) | final class | 16 | The reason phrase a status line carries for each code, as the reference's |
 | [`Subject`](#subject) | enum | 46 | The record a route capture names, so a policy can have it looked up |
@@ -1225,10 +1225,11 @@ it, and "/{path*}" captures the rest of the path (slashes included).
 Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\LegacyPackController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Matched`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BatchController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\Catalogue`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\DeclaredTermsController`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PatternDirectoryController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\SiteHealthController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AdminActionController`, `Minn\Runtime\AjaxController`
 
 ```php
-__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ), ?string $name = NULL, ?string $params = NULL, ?string $refuse = NULL)
+__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ), ?string $name = NULL, ?string $params = NULL, ?string $refuse = NULL, ?array $allowBatch = NULL)
 ```
 - `@param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args`
 - `@param list<array<string, array<string, mixed>>> $body the parameter sets this route reads from the JSON body, from Args or the shape that owns them`
+- `@param array<string, bool>|null $allowBatch whether a batch may carry the route, by batch version, as the index lists it (['v1' => false]); unsaid when null`
 
 - readonly `Minn\Http\Method $method`
 - readonly `string $pattern`
@@ -1239,6 +1240,7 @@ __construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy
 - readonly `?string $name`
 - readonly `?string $params`
 - readonly `?string $refuse`
+- readonly `?array $allowBatch`
 
 ### `arguments(array $captures = array ( )): array`
 
@@ -1280,7 +1282,7 @@ The parameters a route takes when they depend on what its captures name
 (a post type's collection takes its own taxonomies, its own orderby
 values, whatever plugins add to it), rather than on a fixed set.
 
-Used by: `Minn\Rest\MenuCollectionParams`, `Minn\Rest\MenuItemCollectionParams`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\TermCollectionParams`, `Minn\Rest\UserCollectionParams`
+Used by: `Minn\Rest\GlobalStylesParams`, `Minn\Rest\MenuCollectionParams`, `Minn\Rest\MenuItemCollectionParams`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\TermCollectionParams`, `Minn\Rest\UserCollectionParams`
 
 ### static `for(array $captures): array`
 
@@ -1303,10 +1305,11 @@ are written from.
 Used by: `Minn\Http\Router`, `Minn\Rest\Catalogue`
 
 ```php
-__construct(string $method, string $pattern, string $name, string $handler, string $summary, ?Minn\Http\Policy $policy, array $args, array $body, bool $index, ?string $params = NULL, string $regex = '')
+__construct(string $method, string $pattern, string $name, string $handler, string $summary, ?Minn\Http\Policy $policy, array $args, array $body, bool $index, ?string $params = NULL, string $regex = '', ?array $allowBatch = NULL)
 ```
 - `@param array<string, array<string, mixed>> $args the query parameters the route reads`
 - `@param array<string, array<string, mixed>> $body the JSON body parameters it reads`
+- `@param array<string, bool>|null $allowBatch whether a batch may carry the route, as the index lists it`
 
 - readonly `string $method`
 - readonly `string $pattern`
@@ -1319,6 +1322,7 @@ __construct(string $method, string $pattern, string $name, string $handler, stri
 - readonly `bool $index`
 - readonly `?string $params`
 - readonly `string $regex`
+- readonly `?array $allowBatch`
 
 ### static `of(Minn\Http\Route $route, ReflectionMethod $method): self`
 
@@ -1337,7 +1341,7 @@ The row as data, for the JSON catalogue. @return array<string, mixed>
 
 - `@return array<string, mixed>`
 
-Internals: `summary()` (private, line 95)
+Internals: `summary()` (private, line 98)
 
 
 ## Router

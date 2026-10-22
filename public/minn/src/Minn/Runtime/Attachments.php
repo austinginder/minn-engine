@@ -183,7 +183,7 @@ final class Attachments
             return false;
         }
         $check = FileTypes::check($file);
-        return Kind::matches((string) $type, (string) $post->post_mime_type, (string) ($check['ext'] ?: ''), self::audioExtensions(), self::videoExtensions());
+        return Kind::matches((string) $type, (string) $post->post_mime_type, (string) ($check['ext'] ?: ''));
     }
 
     /** Whether an attachment is an image (wp_attachment_is_image). */

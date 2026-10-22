@@ -72419,7 +72419,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Route.php",
-            "lines": 75,
+            "lines": 77,
             "doc": "Declares a handler method as a route. The policy lives here, as\nmetadata the router enforces before the handler runs, so the\nauthorization surface of the engine is a grep away; a route with no\npolicy is one the ratchet in the style suite counts down. The parameter\nsets it reads live here too, judged before the policy is (the reference\nrefuses a bad argument before it refuses a caller), so the REST index can\ntell a client what a route takes as well as what it requires of them.\n\nPatterns: \"/wp/v2/posts/{id}\" captures one segment, \"{id:\\d+}\" constrains\nit, and \"/{path*}\" captures the rest of the path (slashes included).",
             "implements": [],
             "extends": null,
@@ -72494,11 +72494,12 @@
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Http\\Method $method, string $pattern, ?Minn\\Http\\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ), ?string $name = NULL, ?string $params = NULL, ?string $refuse = NULL)",
+                "signature": "__construct(Minn\\Http\\Method $method, string $pattern, ?Minn\\Http\\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ), ?string $name = NULL, ?string $params = NULL, ?string $refuse = NULL, ?array $allowBatch = NULL)",
                 "doc": "",
                 "shapes": [
                     "@param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args",
-                    "@param list<array<string, array<string, mixed>>> $body the parameter sets this route reads from the JSON body, from Args or the shape that owns them"
+                    "@param list<array<string, array<string, mixed>>> $body the parameter sets this route reads from the JSON body, from Args or the shape that owns them",
+                    "@param array<string, bool>|null $allowBatch whether a batch may carry the route, by batch version, as the index lists it (['v1' => false]); unsaid when null"
                 ],
                 "params": [
                     {
@@ -72563,11 +72564,18 @@
                         "shape": "class-string<Refusal>|null",
                         "default": "NULL",
                         "doc": "a refusal judged after the arguments and before the policy"
+                    },
+                    {
+                        "name": "allowBatch",
+                        "type": "?array",
+                        "shape": "array<string, bool>|null",
+                        "default": "NULL",
+                        "doc": "whether a batch may carry the route, by batch version, as the index lists it (['v1' => false]); unsaid when null"
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 43
+                "line": 33,
+                "end": 45
             },
             "cases": [],
             "constants": [],
@@ -72652,6 +72660,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "allowBatch",
+                    "type": "?array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -72675,8 +72692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 60
+                    "line": 55,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -72689,8 +72706,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 67,
-                    "end": 70
+                    "line": 69,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -72701,8 +72718,8 @@
                     "doc": "The pattern as a regular expression with named captures.",
                     "shapes": [],
                     "params": [],
-                    "line": 73,
-                    "end": 95
+                    "line": 75,
+                    "end": 97
                 }
             ]
         },
@@ -72753,6 +72770,7 @@
                 "Minn\\Http"
             ],
             "usedBy": [
+                "Minn\\Rest\\GlobalStylesParams",
                 "Minn\\Rest\\MenuCollectionParams",
                 "Minn\\Rest\\MenuItemCollectionParams",
                 "Minn\\Rest\\PostCollectionParams",
@@ -72795,7 +72813,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/RouteRow.php",
-            "lines": 87,
+            "lines": 90,
             "doc": "One line of the route table: what a route is, who it is for, and what it\ntakes, read from the attribute and the handler method alone, so the table\ncan be built from the classes without a request, a database, or a site.\nThis is the row the REST index, the docs, and contracts/api/routes.json\nare written from.",
             "implements": [],
             "extends": null,
@@ -72810,11 +72828,12 @@
                 "Minn\\Rest\\Catalogue"
             ],
             "constructor": {
-                "signature": "__construct(string $method, string $pattern, string $name, string $handler, string $summary, ?Minn\\Http\\Policy $policy, array $args, array $body, bool $index, ?string $params = NULL, string $regex = '')",
+                "signature": "__construct(string $method, string $pattern, string $name, string $handler, string $summary, ?Minn\\Http\\Policy $policy, array $args, array $body, bool $index, ?string $params = NULL, string $regex = '', ?array $allowBatch = NULL)",
                 "doc": "",
                 "shapes": [
                     "@param array<string, array<string, mixed>> $args the query parameters the route reads",
-                    "@param array<string, array<string, mixed>> $body the JSON body parameters it reads"
+                    "@param array<string, array<string, mixed>> $body the JSON body parameters it reads",
+                    "@param array<string, bool>|null $allowBatch whether a batch may carry the route, as the index lists it"
                 ],
                 "params": [
                     {
@@ -72893,11 +72912,18 @@
                         "shape": "",
                         "default": "''",
                         "doc": ""
+                    },
+                    {
+                        "name": "allowBatch",
+                        "type": "?array",
+                        "shape": "array<string, bool>|null",
+                        "default": "NULL",
+                        "doc": "whether a batch may carry the route, as the index lists it"
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 36
+                "line": 24,
+                "end": 38
             },
             "cases": [],
             "constants": [],
@@ -73000,6 +73026,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "allowBatch",
+                    "type": "?array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -73027,8 +73062,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 55
+                    "line": 41,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -73049,8 +73084,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 76
+                    "line": 66,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -73063,8 +73098,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 79,
-                    "end": 92
+                    "line": 82,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -73083,8 +73118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 101
+                    "line": 98,
+                    "end": 104
                 }
             ]
         },
@@ -90096,8 +90131,8 @@
             "namespace": "Minn\\Media",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Kind.php",
-            "lines": 79,
-            "doc": "Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second.",
+            "lines": 72,
+            "doc": "Whether an attachment is an image, audio or video (by its MIME type) or of a given extension.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -90108,12 +90143,6 @@
             "constructor": null,
             "cases": [],
             "constants": [
-                {
-                    "name": "IMAGE_EXTENSIONS",
-                    "value": "array (   0 => 'jpg',   1 => 'jpeg',   2 => 'jpe',   3 => 'gif',   4 => 'png',   5 => 'webp',   6 => 'avif',   7 => 'heic', )",
-                    "doc": "",
-                    "visibility": "private"
-                },
                 {
                     "name": "POST_MIME_TYPES",
                     "value": "array (   'image' =>    array (     0 => 'Images',     1 => 'Manage Images',     2 => 'Image <span class=\"count\">(%s)</span>',     3 => 'Images <span class=\"count\">(%s)</span>',   ),   'audio' =>    array (     0 => 'Audio',     1 => 'Manage Audio',     2 => 'Audio <span class=\"count\">(%s)</span>',     3 => 'Audio <span class=\"count\">(%s)</span>',   ),   'video' =>    array (     0 => 'Video',     1 => 'Manage Video',     2 => 'Video <span class=\"count\">(%s)</span>',     3 => 'Video <span class=\"count\">(%s)</span>',   ),   'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-word.document.macroEnabled.12,application/vnd.ms-word.template.macroEnabled.12,application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/pdf,application/vnd.ms-xpsdocument,application/oxps,application/rtf,application/wordperfect,application/octet-stream' =>    array (     0 => 'Documents',     1 => 'Manage Documents',     2 => 'Document <span class=\"count\">(%s)</span>',     3 => 'Documents <span class=\"count\">(%s)</span>',   ),   'application/vnd.apple.numbers,application/vnd.oasis.opendocument.spreadsheet,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12,application/vnd.ms-excel.sheet.binary.macroEnabled.12' =>    array (     0 => 'Spreadsheets',     1 => 'Manage Spreadsheets',     2 => 'Spreadsheet <span class=\"count\">(%s)</span>',     3 => 'Spreadsheets <span class=\"count\">(%s)</span>',   ),   'application/x-gzip,application/rar,application/x-tar,application/zip,application/x-7z-compressed' =>    array (     0 => 'Archives',     1 => 'Manage Archives',     2 => 'Archive <span class=\"count\">(%s)</span>',     3 => 'Archives <span class=\"count\">(%s)</span>',   ), )",
@@ -90151,16 +90180,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 67
+                    "line": 45,
+                    "end": 65
                 },
                 {
                     "routes": [],
                     "name": "matches",
                     "static": true,
                     "visibility": "public",
-                    "signature": "matches(string $type, string $mime, string $extension, array $audioExtensions, array $videoExtensions): bool",
-                    "doc": "Whether a file is of a media type, by mime prefix or by extension list.",
+                    "signature": "matches(string $type, string $mime, string $extension): bool",
+                    "doc": "Whether a file is of a media type (wp_attachment_is): an image, audio\nor video by its mime type alone, whatever its extension says; any\nother type by the file's extension.",
                     "shapes": [],
                     "params": [
                         {
@@ -90183,24 +90212,10 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "audioExtensions",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "videoExtensions",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 85
+                    "line": 72,
+                    "end": 78
                 }
             ]
         },
@@ -108452,7 +108467,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/GlobalStylesController.php",
-            "lines": 158,
+            "lines": 161,
             "doc": "wp/v2/global-styles: the site editor's saved styles (one post per\ntheme, read and written by id, with its revisions) and the active\ntheme's own styles and variations. There is no collection, no create\nand no delete; the post is made on first use, as on the reference.",
             "implements": [],
             "extends": null,
@@ -108474,6 +108489,7 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\GlobalStylesObject",
+                "Minn\\Rest\\GlobalStylesParams",
                 "Minn\\Rest\\PathArgs",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionCollection",
@@ -108527,8 +108543,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 36,
-                "end": 43
+                "line": 39,
+                "end": 46
             },
             "cases": [],
             "constants": [
@@ -108542,6 +108558,12 @@
                     "name": "CANNOT_READ_REVISIONS",
                     "value": "'Sorry, you are not allowed to view revisions of this post.'",
                     "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "NO_BATCH",
+                    "value": "array (   'v1' => false, )",
+                    "doc": "Global styles take no part in a batch, and the index says so of each of their endpoints.",
                     "visibility": "private"
                 }
             ],
@@ -108619,8 +108641,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 57
+                    "line": 50,
+                    "end": 60
                 },
                 {
                     "routes": [
@@ -108650,8 +108672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 77
+                    "line": 66,
+                    "end": 80
                 },
                 {
                     "routes": [
@@ -108679,8 +108701,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 103
+                    "line": 102,
+                    "end": 106
                 },
                 {
                     "routes": [
@@ -108708,8 +108730,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 111
+                    "line": 110,
+                    "end": 114
                 },
                 {
                     "routes": [
@@ -108737,8 +108759,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 121
+                    "line": 118,
+                    "end": 124
                 },
                 {
                     "routes": [
@@ -108773,8 +108795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 129
+                    "line": 128,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -108793,8 +108815,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 95
+                    "line": 87,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -108820,8 +108842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 136
+                    "line": 135,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -108840,8 +108862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 141
+                    "line": 141,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -108860,8 +108882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 149
+                    "line": 147,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -108880,8 +108902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 162
+                    "line": 155,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -108900,8 +108922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 171
+                    "line": 168,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -108927,8 +108949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 187
+                    "line": 177,
+                    "end": 190
                 }
             ]
         },
@@ -109140,6 +109162,59 @@
                     ],
                     "line": 97,
                     "end": 100
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\GlobalStylesParams",
+            "short": "GlobalStylesParams",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/GlobalStylesParams.php",
+            "lines": 22,
+            "doc": "A global styles update's parameters as the reference declares them: its\nstyles and settings, each an object, and its title, then the fields\nplugins register for wp_global_styles (Minn Admin's own among them). Each\nis held to its type before the caller is judged; the id is the path's\nalone, and a key the update does not know is ignored.",
+            "implements": [
+                "Minn\\Http\\RouteParams"
+            ],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\RouteParams",
+                "Minn\\Rest\\RegisteredFields"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\GlobalStylesController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "UPDATE",
+                    "value": "array (   'styles' =>    array (     'description' => 'Global styles.',     'type' =>      array (       0 => 'object',     ),     'required' => false,   ),   'settings' =>    array (     'description' => 'Global settings.',     'type' =>      array (       0 => 'object',     ),     'required' => false,   ),   'title' =>    array (     'description' => 'Title of the global styles variation.',     'type' =>      array (       0 => 'object',       1 => 'string',     ),     'properties' =>      array (       'raw' =>        array (         'description' => 'Title for the global styles variation, as it exists in the database.',         'type' => 'string',         'context' =>          array (           0 => 'view',           1 => 'edit',           2 => 'embed',         ),       ),       'rendered' =>        array (         'description' => 'HTML title for the post, transformed for display.',         'type' => 'string',         'context' =>          array (           0 => 'view',           1 => 'edit',           2 => 'embed',         ),         'readonly' => true,       ),     ),     'required' => false,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "for",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "for(array $captures): array",
+                    "doc": "The update's parameters; the route's id capture changes none of them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 36
                 }
             ]
         },
@@ -112294,7 +112369,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/PathArgs.php",
-            "lines": 71,
+            "lines": 79,
             "doc": "The arguments a route's path names, as the reference lists them among the\nroute's args: each capture again, described and typed. Declared, they are\njudged like any other argument, and a value of the same name in the query\n(or a write's body) takes the capture's place before the caller is judged\n(Http\\Router), as on the reference: /wp/v2/users/1?id=abc is refused as an\ninvalid id, and /wp/v2/users/1?id=2 answers user 2. A route lists one only\nwhere the reference lists it (a widget's GET names no id), and in the\nreference's order, which a refusal's list follows.",
             "implements": [],
             "extends": null,
@@ -112345,6 +112420,12 @@
                     "name": "GLOBAL_STYLES_ID",
                     "value": "array (   'id' =>    array (     'description' => 'ID of global styles config.',     'type' => 'integer',     'required' => false,   ), )",
                     "doc": "A global styles config's id: wp/v2/global-styles/{id}, read (its writes name none).",
+                    "visibility": "public"
+                },
+                {
+                    "name": "THEME_STYLES",
+                    "value": "array (   'stylesheet' =>    array (     'description' => 'The theme identifier',     'type' => 'string',     'required' => false,     'handler_validates' => true,   ), )",
+                    "doc": "A theme's identifier: wp/v2/global-styles/themes/{stylesheet} and its\nvariations. The handler judges it: the reference holds it to no type.",
                     "visibility": "public"
                 },
                 {
@@ -116337,7 +116418,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RegisteredFields.php",
-            "lines": 105,
+            "lines": 118,
             "doc": "The fields plugin code adds to an object type with register_rest_field,\nas the reference serves them (probe rest-fields). A get callback's value\nfollows the item's own fields, before its links. It is handed the item\nso far (without links, cut to the fields asked for, id kept), the\nfield's name, the request and the object type. A field is left out when\n_fields does not name it or its schema's context does not include the\nrequest's. A write runs the update callbacks for the fields its body\nnames, with the saved object, before rest_after_insert; an error one\nreturns is the write's answer.",
             "implements": [],
             "extends": null,
@@ -116347,12 +116428,14 @@
                 "Minn\\RestError",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\Responses",
+                "Minn\\Rest\\Schema",
                 "Minn\\Runtime\\PluginCall",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Support\\Lists"
             ],
             "usedBy": [
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\GlobalStylesParams",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Runtime\\CommentEvents",
@@ -116493,6 +116576,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "args",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "args(string $type): array",
+                    "doc": "The type's registered fields as a write's parameters, each from its\nschema as the reference derives an item schema's (a read-only field,\nor one without a schema, takes none).",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 107
+                },
+                {
+                    "routes": [],
                     "name": "of",
                     "static": true,
                     "visibility": "private",
@@ -116510,8 +116615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 101
+                    "line": 110,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -116532,8 +116637,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 111
+                    "line": 117,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -116561,8 +116666,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 118
+                    "line": 127,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -116581,8 +116686,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 127
+                    "line": 133,
+                    "end": 140
                 }
             ]
         },
@@ -119584,7 +119689,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RouteCatalogue.php",
-            "lines": 143,
+            "lines": 144,
             "doc": "The routes the engine serves, described in the reference's shape for the\nindex and for an OPTIONS request: every route's namespace, its methods\nand the parameters it declares, gathered per concrete route from the\nattributes so a client learns what really works on it, with the\nnamespaces they fall under. Routes are keyed as the reference spells them\n('/wp/v2/posts/(?P<id>[\\d]+)').",
             "implements": [],
             "extends": null,
@@ -119715,8 +119820,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 127
+                    "line": 122,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -119735,8 +119840,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 141
+                    "line": 136,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -119757,8 +119862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 158
+                    "line": 151,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -119789,7 +119894,7 @@
                         }
                     ],
                     "line": 74,
-                    "end": 104
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -119808,8 +119913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 111
+                    "line": 108,
+                    "end": 112
                 }
             ]
         },
@@ -120707,7 +120812,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 554,
+            "lines": 571,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -120962,8 +121067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 252
+                    "line": 223,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -120989,8 +121094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 268
+                    "line": 281,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -121018,8 +121123,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 284
+                    "line": 293,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -121038,8 +121143,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 291
+                    "line": 304,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -121074,8 +121179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 302
+                    "line": 315,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -121094,8 +121199,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 311
+                    "line": 322,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -121114,8 +121219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 334
+                    "line": 335,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -121144,8 +121249,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 354
+                    "line": 360,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -121166,8 +121271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 369
+                    "line": 379,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -121186,8 +121291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 372,
-                    "end": 382
+                    "line": 389,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -121213,8 +121318,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 403,
-                    "end": 447
+                    "line": 420,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -121240,8 +121345,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 454,
-                    "end": 457
+                    "line": 471,
+                    "end": 474
                 },
                 {
                     "routes": [],
@@ -121260,8 +121365,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 558,
-                    "end": 562
+                    "line": 575,
+                    "end": 579
                 },
                 {
                     "routes": [],
@@ -121272,8 +121377,8 @@
                     "doc": "The runtime's REST server, the one door to it (built, with rest_api_init, on first use).",
                     "shapes": [],
                     "params": [],
-                    "line": 566,
-                    "end": 569
+                    "line": 583,
+                    "end": 586
                 },
                 {
                     "routes": [],
@@ -121311,6 +121416,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "describing",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "describing(string $route): array",
+                    "doc": "What describes an engine route's endpoints: its own description, or,\nfor a template's autosaves, its update's, whose parameters the\nreference lists for the autosave too.",
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 173,
+                    "end": 180
+                },
+                {
+                    "routes": [],
                     "name": "filled",
                     "static": true,
                     "visibility": "private",
@@ -121337,8 +121464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 203
+                    "line": 192,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -121359,8 +121486,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 385,
-                    "end": 394
+                    "line": 402,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -121379,8 +121506,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 460,
-                    "end": 463
+                    "line": 477,
+                    "end": 480
                 },
                 {
                     "routes": [],
@@ -121406,8 +121533,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 471,
-                    "end": 482
+                    "line": 488,
+                    "end": 499
                 },
                 {
                     "routes": [],
@@ -121428,8 +121555,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 485,
-                    "end": 488
+                    "line": 502,
+                    "end": 505
                 },
                 {
                     "routes": [],
@@ -121462,8 +121589,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 490,
-                    "end": 494
+                    "line": 507,
+                    "end": 511
                 },
                 {
                     "routes": [],
@@ -121482,8 +121609,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 507
+                    "line": 514,
+                    "end": 524
                 },
                 {
                     "routes": [],
@@ -121505,8 +121632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 517,
-                    "end": 540
+                    "line": 534,
+                    "end": 557
                 },
                 {
                     "routes": [],
@@ -121525,8 +121652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 542,
-                    "end": 555
+                    "line": 559,
+                    "end": 572
                 },
                 {
                     "routes": [],
@@ -121545,8 +121672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 571,
-                    "end": 579
+                    "line": 588,
+                    "end": 596
                 }
             ]
         },
@@ -121572,6 +121699,7 @@
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\ClientSchema",
                 "Minn\\Rest\\LiveSettings",
+                "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\SchemaChoices",
                 "Minn\\Rest\\SchemaValues",
@@ -198694,7 +198822,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/UserStyles.php",
-            "lines": 105,
+            "lines": 109,
             "doc": "The site editor's saved global styles: one wp_global_styles post per\ntheme, tied to it by the wp_theme term, holding a versioned JSON body\nof the settings and styles the editor wrote. Every changed save leaves\na revision behind, as a post's does.",
             "implements": [],
             "extends": null,
@@ -198922,7 +199050,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "changes(int $id, ?string $title, ?array $settings, ?array $styles): ?array",
-                    "doc": "What a save changes, as columns: the content with what the caller\nnames replaced (null keeps the stored value), and the title when one\nis given; null for no such post. The REST controller saves it as a\npost update.",
+                    "doc": "What a save changes, as columns: the title when one is given, and,\nwhen the caller names settings or styles, the content rebuilt from\nthem, the stored styles and settings it leaves out (a node the stored\nconfig never had stays out), the marker and version 3, as the\nreference rewrites it; any other stored key is dropped. A save naming\nneither leaves the content as stored, broken or not. Null for no such\npost. The REST controller saves it as a post update.",
                     "shapes": [
                         "@return array<string, string>|null"
                     ],
@@ -198956,8 +199084,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 124
+                    "line": 113,
+                    "end": 128
                 }
             ]
         },

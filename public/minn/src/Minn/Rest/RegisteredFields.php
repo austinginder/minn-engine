@@ -93,6 +93,19 @@ final class RegisteredFields
         return array_map('strval', array_keys(array_filter(self::of($type), static fn (array $options) => self::inContext($options, $context))));
     }
 
+    /**
+     * The type's registered fields as a write's parameters, each from its
+     * schema as the reference derives an item schema's (a read-only field,
+     * or one without a schema, takes none).
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public static function args(string $type): array
+    {
+        $properties = array_filter(array_map(static fn (mixed $options): mixed => is_array($options) ? ($options['schema'] ?? null) : null, self::of($type)), is_array(...));
+        return array_map(static fn (array $arg): array => array_diff_key($arg, ['validate_callback' => true, 'sanitize_callback' => true]), Schema::endpointArgs(['properties' => $properties], false));
+    }
+
     /** @return array<string, array<string, mixed>> */
     private static function of(string $type): array
     {

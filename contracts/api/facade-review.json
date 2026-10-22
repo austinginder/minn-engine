@@ -16688,8 +16688,8 @@
             "wp_get_missing_image_subsizes": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\ImageSubsizes",
-                "why": "every registered size (wp_get_registered_image_subsizes) the metadata lacks and image_resize_dimensions would make from the image, the original's measure for a kept original, all of them before the filter when nothing is measured; subsize logic. Doubt fixed (2026-10-22): height-only and cropped sizes and missing metadata answer as on the reference.",
-                "body": "fd9bda26008b"
+                "why": "none for an attachment that is not an image (no filter asked); otherwise every registered size (wp_get_registered_image_subsizes) the metadata lacks and image_resize_dimensions would make from the image, the original's measure for a kept original, all of them before the filter when nothing is measured; subsize logic. Doubt fixed (2026-10-22): height-only and cropped sizes and missing metadata answer as on the reference, and a non-image answers none (probe media-template-doubts).",
+                "body": "2b9a8b328566"
             },
             "wp_get_original_image_path": {
                 "verdict": "move",

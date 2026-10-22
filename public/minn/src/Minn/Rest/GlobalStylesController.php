@@ -33,6 +33,9 @@ final readonly class GlobalStylesController
     private const CANNOT_EDIT = 'Sorry, you are not allowed to edit this global style.';
     private const CANNOT_READ_REVISIONS = 'Sorry, you are not allowed to view revisions of this post.';
 
+    /** Global styles take no part in a batch, and the index says so of each of their endpoints. */
+    private const NO_BATCH = ['v1' => false];
+
     public function __construct(
         private UserStyles $styles,
         private ThemeStyles $theme,
@@ -43,7 +46,7 @@ final readonly class GlobalStylesController
     }
 
     /** The saved styles by id: anyone who edits posts may read them, editing context needs the theme. */
-    #[Route(Method::Get, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Public, subject: Subject::GlobalStyles, param: 'id'), args: [PathArgs::GLOBAL_STYLES_ID])]
+    #[Route(Method::Get, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Public, subject: Subject::GlobalStyles, param: 'id'), args: [PathArgs::GLOBAL_STYLES_ID], allowBatch: self::NO_BATCH)]
     public function single(Request $request, string $id): Response
     {
         $post = $this->post((int) $id);
@@ -57,9 +60,9 @@ final readonly class GlobalStylesController
     }
 
     /** Replaces the title, settings, or styles the body names; what it leaves out stays. */
-    #[Route(Method::Post, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::GlobalStyles, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this global style.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this global style.'))]
-    #[Route(Method::Put, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::GlobalStyles, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this global style.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this global style.'))]
-    #[Route(Method::Patch, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::GlobalStyles, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this global style.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this global style.'))]
+    #[Route(Method::Post, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::GlobalStyles, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this global style.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this global style.'), params: GlobalStylesParams::class, allowBatch: self::NO_BATCH)]
+    #[Route(Method::Put, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::GlobalStyles, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this global style.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this global style.'), params: GlobalStylesParams::class, allowBatch: self::NO_BATCH)]
+    #[Route(Method::Patch, '/wp/v2/global-styles/{id:[\/\d+]+}', policy: new Policy(Access::Cap, 'edit_theme_options', param: 'id', subject: Subject::GlobalStyles, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this global style.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this global style.'), params: GlobalStylesParams::class, allowBatch: self::NO_BATCH)]
     public function update(Request $request, string $id): Response
     {
         $post = $this->post((int) $id);
@@ -95,7 +98,7 @@ final readonly class GlobalStylesController
     }
 
     /** The style variations the active theme ships; listed ahead of the theme's own route, whose pattern would take this path too. */
-    #[Route(Method::Get, '/wp/v2/global-styles/themes/{stylesheet:[\/\s%\w\.\(\)\[\]\@_\-]+}/variations', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_read_global_styles', signInMessage: 'Sorry, you are not allowed to access the global styles on this site.', refuse: 'rest_cannot_read_global_styles', message: 'Sorry, you are not allowed to access the global styles on this site.'))]
+    #[Route(Method::Get, '/wp/v2/global-styles/themes/{stylesheet:[\/\s%\w\.\(\)\[\]\@_\-]+}/variations', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_read_global_styles', signInMessage: 'Sorry, you are not allowed to access the global styles on this site.', refuse: 'rest_cannot_read_global_styles', message: 'Sorry, you are not allowed to access the global styles on this site.'), args: [PathArgs::THEME_STYLES], allowBatch: self::NO_BATCH)]
     public function variations(Request $request, string $stylesheet): Response
     {
         $this->requireTheme($stylesheet);
@@ -103,7 +106,7 @@ final readonly class GlobalStylesController
     }
 
     /** The active theme's settings and styles, the engine's defaults underneath. */
-    #[Route(Method::Get, '/wp/v2/global-styles/themes/{stylesheet:[^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?}', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_read_global_styles', signInMessage: 'Sorry, you are not allowed to access the global styles on this site.', refuse: 'rest_cannot_read_global_styles', message: 'Sorry, you are not allowed to access the global styles on this site.'))]
+    #[Route(Method::Get, '/wp/v2/global-styles/themes/{stylesheet:[^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?}', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_read_global_styles', signInMessage: 'Sorry, you are not allowed to access the global styles on this site.', refuse: 'rest_cannot_read_global_styles', message: 'Sorry, you are not allowed to access the global styles on this site.'), args: [PathArgs::THEME_STYLES], allowBatch: self::NO_BATCH)]
     public function theme(Request $request, string $stylesheet): Response
     {
         $this->requireTheme($stylesheet);

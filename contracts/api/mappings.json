@@ -12502,7 +12502,7 @@
         },
         "WP_Font_Utils::maybe_add_quotes": {
             "file": "classes/WP_Font_Utils.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -69041,12 +69041,13 @@
         },
         "wp_get_missing_image_subsizes": {
             "file": "media.php",
-            "lines": 18,
+            "lines": 21,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
                 "image_resize_dimensions",
+                "wp_attachment_is_image",
                 "wp_get_attachment_metadata",
                 "wp_get_original_image_path",
                 "wp_get_registered_image_subsizes",

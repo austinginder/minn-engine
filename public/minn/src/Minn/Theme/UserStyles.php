@@ -100,10 +100,13 @@ final readonly class UserStyles
     }
 
     /**
-     * What a save changes, as columns: the content with what the caller
-     * names replaced (null keeps the stored value), and the title when one
-     * is given; null for no such post. The REST controller saves it as a
-     * post update.
+     * What a save changes, as columns: the title when one is given, and,
+     * when the caller names settings or styles, the content rebuilt from
+     * them, the stored styles and settings it leaves out (a node the stored
+     * config never had stays out), the marker and version 3, as the
+     * reference rewrites it; any other stored key is dropped. A save naming
+     * neither leaves the content as stored, broken or not. Null for no such
+     * post. The REST controller saves it as a post update.
      *
      * @return array<string, string>|null
      */
@@ -113,13 +116,14 @@ final readonly class UserStyles
         if ($post === null) {
             return null;
         }
-        $current = self::decode($post->content);
-        $body = Json::encode([
-            'styles' => $styles ?? $current['styles'],
-            'settings' => $settings ?? $current['settings'],
-            'isGlobalStylesUserThemeJSON' => true,
-            'version' => 3,
-        ], Json::ESCAPED);
-        return ['post_content' => $body] + ($title === null ? [] : ['post_title' => $title]);
+        $titled = $title === null ? [] : ['post_title' => $title];
+        if ($settings === null && $styles === null) {
+            return $titled;
+        }
+        $stored = Json::decode($post->content, or: null);
+        $stored = is_array($stored) ? $stored : [];
+        $config = array_filter(['styles' => $styles ?? $stored['styles'] ?? null, 'settings' => $settings ?? $stored['settings'] ?? null], static fn (mixed $node): bool => $node !== null);
+        $body = Json::encode($config + ['isGlobalStylesUserThemeJSON' => true, 'version' => 3], Json::ESCAPED);
+        return ['post_content' => $body] + $titled;
     }
 }

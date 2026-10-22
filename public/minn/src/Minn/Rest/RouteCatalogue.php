@@ -88,6 +88,7 @@ final readonly class RouteCatalogue
                 $args = $row->argsFor($route);
                 $key = $row->handler . "\0" . serialize($args);
                 $groups[$route][$key]['methods'][] = $method;
+                $groups[$route][$key]['batch'] = $row->allowBatch;
                 $groups[$route][$key]['args'] = $args;
             }
         }
@@ -95,7 +96,7 @@ final readonly class RouteCatalogue
         foreach ($groups as $route => $group) {
             $listed = array_map(static function (array $endpoint): array {
                 usort($endpoint['methods'], static fn (string $a, string $b): int => self::rank($a) <=> self::rank($b));
-                return ['methods' => $endpoint['methods'], 'args' => $endpoint['args']];
+                return ['methods' => $endpoint['methods']] + ($endpoint['batch'] !== null ? ['allow_batch' => $endpoint['batch']] : []) + ['args' => $endpoint['args']];
             }, array_values($group));
             usort($listed, static fn (array $a, array $b): int => self::rank($a['methods'][0]) <=> self::rank($b['methods'][0]));
             $endpoints[$route] = $listed;

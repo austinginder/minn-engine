@@ -170,6 +170,9 @@ gs_parity( 'admin: no create', '/wp/v2/global-styles', $admin, 'POST', '{"styles
 gs_parity( 'admin: no delete', "/wp/v2/global-styles/$id", $admin, 'DELETE' );
 gs_parity( 'admin: styles must be an object', "/wp/v2/global-styles/$id", $admin, 'POST', '{"styles":"nope"}' );
 gs_parity( 'admin: settings must be an object', "/wp/v2/global-styles/$id", $admin, 'POST', '{"settings":7}' );
+gs_parity( 'admin: the title must be a string or an object', "/wp/v2/global-styles/$id", $admin, 'PUT', '{"title":5}' );
+gs_parity( 'admin: every invalid node is listed, a list passing as an object', "/wp/v2/global-styles/$id", $admin, 'PUT', '{"title":[],"styles":"x","settings":"y"}' );
+gs_parity( 'admin: a registered field is held to its schema', "/wp/v2/global-styles/$id", $admin, 'PUT', '{"minn_modified":"abc"}' );
 
 // ---- the other callers
 foreach ( array( 'editor' => $editor, 'author' => $author, 'anonymous' => null ) as $who => $mint ) {
@@ -213,6 +216,28 @@ check( 200 === $st && ( $reply['settings']['color']['palette']['custom'][0]['slu
 check( 200 === $st && $reply['settings'] === array() && $reply['styles'] === array() && 'Custom Styles' === ( $reply['title']['raw'] ?? '' ), 'engine: emptied again, title from {raw}', json_encode( $reply ) );
 gs_parity( 'after emptying: item in edit context', "/wp/v2/global-styles/$id?context=edit", $admin );
 gs_parity( 'after emptying: revisions', "/wp/v2/global-styles/$id/revisions", $admin );
+
+// ---- the config each stack stores: a save naming neither node leaves the content as stored; one naming
+// either rebuilds it from what it names, the stored nodes it leaves out, the marker and version 3
+function gs_store( int $id, string $content ): void {
+	gs_wp( "eval '\$GLOBALS[\"wpdb\"]->update( \$GLOBALS[\"wpdb\"]->posts, array( \"post_content\" => base64_decode( \"" . base64_encode( $content ) . "\" ) ), array( \"ID\" => $id ) ); clean_post_cache( $id );'" );
+}
+
+foreach ( array(
+	'a body naming neither node'                       => array( '{"version": 3, "isGlobalStylesUserThemeJSON": true }', '{}' ),
+	'a title alone, over content that is not JSON'     => array( 'not json', '{"title":"Engine wrote"}' ),
+	'settings, over a config without styles'           => array( '{"version": 3, "isGlobalStylesUserThemeJSON": true }', '{"settings":{"color":{"text":true}}}' ),
+	'settings, beside the stored styles'               => array( '{"styles":{"color":{"text":"#111"}},"isGlobalStylesUserThemeJSON":true,"version":3}', '{"settings":{"color":{"text":true}}}' ),
+	'styles, over an older config with a key of its own' => array( '{"version":2,"foo":1,"isGlobalStylesUserThemeJSON":true,"settings":{"color":{"text":true}},"styles":{}}', '{"styles":{"color":{"text":"#222"}}}' ),
+) as $label => [ $stored, $body ] ) {
+	$written = array();
+	foreach ( array( 'reference' => $REF, 'engine' => $ENGINE ) as $stack => $base ) {
+		gs_store( $id, $stored );
+		$written[ $stack ] = gs_fetch( $base, "/wp/v2/global-styles/$id", $admin, 'PUT', $body )[0] . ' ' . gs_wp( "post get $id --field=post_content" );
+	}
+	check( $written['reference'] === $written['engine'], "stored config: $label", $written['reference'] . ' vs ' . $written['engine'] );
+}
+gs_store( $id, $original_content );
 
 // ---- the app's own route reads the saved styles through the engine's route
 gs_parity( 'minn-admin/v1/styles/variations', '/minn-admin/v1/styles/variations', $admin );

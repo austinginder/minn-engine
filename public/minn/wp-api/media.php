@@ -1517,7 +1517,10 @@ function wp_update_image_subsizes($attachment_id)
 /** Registered sizes the attachment's metadata lacks and its dimensions can fit (empty for the battery attachment, probed). */
 function wp_get_missing_image_subsizes($attachment_id)
 {
-    // With no measured image every registered size is missing, before the filter.
+    // An attachment that is not an image has none missing, and the filter is not asked; one with no measured image misses every registered size.
+    if (!wp_attachment_is_image((int) $attachment_id)) {
+        return [];
+    }
     $registered = wp_get_registered_image_subsizes();
     $meta = wp_get_attachment_metadata((int) $attachment_id);
     if (!is_array($meta) || empty($meta['width']) || empty($meta['height'])) {

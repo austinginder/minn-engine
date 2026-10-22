@@ -4324,7 +4324,51 @@
                     "message": "Sorry, you are not allowed to edit this global style."
                 }
             },
-            "args": [],
+            "args": {
+                "styles": {
+                    "description": "Global styles.",
+                    "type": [
+                        "object"
+                    ],
+                    "required": false
+                },
+                "settings": {
+                    "description": "Global settings.",
+                    "type": [
+                        "object"
+                    ],
+                    "required": false
+                },
+                "title": {
+                    "description": "Title of the global styles variation.",
+                    "type": [
+                        "object",
+                        "string"
+                    ],
+                    "properties": {
+                        "raw": {
+                            "description": "Title for the global styles variation, as it exists in the database.",
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit",
+                                "embed"
+                            ]
+                        },
+                        "rendered": {
+                            "description": "HTML title for the post, transformed for display.",
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit",
+                                "embed"
+                            ],
+                            "readonly": true
+                        }
+                    },
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4353,7 +4397,51 @@
                     "message": "Sorry, you are not allowed to edit this global style."
                 }
             },
-            "args": [],
+            "args": {
+                "styles": {
+                    "description": "Global styles.",
+                    "type": [
+                        "object"
+                    ],
+                    "required": false
+                },
+                "settings": {
+                    "description": "Global settings.",
+                    "type": [
+                        "object"
+                    ],
+                    "required": false
+                },
+                "title": {
+                    "description": "Title of the global styles variation.",
+                    "type": [
+                        "object",
+                        "string"
+                    ],
+                    "properties": {
+                        "raw": {
+                            "description": "Title for the global styles variation, as it exists in the database.",
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit",
+                                "embed"
+                            ]
+                        },
+                        "rendered": {
+                            "description": "HTML title for the post, transformed for display.",
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit",
+                                "embed"
+                            ],
+                            "readonly": true
+                        }
+                    },
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4382,7 +4470,51 @@
                     "message": "Sorry, you are not allowed to edit this global style."
                 }
             },
-            "args": [],
+            "args": {
+                "styles": {
+                    "description": "Global styles.",
+                    "type": [
+                        "object"
+                    ],
+                    "required": false
+                },
+                "settings": {
+                    "description": "Global settings.",
+                    "type": [
+                        "object"
+                    ],
+                    "required": false
+                },
+                "title": {
+                    "description": "Title of the global styles variation.",
+                    "type": [
+                        "object",
+                        "string"
+                    ],
+                    "properties": {
+                        "raw": {
+                            "description": "Title for the global styles variation, as it exists in the database.",
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit",
+                                "embed"
+                            ]
+                        },
+                        "rendered": {
+                            "description": "HTML title for the post, transformed for display.",
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit",
+                                "embed"
+                            ],
+                            "readonly": true
+                        }
+                    },
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4405,7 +4537,13 @@
                     "message": "Sorry, you are not allowed to access the global styles on this site."
                 }
             },
-            "args": [],
+            "args": {
+                "stylesheet": {
+                    "description": "The theme identifier",
+                    "type": "string",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },
@@ -4428,7 +4566,13 @@
                     "message": "Sorry, you are not allowed to access the global styles on this site."
                 }
             },
-            "args": [],
+            "args": {
+                "stylesheet": {
+                    "description": "The theme identifier",
+                    "type": "string",
+                    "required": false
+                }
+            },
             "body": [],
             "index": true
         },

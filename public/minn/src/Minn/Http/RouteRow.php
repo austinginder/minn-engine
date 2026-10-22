@@ -19,6 +19,7 @@ final readonly class RouteRow
      * @param array<string, array<string, mixed>> $args the query parameters the route reads
      * @param array<string, array<string, mixed>> $body the JSON body parameters it reads
      * @param class-string<RouteParams>|null $params where the parameters come from when they depend on the path
+     * @param array<string, bool>|null $allowBatch whether a batch may carry the route, as the index lists it
      */
     public function __construct(
         public string $method,
@@ -32,6 +33,7 @@ final readonly class RouteRow
         public bool $index,
         public ?string $params = null,
         public string $regex = '',
+        public ?array $allowBatch = null,
     ) {
     }
 
@@ -51,6 +53,7 @@ final readonly class RouteRow
             index: $route->index,
             params: $route->params,
             regex: $route->regex(),
+            allowBatch: $route->allowBatch,
         );
     }
 

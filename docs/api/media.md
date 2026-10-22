@@ -11,7 +11,7 @@ uploads, image sizes and attachment metadata
 | [`Gallery`](#gallery) | final class | 73 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
 | [`ImageMime`](#imagemime) | final class | 34 | An image file's real type from its first bytes, as the reference sniffs |
-| [`Kind`](#kind) | final class | 79 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
+| [`Kind`](#kind) | final class | 72 | Whether an attachment is an image, audio or video (by its MIME type) or of a given extension. |
 | [`MediaModal`](#mediamodal) | final class | 219 | WordPress's media modal, set up for a page that opens it (wp_enqueue_media): |
 | [`Metadata`](#metadata) | final class | 112 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
@@ -263,9 +263,8 @@ The image type the file's header declares, or null.
 
 `final class Minn\Media\Kind` · `public/minn/src/Minn/Media/Kind.php`
 
-Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second.
+Whether an attachment is an image, audio or video (by its MIME type) or of a given extension.
 
-- const `IMAGE_EXTENSIONS` = `array (   0 => 'jpg',   1 => 'jpeg',   2 => 'jpe',   3 => 'gif',   4 => 'png',   5 => 'webp',   6 => 'avif',   7 => 'heic', )`
 - const `POST_MIME_TYPES` = `array (   'image' =>    array (     0 => 'Images',     1 => 'Manage Images',     2 => 'Image <span class="count">(%s)</span>',     3 => 'Images <span class="count">(%s)</span>',   ),   'audio' =>    array (     0 => 'Audio',     1 => 'Manage Audio',     2 => 'Audio <span class="count">(%s)</span>',     3 => 'Audio <span class="count">(%s)</span>',   ),   'video' =>    array (     0 => 'Video',     1 => 'Manage Video',     2 => 'Video <span class="count">(%s)</span>',     3 => 'Video <span class="count">(%s)</span>',   ),   'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-word.document.macroEnabled.12,application/vnd.ms-word.template.macroEnabled.12,application/vnd.oasis.opendocument.text,application/vnd.apple.pages,application/pdf,application/vnd.ms-xpsdocument,application/oxps,application/rtf,application/wordperfect,application/octet-stream' =>    array (     0 => 'Documents',     1 => 'Manage Documents',     2 => 'Document <span class="count">(%s)</span>',     3 => 'Documents <span class="count">(%s)</span>',   ),   'application/vnd.apple.numbers,application/vnd.oasis.opendocument.spreadsheet,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12,application/vnd.ms-excel.sheet.binary.macroEnabled.12' =>    array (     0 => 'Spreadsheets',     1 => 'Manage Spreadsheets',     2 => 'Spreadsheet <span class="count">(%s)</span>',     3 => 'Spreadsheets <span class="count">(%s)</span>',   ),   'application/x-gzip,application/rar,application/x-tar,application/zip,application/x-7z-compressed' =>    array (     0 => 'Archives',     1 => 'Manage Archives',     2 => 'Archive <span class="count">(%s)</span>',     3 => 'Archives <span class="count">(%s)</span>',   ), )` — The media library's filter groups: a MIME pattern (a top-level type, or
 a comma list of full types) => its plural label, its manage label, and
 the singular and plural count labels.
@@ -282,9 +281,11 @@ no matches is omitted (probe post-remaining).
 - `@param list<string> $reals`
 - `@return array<string, list<string>>`
 
-### static `matches(string $type, string $mime, string $extension, array $audioExtensions, array $videoExtensions): bool`
+### static `matches(string $type, string $mime, string $extension): bool`
 
-Whether a file is of a media type, by mime prefix or by extension list.
+Whether a file is of a media type (wp_attachment_is): an image, audio
+or video by its mime type alone, whatever its extension says; any
+other type by the file's extension.
 
 
 ## MediaModal

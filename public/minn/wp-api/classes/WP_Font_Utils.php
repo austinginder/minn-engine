@@ -10,7 +10,8 @@ class WP_Font_Utils
     private static function maybe_add_quotes($item)
     {
         $item = trim((string) $item, " \t\n\r\0\x0B\"'");
-        return preg_match('/^[\w-]+$/', $item) === 1 ? $item : '"' . $item . '"';
+        // Only a name of letters and hyphens goes unquoted: a digit or an underscore is quoted too (probe font-writes).
+        return preg_match('/^[a-zA-Z-]+$/', $item) === 1 ? $item : '"' . $item . '"';
     }
 
     public static function sanitize_font_family($font_family)
