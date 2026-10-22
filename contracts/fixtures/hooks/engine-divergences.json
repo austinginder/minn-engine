@@ -469,7 +469,8 @@
         "probe:queried-author",
         "probe:loading-threshold",
         "probe:auth-check-host",
-        "probe:sideload-image-meta"
+        "probe:sideload-image-meta",
+        "probe:guess-url"
     ],
     "hooks": {
         "_get_page_link": {
@@ -739,6 +740,7 @@
             "probe:debug-notices": "not fired",
             "probe:default-presets": "not fired",
             "probe:formatting-remaining": "not fired",
+            "probe:guess-url": "not fired",
             "probe:hook-priority": "not fired",
             "probe:html-tag-processor": "not fired",
             "probe:http-absolute-url": "not fired",
@@ -6482,6 +6484,7 @@
             "probe:debug-notices": "not fired",
             "probe:default-presets": "not fired",
             "probe:formatting-remaining": "not fired",
+            "probe:guess-url": "not fired",
             "probe:hook-priority": "not fired",
             "probe:html-tag-processor": "not fired",
             "probe:http-absolute-url": "not fired",
@@ -11643,6 +11646,7 @@
             "probe:debug-notices": "not fired",
             "probe:default-presets": "not fired",
             "probe:formatting-remaining": "not fired",
+            "probe:guess-url": "not fired",
             "probe:hook-priority": "not fired",
             "probe:html-tag-processor": "not fired",
             "probe:http-absolute-url": "not fired",
@@ -11715,6 +11719,7 @@
             "probe:debug-notices": "not fired",
             "probe:default-presets": "not fired",
             "probe:formatting-remaining": "not fired",
+            "probe:guess-url": "not fired",
             "probe:hook-priority": "not fired",
             "probe:html-tag-processor": "not fired",
             "probe:http-absolute-url": "not fired",
@@ -12170,6 +12175,7 @@
             "probe:debug-notices": "not fired",
             "probe:default-presets": "not fired",
             "probe:formatting-remaining": "not fired",
+            "probe:guess-url": "not fired",
             "probe:hook-priority": "not fired",
             "probe:html-tag-processor": "not fired",
             "probe:http-absolute-url": "not fired",

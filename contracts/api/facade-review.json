@@ -14645,12 +14645,10 @@
                 "verdict": "move",
                 "to": "Minn\\Runtime\\SiteUrls",
                 "gates": [
-                    "unprobed",
                     "globals"
                 ],
-                "why": "the path-guessing rules behind wp_guess_url (admin and login requests, scripts at or under ABSPATH)",
-                "doubt": "a script above ABSPATH (WordPress in a subfolder) gets the request URI whole where the API strips the file and appends the subfolder",
-                "body": "29f04353cc45"
+                "why": "the path-guessing rules behind wp_guess_url: admin and login requests, scripts at or under ABSPATH, and a script above it (WordPress in a folder of the site), whose request keeps up to its last slash with the folder appended. Doubt fixed (2026-10-22, probe guess-url).",
+                "body": "981401d38c7f"
             },
             "_minn_kept_enclosures": {
                 "verdict": "move",

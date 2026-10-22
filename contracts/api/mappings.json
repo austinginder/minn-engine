@@ -10,7 +10,7 @@
         "deadend": 1766,
         "functions": 8680,
         "minnMethods": 1555,
-        "leafLinesOver15": 8
+        "leafLinesOver15": 9
     },
     "functions": {
         "Author::__construct": {
@@ -37168,7 +37168,7 @@
         },
         "_minn_guessed_path": {
             "file": "functions.php",
-            "lines": 13,
+            "lines": 17,
             "kind": "leaf",
             "minn": [],
             "composes": []

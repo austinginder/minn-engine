@@ -1,0 +1,50 @@
+[
+    [
+        "root index",
+        "http://example.test"
+    ],
+    [
+        "root page",
+        "http://example.test"
+    ],
+    [
+        "subdir script",
+        "http://example.test"
+    ],
+    [
+        "subdir script, query",
+        "http://example.test"
+    ],
+    [
+        "above, index",
+        "http://example.test/{folder}"
+    ],
+    [
+        "above, page",
+        "http://example.test/blog/about/{folder}"
+    ],
+    [
+        "above, wp in folder",
+        "http://example.test/wp/hello/{folder}"
+    ],
+    [
+        "wp-admin",
+        "http://example.test/wp"
+    ],
+    [
+        "wp-login",
+        "http://example.test/wp"
+    ],
+    [
+        "elsewhere",
+        "http://example.test/zz/x.php"
+    ],
+    [
+        "above, a query with a slash",
+        "http://example.test/blog/?a=b/{folder}"
+    ],
+    [
+        "above, https",
+        "https://example.test/blog/{folder}"
+    ]
+]

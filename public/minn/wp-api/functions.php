@@ -388,6 +388,10 @@ function _minn_guessed_path(): string
     if (str_starts_with($folder, $root . '/')) {
         return (string) preg_replace('#/' . preg_quote(substr($folder, strlen($root) + 1), '#') . '/[^/]*$#i', '', $uri);
     }
+    // A script above the install (WordPress in a folder of the site): the request up to its last slash, then the folder.
+    if (str_starts_with($root, $folder . '/')) {
+        return (string) preg_replace('#/[^/]*$#', '/', $uri) . substr($root, strlen($folder) + 1);
+    }
     return $uri;
 }
 
