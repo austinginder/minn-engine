@@ -40,13 +40,8 @@ final readonly class RouteCatalogue
         $bases = $this->types->routeBases();
         $routes = ['/' => ['namespace' => '', 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/')]]]]];
         $namespaces = [];
-        $arguments = [];
-        foreach ($this->router->table() as $row) {
-            foreach (EngineRoutes::forms($row->pattern, $bases) as $form) {
-                $arguments[$form] = array_merge($arguments[$form] ?? [], $row->argsFor($form));
-            }
-        }
-        foreach ($this->router->routes() as $pattern => $methods) {
+        $endpoints = self::endpoints($this->router->table(), $bases);
+        foreach (array_keys($this->router->routes()) as $pattern) {
             foreach (EngineRoutes::forms($pattern, $bases) as $route) {
                 if ($route === '/') {
                     continue;
@@ -56,16 +51,63 @@ final readonly class RouteCatalogue
                     $namespaces[] = $namespace;
                     $routes['/' . $namespace] = ['namespace' => $namespace, 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['namespace' => ['default' => $namespace, 'required' => false], 'context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/' . $namespace)]]]];
                 }
-                $methods = array_map(static fn (string $m) => $m === '*' ? 'GET' : $m, $methods);
-                // Two patterns can make one route (a list's GET and its create's POST): its methods are both's.
-                $methods = array_values(array_unique([...($routes[$route]['methods'] ?? []), ...$methods]));
-                $routes[$route] = ['namespace' => $namespace, 'methods' => $methods, 'endpoints' => [['methods' => $methods, 'args' => $arguments[$route] ?? []]]];
+                $routes[$route] = ['namespace' => $namespace, 'methods' => array_merge(...array_column($endpoints[$route] ?? [], 'methods')), 'endpoints' => $endpoints[$route] ?? []];
                 if (!str_contains($route, '(?P<')) {
                     $routes[$route]['_links'] = ['self' => [['href' => $this->url->to($route)]]];
                 }
             }
         }
         return ['namespaces' => $namespaces, 'routes' => $routes];
+    }
+
+    /**
+     * Each concrete route's endpoints as the reference lists them: one per
+     * handler and set of parameters (an update's POST, PUT and PATCH are
+     * one), the methods in the reference's order, the endpoints ordered by
+     * their first method. A method an earlier pattern already answers on
+     * the route is left to it, as the router leaves it.
+     *
+     * @param list<RouteRow> $rows
+     * @param list<string> $bases
+     * @return array<string, list<array{methods: list<string>, args: array<string, mixed>}>>
+     */
+    private static function endpoints(array $rows, array $bases): array
+    {
+        $groups = [];
+        $taken = [];
+        foreach ($rows as $row) {
+            if (!$row->index) {
+                continue;
+            }
+            $method = $row->method === '*' ? 'GET' : $row->method;
+            foreach (EngineRoutes::forms($row->pattern, $bases) as $route) {
+                if (isset($taken[$route][$method])) {
+                    continue;
+                }
+                $taken[$route][$method] = true;
+                $args = $row->argsFor($route);
+                $key = $row->handler . "\0" . serialize($args);
+                $groups[$route][$key]['methods'][] = $method;
+                $groups[$route][$key]['args'] = $args;
+            }
+        }
+        $endpoints = [];
+        foreach ($groups as $route => $group) {
+            $listed = array_map(static function (array $endpoint): array {
+                usort($endpoint['methods'], static fn (string $a, string $b): int => self::rank($a) <=> self::rank($b));
+                return ['methods' => $endpoint['methods'], 'args' => $endpoint['args']];
+            }, array_values($group));
+            usort($listed, static fn (array $a, array $b): int => self::rank($a['methods'][0]) <=> self::rank($b['methods'][0]));
+            $endpoints[$route] = $listed;
+        }
+        return $endpoints;
+    }
+
+    /** A method's place in the reference's order. */
+    private static function rank(string $method): int
+    {
+        $at = array_search($method, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], true);
+        return $at === false ? 5 : $at;
     }
 
     /**

@@ -119580,7 +119580,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RouteCatalogue.php",
-            "lines": 100,
+            "lines": 142,
             "doc": "The routes the engine serves, described in the reference's shape for the\nindex and for an OPTIONS request: every route's namespace, its methods\nand the parameters it declares, gathered per concrete route from the\nattributes so a client learns what really works on it, with the\nnamespaces they fall under. Routes are keyed as the reference spells them\n('/wp/v2/posts/(?P<id>[\\d]+)').",
             "implements": [],
             "extends": null,
@@ -119689,7 +119689,7 @@
                     ],
                     "params": [],
                     "line": 38,
-                    "end": 69
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -119711,8 +119711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 85
+                    "line": 121,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -119731,8 +119731,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 99
+                    "line": 135,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -119753,8 +119753,59 @@
                             "doc": ""
                         }
                     ],
+                    "line": 149,
+                    "end": 157
+                },
+                {
+                    "routes": [],
+                    "name": "endpoints",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "endpoints(array $rows, array $bases): array",
+                    "doc": "Each concrete route's endpoints as the reference lists them: one per\nhandler and set of parameters (an update's POST, PUT and PATCH are\none), the methods in the reference's order, the endpoints ordered by\ntheir first method. A method an earlier pattern already answers on\nthe route is left to it, as the router leaves it.",
+                    "shapes": [
+                        "@param list<RouteRow> $rows",
+                        "@param list<string> $bases",
+                        "@return array<string, list<array{methods: list<string>, args: array<string, mixed>}>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rows",
+                            "type": "array",
+                            "shape": "list<RouteRow>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bases",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 104
+                },
+                {
+                    "routes": [],
+                    "name": "rank",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rank(string $method): int",
+                    "doc": "A method's place in the reference's order.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "method",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
                     "line": 107,
-                    "end": 115
+                    "end": 111
                 }
             ]
         },

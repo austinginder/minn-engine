@@ -1,10 +1,10 @@
 {
     "method": "tests/tools/rest-fuzz.php: GET requests generated from the reference REST index, sent to both stacks, compared by status, body and X-WP-Total headers",
-    "measured": "2026-10-21",
+    "measured": "2026-10-22",
     "summary": {
         "routes": 201,
         "requests": 14607,
-        "differences": 526
+        "differences": 280
     },
     "differences": [
         {
@@ -553,7 +553,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Improved\n\n* **Editor panels refuse what they cannot store, by one set of rules.** The SEO, Meta Box, Pods, The Events Calendar, PowerPress, Seriously Simple Podcasting and WP Job Manager panels now save through one path: a number the plugin would have emptied, a choice a field does not offer or a number outside its range is named as not sa"
+            "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Added\n\n* **Breakwater.** Minn now reads Breakwater\\'s log, every comment, sign-up and form submission it checked, under Forms: filter it to what was held, see why each one scored what it did, and say Not spam to hand a held submission back to its form (saved and sent as if it had never been held) or Was spam on one that got through. Its mo"
         },
         {
             "route": "/minn-admin/v1/changelog",
@@ -563,7 +563,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Improved\n\n* **Editor panels refuse what they cannot store, by one set of rules.** The SEO, Meta Box, Pods, The Events Calendar, PowerPress, Seriously Simple Podcasting and WP Job Manager panels now save through one path: a number the plugin would have emptied, a choice a field does not offer or a number outside its range is named as not sa"
+            "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Added\n\n* **Breakwater.** Minn now reads Breakwater\\'s log, every comment, sign-up and form submission it checked, under Forms: filter it to what was held, see why each one scored what it did, and say Not spam to hand a held submission back to its form (saved and sent as if it had never been held) or Was spam on one that got through. Its mo"
         },
         {
             "route": "/minn-admin/v1/changelog",
@@ -575,7 +575,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Improved\n\n* **Editor panels refuse what they cannot store, by one set of rules.** The SEO, Meta Box, Pods, The Events Calendar, PowerPress, Seriously Simple Podcasting and WP Job Manager panels now save through one path: a number the plugin would have emptied, a choice a field does not offer or a number outside its range is named as not sa"
+            "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Added\n\n* **Breakwater.** Minn now reads Breakwater\\'s log, every comment, sign-up and form submission it checked, under Forms: filter it to what was held, see why each one scored what it did, and say Not spam to hand a held submission back to its form (saved and sent as if it had never been held) or Was spam on one that got through. Its mo"
         },
         {
             "route": "/minn-admin/v1/changelog",
@@ -587,7 +587,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Improved\n\n* **Editor panels refuse what they cannot store, by one set of rules.** The SEO, Meta Box, Pods, The Events Calendar, PowerPress, Seriously Simple Podcasting and WP Job Manager panels now save through one path: a number the plugin would have emptied, a choice a field does not offer or a number outside its range is named as not sa"
+            "difference": "$.markdown ('# Changelog\n\n## **v0.47.0** - Unreleased\n\n### Added\n\n* **Breakwater.** Minn now reads Breakwater\\'s log, every comment, sign-up and form submission it checked, under Forms: filter it to what was held, see why each one scored what it did, and say Not spam to hand a held submission back to its form (saved and sent as if it had never been held) or Was spam on one that got through. Its mo"
         },
         {
             "route": "/minn-admin/v1/templates",
@@ -1041,7 +1041,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.generated ('2026-10-21T12:53:24+00:00' vs '2026-10-21T12:53:22+00:00')"
+            "difference": "$.generated ('2026-10-22T03:17:40+00:00' vs '2026-10-22T03:17:38+00:00')"
         },
         {
             "route": "/minn-admin/v1/system",
@@ -1107,7 +1107,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.size (79839039 vs 1412812)"
+            "difference": "$.size (81432234 vs 1448100)"
         },
         {
             "route": "/minn-admin/v1/system/debug-log",
@@ -1119,7 +1119,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.size (79839039 vs 1412812)"
+            "difference": "$.size (81432234 vs 1448100)"
         },
         {
             "route": "/minn-admin/v1/system/logs",
@@ -1411,7 +1411,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1421,7 +1421,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1431,7 +1431,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1443,7 +1443,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1455,7 +1455,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1467,7 +1467,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1521,7 +1521,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1533,7 +1533,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1545,7 +1545,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1557,7 +1557,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1569,7 +1569,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1581,7 +1581,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1593,7 +1593,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1605,7 +1605,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1617,7 +1617,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1631,7 +1631,7 @@
             "role": "anon",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1645,7 +1645,7 @@
             "role": "author",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2",
@@ -1659,7 +1659,7 @@
             "role": "admin",
             "reference": 200,
             "engine": 200,
-            "difference": "$.routes (keys missing: /wp/v2/block-directory/search,/wp/v2/pattern-directory/patterns extra: )"
+            "difference": "$.routes./wp/v2/posts.endpoints (length 2 vs 1)"
         },
         {
             "route": "/wp/v2/posts/(?P<id>[\\d]+)",
@@ -1671,7 +1671,7 @@
             "role": "anon",
             "reference": 500,
             "engine": 500,
-            "difference": "$ ('[not JSON: 158314 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
+            "difference": "$ ('[not JSON: 158313 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp/v2/posts/(?P<id>[\\d]+)",
@@ -1740,102 +1740,6 @@
             "difference": "status 500 vs 400"
         },
         {
-            "route": "/wp/v2/templates",
-            "request": "/wp/v2/templates",
-            "query": {
-                "context": "embed"
-            },
-            "case": "context enum \"embed\"",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.0 (keys missing: theme,content,source,origin,description,status,wp_id,has_theme_file,is_custom,author_text,original_source extra: date)"
-        },
-        {
-            "route": "/wp/v2/templates",
-            "request": "/wp/v2/templates",
-            "query": {
-                "context": "embed"
-            },
-            "case": "context enum \"embed\"",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.0 (keys missing: theme,content,source,origin,description,status,wp_id,has_theme_file,is_custom,author_text,original_source extra: date)"
-        },
-        {
-            "route": "/wp/v2/templates/lookup",
-            "request": "/wp/v2/templates/lookup",
-            "query": {
-                "slug": ""
-            },
-            "case": "slug empty",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$ (list vs object)"
-        },
-        {
-            "route": "/wp/v2/templates/lookup",
-            "request": "/wp/v2/templates/lookup",
-            "query": {
-                "slug": ""
-            },
-            "case": "slug empty",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$ (list vs object)"
-        },
-        {
-            "route": "/wp/v2/template-parts",
-            "request": "/wp/v2/template-parts",
-            "query": {
-                "context": "embed"
-            },
-            "case": "context enum \"embed\"",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.0 (keys missing: theme,content,source,origin,description,status,wp_id,has_theme_file,area,author_text,original_source extra: date)"
-        },
-        {
-            "route": "/wp/v2/template-parts",
-            "request": "/wp/v2/template-parts",
-            "query": {
-                "context": "embed"
-            },
-            "case": "context enum \"embed\"",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.0 (keys missing: theme,content,source,origin,description,status,wp_id,has_theme_file,area,author_text,original_source extra: date)"
-        },
-        {
-            "route": "/wp/v2/template-parts/lookup",
-            "request": "/wp/v2/template-parts/lookup",
-            "query": {
-                "slug": ""
-            },
-            "case": "slug empty",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$ (list vs object)"
-        },
-        {
-            "route": "/wp/v2/template-parts/lookup",
-            "request": "/wp/v2/template-parts/lookup",
-            "query": {
-                "slug": ""
-            },
-            "case": "slug empty",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$ (list vs object)"
-        },
-        {
             "route": "/wp/v2/global-styles/themes/(?P<stylesheet>[\\/\\s%\\w\\.\\(\\)\\[\\]\\@_\\-]+)/variations",
             "request": "/wp/v2/global-styles/themes/twentytwentyfive\\[\\]\\@_\\-]+)/variations",
             "query": {
@@ -1918,42 +1822,6 @@
             "reference": 500,
             "engine": 404,
             "difference": "status 500 vs 404"
-        },
-        {
-            "route": "/wp/v2/navigation",
-            "request": "/wp/v2/navigation",
-            "query": {
-                "context": "embed"
-            },
-            "case": "context enum \"embed\"",
-            "role": "anon",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.0.title (keys missing: raw extra: )"
-        },
-        {
-            "route": "/wp/v2/navigation",
-            "request": "/wp/v2/navigation",
-            "query": {
-                "context": "embed"
-            },
-            "case": "context enum \"embed\"",
-            "role": "author",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.0.title (keys missing: raw extra: )"
-        },
-        {
-            "route": "/wp/v2/navigation",
-            "request": "/wp/v2/navigation",
-            "query": {
-                "context": "embed"
-            },
-            "case": "context enum \"embed\"",
-            "role": "admin",
-            "reference": 200,
-            "engine": 200,
-            "difference": "$.0.title (keys missing: raw extra: )"
         },
         {
             "route": "/wp/v2/types",
@@ -2116,1182 +1984,14 @@
             "difference": "$ (length 7 vs 14)"
         },
         {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": [],
-            "case": "plain",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": [],
-            "case": "plain",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": [],
-            "case": "plain",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "zzfuzz": "1"
-            },
-            "case": "unknown argument",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "zzfuzz": "1"
-            },
-            "case": "unknown argument",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "zzfuzz": "1"
-            },
-            "case": "unknown argument",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": ""
-            },
-            "case": "context empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": ""
-            },
-            "case": "context empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": ""
-            },
-            "case": "context empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "context long",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "context long",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "context long",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "<b>zzfuzz</b>"
-            },
-            "case": "context markup",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "<b>zzfuzz</b>"
-            },
-            "case": "context markup",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "<b>zzfuzz</b>"
-            },
-            "case": "context markup",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "context as array",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "context as array",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "context as array",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "view"
-            },
-            "case": "context enum \"view\"",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "view"
-            },
-            "case": "context enum \"view\"",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "view"
-            },
-            "case": "context enum \"view\"",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "zzfuzz-not-listed"
-            },
-            "case": "context outside the enum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "zzfuzz-not-listed"
-            },
-            "case": "context outside the enum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "context": "zzfuzz-not-listed"
-            },
-            "case": "context outside the enum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": ""
-            },
-            "case": "page empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": ""
-            },
-            "case": "page empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": ""
-            },
-            "case": "page empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "abc"
-            },
-            "case": "page word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "abc"
-            },
-            "case": "page word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "abc"
-            },
-            "case": "page word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "-1"
-            },
-            "case": "page negative",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "-1"
-            },
-            "case": "page negative",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "-1"
-            },
-            "case": "page negative",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "0"
-            },
-            "case": "page zero",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "0"
-            },
-            "case": "page zero",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "0"
-            },
-            "case": "page zero",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "1.5"
-            },
-            "case": "page fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "1.5"
-            },
-            "case": "page fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "1.5"
-            },
-            "case": "page fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "99999999999999999999"
-            },
-            "case": "page huge",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "99999999999999999999"
-            },
-            "case": "page huge",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "99999999999999999999"
-            },
-            "case": "page huge",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": " 5"
-            },
-            "case": "page padded",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": " 5"
-            },
-            "case": "page padded",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": " 5"
-            },
-            "case": "page padded",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "0"
-            },
-            "case": "page past minimum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "0"
-            },
-            "case": "page past minimum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "0"
-            },
-            "case": "page past minimum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "1"
-            },
-            "case": "page at minimum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "1"
-            },
-            "case": "page at minimum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "page": "1"
-            },
-            "case": "page at minimum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": ""
-            },
-            "case": "per_page empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": ""
-            },
-            "case": "per_page empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": ""
-            },
-            "case": "per_page empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "abc"
-            },
-            "case": "per_page word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "abc"
-            },
-            "case": "per_page word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "abc"
-            },
-            "case": "per_page word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "-1"
-            },
-            "case": "per_page negative",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "-1"
-            },
-            "case": "per_page negative",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "-1"
-            },
-            "case": "per_page negative",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page zero",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page zero",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page zero",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "1.5"
-            },
-            "case": "per_page fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "1.5"
-            },
-            "case": "per_page fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "1.5"
-            },
-            "case": "per_page fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "99999999999999999999"
-            },
-            "case": "per_page huge",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "99999999999999999999"
-            },
-            "case": "per_page huge",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "99999999999999999999"
-            },
-            "case": "per_page huge",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": " 5"
-            },
-            "case": "per_page padded",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": " 5"
-            },
-            "case": "per_page padded",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": " 5"
-            },
-            "case": "per_page padded",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page past minimum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page past minimum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page past minimum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "1"
-            },
-            "case": "per_page at minimum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "1"
-            },
-            "case": "per_page at minimum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "1"
-            },
-            "case": "per_page at minimum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "101"
-            },
-            "case": "per_page past maximum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "101"
-            },
-            "case": "per_page past maximum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "101"
-            },
-            "case": "per_page past maximum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "100"
-            },
-            "case": "per_page at maximum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "100"
-            },
-            "case": "per_page at maximum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "per_page": "100"
-            },
-            "case": "per_page at maximum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": ""
-            },
-            "case": "term empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": ""
-            },
-            "case": "term empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": ""
-            },
-            "case": "term empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "term long",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "term long",
-            "role": "author",
-            "reference": 403,
-            "engine": 404,
-            "difference": "status 403 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "term long",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": "<b>zzfuzz</b>"
-            },
-            "case": "term markup",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": "<b>zzfuzz</b>"
-            },
-            "case": "term markup",
-            "role": "author",
-            "reference": 403,
-            "engine": 404,
-            "difference": "status 403 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": "<b>zzfuzz</b>"
-            },
-            "case": "term markup",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "term as array",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "term as array",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/block-directory/search",
-            "request": "/wp/v2/block-directory/search",
-            "query": {
-                "term": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "term as array",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": [],
-            "case": "plain",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
-        },
-        {
             "route": "/wp/v2/pattern-directory/patterns",
             "request": "/wp/v2/pattern-directory/patterns",
             "query": [],
             "case": "plain",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3300,20 +2000,8 @@
             "case": "plain",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "zzfuzz": "1"
-            },
-            "case": "unknown argument",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3324,8 +2012,8 @@
             "case": "unknown argument",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3336,170 +2024,8 @@
             "case": "unknown argument",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": ""
-            },
-            "case": "context empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": ""
-            },
-            "case": "context empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": ""
-            },
-            "case": "context empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "context long",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "context long",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "context long",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "<b>zzfuzz</b>"
-            },
-            "case": "context markup",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "<b>zzfuzz</b>"
-            },
-            "case": "context markup",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "<b>zzfuzz</b>"
-            },
-            "case": "context markup",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "context as array",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "context as array",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "context as array",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "view"
-            },
-            "case": "context enum \"view\"",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3510,8 +2036,8 @@
             "case": "context enum \"view\"",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3522,20 +2048,8 @@
             "case": "context enum \"view\"",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "embed"
-            },
-            "case": "context enum \"embed\"",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3546,8 +2060,8 @@
             "case": "context enum \"embed\"",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3558,20 +2072,8 @@
             "case": "context enum \"embed\"",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "edit"
-            },
-            "case": "context enum \"edit\"",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3582,8 +2084,8 @@
             "case": "context enum \"edit\"",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3594,236 +2096,8 @@
             "case": "context enum \"edit\"",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "zzfuzz-not-listed"
-            },
-            "case": "context outside the enum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "zzfuzz-not-listed"
-            },
-            "case": "context outside the enum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "context": "zzfuzz-not-listed"
-            },
-            "case": "context outside the enum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": ""
-            },
-            "case": "page empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": ""
-            },
-            "case": "page empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": ""
-            },
-            "case": "page empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "abc"
-            },
-            "case": "page word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "abc"
-            },
-            "case": "page word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "abc"
-            },
-            "case": "page word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "-1"
-            },
-            "case": "page negative",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "-1"
-            },
-            "case": "page negative",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "-1"
-            },
-            "case": "page negative",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "0"
-            },
-            "case": "page zero",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "0"
-            },
-            "case": "page zero",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "0"
-            },
-            "case": "page zero",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "1.5"
-            },
-            "case": "page fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "1.5"
-            },
-            "case": "page fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "1.5"
-            },
-            "case": "page fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "99999999999999999999"
-            },
-            "case": "page huge",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3834,8 +2108,8 @@
             "case": "page huge",
             "role": "author",
             "reference": 500,
-            "engine": 404,
-            "difference": "status 500 vs 404"
+            "engine": 500,
+            "difference": "$.additional_data.0.response ('{\"code\":\"rest_post_invalid_page_number\",\"message\":\"The page number requested is larger than the number of pages available.\",\"data\":{\"status\":400}}' vs '{\"error\":\"not_found\"}')"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3846,20 +2120,8 @@
             "case": "page huge",
             "role": "admin",
             "reference": 500,
-            "engine": 404,
-            "difference": "status 500 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": " 5"
-            },
-            "case": "page padded",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "$.additional_data.0.response ('{\"code\":\"rest_post_invalid_page_number\",\"message\":\"The page number requested is larger than the number of pages available.\",\"data\":{\"status\":400}}' vs '{\"error\":\"not_found\"}')"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3870,8 +2132,8 @@
             "case": "page padded",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3882,56 +2144,8 @@
             "case": "page padded",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "0"
-            },
-            "case": "page past minimum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "0"
-            },
-            "case": "page past minimum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "0"
-            },
-            "case": "page past minimum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "page": "1"
-            },
-            "case": "page at minimum",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.59.title ('Data Table' vs 'Data  Table')"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3942,8 +2156,8 @@
             "case": "page at minimum",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -3954,236 +2168,8 @@
             "case": "page at minimum",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": ""
-            },
-            "case": "per_page empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": ""
-            },
-            "case": "per_page empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": ""
-            },
-            "case": "per_page empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "abc"
-            },
-            "case": "per_page word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "abc"
-            },
-            "case": "per_page word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "abc"
-            },
-            "case": "per_page word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "-1"
-            },
-            "case": "per_page negative",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "-1"
-            },
-            "case": "per_page negative",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "-1"
-            },
-            "case": "per_page negative",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page zero",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page zero",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page zero",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "1.5"
-            },
-            "case": "per_page fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "1.5"
-            },
-            "case": "per_page fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "1.5"
-            },
-            "case": "per_page fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "99999999999999999999"
-            },
-            "case": "per_page huge",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "99999999999999999999"
-            },
-            "case": "per_page huge",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "99999999999999999999"
-            },
-            "case": "per_page huge",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": " 5"
-            },
-            "case": "per_page padded",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4194,68 +2180,8 @@
             "case": "per_page padded",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": " 5"
-            },
-            "case": "per_page padded",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page past minimum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page past minimum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "0"
-            },
-            "case": "per_page past minimum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "1"
-            },
-            "case": "per_page at minimum",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4266,68 +2192,8 @@
             "case": "per_page at minimum",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "1"
-            },
-            "case": "per_page at minimum",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "101"
-            },
-            "case": "per_page past maximum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "101"
-            },
-            "case": "per_page past maximum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "101"
-            },
-            "case": "per_page past maximum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "per_page": "100"
-            },
-            "case": "per_page at maximum",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4338,8 +2204,8 @@
             "case": "per_page at maximum",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4350,56 +2216,8 @@
             "case": "per_page at maximum",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "search": ""
-            },
-            "case": "search empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "search": ""
-            },
-            "case": "search empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "search": ""
-            },
-            "case": "search empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "search": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "search long",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.17.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4410,32 +2228,8 @@
             "case": "search long",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "search": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-            },
-            "case": "search long",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "search": "<b>zzfuzz</b>"
-            },
-            "case": "search markup",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4446,8 +2240,8 @@
             "case": "search markup",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4458,242 +2252,8 @@
             "case": "search markup",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "search": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "search as array",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "search": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "search as array",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "search": [
-                    "zzfuzz"
-                ]
-            },
-            "case": "search as array",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": ""
-            },
-            "case": "category empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": ""
-            },
-            "case": "category empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": ""
-            },
-            "case": "category empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "abc"
-            },
-            "case": "category word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "abc"
-            },
-            "case": "category word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "abc"
-            },
-            "case": "category word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "-1"
-            },
-            "case": "category negative",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "-1"
-            },
-            "case": "category negative",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "-1"
-            },
-            "case": "category negative",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "0"
-            },
-            "case": "category zero",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "0"
-            },
-            "case": "category zero",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "0"
-            },
-            "case": "category zero",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "1.5"
-            },
-            "case": "category fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "1.5"
-            },
-            "case": "category fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "1.5"
-            },
-            "case": "category fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "99999999999999999999"
-            },
-            "case": "category huge",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4704,32 +2264,8 @@
             "case": "category huge",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "99999999999999999999"
-            },
-            "case": "category huge",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": " 5"
-            },
-            "case": "category padded",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4740,8 +2276,8 @@
             "case": "category padded",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4752,56 +2288,8 @@
             "case": "category padded",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "0"
-            },
-            "case": "category past minimum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "0"
-            },
-            "case": "category past minimum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "0"
-            },
-            "case": "category past minimum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "1"
-            },
-            "case": "category at minimum",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.49.content ('<!-- wp:group {\"layout\":{\"type\":\"constrained\"}} -->\n<div class=\"wp-block-group\"><!-- wp:columns -->\n<div class=\"wp-block-columns\"><!-- wp:column -->\n<div class=\"wp-block-column\"><!-- wp:cover {\"url\":\"https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/-a010-markuss-0262.jpg?w=1200\\\\u0026amp;h=1200\\\\u0026amp;fit=clip\\\\u0026amp;crop=default\\\\u0026amp;dpr=1\\\\u0026amp;"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -4812,212 +2300,8 @@
             "case": "category at minimum",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "category": "1"
-            },
-            "case": "category at minimum",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": ""
-            },
-            "case": "keyword empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": ""
-            },
-            "case": "keyword empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": ""
-            },
-            "case": "keyword empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "abc"
-            },
-            "case": "keyword word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "abc"
-            },
-            "case": "keyword word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "abc"
-            },
-            "case": "keyword word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "-1"
-            },
-            "case": "keyword negative",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "-1"
-            },
-            "case": "keyword negative",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "-1"
-            },
-            "case": "keyword negative",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "0"
-            },
-            "case": "keyword zero",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "0"
-            },
-            "case": "keyword zero",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "0"
-            },
-            "case": "keyword zero",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "1.5"
-            },
-            "case": "keyword fraction",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "1.5"
-            },
-            "case": "keyword fraction",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "1.5"
-            },
-            "case": "keyword fraction",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "99999999999999999999"
-            },
-            "case": "keyword huge",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5028,32 +2312,8 @@
             "case": "keyword huge",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "99999999999999999999"
-            },
-            "case": "keyword huge",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": " 5"
-            },
-            "case": "keyword padded",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5064,68 +2324,8 @@
             "case": "keyword padded",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": " 5"
-            },
-            "case": "keyword padded",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "0"
-            },
-            "case": "keyword past minimum",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "0"
-            },
-            "case": "keyword past minimum",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "0"
-            },
-            "case": "keyword past minimum",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "1"
-            },
-            "case": "keyword at minimum",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5136,32 +2336,8 @@
             "case": "keyword at minimum",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "keyword": "1"
-            },
-            "case": "keyword at minimum",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "slug": ""
-            },
-            "case": "slug empty",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5172,8 +2348,8 @@
             "case": "slug empty",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5184,20 +2360,8 @@
             "case": "slug empty",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "slug": "a,b"
-            },
-            "case": "slug comma list",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5208,8 +2372,8 @@
             "case": "slug comma list",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5220,23 +2384,8 @@
             "case": "slug comma list",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "slug": [
-                    "1",
-                    "zzfuzz"
-                ]
-            },
-            "case": "slug mixed items",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5250,39 +2399,8 @@
             "case": "slug mixed items",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "slug": [
-                    "1",
-                    "zzfuzz"
-                ]
-            },
-            "case": "slug mixed items",
-            "role": "admin",
-            "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "slug": [
-                    [
-                        "zzfuzz"
-                    ]
-                ]
-            },
-            "case": "slug nested",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5297,8 +2415,8 @@
             "case": "slug nested",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5313,92 +2431,8 @@
             "case": "slug nested",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "offset": ""
-            },
-            "case": "offset empty",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "offset": ""
-            },
-            "case": "offset empty",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "offset": ""
-            },
-            "case": "offset empty",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "offset": "abc"
-            },
-            "case": "offset word",
-            "role": "anon",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "offset": "abc"
-            },
-            "case": "offset word",
-            "role": "author",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "offset": "abc"
-            },
-            "case": "offset word",
-            "role": "admin",
-            "reference": 400,
-            "engine": 404,
-            "difference": "status 400 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "offset": "-1"
-            },
-            "case": "offset negative",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5409,8 +2443,8 @@
             "case": "offset negative",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5421,20 +2455,8 @@
             "case": "offset negative",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
-        },
-        {
-            "route": "/wp/v2/pattern-directory/patterns",
-            "request": "/wp/v2/pattern-directory/patterns",
-            "query": {
-                "offset": "0"
-            },
-            "case": "offset zero",
-            "role": "anon",
-            "reference": 401,
-            "engine": 404,
-            "difference": "status 401 vs 404"
+            "engine": 200,
+            "difference": "$.16.content ('<!-- wp:media-text {\"align\":\"full\",\"mediaId\":null,\"linkDestination\":\"none\",\"mediaType\":\"image\",\"verticalAlignment\":\"center\",\"imageFill\":true,\"metadata\":{\"name\":\"Process - Media \\\\u0026amp; Text\"},\"style\":{\"color\":{\"background\":\"#000000\"}}} -->\n<div class=\"wp-block-media-text alignfull is-stacked-on-mobile is-vertically-aligned-center is-image-fill-element has-background\" style=\"back"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5445,8 +2467,8 @@
             "case": "offset zero",
             "role": "author",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/pattern-directory/patterns",
@@ -5457,8 +2479,8 @@
             "case": "offset zero",
             "role": "admin",
             "reference": 200,
-            "engine": 404,
-            "difference": "status 200 vs 404"
+            "engine": 500,
+            "difference": "status 200 vs 500"
         },
         {
             "route": "/wp/v2/block-patterns/patterns",
@@ -5958,7 +2980,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "$ ('[not JSON: 142555 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
+            "difference": "$ ('[not JSON: 142554 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp-abilities/v1/abilities/(?P<name>[a-zA-Z0-9\\-\\/]+?)/run",
@@ -6054,7 +3076,7 @@
             "role": "author",
             "reference": 500,
             "engine": 500,
-            "difference": "$ ('[not JSON: 143025 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
+            "difference": "$ ('[not JSON: 143026 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp-abilities/v1/abilities",
@@ -6066,7 +3088,7 @@
             "role": "admin",
             "reference": 500,
             "engine": 500,
-            "difference": "$ ('[not JSON: 143022 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
+            "difference": "$ ('[not JSON: 143021 bytes]' vs array (\n  'code' => 'internal_server_error',\n  'message' => 'The site hit an error while answering this request.',\n  'data' => \n  array (\n    'status' => 500,\n  ),\n))"
         },
         {
             "route": "/wp/v2/icons",

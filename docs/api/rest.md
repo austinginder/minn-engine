@@ -71,7 +71,7 @@ the wp/v2 surface: shapes and controllers
 | [`RevisionCollection`](#revisioncollection) | final class | 177 | A revisions list as the reference answers it (probe of the posts, |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 299 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
-| [`RouteCatalogue`](#routecatalogue) | final readonly class | 100 | The routes the engine serves, described in the reference's shape for the |
+| [`RouteCatalogue`](#routecatalogue) | final readonly class | 142 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
@@ -3103,6 +3103,8 @@ The first route whose pattern takes the path, as the reference finds
 the route an OPTIONS request describes; null when none does.
 
 - `@return array<string, mixed>|null`
+
+Internals: `endpoints()` (private, line 74), `rank()` (private, line 107)
 
 
 ## RouteIndex

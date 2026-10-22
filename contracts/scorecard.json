@@ -261,20 +261,21 @@
         }
     },
     "open": {
-        "done": 77,
-        "accepted": 24,
-        "open": 11,
-        "austin": 3
+        "done": 89,
+        "accepted": 26,
+        "open": 10,
+        "austin": 0
     },
     "run": {
         "measured": "2026-10-21",
         "suites": 93,
-        "green": 90,
-        "checks": 30188,
+        "green": 89,
+        "checks": 30199,
         "red": [
-            "admin-surfaces",
-            "browser: geometry (dev site)",
-            "browser: geometry (dogfood)"
+            "cron-mail",
+            "cron",
+            "recovery",
+            "browser: embeds (dev site)"
         ],
         "engineWarnings": 0,
         "warningKinds": []
@@ -303,12 +304,12 @@
     "clones": {
         "duplicated": {
             "window": 100,
-            "stretches": 122,
-            "lines": 2184,
-            "of": 189772
+            "stretches": 124,
+            "lines": 2196,
+            "of": 190317
         },
         "engine": {
-            "of": 113746,
+            "of": 114294,
             "php": {
                 "strict": {
                     "window": 40,
@@ -335,7 +336,7 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76026,
+            "of": 76023,
             "window": 80,
             "stretches": 108,
             "lines": 2901
@@ -344,18 +345,18 @@
     "facadeLogic": {
         "functions": 3494,
         "methods": 3811,
-        "delegates": 3552,
-        "logicFunctions": 1781,
+        "delegates": 3553,
+        "logicFunctions": 1780,
         "logicMethods": 1972,
-        "logicLines": 29293,
+        "logicLines": 29288,
         "kept": 0,
         "review": {
             "doubts": 45,
-            "reviewed": 3133,
+            "reviewed": 3132,
             "stale": 0,
             "verdicts": {
                 "delegate": 148,
-                "move": 1478,
+                "move": 1477,
                 "keep": 1493,
                 "remove": 14
             },
