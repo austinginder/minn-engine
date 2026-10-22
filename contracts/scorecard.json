@@ -261,7 +261,7 @@
         }
     },
     "open": {
-        "done": 105,
+        "done": 111,
         "accepted": 27,
         "open": 7,
         "austin": 0
@@ -269,11 +269,10 @@
     "run": {
         "measured": "2026-10-22",
         "suites": 94,
-        "green": 92,
-        "checks": 30559,
+        "green": 93,
+        "checks": 30595,
         "red": [
-            "probes",
-            "hook-parity"
+            "cli"
         ],
         "engineWarnings": 0,
         "warningKinds": []
@@ -304,10 +303,10 @@
             "window": 100,
             "stretches": 123,
             "lines": 2189,
-            "of": 191304
+            "of": 191420
         },
         "engine": {
-            "of": 115249,
+            "of": 115362,
             "php": {
                 "strict": {
                     "window": 40,
@@ -334,7 +333,7 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76055,
+            "of": 76058,
             "window": 80,
             "stretches": 108,
             "lines": 2901
@@ -343,18 +342,18 @@
     "facadeLogic": {
         "functions": 3495,
         "methods": 3814,
-        "delegates": 3560,
-        "logicFunctions": 1778,
+        "delegates": 3561,
+        "logicFunctions": 1777,
         "logicMethods": 1971,
-        "logicLines": 29270,
+        "logicLines": 29266,
         "kept": 0,
         "review": {
-            "doubts": 18,
-            "reviewed": 3132,
+            "doubts": 13,
+            "reviewed": 3131,
             "stale": 0,
             "verdicts": {
-                "delegate": 147,
-                "move": 1476,
+                "delegate": 148,
+                "move": 1474,
                 "keep": 1495,
                 "remove": 14
             },
