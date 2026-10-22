@@ -289,7 +289,10 @@ final readonly class TemplatesController
         $fields = Fields::fromQuery($request->query);
         if (!$request->flagged('force')) {
             $this->writer->trash($record);
-            return Reply::item($this->object->view($this->trashed($record), Context::Edit), $fields);
+            // The trash's answer names no revisions, though a trashed copy read later does (probe rest-templates-controller; REST fuzzing).
+            $answer = $this->object->view($this->trashed($record), Context::Edit);
+            unset($answer['_links']['version-history'], $answer['_links']['predecessor-version']);
+            return Reply::item($answer, $fields);
         }
         $previous = $this->object->view($record, Context::Edit);
         $this->writer->destroy($record);

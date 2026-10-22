@@ -7950,8 +7950,8 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "only the site's copy goes: trashed (refused when already trashed) or with force deleted with its previous view; the engine controller's delete holds the same rules",
-                "body": "331aadc0e80c"
+                "why": "only the site's copy goes: trashed (refused when already trashed; its answer names no revisions) or with force deleted with its previous view; the engine controller's delete holds the same rules",
+                "body": "d7a4593aca43"
             },
             "WP_REST_Templates_Controller::get_available_actions": {
                 "verdict": "keep",

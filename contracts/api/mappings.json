@@ -24029,7 +24029,7 @@
         },
         "WP_REST_Templates_Controller::delete_item": {
             "file": "classes/WP_REST_Templates_Controller.php",
-            "lines": 22,
+            "lines": 25,
             "kind": "composes",
             "minn": [],
             "composes": [

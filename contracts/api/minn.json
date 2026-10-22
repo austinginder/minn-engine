@@ -126609,6 +126609,7 @@
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\TemplatesController",
                 "Minn\\Theme\\TemplateIndex",
                 "Minn\\Theme\\TemplateRecord"
             ],
@@ -127306,7 +127307,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TemplatesController.php",
-            "lines": 329,
+            "lines": 332,
             "doc": "wp/v2/templates and wp/v2/template-parts: the block theme's templates as\none list, whether they come from the theme's files, from a row the site\nsaved over one, or from a plugin. Reading needs only edit_posts (the\nreference lets an editor or author see the layout); changing anything\nneeds edit_theme_options.",
             "implements": [],
             "extends": null,
@@ -127334,7 +127335,8 @@
                 "Minn\\Theme\\TemplateWriter"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\TemplateObject"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Theme\\TemplateIndex $index, Minn\\Theme\\TemplateWriter $writer, Minn\\Rest\\TemplateObject $object, Minn\\Rest\\Caller $caller)",
@@ -128002,7 +128004,7 @@
                         }
                     ],
                     "line": 282,
-                    "end": 297
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -128021,8 +128023,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 319
+                    "line": 302,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -128048,8 +128050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 328
+                    "line": 324,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -128060,8 +128062,8 @@
                     "doc": "Reading the layout is an editor's business, not only an administrator's.",
                     "shapes": [],
                     "params": [],
-                    "line": 331,
-                    "end": 340
+                    "line": 334,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -128072,8 +128074,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 342,
-                    "end": 348
+                    "line": 345,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -128092,8 +128094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 357
+                    "line": 354,
+                    "end": 360
                 }
             ]
         },

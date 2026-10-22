@@ -6,7 +6,7 @@
         "delegates": 3560,
         "logicFunctions": 1778,
         "logicMethods": 1971,
-        "logicLines": 29268,
+        "logicLines": 29270,
         "kept": 0
     },
     "byFile": {
@@ -160,7 +160,7 @@
         },
         "classes/WP_REST_Templates_Controller.php": {
             "logic": 18,
-            "lines": 207
+            "lines": 209
         },
         "simplepie/SimplePie.php": {
             "logic": 32,
@@ -8920,11 +8920,11 @@
             "file": "classes/WP_REST_Templates_Controller.php",
             "line": 205,
             "statements": 6,
-            "lines": 21
+            "lines": 23
         },
         "WP_REST_Templates_Controller::get_available_actions": {
             "file": "classes/WP_REST_Templates_Controller.php",
-            "line": 323,
+            "line": 326,
             "statements": 5,
             "lines": 9
         },
@@ -8936,7 +8936,7 @@
         },
         "WP_REST_Templates_Controller::get_item_schema": {
             "file": "classes/WP_REST_Templates_Controller.php",
-            "line": 348,
+            "line": 351,
             "statements": 4,
             "lines": 6
         },
@@ -8960,13 +8960,13 @@
         },
         "WP_REST_Templates_Controller::minn_changed_text": {
             "file": "classes/WP_REST_Templates_Controller.php",
-            "line": 277,
+            "line": 280,
             "statements": 1,
             "lines": 7
         },
         "WP_REST_Templates_Controller::minn_record": {
             "file": "classes/WP_REST_Templates_Controller.php",
-            "line": 311,
+            "line": 314,
             "statements": 2,
             "lines": 2
         },
@@ -8978,19 +8978,19 @@
         },
         "WP_REST_Templates_Controller::prepare_item_for_database": {
             "file": "classes/WP_REST_Templates_Controller.php",
-            "line": 239,
+            "line": 242,
             "statements": 8,
             "lines": 32
         },
         "WP_REST_Templates_Controller::prepare_item_for_response": {
             "file": "classes/WP_REST_Templates_Controller.php",
-            "line": 288,
+            "line": 291,
             "statements": 9,
             "lines": 17
         },
         "WP_REST_Templates_Controller::prepare_links": {
             "file": "classes/WP_REST_Templates_Controller.php",
-            "line": 317,
+            "line": 320,
             "statements": 2,
             "lines": 2
         },

@@ -224,6 +224,9 @@ class WP_REST_Templates_Controller extends WP_REST_Controller
             $done = wp_trash_post($template->wp_id);
             $template->status = 'trash';
             $response = $this->prepare_item_for_response($template, $request);
+            // The trash's answer names no revisions, though a trashed copy read later does.
+            $response->remove_link('version-history');
+            $response->remove_link('predecessor-version');
         }
         return $done ? $response : new WP_Error('rest_cannot_delete', __('The template cannot be deleted.'), ['status' => 500]);
     }

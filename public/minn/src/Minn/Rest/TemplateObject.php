@@ -97,8 +97,8 @@ final readonly class TemplateObject
             'collection' => [['href' => $this->url->to("/wp/v2/{$base}")]],
             'about' => [['href' => $this->url->to("/wp/v2/types/{$as}")]],
         ];
-        // A trashed copy shows no revisions (probe rest-templates-controller).
-        if ($record->wpId > 0 && $record->status !== 'trash') {
+        // A stored copy shows its revisions, a trashed one too (REST fuzzing); the trash's own answer drops them (TemplatesController).
+        if ($record->wpId > 0) {
             $links['version-history'] = [['count' => $this->posts->revisionCount($record->wpId), 'href' => $self . '/revisions']];
             $latest = $this->posts->latestRevisionId($record->wpId);
             if ($latest > 0) {

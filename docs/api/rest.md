@@ -99,7 +99,7 @@ the wp/v2 surface: shapes and controllers
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TemplateObject`](#templateobject) | final readonly class | 105 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplateRevisionsController`](#templaterevisionscontroller) | final readonly class | 197 | wp/v2/templates and wp/v2/template-parts revisions and autosaves: the |
-| [`TemplatesController`](#templatescontroller) | final readonly class | 329 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
+| [`TemplatesController`](#templatescontroller) | final readonly class | 332 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermCollectionParams`](#termcollectionparams) | final class | 13 | A taxonomy's term list parameters as the reference declares them (probe |
 | [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
 | [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
@@ -4540,7 +4540,7 @@ needs edit_theme_options.
 - const `WRITE_CAP` = `'edit_theme_options'`
 - const `REFUSAL` = `'Sorry, you are not allowed to access the templates on this site.'`
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Rest\Api`, `Minn\Rest\TemplateObject`
 
 ```php
 __construct(Minn\Theme\TemplateIndex $index, Minn\Theme\TemplateWriter $writer, Minn\Rest\TemplateObject $object, Minn\Rest\Caller $caller)
@@ -4627,7 +4627,7 @@ Route: `DELETE /wp/v2/template-parts/{id:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)
 
 Deletes a customised template part.
 
-Internals: `listing()` (private, line 148), `listed()` (private, line 174), `lookup()` (private, line 191), `single()` (private, line 214), `save()` (private, line 223), `create()` (private, line 241), `fields()` (private, line 263), `delete()` (private, line 282), `trashed()` (private, line 299), `record()` (private, line 321), `readable()` (private, line 331), `requireWrite()` (private, line 342), `text()` (private, line 351)
+Internals: `listing()` (private, line 148), `listed()` (private, line 174), `lookup()` (private, line 191), `single()` (private, line 214), `save()` (private, line 223), `create()` (private, line 241), `fields()` (private, line 263), `delete()` (private, line 282), `trashed()` (private, line 302), `record()` (private, line 324), `readable()` (private, line 334), `requireWrite()` (private, line 345), `text()` (private, line 354)
 
 
 ## TermCollectionParams
