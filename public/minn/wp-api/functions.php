@@ -226,10 +226,13 @@ function wp_max_upload_size()
     return apply_filters('upload_size_limit', min($upload, $post), $upload, $post);
 }
 
-/** Ends as many output buffers as were open, each flushed; one that refuses to end does not loop forever. */
+/**
+ * Ends as many output buffers as were open, each flushed; one that refuses to end does not loop forever.
+ * Mid-page, the engine's own captures stay: what a plugin's buffers held flushes into the page (Runtime\OutputFloor).
+ */
 function wp_ob_end_flush_all()
 {
-    for ($levels = ob_get_level(); $levels > 0; $levels--) {
+    for ($levels = ob_get_level() - Minn\Runtime\OutputFloor::level(); $levels > 0; $levels--) {
         ob_end_flush();
     }
 }

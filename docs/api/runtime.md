@@ -87,6 +87,7 @@ the WordPress runtime plugins load against
 | [`OptionWrites`](#optionwrites) | final class | 133 | Options written the way add_option(), update_option() and delete_option() |
 | [`Options`](#options) | final class | 530 | Options as plugin code sees them, kept where the reference keeps them: |
 | [`OptionsGroup`](#optionsgroup) | final class | 57 | wp_cache's options group, where option reads are kept as the reference |
+| [`OutputFloor`](#outputfloor) | final class | 23 | The output buffers the engine reads its pages from. The reference prints |
 | [`Pages`](#pages) | final class | 136 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 37 | Records every call into a generated placeholder while a site opts in by |
@@ -131,7 +132,7 @@ the WordPress runtime plugins load against
 | [`RequestHeaders`](#requestheaders) | final class | 106 | What WordPress's request functions say and send: the protocol the |
 | [`RewriteRules`](#rewriterules) | final class | 390 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`RewriteStructs`](#rewritestructs) | final class | 113 | The rewrite object's state and the structures it builds links and rules |
-| [`Runtime`](#runtime) | final class | 482 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 484 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`SafeUrls`](#safeurls) | final class | 22 | Whether an address is one the site may fetch (wp_http_validate_url): an |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 393 | The script modules registry: registrations with typed dependencies, the |
@@ -4883,6 +4884,34 @@ Stores a key; a drop-in is written only when it holds something else.
 Removes a key.
 
 
+## OutputFloor
+
+`final class Minn\Runtime\OutputFloor` · `public/minn/src/Minn/Runtime/OutputFloor.php`
+
+The output buffers the engine reads its pages from. The reference prints
+as it goes, so a plugin that ends every buffer mid-page
+(wp_ob_end_flush_all) only sends what it has early; the engine builds the
+page in its own buffers and sends it whole, so ending those would send
+part of the page out ahead of its headers and lose it from the rest.
+Each capture holds its level while it is open, and such a plugin ends
+only the buffers above the innermost one (suite output-flush).
+
+Used by: `Minn\Front\FeedController`, `Minn\Front\PrintedResponse`, `Minn\Runtime\Runtime`, `Minn\Theme\TemplateBuffer`
+
+
+### static `hold(): void`
+
+Marks the buffer just opened as one the engine reads.
+
+### static `release(): void`
+
+Lets the innermost capture go.
+
+### static `level(): int`
+
+The level buffers may be ended down to: the innermost capture's, or none.
+
+
 ## Pages
 
 `final class Minn\Runtime\Pages` · `public/minn/src/Minn/Runtime/Pages.php`
@@ -7597,7 +7626,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 459)
+Internals: `loadObjectCacheDropin()` (private, line 461)
 
 
 ## SafeUrls

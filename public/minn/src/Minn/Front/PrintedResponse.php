@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Closure;
 use Minn\Http\Response;
+use Minn\Runtime\OutputFloor;
 use Minn\Theme\MainQueryBridge;
 use Minn\Theme\Printed;
 
@@ -29,6 +30,7 @@ final class PrintedResponse
     {
         $level = ob_get_level();
         ob_start();
+        OutputFloor::hold();
         try {
             $bridge->stand($resolution ?? Resolution::home(), $vars);
             if ($print === null) {
@@ -41,6 +43,8 @@ final class PrintedResponse
         } catch (\Throwable $failure) {
             self::discard($level);
             throw $failure;
+        } finally {
+            OutputFloor::release();
         }
         $body = '';
         while (ob_get_level() > $level) {

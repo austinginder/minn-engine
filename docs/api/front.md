@@ -15,7 +15,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CommentPostController`](#commentpostcontroller) | final readonly class | 56 | wp-comments-post.php: the comment form's target. The reference's |
 | [`CustomLogo`](#customlogo) | final class | 25 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
-| [`FeedController`](#feedcontroller) | final readonly class | 60 | The feeds, wherever a request asks for one: the feed var of the rule its |
+| [`FeedController`](#feedcontroller) | final readonly class | 63 | The feeds, wherever a request asks for one: the feed var of the rule its |
 | [`FeedTags`](#feedtags) | final class | 197 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
@@ -28,7 +28,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Permalinks`](#permalinks) | final readonly class | 265 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PostEmbed`](#postembed) | final class | 112 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
-| [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
+| [`PrintedResponse`](#printedresponse) | final class | 42 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 72 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`QueryMoves`](#querymoves) | final readonly class | 119 | Where the root's archive query forms move under pretty permalinks, as |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
@@ -456,7 +456,7 @@ Whether a request asks for a feed of what it resolved to (the query form only of
 
 The feed a request asks for, of what its address resolved to.
 
-Internals: `served()` (private, line 56), `perFeed()` (private, line 80)
+Internals: `served()` (private, line 57), `perFeed()` (private, line 84)
 
 
 ## FeedTags
@@ -940,7 +940,7 @@ The request served this way, or null for the theme to render.
 
 - `@param array<string, mixed> $vars the request's own query variables`
 
-Internals: `discard()` (private, line 53)
+Internals: `discard()` (private, line 57)
 
 
 ## ProbeController

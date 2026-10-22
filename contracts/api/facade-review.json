@@ -15023,10 +15023,9 @@
             },
             "wp_ob_end_flush_all": {
                 "verdict": "move",
-                "to": "Minn\\Runtime\\Runtime",
-                "why": "closing every output buffer is output control the engine owns, since Runtime::capture and Theme\\TemplateBuffer open buffers of their own under the page",
-                "doubt": "it also ends the engine's own capture and template buffers, so a plugin calling it mid-render can push the page out early",
-                "body": "12df553cec8a"
+                "to": "Minn\\Runtime\\OutputFloor",
+                "why": "ends every output buffer above the engine's innermost page capture (Runtime\\OutputFloor), all of them once none is open (shutdown), so a plugin calling it mid-page flushes its buffers into the page rather than sending part of it ahead of its headers (suite output-flush). Doubt fixed 2026-10-22.",
+                "body": "f3f2a440cfb8"
             },
             "wp_original_referer_field": {
                 "verdict": "keep",

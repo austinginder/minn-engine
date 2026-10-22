@@ -49778,7 +49778,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FeedController.php",
-            "lines": 60,
+            "lines": 63,
             "doc": "The feeds, wherever a request asks for one: the feed var of the rule its\naddress matched (the site's at /feed/, the comments' at\n/comments/feed/, a post's or an archive's after its address, a plugin's\nown) or ?feed= on any page. Each is WordPress's feed lifecycle: the main\nquery with the feed asked for, then do_feed, whose handler prints the\nfeed and its content type. A feed of something the address names but\nthe site does not have is an empty feed, as the reference serves it.",
             "implements": [],
             "extends": null,
@@ -49792,6 +49792,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
+                "Minn\\Runtime\\OutputFloor",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\NotModified"
             ],
@@ -49813,8 +49814,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 30
+                "line": 28,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -49854,8 +49855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -49881,8 +49882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 47
+                    "line": 40,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -49910,8 +49911,8 @@
                             "doc": "what the request asks of the feed: its type and its comments"
                         }
                     ],
-                    "line": 56,
-                    "end": 77
+                    "line": 57,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -49922,8 +49923,8 @@
                     "doc": "How many items a feed carries (posts_per_rss).",
                     "shapes": [],
                     "params": [],
-                    "line": 80,
-                    "end": 83
+                    "line": 84,
+                    "end": 87
                 }
             ]
         },
@@ -52643,13 +52644,14 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/PrintedResponse.php",
-            "lines": 39,
+            "lines": 42,
             "doc": "A response WordPress's handlers print themselves (a sitemap, robots.txt),\nas the reference serves them: the main query stood with the request's own\nvariables and the front-end steps around it, then $print; what was\nprinted, under the status and headers the handlers sent. A handler that\nends the request early (Printed, where the reference exits) ends it here\ntoo; when none did and there is nothing to print, null, and the theme\nrenders the page on the query as it stands.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Front\\Resolution",
                 "Minn\\Http\\Response",
+                "Minn\\Runtime\\OutputFloor",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\Printed"
             ],
@@ -52703,8 +52705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 51
+                    "line": 29,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -52723,8 +52725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 58
+                    "line": 57,
+                    "end": 62
                 }
             ]
         },
@@ -154390,6 +154392,76 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\OutputFloor",
+            "short": "OutputFloor",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/OutputFloor.php",
+            "lines": 23,
+            "doc": "The output buffers the engine reads its pages from. The reference prints\nas it goes, so a plugin that ends every buffer mid-page\n(wp_ob_end_flush_all) only sends what it has early; the engine builds the\npage in its own buffers and sends it whole, so ending those would send\npart of the page out ahead of its headers and lose it from the rest.\nEach capture holds its level while it is open, and such a plugin ends\nonly the buffers above the innermost one (suite output-flush).",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\FeedController",
+                "Minn\\Front\\PrintedResponse",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\TemplateBuffer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "levels",
+                    "type": "array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "hold",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hold(): void",
+                    "doc": "Marks the buffer just opened as one the engine reads.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 22,
+                    "end": 25
+                },
+                {
+                    "routes": [],
+                    "name": "release",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "release(): void",
+                    "doc": "Lets the innermost capture go.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 28,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "level",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "level(): int",
+                    "doc": "The level buffers may be ended down to: the innermost capture's, or none.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 34,
+                    "end": 37
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Pages",
             "short": "Pages",
             "namespace": "Minn\\Runtime",
@@ -167364,7 +167436,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 482,
+            "lines": 484,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -167391,6 +167463,7 @@
                 "Minn\\Runtime\\Interactivity",
                 "Minn\\Runtime\\ObjectCache",
                 "Minn\\Runtime\\Options",
+                "Minn\\Runtime\\OutputFloor",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\ScriptModules",
@@ -168204,7 +168277,7 @@
                         }
                     ],
                     "line": 240,
-                    "end": 255
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -168223,8 +168296,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 290
+                    "line": 285,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -168252,8 +168325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 314
+                    "line": 305,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -168272,8 +168345,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 320
+                    "line": 319,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -168284,8 +168357,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 323,
-                    "end": 326
+                    "line": 325,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -168296,8 +168369,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 329,
-                    "end": 332
+                    "line": 331,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -168308,8 +168381,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 335,
-                    "end": 338
+                    "line": 337,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -168320,8 +168393,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 341,
-                    "end": 344
+                    "line": 343,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -168332,8 +168405,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 347,
-                    "end": 350
+                    "line": 349,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -168344,8 +168417,8 @@
                     "doc": "A script modules registry of its own, as each new WP_Script_Modules keeps (probe script-modules-printing).",
                     "shapes": [],
                     "params": [],
-                    "line": 353,
-                    "end": 359
+                    "line": 355,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -168356,8 +168429,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 362,
-                    "end": 365
+                    "line": 364,
+                    "end": 367
                 },
                 {
                     "routes": [],
@@ -168368,8 +168441,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 368,
-                    "end": 371
+                    "line": 370,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -168380,8 +168453,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 374,
-                    "end": 377
+                    "line": 376,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -168392,8 +168465,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 380,
-                    "end": 383
+                    "line": 382,
+                    "end": 385
                 },
                 {
                     "routes": [],
@@ -168419,8 +168492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 386,
-                    "end": 389
+                    "line": 388,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -168446,8 +168519,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 395
+                    "line": 394,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -168473,8 +168546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 398,
-                    "end": 401
+                    "line": 400,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -168485,8 +168558,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 404,
-                    "end": 407
+                    "line": 406,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -168497,8 +168570,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 410,
-                    "end": 413
+                    "line": 412,
+                    "end": 415
                 },
                 {
                     "routes": [],
@@ -168509,8 +168582,8 @@
                     "doc": "Whether the facade's functions and classes are defined yet.",
                     "shapes": [],
                     "params": [],
-                    "line": 416,
-                    "end": 419
+                    "line": 418,
+                    "end": 421
                 },
                 {
                     "routes": [],
@@ -168529,8 +168602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 422,
-                    "end": 449
+                    "line": 424,
+                    "end": 451
                 },
                 {
                     "routes": [],
@@ -168541,8 +168614,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 481,
-                    "end": 484
+                    "line": 483,
+                    "end": 486
                 },
                 {
                     "routes": [],
@@ -168553,8 +168626,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 487,
-                    "end": 504
+                    "line": 489,
+                    "end": 506
                 },
                 {
                     "routes": [],
@@ -168573,8 +168646,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 459,
-                    "end": 473
+                    "line": 461,
+                    "end": 475
                 }
             ]
         },
@@ -196188,12 +196261,13 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/TemplateBuffer.php",
-            "lines": 31,
+            "lines": 34,
             "doc": "The reference includes a front-end template inside the template-enhancement\nbuffer: wp_before_include_template fires with the template's file, its\ndefault callback opens the buffer when a plugin filters\nwp_template_enhancement_output_buffer, and that filter is handed the whole\npage. The engine builds the page as a string, so the string is passed\nthrough the same buffer: every buffer the action opened is closed in turn,\nits handler writing into the capture the page is read from.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Response",
+                "Minn\\Runtime\\OutputFloor",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -196231,8 +196305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 48
+                    "line": 28,
+                    "end": 52
                 }
             ]
         },

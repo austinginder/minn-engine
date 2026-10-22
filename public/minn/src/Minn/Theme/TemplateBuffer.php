@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Http\Response;
+use Minn\Runtime\OutputFloor;
 use Minn\Runtime\Runtime;
 
 /**
@@ -28,6 +29,7 @@ final class TemplateBuffer
     {
         $level = ob_get_level();
         ob_start();
+        OutputFloor::hold();
         try {
             Runtime::hooks()->action('wp_before_include_template', [$template]);
             $page = $render();
@@ -42,6 +44,8 @@ final class TemplateBuffer
                 ob_end_clean();
             }
             throw $failure;
+        } finally {
+            OutputFloor::release();
         }
         $out = (string) ob_get_clean();
         return $page === null ? null : $out;

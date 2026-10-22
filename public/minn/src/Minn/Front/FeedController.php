@@ -10,6 +10,7 @@ use Minn\Content\Blocks;
 use Minn\Content\Site;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Runtime\OutputFloor;
 use Minn\Theme\MainQueryBridge;
 use Minn\Theme\NotModified;
 
@@ -57,6 +58,7 @@ final readonly class FeedController
     {
         $level = ob_get_level();
         ob_start();
+        OutputFloor::hold();
         try {
             $page = (new MainQueryBridge($this->perFeed()))->stand($resolution, $vars);
             // Content renders against the feed's own queried object (a category feed marks its category current), images by the page rules.
@@ -71,6 +73,8 @@ final readonly class FeedController
                 return new Response(304, [], '');
             }
             throw $failure;
+        } finally {
+            OutputFloor::release();
         }
         $code = http_response_code();
         return new Response(is_int($code) && $code > 0 ? $code : 200, [], (string) ob_get_clean());

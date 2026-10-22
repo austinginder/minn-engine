@@ -33,7 +33,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`StylePresets`](#stylepresets) | final class | 160 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 88 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`Teaser`](#teaser) | enum | 5 | What a post's full text does with the part before its more tag |
-| [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
+| [`TemplateBuffer`](#templatebuffer) | final class | 34 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
 | [`TemplateIndex`](#templateindex) | final class | 343 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |

@@ -2,14 +2,14 @@
     "generated": "2026-10-22",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 707,
+        "minn": 708,
         "composes": 2060,
-        "leaf": 960,
+        "leaf": 959,
         "noop": 3266,
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8681,
-        "minnMethods": 1557,
+        "minnMethods": 1558,
         "leafLinesOver15": 9
     },
     "functions": {
@@ -72443,8 +72443,10 @@
         "wp_ob_end_flush_all": {
             "file": "functions.php",
             "lines": 3,
-            "kind": "leaf",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\OutputFloor::level"
+            ],
             "composes": []
         },
         "wp_oembed_add_discovery_links": {

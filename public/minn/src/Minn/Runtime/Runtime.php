@@ -242,9 +242,11 @@ final class Runtime
         $base = ob_get_level();
         ob_start();
         ob_start();
+        OutputFloor::hold();
         try {
             self::hooks()->action($action, $args);
         } finally {
+            OutputFloor::release();
             while (ob_get_level() > $base + 2) {
                 ob_end_flush();
             }

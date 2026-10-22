@@ -12782,7 +12782,7 @@
         },
         "_ajax_wp_die_handler": {
             "file": "functions.php",
-            "line": 1047,
+            "line": 1050,
             "statements": 5,
             "lines": 12
         },
@@ -12824,7 +12824,7 @@
         },
         "_canonical_charset": {
             "file": "functions.php",
-            "line": 987,
+            "line": 990,
             "statements": 4,
             "lines": 8
         },
@@ -12872,7 +12872,7 @@
         },
         "_default_wp_die_handler": {
             "file": "functions.php",
-            "line": 1022,
+            "line": 1025,
             "statements": 10,
             "lines": 21
         },
@@ -12908,7 +12908,7 @@
         },
         "_device_can_upload": {
             "file": "functions.php",
-            "line": 1340,
+            "line": 1343,
             "statements": 4,
             "lines": 8
         },
@@ -13010,7 +13010,7 @@
         },
         "_get_non_cached_ids": {
             "file": "functions.php",
-            "line": 724,
+            "line": 727,
             "statements": 3,
             "lines": 3
         },
@@ -13040,7 +13040,7 @@
         },
         "_http_build_query": {
             "file": "functions.php",
-            "line": 640,
+            "line": 643,
             "statements": 3,
             "lines": 12
         },
@@ -13058,13 +13058,13 @@
         },
         "_json_wp_die_handler": {
             "file": "functions.php",
-            "line": 1064,
+            "line": 1067,
             "statements": 4,
             "lines": 10
         },
         "_jsonp_wp_die_handler": {
             "file": "functions.php",
-            "line": 1079,
+            "line": 1082,
             "statements": 5,
             "lines": 12
         },
@@ -13670,13 +13670,13 @@
         },
         "_minn_dirsize": {
             "file": "functions.php",
-            "line": 1282,
+            "line": 1285,
             "statements": 4,
             "lines": 13
         },
         "_minn_enclosure_type": {
             "file": "functions.php",
-            "line": 601,
+            "line": 604,
             "statements": 4,
             "lines": 11
         },
@@ -13688,7 +13688,7 @@
         },
         "_minn_etc_zone_order": {
             "file": "functions.php",
-            "line": 973,
+            "line": 976,
             "statements": 4,
             "lines": 10
         },
@@ -13742,7 +13742,7 @@
         },
         "_minn_guessed_path": {
             "file": "functions.php",
-            "line": 377,
+            "line": 380,
             "statements": 8,
             "lines": 16
         },
@@ -13850,7 +13850,7 @@
         },
         "_minn_kept_enclosures": {
             "file": "functions.php",
-            "line": 586,
+            "line": 589,
             "statements": 3,
             "lines": 10
         },
@@ -14684,7 +14684,7 @@
         },
         "_scalar_wp_die_handler": {
             "file": "functions.php",
-            "line": 1135,
+            "line": 1138,
             "statements": 3,
             "lines": 7
         },
@@ -14750,7 +14750,7 @@
         },
         "_validate_cache_id": {
             "file": "functions.php",
-            "line": 1412,
+            "line": 1415,
             "statements": 3,
             "lines": 5
         },
@@ -14852,13 +14852,13 @@
         },
         "_wp_check_alternate_file_names": {
             "file": "functions.php",
-            "line": 1439,
+            "line": 1442,
             "statements": 2,
             "lines": 6
         },
         "_wp_check_existing_file_names": {
             "file": "functions.php",
-            "line": 1422,
+            "line": 1425,
             "statements": 6,
             "lines": 12
         },
@@ -14912,7 +14912,7 @@
         },
         "_wp_die_process_input": {
             "file": "functions.php",
-            "line": 999,
+            "line": 1002,
             "statements": 2,
             "lines": 2
         },
@@ -15188,7 +15188,7 @@
         },
         "_wp_timezone_choice_usort_callback": {
             "file": "functions.php",
-            "line": 958,
+            "line": 961,
             "statements": 3,
             "lines": 10
         },
@@ -15218,13 +15218,13 @@
         },
         "_xml_wp_die_handler": {
             "file": "functions.php",
-            "line": 1006,
+            "line": 1009,
             "statements": 6,
             "lines": 12
         },
         "_xmlrpc_wp_die_handler": {
             "file": "functions.php",
-            "line": 1122,
+            "line": 1125,
             "statements": 4,
             "lines": 8
         },
@@ -15284,7 +15284,7 @@
         },
         "add_magic_quotes": {
             "file": "functions.php",
-            "line": 1324,
+            "line": 1327,
             "statements": 2,
             "lines": 4
         },
@@ -15386,7 +15386,7 @@
         },
         "apache_mod_loaded": {
             "file": "functions.php",
-            "line": 333,
+            "line": 336,
             "statements": 2,
             "lines": 4
         },
@@ -15812,7 +15812,7 @@
         },
         "cache_javascript_headers": {
             "file": "functions.php",
-            "line": 448,
+            "line": 451,
             "statements": 3,
             "lines": 3
         },
@@ -15872,7 +15872,7 @@
         },
         "clean_dirsize_cache": {
             "file": "functions.php",
-            "line": 1472,
+            "line": 1475,
             "statements": 6,
             "lines": 13
         },
@@ -16040,7 +16040,7 @@
         },
         "dead_db": {
             "file": "functions.php",
-            "line": 1100,
+            "line": 1103,
             "statements": 4,
             "lines": 9
         },
@@ -16112,13 +16112,13 @@
         },
         "do_enclose": {
             "file": "functions.php",
-            "line": 555,
+            "line": 558,
             "statements": 8,
             "lines": 26
         },
         "do_favicon": {
             "file": "functions.php",
-            "line": 1114,
+            "line": 1117,
             "statements": 3,
             "lines": 3
         },
@@ -16130,7 +16130,7 @@
         },
         "do_robots": {
             "file": "functions.php",
-            "line": 420,
+            "line": 423,
             "statements": 6,
             "lines": 6
         },
@@ -17900,7 +17900,7 @@
         },
         "global_terms_enabled": {
             "file": "functions.php",
-            "line": 1359,
+            "line": 1362,
             "statements": 2,
             "lines": 2
         },
@@ -17972,7 +17972,7 @@
         },
         "human_readable_duration": {
             "file": "functions.php",
-            "line": 1366,
+            "line": 1369,
             "statements": 7,
             "lines": 11
         },
@@ -18092,7 +18092,7 @@
         },
         "is_lighttpd_before_150": {
             "file": "functions.php",
-            "line": 1490,
+            "line": 1493,
             "statements": 2,
             "lines": 2
         },
@@ -18338,7 +18338,7 @@
         },
         "mbstring_binary_safe_encoding": {
             "file": "functions.php",
-            "line": 770,
+            "line": 773,
             "statements": 5,
             "lines": 14
         },
@@ -18554,7 +18554,7 @@
         },
         "print_emoji_styles": {
             "file": "functions.php",
-            "line": 1222,
+            "line": 1225,
             "statements": 5,
             "lines": 8
         },
@@ -18596,7 +18596,7 @@
         },
         "recurse_dirsize": {
             "file": "functions.php",
-            "line": 1252,
+            "line": 1255,
             "statements": 12,
             "lines": 25
         },
@@ -19220,7 +19220,7 @@
         },
         "send_frame_options_header": {
             "file": "functions.php",
-            "line": 800,
+            "line": 803,
             "statements": 2,
             "lines": 2
         },
@@ -19904,7 +19904,7 @@
         },
         "wp": {
             "file": "functions.php",
-            "line": 1624,
+            "line": 1627,
             "statements": 3,
             "lines": 5
         },
@@ -19982,13 +19982,13 @@
         },
         "wp_admin_headers": {
             "file": "functions.php",
-            "line": 812,
+            "line": 815,
             "statements": 2,
             "lines": 2
         },
         "wp_admin_notice": {
             "file": "functions.php",
-            "line": 759,
+            "line": 762,
             "statements": 2,
             "lines": 2
         },
@@ -20060,13 +20060,13 @@
         },
         "wp_auth_check": {
             "file": "functions.php",
-            "line": 680,
+            "line": 683,
             "statements": 2,
             "lines": 2
         },
         "wp_auth_check_html": {
             "file": "functions.php",
-            "line": 671,
+            "line": 674,
             "statements": 5,
             "lines": 5
         },
@@ -20144,7 +20144,7 @@
         },
         "wp_cache_get_last_changed": {
             "file": "functions.php",
-            "line": 718,
+            "line": 721,
             "statements": 2,
             "lines": 2
         },
@@ -20174,7 +20174,7 @@
         },
         "wp_cache_set_last_changed": {
             "file": "functions.php",
-            "line": 732,
+            "line": 735,
             "statements": 5,
             "lines": 5
         },
@@ -20396,7 +20396,7 @@
         },
         "wp_debug_backtrace_summary": {
             "file": "functions.php",
-            "line": 1164,
+            "line": 1167,
             "statements": 2,
             "lines": 2
         },
@@ -20480,7 +20480,7 @@
         },
         "wp_die": {
             "file": "functions.php",
-            "line": 925,
+            "line": 928,
             "statements": 3,
             "lines": 20
         },
@@ -20600,7 +20600,7 @@
         },
         "wp_enqueue_emoji_styles": {
             "file": "functions.php",
-            "line": 1210,
+            "line": 1213,
             "statements": 5,
             "lines": 7
         },
@@ -20666,7 +20666,7 @@
         },
         "wp_extract_urls": {
             "file": "functions.php",
-            "line": 537,
+            "line": 540,
             "statements": 2,
             "lines": 2
         },
@@ -20738,13 +20738,13 @@
         },
         "wp_find_hierarchy_loop": {
             "file": "functions.php",
-            "line": 1456,
+            "line": 1459,
             "statements": 3,
             "lines": 3
         },
         "wp_find_hierarchy_loop_tortoise_hare": {
             "file": "functions.php",
-            "line": 1464,
+            "line": 1467,
             "statements": 3,
             "lines": 3
         },
@@ -20798,7 +20798,7 @@
         },
         "wp_generate_uuid4": {
             "file": "functions.php",
-            "line": 901,
+            "line": 904,
             "statements": 4,
             "lines": 4
         },
@@ -20822,7 +20822,7 @@
         },
         "wp_get_admin_notice": {
             "file": "functions.php",
-            "line": 752,
+            "line": 755,
             "statements": 3,
             "lines": 3
         },
@@ -20966,7 +20966,7 @@
         },
         "wp_get_default_extension_for_mime_type": {
             "file": "functions.php",
-            "line": 1333,
+            "line": 1336,
             "statements": 2,
             "lines": 2
         },
@@ -20978,13 +20978,13 @@
         },
         "wp_get_direct_php_update_url": {
             "file": "functions.php",
-            "line": 1194,
+            "line": 1197,
             "statements": 2,
             "lines": 2
         },
         "wp_get_direct_update_https_url": {
             "file": "functions.php",
-            "line": 1521,
+            "line": 1524,
             "statements": 2,
             "lines": 2
         },
@@ -21032,7 +21032,7 @@
         },
         "wp_get_font_dir": {
             "file": "functions.php",
-            "line": 1391,
+            "line": 1394,
             "statements": 4,
             "lines": 4
         },
@@ -21074,7 +21074,7 @@
         },
         "wp_get_http_headers": {
             "file": "functions.php",
-            "line": 617,
+            "line": 620,
             "statements": 2,
             "lines": 2
         },
@@ -21230,7 +21230,7 @@
         },
         "wp_get_referer": {
             "file": "functions.php",
-            "line": 879,
+            "line": 882,
             "statements": 4,
             "lines": 6
         },
@@ -21338,13 +21338,13 @@
         },
         "wp_get_update_https_url": {
             "file": "functions.php",
-            "line": 1528,
+            "line": 1531,
             "statements": 4,
             "lines": 4
         },
         "wp_get_update_php_annotation": {
             "file": "functions.php",
-            "line": 1537,
+            "line": 1540,
             "statements": 3,
             "lines": 5
         },
@@ -21368,7 +21368,7 @@
         },
         "wp_get_webp_info": {
             "file": "functions.php",
-            "line": 1382,
+            "line": 1385,
             "statements": 2,
             "lines": 4
         },
@@ -21386,7 +21386,7 @@
         },
         "wp_guess_url": {
             "file": "functions.php",
-            "line": 363,
+            "line": 366,
             "statements": 2,
             "lines": 4
         },
@@ -21614,13 +21614,13 @@
         },
         "wp_is_rest_endpoint": {
             "file": "functions.php",
-            "line": 508,
+            "line": 511,
             "statements": 3,
             "lines": 3
         },
         "wp_is_site_protected_by_basic_auth": {
             "file": "functions.php",
-            "line": 521,
+            "line": 524,
             "statements": 3,
             "lines": 5
         },
@@ -21638,7 +21638,7 @@
         },
         "wp_is_uuid": {
             "file": "functions.php",
-            "line": 910,
+            "line": 913,
             "statements": 3,
             "lines": 11
         },
@@ -21938,7 +21938,7 @@
         },
         "wp_maybe_load_widgets": {
             "file": "functions.php",
-            "line": 1564,
+            "line": 1567,
             "statements": 1,
             "lines": 3
         },
@@ -22004,13 +22004,13 @@
         },
         "wp_nonce_ays": {
             "file": "functions.php",
-            "line": 837,
+            "line": 840,
             "statements": 2,
             "lines": 12
         },
         "wp_nonce_field": {
             "file": "functions.php",
-            "line": 818,
+            "line": 821,
             "statements": 5,
             "lines": 9
         },
@@ -22040,7 +22040,7 @@
         },
         "wp_ob_end_flush_all": {
             "file": "functions.php",
-            "line": 230,
+            "line": 233,
             "statements": 1,
             "lines": 3
         },
@@ -22088,7 +22088,7 @@
         },
         "wp_original_referer_field": {
             "file": "functions.php",
-            "line": 863,
+            "line": 866,
             "statements": 4,
             "lines": 6
         },
@@ -22154,7 +22154,7 @@
         },
         "wp_post_preview_js": {
             "file": "functions.php",
-            "line": 1612,
+            "line": 1615,
             "statements": 5,
             "lines": 7
         },
@@ -22238,13 +22238,13 @@
         },
         "wp_privacy_delete_old_export_files": {
             "file": "functions.php",
-            "line": 1583,
+            "line": 1586,
             "statements": 2,
             "lines": 4
         },
         "wp_privacy_personal_data_cleanup_requests": {
             "file": "functions.php",
-            "line": 1600,
+            "line": 1603,
             "statements": 3,
             "lines": 7
         },
@@ -22298,7 +22298,7 @@
         },
         "wp_referer_field": {
             "file": "functions.php",
-            "line": 853,
+            "line": 856,
             "statements": 3,
             "lines": 5
         },
@@ -22460,7 +22460,7 @@
         },
         "wp_remote_fopen": {
             "file": "functions.php",
-            "line": 264,
+            "line": 267,
             "statements": 3,
             "lines": 5
         },
@@ -22514,7 +22514,7 @@
         },
         "wp_removable_query_args": {
             "file": "functions.php",
-            "line": 1152,
+            "line": 1155,
             "statements": 2,
             "lines": 2
         },
@@ -22784,13 +22784,13 @@
         },
         "wp_schedule_delete_old_privacy_export_files": {
             "file": "functions.php",
-            "line": 1572,
+            "line": 1575,
             "statements": 2,
             "lines": 6
         },
         "wp_schedule_personal_data_cleanup_requests": {
             "file": "functions.php",
-            "line": 1592,
+            "line": 1595,
             "statements": 1,
             "lines": 3
         },
@@ -22802,7 +22802,7 @@
         },
         "wp_scheduled_delete": {
             "file": "functions.php",
-            "line": 239,
+            "line": 242,
             "statements": 3,
             "lines": 19
         },
@@ -22820,19 +22820,19 @@
         },
         "wp_send_json": {
             "file": "functions.php",
-            "line": 455,
+            "line": 458,
             "statements": 4,
             "lines": 15
         },
         "wp_send_json_error": {
             "file": "functions.php",
-            "line": 483,
+            "line": 486,
             "statements": 3,
             "lines": 15
         },
         "wp_send_json_success": {
             "file": "functions.php",
-            "line": 474,
+            "line": 477,
             "statements": 3,
             "lines": 5
         },
@@ -22988,7 +22988,7 @@
         },
         "wp_site_admin_email_change_notification": {
             "file": "functions.php",
-            "line": 1547,
+            "line": 1550,
             "statements": 5,
             "lines": 12
         },
@@ -23138,7 +23138,7 @@
         },
         "wp_suspend_cache_invalidation": {
             "file": "functions.php",
-            "line": 405,
+            "line": 408,
             "statements": 4,
             "lines": 4
         },
@@ -23174,7 +23174,7 @@
         },
         "wp_timezone_override_offset": {
             "file": "functions.php",
-            "line": 1182,
+            "line": 1185,
             "statements": 5,
             "lines": 7
         },
@@ -23222,7 +23222,7 @@
         },
         "wp_trigger_error": {
             "file": "functions.php",
-            "line": 320,
+            "line": 323,
             "statements": 4,
             "lines": 8
         },
@@ -23246,7 +23246,7 @@
         },
         "wp_unique_prefixed_id": {
             "file": "functions.php",
-            "line": 707,
+            "line": 710,
             "statements": 4,
             "lines": 7
         },
@@ -23294,7 +23294,7 @@
         },
         "wp_update_php_annotation": {
             "file": "functions.php",
-            "line": 1646,
+            "line": 1649,
             "statements": 5,
             "lines": 9
         },
@@ -23366,7 +23366,7 @@
         },
         "wp_widget_description": {
             "file": "functions.php",
-            "line": 657,
+            "line": 660,
             "statements": 2,
             "lines": 4
         },
