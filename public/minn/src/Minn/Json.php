@@ -73,6 +73,16 @@ final class Json
         }
     }
 
+    /** The value the text holds with its objects kept as objects, or null when the text is not JSON. */
+    public static function objects(string $text): mixed
+    {
+        try {
+            return json_decode($text, false, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return null;
+        }
+    }
+
     /**
      * The value a JSON file holds, objects as arrays; with `or:` given, a missing or broken file gives that instead.
      *

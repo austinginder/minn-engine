@@ -14358,12 +14358,6 @@
                 "why": "encodes every character with an entity, then restores known named and numeric references; an encoding rule for Support\\Entities",
                 "body": "1c9ff4cb1d4a"
             },
-            "human_time_diff": {
-                "verdict": "move",
-                "to": "Minn\\Support\\Time",
-                "why": "words Time::span's count and unit with plural forms and fires human_time_diff; the wording belongs beside Time::span (F5 sent human_readable_duration there). Doubt settled, not real: Measured 2026-10-20: both stacks word minutes the same way.",
-                "body": "d97c766901b9"
-            },
             "iso8601_timezone_to_offset": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\SiteTime",

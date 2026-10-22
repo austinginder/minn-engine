@@ -1,11 +1,11 @@
 {
-    "generated": "2026-10-21",
+    "generated": "2026-10-22",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 703,
+        "minn": 702,
         "composes": 2069,
         "leaf": 960,
-        "noop": 3256,
+        "noop": 3257,
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8676,
@@ -52703,15 +52703,12 @@
         },
         "human_time_diff": {
             "file": "formatting.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Support\\Time::span"
+                "Minn\\Runtime\\TimeSince::between"
             ],
-            "composes": [
-                "_n",
-                "apply_filters"
-            ]
+            "composes": []
         },
         "iframe_footer": {
             "file": "admin.php",

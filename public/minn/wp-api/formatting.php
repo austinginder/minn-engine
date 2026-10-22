@@ -20,7 +20,7 @@ use Minn\Support\Kses;
 use Minn\Support\Lists;
 use Minn\Support\Paths;
 use Minn\Support\Slashes;
-use Minn\Support\Time;
+use Minn\Runtime\TimeSince;
 use Minn\Support\Url;
 use Minn\Support\Sanitize;
 use Minn\Support\Text;
@@ -492,11 +492,7 @@ function wp_readonly($readonly_value, $current = true, $display = true)
 
 function human_time_diff($from, $to = 0)
 {
-    $to = (int) $to === 0 ? time() : (int) $to;
-    $diff = abs($to - (int) $from);
-    [$count, $unit] = Time::span($diff);
-    $since = sprintf(_n("%s {$unit}", "%s {$unit}s", $count), $count);
-    return apply_filters('human_time_diff', $since, $diff, $from, $to);
+    return TimeSince::between((int) $from, (int) $to);
 }
 
 function ent2ncr($text)

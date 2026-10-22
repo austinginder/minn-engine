@@ -251,7 +251,7 @@ after the version, so the service counts it apart from real sites.
 - const `LAB_HOST` = `'/(^localhost$|\\.(localhost|test|local|example|invalid|internal|lan|home\\.arpa)$)/'` — Host names only a development install answers to.
 - const `PACKAGES` = `'https://updates.minn.run/v1/download/'` — Where plugin, theme and translation packages download from.
 
-Used by: `Minn\Admin\LegacyPackController`, `Minn\Cli\PackageInstaller`, `Minn\Ops\Changelog`, `Minn\Ops\EngineChecksums`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\Release`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`
+Used by: `Minn\Admin\LegacyPackController`, `Minn\Cli\PackageInstaller`, `Minn\Ops\Changelog`, `Minn\Ops\EngineChecksums`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\Release`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Rest\PatternDirectoryController`
 
 
 ### static `url(string $path): string`
@@ -294,6 +294,8 @@ error) stands, and only when nobody answers is the directory asked,
 through Ops\Packages (behind the Minn update service);
 <kind>_api_result is handed what came back either way. A refusal is
 <kind>_api_failed in the directory's own words.
+
+Used by: `Minn\Rest\BlockDirectoryController`
 
 ```php
 __construct(string $kind, Closure $filter, Minn\Ops\Packages $packages, string $locale, string $version)
@@ -513,7 +515,7 @@ deleted.
 - const `INFO_OPTION` = `'minn_plugin_info'`
 - const `INFO_TTL` = `43200`
 
-Used by: `Minn\Admin\LegacyPackController`, `Minn\Admin\PackagesController`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Ops\DirectoryApi`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\LegacyPackController`, `Minn\Admin\PackagesController`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Ops\DirectoryApi`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, string $contentDir, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))

@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1654
+        "delegates": 1655
     },
     "functions": {
         "__": {
@@ -2643,6 +2643,10 @@
         "html_type_rss": {
             "file": "feed.php",
             "statement": "echo str_contains((string) get_bloginfo('html_type'), 'xhtml') ? 'xhtml' : 'html';"
+        },
+        "human_time_diff": {
+            "file": "formatting.php",
+            "statement": "return TimeSince::between((int) $from, (int) $to);"
         },
         "iis7_supports_permalinks": {
             "file": "functions.php",

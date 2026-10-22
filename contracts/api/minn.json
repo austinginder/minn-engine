@@ -11283,6 +11283,7 @@
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\Resolver",
                 "Minn\\Login\\LoginController",
+                "Minn\\Rest\\Api",
                 "Minn\\Rest\\RevisionsController"
             ],
             "constructor": null,
@@ -44056,7 +44057,9 @@
             ],
             "usedBy": [
                 "Minn\\Cli\\Runtime",
-                "Minn\\Ops\\Directory"
+                "Minn\\Ops\\Directory",
+                "Minn\\Rest\\BlockDirectoryController",
+                "Minn\\Rest\\PatternDirectoryController"
             ],
             "constructor": {
                 "signature": "__construct(string $version, string $engineDir)",
@@ -65794,7 +65797,8 @@
                 "Minn\\Ops\\EngineUpdate",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Releases",
-                "Minn\\Ops\\Updates"
+                "Minn\\Ops\\Updates",
+                "Minn\\Rest\\PatternDirectoryController"
             ],
             "constructor": {
                 "signature": "__construct(array $within = array ( ), ?Minn\\Http\\Fake $fake = NULL, ?string $refusal = NULL)",
@@ -66737,6 +66741,7 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -66752,6 +66757,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -69747,6 +69753,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -69764,6 +69771,7 @@
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -70279,6 +70287,7 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -70294,6 +70303,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -71136,6 +71146,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -71159,6 +71170,7 @@
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -71906,6 +71918,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -71923,6 +71936,7 @@
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -72498,6 +72512,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -72514,6 +72529,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -74420,6 +74436,7 @@
                 "Minn\\Media\\Player",
                 "Minn\\Query\\DateSql",
                 "Minn\\Query\\TaxSql",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\ApplicationPasswordRecords",
@@ -74450,6 +74467,7 @@
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\TermWrites",
+                "Minn\\Runtime\\TimeSince",
                 "Minn\\Runtime\\UpdateCounts",
                 "Minn\\Runtime\\Upgrade",
                 "Minn\\Runtime\\UserWrites",
@@ -76953,7 +76971,7 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Json.php",
-            "lines": 134,
+            "lines": 144,
             "doc": "JSON in and out, for the engine and for code written for Minn:\n\nuse Minn\\Json;\n\nJson::encode($rows);              // {\"url\":\"https://example.com/a\",\"name\":\"Café\"}\nJson::decode($text);              // objects as arrays; JsonException when it is not JSON\nJson::decode($stored, or: []);    // the fallback, for text that may be empty or broken\nJson::file($path);                // the same, read from a file; the error names the file\n\nencode() writes slashes and characters as themselves unless flags say\notherwise (Json::ESCAPED is the form WordPress writes, which REST bodies\nkeep). A string cut mid-character still encodes: each invalid byte becomes\n\"?\", as wp_json_encode() does it (probe functions-utils). What cannot be\nencoded even then (NAN, nesting past the depth) throws a JsonException.",
             "implements": [],
             "extends": null,
@@ -77002,6 +77020,7 @@
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\FontObject",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
@@ -77117,6 +77136,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "objects",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "objects(string $text): mixed",
+                    "doc": "The value the text holds with its objects kept as objects, or null when the text is not JSON.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 84
+                },
+                {
+                    "routes": [],
                     "name": "file",
                     "static": true,
                     "visibility": "public",
@@ -77139,8 +77178,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 98
+                    "line": 91,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -77166,8 +77205,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 125
+                    "line": 115,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -77186,8 +77225,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 159
+                    "line": 158,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -77213,8 +77252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 134
+                    "line": 138,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -77233,8 +77272,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 140
+                    "line": 147,
+                    "end": 150
                 }
             ]
         },
@@ -92135,6 +92174,7 @@
                 "Minn\\Ops\\UpgraderRun",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\FontCollectionsController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PluginsController",
@@ -94047,7 +94087,8 @@
                 "Minn\\Ops\\Release",
                 "Minn\\Ops\\Releases",
                 "Minn\\Ops\\Updates",
-                "Minn\\Ops\\UpgraderRun"
+                "Minn\\Ops\\UpgraderRun",
+                "Minn\\Rest\\PatternDirectoryController"
             ],
             "constructor": null,
             "cases": [],
@@ -94221,7 +94262,9 @@
                 "Minn\\Ops\\Packages",
                 "Minn\\Runtime\\Handoff"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Rest\\BlockDirectoryController"
+            ],
             "constructor": {
                 "signature": "__construct(string $kind, Closure $filter, Minn\\Ops\\Packages $packages, string $locale, string $version)",
                 "doc": "",
@@ -95379,6 +95422,7 @@
                 "Minn\\Ops\\DirectoryApi",
                 "Minn\\Ops\\Updates",
                 "Minn\\Ops\\UpgraderRun",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\Services"
             ],
@@ -101193,6 +101237,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\Caller",
@@ -101210,6 +101255,7 @@
                 "Minn\\Rest\\MenuItemStatus",
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -101463,7 +101509,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 460,
+            "lines": 468,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -101485,6 +101531,7 @@
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Auth\\Authenticated",
+                "Minn\\Auth\\Nonce",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Db",
                 "Minn\\Http\\Method",
@@ -101497,6 +101544,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -101524,6 +101572,7 @@
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostObject",
@@ -101596,8 +101645,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 46,
-                "end": 52
+                "line": 47,
+                "end": 53
             },
             "cases": [],
             "constants": [
@@ -101658,8 +101707,8 @@
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
                     "params": [],
-                    "line": 59,
-                    "end": 62
+                    "line": 60,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -101685,8 +101734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 72
+                    "line": 66,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -101697,8 +101746,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 146,
-                    "end": 149
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -101740,8 +101789,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 170
+                    "line": 161,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -101769,8 +101818,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 177
+                    "line": 176,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -101781,8 +101830,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 180,
-                    "end": 183
+                    "line": 183,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -101793,8 +101842,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 186,
-                    "end": 189
+                    "line": 189,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -101805,8 +101854,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 192,
-                    "end": 195
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -101817,8 +101866,8 @@
                     "doc": "The wp/v2 menu shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 198,
-                    "end": 202
+                    "line": 201,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -101846,8 +101895,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 210
+                    "line": 208,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -101875,8 +101924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 217
+                    "line": 216,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -101904,8 +101953,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 224
+                    "line": 223,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -101940,8 +101989,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 232
+                    "line": 230,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -101969,8 +102018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 238
+                    "line": 238,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -101998,8 +102047,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 241,
-                    "end": 244
+                    "line": 244,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -102010,8 +102059,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 247,
-                    "end": 250
+                    "line": 250,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -102022,8 +102071,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 253,
-                    "end": 256
+                    "line": 256,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -102049,8 +102098,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 273
+                    "line": 267,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -102069,8 +102118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 303
+                    "line": 279,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -102078,7 +102127,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "withServerHeaders(Minn\\Http\\Response $response, string $route): Minn\\Http\\Response",
-                    "doc": "The headers the reference's server adds to every REST answer over\nHTTP (probe rest-server-headers): X-Robots-Tag noindex always; and,\nwhile rest_send_cors_headers stays hooked, for a request from an\nOrigin the CORS headers echoing it with Vary: Origin, otherwise Vary:\nOrigin for a GET from someone not signed in. A signed-in caller's\nanswer also carries the no-cache headers (rest_send_nocache_headers,\nnocache_headers). The CORS header lists go through\nrest_exposed_cors_headers and rest_allowed_cors_headers, handed the\nroute's request.",
+                    "doc": "The headers the reference's server adds to every REST answer over\nHTTP (probe rest-server-headers): X-Robots-Tag noindex always; and,\nwhile rest_send_cors_headers stays hooked, for a request from an\nOrigin the CORS headers echoing it with Vary: Origin, otherwise Vary:\nOrigin for a GET from someone not signed in. A signed-in caller's\nanswer also carries the no-cache headers (rest_send_nocache_headers,\nnocache_headers), and a cookie caller whose nonce held a fresh\nX-WP-Nonce, refused or not. The CORS header lists go through\nrest_exposed_cors_headers and rest_allowed_cors_headers, handed the\nroute's request.",
                     "shapes": [],
                     "params": [
                         {
@@ -102096,8 +102145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 341
+                    "line": 320,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -102116,8 +102165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 348
+                    "line": 353,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -102171,8 +102220,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 373
+                    "line": 365,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -102198,8 +102247,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 382,
-                    "end": 394
+                    "line": 391,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -102227,8 +102276,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 409
+                    "line": 411,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -102256,8 +102305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 143
+                    "line": 81,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -102276,8 +102325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 419
+                    "line": 420,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -102303,8 +102352,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 448
+                    "line": 435,
+                    "end": 457
                 },
                 {
                     "routes": [],
@@ -102323,8 +102372,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 457,
-                    "end": 464
+                    "line": 466,
+                    "end": 473
                 },
                 {
                     "routes": [],
@@ -102353,8 +102402,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 474,
-                    "end": 489
+                    "line": 483,
+                    "end": 498
                 },
                 {
                     "routes": [],
@@ -102380,8 +102429,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 495,
-                    "end": 499
+                    "line": 504,
+                    "end": 508
                 }
             ]
         },
@@ -103551,6 +103600,139 @@
                     ],
                     "line": 21,
                     "end": 43
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\BlockDirectoryController",
+            "short": "BlockDirectoryController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/BlockDirectoryController.php",
+            "lines": 72,
+            "doc": "wp/v2/block-directory/search (Austin, 2026-10-21, decision 1B): the\ndirectory's block plugins for a term, asked as plugins_api asks (its\nfilters run) of wordpress.org through the Minn update service. The term\nis required before the caller is judged; then only someone who may\ninstall and activate plugins searches. A plugin with blocks is one item,\nnamed for its first block: its short description as the directory words\nit, ratings out of five, the author's name without its link, the last\nupdate as a date and as how long ago, and a link to install it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Engine",
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Objects\\Errors",
+                "Minn\\Ops\\DirectoryApi",
+                "Minn\\Ops\\Packages",
+                "Minn\\RestError",
+                "Minn\\Rest\\Fields",
+                "Minn\\Rest\\Links",
+                "Minn\\Rest\\Reply",
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TimeSince",
+                "Minn\\Runtime\\Translations"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\RestUrl $url)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "url",
+                        "type": "Minn\\Rest\\RestUrl",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 44,
+                "end": 46
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "REFUSAL",
+                    "value": "'Sorry, you are not allowed to browse the block directory.'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ARGS",
+                    "value": "array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'term' =>    array (     'description' => 'Limit result set to blocks matching the search term.',     'type' => 'string',     'minLength' => 1,     'required' => true,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "url",
+                    "type": "Minn\\Rest\\RestUrl",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp/v2/block-directory/search (cap install_plugins + activate_plugins)"
+                    ],
+                    "name": "search",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "search(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The block plugins matching a term, a page at a time.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "item(array $plugin, array $block): array",
+                    "doc": "One plugin as the search shows it.",
+                    "shapes": [
+                        "@param array<string, mixed> $plugin",
+                        "@param array<string, mixed> $block",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "block",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 103
                 }
             ]
         },
@@ -107021,6 +107203,7 @@
             "usedBy": [
                 "Minn\\Admin\\SessionsController",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
@@ -107032,6 +107215,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
@@ -109551,6 +109735,7 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\FontCollectionsController",
                 "Minn\\Rest\\FontObject",
@@ -112215,6 +112400,184 @@
             ],
             "properties": [],
             "methods": []
+        },
+        {
+            "name": "Minn\\Rest\\PatternDirectoryController",
+            "short": "PatternDirectoryController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/PatternDirectoryController.php",
+            "lines": 120,
+            "doc": "wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the\nblock editor's pattern directory, asked of wordpress.org through the Minn\nupdate service, with the query the reference sends upstream (its paging\nand order, then the search, slugs and offset asked for, the reader's\nlocale, the WordPress version, then the category and keyword by their\nupstream names). An answer is kept an hour in the site transient the\nreference keeps it in, named for that query, so either stack reads the\nother's. Anyone who may edit posts browses it. Each pattern shows its\ntitle as the directory renders it, its markup, its category and keyword\nslugs, its description, viewport width and block types.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Engine",
+                "Minn\\Http",
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\Json",
+                "Minn\\Ops\\Directory",
+                "Minn\\RestError",
+                "Minn\\Rest\\Fields",
+                "Minn\\Rest\\Reply",
+                "Minn\\Runtime\\Transients",
+                "Minn\\Runtime\\Translations"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Http $http = \\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "http",
+                        "type": "Minn\\Http",
+                        "shape": "",
+                        "default": "\\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, ))",
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 55,
+                "end": 57
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "REFUSAL",
+                    "value": "'Sorry, you are not allowed to browse the local block pattern directory.'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ARGS",
+                    "value": "array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 100,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'minLength' => 1,     'required' => false,   ),   'category' =>    array (     'description' => 'Limit results to those matching a category ID.',     'type' => 'integer',     'minimum' => 1,     'required' => false,   ),   'keyword' =>    array (     'description' => 'Limit results to those matching a keyword ID.',     'type' => 'integer',     'minimum' => 1,     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit results to those matching a pattern (slug).',     'type' => 'array',     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'date',     'enum' =>      array (       0 => 'author',       1 => 'date',       2 => 'id',       3 => 'include',       4 => 'modified',       5 => 'parent',       6 => 'relevance',       7 => 'slug',       8 => 'include_slugs',       9 => 'title',       10 => 'favorite_count',     ),     'required' => false,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FAILED",
+                    "value": "'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href=\"https://wordpress.org/support/forums/\">support forums</a>.'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "KEEP",
+                    "value": "3600",
+                    "doc": "How long an answer is kept, as the reference keeps it.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp/v2/pattern-directory/patterns (cap edit_posts)"
+                    ],
+                    "name": "patterns",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "patterns(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The directory's patterns for a query, a page at a time.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "upstreamQuery",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "upstreamQuery(array $asked): array",
+                    "doc": "The upstream query in the reference's order: paging and order first,\nthen the search, slugs and offset the request names, the reader's\nlocale and the WordPress version, then category and keyword under\ntheir upstream names.",
+                    "shapes": [
+                        "@param array<string, mixed> $asked",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "asked",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 83,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "fetch",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "fetch(array $query): array",
+                    "doc": "The directory's answer, its patterns as objects. A request that never\ngot an answer is refused with the transport's own error; an answer\nthat is not a list of patterns as pattern_api_failed, the body beside\nit, as the reference refuses both.",
+                    "shapes": [
+                        "@param array<string, mixed> $query",
+                        "@return list<object>"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 119,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "item(object $raw): array",
+                    "doc": "One pattern as the directory route shows it.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "raw",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 138,
+                    "end": 151
+                }
+            ]
         },
         {
             "name": "Minn\\Rest\\PluginsController",
@@ -116724,7 +117087,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Reply.php",
-            "lines": 53,
+            "lines": 63,
             "doc": "JSON responses in the reference's shape: its header set, its json_encode\nflags (slashes escaped), the _fields filter, and the pagination headers\non lists.",
             "implements": [],
             "extends": null,
@@ -116754,6 +117117,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -116767,6 +117131,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenuLists",
                 "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -116934,6 +117299,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "rows",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rows(array $rows, ?Minn\\Rest\\Fields $fields): Minn\\Http\\Response",
+                    "doc": "A list response without paging headers, each row's fields selected.",
+                    "shapes": [
+                        "@param list<array> $rows"
+                    ],
+                    "params": [
+                        {
+                            "name": "rows",
+                            "type": "array",
+                            "shape": "list<array>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "?Minn\\Rest\\Fields",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 72
+                },
+                {
+                    "routes": [],
                     "name": "error",
                     "static": true,
                     "visibility": "public",
@@ -116949,8 +117343,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 68
+                    "line": 75,
+                    "end": 78
                 }
             ]
         },
@@ -118062,6 +118456,7 @@
             "usedBy": [
                 "Minn\\Engine",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockEditorController",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\CommentObject",
@@ -165387,6 +165782,7 @@
                 "Minn\\Query\\TaxSql",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\Caller",
@@ -165535,6 +165931,7 @@
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\ThemeSwitch",
                 "Minn\\Runtime\\Themes",
+                "Minn\\Runtime\\TimeSince",
                 "Minn\\Runtime\\Transients",
                 "Minn\\Runtime\\Translations",
                 "Minn\\Runtime\\UpdateCounts",
@@ -176567,6 +176964,58 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\TimeSince",
+            "short": "TimeSince",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TimeSince.php",
+            "lines": 12,
+            "doc": "How long ago something was, as human_time_diff words it: the span\nbetween two times in its largest whole unit (\"3 days\"), through\nhuman_time_diff.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Time"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\BlockDirectoryController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "between",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "between(int $from, int $to = 0): string",
+                    "doc": "The span from one time to another (now when none is given).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "from",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "to",
+                            "type": "int",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 18,
+                    "end": 25
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Transients",
             "short": "Transients",
             "namespace": "Minn\\Runtime",
@@ -176583,6 +177032,7 @@
             ],
             "usedBy": [
                 "Minn\\Ops\\Updates",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\ThemeSwitch",
                 "Minn\\Runtime\\UpdateCounts"
@@ -176765,6 +177215,8 @@
             "usedBy": [
                 "Minn\\I18n\\SiteLanguage",
                 "Minn\\Media\\Player",
+                "Minn\\Rest\\BlockDirectoryController",
+                "Minn\\Rest\\PatternDirectoryController",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\PluginFiles",
                 "Minn\\Runtime\\PluginRemoval",
@@ -187988,7 +188440,9 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\TimeSince"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [

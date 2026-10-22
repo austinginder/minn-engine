@@ -1,7 +1,7 @@
 {
     "engine": "0.1.0",
-    "routes": 284,
-    "withPolicy": 278,
+    "routes": 286,
+    "withPolicy": 280,
     "entries": [
         {
             "method": "GET",
@@ -2325,6 +2325,63 @@
                     }
                 }
             },
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/block-directory/search",
+            "name": "Minn\\Rest\\BlockDirectoryController::search",
+            "handler": "Minn\\Rest\\BlockDirectoryController::search",
+            "summary": "The block plugins matching a term, a page at a time.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap install_plugins + activate_plugins",
+                "cap": "install_plugins",
+                "caps": [
+                    "activate_plugins"
+                ],
+                "signIn": {
+                    "code": "rest_block_directory_cannot_view",
+                    "message": "Sorry, you are not allowed to browse the block directory."
+                },
+                "refuse": {
+                    "code": "rest_block_directory_cannot_view",
+                    "message": "Sorry, you are not allowed to browse the block directory."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "required": false
+                },
+                "term": {
+                    "description": "Limit result set to blocks matching the search term.",
+                    "type": "string",
+                    "minLength": 1,
+                    "required": true
+                }
+            },
+            "body": [],
             "index": true
         },
         {
@@ -5745,6 +5802,113 @@
                 "id": {
                     "description": "Unique identifier for the post.",
                     "type": "integer",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/pattern-directory/patterns",
+            "name": "Minn\\Rest\\PatternDirectoryController::patterns",
+            "handler": "Minn\\Rest\\PatternDirectoryController::patterns",
+            "summary": "The directory's patterns for a query, a page at a time.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_posts",
+                "cap": "edit_posts",
+                "signIn": {
+                    "code": "rest_pattern_directory_cannot_view",
+                    "message": "Sorry, you are not allowed to browse the local block pattern directory."
+                },
+                "refuse": {
+                    "code": "rest_pattern_directory_cannot_view",
+                    "message": "Sorry, you are not allowed to browse the local block pattern directory."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                    "required": false
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 100,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "required": false
+                },
+                "search": {
+                    "description": "Limit results to those matching a string.",
+                    "type": "string",
+                    "minLength": 1,
+                    "required": false
+                },
+                "category": {
+                    "description": "Limit results to those matching a category ID.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "required": false
+                },
+                "keyword": {
+                    "description": "Limit results to those matching a keyword ID.",
+                    "type": "integer",
+                    "minimum": 1,
+                    "required": false
+                },
+                "slug": {
+                    "description": "Limit results to those matching a pattern (slug).",
+                    "type": "array",
+                    "required": false
+                },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
+                    "type": "integer",
+                    "required": false
+                },
+                "order": {
+                    "description": "Order sort attribute ascending or descending.",
+                    "type": "string",
+                    "default": "desc",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ],
+                    "required": false
+                },
+                "orderby": {
+                    "description": "Sort collection by post attribute.",
+                    "type": "string",
+                    "default": "date",
+                    "enum": [
+                        "author",
+                        "date",
+                        "id",
+                        "include",
+                        "modified",
+                        "parent",
+                        "relevance",
+                        "slug",
+                        "include_slugs",
+                        "title",
+                        "favorite_count"
+                    ],
                     "required": false
                 }
             },

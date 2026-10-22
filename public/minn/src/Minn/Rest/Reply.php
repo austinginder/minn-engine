@@ -61,6 +61,16 @@ final class Reply
         );
     }
 
+    /**
+     * A list response without paging headers, each row's fields selected.
+     *
+     * @param list<array> $rows
+     */
+    public static function rows(array $rows, ?Fields $fields): Response
+    {
+        return self::item($fields === null ? $rows : array_map(static fn (array $row) => $fields->apply($row), $rows), null);
+    }
+
     /** A REST error as the reference's error body. */
     public static function error(RestError $error): Response
     {

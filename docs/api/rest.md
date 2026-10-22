@@ -4,11 +4,12 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 460 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 468 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 142 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 164 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
+| [`BlockDirectoryController`](#blockdirectorycontroller) | final readonly class | 72 | wp/v2/block-directory/search (Austin, 2026-10-21, decision 1B): the |
 | [`BlockEditorController`](#blockeditorcontroller) | final readonly class | 29 | Two of wp-block-editor/v1's routes, for someone who may edit theme |
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 93 | wp/v2/block-renderer as the reference answers it (probe |
 | [`BlockTypesController`](#blocktypescontroller) | final readonly class | 133 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
@@ -51,6 +52,7 @@ the wp/v2 surface: shapes and controllers
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PathArgs`](#pathargs) | final class | 71 | The arguments a route's path names, as the reference lists them among the |
+| [`PatternDirectoryController`](#patterndirectorycontroller) | final readonly class | 120 | wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 287 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 176 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
@@ -62,7 +64,7 @@ the wp/v2 surface: shapes and controllers
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
 | [`RenderedFields`](#renderedfields) | final class | 68 | A post's rendered title, content and excerpt as a REST response carries |
-| [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
+| [`Reply`](#reply) | final class | 63 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`Responses`](#responses) | final class | 95 | REST answers as the WordPress layer shapes them: any value made a |
 | [`RestMeta`](#restmeta) | final class | 296 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
@@ -232,7 +234,8 @@ while rest_send_cors_headers stays hooked, for a request from an
 Origin the CORS headers echoing it with Vary: Origin, otherwise Vary:
 Origin for a GET from someone not signed in. A signed-in caller's
 answer also carries the no-cache headers (rest_send_nocache_headers,
-nocache_headers). The CORS header lists go through
+nocache_headers), and a cookie caller whose nonce held a fresh
+X-WP-Nonce, refused or not. The CORS header lists go through
 rest_exposed_cors_headers and rest_allowed_cors_headers, handed the
 route's request.
 
@@ -262,7 +265,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 80), `engineResponse()` (private, line 411), `withPageLinks()` (private, line 426), `options()` (private, line 457), `withSchema()` (private, line 474), `withAllow()` (private, line 495)
+Internals: `controllers()` (private, line 81), `engineResponse()` (private, line 420), `withPageLinks()` (private, line 435), `options()` (private, line 466), `withSchema()` (private, line 483), `withAllow()` (private, line 504)
 
 
 ## ApplicationPasswordsController
@@ -421,6 +424,38 @@ what lets one round trip stand in for several.
 The batch body's requests in the reference's normalised form.
 
 - `@return list<array{method: string, path: string, query: array<string, mixed>, body: ?array, headers: ?array}>`
+
+
+## BlockDirectoryController
+
+`final readonly class Minn\Rest\BlockDirectoryController` · `public/minn/src/Minn/Rest/BlockDirectoryController.php`
+
+wp/v2/block-directory/search (Austin, 2026-10-21, decision 1B): the
+directory's block plugins for a term, asked as plugins_api asks (its
+filters run) of wordpress.org through the Minn update service. The term
+is required before the caller is judged; then only someone who may
+install and activate plugins searches. A plugin with blocks is one item,
+named for its first block: its short description as the directory words
+it, ratings out of five, the author's name without its link, the last
+update as a date and as how long ago, and a link to install it.
+
+- const `REFUSAL` = `'Sorry, you are not allowed to browse the block directory.'`
+- const `ARGS` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'term' =>    array (     'description' => 'Limit result set to blocks matching the search term.',     'type' => 'string',     'minLength' => 1,     'required' => true,   ), )`
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Rest\RestUrl $url)
+```
+
+
+### `search(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp/v2/block-directory/search (cap install_plugins + activate_plugins)`
+
+The block plugins matching a term, a page at a time.
+
+Internals: `item()` (private, line 80)
 
 
 ## BlockEditorController
@@ -1102,7 +1137,7 @@ the whole payload otherwise, which is why _fields on the associative
 types response strips every key and yields [] over HTTP, a reference
 quirk the engine reproduces by construction.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\Responses`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`, `Minn\Rest\PatternDirectoryController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\Responses`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 - readonly `array $paths`
 - readonly `bool $deferred`
@@ -1566,7 +1601,7 @@ reference lets past it (the right password, or the edit context).
 
 Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BlockEditorController`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\TemplateRevisionsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\TemplateRevisionsController`
 
 ### static `item(string $rel, string $href, array $attributes): array`
 
@@ -2072,6 +2107,42 @@ refusal is the bare "Invalid parameter.".
 - const `WIDGET_TYPE_ID` = `array (   'id' =>    array (     'description' => 'The widget type id.',     'type' => 'string',     'required' => false,   ), )` — A widget type's id: wp/v2/widget-types/{id}.
 
 Used by: `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\DeclaredTermsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
+
+
+## PatternDirectoryController
+
+`final readonly class Minn\Rest\PatternDirectoryController` · `public/minn/src/Minn/Rest/PatternDirectoryController.php`
+
+wp/v2/pattern-directory/patterns (Austin, 2026-10-21, decision 1B): the
+block editor's pattern directory, asked of wordpress.org through the Minn
+update service, with the query the reference sends upstream (its paging
+and order, then the search, slugs and offset asked for, the reader's
+locale, the WordPress version, then the category and keyword by their
+upstream names). An answer is kept an hour in the site transient the
+reference keeps it in, named for that query, so either stack reads the
+other's. Anyone who may edit posts browses it. Each pattern shows its
+title as the directory renders it, its markup, its category and keyword
+slugs, its description, viewport width and block types.
+
+- const `REFUSAL` = `'Sorry, you are not allowed to browse the local block pattern directory.'`
+- const `ARGS` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',       2 => 'edit',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 100,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'minLength' => 1,     'required' => false,   ),   'category' =>    array (     'description' => 'Limit results to those matching a category ID.',     'type' => 'integer',     'minimum' => 1,     'required' => false,   ),   'keyword' =>    array (     'description' => 'Limit results to those matching a keyword ID.',     'type' => 'integer',     'minimum' => 1,     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit results to those matching a pattern (slug).',     'type' => 'array',     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'date',     'enum' =>      array (       0 => 'author',       1 => 'date',       2 => 'id',       3 => 'include',       4 => 'modified',       5 => 'parent',       6 => 'relevance',       7 => 'slug',       8 => 'include_slugs',       9 => 'title',       10 => 'favorite_count',     ),     'required' => false,   ), )`
+- const `FAILED` = `'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>.'`
+- const `KEEP` = `3600` — How long an answer is kept, as the reference keeps it.
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
+```
+
+
+### `patterns(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp/v2/pattern-directory/patterns (cap edit_posts)`
+
+The directory's patterns for a query, a page at a time.
+
+Internals: `upstreamQuery()` (private, line 83), `fetch()` (private, line 119), `item()` (private, line 138)
 
 
 ## PluginsController
@@ -2641,7 +2712,7 @@ on lists.
 
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )`
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\LegacyPackController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\LegacyPackController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuLists`, `Minn\Rest\MenusController`, `Minn\Rest\PatternDirectoryController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
 
@@ -2658,6 +2729,12 @@ A post's answer pointing at its page on the site, as a viewable type's single it
 ### static `list(array $rows, int $total, int $totalPages, ?Minn\Rest\Fields $fields): Minn\Http\Response`
 
 A list response with the total and page-count headers.
+
+- `@param list<array> $rows`
+
+### static `rows(array $rows, ?Minn\Rest\Fields $fields): Minn\Http\Response`
+
+A list response without paging headers, each row's fields selected.
 
 - `@param list<array> $rows`
 
@@ -2832,7 +2909,7 @@ REST URLs in the form the reference emits for the site's permalink mode:
 {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
 when query args ride along.
 
-Used by: `Minn\Engine`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
+Used by: `Minn\Engine`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\BlockEditorController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\FontCollectionsController`, `Minn\Rest\FontObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplateRevisionsController`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks)

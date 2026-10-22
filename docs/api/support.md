@@ -1270,6 +1270,8 @@ Human-scale spans: a number of seconds as the largest whole unit it fills, round
 
 - const `UNITS` = `array (   0 =>    array (     0 => 'second',     1 => 1,   ),   1 =>    array (     0 => 'minute',     1 => 60,   ),   2 =>    array (     0 => 'hour',     1 => 3600,   ),   3 =>    array (     0 => 'day',     1 => 86400,   ),   4 =>    array (     0 => 'week',     1 => 604800,   ),   5 =>    array (     0 => 'month',     1 => 2592000,   ),   6 =>    array (     0 => 'year',     1 => 31536000,   ), )`
 
+Used by: `Minn\Runtime\TimeSince`
+
 ### static `span(int $seconds): array`
 
 A number of seconds as its largest whole unit and count.

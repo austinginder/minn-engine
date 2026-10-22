@@ -520,7 +520,7 @@ under the nonce salt, accepted for the current tick and the one before.
 
 - const `LIFETIME` = `86400`
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Front\AdminBar`, `Minn\Front\Resolver`, `Minn\Login\LoginController`, `Minn\Rest\RevisionsController`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Front\AdminBar`, `Minn\Front\Resolver`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\RevisionsController`
 
 ### static `lifetime(string|int $action): int`
 

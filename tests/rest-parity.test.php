@@ -380,5 +380,64 @@ if ( $template > 0 ) {
 	$wp( 'eval ' . escapeshellarg( 'WP_Session_Tokens::get_instance(1)->destroy(' . var_export( (string) $session['token'], true ) . ');' ) );
 }
 
+// The block and pattern directories (decision 1B): who may search them and the arguments
+// refused before anything is asked of the directory; a page of patterns the reference keeps
+// in its site transient for that query (made up here, never the directory's own) read the
+// same by both stacks, with _fields picking from each pattern. A cookie caller whose nonce
+// held is handed a fresh one in X-WP-Nonce, refused, missing or not; without one, nothing.
+$admin  = json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . ' 1' ), true );
+$author = json_decode( $wp( 'eval-file ' . escapeshellarg( __DIR__ . '/tools/mint-session.php' ) . ' 3' ), true );
+$ask    = function ( string $base, string $path, ?array $session, bool $nonce = true ): array {
+	$headers = $session ? array( 'Cookie: ' . $session['cookie_name'] . '=' . $session['cookie'] ) : array();
+	if ( $session && $nonce ) {
+		$headers[] = 'X-WP-Nonce: ' . $session['nonce'];
+	}
+	$curl = curl_init( "$base$path" );
+	curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_HTTPHEADER => $headers ) );
+	$raw  = (string) curl_exec( $curl );
+	$size = curl_getinfo( $curl, CURLINFO_HEADER_SIZE );
+	preg_match( '/^x-wp-nonce:\s*(\S+)/mi', substr( $raw, 0, $size ), $fresh );
+	return array( curl_getinfo( $curl, CURLINFO_HTTP_CODE ), json_decode( substr( $raw, $size ), true ), $fresh[1] ?? '' );
+};
+$version = $wp( 'eval ' . escapeshellarg( 'echo get_bloginfo("version");' ) );
+$query   = array( 'page' => 1, 'per_page' => 2, 'order' => 'desc', 'orderby' => 'date', 'search' => 'zzparity', 'locale' => 'en_US', 'wp-version' => $version );
+$key     = 'wp_remote_block_patterns_' . md5( serialize( $query ) );
+$made_up = '[{"id":901,"title":{"rendered":"Zz &amp; Parity"},"pattern_content":"<!-- wp:paragraph --><p>zz</p><!-- /wp:paragraph -->","category_slugs":["text","featured"],"meta":{"wpop_keywords":"zz, parity ,x","wpop_description":"Made up.","wpop_viewport_width":"1200","wpop_block_types":["core/paragraph"]}},{"id":"902","title":{"rendered":"Bare"},"pattern_content":"","category_slugs":[],"meta":{"wpop_keywords":"","wpop_description":"","wpop_viewport_width":0,"wpop_block_types":[]}}]';
+$wp( 'eval ' . escapeshellarg( 'set_site_transient(' . var_export( $key, true ) . ', json_decode(' . var_export( $made_up, true ) . '), 600);' ) );
+$cases = array(
+	'block search signed out'              => array( '/wp-json/wp/v2/block-directory/search?term=x', null ),
+	'block search by an author'            => array( '/wp-json/wp/v2/block-directory/search?term=x', $author ),
+	'block search without a term'          => array( '/wp-json/wp/v2/block-directory/search', $admin ),
+	'block search with an empty term'      => array( '/wp-json/wp/v2/block-directory/search?term=', $admin ),
+	'block search per_page=0'              => array( '/wp-json/wp/v2/block-directory/search?term=x&per_page=0', $admin ),
+	'block search in the edit context'     => array( '/wp-json/wp/v2/block-directory/search?term=x&context=edit', $admin ),
+	'patterns signed out'                  => array( '/wp-json/wp/v2/pattern-directory/patterns', null ),
+	'patterns per_page=0'                  => array( '/wp-json/wp/v2/pattern-directory/patterns?per_page=0', $admin ),
+	'patterns order=zz'                    => array( '/wp-json/wp/v2/pattern-directory/patterns?order=zz', $admin ),
+	'patterns with an empty search'        => array( '/wp-json/wp/v2/pattern-directory/patterns?search=', $admin ),
+	'patterns category=0'                  => array( '/wp-json/wp/v2/pattern-directory/patterns?category=0', $admin ),
+	'kept patterns for an author'          => array( '/wp-json/wp/v2/pattern-directory/patterns?per_page=2&search=zzparity', $author ),
+	'kept patterns, _fields=id,keywords'   => array( '/wp-json/wp/v2/pattern-directory/patterns?per_page=2&search=zzparity&_fields=id,keywords', $admin ),
+	'nonce: a route answered'              => array( '/wp-json/wp/v2/types/post', $author ),
+	'nonce: from ?_wpnonce'                => array( '/wp-json/wp/v2/types/post?_wpnonce=' . $author['nonce'], $author, false ),
+	'nonce: a missing route'               => array( '/wp-json/wp/v2/zz-nothing', $author ),
+	'nonce: a refused route'               => array( '/wp-json/wp/v2/settings', $author ),
+	'nonce: by ?rest_route='               => array( '/?rest_route=/wp/v2/types/post', $author ),
+	'nonce: a cookie without one'          => array( '/wp-json/wp/v2/types/post', $author, false ),
+);
+foreach ( $cases as $label => $case ) {
+	$seen = array();
+	foreach ( array( $REF, $ENGINE ) as $base ) {
+		$seen[] = $ask( $base, ...$case );
+	}
+	$ok = $seen[0] === $seen[1] && ( ! str_starts_with( $label, 'kept' ) || 2 === count( (array) $seen[0][1] ) );
+	$ok ? $pass++ : $fail++;
+	echo ( $ok ? '  ok   ' : '  FAIL ' ) . "directories and nonces: $label" . ( $ok ? '' : "\n      " . substr( json_encode( $seen[0] ), 0, 400 ) . "\n      " . substr( json_encode( $seen[1] ), 0, 400 ) ) . "\n";
+}
+$wp( 'eval ' . escapeshellarg( 'delete_site_transient(' . var_export( $key, true ) . ');' ) );
+foreach ( array( 1 => $admin, 3 => $author ) as $id => $session ) {
+	$wp( 'eval ' . escapeshellarg( "WP_Session_Tokens::get_instance($id)->destroy(" . var_export( (string) $session['token'], true ) . ');' ) );
+}
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Auth\Authenticated;
+use Minn\Auth\Nonce;
 use Minn\Admin\AdminTypes;
 use Minn\Admin\LanguageController;
 use Minn\Admin\UpdatesController;
@@ -131,6 +132,8 @@ final readonly class Api
             new SiteHealthController(),
             new BlockEditorController($s->url(), $caller),
             new FontCollectionsController($s->url()),
+            new BlockDirectoryController($s->url()),
+            new PatternDirectoryController(),
         ];
         $templates = $s->templates();
         $templateWriter = $s->templateWriter();
@@ -309,7 +312,8 @@ final readonly class Api
      * Origin the CORS headers echoing it with Vary: Origin, otherwise Vary:
      * Origin for a GET from someone not signed in. A signed-in caller's
      * answer also carries the no-cache headers (rest_send_nocache_headers,
-     * nocache_headers). The CORS header lists go through
+     * nocache_headers), and a cookie caller whose nonce held a fresh
+     * X-WP-Nonce, refused or not. The CORS header lists go through
      * rest_exposed_cors_headers and rest_allowed_cors_headers, handed the
      * route's request.
      */
@@ -329,6 +333,11 @@ final readonly class Api
                     $response = $response->withHeader((string) $name, $value);
                 }
             }
+        }
+        // A cookie caller whose nonce held is handed a fresh one, whatever the answer.
+        $session = $this->services->caller()->session();
+        if ($session !== null && $session->applicationPassword === null && $session->token !== '') {
+            $response = $response->withHeader('X-WP-Nonce', Nonce::create($session->id(), $session->token));
         }
         if (Runtime::hooks()->has('rest_pre_serve_request', 'rest_send_cors_headers') === false || RuntimeRoutes::servedAsXml($this->request->withPath('/' . trim($route, '/')), $response)) {
             return $response;
