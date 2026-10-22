@@ -186,7 +186,8 @@ final readonly class QueryFlags
         $on['is_category'] = $categoryIds !== [] || !empty($vars['category_name']) || !empty($vars['category__in']) || !empty($vars['category__and']);
         $on['is_tag'] = !empty($vars['tag']) || !empty($vars['tag_id']) || !empty($vars['tag__in']) || !empty($vars['tag__and']) || !empty($vars['tag_slug__in']) || !empty($vars['tag_slug__and']);
         $on['is_tax'] = (!empty($vars['tax_query']) && is_array($vars['tax_query'])) || self::customTaxonomyVar($vars, $registry) !== null;
-        $on['is_author'] = !empty($vars['author']) || !empty($vars['author_name']) || !empty($vars['author__in']);
+        // A list of authors alone (author__in) is not an author archive (probe: the queried author).
+        $on['is_author'] = !empty($vars['author']) || !empty($vars['author_name']);
         if (!empty($vars['post_type']) && !is_array($vars['post_type']) && $vars['post_type'] !== 'any') {
             $type = $registry->postType((string) $vars['post_type']);
             $on['is_post_type_archive'] = $type !== null && !empty($type['has_archive']);

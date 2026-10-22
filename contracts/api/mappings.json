@@ -17648,7 +17648,7 @@
         },
         "WP_Query::get_queried_object": {
             "file": "classes/WP_Query.php",
-            "lines": 28,
+            "lines": 29,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\QueriedObject::locate",

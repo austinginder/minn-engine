@@ -221,9 +221,15 @@ final readonly class Permalinks
     /** An author's archive URL. */
     public function forAuthor(UserRecord $user): string
     {
+        return $this->forAuthorBy($user->id, $user->nicename);
+    }
+
+    /** An author archive's URL by id and nicename; with no nicename (a user who does not exist), the archive's base. */
+    public function forAuthorBy(int $id, string $nicename): string
+    {
         return $this->isPretty()
-            ? $this->url('/author/' . $user->nicename . '/')
-            : $this->url('/?author=' . $user->id);
+            ? $this->url('/author/' . ($nicename === '' ? '' : $nicename . '/'))
+            : $this->url('/?author=' . $id);
     }
 
     /** A date archive's URL. */

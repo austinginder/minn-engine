@@ -25,7 +25,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Maintenance`](#maintenance) | final class | 28 | Maintenance mode, as hosting tools and updaters switch it on: a |
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
-| [`Permalinks`](#permalinks) | final readonly class | 265 | Builds public URLs from the site's permalink structure. With an empty |
+| [`Permalinks`](#permalinks) | final readonly class | 271 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PostEmbed`](#postembed) | final class | 112 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
@@ -826,6 +826,10 @@ A term's archive URL.
 
 An author's archive URL.
 
+### `forAuthorBy(int $id, string $nicename): string`
+
+An author archive's URL by id and nicename; with no nicename (a user who does not exist), the archive's base.
+
 ### `forDate(int $year, ?int $month = NULL, ?int $day = NULL): string`
 
 A date archive's URL.
@@ -838,7 +842,7 @@ A search's URL.
 
 A listing URL for a page number.
 
-Internals: `filtered()` (private, line 127), `hasPrettyLink()` (private, line 257), `fill()` (private, line 262)
+Internals: `filtered()` (private, line 127), `hasPrettyLink()` (private, line 263), `fill()` (private, line 268)
 
 
 ## PostEmbed

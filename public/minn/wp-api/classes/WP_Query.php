@@ -324,7 +324,8 @@ class WP_Query implements \Minn\Objects\Query
         } elseif ($object instanceof WP_Post || $object instanceof WP_User) {
             $this->queried_object_id = (int) $object->ID;
         }
-        if ($where->kind === 'posts_page') {
+        // A posts page, and an author named by id, keep the id they name, a user who does not exist included.
+        if ($where->kind === 'posts_page' || ($where->kind === 'author' && $where->field === 'id')) {
             $this->queried_object_id = (int) $where->value;
         }
         $this->queried_object = $object ?: null;

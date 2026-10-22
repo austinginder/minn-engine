@@ -27,6 +27,7 @@ use Minn\Content\Reader;
 use Minn\Extension\Extensions;
 use Minn\Front\Kind;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\MainQuery;
 
 /** The post-* blocks: they render the context's current post. */
 final readonly class PostBlocks
@@ -140,16 +141,30 @@ final readonly class PostBlocks
         return self::open('div', ['wp-block-post-date', ...Styles::classes($block->attrs)], $block, styleFirst: true, linkColorClass: true) . $time . '</div>';
     }
 
+    /**
+     * The post's author's name; with no post to read, on an author archive,
+     * the name of the user its author variable names (an empty name when it
+     * names none, a list of authors included), as the reference renders it;
+     * anywhere else nothing.
+     */
     private function authorName(Block $block, Renderer $renderer): string
     {
         $post = $renderer->context()->post();
-        $user = $post === null ? null : $this->users->find($post->authorId);
-        if ($user === null) {
+        $query = MainQuery::current();
+        if ($post === null && !$query->is_author()) {
             return '';
         }
-        $name = Html::esc((string) $user['display_name']);
+        $named = $post === null ? $query->get('author') : $post->authorId;
+        $user = is_numeric($named) && (int) $named > 0 ? $this->users->find((int) $named) : null;
+        if ($user === null && $post !== null) {
+            return '';
+        }
+        $name = Html::esc((string) ($user['display_name'] ?? ''));
         if ((bool) $block->attr('isLink', false)) {
-            $name = '<a href="' . Html::attr($this->permalinks->forAuthor($user)) . '" target="' . self::target($block) . '" class="wp-block-post-author-name__link">' . $name . '</a>';
+            // The link is to the archive of the id the variable reads as, even where no name was found.
+            $linked = $user ?? $this->users->find((int) $named);
+            $href = $linked === null ? $this->permalinks->forAuthorBy((int) $named, '') : $this->permalinks->forAuthor($linked);
+            $name = '<a href="' . Html::attr($href) . '" target="' . self::target($block) . '" class="wp-block-post-author-name__link">' . $name . '</a>';
         }
         return self::open('div', ['wp-block-post-author-name', ...Styles::classes($block->attrs)], $block) . $name . '</div>';
     }

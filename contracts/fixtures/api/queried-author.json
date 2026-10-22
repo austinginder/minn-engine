@@ -1,0 +1,326 @@
+[
+    [
+        "query: author=1",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            1,
+            "WP_User:1",
+            "1"
+        ]
+    ],
+    [
+        "query: author=1,2",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            1,
+            "WP_User:1",
+            "1,2"
+        ]
+    ],
+    [
+        "query: author=2,1",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            1,
+            "WP_User:1",
+            "1,2"
+        ]
+    ],
+    [
+        "query: author=-1",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            -1,
+            null,
+            "-1"
+        ]
+    ],
+    [
+        "query: author=-1,2",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            -1,
+            null,
+            "-1,2"
+        ]
+    ],
+    [
+        "query: author=999999",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            999999,
+            null,
+            "999999"
+        ]
+    ],
+    [
+        "query: author=0",
+        [
+            false,
+            false,
+            false,
+            false,
+            true,
+            0,
+            null,
+            "0"
+        ]
+    ],
+    [
+        "query: author=abc",
+        [
+            false,
+            false,
+            false,
+            false,
+            true,
+            0,
+            null,
+            ""
+        ]
+    ],
+    [
+        "query: author= 3",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            3,
+            "WP_User:3",
+            "3"
+        ]
+    ],
+    [
+        "query: author_name=admin",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            1,
+            "WP_User:1",
+            1
+        ]
+    ],
+    [
+        "query: author_name=nobody",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            0,
+            null,
+            false
+        ]
+    ],
+    [
+        "query: author__in",
+        [
+            false,
+            false,
+            false,
+            false,
+            true,
+            0,
+            null,
+            ""
+        ]
+    ],
+    [
+        "query: author__in two",
+        [
+            false,
+            false,
+            false,
+            false,
+            true,
+            0,
+            null,
+            ""
+        ]
+    ],
+    [
+        "query: author__in and author",
+        [
+            true,
+            false,
+            false,
+            true,
+            false,
+            1,
+            "WP_User:1",
+            "1"
+        ]
+    ],
+    [
+        "query: author__not_in",
+        [
+            false,
+            false,
+            false,
+            false,
+            true,
+            0,
+            null,
+            ""
+        ]
+    ],
+    [
+        "query: category__in",
+        [
+            false,
+            true,
+            false,
+            true,
+            false,
+            1,
+            "WP_Term:1",
+            ""
+        ]
+    ],
+    [
+        "query: category__not_in",
+        [
+            false,
+            false,
+            false,
+            false,
+            true,
+            0,
+            null,
+            ""
+        ]
+    ],
+    [
+        "query: tag__in",
+        [
+            false,
+            false,
+            true,
+            true,
+            false,
+            0,
+            null,
+            ""
+        ]
+    ],
+    [
+        "query: tag_slug__and",
+        [
+            false,
+            false,
+            true,
+            true,
+            false,
+            0,
+            null,
+            ""
+        ]
+    ],
+    [
+        "post-author-name, no post: author=1",
+        [
+            "<div class=\"wp-block-post-author-name\">admin</div>",
+            "<div class=\"wp-block-post-author-name\"><a href=\"https://minn.localhost/author/admin/\" target=\"_self\" class=\"wp-block-post-author-name__link\">admin</a></div>"
+        ]
+    ],
+    [
+        "post-author-name, another author's post: author=1",
+        "<div class=\"wp-block-post-author-name\">Erin Editor</div>"
+    ],
+    [
+        "post-author-name, no post: author=1,2",
+        [
+            "<div class=\"wp-block-post-author-name\"></div>",
+            "<div class=\"wp-block-post-author-name\"><a href=\"https://minn.localhost/author/admin/\" target=\"_self\" class=\"wp-block-post-author-name__link\"></a></div>"
+        ]
+    ],
+    [
+        "post-author-name, another author's post: author=1,2",
+        "<div class=\"wp-block-post-author-name\">Erin Editor</div>"
+    ],
+    [
+        "post-author-name, no post: author=999999",
+        [
+            "<div class=\"wp-block-post-author-name\"></div>",
+            "<div class=\"wp-block-post-author-name\"><a href=\"https://minn.localhost/author/\" target=\"_self\" class=\"wp-block-post-author-name__link\"></a></div>"
+        ]
+    ],
+    [
+        "post-author-name, another author's post: author=999999",
+        "<div class=\"wp-block-post-author-name\">Erin Editor</div>"
+    ],
+    [
+        "post-author-name, no post: author_name=admin",
+        [
+            "<div class=\"wp-block-post-author-name\">admin</div>",
+            "<div class=\"wp-block-post-author-name\"><a href=\"https://minn.localhost/author/admin/\" target=\"_self\" class=\"wp-block-post-author-name__link\">admin</a></div>"
+        ]
+    ],
+    [
+        "post-author-name, another author's post: author_name=admin",
+        "<div class=\"wp-block-post-author-name\">Erin Editor</div>"
+    ],
+    [
+        "post-author-name, no post: author__in",
+        [
+            "",
+            ""
+        ]
+    ],
+    [
+        "post-author-name, another author's post: author__in",
+        "<div class=\"wp-block-post-author-name\">Erin Editor</div>"
+    ],
+    [
+        "post-author-name, no post: category",
+        [
+            "",
+            ""
+        ]
+    ],
+    [
+        "post-author-name, another author's post: category",
+        "<div class=\"wp-block-post-author-name\">Erin Editor</div>"
+    ],
+    [
+        "post-author-name, no post: single post",
+        [
+            "",
+            ""
+        ]
+    ],
+    [
+        "post-author-name, another author's post: single post",
+        "<div class=\"wp-block-post-author-name\">Erin Editor</div>"
+    ]
+]

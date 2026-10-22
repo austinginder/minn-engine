@@ -17710,7 +17710,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/PostBlocks.php",
-            "lines": 281,
+            "lines": 295,
             "doc": "The post-* blocks: they render the context's current post.",
             "implements": [],
             "extends": null,
@@ -17741,6 +17741,7 @@
                 "Minn\\Html",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\KsesRules",
+                "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -17781,8 +17782,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 40
+                "line": 35,
+                "end": 41
             },
             "cases": [],
             "constants": [],
@@ -17842,8 +17843,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 53
+                    "line": 44,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -17869,8 +17870,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 68
+                    "line": 56,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -17896,8 +17897,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 75
+                    "line": 72,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -17930,8 +17931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 127
+                    "line": 78,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -17957,8 +17958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 141
+                    "line": 130,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -17966,7 +17967,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "authorName(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
-                    "doc": "",
+                    "doc": "The post's author's name; with no post to read, on an author archive,\nthe name of the user its author variable names (an empty name when it\nnames none, a list of authors included), as the reference renders it;\nanywhere else nothing.",
                     "shapes": [],
                     "params": [
                         {
@@ -17984,8 +17985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 155
+                    "line": 150,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -18011,8 +18012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 167
+                    "line": 172,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -18038,8 +18039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 207
+                    "line": 184,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -18065,8 +18066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 238
+                    "line": 224,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -18092,8 +18093,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 270
+                    "line": 256,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -18119,8 +18120,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 275
+                    "line": 287,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -18146,8 +18147,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 291
+                    "line": 299,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -18166,8 +18167,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 296
+                    "line": 308,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -18214,8 +18215,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 311
+                    "line": 313,
+                    "end": 326
                 }
             ]
         },
@@ -51497,7 +51498,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Permalinks.php",
-            "lines": 265,
+            "lines": 271,
             "doc": "Builds public URLs from the site's permalink structure. With an empty\nstructure every link is a query-string form (?p=, ?cat=); with a\nstructure, published and private posts get their pretty form and every\nother status keeps the query form, which is what the reference emits.",
             "implements": [],
             "extends": null,
@@ -52012,7 +52013,34 @@
                         }
                     ],
                     "line": 222,
-                    "end": 227
+                    "end": 225
+                },
+                {
+                    "routes": [],
+                    "name": "forAuthorBy",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "forAuthorBy(int $id, string $nicename): string",
+                    "doc": "An author archive's URL by id and nicename; with no nicename (a user who does not exist), the archive's base.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "nicename",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 228,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -52045,8 +52073,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 243
+                    "line": 236,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -52065,8 +52093,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 249
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -52092,8 +52120,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 255
+                    "line": 258,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -52124,8 +52152,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 260
+                    "line": 263,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -52144,8 +52172,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 288
+                    "line": 268,
+                    "end": 294
                 }
             ]
         },
@@ -148339,6 +148367,7 @@
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
+                "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Front\\CustomLogo",
                 "Minn\\Front\\EmbedCard",
@@ -163114,7 +163143,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/QueryFlags.php",
-            "lines": 201,
+            "lines": 202,
             "doc": "The conditional flags a set of query variables implies (is_single, is_archive,\nis_home, ...), derived the way the reference's parse step derives them, plus\nthe variables after the integer casts that step applies.",
             "implements": [],
             "extends": null,
@@ -163283,8 +163312,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 213
+                    "line": 205,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -163336,7 +163365,7 @@
                         }
                     ],
                     "line": 160,
-                    "end": 196
+                    "end": 197
                 }
             ]
         },

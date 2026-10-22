@@ -4906,8 +4906,8 @@
                 "gates": [
                     "subclass"
                 ],
-                "why": "fetches the queried object by the kind QueriedObject::locate names and its id",
-                "body": "6b4fdccd5bf9"
+                "why": "fetches the queried object by the kind QueriedObject::locate names and its id; a posts page and an author named by id keep the id they name, a user who does not exist included (probe queried-author)",
+                "body": "f4a89c3acd62"
             },
             "WP_Query::get_queried_object_id": {
                 "verdict": "keep",

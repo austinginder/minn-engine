@@ -6260,7 +6260,7 @@
         },
         "WP_Query::generate_postdata": {
             "file": "classes/WP_Query.php",
-            "line": 631,
+            "line": 632,
             "statements": 2,
             "lines": 2
         },
@@ -6278,13 +6278,13 @@
         },
         "WP_Query::get_queried_object_id": {
             "file": "classes/WP_Query.php",
-            "line": 334,
+            "line": 335,
             "statements": 2,
             "lines": 2
         },
         "WP_Query::have_comments": {
             "file": "classes/WP_Query.php",
-            "line": 576,
+            "line": 577,
             "statements": 3,
             "lines": 7
         },
@@ -6308,79 +6308,79 @@
         },
         "WP_Query::is_attachment": {
             "file": "classes/WP_Query.php",
-            "line": 361,
+            "line": 362,
             "statements": 4,
             "lines": 8
         },
         "WP_Query::is_author": {
             "file": "classes/WP_Query.php",
-            "line": 373,
+            "line": 374,
             "statements": 4,
             "lines": 8
         },
         "WP_Query::is_comments_popup": {
             "file": "classes/WP_Query.php",
-            "line": 624,
+            "line": 625,
             "statements": 2,
             "lines": 2
         },
         "WP_Query::is_feed": {
             "file": "classes/WP_Query.php",
-            "line": 433,
+            "line": 434,
             "statements": 2,
             "lines": 4
         },
         "WP_Query::is_front_page": {
             "file": "classes/WP_Query.php",
-            "line": 446,
+            "line": 447,
             "statements": 2,
             "lines": 4
         },
         "WP_Query::is_page": {
             "file": "classes/WP_Query.php",
-            "line": 469,
+            "line": 470,
             "statements": 8,
             "lines": 20
         },
         "WP_Query::is_post_type_archive": {
             "file": "classes/WP_Query.php",
-            "line": 350,
+            "line": 351,
             "statements": 3,
             "lines": 7
         },
         "WP_Query::is_single": {
             "file": "classes/WP_Query.php",
-            "line": 518,
+            "line": 519,
             "statements": 6,
             "lines": 12
         },
         "WP_Query::is_singular": {
             "file": "classes/WP_Query.php",
-            "line": 534,
+            "line": 535,
             "statements": 4,
             "lines": 8
         },
         "WP_Query::is_tax": {
             "file": "classes/WP_Query.php",
-            "line": 395,
+            "line": 396,
             "statements": 4,
             "lines": 8
         },
         "WP_Query::is_term_query": {
             "file": "classes/WP_Query.php",
-            "line": 407,
+            "line": 408,
             "statements": 6,
             "lines": 12
         },
         "WP_Query::lazyload_comment_meta": {
             "file": "classes/WP_Query.php",
-            "line": 650,
+            "line": 651,
             "statements": 2,
             "lines": 2
         },
         "WP_Query::lazyload_term_meta": {
             "file": "classes/WP_Query.php",
-            "line": 643,
+            "line": 644,
             "statements": 2,
             "lines": 2
         },
@@ -6392,7 +6392,7 @@
         },
         "WP_Query::next_comment": {
             "file": "classes/WP_Query.php",
-            "line": 595,
+            "line": 596,
             "statements": 3,
             "lines": 3
         },
@@ -6446,7 +6446,7 @@
         },
         "WP_Query::the_comment": {
             "file": "classes/WP_Query.php",
-            "line": 587,
+            "line": 588,
             "statements": 2,
             "lines": 4
         },
