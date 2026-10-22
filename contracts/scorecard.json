@@ -261,19 +261,18 @@
         }
     },
     "open": {
-        "done": 94,
+        "done": 102,
         "accepted": 27,
-        "open": 11,
+        "open": 10,
         "austin": 0
     },
     "run": {
         "measured": "2026-10-22",
-        "suites": 93,
-        "green": 91,
-        "checks": 30264,
+        "suites": 94,
+        "green": 93,
+        "checks": 30512,
         "red": [
-            "rest-envelope",
-            "browser: minn-admin boot"
+            "unit"
         ],
         "engineWarnings": 0,
         "warningKinds": []
@@ -302,12 +301,12 @@
     "clones": {
         "duplicated": {
             "window": 100,
-            "stretches": 124,
-            "lines": 2196,
-            "of": 190493
+            "stretches": 123,
+            "lines": 2189,
+            "of": 191204
         },
         "engine": {
-            "of": 114450,
+            "of": 115166,
             "php": {
                 "strict": {
                     "window": 40,
@@ -334,27 +333,27 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76043,
+            "of": 76038,
             "window": 80,
             "stretches": 108,
             "lines": 2901
         }
     },
     "facadeLogic": {
-        "functions": 3494,
+        "functions": 3495,
         "methods": 3813,
-        "delegates": 3556,
+        "delegates": 3560,
         "logicFunctions": 1778,
-        "logicMethods": 1973,
-        "logicLines": 29287,
+        "logicMethods": 1970,
+        "logicLines": 29264,
         "kept": 0,
         "review": {
-            "doubts": 45,
+            "doubts": 18,
             "reviewed": 3131,
             "stale": 0,
             "verdicts": {
-                "delegate": 148,
-                "move": 1475,
+                "delegate": 147,
+                "move": 1476,
                 "keep": 1494,
                 "remove": 14
             },
@@ -372,7 +371,7 @@
                 "globals": 170,
                 "refs": 27
             },
-            "unreviewed": 620
+            "unreviewed": 617
         }
     },
     "behaviour": {
@@ -389,8 +388,8 @@
         "cliFeatures": {
             "scenarios": 335,
             "passedReference": 289,
-            "passedEngine": 288,
-            "passedBoth": 288,
+            "passedEngine": 289,
+            "passedBoth": 289,
             "setAsideMultisite": 58
         }
     }

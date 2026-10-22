@@ -20,7 +20,9 @@ return [
             && $pairs['User'] === ['rest_user_invalid_id', 'Invalid user ID.']
             && $pairs['Comment'] === ['rest_comment_invalid_id', 'Invalid comment ID.']
             && $pairs['GlobalStyles'] === ['rest_global_styles_not_found', 'No global styles config exists with that ID.']
-            && count($pairs) === 12
+            && $pairs['FontFamily'] === ['rest_post_invalid_id', 'Invalid post ID.']
+            && $pairs['FontFace'] === $pairs['FontFamily']
+            && count($pairs) === 14
             ? true : json_encode($pairs);
     },
     'a policy with a subject is not public, and takes the subject\'s 404 unless it names its own' => static function (): bool|string {
