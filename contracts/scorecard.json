@@ -261,18 +261,19 @@
         }
     },
     "open": {
-        "done": 102,
+        "done": 105,
         "accepted": 27,
-        "open": 10,
+        "open": 7,
         "austin": 0
     },
     "run": {
         "measured": "2026-10-22",
         "suites": 94,
-        "green": 93,
-        "checks": 30512,
+        "green": 92,
+        "checks": 30559,
         "red": [
-            "unit"
+            "probes",
+            "hook-parity"
         ],
         "engineWarnings": 0,
         "warningKinds": []
@@ -303,10 +304,10 @@
             "window": 100,
             "stretches": 123,
             "lines": 2189,
-            "of": 191204
+            "of": 191304
         },
         "engine": {
-            "of": 115166,
+            "of": 115249,
             "php": {
                 "strict": {
                     "window": 40,
@@ -326,14 +327,14 @@
                 "lines": 126
             },
             "data": {
-                "strings": 1800,
-                "of": 1840,
+                "strings": 1835,
+                "of": 1875,
                 "files": 21
             },
             "sequences": 19
         },
         "facade": {
-            "of": 76038,
+            "of": 76055,
             "window": 80,
             "stretches": 108,
             "lines": 2901
@@ -341,27 +342,27 @@
     },
     "facadeLogic": {
         "functions": 3495,
-        "methods": 3813,
+        "methods": 3814,
         "delegates": 3560,
         "logicFunctions": 1778,
-        "logicMethods": 1970,
-        "logicLines": 29264,
+        "logicMethods": 1971,
+        "logicLines": 29270,
         "kept": 0,
         "review": {
             "doubts": 18,
-            "reviewed": 3131,
+            "reviewed": 3132,
             "stale": 0,
             "verdicts": {
                 "delegate": 147,
                 "move": 1476,
-                "keep": 1494,
+                "keep": 1495,
                 "remove": 14
             },
             "keep": {
                 "scope": 115,
                 "shape": 289,
                 "compose": 603,
-                "contract": 476,
+                "contract": 477,
                 "library": 11
             },
             "gates": {
