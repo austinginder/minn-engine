@@ -261,21 +261,19 @@
         }
     },
     "open": {
-        "done": 89,
-        "accepted": 26,
-        "open": 10,
+        "done": 94,
+        "accepted": 27,
+        "open": 11,
         "austin": 0
     },
     "run": {
-        "measured": "2026-10-21",
+        "measured": "2026-10-22",
         "suites": 93,
-        "green": 89,
-        "checks": 30199,
+        "green": 91,
+        "checks": 30264,
         "red": [
-            "cron-mail",
-            "cron",
-            "recovery",
-            "browser: embeds (dev site)"
+            "rest-envelope",
+            "browser: minn-admin boot"
         ],
         "engineWarnings": 0,
         "warningKinds": []
@@ -306,10 +304,10 @@
             "window": 100,
             "stretches": 124,
             "lines": 2196,
-            "of": 190317
+            "of": 190493
         },
         "engine": {
-            "of": 114294,
+            "of": 114450,
             "php": {
                 "strict": {
                     "window": 40,
@@ -336,7 +334,7 @@
             "sequences": 19
         },
         "facade": {
-            "of": 76023,
+            "of": 76043,
             "window": 80,
             "stretches": 108,
             "lines": 2901
@@ -344,24 +342,24 @@
     },
     "facadeLogic": {
         "functions": 3494,
-        "methods": 3811,
-        "delegates": 3553,
-        "logicFunctions": 1780,
-        "logicMethods": 1972,
-        "logicLines": 29288,
+        "methods": 3813,
+        "delegates": 3556,
+        "logicFunctions": 1778,
+        "logicMethods": 1973,
+        "logicLines": 29287,
         "kept": 0,
         "review": {
             "doubts": 45,
-            "reviewed": 3132,
+            "reviewed": 3131,
             "stale": 0,
             "verdicts": {
                 "delegate": 148,
-                "move": 1477,
-                "keep": 1493,
+                "move": 1475,
+                "keep": 1494,
                 "remove": 14
             },
             "keep": {
-                "scope": 114,
+                "scope": 115,
                 "shape": 289,
                 "compose": 603,
                 "contract": 476,
@@ -371,7 +369,7 @@
                 "subclass": 302,
                 "pluggable": 26,
                 "unprobed": 149,
-                "globals": 171,
+                "globals": 170,
                 "refs": 27
             },
             "unreviewed": 620
@@ -386,7 +384,7 @@
         "restFuzz": {
             "routes": 201,
             "requests": 14607,
-            "differences": 526
+            "differences": 262
         },
         "cliFeatures": {
             "scenarios": 335,
