@@ -107,3 +107,8 @@ foreach (['login_errors' => 'zz-errors', 'login_messages' => 'zz-messages'] as $
         return $html . '<span class="' . $minnLoginMark . '"></span>';
     });
 }
+// A plugin deciding the sign-in cookies' security (secure_signon_cookie): what it was handed, and with zz_insecure the plain cookies.
+add_filter('secure_signon_cookie', static function ($secure, $credentials) use ($minnLoginHeard) {
+    $minnLoginHeard('secure_signon_cookie ' . var_export($secure, true) . ' ' . implode(',', array_keys((array) $credentials)) . ' ' . var_export($credentials['remember'] ?? null, true));
+    return ($_POST['zz_insecure'] ?? '') === '1' ? false : $secure;
+}, 10, 2);

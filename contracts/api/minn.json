@@ -9177,7 +9177,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/AuthCookies.php",
-            "lines": 125,
+            "lines": 141,
             "doc": "The three cookies a sign-in sets: the auth cookie on the admin and\nplugins paths (the secure variant over HTTPS, keyed off that scheme's\nsalt) and the logged_in cookie on the site root, which is the one REST\nreads. Every value shares the username|expiration|token|hmac shape.",
             "implements": [],
             "extends": null,
@@ -9322,7 +9322,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "attach(Minn\\Http\\Response $response, array $plan): Minn\\Http\\Response",
-                    "doc": "The response with the settled cookies on it: the auth cookie on the\nadmin and plugins paths, the logged-in cookie on the site root; none\nwhen send_auth_cookies said not to.",
+                    "doc": "The response with the settled cookies on it (sent()); none when\nsend_auth_cookies said not to.",
                     "shapes": [
                         "@param array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string, send: bool} $plan from settle()"
                     ],
@@ -9342,8 +9342,31 @@
                             "doc": "from settle()"
                         }
                     ],
-                    "line": 78,
-                    "end": 91
+                    "line": 77,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "sent",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sent(array $plan): array",
+                    "doc": "The settled cookies as the reference sends them (suite login-hooks):\nthe auth cookie, or the secure auth cookie when the sign-in is secure,\non the plugins path and then the admin path, then the logged-in cookie\non the cookie path; names, paths and domain from the cookie constants,\nHTTP only, secure as settled, no same-site flag.",
+                    "shapes": [
+                        "@param array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string} $plan from settle()",
+                        "@return list<array{0: string, 1: string, 2: array<string, mixed>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "plan",
+                            "type": "array",
+                            "shape": "array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string}",
+                            "default": null,
+                            "doc": "from settle()"
+                        }
+                    ],
+                    "line": 95,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -9354,8 +9377,8 @@
                     "doc": "Whether signing out clears the cookies: clear_auth_cookie told, then\nsend_auth_cookies asked with no cookie in hand, as the reference asks\nthem (suite login-hooks).",
                     "shapes": [],
                     "params": [],
-                    "line": 98,
-                    "end": 102
+                    "line": 114,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -9381,8 +9404,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 134
+                    "line": 129,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -9422,8 +9445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 142
+                    "line": 153,
+                    "end": 158
                 }
             ]
         },
@@ -12772,7 +12795,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/SignIn.php",
-            "lines": 67,
+            "lines": 69,
             "doc": "The door itself: what a sign-in surface needs beyond checking a\npassword. Sessions are minted here, the three cookies ride out on the\nresponse, and the failure counter behind the throttle is kept in one\nplace with the session store and the cookie jar it protects.",
             "implements": [],
             "extends": null,
@@ -12981,8 +13004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 71
+                    "line": 69,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -13008,8 +13031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 78
+                    "line": 76,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -13028,8 +13051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 84
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -13070,7 +13093,7 @@
                         }
                     ],
                     "line": 58,
-                    "end": 64
+                    "end": 66
                 }
             ]
         },

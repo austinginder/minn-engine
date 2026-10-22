@@ -59,8 +59,10 @@ final readonly class SignIn
     {
         // The cookies settled as the reference settles them, its hooks told and asked (AuthCookies::settle); the
         // logged-in cookie is secure only for a site whose home is https too (probe functions-formatting-doubts).
+        // Secure as a sign-in said (secure_signon_cookie, Login\LoginHooks::authenticate), else as the request came (suite login-hooks).
+        $secure = (bool) ($GLOBALS['auth_secure_cookie'] ?? $request->secure);
         $httpsHome = parse_url((string) Runtime::options()->filtered('home'), PHP_URL_SCHEME) === 'https';
-        return $this->cookies->attach($response, $this->cookies->settle($user, $days, $request->secure, $httpsHome));
+        return $this->cookies->attach($response, $this->cookies->settle($user, $days, $secure, $httpsHome));
     }
 
     /** Ends one session and clears the cookies from the response, unless send_auth_cookies says not to (AuthCookies::clearing). */

@@ -69,25 +69,41 @@ final readonly class AuthCookies
     }
 
     /**
-     * The response with the settled cookies on it: the auth cookie on the
-     * admin and plugins paths, the logged-in cookie on the site root; none
-     * when send_auth_cookies said not to.
+     * The response with the settled cookies on it (sent()); none when
+     * send_auth_cookies said not to.
      *
      * @param array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string, send: bool} $plan from settle()
      */
     public function attach(Response $response, array $plan): Response
     {
-        if (!$plan['send']) {
-            return $response;
+        foreach ($plan['send'] ? $this->sent($plan) : [] as [$name, $value, $options]) {
+            $response = $response->withCookie($name, $value, $options);
         }
+        return $response;
+    }
+
+    /**
+     * The settled cookies as the reference sends them (suite login-hooks):
+     * the auth cookie, or the secure auth cookie when the sign-in is secure,
+     * on the plugins path and then the admin path, then the logged-in cookie
+     * on the cookie path; names, paths and domain from the cookie constants,
+     * HTTP only, secure as settled, no same-site flag.
+     *
+     * @param array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string} $plan from settle()
+     * @return list<array{0: string, 1: string, 2: array<string, mixed>}>
+     */
+    public function sent(array $plan): array
+    {
         $hash = $this->hash();
-        $authName = ($plan['secure'] ? 'wordpress_sec_' : 'wordpress_') . $hash;
-        $auth = ['expires' => $plan['expire'], 'httponly' => true, 'secure' => $plan['secure'], 'samesite' => 'Lax'];
-        $loggedIn = ['expires' => $plan['expire'], 'httponly' => true, 'secure' => $plan['secureLoggedIn'], 'samesite' => 'Lax'];
-        return $response
-            ->withCookie($authName, $plan['auth'], ['path' => '/wp-admin'] + $auth)
-            ->withCookie($authName, $plan['auth'], ['path' => '/wp-content/plugins'] + $auth)
-            ->withCookie('wordpress_logged_in_' . $hash, $plan['loggedIn'], ['path' => '/'] + $loggedIn);
+        $constant = static fn (string $name, string $default): string => defined($name) ? (string) constant($name) : $default;
+        $authName = $plan['secure'] ? $constant('SECURE_AUTH_COOKIE', 'wordpress_sec_' . $hash) : $constant('AUTH_COOKIE', 'wordpress_' . $hash);
+        $options = ['expires' => $plan['expire'], 'domain' => $constant('COOKIE_DOMAIN', ''), 'httponly' => true];
+        $auth = ['secure' => $plan['secure']] + $options;
+        return [
+            [$authName, $plan['auth'], ['path' => $constant('PLUGINS_COOKIE_PATH', '/wp-content/plugins')] + $auth],
+            [$authName, $plan['auth'], ['path' => $constant('ADMIN_COOKIE_PATH', '/wp-admin')] + $auth],
+            [$constant('LOGGED_IN_COOKIE', 'wordpress_logged_in_' . $hash), $plan['loggedIn'], ['path' => $constant('COOKIEPATH', '/'), 'secure' => $plan['secureLoggedIn']] + $options],
+        ];
     }
 
     /**

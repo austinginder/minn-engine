@@ -17582,13 +17582,13 @@
                 "body": "308a90f948f6"
             },
             "wp_set_auth_cookie": {
-                "verdict": "move",
-                "to": "Minn\\Auth\\AuthCookies",
+                "verdict": "keep",
+                "reason": "compose",
                 "gates": [
                     "pluggable"
                 ],
-                "why": "AuthCookies::settle plans the cookies with every hook, then three setcookie calls repeat AuthCookies::attach; the sending belongs on the engine's response",
-                "body": "22966255ba82"
+                "why": "AuthCookies::settle plans the cookies with every hook and AuthCookies::sent names them as the reference sends them (plugins path, admin path, logged-in; from the cookie constants); only the setcookie calls stay, as a pluggable caller sends them itself (suite login-hooks).",
+                "body": "4e0278c1b5da"
             },
             "wp_set_current_user": {
                 "verdict": "move",

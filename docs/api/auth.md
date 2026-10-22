@@ -5,7 +5,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 165 | Application passwords as the reference stores them: a serialized list in |
-| [`AuthCookies`](#authcookies) | final readonly class | 125 | The three cookies a sign-in sets: the auth cookie on the admin and |
+| [`AuthCookies`](#authcookies) | final readonly class | 141 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 26 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
@@ -22,7 +22,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 83 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 178 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
-| [`SignIn`](#signin) | final readonly class | 67 | The door itself: what a sign-in surface needs beyond checking a |
+| [`SignIn`](#signin) | final readonly class | 69 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
 
 ## ApplicationPasswords
@@ -136,11 +136,21 @@ runtime (its sessions are WordPress's), so the hooks always run.
 
 ### `attach(Minn\Http\Response $response, array $plan): Minn\Http\Response`
 
-The response with the settled cookies on it: the auth cookie on the
-admin and plugins paths, the logged-in cookie on the site root; none
-when send_auth_cookies said not to.
+The response with the settled cookies on it (sent()); none when
+send_auth_cookies said not to.
 
 - `@param array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string, send: bool} $plan from settle()`
+
+### `sent(array $plan): array`
+
+The settled cookies as the reference sends them (suite login-hooks):
+the auth cookie, or the secure auth cookie when the sign-in is secure,
+on the plugins path and then the admin path, then the logged-in cookie
+on the cookie path; names, paths and domain from the cookie constants,
+HTTP only, secure as settled, no same-site flag.
+
+- `@param array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string} $plan from settle()`
+- `@return list<array{0: string, 1: string, 2: array<string, mixed>}>`
 
 ### `clearing(): bool`
 

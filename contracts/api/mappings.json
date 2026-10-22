@@ -75075,11 +75075,11 @@
         },
         "wp_set_auth_cookie": {
             "file": "pluggable.php",
-            "lines": 17,
+            "lines": 16,
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\AuthCookies::__construct",
-                "Minn\\Auth\\AuthCookies::hash",
+                "Minn\\Auth\\AuthCookies::sent",
                 "Minn\\Auth\\AuthCookies::settle",
                 "Minn\\Auth\\Cookie::__construct",
                 "Minn\\Auth\\Sessions::__construct",

@@ -178,6 +178,19 @@ $both(static function (string $stack) use ($ask, $password): array {
 });
 $same('a remembered sign-in: the actions heard', $both($heard));
 
+// A plugin that says the sign-in's cookies are not secure (secure_signon_cookie): the cookies set, each named without its hash.
+$plain = $both(static function (string $stack) use ($stacks, $jars, $run, $password): array {
+    $ch = curl_init($stacks[$stack][0] . '/wp-login.php');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_COOKIEFILE => $jars[$stack], CURLOPT_HTTPHEADER => ["X-Minn-Login: {$run}"], CURLOPT_POST => true, CURLOPT_POSTFIELDS => http_build_query(['log' => 'login-hooks-reader', 'pwd' => $password, 'zz_human' => 'yes', 'zz_insecure' => '1', 'testcookie' => '1'])]);
+    $raw = (string) curl_exec($ch);
+    $head = substr($raw, 0, (int) curl_getinfo($ch, CURLINFO_HEADER_SIZE));
+    curl_close($ch);
+    preg_match_all('/^set-cookie:\s*([^=]+)=[^;]*(;[^\r\n]*)?/mi', $head, $m, PREG_SET_ORDER);
+    return array_map(static fn (array $c): string => preg_replace('/_[0-9a-f]{32}$/', '_{hash}', $c[1]) . strtolower((string) preg_replace('/(expires|max-age)=[^;]*/i', '$1', $c[2] ?? '')), $m);
+});
+$same('a sign-in a plugin says is not secure: the cookies set', $plain);
+$same('a sign-in a plugin says is not secure: the actions heard', $both($heard));
+
 $left = $both(static function (string $stack) use ($ask, $stacks): array {
     [, , $body] = $ask($stack, '/wp-login.php?action=logout');
     preg_match('/href="([^"]*action=logout[^"]*_wpnonce=[^"]*)"/', html_entity_decode($body), $m);

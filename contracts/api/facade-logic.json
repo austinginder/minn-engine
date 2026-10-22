@@ -6,7 +6,7 @@
         "delegates": 3561,
         "logicFunctions": 1777,
         "logicMethods": 1971,
-        "logicLines": 29276,
+        "logicLines": 29275,
         "kept": 0
     },
     "byFile": {
@@ -92,7 +92,7 @@
         },
         "pluggable.php": {
             "logic": 40,
-            "lines": 365
+            "lines": 364
         },
         "rest-api.php": {
             "logic": 40,
@@ -16466,7 +16466,7 @@
         },
         "get_avatar": {
             "file": "pluggable.php",
-            "line": 572,
+            "line": 571,
             "statements": 18,
             "lines": 26
         },
@@ -16796,7 +16796,7 @@
         },
         "get_currentuserinfo": {
             "file": "pluggable.php",
-            "line": 706,
+            "line": 705,
             "statements": 2,
             "lines": 2
         },
@@ -17840,13 +17840,13 @@
         },
         "get_user_by": {
             "file": "pluggable.php",
-            "line": 640,
+            "line": 639,
             "statements": 5,
             "lines": 7
         },
         "get_user_by_email": {
             "file": "pluggable.php",
-            "line": 697,
+            "line": 696,
             "statements": 2,
             "lines": 2
         },
@@ -17858,7 +17858,7 @@
         },
         "get_userdatabylogin": {
             "file": "pluggable.php",
-            "line": 688,
+            "line": 687,
             "statements": 2,
             "lines": 2
         },
@@ -19250,7 +19250,7 @@
         },
         "set_current_user": {
             "file": "pluggable.php",
-            "line": 715,
+            "line": 714,
             "statements": 2,
             "lines": 2
         },
@@ -20288,7 +20288,7 @@
         },
         "wp_clearcookie": {
             "file": "pluggable.php",
-            "line": 734,
+            "line": 733,
             "statements": 2,
             "lines": 2
         },
@@ -20774,13 +20774,13 @@
         },
         "wp_generate_auth_cookie": {
             "file": "pluggable.php",
-            "line": 532,
+            "line": 531,
             "statements": 6,
             "lines": 10
         },
         "wp_generate_password": {
             "file": "pluggable.php",
-            "line": 667,
+            "line": 666,
             "statements": 6,
             "lines": 12
         },
@@ -20948,7 +20948,7 @@
         },
         "wp_get_cookie_login": {
             "file": "pluggable.php",
-            "line": 743,
+            "line": 742,
             "statements": 2,
             "lines": 2
         },
@@ -21812,7 +21812,7 @@
         },
         "wp_login": {
             "file": "pluggable.php",
-            "line": 752,
+            "line": 751,
             "statements": 5,
             "lines": 7
         },
@@ -22100,7 +22100,7 @@
         },
         "wp_parse_auth_cookie": {
             "file": "pluggable.php",
-            "line": 551,
+            "line": 550,
             "statements": 5,
             "lines": 14
         },
@@ -22268,7 +22268,7 @@
         },
         "wp_rand": {
             "file": "pluggable.php",
-            "line": 658,
+            "line": 657,
             "statements": 3,
             "lines": 3
         },
@@ -22863,8 +22863,8 @@
         "wp_set_auth_cookie": {
             "file": "pluggable.php",
             "line": 508,
-            "statements": 11,
-            "lines": 15
+            "statements": 8,
+            "lines": 14
         },
         "wp_set_comment_cookies": {
             "file": "comment.php",
@@ -22874,7 +22874,7 @@
         },
         "wp_set_current_user": {
             "file": "pluggable.php",
-            "line": 611,
+            "line": 610,
             "statements": 3,
             "lines": 8
         },
@@ -22934,7 +22934,7 @@
         },
         "wp_setcookie": {
             "file": "pluggable.php",
-            "line": 724,
+            "line": 723,
             "statements": 3,
             "lines": 3
         },

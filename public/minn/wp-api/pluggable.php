@@ -519,10 +519,9 @@ function wp_set_auth_cookie($user_id, $remember = false, $secure = '', $token = 
     if (!$plan['send'] || headers_sent()) {
         return null;
     }
-    $name = ($plan['secure'] ? 'wordpress_sec_' : 'wordpress_') . $cookies->hash();
-    setcookie($name, $plan['auth'], ['expires' => $plan['expire'], 'path' => '/wp-admin', 'secure' => $plan['secure'], 'httponly' => true]);
-    setcookie($name, $plan['auth'], ['expires' => $plan['expire'], 'path' => '/wp-content/plugins', 'secure' => $plan['secure'], 'httponly' => true]);
-    setcookie('wordpress_logged_in_' . $cookies->hash(), $plan['loggedIn'], ['expires' => $plan['expire'], 'path' => '/', 'secure' => $plan['secureLoggedIn'], 'httponly' => true]);
+    foreach ($cookies->sent($plan) as [$name, $value, $options]) {
+        setcookie($name, $value, $options);
+    }
     return null;
 }
 endif;
