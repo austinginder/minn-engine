@@ -483,12 +483,15 @@ final readonly class Api
      */
     private function withSchema(array $entry, string $path): array
     {
-        foreach (RuntimeRoutes::server()->get_routes() as $route => $handlers) {
+        $server = RuntimeRoutes::server();
+        foreach (array_keys($server->get_routes()) as $route) {
             if (@preg_match('@^' . $route . '$@i', $path) !== 1) {
                 continue;
             }
-            if (is_array($handlers) && isset($handlers['schema']) && is_callable($handlers['schema'])) {
-                $entry['schema'] = \Minn\Runtime\PluginCall::run($handlers['schema']);
+            // The schema callback is the route's option, beside its handlers, as the server keeps it.
+            $schema = ((array) $server->get_route_options((string) $route))['schema'] ?? null;
+            if (is_callable($schema)) {
+                $entry['schema'] = \Minn\Runtime\PluginCall::run($schema);
                 if (!str_contains((string) $route, '(?P<')) {
                     $entry['_links'] = ['self' => [Links::item('self', $this->services->url()->to((string) $route), [])]];
                 }

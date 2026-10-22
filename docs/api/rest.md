@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 469 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 472 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 142 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 164 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -269,7 +269,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 81), `engineResponse()` (private, line 421), `withPageLinks()` (private, line 436), `options()` (private, line 467), `withSchema()` (private, line 484), `withAllow()` (private, line 505)
+Internals: `controllers()` (private, line 81), `engineResponse()` (private, line 421), `withPageLinks()` (private, line 436), `options()` (private, line 467), `withSchema()` (private, line 484), `withAllow()` (private, line 508)
 
 
 ## ApplicationPasswordsController

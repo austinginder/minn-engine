@@ -445,6 +445,66 @@ foreach ( array( 'signed out' => null, 'an author' => $author, 'an administrator
 	$ok ? $pass++ : $fail++;
 	echo ( $ok ? '  ok   ' : '  FAIL ' ) . "directories and nonces: the root index for $label" . ( $ok ? '' : "\n      " . substr( json_encode( $seen[0] ), 0, 400 ) . "\n      " . substr( json_encode( $seen[1] ), 0, 400 ) ) . "\n";
 }
+// OPTIONS on each route both indexes list tells a client its item schema, as the reference's controller
+// describes it (asked signed out, on the route with each capture filled in). Set aside: the schemas still
+// told differently (register row 18300, OPTIONS schemas); the list only shrinks.
+$schema_aside = array(
+	'/wp/v2/media/(?P<id>[\d]+)/sideload',
+	'/wp/v2/media/(?P<id>[\d]+)/finalize',
+	'/wp/v2/global-styles/(?P<id>[\/\d+]+)',
+	'/wp/v2/global-styles/(?P<parent>[\d]+)/revisions',
+	'/wp/v2/global-styles/(?P<parent>[\d]+)/revisions/(?P<id>[\d]+)',
+	'/wp/v2/statuses',
+	'/wp/v2/statuses/(?P<status>[\w-]+)',
+	'/wp/v2/block-directory/search',
+	'/wp/v2/pattern-directory/patterns',
+	'/wp-site-health/v1/tests/background-updates',
+	'/wp-site-health/v1/tests/loopback-requests',
+	'/wp-site-health/v1/tests/https-status',
+	'/wp-site-health/v1/tests/dotorg-communication',
+	'/wp-site-health/v1/tests/authorization-header',
+	'/wp-block-editor/v1/navigation-fallback',
+	'/wp-block-editor/v1/url-details',
+	'/wp/v2/font-collections',
+	'/wp/v2/font-collections/(?P<slug>[\/\w-]+)',
+	'/wp/v2/menu-items/(?P<id>[\d]+)/autosaves',
+	'/wp/v2/menu-items/(?P<parent>[\d]+)/autosaves/(?P<id>[\d]+)',
+	'/wp/v2/font-families',
+	'/wp/v2/font-families/(?P<id>[\d]+)',
+	'/wp/v2/font-families/(?P<font_family_id>[\d]+)/font-faces',
+	'/wp/v2/font-families/(?P<font_family_id>[\d]+)/font-faces/(?P<id>[\d]+)',
+);
+[ , $engine_index ] = minn_test_fetch( "$ENGINE/?rest_route=/" );
+$shared  = array_intersect_key( json_decode( (string) $index, true )['routes'] ?? array(), json_decode( (string) $engine_index, true )['routes'] ?? array() );
+$schemas = 0;
+$told    = 0;
+foreach ( array_keys( $shared ) as $route ) {
+	$path    = preg_replace( '/\(\?P<\w+>(?:[^()]|\((?:[^()]|\([^()]*\))*\))*\)/', '1', $route );
+	$answers = array();
+	foreach ( array( $REF, $ENGINE ) as $base ) {
+		$curl = curl_init( "$base/index.php?rest_route=" . rawurlencode( $path ) );
+		curl_setopt_array( $curl, array( CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_CUSTOMREQUEST => 'OPTIONS', CURLOPT_TIMEOUT => 20 ) );
+		$answers[] = json_decode( (string) curl_exec( $curl ), true )['schema'] ?? null;
+	}
+	$aside = in_array( $route, $schema_aside, true );
+	if ( null === $answers[0] && null === $answers[1] ) {
+		continue;
+	}
+	$schemas++;
+	$same = $answers[0] == $answers[1];
+	if ( $same && $aside ) {
+		$fail++;
+		echo "  FAIL OPTIONS schema: $route is told as the reference tells it now: take it off the list\n";
+	} elseif ( ! $same && ! $aside ) {
+		$fail++;
+		echo "  FAIL OPTIONS schema: $route " . substr( (string) minn_test_diff( $answers[0], $answers[1] ), 0, 300 ) . "\n";
+	} elseif ( $same ) {
+		$told++;
+	}
+}
+$ok = $schemas > 80 && $told === $schemas - count( $schema_aside );
+$ok ? $pass++ : $fail++;
+echo ( $ok ? '  ok   ' : '  FAIL ' ) . "OPTIONS schema: $told of $schemas routes' schemas told as the reference tells them, " . count( $schema_aside ) . " set aside\n";
 $wp( 'eval ' . escapeshellarg( 'delete_site_transient(' . var_export( $key, true ) . ');' ) );
 foreach ( array( 1 => $admin, 3 => $author ) as $id => $session ) {
 	$wp( 'eval ' . escapeshellarg( "WP_Session_Tokens::get_instance($id)->destroy(" . var_export( (string) $session['token'], true ) . ');' ) );

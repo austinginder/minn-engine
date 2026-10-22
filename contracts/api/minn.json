@@ -101498,7 +101498,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 469,
+            "lines": 472,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -102393,7 +102393,7 @@
                         }
                     ],
                     "line": 484,
-                    "end": 499
+                    "end": 502
                 },
                 {
                     "routes": [],
@@ -102419,8 +102419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 505,
-                    "end": 509
+                    "line": 508,
+                    "end": 512
                 }
             ]
         },
