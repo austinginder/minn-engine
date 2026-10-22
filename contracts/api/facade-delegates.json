@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1659
+        "delegates": 1660
     },
     "functions": {
         "__": {
@@ -351,6 +351,10 @@
         "_minn_http_transport_unanswered": {
             "file": "http.php",
             "statement": "return ['headers' => [], 'body' => '', 'response' => ['code' => false, 'message' => false], 'cookies' => []];"
+        },
+        "_minn_https_request_address": {
+            "file": "pluggable.php",
+            "statement": "return str_starts_with($uri, 'http') ? set_url_scheme($uri, 'https') : 'https://' . ($_SERVER['HTTP_HOST'] ?? '') . $uri;"
         },
         "_minn_image_sizes": {
             "file": "media.php",

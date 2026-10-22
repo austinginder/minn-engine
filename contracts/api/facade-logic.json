@@ -1,12 +1,12 @@
 {
     "method": "tests/tools/facade-logic.php: functions and methods in public/minn/wp-api (generated dead ends and placeholders apart) whose body holds more than one statement or a control structure, by tokens; lines are the body's non-blank, non-comment lines; a docblock tag @minn-facade-logic <reason> keeps one out of the count and lists it under \"kept\"",
     "summary": {
-        "functions": 3495,
+        "functions": 3496,
         "methods": 3814,
-        "delegates": 3561,
+        "delegates": 3562,
         "logicFunctions": 1777,
         "logicMethods": 1971,
-        "logicLines": 29282,
+        "logicLines": 29283,
         "kept": 0
     },
     "byFile": {
@@ -92,7 +92,7 @@
         },
         "pluggable.php": {
             "logic": 40,
-            "lines": 364
+            "lines": 365
         },
         "rest-api.php": {
             "logic": 40,
@@ -13190,9 +13190,9 @@
         },
         "_minn_admin_https_address": {
             "file": "pluggable.php",
-            "line": 376,
-            "statements": 3,
-            "lines": 5
+            "line": 381,
+            "statements": 2,
+            "lines": 2
         },
         "_minn_after_tag": {
             "file": "core-blocks.php",
@@ -15448,7 +15448,7 @@
             "file": "pluggable.php",
             "line": 356,
             "statements": 8,
-            "lines": 14
+            "lines": 18
         },
         "author_can": {
             "file": "user.php",
@@ -16466,7 +16466,7 @@
         },
         "get_avatar": {
             "file": "pluggable.php",
-            "line": 571,
+            "line": 579,
             "statements": 18,
             "lines": 26
         },
@@ -16796,7 +16796,7 @@
         },
         "get_currentuserinfo": {
             "file": "pluggable.php",
-            "line": 705,
+            "line": 713,
             "statements": 2,
             "lines": 2
         },
@@ -17840,13 +17840,13 @@
         },
         "get_user_by": {
             "file": "pluggable.php",
-            "line": 639,
+            "line": 647,
             "statements": 5,
             "lines": 7
         },
         "get_user_by_email": {
             "file": "pluggable.php",
-            "line": 696,
+            "line": 704,
             "statements": 2,
             "lines": 2
         },
@@ -17858,7 +17858,7 @@
         },
         "get_userdatabylogin": {
             "file": "pluggable.php",
-            "line": 687,
+            "line": 695,
             "statements": 2,
             "lines": 2
         },
@@ -19250,7 +19250,7 @@
         },
         "set_current_user": {
             "file": "pluggable.php",
-            "line": 714,
+            "line": 722,
             "statements": 2,
             "lines": 2
         },
@@ -20078,7 +20078,7 @@
         },
         "wp_authenticate": {
             "file": "pluggable.php",
-            "line": 386,
+            "line": 394,
             "statements": 6,
             "lines": 10
         },
@@ -20282,13 +20282,13 @@
         },
         "wp_clear_auth_cookie": {
             "file": "pluggable.php",
-            "line": 469,
+            "line": 477,
             "statements": 3,
             "lines": 7
         },
         "wp_clearcookie": {
             "file": "pluggable.php",
-            "line": 733,
+            "line": 741,
             "statements": 2,
             "lines": 2
         },
@@ -20774,13 +20774,13 @@
         },
         "wp_generate_auth_cookie": {
             "file": "pluggable.php",
-            "line": 531,
+            "line": 539,
             "statements": 6,
             "lines": 10
         },
         "wp_generate_password": {
             "file": "pluggable.php",
-            "line": 666,
+            "line": 674,
             "statements": 6,
             "lines": 12
         },
@@ -20948,7 +20948,7 @@
         },
         "wp_get_cookie_login": {
             "file": "pluggable.php",
-            "line": 742,
+            "line": 750,
             "statements": 2,
             "lines": 2
         },
@@ -21812,7 +21812,7 @@
         },
         "wp_login": {
             "file": "pluggable.php",
-            "line": 751,
+            "line": 759,
             "statements": 5,
             "lines": 7
         },
@@ -21830,7 +21830,7 @@
         },
         "wp_logout": {
             "file": "pluggable.php",
-            "line": 457,
+            "line": 465,
             "statements": 5,
             "lines": 5
         },
@@ -22100,7 +22100,7 @@
         },
         "wp_parse_auth_cookie": {
             "file": "pluggable.php",
-            "line": 550,
+            "line": 558,
             "statements": 5,
             "lines": 14
         },
@@ -22112,7 +22112,7 @@
         },
         "wp_password_change_notification": {
             "file": "pluggable.php",
-            "line": 484,
+            "line": 492,
             "statements": 4,
             "lines": 15
         },
@@ -22268,7 +22268,7 @@
         },
         "wp_rand": {
             "file": "pluggable.php",
-            "line": 657,
+            "line": 665,
             "statements": 3,
             "lines": 3
         },
@@ -22862,7 +22862,7 @@
         },
         "wp_set_auth_cookie": {
             "file": "pluggable.php",
-            "line": 508,
+            "line": 516,
             "statements": 8,
             "lines": 14
         },
@@ -22874,7 +22874,7 @@
         },
         "wp_set_current_user": {
             "file": "pluggable.php",
-            "line": 610,
+            "line": 618,
             "statements": 3,
             "lines": 8
         },
@@ -22934,7 +22934,7 @@
         },
         "wp_setcookie": {
             "file": "pluggable.php",
-            "line": 723,
+            "line": 731,
             "statements": 3,
             "lines": 3
         },
@@ -23330,13 +23330,13 @@
         },
         "wp_validate_auth_cookie": {
             "file": "pluggable.php",
-            "line": 413,
+            "line": 421,
             "statements": 10,
             "lines": 16
         },
         "wp_validate_logged_in_cookie": {
             "file": "pluggable.php",
-            "line": 436,
+            "line": 444,
             "statements": 5,
             "lines": 13
         },

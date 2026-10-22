@@ -5,10 +5,10 @@
         "minn": 707,
         "composes": 2060,
         "leaf": 960,
-        "noop": 3265,
+        "noop": 3266,
         "placeholder": 0,
         "deadend": 1766,
-        "functions": 8680,
+        "functions": 8681,
         "minnMethods": 1557,
         "leafLinesOver15": 9
     },
@@ -35732,14 +35732,14 @@
         },
         "_minn_admin_https_address": {
             "file": "pluggable.php",
-            "lines": 5,
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_https_request_address",
                 "apply_filters",
                 "force_ssl_admin",
-                "is_ssl",
-                "set_url_scheme"
+                "is_ssl"
             ]
         },
         "_minn_admin_page_hooks": {
@@ -37236,6 +37236,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "_minn_https_request_address": {
+            "file": "pluggable.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "set_url_scheme"
+            ]
         },
         "_minn_icon_style": {
             "file": "core-blocks.php",
@@ -42328,14 +42337,16 @@
         },
         "auth_redirect": {
             "file": "pluggable.php",
-            "lines": 14,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_minn_admin_https_address",
+                "_minn_https_request_address",
                 "_minn_request_uri",
                 "apply_filters",
                 "do_action",
+                "get_user_option",
                 "is_ssl",
                 "nocache_headers",
                 "wp_login_url",

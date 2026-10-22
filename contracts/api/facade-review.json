@@ -11958,8 +11958,7 @@
             "_wp_connectors_is_ai_api_key_valid": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "a _doing_it_wrong notice and null, the answer for a provider the AI client does not hold",
-                "doubt": "always reports the provider as unregistered, even one a plugin registered with the AI client; a probe with a registered provider should settle it",
+                "why": "a _doing_it_wrong notice and null, the answer for a provider the AI client does not hold. Settled 2026-10-22: the engine's provider registry never registers a provider (registerProvider logs and leaves it out; the plugin gate holds back plugins whose providers build on the SDK's abstract classes), so every provider id is unregistered here and this answer is the one the reference gives for an unregistered provider (probe connectors).",
                 "body": "a947f34b60a4"
             },
             "_wp_connectors_rest_settings_dispatch": {
@@ -17342,8 +17341,8 @@
             "_minn_admin_https_address": {
                 "verdict": "move",
                 "to": "Minn\\Front\\Redirects",
-                "why": "decides through secure_auth_redirect whether an admin request over http goes to https and builds that address",
-                "body": "e7ca19571f38"
+                "why": "decides through secure_auth_redirect whether an admin request over http goes to https; the address itself is _minn_https_request_address",
+                "body": "5edeb3dbff47"
             },
             "_minn_password_settings": {
                 "verdict": "move",
@@ -17354,9 +17353,8 @@
             "auth_redirect": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "the https detour, wp_validate_auth_cookie (pluggable) under auth_redirect_scheme and the auth_redirect action, else nocache_headers and wp_redirect to wp_login_url, then exit",
-                "doubt": "the use_ssl user option detour (a user who chose an HTTPS admin is sent there first) is not measured; the cookie it reads is settled (suite rest-gate)",
-                "body": "51f7affeb88a"
+                "why": "the https detour, wp_validate_auth_cookie (pluggable) under auth_redirect_scheme and the auth_redirect action, then the use_ssl detour (a user who chose an HTTPS admin, on a plain address naming wp-admin), else nocache_headers and wp_redirect to wp_login_url, then exit (probe auth-redirect-ssl; suite rest-gate). Doubt fixed 2026-10-22.",
+                "body": "dee84242ddda"
             },
             "cache_users": {
                 "verdict": "move",

@@ -1,0 +1,123 @@
+[
+    [
+        "signed in, use_ssl, wp-admin",
+        [
+            "https://example.test/wp-admin/edit.php?a=1 302",
+            [
+                "secure_auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "signed in, no use_ssl, wp-admin",
+        [
+            "https://example.test/wp-admin/edit.php?a=1 302",
+            [
+                "secure_auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "signed in, use_ssl, elsewhere",
+        [
+            "let through",
+            [
+                "secure_auth_redirect",
+                "auth_redirect_scheme",
+                "auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "signed in, use_ssl, a full address",
+        [
+            "https://example.test/wp-admin/ 302",
+            [
+                "secure_auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "signed in, no use_ssl, secure_auth_redirect true",
+        [
+            "https://example.test/wp-admin/ 302",
+            [
+                "secure_auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "signed in, use_ssl, secure_auth_redirect false",
+        [
+            "https://example.test/wp-admin/ 302",
+            [
+                "secure_auth_redirect",
+                "auth_redirect_scheme",
+                "auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "signed in, no use_ssl, secure_auth_redirect false",
+        [
+            "let through",
+            [
+                "secure_auth_redirect",
+                "auth_redirect_scheme",
+                "auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "signed in, use_ssl, secure_auth_redirect false, elsewhere",
+        [
+            "let through",
+            [
+                "secure_auth_redirect",
+                "auth_redirect_scheme",
+                "auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "signed in, use_ssl, secure_auth_redirect false, a full address",
+        [
+            "https://example.test/wp-admin/x.php?b=2 302",
+            [
+                "secure_auth_redirect",
+                "auth_redirect_scheme",
+                "auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "signed in, use_ssl, secure_auth_redirect false, a query naming wp-admin",
+        [
+            "https://example.test/zz-page/?to=wp-admin 302",
+            [
+                "secure_auth_redirect",
+                "auth_redirect_scheme",
+                "auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "not signed in, wp-admin",
+        [
+            "https://example.test/wp-admin/ 302",
+            [
+                "secure_auth_redirect"
+            ]
+        ]
+    ],
+    [
+        "not signed in, secure_auth_redirect false",
+        [
+            "{home}/wp-login.php?redirect_to=http%3A%2F%2Fexample.test%2Fwp-admin%2F&reauth=1 302",
+            [
+                "secure_auth_redirect",
+                "auth_redirect_scheme"
+            ]
+        ]
+    ]
+]

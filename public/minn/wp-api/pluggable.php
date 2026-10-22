@@ -364,6 +364,11 @@ function auth_redirect()
     $user_id = wp_validate_auth_cookie('', apply_filters('auth_redirect_scheme', ''));
     if ($user_id) {
         do_action('auth_redirect', $user_id);
+        // A user who chose an HTTPS admin (use_ssl) is sent there from a plain address naming wp-admin (probe auth-redirect-ssl).
+        if (!is_ssl() && get_user_option('use_ssl', $user_id) && str_contains($uri, 'wp-admin')) {
+            wp_redirect(_minn_https_request_address($uri));
+            exit;
+        }
         return;
     }
     nocache_headers();
@@ -376,9 +381,12 @@ endif;
 function _minn_admin_https_address(string $uri): ?string
 {
     $secure = (bool) apply_filters('secure_auth_redirect', is_ssl() || force_ssl_admin());
-    if (!$secure || is_ssl() || !str_contains($uri, 'wp-admin')) {
-        return null;
-    }
+    return !$secure || is_ssl() || !str_contains($uri, 'wp-admin') ? null : _minn_https_request_address($uri);
+}
+
+/** @internal the request's address over https: a full address with its scheme swapped, a path on the request's host */
+function _minn_https_request_address(string $uri): string
+{
     return str_starts_with($uri, 'http') ? set_url_scheme($uri, 'https') : 'https://' . ($_SERVER['HTTP_HOST'] ?? '') . $uri;
 }
 
