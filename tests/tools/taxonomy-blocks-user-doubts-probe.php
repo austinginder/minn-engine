@@ -814,8 +814,16 @@ try {
         return $id;
     };
     register_block_template('zzdoubteb//zzdoubteb-plug', ['title' => 'Plug Title', 'description' => 'Plug Desc', 'content' => '<!-- wp:paragraph --><p>plug</p><!-- /wp:paragraph -->', 'post_types' => ['post']]);
-    $saveTemplate('wp_template', 'zzdoubteb-custom', 'Zzdoubteb Custom', $theme);
-    $saveTemplate('wp_template', 'page-zzdoubteb', 'Zzdoubteb Suggestion', $theme, ['is_wp_suggestion' => true]);
+    $custom = $saveTemplate('wp_template', 'zzdoubteb-custom', 'Zzdoubteb Custom', $theme);
+    $suggestion = $saveTemplate('wp_template', 'page-zzdoubteb', 'Zzdoubteb Suggestion', $theme, ['is_wp_suggestion' => true]);
+    // Dated as the injected template is, whatever second the clock reached, so the date order ties and the ids decide (as when the fixture was captured).
+    $injected = get_post($template);
+    foreach ([$custom, $suggestion] as $pinned) {
+        if (is_int($pinned) && $pinned > 0 && $injected instanceof WP_Post) {
+            $GLOBALS['wpdb']->update($GLOBALS['wpdb']->posts, ['post_date' => $injected->post_date, 'post_date_gmt' => $injected->post_date_gmt], ['ID' => $pinned]);
+            clean_post_cache($pinned);
+        }
+    }
     $saveTemplate('wp_template_part', 'zzdoubteb-part', 'Zzdoubteb Part', $theme);
     $saveTemplate('wp_template', 'zzdoubteb-other', 'Zzdoubteb Other', 'zzdoubteb-other-theme');
     $made['wp_theme'] = 'zzdoubteb-other-theme';
