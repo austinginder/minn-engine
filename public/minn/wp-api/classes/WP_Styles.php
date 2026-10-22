@@ -92,7 +92,7 @@ class WP_Styles extends WP_Dependencies
         }
         $ver = $ver === false || $ver === '' ? $this->default_version : $ver;
         if ($ver !== null && $ver !== true) {
-            $src = add_query_arg('ver', (string) $ver, $src);
+            $src = Minn\Runtime\QueryArgs::versioned((string) $src, (string) $ver);
         }
         return esc_url(apply_filters('style_loader_src', $src, $handle));
     }

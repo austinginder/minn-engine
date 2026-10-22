@@ -436,7 +436,8 @@ final readonly class Api
     private function withPageLinks(Request $request, Response $response): Response
     {
         $pages = $response->headers['X-WP-TotalPages'] ?? null;
-        if ($pages === null || $response->status !== 200 || !in_array($request->method, [Method::Get, Method::Head], true)) {
+        // The themes list is one page and builds no page links (nor their base, whose query wp_parse_str would read).
+        if ($pages === null || $response->status !== 200 || !in_array($request->method, [Method::Get, Method::Head], true) || $request->path === '/wp/v2/themes') {
             return $response;
         }
         $pages = (int) $pages;

@@ -18,7 +18,7 @@ the WordPress runtime plugins load against
 | [`AssetQueue`](#assetqueue) | final class | 201 | The scripts and styles a request queues, as WordPress's asset functions |
 | [`AssetView`](#assetview) | final class | 101 | A registry's view in the shape plugins read and edit it: the public |
 | [`Assets`](#assets) | final class | 453 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
-| [`AttachmentImages`](#attachmentimages) | final class | 459 | An attachment's image as WordPress's media functions make it: the |
+| [`AttachmentImages`](#attachmentimages) | final class | 475 | An attachment's image as WordPress's media functions make it: the |
 | [`AttachmentModel`](#attachmentmodel) | final class | 96 | An attachment as the media modal's scripts read it |
 | [`Attachments`](#attachments) | final class | 266 | Attachments as WordPress's media functions keep them: the uploads folder |
 | [`Autosaves`](#autosaves) | final class | 71 | An autosave as the reference's REST autosave makes it (probes |
@@ -119,7 +119,7 @@ the WordPress runtime plugins load against
 | [`PostWrites`](#postwrites) | final class | 573 | Posts written as WordPress's post functions write them: a post stored |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryAnswers`](#queryanswers) | final class | 23 | Answers for queries the engine writes itself and already knows the result |
-| [`QueryArgs`](#queryargs) | final class | 54 | Query arguments added to and taken from an address the way WordPress's |
+| [`QueryArgs`](#queryargs) | final class | 78 | Query arguments added to and taken from an address the way WordPress's |
 | [`QueryFlags`](#queryflags) | final readonly class | 202 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`RecipientLocale`](#recipientlocale) | final class | 30 | An email written in its reader's language, as the reference writes each: |
 | [`Records`](#records) | final class | 140 | Posts, terms and comments as WordPress hands them to plugins: found by |
@@ -945,6 +945,7 @@ where it sits, the img element itself, and the site icon.
 
 Used by: `Minn\Blocks\ImageTags`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Rest\IndexController`, `Minn\Runtime\AttachmentModel`
 
+
 ### static `sizes(): array`
 
 The registered sizes (_minn_image_sizes): the four from the options,
@@ -1072,7 +1073,13 @@ The site icon's address at a size (get_site_icon_url), the address given when th
 
 Whether the site has an icon (has_site_icon).
 
-Internals: `asked()` (private, line 429), `byPlace()` (private, line 464)
+### static `omitThreshold(mixed $force = false): int`
+
+How many images in a page's content load eagerly
+(wp_omit_loading_attr_threshold): 3, as the filter leaves it, asked
+once and then kept unless forced (probe: the loading threshold).
+
+Internals: `asked()` (private, line 431), `byPlace()` (private, line 480)
 
 
 ## AttachmentModel
@@ -6560,6 +6567,13 @@ list of them, then the address (the request's when false or left
 out). Values are URL-encoded; an empty one leaves its key bare, a
 false or null one takes the key out.
 
+### static `versioned(string $src, string $version): string`
+
+A script's or style's address with its version, as the dependency
+printers add it: the same address add_query_arg would give, its
+query read without wp_parse_str's filter (probe: printing a
+versioned script fires none on the reference).
+
 ### static `remove(mixed $key, mixed $query = false): mixed`
 
 An address with an argument, or each of a list, taken out (remove_query_arg); an empty list gives back what was given.
@@ -6571,6 +6585,8 @@ An address carrying a nonce for the action (wp_nonce_url), escaped for HTML.
 ### static `requestUri(): string`
 
 The request's address as PHP was given it; a runtime built without one gives its request's path and query.
+
+Internals: `with()` (private, line 57)
 
 
 ## QueryFlags

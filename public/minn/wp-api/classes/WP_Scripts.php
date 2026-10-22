@@ -237,7 +237,7 @@ class WP_Scripts extends WP_Dependencies
             $ver = $ver === null || $ver === true ? $this->args[$handle] : $ver . '&' . $this->args[$handle];
         }
         if ($ver !== null && $ver !== true) {
-            $src = add_query_arg('ver', (string) $ver, $src);
+            $src = Minn\Runtime\QueryArgs::versioned((string) $src, (string) $ver);
         }
         return esc_url(apply_filters('script_loader_src', $src, $handle));
     }

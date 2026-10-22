@@ -14854,9 +14854,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "decides same-domain from the login URL and the request host, filters it, and renders the session-expired dialog markup",
-                "doubt": "a host with a port never counts as the same domain, since parse_url's host drops the port HTTP_HOST keeps",
-                "body": "6f0e93a20fd7"
+                "why": "decides same-domain from the login URL and the request host, filters it, and renders the session-expired dialog markup. Doubt settled (2026-10-22): a host with a port is no same domain on the reference either, nor another case (probe auth-check-host)",
+                "body": "e7ed4fa12d35"
             },
             "wp_cache_get_last_changed": {
                 "verdict": "keep",
@@ -16826,13 +16825,6 @@
                 "to": "Minn\\Content\\PersonalData",
                 "why": "pages through the user's uploads and builds export items; beside PersonalData::item",
                 "body": "91f73d90d19a"
-            },
-            "wp_omit_loading_attr_threshold": {
-                "verdict": "move",
-                "to": "Minn\\Runtime\\AttachmentImages",
-                "why": "static state holding the filtered eager-image budget; engine state the loading rules should read",
-                "doubt": "the engine's loading budget (AttachmentImages::byPlace, Blocks\\ImageTags::loadingPrefix) hard-codes three and never reads this filter",
-                "body": "f5daa52d2266"
             },
             "wp_playlist_scripts": {
                 "verdict": "keep",
@@ -18963,8 +18955,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "an asset's address: relative sources under the stored site URL, the version argument by its rule",
-                "body": "afc0c8cf5a2c"
+                "why": "an asset's address: relative sources under the stored site URL, the version argument by its rule (the version added as the dependency printers add it, without wp_parse_str's filter: QueryArgs::versioned)",
+                "body": "2f3a50821610"
             },
             "_minn_before_head_closer": {
                 "verdict": "move",
@@ -19008,8 +19000,8 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "a module's address with its version argument",
-                "body": "d77ad2a2b61b"
+                "why": "a module's address with its version argument (the version added as the dependency printers add it, without wp_parse_str's filter: QueryArgs::versioned)",
+                "body": "7825747d3228"
             },
             "_minn_script_translations_block": {
                 "verdict": "move",
@@ -19182,8 +19174,8 @@
             "wp_get_script_polyfill": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\Assets",
-                "why": "the polyfill loader markup per feature test, through script_loader_src",
-                "body": "aec0028bd5a5"
+                "why": "the polyfill loader markup per feature test, through script_loader_src (the version added as the dependency printers add it, without wp_parse_str's filter: QueryArgs::versioned)",
+                "body": "96b05ea96e86"
             },
             "wp_hoist_late_printed_styles": {
                 "verdict": "move",

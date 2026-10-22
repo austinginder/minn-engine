@@ -296,7 +296,7 @@ final readonly class ImageTags
         // network's attention is fetched with high priority, and a thumbnail
         // or an avatar is not, so the flag can fall to a later image.
         $seen = RenderState::current()->nextImage();
-        if ($seen > 3) {
+        if ($seen > AttachmentImages::omitThreshold()) {
             return $lazy;
         }
         $large = $width * $height >= self::minimumPriorityPixels();

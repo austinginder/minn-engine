@@ -2,14 +2,14 @@
     "generated": "2026-10-22",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 702,
-        "composes": 2066,
+        "minn": 707,
+        "composes": 2060,
         "leaf": 960,
-        "noop": 3264,
+        "noop": 3265,
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8680,
-        "minnMethods": 1551,
+        "minnMethods": 1553,
         "leafLinesOver15": 8
     },
     "functions": {
@@ -26939,10 +26939,11 @@
         "WP_Scripts::source": {
             "file": "classes/WP_Scripts.php",
             "lines": 11,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\QueryArgs::versioned"
+            ],
             "composes": [
-                "add_query_arg",
                 "apply_filters",
                 "esc_url"
             ]
@@ -28556,10 +28557,11 @@
         "WP_Styles::_css_href": {
             "file": "classes/WP_Styles.php",
             "lines": 9,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\QueryArgs::versioned"
+            ],
             "composes": [
-                "add_query_arg",
                 "apply_filters",
                 "esc_url"
             ]
@@ -35860,10 +35862,11 @@
         "_minn_asset_url": {
             "file": "script-loader.php",
             "lines": 14,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\QueryArgs::versioned"
+            ],
             "composes": [
-                "add_query_arg",
                 "get_option"
             ]
         },
@@ -38326,10 +38329,11 @@
         "_minn_script_module_url": {
             "file": "script-loader.php",
             "lines": 7,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\QueryArgs::versioned"
+            ],
             "composes": [
-                "add_query_arg",
                 "esc_url"
             ]
         },
@@ -65080,9 +65084,9 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "add_query_arg",
                 "apply_filters",
-                "esc_html__",
                 "esc_url",
                 "get_user_locale",
                 "is_ssl",
@@ -69465,10 +69469,11 @@
         "wp_get_script_polyfill": {
             "file": "script-loader.php",
             "lines": 11,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\QueryArgs::versioned"
+            ],
             "composes": [
-                "add_query_arg",
                 "apply_filters",
                 "esc_url"
             ]
@@ -72503,12 +72508,12 @@
         },
         "wp_omit_loading_attr_threshold": {
             "file": "media.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AttachmentImages::omitThreshold"
+            ],
+            "composes": []
         },
         "wp_opcache_invalidate": {
             "file": "misc.php",

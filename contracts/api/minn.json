@@ -101500,7 +101500,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 464,
+            "lines": 465,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -102345,7 +102345,7 @@
                         }
                     ],
                     "line": 436,
-                    "end": 458
+                    "end": 459
                 },
                 {
                     "routes": [],
@@ -102364,8 +102364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 467,
-                    "end": 474
+                    "line": 468,
+                    "end": 475
                 },
                 {
                     "routes": [],
@@ -102394,8 +102394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 484,
-                    "end": 494
+                    "line": 485,
+                    "end": 495
                 },
                 {
                     "routes": [],
@@ -102421,8 +102421,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 500,
-                    "end": 504
+                    "line": 501,
+                    "end": 505
                 }
             ]
         },
@@ -134401,7 +134401,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AttachmentImages.php",
-            "lines": 459,
+            "lines": 475,
             "doc": "An attachment's image as WordPress's media functions make it: the\nregistered sizes, a size fitted to a box, the file for a size (or an\nicon), the srcset and sizes pair, the loading attributes an image earns\nwhere it sits, the img element itself, and the site icon.",
             "implements": [],
             "extends": null,
@@ -134433,7 +134433,17 @@
             "constructor": null,
             "cases": [],
             "constants": [],
-            "properties": [],
+            "properties": [
+                {
+                    "name": "omitThreshold",
+                    "type": "?int",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
             "methods": [
                 {
                     "routes": [],
@@ -134446,8 +134456,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 29,
-                    "end": 42
+                    "line": 31,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -134460,8 +134470,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 50,
-                    "end": 56
+                    "line": 52,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -134503,8 +134513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 71
+                    "line": 66,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -134544,8 +134554,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 82
+                    "line": 76,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -134587,8 +134597,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 112
+                    "line": 92,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -134614,8 +134624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 124
+                    "line": 117,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -134641,8 +134651,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 167
+                    "line": 133,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -134675,8 +134685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 178
+                    "line": 172,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -134702,8 +134712,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 194
+                    "line": 187,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -134743,8 +134753,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 210
+                    "line": 199,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -134757,8 +134767,8 @@
                         "@return array<string, array{width: int, height: int, crop: bool|array<mixed>}>"
                     ],
                     "params": [],
-                    "line": 221,
-                    "end": 233
+                    "line": 223,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -134784,8 +134794,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 245
+                    "line": 243,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -134825,8 +134835,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 269
+                    "line": 250,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -134845,8 +134855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 275
+                    "line": 274,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -134872,8 +134882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 288
+                    "line": 280,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -134899,8 +134909,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 294
+                    "line": 293,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -134933,8 +134943,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 324
+                    "line": 304,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -134963,8 +134973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 340
+                    "line": 335,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -135021,8 +135031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 371
+                    "line": 351,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -135062,8 +135072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 399
+                    "line": 381,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -135096,8 +135106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 412
+                    "line": 404,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -135116,8 +135126,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 418
+                    "line": 417,
+                    "end": 420
+                },
+                {
+                    "routes": [],
+                    "name": "omitThreshold",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "omitThreshold(mixed $force = false): int",
+                    "doc": "How many images in a page's content load eagerly\n(wp_omit_loading_attr_threshold): 3, as the filter leaves it, asked\nonce and then kept unless forced (probe: the loading threshold).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "force",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 460,
+                    "end": 466
                 },
                 {
                     "routes": [],
@@ -135161,8 +135191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 429,
-                    "end": 451
+                    "line": 431,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -135170,7 +135200,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "byPlace(string $tagName, array $attr, mixed $context, array $optimization): array",
-                    "doc": "Where an element sits settles the rest. One in a header context is in\nview: never lazy, one of the eager images. Inside a page's template, or\nits main loop, an image shares the engine's budget: three eager images,\nthe first one large enough to deserve it high priority. Anything else\nwaits, where lazy loading is on.",
+                    "doc": "Where an element sits settles the rest. One in a header context is in\nview: never lazy, one of the eager images. Inside a page's template, or\nits main loop, an image shares the budget wp_omit_loading_attr_threshold\nleaves (three eager images), the first one large enough to deserve it\nhigh priority. Anything else\nwaits, where lazy loading is on.",
                     "shapes": [
                         "@param array<string, mixed> $attr",
                         "@param array<string, mixed> $optimization",
@@ -135206,8 +135236,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 464,
-                    "end": 478
+                    "line": 480,
+                    "end": 494
                 }
             ]
         },
@@ -162988,7 +163018,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/QueryArgs.php",
-            "lines": 54,
+            "lines": 78,
             "doc": "Query arguments added to and taken from an address the way WordPress's\nadd_query_arg() and remove_query_arg() do, the current request's address\nwhen none is given, and an action's nonce added to one.",
             "implements": [],
             "extends": null,
@@ -163037,7 +163067,34 @@
                         }
                     ],
                     "line": 25,
-                    "end": 36
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "versioned",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "versioned(string $src, string $version): string",
+                    "doc": "A script's or style's address with its version, as the dependency\nprinters add it: the same address add_query_arg would give, its\nquery read without wp_parse_str's filter (probe: printing a\nversioned script fires none on the reference).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "src",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -163063,8 +163120,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 48
+                    "line": 63,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -163097,8 +163154,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 54
+                    "line": 75,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -163109,8 +163166,45 @@
                     "doc": "The request's address as PHP was given it; a runtime built without one gives its request's path and query.",
                     "shapes": [],
                     "params": [],
+                    "line": 81,
+                    "end": 93
+                },
+                {
+                    "routes": [],
+                    "name": "with",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "with(string $uri, array $new, Closure $read): string",
+                    "doc": "An address with the arguments set, its own query read through the\ngiven step and encoded.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $new",
+                        "@param \\Closure(array<array-key, mixed>): array<array-key, mixed> $read"
+                    ],
+                    "params": [
+                        {
+                            "name": "uri",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "new",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "read",
+                            "type": "Closure",
+                            "shape": "\\Closure(array<array-key, mixed>): array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
                     "line": 57,
-                    "end": 69
+                    "end": 60
                 }
             ]
         },

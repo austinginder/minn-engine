@@ -1,0 +1,82 @@
+[
+    [
+        "https minn.localhost",
+        [
+            true,
+            true,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t\t<div id=\"wp-auth-check-form\" class=\"loading\" data-src=\"https://{host}/wp-login.php?interim-login=1&#038;wp_lang=en_US\"></div>\n\t\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ],
+    [
+        "https minn.localhost:443",
+        [
+            true,
+            false,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ],
+    [
+        "https minn.localhost:8443",
+        [
+            true,
+            false,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ],
+    [
+        "https other.localhost",
+        [
+            true,
+            false,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ],
+    [
+        "https MINN.localhost",
+        [
+            true,
+            false,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ],
+    [
+        "http minn.localhost",
+        [
+            true,
+            false,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ],
+    [
+        "http minn.localhost:443",
+        [
+            true,
+            false,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ],
+    [
+        "http minn.localhost:8443",
+        [
+            true,
+            false,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ],
+    [
+        "http other.localhost",
+        [
+            true,
+            false,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ],
+    [
+        "http MINN.localhost",
+        [
+            true,
+            false,
+            "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"https://{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t"
+        ]
+    ]
+]

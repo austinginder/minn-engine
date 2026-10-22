@@ -26,7 +26,7 @@ function _minn_asset_url(string $src, string|bool|null $ver): string
         $ver = $GLOBALS['wp_version'];
     }
     if ($ver !== null && $ver !== '' && $ver !== true) {
-        $src = add_query_arg('ver', (string) $ver, $src);
+        $src = Minn\Runtime\QueryArgs::versioned((string) $src, (string) $ver);
     }
     return $src;
 }
@@ -552,7 +552,7 @@ function _minn_script_module_url(string $src, string|false|null $version): strin
         $version = (string) $GLOBALS['wp_version'];
     }
     if ($version !== null && $version !== '') {
-        $src = add_query_arg('ver', $version, $src);
+        $src = Minn\Runtime\QueryArgs::versioned((string) $src, (string) $version);
     }
     return esc_url($src);
 }
@@ -755,7 +755,7 @@ function wp_get_script_polyfill($scripts, $tests)
             continue;
         }
         $src = preg_match('#^(https?:)?//#', (string) $item->src) === 1 ? (string) $item->src : $scripts->base_url . $item->src;
-        $src = apply_filters('script_loader_src', empty($item->ver) ? $src : add_query_arg('ver', $item->ver, $src), $handle);
+        $src = apply_filters('script_loader_src', empty($item->ver) ? $src : Minn\Runtime\QueryArgs::versioned((string) $src, (string) $item->ver), $handle);
         $polyfill .= $src ? '( ' . $test . ' ) || document.write( \'<script src="' . esc_url($src) . '"></scr\' + \'ipt>\' );' : '';
     }
     return $polyfill;

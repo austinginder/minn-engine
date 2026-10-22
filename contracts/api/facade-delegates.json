@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1658
+        "delegates": 1659
     },
     "functions": {
         "__": {
@@ -5971,6 +5971,10 @@
         "wp_oembed_get": {
             "file": "misc.php",
             "statement": "return _wp_oembed_get_object()->get_html($url, $args);"
+        },
+        "wp_omit_loading_attr_threshold": {
+            "file": "media.php",
+            "statement": "return Minn\\Runtime\\AttachmentImages::omitThreshold($force);"
         },
         "wp_parse_args": {
             "file": "formatting.php",

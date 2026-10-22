@@ -20,6 +20,8 @@ use Minn\Support\Text;
  */
 final class AttachmentImages
 {
+    private static ?int $omitThreshold = null;
+
     /**
      * The registered sizes (_minn_image_sizes): the four from the options,
      * then the ones add_image_size added.
@@ -451,10 +453,24 @@ final class AttachmentImages
     }
 
     /**
+     * How many images in a page's content load eagerly
+     * (wp_omit_loading_attr_threshold): 3, as the filter leaves it, asked
+     * once and then kept unless forced (probe: the loading threshold).
+     */
+    public static function omitThreshold(mixed $force = false): int
+    {
+        if (self::$omitThreshold === null || $force) {
+            self::$omitThreshold = (int) Runtime::hooks()->filter('wp_omit_loading_attr_threshold', [3]);
+        }
+        return self::$omitThreshold;
+    }
+
+    /**
      * Where an element sits settles the rest. One in a header context is in
      * view: never lazy, one of the eager images. Inside a page's template, or
-     * its main loop, an image shares the engine's budget: three eager images,
-     * the first one large enough to deserve it high priority. Anything else
+     * its main loop, an image shares the budget wp_omit_loading_attr_threshold
+     * leaves (three eager images), the first one large enough to deserve it
+     * high priority. Anything else
      * waits, where lazy loading is on.
      *
      * @param array<string, mixed> $attr
@@ -471,7 +487,7 @@ final class AttachmentImages
             return $optimization + self::earnedPriority($tagName, $attr);
         }
         $query = MainQuery::current();
-        if ($tagName === 'img' && ((RenderState::current()->inside('template') && RenderState::current()->depth() > 0) || ((bool) $query->in_the_loop && $query->is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {
+        if ($tagName === 'img' && ((RenderState::current()->inside('template') && RenderState::current()->depth() > 0) || ((bool) $query->in_the_loop && $query->is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= self::omitThreshold()) {
             return $optimization + self::earnedPriority($tagName, $attr);
         }
         return self::lazyLoading($tagName, $context) ? $optimization + ['loading' => 'lazy'] : $optimization;

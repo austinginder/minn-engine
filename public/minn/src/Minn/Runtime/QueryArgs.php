@@ -32,7 +32,31 @@ final class QueryArgs
             $uri = count($args) < 3 || $args[2] === false ? $current : (string) $args[2];
             $new = [$args[0] => $args[1] ?? null];
         }
-        return Url::withQuery($uri, $new, static fn (array $q): array => Text::mapDeep($q, 'urlencode'), static fn (array $q): string => (string) preg_replace('#=(&|$)#', '$1', Url::buildQuery($q)));
+        // The address's own query is parsed as wp_parse_str parses it, its filter heard, then encoded.
+        return self::with($uri, $new, static fn (array $q): array => (array) Runtime::hooks()->filter('wp_parse_str', [$q]));
+    }
+
+    /**
+     * A script's or style's address with its version, as the dependency
+     * printers add it: the same address add_query_arg would give, its
+     * query read without wp_parse_str's filter (probe: printing a
+     * versioned script fires none on the reference).
+     */
+    public static function versioned(string $src, string $version): string
+    {
+        return self::with($src, ['ver' => $version], static fn (array $q): array => $q);
+    }
+
+    /**
+     * An address with the arguments set, its own query read through the
+     * given step and encoded.
+     *
+     * @param array<array-key, mixed> $new
+     * @param \Closure(array<array-key, mixed>): array<array-key, mixed> $read
+     */
+    private static function with(string $uri, array $new, \Closure $read): string
+    {
+        return Url::withQuery($uri, $new, static fn (array $q): array => Text::mapDeep($read($q), 'urlencode'), static fn (array $q): string => (string) preg_replace('#=(&|$)#', '$1', Url::buildQuery($q)));
     }
 
     /** An address with an argument, or each of a list, taken out (remove_query_arg); an empty list gives back what was given. */

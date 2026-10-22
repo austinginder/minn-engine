@@ -1329,11 +1329,7 @@ function _wp_image_editor_choose($args = [])
 /** How many images print eagerly before lazy loading starts: the reference's three, or a filter's number. */
 function wp_omit_loading_attr_threshold($force = false)
 {
-    static $threshold = null;
-    if ($threshold === null || $force) {
-        $threshold = (int) apply_filters('wp_omit_loading_attr_threshold', 3);
-    }
-    return $threshold;
+    return Minn\Runtime\AttachmentImages::omitThreshold($force);
 }
 
 function wp_match_mime_types($wildcard_mime_types, $real_mime_types)
