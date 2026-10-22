@@ -17129,8 +17129,7 @@
             "wp_opcache_invalidate": {
                 "verdict": "move",
                 "to": "Minn\\Ops\\Opcache",
-                "why": "decides whether opcache can and may invalidate a file (function present, the filter, enable and enable_cli) and does it; opcode cache control for the engine",
-                "doubt": "opcache.restrict_api is not checked against the running script",
+                "why": "decides whether opcache can and may invalidate a file (function present, the filter, enable and enable_cli) and does it; opcode cache control for the engine. Doubt settled (2026-10-22): with opcache.restrict_api naming another directory, one holding the running script, and none, both stacks answer alike (false, true, true; false for a file that is not PHP), since opcache_invalidate itself keeps to restrict_api (measured with php -d under WP-CLI)",
                 "body": "8a766f76d5ad"
             },
             "wp_opcache_invalidate_directory": {
