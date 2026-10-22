@@ -6,7 +6,7 @@
         "delegates": 3561,
         "logicFunctions": 1777,
         "logicMethods": 1971,
-        "logicLines": 29267,
+        "logicLines": 29266,
         "kept": 0
     },
     "byFile": {
@@ -86,12 +86,12 @@
             "logic": 43,
             "lines": 379
         },
-        "pluggable.php": {
-            "logic": 40,
-            "lines": 366
-        },
         "formatting.php": {
             "logic": 64,
+            "lines": 365
+        },
+        "pluggable.php": {
+            "logic": 40,
             "lines": 365
         },
         "rest-api.php": {
@@ -20283,8 +20283,8 @@
         "wp_clear_auth_cookie": {
             "file": "pluggable.php",
             "line": 469,
-            "statements": 4,
-            "lines": 8
+            "statements": 3,
+            "lines": 7
         },
         "wp_clearcookie": {
             "file": "pluggable.php",

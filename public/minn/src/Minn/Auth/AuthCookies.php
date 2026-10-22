@@ -101,19 +101,34 @@ final readonly class AuthCookies
         return (bool) Runtime::hooks()->filter('send_auth_cookies', [true, 0, 0, 0, '', '']);
     }
 
-    /** The response with every sign-in cookie expired. */
-    public function clear(Response $response): Response
+    /**
+     * The response with every sign-in cookie expired a year back, as
+     * wp_clear_auth_cookie sends them (measured on the reference's log
+     * out): the auth and secure auth cookies on the admin and plugins
+     * paths, the logged-in cookie on the cookie and site paths, the user's
+     * settings cookies, then the auth, secure auth, user and pass cookies
+     * on both paths and the post password cookie; names, paths and domain
+     * from the cookie constants, no flag but the path.
+     */
+    public function clear(Response $response, int $userId = 0): Response
     {
         $hash = $this->hash();
-        $past = ['expires' => time() - 3600, 'httponly' => true];
+        $name = static fn (string $constant, string $prefix): string => defined($constant) ? (string) constant($constant) : $prefix . $hash;
+        $path = static fn (string $constant, string $default): string => defined($constant) ? (string) constant($constant) : $default;
+        [$auth, $secure, $loggedIn] = [$name('AUTH_COOKIE', 'wordpress_'), $name('SECURE_AUTH_COOKIE', 'wordpress_sec_'), $name('LOGGED_IN_COOKIE', 'wordpress_logged_in_')];
+        [$user, $pass] = [$name('USER_COOKIE', 'wordpressuser_'), $name('PASS_COOKIE', 'wordpresspass_')];
+        [$admin, $plugins] = [$path('ADMIN_COOKIE_PATH', '/wp-admin'), $path('PLUGINS_COOKIE_PATH', '/wp-content/plugins')];
+        [$cookiePath, $sitePath] = [$path('COOKIEPATH', '/'), $path('SITECOOKIEPATH', '/')];
+        $options = ['expires' => time() - 365 * self::DAY, 'domain' => $path('COOKIE_DOMAIN', '')];
         foreach ([
-            ['wordpress_' . $hash, '/wp-admin'],
-            ['wordpress_' . $hash, '/wp-content/plugins'],
-            ['wordpress_sec_' . $hash, '/wp-admin'],
-            ['wordpress_sec_' . $hash, '/wp-content/plugins'],
-            ['wordpress_logged_in_' . $hash, '/'],
-        ] as [$name, $path]) {
-            $response = $response->withCookie($name, ' ', ['path' => $path] + $past);
+            [$auth, $admin], [$secure, $admin], [$auth, $plugins], [$secure, $plugins],
+            [$loggedIn, $cookiePath], [$loggedIn, $sitePath],
+            ['wp-settings-' . $userId, $sitePath], ['wp-settings-time-' . $userId, $sitePath],
+            [$auth, $cookiePath], [$auth, $sitePath], [$secure, $cookiePath], [$secure, $sitePath],
+            [$user, $cookiePath], [$pass, $cookiePath], [$user, $sitePath], [$pass, $sitePath],
+            ['wp-postpass_' . $hash, $cookiePath],
+        ] as [$cookie, $at]) {
+            $response = $response->withCookie($cookie, ' ', ['path' => $at] + $options);
         }
         return $response;
     }

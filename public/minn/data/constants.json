@@ -1,5 +1,4 @@
 {
-    "ADMIN_COOKIE_PATH": "/wp-admin",
     "ARRAY_A": "ARRAY_A",
     "ARRAY_N": "ARRAY_N",
     "AUTOSAVE_INTERVAL": 60,
@@ -107,7 +106,6 @@
     "PCLZIP_TEMPORARY_DIR": "",
     "PCLZIP_TEMPORARY_FILE_RATIO": 0.47,
     "PLUGINDIR": "wp-content/plugins",
-    "PLUGINS_COOKIE_PATH": "/wp-content/plugins",
     "REQUESTS_AUTOLOAD_REGISTERED": true,
     "REQUESTS_SILENCE_PSR0_DEPRECATIONS": true,
     "REST_API_VERSION": "2.0",

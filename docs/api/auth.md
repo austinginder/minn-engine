@@ -5,7 +5,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 165 | Application passwords as the reference stores them: a serialized list in |
-| [`AuthCookies`](#authcookies) | final readonly class | 110 | The three cookies a sign-in sets: the auth cookie on the admin and |
+| [`AuthCookies`](#authcookies) | final readonly class | 125 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 26 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
@@ -148,9 +148,15 @@ Whether signing out clears the cookies: clear_auth_cookie told, then
 send_auth_cookies asked with no cookie in hand, as the reference asks
 them (suite login-hooks).
 
-### `clear(Minn\Http\Response $response): Minn\Http\Response`
+### `clear(Minn\Http\Response $response, int $userId = 0): Minn\Http\Response`
 
-The response with every sign-in cookie expired.
+The response with every sign-in cookie expired a year back, as
+wp_clear_auth_cookie sends them (measured on the reference's log
+out): the auth and secure auth cookies on the admin and plugins
+paths, the logged-in cookie on the cookie and site paths, the user's
+settings cookies, then the auth, secure auth, user and pass cookies
+on both paths and the post password cookie; names, paths and domain
+from the cookie constants, no flag but the path.
 
 ### static `mint(Minn\Content\UserRecord $user, int $expiration, string $token, string $scheme): string`
 

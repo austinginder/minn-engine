@@ -93,7 +93,7 @@ final class Constants
                 define($name, $value);
             }
         }
-        foreach (['ADMIN_COOKIEPATH' => SITECOOKIEPATH . 'wp-admin', 'PLUGINS_COOKIE_PATH' => rtrim((string) (parse_url(WP_PLUGIN_URL, PHP_URL_PATH) ?: ''), '/'), 'USER_COOKIE' => 'wordpressuser_' . COOKIEHASH, 'PASS_COOKIE' => 'wordpresspass_' . COOKIEHASH, 'AUTH_COOKIE' => 'wordpress_' . COOKIEHASH, 'SECURE_AUTH_COOKIE' => 'wordpress_sec_' . COOKIEHASH, 'LOGGED_IN_COOKIE' => 'wordpress_logged_in_' . COOKIEHASH, 'TEST_COOKIE' => 'wordpress_test_cookie', 'RECOVERY_MODE_COOKIE' => 'wordpress_rec_' . COOKIEHASH] as $name => $value) {
+        foreach (['ADMIN_COOKIE_PATH' => SITECOOKIEPATH . 'wp-admin', 'PLUGINS_COOKIE_PATH' => rtrim((string) (parse_url(WP_PLUGIN_URL, PHP_URL_PATH) ?: ''), '/'), 'USER_COOKIE' => 'wordpressuser_' . COOKIEHASH, 'PASS_COOKIE' => 'wordpresspass_' . COOKIEHASH, 'AUTH_COOKIE' => 'wordpress_' . COOKIEHASH, 'SECURE_AUTH_COOKIE' => 'wordpress_sec_' . COOKIEHASH, 'LOGGED_IN_COOKIE' => 'wordpress_logged_in_' . COOKIEHASH, 'TEST_COOKIE' => 'wordpress_test_cookie', 'RECOVERY_MODE_COOKIE' => 'wordpress_rec_' . COOKIEHASH] as $name => $value) {
             if (!defined($name)) {
                 define($name, $value);
             }

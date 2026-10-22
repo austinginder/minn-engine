@@ -4,7 +4,7 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 502 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginController`](#logincontroller) | final readonly class | 534 | Signing in. The page people see is /minn-admin/login: the form, the |
 | [`LoginForm`](#loginform) | final class | 263 | The sign-in page markup. |
 | [`LoginHooks`](#loginhooks) | final readonly class | 143 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`LoginNotices`](#loginnotices) | final readonly class | 113 | What a sign-in page tells the reader, held as the reference's pages hold |
@@ -52,7 +52,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `landingFor()` (private, line 125), `asked()` (private, line 132), `checkEmail()` (private, line 139), `signInNotices()` (private, line 150), `lostPassword()` (private, line 156), `retrieve()` (private, line 187), `openResetLink()` (private, line 207), `resetSession()` (private, line 224), `savePassword()` (private, line 239), `register()` (private, line 274), `validateReset()` (private, line 299), `parts()` (private, line 314), `tokenLogin()` (private, line 326), `adminEmail()` (private, line 412), `safeRedirect()` (private, line 434), `logout()` (private, line 455), `action()` (private, line 485), `actionUrl()` (private, line 497), `siteName()` (private, line 507), `base()` (private, line 513), `tooManyAttempts()` (private, line 519), `render()` (private, line 527)
+Internals: `page()` (private, line 70), `landingFor()` (private, line 132), `asked()` (private, line 139), `checkEmail()` (private, line 146), `signInNotices()` (private, line 157), `lostPassword()` (private, line 163), `retrieve()` (private, line 194), `openResetLink()` (private, line 214), `resetSession()` (private, line 231), `savePassword()` (private, line 246), `register()` (private, line 281), `validateReset()` (private, line 306), `parts()` (private, line 321), `tokenLogin()` (private, line 333), `submitted()` (private, line 376), `adminEmail()` (private, line 425), `withTestCookie()` (private, line 450), `safeRedirect()` (private, line 466), `logout()` (private, line 487), `action()` (private, line 518), `actionUrl()` (private, line 530), `siteName()` (private, line 540), `base()` (private, line 546), `tooManyAttempts()` (private, line 552), `render()` (private, line 560)
 
 
 ## LoginForm

@@ -17441,14 +17441,13 @@
                 "body": "22f69245b11f"
             },
             "wp_clear_auth_cookie": {
-                "verdict": "move",
-                "to": "Minn\\Auth\\AuthCookies",
+                "verdict": "delegate",
+                "to": "Minn\\Auth\\AuthCookies::clear",
                 "gates": [
                     "pluggable"
                 ],
-                "why": "asks AuthCookies::clearing, then expires the five sign-in cookies with setcookie; the list repeats AuthCookies::clear, which should send them on the engine's response",
-                "doubt": "names, paths and domain are fixed rather than read from AUTH_COOKIE, ADMIN_COOKIE_PATH, COOKIEPATH and COOKIE_DOMAIN, and the wp-settings and post password cookies WordPress also expires are left",
-                "body": "9edae4cca902"
+                "why": "asks AuthCookies::clearing, then sends with setcookie the cookies AuthCookies::clear expires for the current user. Doubt fixed (2026-10-22): the seventeen cookies the reference's log out expires (auth and secure auth on the admin, plugins, cookie and site paths, logged-in on both, the user's settings, the user and pass cookies, the post password), a year back, names, paths and domain from the cookie constants, no secure or HTTP-only flag (measured over HTTP: wp-login.php?action=logout)",
+                "body": "eaa1564638f8"
             },
             "wp_clearcookie": {
                 "verdict": "keep",

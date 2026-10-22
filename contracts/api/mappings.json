@@ -9,7 +9,7 @@
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8680,
-        "minnMethods": 1553,
+        "minnMethods": 1555,
         "leafLinesOver15": 8
     },
     "functions": {
@@ -65863,15 +65863,18 @@
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\AuthCookies::__construct",
+                "Minn\\Auth\\AuthCookies::clear",
                 "Minn\\Auth\\AuthCookies::clearing",
-                "Minn\\Auth\\AuthCookies::hash",
                 "Minn\\Auth\\Cookie::__construct",
                 "Minn\\Auth\\Sessions::__construct",
                 "Minn\\Content\\Users::__construct",
+                "Minn\\Http\\Response::__construct",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::db"
             ],
-            "composes": []
+            "composes": [
+                "get_current_user_id"
+            ]
         },
         "wp_clear_scheduled_hook": {
             "file": "cron.php",

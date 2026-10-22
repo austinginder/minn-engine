@@ -67,14 +67,14 @@ final readonly class SignIn
     public function end(Response $response, Authenticated $session): Response
     {
         Handoff::sessionTokens($session->id())->destroy($session->token);
-        return $this->cookies->clearing() ? $this->cookies->clear($response) : $response;
+        return $this->cookies->clearing() ? $this->cookies->clear($response, $session->id()) : $response;
     }
 
     /** Ends every session of a user (a password reset) and clears the cookies from the response. */
     public function endAll(Response $response, int $userId): Response
     {
         Handoff::sessionTokens($userId)->destroy_all();
-        return $this->cookies->clear($response);
+        return $this->cookies->clear($response, $userId);
     }
 
     /** The response with the sign-in cookies cleared. */

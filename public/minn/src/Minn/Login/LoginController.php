@@ -27,6 +27,7 @@ use Minn\Html;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\PortableHash;
 use Minn\Runtime\SiteUrls;
+use Minn\Runtime\Translations;
 use Minn\Support\Slashes;
 
 /**
@@ -61,6 +62,12 @@ final readonly class LoginController
     #[Route(Method::Get, self::PATH . '/{segment:lost-password|reset|logout|register|confirm-email}')]
     #[Route(Method::Get, '/wp-login.php', policy: new Policy(Access::Public))]
     public function form(Request $request): Response
+    {
+        return $this->withTestCookie($request, $this->page($request));
+    }
+
+    /** The page a GET asks for: the sign-in form, or the action it names. */
+    private function page(Request $request): Response
     {
         if ($request->path === '/wp-login.php' && $request->query === []) {
             return Response::redirect($this->permalinks->url(self::PATH), 302);
@@ -362,8 +369,14 @@ final readonly class LoginController
     #[Route(Method::Post, '/wp-login.php', policy: new Policy(Access::Public))]
     public function signIn(Request $request): Response
     {
+        return $this->withTestCookie($request, $this->submitted($request));
+    }
+
+    /** What a POST does: signs in, or runs the action it names. */
+    private function submitted(Request $request): Response
+    {
         if ($this->action($request) === 'logout') {
-            return $this->form($request);
+            return $this->page($request);
         }
         $hooks = new LoginHooks($this->users);
         $hooks->enter($this->action($request) ?: 'login');
@@ -428,6 +441,25 @@ final readonly class LoginController
     }
 
     /**
+     * A wp-login.php answer with the test cookie set ahead of any other,
+     * as the reference's login page sets it on every request but the bare
+     * address (which the engine sends to its own sign-in page): for the
+     * session, on the cookie path and the site path when that differs,
+     * secure on HTTPS, HTTP only.
+     */
+    private function withTestCookie(Request $request, Response $response): Response
+    {
+        if ($request->path !== '/wp-login.php' || $request->query === [] && $request->method === Method::Get) {
+            return $response;
+        }
+        $name = defined('TEST_COOKIE') ? (string) constant('TEST_COOKIE') : 'wordpress_test_cookie';
+        $options = ['domain' => defined('COOKIE_DOMAIN') ? (string) constant('COOKIE_DOMAIN') : '', 'secure' => $request->secure, 'httponly' => true];
+        $paths = array_unique([defined('COOKIEPATH') ? (string) constant('COOKIEPATH') : '/', defined('SITECOOKIEPATH') ? (string) constant('SITECOOKIEPATH') : '/']);
+        $first = array_map(static fn (string $path): array => [$name, 'WP Cookie check', ['path' => $path] + $options], array_values($paths));
+        return new Response($response->status, $response->headers, $response->body, [...$first, ...$response->cookies], $response->afterSend);
+    }
+
+    /**
      * Only this site's own URLs are sign-in destinations: a path, or an
      * absolute URL on the home host. Anything else lands in the admin.
      */
@@ -470,7 +502,8 @@ final readonly class LoginController
         }
         $hooks = new LoginHooks($this->users);
         $requested = (string) ($request->query('redirect_to') ?? '');
-        $default = $requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?loggedout=true');
+        // The signed-out page is shown in the language of the user who left (wp_lang), as on the reference.
+        $default = $requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?loggedout=true&wp_lang=' . rawurlencode(Translations::userLocale($session->id())));
         $to = $hooks->leaving($default, $requested, $session->id());
         $response = $this->signIn->end(Response::redirect($to === $default ? $default : $this->safeRedirect($to), 302), $session);
         $hooks->signedOut($session->id());

@@ -9177,7 +9177,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/AuthCookies.php",
-            "lines": 110,
+            "lines": 125,
             "doc": "The three cookies a sign-in sets: the auth cookie on the admin and\nplugins paths (the secure variant over HTTPS, keyed off that scheme's\nsalt) and the logged_in cookie on the site root, which is the one REST\nreads. Every value shares the username|expiration|token|hmac shape.",
             "implements": [],
             "extends": null,
@@ -9362,8 +9362,8 @@
                     "name": "clear",
                     "static": false,
                     "visibility": "public",
-                    "signature": "clear(Minn\\Http\\Response $response): Minn\\Http\\Response",
-                    "doc": "The response with every sign-in cookie expired.",
+                    "signature": "clear(Minn\\Http\\Response $response, int $userId = 0): Minn\\Http\\Response",
+                    "doc": "The response with every sign-in cookie expired a year back, as\nwp_clear_auth_cookie sends them (measured on the reference's log\nout): the auth and secure auth cookies on the admin and plugins\npaths, the logged-in cookie on the cookie and site paths, the user's\nsettings cookies, then the auth, secure auth, user and pass cookies\non both paths and the post password cookie; names, paths and domain\nfrom the cookie constants, no flag but the path.",
                     "shapes": [],
                     "params": [
                         {
@@ -9372,10 +9372,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 119
+                    "line": 113,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -9415,8 +9422,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 127
+                    "line": 137,
+                    "end": 142
                 }
             ]
         },
@@ -77292,7 +77299,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 502,
+            "lines": 534,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -77323,6 +77330,7 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Support\\Slashes"
             ],
             "usedBy": [
@@ -77377,8 +77385,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 46,
-                "end": 54
+                "line": 47,
+                "end": 55
             },
             "cases": [],
             "constants": [
@@ -77479,8 +77487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 122
+                    "line": 64,
+                    "end": 67
                 },
                 {
                     "routes": [
@@ -77503,8 +77511,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 363,
-                    "end": 404
+                    "line": 370,
+                    "end": 373
+                },
+                {
+                    "routes": [],
+                    "name": "page",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "page(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The page a GET asks for: the sign-in form, or the action it names.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -77530,8 +77558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 129
+                    "line": 132,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -77552,8 +77580,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 136
+                    "line": 139,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -77572,8 +77600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 147
+                    "line": 146,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -77599,8 +77627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 153
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -77619,8 +77647,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 179
+                    "line": 163,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -77653,8 +77681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 200
+                    "line": 194,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -77673,8 +77701,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 221
+                    "line": 214,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -77695,8 +77723,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 237
+                    "line": 231,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -77715,8 +77743,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 265
+                    "line": 246,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -77742,8 +77770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 293
+                    "line": 281,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -77769,8 +77797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 307
+                    "line": 306,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -77819,8 +77847,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 318
+                    "line": 321,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -77839,8 +77867,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 357
+                    "line": 333,
+                    "end": 364
+                },
+                {
+                    "routes": [],
+                    "name": "submitted",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "submitted(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "What a POST does: signs in, or runs the action it names.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 376,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -77866,8 +77914,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 412,
-                    "end": 428
+                    "line": 425,
+                    "end": 441
+                },
+                {
+                    "routes": [],
+                    "name": "withTestCookie",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "withTestCookie(Minn\\Http\\Request $request, Minn\\Http\\Response $response): Minn\\Http\\Response",
+                    "doc": "A wp-login.php answer with the test cookie set ahead of any other,\nas the reference's login page sets it on every request but the bare\naddress (which the engine sends to its own sign-in page): for the\nsession, on the cookie path and the site path when that differs,\nsecure on HTTPS, HTTP only.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 450,
+                    "end": 460
                 },
                 {
                     "routes": [],
@@ -77886,8 +77961,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 434,
-                    "end": 448
+                    "line": 466,
+                    "end": 480
                 },
                 {
                     "routes": [],
@@ -77906,8 +77981,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 455,
-                    "end": 478
+                    "line": 487,
+                    "end": 511
                 },
                 {
                     "routes": [],
@@ -77926,8 +78001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 485,
-                    "end": 494
+                    "line": 518,
+                    "end": 527
                 },
                 {
                     "routes": [],
@@ -77960,8 +78035,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 504
+                    "line": 530,
+                    "end": 537
                 },
                 {
                     "routes": [],
@@ -77972,8 +78047,8 @@
                     "doc": "The site's name, as the sign-in pages head themselves (\"Site\" when it has none).",
                     "shapes": [],
                     "params": [],
-                    "line": 507,
-                    "end": 510
+                    "line": 540,
+                    "end": 543
                 },
                 {
                     "routes": [],
@@ -77992,8 +78067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 513,
-                    "end": 516
+                    "line": 546,
+                    "end": 549
                 },
                 {
                     "routes": [],
@@ -78019,8 +78094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 519,
-                    "end": 524
+                    "line": 552,
+                    "end": 557
                 },
                 {
                     "routes": [],
@@ -78053,8 +78128,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 527,
-                    "end": 540
+                    "line": 560,
+                    "end": 573
                 }
             ]
         },
@@ -178569,6 +178644,7 @@
             ],
             "usedBy": [
                 "Minn\\I18n\\SiteLanguage",
+                "Minn\\Login\\LoginController",
                 "Minn\\Media\\Player",
                 "Minn\\Rest\\BlockDirectoryController",
                 "Minn\\Rest\\PatternDirectoryController",

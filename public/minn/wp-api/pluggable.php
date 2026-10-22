@@ -472,9 +472,9 @@ function wp_clear_auth_cookie()
     if (!$cookies->clearing() || headers_sent()) {
         return;
     }
-    $hash = $cookies->hash();
-    foreach ([['wordpress_' . $hash, '/wp-admin'], ['wordpress_' . $hash, '/wp-content/plugins'], ['wordpress_sec_' . $hash, '/wp-admin'], ['wordpress_sec_' . $hash, '/wp-content/plugins'], ['wordpress_logged_in_' . $hash, '/']] as [$name, $path]) {
-        setcookie($name, ' ', ['expires' => time() - YEAR_IN_SECONDS, 'path' => $path, 'httponly' => true]);
+    // Every sign-in cookie expired as the engine's own log out expires them (AuthCookies::clear, measured on the reference).
+    foreach ($cookies->clear(new Minn\Http\Response(), get_current_user_id())->cookies as [$name, $value, $options]) {
+        setcookie($name, $value, $options);
     }
 }
 endif;

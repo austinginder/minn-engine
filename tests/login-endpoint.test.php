@@ -168,5 +168,23 @@ $lo_val = cookie_value( $oh['set-cookie'], 'wordpress_logged_in_' . $hash );
 check( '' === trim( (string) $lo_val ) || $cleared, 'logout clears the logged_in cookie' );
 check( str_contains( (string) $oh['location'], 'loggedout=true' ), 'logout redirects to the loggedout page', (string) $oh['location'] );
 
+// 7. A signed-in log out on both stacks (a throwaway subscriber, a session each): the test cookie
+// first, then every cookie wp_clear_auth_cookie expires, in the reference's order, and the
+// signed-out page in the user's language. The expiry dates and a plugin's own cookie are left out.
+$wp  = static fn ( string $command ): string => trim( (string) shell_exec( 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' ) . " $command 2>/dev/null" ) );
+$uid = (int) $wp( 'user create zzlogout' . getmypid() . ' zzlogout' . getmypid() . '@example.invalid --role=subscriber --porcelain' );
+if ( $uid > 1 ) {
+	$seen = array();
+	foreach ( array( 'reference' => $REF, 'engine' => $ENGINE ) as $who => $base ) {
+		$mint = (array) json_decode( $wp( 'eval-file ' . escapeshellarg( "$ROOT/tests/tools/mint-logout.php" ) . " $uid" ), true );
+		[ $ls, $lh ] = http( 'GET', "$base/wp-login.php?action=logout&_wpnonce=" . ( $mint['nonce'] ?? '' ), array( 'Cookie: ' . implode( '=', (array) ( $mint['logged_in'] ?? array() ) ) . '; ' . implode( '=', (array) ( $mint['secure'] ?? array() ) ) ) );
+		$cookies = array_values( array_filter( array_map( static fn ( string $c ): string => (string) preg_replace( '/;\s*(expires|Max-Age)=[^;]*/i', '', $c ), $lh['set-cookie'] ), static fn ( string $c ): bool => ! str_starts_with( $c, 'minn_net_purge=' ) ) );
+		$seen[ $who ] = array( $ls, $lh['location'], $cookies );
+	}
+	$d = minn_test_diff( $seen['reference'], $seen['engine'] );
+	check( null === $d && count( $seen['reference'][2] ) >= 17, 'a signed-in log out expires the reference\'s cookies, in its order, and names the language', (string) $d );
+	$wp( "user delete $uid --yes" );
+}
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

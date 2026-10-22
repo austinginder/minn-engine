@@ -9593,7 +9593,7 @@ folder named for later) and unloaded, the default domain, a plugin's,
 a user's locale, and the translations installed on disk; each step with
 the filters that may answer first.
 
-Used by: `Minn\I18n\SiteLanguage`, `Minn\Media\Player`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\PatternDirectoryController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\Plugins`, `Minn\Theme\ThemeHeaders`
+Used by: `Minn\I18n\SiteLanguage`, `Minn\Login\LoginController`, `Minn\Media\Player`, `Minn\Rest\BlockDirectoryController`, `Minn\Rest\PatternDirectoryController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\Plugins`, `Minn\Theme\ThemeHeaders`
 
 ### static `folderFiles(string $path): mixed`
 
