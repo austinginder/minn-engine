@@ -1168,7 +1168,7 @@ function wp_handle_sideload(&$file, $overrides = false, $time = null)
 
 function media_handle_sideload($file_array, $post_id = 0, $desc = null, $post_data = [])
 {
-    $file = wp_handle_sideload($file_array);
+    $file = wp_handle_sideload($file_array, false, _minn_upload_time((int) $post_id));
     if (isset($file['error'])) {
         return new WP_Error('upload_error', $file['error']);
     }
@@ -1189,6 +1189,16 @@ function _minn_media_attach(array $file, int $post_id, $desc, array $post_data)
     return $id;
 }
 
+/** @internal the month a file is filed under: the parent post's date, else now */
+function _minn_upload_time(int $post_id): string
+{
+    $parent = $post_id ? get_post($post_id) : null;
+    if ($parent instanceof WP_Post && (int) substr((string) $parent->post_date, 0, 4) > 0) {
+        return (string) $parent->post_date;
+    }
+    return (string) current_time('mysql');
+}
+
 /**
  * A form upload made an attachment: through wp_handle_upload with the
  * caller's overrides (its types, its tests, its file name callback) and
@@ -1202,12 +1212,8 @@ function media_handle_upload($file_id, $post_id, $post_data = [], $overrides = [
     if ($files === null) {
         return new WP_Error('upload_error', 'No file was uploaded.');
     }
-    $time = current_time('mysql');
-    $parent = $post_id ? get_post($post_id) : null;
-    if ($parent instanceof WP_Post && $parent->post_type !== 'page' && (int) substr((string) $parent->post_date, 0, 4) > 0) {
-        $time = $parent->post_date;
-    }
-    $file = wp_handle_upload($files, $overrides, $time);
+    // An upload to a page is filed under now; a sideload goes by any parent's date.
+    $file = wp_handle_upload($files, $overrides, _minn_upload_time(get_post_type((int) $post_id) === 'page' ? 0 : (int) $post_id));
     if (isset($file['error'])) {
         return new WP_Error('upload_error', $file['error']);
     }
@@ -1511,18 +1517,20 @@ function wp_update_image_subsizes($attachment_id)
 /** Registered sizes the attachment's metadata lacks and its dimensions can fit (empty for the battery attachment, probed). */
 function wp_get_missing_image_subsizes($attachment_id)
 {
+    // With no measured image every registered size is missing, before the filter.
+    $registered = wp_get_registered_image_subsizes();
     $meta = wp_get_attachment_metadata((int) $attachment_id);
     if (!is_array($meta) || empty($meta['width']) || empty($meta['height'])) {
-        return [];
+        return $registered;
     }
     // An image kept beside its original is measured by the original (probe rest-attachments-sideload).
     $original = empty($meta['original_image']) ? false : wp_getimagesize((string) wp_get_original_image_path((int) $attachment_id));
     [$width, $height] = $original ? [(int) $original[0], (int) $original[1]] : [(int) $meta['width'], (int) $meta['height']];
-    $have = array_keys((array) ($meta['sizes'] ?? []));
+    $have = (array) ($meta['sizes'] ?? []);
     $missing = [];
-    foreach (_minn_image_sizes() as $name => $size) {
-        $fits = (int) $size['width'] < $width || (int) $size['height'] < $height;
-        if (!in_array($name, $have, true) && $fits && (int) $size['width'] > 0) {
+    // A size is missing when it has none yet and resizing the image to it would make one.
+    foreach ($registered as $name => $size) {
+        if (!isset($have[$name]) && image_resize_dimensions($width, $height, $size['width'], $size['height'], $size['crop'])) {
             $missing[$name] = $size;
         }
     }

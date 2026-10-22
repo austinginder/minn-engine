@@ -14416,8 +14416,7 @@
                 "gates": [
                     "globals"
                 ],
-                "why": "builds the filtered, reverse-sorted smiley table under the use_smilies option, then sets $wpsmiliestrans and $wp_smiliessearch; the table building moves, the two global writes stay",
-                "doubt": "WordPress builds the search pattern with wp_spaces_regexp(), so its filter applies; TextFilters::smiliesSearch hard-codes the default spaces",
+                "why": "builds the filtered, reverse-sorted smiley table under the use_smilies option, then sets $wpsmiliestrans and $wp_smiliessearch; the table building moves, the two global writes stay Doubt settled, not real: measured 2026-10-22, a wp_spaces_regexp filter reaches neither stack's smilies search.",
                 "body": "e530e4792fd2"
             },
             "translate_smiley": {
@@ -16346,6 +16345,12 @@
                 "why": "runs each [gallery] shortcode with the post's id and collects markup or attributes and sources",
                 "body": "12369e65d2e5"
             },
+            "_minn_upload_time": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "why": "the month an upload or sideload is filed under: the parent post's date when it has one, else the site's now; filing rules beside Attachments::uploadDir",
+                "body": "4feceeb02b2f"
+            },
             "_wp_add_additional_image_sizes": {
                 "verdict": "keep",
                 "reason": "compose",
@@ -16535,9 +16540,9 @@
                 "gates": [
                     "unprobed"
                 ],
-                "why": "stores the file, turns an error into a WP_Error and creates the attachment; the creation flow belongs beside Attachments::insert",
-                "doubt": "the parent post's date never reaches wp_handle_sideload, so the file lands in the current month folder, and the EXIF title and caption are not used",
-                "body": "8f33a7c2c21b"
+                "why": "stores the file, turns an error into a WP_Error and creates the attachment; the creation flow belongs beside Attachments::insert The file is filed under the parent post's month, a page's too (measured 2026-10-22).",
+                "doubt": "the EXIF title and caption are not used for the attachment's title and excerpt (not yet measured with an image carrying them)",
+                "body": "9fa9cecf9758"
             },
             "media_handle_upload": {
                 "verdict": "move",
@@ -16545,8 +16550,8 @@
                 "gates": [
                     "unprobed"
                 ],
-                "why": "takes the request's file, picks the upload time from the parent post and creates the attachment; engine upload flow",
-                "body": "5219dcd1f0c9"
+                "why": "takes the request's file, picks the upload time from the parent post and creates the attachment; engine upload flow. Its month is _minn_upload_time's, a page's parent aside.",
+                "body": "a8743d63f01a"
             },
             "media_sideload_image": {
                 "verdict": "move",
@@ -16683,9 +16688,8 @@
             "wp_get_missing_image_subsizes": {
                 "verdict": "move",
                 "to": "Minn\\Runtime\\ImageSubsizes",
-                "why": "measures the original and works out which registered sizes fit and are absent; subsize logic",
-                "doubt": "uses the raw size table instead of wp_get_registered_image_subsizes and its own fit test instead of image_resize_dimensions (height-only and crop sizes differ); empty metadata gives none where WordPress gives every registered size",
-                "body": "67644da4f239"
+                "why": "every registered size (wp_get_registered_image_subsizes) the metadata lacks and image_resize_dimensions would make from the image, the original's measure for a kept original, all of them before the filter when nothing is measured; subsize logic. Doubt fixed (2026-10-22): height-only and cropped sizes and missing metadata answer as on the reference.",
+                "body": "fd9bda26008b"
             },
             "wp_get_original_image_path": {
                 "verdict": "move",

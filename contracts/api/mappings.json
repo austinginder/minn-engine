@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 703,
-        "composes": 2066,
+        "composes": 2067,
         "leaf": 961,
         "noop": 3260,
         "placeholder": 0,
         "deadend": 1766,
-        "functions": 8678,
+        "functions": 8679,
         "minnMethods": 1548,
         "leafLinesOver15": 8
     },
@@ -38741,6 +38741,16 @@
             "minn": [],
             "composes": []
         },
+        "_minn_upload_time": {
+            "file": "media.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_time",
+                "get_post"
+            ]
+        },
         "_minn_user_level": {
             "file": "deprecated.php",
             "lines": 2,
@@ -54802,13 +54812,14 @@
             "minn": [],
             "composes": [
                 "_minn_media_attach",
+                "_minn_upload_time",
                 "wp_handle_sideload"
             ],
             "deadend": "admin"
         },
         "media_handle_upload": {
             "file": "media.php",
-            "lines": 15,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -54816,8 +54827,8 @@
             ],
             "composes": [
                 "_minn_media_attach",
-                "current_time",
-                "get_post",
+                "_minn_upload_time",
+                "get_post_type",
                 "wp_handle_upload"
             ],
             "deadend": "admin"
@@ -69030,14 +69041,15 @@
         },
         "wp_get_missing_image_subsizes": {
             "file": "media.php",
-            "lines": 16,
+            "lines": 18,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_image_sizes",
                 "apply_filters",
+                "image_resize_dimensions",
                 "wp_get_attachment_metadata",
                 "wp_get_original_image_path",
+                "wp_get_registered_image_subsizes",
                 "wp_getimagesize"
             ],
             "deadend": "admin"
