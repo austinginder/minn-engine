@@ -7064,7 +7064,9 @@
                 "Minn\\Support\\Entities",
                 "Minn\\Support\\KsesEntities"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Ops\\FilesystemCredentials"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -74473,6 +74475,7 @@
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Media\\MediaModal",
                 "Minn\\Media\\Player",
+                "Minn\\Ops\\FilesystemCredentials",
                 "Minn\\Query\\DateSql",
                 "Minn\\Query\\TaxSql",
                 "Minn\\Rest\\BlockDirectoryController",
@@ -95190,6 +95193,244 @@
                     "params": [],
                     "line": 175,
                     "end": 180
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Ops\\FilesystemCredentials",
+            "short": "FilesystemCredentials",
+            "namespace": "Minn\\Ops",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Ops/FilesystemCredentials.php",
+            "lines": 214,
+            "doc": "How the site reaches its own files, and the connection it asks for when\nit cannot write them itself (probes filesystem-credentials and\nfilesystem-credentials-constants).\n\nThe method (get_filesystem_method) is FS_METHOD when set; otherwise\ndirect when a file made in the folder (the content folder by default)\nbelongs to the owner of the running script, or when ownership is relaxed\nand the file could be made at all; otherwise SSH2, the FTP extension or\nFTP over sockets, whichever this PHP has; filesystem_method has the last\nword.\n\nThe connection (request_filesystem_credentials): request_filesystem_\ncredentials may answer first; a direct method needs none. The stored\nconnection (ftp_credentials) is the start, each field then taken from its\nFTP_* constant, else from the form posted with a good _fs_nonce when it\nis not empty, else as stored; a host's \":port\" is split off (kept only\nwhen it is a number); the type is ssh under FTP_SSH, ftps under FTP_SSL,\nelse as posted, stored, or ftp. With no error to show, a host, a user and\na password (or, over SSH, both key paths) make it complete: it is stored\n(not autoloaded) without the password, the keys or the port (the port\nback on the host)\nand returned. Otherwise the answer is false and the form is printed, as\nthe reference prints it, after the error's notice (the facade's\nwp_admin_notice).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Admin\\SubmitButton",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Slashes",
+                "Minn\\Support\\Url"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "NONCE",
+                    "value": "'filesystem-credentials'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CONSTANTS",
+                    "value": "array (   'hostname' => 'FTP_HOST',   'username' => 'FTP_USER',   'password' => 'FTP_PASS',   'public_key' => 'FTP_PUBKEY',   'private_key' => 'FTP_PRIKEY', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "method",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "method(array $asked): mixed",
+                    "doc": "The method the site's files are reached by (get_filesystem_method).",
+                    "shapes": [
+                        "@param array{0?: mixed, 1?: mixed, 2?: mixed} $asked the arguments as given: the method's own, the folder, whether ownership is relaxed"
+                    ],
+                    "params": [
+                        {
+                            "name": "asked",
+                            "type": "array",
+                            "shape": "array{0?: mixed, 1?: mixed, 2?: mixed}",
+                            "default": null,
+                            "doc": "the arguments as given: the method's own, the folder, whether ownership is relaxed"
+                        }
+                    ],
+                    "line": 52,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "request",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "request(array $asked, array $posted): array",
+                    "doc": "The connection, or false with the form to print\n(request_filesystem_credentials); an error's notice is the caller's.",
+                    "shapes": [
+                        "@param array{0: mixed, 1?: mixed, 2?: mixed, 3?: mixed, 4?: mixed, 5?: mixed} $asked the arguments as given: the form's address, the type, the error, the folder, the extra fields, whether ownership is relaxed",
+                        "@param array<string, mixed> $posted the request's form",
+                        "@return array{0: mixed, 1: string} the answer, then what is printed"
+                    ],
+                    "params": [
+                        {
+                            "name": "asked",
+                            "type": "array",
+                            "shape": "array{0: mixed, 1?: mixed, 2?: mixed, 3?: mixed, 4?: mixed, 5?: mixed}",
+                            "default": null,
+                            "doc": "the arguments as given: the form's address, the type, the error, the folder, the extra fields, whether ownership is relaxed"
+                        },
+                        {
+                            "name": "posted",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the request's form"
+                        }
+                    ],
+                    "line": 72,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "credentials",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "credentials(array $submitted): array",
+                    "doc": "The connection as stored, its fields from the constants, the form or\nwhat was stored, its port split from the host and its type settled.",
+                    "shapes": [
+                        "@param array<string, mixed> $submitted",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "submitted",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 132
+                },
+                {
+                    "routes": [],
+                    "name": "host",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "host(array $credentials): string",
+                    "doc": "The host with its port, as stored and shown. @param array<string, mixed> $credentials",
+                    "shapes": [
+                        "@param array<string, mixed> $credentials"
+                    ],
+                    "params": [
+                        {
+                            "name": "credentials",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 135,
+                    "end": 138
+                },
+                {
+                    "routes": [],
+                    "name": "types",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "types(): array",
+                    "doc": "The connection types this PHP can offer. @return array<string, string>",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [],
+                    "line": 141,
+                    "end": 149
+                },
+                {
+                    "routes": [],
+                    "name": "ownsNewFiles",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ownsNewFiles(string $context): ?bool",
+                    "doc": "Whether a file made in the folder belongs to the running script's owner; null when none can be made there.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 152,
+                    "end": 163
+                },
+                {
+                    "routes": [],
+                    "name": "transport",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "transport(): string|false",
+                    "doc": "The first remote transport this PHP has, or false.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 166,
+                    "end": 174
+                },
+                {
+                    "routes": [],
+                    "name": "form",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "form(string $formPost, array $credentials, array $types, array $extraFields, array $posted): string",
+                    "doc": "The form asking for the connection, character for character as the\nreference prints it.",
+                    "shapes": [
+                        "@param array<string, mixed> $credentials",
+                        "@param array<mixed> $types",
+                        "@param array<mixed> $extraFields",
+                        "@param array<string, mixed> $posted"
+                    ],
+                    "params": [
+                        {
+                            "name": "formPost",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "credentials",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "array<mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "extraFields",
+                            "type": "array",
+                            "shape": "array<mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "posted",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 185,
+                    "end": 254
                 }
             ]
         },
@@ -144389,6 +144630,7 @@
                 "Minn\\Mail\\Mailer",
                 "Minn\\Media\\MediaModal",
                 "Minn\\Ops\\DirectoryApi",
+                "Minn\\Ops\\FilesystemCredentials",
                 "Minn\\Ops\\UpgraderRun",
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\BlockEditorController",
@@ -152986,6 +153228,7 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
+                "Minn\\Ops\\FilesystemCredentials",
                 "Minn\\Rest\\LiveSettings",
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\CronEvents",
@@ -167233,6 +167476,7 @@
                 "Minn\\Media\\MediaModal",
                 "Minn\\Media\\Player",
                 "Minn\\Ops\\AutoUpdates",
+                "Minn\\Ops\\FilesystemCredentials",
                 "Minn\\Ops\\Updates",
                 "Minn\\Ops\\UpgraderRun",
                 "Minn\\Query\\DateSql",
@@ -184775,6 +185019,7 @@
                 "Minn\\Front\\ToolbarMarkup",
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Media\\CompatFields",
+                "Minn\\Ops\\FilesystemCredentials",
                 "Minn\\Rest\\FontSettings",
                 "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\SiteSchema",
@@ -189492,6 +189737,7 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Users",
                 "Minn\\Login\\LoginController",
+                "Minn\\Ops\\FilesystemCredentials",
                 "Minn\\Rest\\FontWritesController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\MediaController",
@@ -190207,6 +190453,7 @@
             "usedBy": [
                 "Minn\\Front\\FeedTags",
                 "Minn\\Front\\PostEmbed",
+                "Minn\\Ops\\FilesystemCredentials",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\MenuItemMarks",

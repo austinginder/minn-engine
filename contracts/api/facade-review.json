@@ -409,8 +409,8 @@
             "request_filesystem_credentials": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "the request_filesystem_credentials filter's answer, else true, the direct method's answer",
-                "body": "5e8b6af5a5b2"
+                "why": "Ops\\FilesystemCredentials::request settles the connection (filter, method, stored, constants, the nonce-checked form, port, type) and draws the form; the error's notice goes through wp_admin_notice as the reference prints it (probes filesystem-credentials and filesystem-credentials-constants).",
+                "body": "527184ef4fef"
             },
             "set_current_screen": {
                 "verdict": "keep",
@@ -6665,9 +6665,8 @@
             "WP_REST_Plugins_Controller::is_filesystem_available": {
                 "verdict": "keep",
                 "reason": "compose",
-                "why": "get_filesystem_method by name, anything but direct refused with the reference's 500",
-                "doubt": "stored filesystem credentials (request_filesystem_credentials) are not tried before refusing",
-                "body": "c7d7a124a206"
+                "why": "get_filesystem_method by name; a method that is not direct passes once request_filesystem_credentials, asked quietly for the admin address, finds the connection complete, else the reference's 500 (probe filesystem-credentials). Doubt fixed 2026-10-22.",
+                "body": "b4c2668ca018"
             },
             "WP_REST_Plugins_Controller::plugin_status_permission_check": {
                 "verdict": "keep",

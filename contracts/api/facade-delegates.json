@@ -1950,7 +1950,7 @@
         },
         "get_filesystem_method": {
             "file": "admin.php",
-            "statement": "return apply_filters('filesystem_method', 'direct', $args, $context, $allow_relaxed_file_ownership);"
+            "statement": "return Minn\\Ops\\FilesystemCredentials::method([$args, $context, $allow_relaxed_file_ownership]);"
         },
         "get_front_page_template": {
             "file": "template.php",

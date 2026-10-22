@@ -288,8 +288,14 @@ class WP_REST_Plugins_Controller extends WP_REST_Controller
 
     protected function is_filesystem_available()
     {
-        // Plugins are written straight to disk here (a filesystem that asks for credentials is not probed).
+        // A filesystem that is not direct is available once its connection is complete, asked quietly (probe filesystem-credentials).
         if (get_filesystem_method() === 'direct') {
+            return true;
+        }
+        ob_start();
+        $stored = request_filesystem_credentials(self_admin_url());
+        ob_end_clean();
+        if ($stored) {
             return true;
         }
         return new WP_Error('fs_unavailable', __('The filesystem is currently unavailable for managing plugins.'), ['status' => 500]);

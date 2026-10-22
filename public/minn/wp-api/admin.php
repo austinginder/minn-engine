@@ -704,7 +704,7 @@ function get_home_path()
 
 function get_filesystem_method($args = [], $context = '', $allow_relaxed_file_ownership = false)
 {
-    return apply_filters('filesystem_method', 'direct', $args, $context, $allow_relaxed_file_ownership);
+    return Minn\Ops\FilesystemCredentials::method([$args, $context, $allow_relaxed_file_ownership]);
 }
 
 /** One upgrader line on the page: an error says its message, and its data when that is text; buffers flushed so it shows at once (probe upgrader). */
@@ -719,13 +719,16 @@ function show_message($message)
     flush();
 }
 
+/** The connection the site's files need, or false with the form asking for it printed (Ops\FilesystemCredentials; probe filesystem-credentials). */
 function request_filesystem_credentials($form_post, $type = '', $error = false, $context = '', $extra_fields = null, $allow_relaxed_file_ownership = false)
 {
-    $req_cred = apply_filters('request_filesystem_credentials', '', $form_post, $type, $error, $context, $extra_fields, $allow_relaxed_file_ownership);
-    if ($req_cred !== '') {
-        return $req_cred;
+    [$answer, $form] = Minn\Ops\FilesystemCredentials::request([$form_post, $type, $error, $context, $extra_fields, $allow_relaxed_file_ownership], $_POST);
+    if ($form !== '' && $error) {
+        // An error object says its own message; anything else, that the connection failed.
+        wp_admin_notice(is_wp_error($error) ? esc_html($error->get_error_message()) : __('<strong>Error:</strong> Could not connect to the server. Please verify the settings are correct.'), ['id' => 'message', 'additional_classes' => ['error']]);
     }
-    return true;
+    echo $form;
+    return $answer;
 }
 
 function plugins_api($action, $args = [])

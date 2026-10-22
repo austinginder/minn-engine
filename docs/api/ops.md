@@ -14,6 +14,7 @@
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
 | [`EngineUpdate`](#engineupdate) | final readonly class | 160 | Replaces the running engine with a published release. The release's |
+| [`FilesystemCredentials`](#filesystemcredentials) | final class | 214 | How the site reaches its own files, and the connection it asks for when |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 484 | Putting plugins, themes and extensions on disk. Plugins and themes come |
@@ -410,6 +411,56 @@ The version a bootstrap.php names; "0.0.0" when it names none.
 A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down).
 
 Internals: `swap()` (private, line 96), `signed()` (private, line 150), `refuseCheckout()` (private, line 175)
+
+
+## FilesystemCredentials
+
+`final class Minn\Ops\FilesystemCredentials` · `public/minn/src/Minn/Ops/FilesystemCredentials.php`
+
+How the site reaches its own files, and the connection it asks for when
+it cannot write them itself (probes filesystem-credentials and
+filesystem-credentials-constants).
+
+The method (get_filesystem_method) is FS_METHOD when set; otherwise
+direct when a file made in the folder (the content folder by default)
+belongs to the owner of the running script, or when ownership is relaxed
+and the file could be made at all; otherwise SSH2, the FTP extension or
+FTP over sockets, whichever this PHP has; filesystem_method has the last
+word.
+
+The connection (request_filesystem_credentials): request_filesystem_
+credentials may answer first; a direct method needs none. The stored
+connection (ftp_credentials) is the start, each field then taken from its
+FTP_* constant, else from the form posted with a good _fs_nonce when it
+is not empty, else as stored; a host's ":port" is split off (kept only
+when it is a number); the type is ssh under FTP_SSH, ftps under FTP_SSL,
+else as posted, stored, or ftp. With no error to show, a host, a user and
+a password (or, over SSH, both key paths) make it complete: it is stored
+(not autoloaded) without the password, the keys or the port (the port
+back on the host)
+and returned. Otherwise the answer is false and the form is printed, as
+the reference prints it, after the error's notice (the facade's
+wp_admin_notice).
+
+- const `NONCE` = `'filesystem-credentials'`
+- const `CONSTANTS` = `array (   'hostname' => 'FTP_HOST',   'username' => 'FTP_USER',   'password' => 'FTP_PASS',   'public_key' => 'FTP_PUBKEY',   'private_key' => 'FTP_PRIKEY', )`
+
+### static `method(array $asked): mixed`
+
+The method the site's files are reached by (get_filesystem_method).
+
+- `@param array{0?: mixed, 1?: mixed, 2?: mixed} $asked the arguments as given: the method's own, the folder, whether ownership is relaxed`
+
+### static `request(array $asked, array $posted): array`
+
+The connection, or false with the form to print
+(request_filesystem_credentials); an error's notice is the caller's.
+
+- `@param array{0: mixed, 1?: mixed, 2?: mixed, 3?: mixed, 4?: mixed, 5?: mixed} $asked the arguments as given: the form's address, the type, the error, the folder, the extra fields, whether ownership is relaxed`
+- `@param array<string, mixed> $posted the request's form`
+- `@return array{0: mixed, 1: string} the answer, then what is printed`
+
+Internals: `credentials()` (private, line 108), `host()` (private, line 135), `types()` (private, line 141), `ownsNewFiles()` (private, line 152), `transport()` (private, line 166), `form()` (private, line 185)
 
 
 ## InstalledSoftware

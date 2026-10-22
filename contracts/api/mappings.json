@@ -2,14 +2,14 @@
     "generated": "2026-10-22",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 706,
-        "composes": 2061,
+        "minn": 707,
+        "composes": 2060,
         "leaf": 960,
         "noop": 3265,
         "placeholder": 0,
         "deadend": 1766,
         "functions": 8680,
-        "minnMethods": 1555,
+        "minnMethods": 1557,
         "leafLinesOver15": 9
     },
     "functions": {
@@ -21415,12 +21415,14 @@
         },
         "WP_REST_Plugins_Controller::is_filesystem_available": {
             "file": "classes/WP_REST_Plugins_Controller.php",
-            "lines": 5,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "__",
-                "get_filesystem_method"
+                "get_filesystem_method",
+                "request_filesystem_credentials",
+                "self_admin_url"
             ]
         },
         "WP_REST_Plugins_Controller::is_plugin_installed": {
@@ -48725,10 +48727,10 @@
             "file": "admin.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters"
+            "minn": [
+                "Minn\\Ops\\FilesystemCredentials::method"
             ],
+            "composes": [],
             "deadend": "admin"
         },
         "get_footer": {
@@ -58942,11 +58944,16 @@
         },
         "request_filesystem_credentials": {
             "file": "admin.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Ops\\FilesystemCredentials::request"
+            ],
             "composes": [
-                "apply_filters"
+                "__",
+                "esc_html",
+                "is_wp_error",
+                "wp_admin_notice"
             ],
             "deadend": "admin"
         },
